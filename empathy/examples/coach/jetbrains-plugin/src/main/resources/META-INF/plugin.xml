@@ -1,0 +1,243 @@
+<!-- Coach IDE Plugin for JetBrains IDEs
+     Copyright 2025 Deep Study AI, LLC
+     Licensed under the Apache License, Version 2.0
+-->
+
+<idea-plugin>
+    <id>com.deepstudyai.coach</id>
+    <name>Coach - AI with Level 4 Anticipatory Empathy</name>
+    <vendor email="support@deepstudyai.com" url="https://deepstudyai.com">Deep Study AI, LLC</vendor>
+
+    <description><![CDATA[
+    <h1>Coach - AI with Level 4 Anticipatory Empathy</h1>
+
+    <p><strong>Built on LangChain with 16 Specialized AI Wizards</strong></p>
+
+    <p>Coach predicts problems <strong>before they happen</strong> and coordinates expert wizards to guide you through complex development scenarios.</p>
+
+    <h2>✨ Level 4 Anticipatory Empathy</h2>
+    <ul>
+        <li><strong>30-90 day predictions</strong> - "At 5K req/day growth, this pool will saturate in ~45 days"</li>
+        <li><strong>Proactive insights</strong> - Warns about future issues while you code</li>
+        <li><strong>Contextual guidance</strong> - Understands your patterns and adapts</li>
+    </ul>
+
+    <h2>🧙 16 Specialized Wizards</h2>
+    <ul>
+        <li><strong>SecurityWizard</strong> - SQL injection, XSS, secrets detection</li>
+        <li><strong>PerformanceWizard</strong> - N+1 queries, bottlenecks, optimization</li>
+        <li><strong>AccessibilityWizard</strong> - WCAG 2.1 compliance, screen readers</li>
+        <li><strong>DebuggingWizard</strong> - Root cause analysis, stack traces</li>
+        <li><strong>TestingWizard</strong> - Test generation, coverage analysis</li>
+        <li><strong>RefactoringWizard</strong> - Code quality, maintainability</li>
+        <li><strong>DatabaseWizard</strong> - Schema review, query optimization</li>
+        <li><strong>APIWizard</strong> - REST/GraphQL design, OpenAPI specs</li>
+        <li><strong>ScalingWizard</strong> - Load prediction, capacity planning</li>
+        <li>...and 7 more!</li>
+    </ul>
+
+    <h2>🎯 Key Features</h2>
+    <ul>
+        <li>Real-time code analysis with instant feedback</li>
+        <li>Multi-wizard collaboration for complex scenarios</li>
+        <li>Smart quick fixes with explanations</li>
+        <li>Privacy-first: local-only or optional cloud</li>
+        <li>Extensible: create custom wizards with LangChain</li>
+    </ul>
+
+    <h2>🚀 Getting Started</h2>
+    <ol>
+        <li>Install Python 3.12+ and the Coach LSP server</li>
+        <li>Configure server path in Settings → Tools → Coach</li>
+        <li>Open any Python, JavaScript, or TypeScript file</li>
+        <li>See real-time suggestions appear as you code!</li>
+    </ol>
+
+    <p><a href="https://docs.coach-ai.dev">Documentation</a> | <a href="https://github.com/deepstudyai/coach">GitHub</a></p>
+    ]]></description>
+
+    <change-notes><![CDATA[
+    <h2>0.1.0-alpha - Alpha Release</h2>
+    <ul>
+        <li>Initial alpha release for testing</li>
+        <li>Core LSP client with 16 wizard support</li>
+        <li>Security, Performance, and Accessibility inspections</li>
+        <li>Real-time code analysis</li>
+        <li>Quick fixes for common issues</li>
+        <li>Multi-wizard collaboration</li>
+    </ul>
+    ]]></change-notes>
+
+    <!-- Product and Plugin Compatibility -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+
+    <!-- Supported versions: 2023.1+ -->
+    <idea-version since-build="231"/>
+
+    <!-- Extensions -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Project Services -->
+        <projectService serviceImplementation="com.deepstudyai.coach.lsp.CoachLSPClient"/>
+
+        <!-- Inspections -->
+        <localInspection
+                language="ANY"
+                displayName="Coach Security Analysis"
+                groupName="Coach"
+                shortName="CoachSecurity"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.SecurityInspection"/>
+
+        <localInspection
+                language="ANY"
+                displayName="Coach Performance Analysis"
+                groupName="Coach"
+                shortName="CoachPerformance"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.PerformanceInspection"/>
+
+        <localInspection
+                language="ANY"
+                displayName="Coach Accessibility Analysis"
+                groupName="Coach"
+                shortName="CoachAccessibility"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.AccessibilityInspection"/>
+
+        <!-- Settings -->
+        <applicationConfigurable
+                instance="com.deepstudyai.coach.settings.CoachSettingsConfigurable"
+                displayName="Coach"
+                id="com.deepstudyai.coach.settings"
+                groupId="tools"/>
+
+        <!-- Tool Window -->
+        <toolWindow
+                id="Coach"
+                anchor="right"
+                icon="/icons/coach.svg"
+                factoryClass="com.deepstudyai.coach.ui.CoachToolWindowFactory"/>
+
+        <!-- Actions -->
+        <action
+                id="Coach.AnalyzeFile"
+                class="com.deepstudyai.coach.actions.AnalyzeFileAction"
+                text="Analyze File with Coach"
+                description="Run Coach analysis on current file"
+                icon="/icons/coach.svg">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt C"/>
+        </action>
+
+        <action
+                id="Coach.SecurityAudit"
+                class="com.deepstudyai.coach.actions.SecurityAuditAction"
+                text="Security Audit"
+                description="Run SecurityWizard on current file"
+                icon="/icons/security.svg">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+
+        <action
+                id="Coach.PerformanceProfile"
+                class="com.deepstudyai.coach.actions.PerformanceProfileAction"
+                text="Performance Profile"
+                description="Run PerformanceWizard on current file"
+                icon="/icons/performance.svg">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+
+        <action
+                id="Coach.AccessibilityCheck"
+                class="com.deepstudyai.coach.actions.AccessibilityCheckAction"
+                text="Accessibility Check"
+                description="Run AccessibilityWizard on current file"
+                icon="/icons/accessibility.svg">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+
+        <action
+                id="Coach.GenerateTests"
+                class="com.deepstudyai.coach.actions.GenerateTestsAction"
+                text="Generate Tests"
+                description="Run TestingWizard to generate test cases"
+                icon="/icons/testing.svg">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+
+        <action
+                id="Coach.MultiWizardReview"
+                class="com.deepstudyai.coach.actions.MultiWizardReviewAction"
+                text="Multi-Wizard Review"
+                description="Run comprehensive multi-wizard analysis"
+                icon="/icons/coach.svg">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+
+        <!-- Notifications -->
+        <notificationGroup id="Coach" displayType="BALLOON"/>
+
+        <!-- File Types (for syntax highlighting in tool window) -->
+        <fileType
+                name="Coach Result"
+                implementationClass="com.intellij.openapi.fileTypes.PlainTextFileType"
+                language="TEXT"
+                extensions="coach-result"/>
+    </extensions>
+
+    <!-- Application Listeners -->
+    <applicationListeners>
+        <listener
+                class="com.deepstudyai.coach.listeners.CoachStartupListener"
+                topic="com.intellij.ide.AppLifecycleListener"/>
+    </applicationListeners>
+
+    <!-- Project Listeners -->
+    <projectListeners>
+        <listener
+                class="com.deepstudyai.coach.listeners.CoachProjectListener"
+                topic="com.intellij.openapi.project.ProjectManagerListener"/>
+
+        <listener
+                class="com.deepstudyai.coach.listeners.FileChangeListener"
+                topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
+    </projectListeners>
+
+    <!-- Actions (Menu Items) -->
+    <actions>
+        <group id="Coach.MainMenu" text="Coach" description="Coach AI Assistant" popup="true">
+            <add-to-group group-id="MainMenu" anchor="before" relative-to-action="HelpMenu"/>
+
+            <action id="Coach.ShowToolWindow"
+                    class="com.deepstudyai.coach.actions.ShowToolWindowAction"
+                    text="Show Coach Panel"
+                    description="Show Coach tool window"/>
+
+            <separator/>
+
+            <reference ref="Coach.AnalyzeFile"/>
+            <reference ref="Coach.SecurityAudit"/>
+            <reference ref="Coach.PerformanceProfile"/>
+            <reference ref="Coach.AccessibilityCheck"/>
+            <reference ref="Coach.GenerateTests"/>
+            <reference ref="Coach.MultiWizardReview"/>
+
+            <separator/>
+
+            <action id="Coach.Settings"
+                    class="com.deepstudyai.coach.actions.ShowSettingsAction"
+                    text="Settings..."
+                    description="Configure Coach settings"/>
+
+            <action id="Coach.Documentation"
+                    class="com.deepstudyai.coach.actions.OpenDocumentationAction"
+                    text="Documentation"
+                    description="Open Coach documentation"/>
+        </group>
+    </actions>
+</idea-plugin>
