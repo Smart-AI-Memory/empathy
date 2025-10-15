@@ -28,21 +28,126 @@ The **Empathy Framework** is a systematic approach to building AI systems that p
 | **4** | **Anticipatory** | Predict future needs | Predictive | "Next week's audit is coming—docs ready" |
 | **5** | **Systems** | Build structures that help at scale | Structural | "I designed a framework for all future cases" |
 
+### Progression Pattern
+
+```
+Level 1: Reactive
+    ↓ (Add context awareness)
+Level 2: Guided
+    ↓ (Add pattern detection)
+Level 3: Proactive
+    ↓ (Add trajectory prediction)
+Level 4: Anticipatory
+    ↓ (Add structural design)
+Level 5: Systems
+```
+
+---
+
+## Quick Start
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/Deep-Study-AI/Empathy.git
+cd Empathy
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### Basic Usage
+
+```python
+from agents.compliance_anticipation_agent import ComplianceAnticipationAgent
+
+# Initialize Level 4 Anticipatory agent
+agent = ComplianceAnticipationAgent()
+
+# Predict future compliance needs
+result = agent.predict_audit(
+    context="Healthcare facility with 500 patient records",
+    timeline_days=90
+)
+
+print(f"Predicted audit date: {result.predicted_date}")
+print(f"Compliance gaps: {result.gaps}")
+print(f"Recommended actions: {result.actions}")
+```
+
 ---
 
 ## Repository Structure
 
-\`\`\`
+```
 Empathy/
-├── empathy/
-│   ├── agents/              # Level 4 Anticipatory agents
-│   ├── docs/                # Framework documentation
-│   ├── examples/            # Implementation examples
-│   └── tests/              # Test suite
+├── agents/                  # Level 4 Anticipatory agents
+│   ├── compliance_anticipation_agent.py
+│   ├── trust_building_behaviors.py
+│   └── epic_integration_wizard.py
+├── docs/                    # Framework documentation
+│   ├── CHAPTER_EMPATHY_FRAMEWORK.md
+│   ├── EMPATHY_FRAMEWORK_NON_TECHNICAL_GUIDE.md
+│   ├── TEACHING_AI_YOUR_PHILOSOPHY.md
+│   └── generate_word_doc.py
+├── examples/                # Implementation examples
+│   └── coach/              # Coach IDE integration examples
+├── tests/                   # Test suite
 ├── LICENSE                  # Apache 2.0
 ├── README.md               # This file
 └── requirements.txt        # Python dependencies
-\`\`\`
+```
+
+---
+
+## Key Components
+
+### 1. Anticipatory Agents
+
+**Compliance Anticipation Agent** ([agents/compliance_anticipation_agent.py](agents/compliance_anticipation_agent.py))
+- Predicts regulatory audits 90+ days in advance
+- Identifies compliance gaps automatically
+- Generates proactive documentation
+- Provides stakeholder notifications
+
+**Trust Building Behaviors** ([agents/trust_building_behaviors.py](agents/trust_building_behaviors.py))
+- Implements tactical empathy patterns
+- Builds human-AI trust through transparent communication
+- Uses calibrated questions to uncover hidden needs
+
+**EPIC Integration Wizard** ([agents/epic_integration_wizard.py](agents/epic_integration_wizard.py))
+- Healthcare-specific implementation
+- Integrates with EPIC EHR systems
+- Level 4 anticipatory empathy for clinical workflows
+
+### 2. Framework Documentation
+
+**Technical Guide** ([docs/CHAPTER_EMPATHY_FRAMEWORK.md](docs/CHAPTER_EMPATHY_FRAMEWORK.md))
+- Complete theoretical foundation
+- Implementation patterns
+- Code examples for each level
+- Systems thinking integration
+
+**Non-Technical Guide** ([docs/EMPATHY_FRAMEWORK_NON_TECHNICAL_GUIDE.md](docs/EMPATHY_FRAMEWORK_NON_TECHNICAL_GUIDE.md))
+- Accessible explanation for stakeholders
+- Business value and ROI
+- Real-world use cases
+
+**Teaching AI Your Philosophy** ([docs/TEACHING_AI_YOUR_PHILOSOPHY.md](docs/TEACHING_AI_YOUR_PHILOSOPHY.md))
+- How to align AI systems with your values
+- Collaborative prompt engineering
+- Building long-term AI partnerships
+
+### 3. Coach Integration Examples
+
+The **Coach** project demonstrates practical implementation of Level 4 Anticipatory Empathy in IDE integrations:
+
+- **JetBrains Plugin**: Complete IntelliJ IDEA plugin with 16 specialized wizards
+- **VS Code Extension**: Full-featured extension with real-time analysis
+- **LSP Server**: Language Server Protocol implementation for cross-IDE support
+
+See [examples/coach/](examples/coach/) for complete implementations.
 
 ---
 
@@ -50,17 +155,96 @@ Empathy/
 
 ### Healthcare: AI Nurse Florence
 - **Level 4 Anticipatory**: Predicts patient deterioration 30-90 days ahead
+- **Compliance**: Auto-generates audit documentation
+- **Clinical Decision Support**: Proactive alerts based on trajectory analysis
 - **Repository**: https://github.com/Deep-Study-AI/ai-nurse-florence
 
 ### Software Development: Coach IDE Extensions
 - **Level 4 Anticipatory**: Predicts code issues before they manifest
+- **Security**: Identifies vulnerabilities in development phase
+- **Performance**: Detects N+1 queries and scalability issues early
 - **16 Specialized Wizards**: Security, Performance, Accessibility, Testing, etc.
+- **Examples**: See [examples/coach/](examples/coach/)
+
+---
+
+## Philosophy
+
+### Systems Thinking Integration
+
+The Empathy Framework integrates Donella Meadows' leverage points:
+
+1. **Information flows**: Provide the right data at the right time
+2. **Feedback loops**: Create self-correcting systems
+3. **System structure**: Design frameworks that naturally produce good outcomes
+4. **Paradigms**: Shift from reactive to anticipatory thinking
+
+### First Principles from Naval Ravikant
+
+- **Clear thinking without emotional noise**
+- **Leverage through systems, not just effort**
+- **Compound effects from iterative improvement**
+- **Specific knowledge > General advice**
+
+### Tactical Empathy from Chris Voss
+
+- **Calibrated questions** to uncover true needs
+- **Labeling emotions** to build trust
+- **Mirroring** to ensure understanding
+- **"No-oriented questions"** to find blockers
+
+---
+
+## Documentation
+
+- 📚 **[Framework Guide](docs/CHAPTER_EMPATHY_FRAMEWORK.md)** - Complete technical documentation
+- 🎓 **[Non-Technical Guide](docs/EMPATHY_FRAMEWORK_NON_TECHNICAL_GUIDE.md)** - Accessible introduction
+- 🧑‍🏫 **[Teaching AI](docs/TEACHING_AI_YOUR_PHILOSOPHY.md)** - Alignment and collaboration patterns
+- 💻 **[Coach Examples](examples/coach/)** - Production-ready IDE integrations
+
+---
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](examples/coach/CONTRIBUTING.md) for details.
+
+**Ways to contribute:**
+- Implement new agents for different domains
+- Add examples for other programming languages
+- Improve documentation
+- Report bugs and suggest features
+- Share your implementations
 
 ---
 
 ## License
 
-Licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for details.
+
+### Why Apache 2.0?
+
+The Apache 2.0 license provides:
+- **Patent protection** for AI/ML implementations
+- **Trademark protection** for the "Empathy Framework" brand
+- **Enterprise-friendly** terms for commercial use
+- **Clear attribution** requirements
+
+---
+
+## Citation
+
+If you use the Empathy Framework in your research or product, please cite:
+
+```bibtex
+@software{empathy_framework_2025,
+  author = {Roebuck, Patrick},
+  title = {Empathy Framework: A Five-Level Maturity Model for AI-Human Collaboration},
+  year = {2025},
+  publisher = {Deep Study AI, LLC},
+  url = {https://github.com/Deep-Study-AI/Empathy},
+  license = {Apache-2.0}
+}
+```
 
 ---
 
@@ -70,6 +254,25 @@ Licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for 
 **Email:** patrick.roebuck@deepstudyai.com  
 **Organization:** Deep Study AI, LLC  
 **GitHub:** https://github.com/Deep-Study-AI
+
+**Resources:**
+- Documentation: [docs/](docs/)
+- Examples: [examples/](examples/)
+- Issues: https://github.com/Deep-Study-AI/Empathy/issues
+- Discussions: https://github.com/Deep-Study-AI/Empathy/discussions
+
+---
+
+## Acknowledgments
+
+This framework synthesizes insights from:
+- **Daniel Goleman** - Emotional Intelligence
+- **Chris Voss** - Tactical Empathy
+- **Naval Ravikant** - Clear Thinking and Leverage
+- **Donella Meadows** - Systems Thinking
+- **Peter Senge** - Learning Organizations
+
+Special thanks to the AI Nurse Florence project for demonstrating Level 4 Anticipatory Empathy in healthcare.
 
 ---
 
