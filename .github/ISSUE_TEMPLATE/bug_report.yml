@@ -1,0 +1,140 @@
+name: Bug Report
+description: Report a bug in the Empathy Framework
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the information below to help us resolve it quickly.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: When I try to..., the wizard...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Step-by-step instructions to reproduce the behavior
+      placeholder: |
+        1. Initialize SecurityWizard
+        2. Call analyze_code() with...
+        3. See error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: I expected the wizard to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: Instead, the wizard...
+    validations:
+      required: true
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Code Sample
+      description: Minimal code sample that reproduces the issue
+      render: python
+      placeholder: |
+        from coach_wizards import SecurityWizard
+        wizard = SecurityWizard()
+        # Your code here
+
+  - type: textarea
+    id: error
+    attributes:
+      label: Error Message
+      description: Full error message and stack trace (if applicable)
+      render: shell
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which component is affected?
+      options:
+        - Coach Wizards (Security, Performance, etc.)
+        - Healthcare Agents (Compliance, Trust Building)
+        - Clinical Wizards (SBAR, SOAP, etc.)
+        - Base Framework
+        - Documentation
+        - Examples
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Empathy Framework Version
+      description: What version are you using?
+      placeholder: "1.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: python
+    attributes:
+      label: Python Version
+      description: What Python version are you running?
+      placeholder: "3.10.5"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      options:
+        - macOS
+        - Linux
+        - Windows
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment Details
+      description: Any other relevant environment details (IDE, dependencies, etc.)
+      placeholder: |
+        - IDE: VS Code 1.85.0
+        - langchain: 0.1.0
+        - anthropic: 0.8.0
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other context about the problem (screenshots, logs, etc.)
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues to avoid duplicates
+          required: true
+        - label: I have included a minimal code sample that reproduces the issue
+          required: false
+        - label: I have read the documentation and this is not a usage question
+          required: true

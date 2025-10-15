@@ -1,0 +1,178 @@
+name: New Wizard Request
+description: Request a new specialized wizard for code analysis
+title: "[Wizard]: "
+labels: ["wizard", "enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Request a new specialized wizard! Wizards are focused code analyzers that implement Level 4 Anticipatory Empathy.
+
+  - type: input
+    id: wizard_name
+    attributes:
+      label: Wizard Name
+      description: What should this wizard be called?
+      placeholder: e.g., "SecurityWizard", "PerformanceWizard", "CustomWizard"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: domain
+    attributes:
+      label: Domain
+      description: Which domain is this wizard for?
+      options:
+        - Software Development (Coach)
+        - Healthcare/Clinical
+        - Finance/Banking
+        - Education
+        - E-commerce
+        - DevOps/Infrastructure
+        - Data Science/ML
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: purpose
+    attributes:
+      label: Wizard Purpose
+      description: What specific problems should this wizard detect and prevent?
+      placeholder: |
+        This wizard should detect:
+        - Issue type 1
+        - Issue type 2
+        - Issue type 3
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_analysis
+    attributes:
+      label: Current Issues Detection
+      description: What current issues should the wizard detect?
+      placeholder: |
+        - SQL injection vulnerabilities
+        - Missing input validation
+        - Hardcoded credentials
+    validations:
+      required: true
+
+  - type: textarea
+    id: predictions
+    attributes:
+      label: Level 4 Predictions
+      description: What future issues should it predict (30-90 days ahead)?
+      placeholder: |
+        - Database performance degradation based on growth trends
+        - Security vulnerabilities in dependencies
+        - Scalability bottlenecks as user base grows
+    validations:
+      required: true
+
+  - type: dropdown
+    id: languages
+    attributes:
+      label: Programming Languages
+      description: Which languages should this wizard support? (Select primary)
+      options:
+        - Python
+        - JavaScript/TypeScript
+        - Java
+        - Go
+        - Rust
+        - C/C++
+        - Ruby
+        - PHP
+        - C#
+        - Multiple Languages
+        - Language Agnostic
+    validations:
+      required: true
+
+  - type: textarea
+    id: example_code
+    attributes:
+      label: Example Problem Code
+      description: Provide example code that this wizard should flag
+      render: python
+      placeholder: |
+        # Example code with issues this wizard should detect
+        def problematic_function():
+            # Issue that should be detected
+            pass
+
+  - type: textarea
+    id: fix_suggestion
+    attributes:
+      label: Expected Fix Suggestion
+      description: How should the wizard suggest fixing the problem?
+      render: python
+      placeholder: |
+        # Fixed version
+        def fixed_function():
+            # Proper implementation
+            pass
+
+  - type: textarea
+    id: related_wizards
+    attributes:
+      label: Related Wizards
+      description: Are there existing wizards this relates to?
+      placeholder: |
+        - SecurityWizard (for security aspects)
+        - PerformanceWizard (for performance aspects)
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Implementation Complexity
+      description: How complex do you think this wizard would be?
+      options:
+        - Simple (similar to existing wizards)
+        - Moderate (requires new patterns)
+        - Complex (requires significant research)
+    validations:
+      required: true
+
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use Case
+      description: Describe when and why someone would use this wizard
+      placeholder: |
+        This wizard would help developers...
+        Typical scenario: When building...
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Links to related tools, research papers, standards, etc.
+      placeholder: |
+        - Related standard: https://...
+        - Similar tool: https://...
+        - Research: https://...
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I have domain expertise in this area and can help design the wizard
+          required: false
+        - label: I would be willing to implement this wizard
+          required: false
+        - label: I can provide test cases and examples
+          required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: This wizard doesn't duplicate existing wizards
+          required: true
+        - label: This wizard would provide Level 4 Anticipatory value (not just detection)
+          required: true
