@@ -1,0 +1,2 @@
+pygls>=1.1.0
+lsprotocol>=2023.0.0

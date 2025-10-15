@@ -1,0 +1,354 @@
+{
+  "name": "coach-vscode",
+  "displayName": "Coach - AI Code Analysis",
+  "description": "AI-powered code analysis with 16 specialized wizards and Level 4 Anticipatory Empathy",
+  "version": "0.1.0",
+  "publisher": "deepstudyai",
+  "author": {
+    "name": "Patrick Roebuck",
+    "email": "patrick.roebuck@deepstudyai.com"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Deep-Study-AI/coach"
+  },
+  "bugs": {
+    "url": "https://github.com/Deep-Study-AI/coach/issues"
+  },
+  "homepage": "https://github.com/Deep-Study-AI/coach#readme",
+  "icon": "resources/icon.png",
+  "galleryBanner": {
+    "color": "#2C3E50",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Linters",
+    "Programming Languages",
+    "Testing",
+    "Snippets",
+    "Other"
+  ],
+  "keywords": [
+    "ai",
+    "code-analysis",
+    "security",
+    "performance",
+    "testing",
+    "refactoring",
+    "accessibility",
+    "llm",
+    "machine-learning",
+    "predictions"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "coach.analyzeFile",
+        "title": "Analyze File",
+        "category": "Coach",
+        "icon": "$(search)"
+      },
+      {
+        "command": "coach.analyzeWorkspace",
+        "title": "Analyze Workspace",
+        "category": "Coach",
+        "icon": "$(folder)"
+      },
+      {
+        "command": "coach.securityAudit",
+        "title": "Security Audit",
+        "category": "Coach",
+        "icon": "$(shield)"
+      },
+      {
+        "command": "coach.multiWizardReview",
+        "title": "Multi-Wizard Review",
+        "category": "Coach",
+        "icon": "$(group-by-ref-type)"
+      },
+      {
+        "command": "coach.level4Predictions",
+        "title": "Level 4 Predictions",
+        "category": "Coach",
+        "icon": "$(telescope)"
+      },
+      {
+        "command": "coach.clearResults",
+        "title": "Clear Results",
+        "category": "Coach",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "coach.refreshResults",
+        "title": "Refresh Results",
+        "category": "Coach",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "coach.showSettings",
+        "title": "Open Settings",
+        "category": "Coach",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "coach.newWizardProject",
+        "title": "New Wizard Project",
+        "category": "Coach",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "coach.newWizard",
+        "title": "New Wizard File",
+        "category": "Coach",
+        "icon": "$(new-file)"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "coach.analyzeFile",
+          "group": "coach@1",
+          "when": "editorHasSelection || editorTextFocus"
+        },
+        {
+          "command": "coach.securityAudit",
+          "group": "coach@2",
+          "when": "editorTextFocus"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "coach.analyzeFile",
+          "group": "coach@1",
+          "when": "!explorerResourceIsFolder"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "coach.refreshResults",
+          "when": "view == coachResultsView",
+          "group": "navigation@1"
+        },
+        {
+          "command": "coach.clearResults",
+          "when": "view == coachResultsView",
+          "group": "navigation@2"
+        }
+      ]
+    },
+    "views": {
+      "coach": [
+        {
+          "id": "coachResultsView",
+          "name": "Analysis Results",
+          "icon": "resources/coach-icon.svg"
+        },
+        {
+          "id": "coachWizardsView",
+          "name": "Wizards",
+          "icon": "resources/wizard-icon.svg"
+        },
+        {
+          "id": "coachPredictionsView",
+          "name": "Level 4 Predictions",
+          "icon": "resources/prediction-icon.svg"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "coach",
+          "title": "Coach",
+          "icon": "resources/coach-icon.svg"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Coach",
+      "properties": {
+        "coach.pythonPath": {
+          "type": "string",
+          "default": "python",
+          "description": "Path to Python interpreter"
+        },
+        "coach.serverScriptPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to Coach LSP server script"
+        },
+        "coach.autoStartServer": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-start LSP server on activation"
+        },
+        "coach.apiProvider": {
+          "type": "string",
+          "enum": ["openai", "anthropic", "local"],
+          "default": "openai",
+          "description": "API provider for LLM"
+        },
+        "coach.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API key for LLM provider"
+        },
+        "coach.apiEndpoint": {
+          "type": "string",
+          "default": "",
+          "description": "Custom API endpoint (optional)"
+        },
+        "coach.modelName": {
+          "type": "string",
+          "default": "gpt-4",
+          "description": "Model name to use"
+        },
+        "coach.enableRealTimeAnalysis": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable real-time analysis as you type"
+        },
+        "coach.analysisDebounceMs": {
+          "type": "number",
+          "default": 1000,
+          "description": "Debounce delay for real-time analysis (milliseconds)"
+        },
+        "coach.maxConcurrentAnalyses": {
+          "type": "number",
+          "default": 3,
+          "description": "Maximum concurrent wizard analyses"
+        },
+        "coach.enablePredictions": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Level 4 predictions"
+        },
+        "coach.predictionTimeframe": {
+          "type": "number",
+          "default": 60,
+          "description": "Prediction timeframe in days"
+        },
+        "coach.predictionConfidenceThreshold": {
+          "type": "number",
+          "default": 0.7,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Minimum confidence threshold for predictions"
+        },
+        "coach.enableCaching": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable result caching"
+        },
+        "coach.cacheExpirationMinutes": {
+          "type": "number",
+          "default": 60,
+          "description": "Cache expiration time in minutes"
+        },
+        "coach.enabledWizards": {
+          "type": "array",
+          "default": [
+            "SecurityWizard",
+            "PerformanceWizard",
+            "AccessibilityWizard",
+            "DebuggingWizard",
+            "TestingWizard",
+            "RefactoringWizard",
+            "DatabaseWizard",
+            "APIWizard",
+            "ScalingWizard",
+            "ObservabilityWizard",
+            "CICDWizard",
+            "DocumentationWizard",
+            "ComplianceWizard",
+            "MigrationWizard",
+            "MonitoringWizard",
+            "LocalizationWizard"
+          ],
+          "description": "Enabled wizards",
+          "items": {
+            "type": "string"
+          }
+        },
+        "coach.showInlineHints": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show inline hints for issues"
+        },
+        "coach.showGutterIcons": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show gutter icons for predictions"
+        },
+        "coach.enableCollaboration": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable multi-wizard collaboration"
+        },
+        "coach.enableTelemetry": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable telemetry"
+        },
+        "coach.debugMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable debug mode"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "language": "python",
+        "path": "./snippets/coach-python.json"
+      },
+      {
+        "language": "yaml",
+        "path": "./snippets/coach-yaml.json"
+      }
+    ],
+    "languages": [
+      {
+        "id": "coach-wizard",
+        "extensions": [".wizard.py"],
+        "aliases": ["Coach Wizard", "wizard"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "coach-wizard",
+        "scopeName": "source.python.wizard",
+        "path": "./syntaxes/wizard.tmLanguage.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "^18.x",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.40.0",
+    "typescript": "^5.1.0",
+    "@vscode/test-electron": "^2.3.0"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^8.1.0"
+  }
+}

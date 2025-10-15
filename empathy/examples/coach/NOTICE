@@ -1,0 +1,14 @@
+Coach - AI Code Analysis
+Copyright 2025 Patrick Roebuck
+
+This product includes software developed by Patrick Roebuck (patrick.roebuck@deepstudyai.com).
+
+This software contains code derived from or inspired by:
+- Language Server Protocol (LSP) specification (https://microsoft.github.io/language-server-protocol/)
+- VS Code Extension API (https://code.visualstudio.com/api)
+- IntelliJ Platform SDK (https://plugins.jetbrains.com/docs/intellij/)
+
+Third-party dependencies and their licenses can be found in:
+- vscode-extension-complete/package.json
+- jetbrains-plugin-complete/build.gradle.kts
+- coach-lsp-server/requirements.txt

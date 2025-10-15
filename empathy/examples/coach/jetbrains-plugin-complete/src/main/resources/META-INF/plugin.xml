@@ -1,0 +1,680 @@
+<!-- Coach IDE Plugin for JetBrains IDEs
+     Complete Framework + IDE Integration
+     Copyright 2025 Patrick Roebuck
+     Licensed under the Apache License, Version 2.0
+-->
+
+<idea-plugin>
+    <id>com.deepstudyai.coach</id>
+    <name>Coach - AI with Level 4 Anticipatory Empathy</name>
+    <vendor email="patrick.roebuck@deepstudyai.com" url="https://github.com/Deep-Study-AI/coach">Patrick Roebuck</vendor>
+    <version>0.1.0-alpha</version>
+
+    <description><![CDATA[
+    <h1>Coach - AI with Level 4 Anticipatory Empathy</h1>
+
+    <p><strong>Framework + IDE Integration</strong> - Built on LangChain with 16 specialized AI wizards.</p>
+
+    <h2>✨ What's Included</h2>
+    <ul>
+        <li><strong>IDE Integration</strong> - Real-time analysis, quick fixes, Level 4 predictions</li>
+        <li><strong>Coach Framework</strong> - Build custom wizards in your projects</li>
+        <li><strong>16 Wizards</strong> - Security, Performance, Accessibility, and 13 more</li>
+        <li><strong>Project Templates</strong> - Quick-start wizard development</li>
+        <li><strong>Live Templates</strong> - Code snippets for common patterns</li>
+    </ul>
+
+    <h2>🎯 Key Features</h2>
+    <ul>
+        <li>Predicts problems 30-90 days before they occur</li>
+        <li>Real-time code analysis with instant feedback</li>
+        <li>Multi-wizard collaboration for complex scenarios</li>
+        <li>Extensible framework for custom wizards</li>
+        <li>Local-first: works offline with local LLMs</li>
+    </ul>
+
+    <h2>🧙 16 Specialized Wizards</h2>
+    <ul>
+        <li><strong>SecurityWizard</strong> - SQL injection, XSS, secrets</li>
+        <li><strong>PerformanceWizard</strong> - N+1 queries, bottlenecks</li>
+        <li><strong>AccessibilityWizard</strong> - WCAG 2.1 compliance</li>
+        <li><strong>DebuggingWizard</strong> - Root cause analysis</li>
+        <li><strong>TestingWizard</strong> - Test generation</li>
+        <li><strong>RefactoringWizard</strong> - Code quality</li>
+        <li><strong>DatabaseWizard</strong> - Query optimization</li>
+        <li><strong>APIWizard</strong> - REST/GraphQL design</li>
+        <li>...and 8 more!</li>
+    </ul>
+
+    <h2>🚀 Getting Started</h2>
+    <ol>
+        <li>Install Python 3.12+ and Coach LSP server</li>
+        <li>Configure: Settings → Tools → Coach</li>
+        <li>Try: Right-click → Coach → Analyze File</li>
+        <li>Build custom wizards: File → New → Coach Wizard Project</li>
+    </ol>
+
+    <p><a href="https://docs.coach-ai.dev">Documentation</a> | <a href="https://github.com/Deep-Study-AI/coach">GitHub</a></p>
+    ]]></description>
+
+    <change-notes><![CDATA[
+    <h2>0.1.0-alpha - Initial Alpha Release</h2>
+    <ul>
+        <li>Complete framework + IDE integration</li>
+        <li>16 specialized AI wizards</li>
+        <li>Real-time code analysis</li>
+        <li>Level 4 Anticipatory predictions</li>
+        <li>Multi-wizard collaboration</li>
+        <li>Project templates for custom wizards</li>
+        <li>Live templates for common patterns</li>
+        <li>Quick fixes and intentions</li>
+        <li>Dedicated tool window</li>
+    </ul>
+    ]]></change-notes>
+
+    <!-- Product and Plugin Compatibility -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends optional="true" config-file="coach-java.xml">com.intellij.modules.java</depends>
+    <depends optional="true" config-file="coach-python.xml">com.intellij.modules.python</depends>
+    <depends optional="true" config-file="coach-javascript.xml">com.intellij.modules.javascript</depends>
+
+    <!-- Supported versions: 2023.1+ -->
+    <idea-version since-build="231"/>
+
+    <!-- ========================================
+         SERVICES
+         ======================================== -->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Application-Level Services -->
+        <applicationService
+                serviceImplementation="com.deepstudyai.coach.services.CoachSettingsService"/>
+        <applicationService
+                serviceImplementation="com.deepstudyai.coach.services.CoachCacheService"/>
+
+        <!-- Project-Level Services -->
+        <projectService
+                serviceImplementation="com.deepstudyai.coach.lsp.CoachLSPClient"/>
+        <projectService
+                serviceImplementation="com.deepstudyai.coach.services.CoachProjectService"/>
+        <projectService
+                serviceImplementation="com.deepstudyai.coach.services.WizardRegistry"/>
+        <projectService
+                serviceImplementation="com.deepstudyai.coach.services.AnalysisService"/>
+
+        <!-- ========================================
+             INSPECTIONS (All 16 Wizards)
+             ======================================== -->
+
+        <!-- Security Inspections -->
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachSecurity"
+                displayName="Security Analysis (SecurityWizard)"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.SecurityInspection"/>
+
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachSQLInjection"
+                displayName="SQL Injection Detection"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.deepstudyai.coach.inspections.security.SQLInjectionInspection"/>
+
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachXSS"
+                displayName="XSS Detection"
+                enabledByDefault="true"
+                level="ERROR"
+                implementationClass="com.deepstudyai.coach.inspections.security.XSSInspection"/>
+
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachHardcodedSecrets"
+                displayName="Hardcoded Secrets Detection"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.security.HardcodedSecretsInspection"/>
+
+        <!-- Performance Inspections -->
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachPerformance"
+                displayName="Performance Analysis (PerformanceWizard)"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.PerformanceInspection"/>
+
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachNPlusOne"
+                displayName="N+1 Query Detection"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.performance.NPlusOneInspection"/>
+
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachMemoryLeak"
+                displayName="Memory Leak Detection"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.performance.MemoryLeakInspection"/>
+
+        <!-- Accessibility Inspections -->
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachAccessibility"
+                displayName="Accessibility Analysis (AccessibilityWizard)"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.AccessibilityInspection"/>
+
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachMissingAltText"
+                displayName="Missing Alt Text (WCAG 1.1.1)"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.accessibility.MissingAltTextInspection"/>
+
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachKeyboardAccessibility"
+                displayName="Keyboard Accessibility (WCAG 2.1.1)"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.accessibility.KeyboardAccessibilityInspection"/>
+
+        <!-- Debugging Inspections -->
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachDebugging"
+                displayName="Debugging Analysis (DebuggingWizard)"
+                enabledByDefault="false"
+                level="INFORMATION"
+                implementationClass="com.deepstudyai.coach.inspections.DebuggingInspection"/>
+
+        <!-- Testing Inspections -->
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachTesting"
+                displayName="Testing Analysis (TestingWizard)"
+                enabledByDefault="true"
+                level="WEAK_WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.TestingInspection"/>
+
+        <!-- Refactoring Inspections -->
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachRefactoring"
+                displayName="Refactoring Suggestions (RefactoringWizard)"
+                enabledByDefault="true"
+                level="WEAK_WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.RefactoringInspection"/>
+
+        <!-- Database Inspections -->
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachDatabase"
+                displayName="Database Analysis (DatabaseWizard)"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.DatabaseInspection"/>
+
+        <!-- API Inspections -->
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachAPI"
+                displayName="API Design Analysis (APIWizard)"
+                enabledByDefault="true"
+                level="WEAK_WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.APIInspection"/>
+
+        <!-- Scaling Inspections -->
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachScaling"
+                displayName="Scaling Analysis (ScalingWizard)"
+                enabledByDefault="false"
+                level="INFORMATION"
+                implementationClass="com.deepstudyai.coach.inspections.ScalingInspection"/>
+
+        <!-- Observability Inspections -->
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachObservability"
+                displayName="Observability Analysis (ObservabilityWizard)"
+                enabledByDefault="false"
+                level="WEAK_WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.ObservabilityInspection"/>
+
+        <!-- CI/CD Inspections -->
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachCICD"
+                displayName="CI/CD Analysis (CICDWizard)"
+                enabledByDefault="false"
+                level="INFORMATION"
+                implementationClass="com.deepstudyai.coach.inspections.CICDInspection"/>
+
+        <!-- Documentation Inspections -->
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachDocumentation"
+                displayName="Documentation Analysis (DocumentationWizard)"
+                enabledByDefault="true"
+                level="WEAK_WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.DocumentationInspection"/>
+
+        <!-- Compliance Inspections -->
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachCompliance"
+                displayName="Compliance Analysis (ComplianceWizard)"
+                enabledByDefault="false"
+                level="WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.ComplianceInspection"/>
+
+        <!-- Migration Inspections -->
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachMigration"
+                displayName="Migration Analysis (MigrationWizard)"
+                enabledByDefault="false"
+                level="INFORMATION"
+                implementationClass="com.deepstudyai.coach.inspections.MigrationInspection"/>
+
+        <!-- Monitoring Inspections -->
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachMonitoring"
+                displayName="Monitoring Analysis (MonitoringWizard)"
+                enabledByDefault="false"
+                level="WEAK_WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.MonitoringInspection"/>
+
+        <!-- Localization Inspections -->
+        <localInspection
+                language="ANY"
+                groupName="Coach"
+                shortName="CoachLocalization"
+                displayName="Localization Analysis (LocalizationWizard)"
+                enabledByDefault="false"
+                level="WEAK_WARNING"
+                implementationClass="com.deepstudyai.coach.inspections.LocalizationInspection"/>
+
+        <!-- ========================================
+             INTENTIONS (Quick Fixes)
+             ======================================== -->
+
+        <intentionAction>
+            <className>com.deepstudyai.coach.intentions.FixSQLInjectionIntention</className>
+            <category>Coach/Security</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>com.deepstudyai.coach.intentions.FixXSSIntention</className>
+            <category>Coach/Security</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>com.deepstudyai.coach.intentions.FixNPlusOneIntention</className>
+            <category>Coach/Performance</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>com.deepstudyai.coach.intentions.AddAltTextIntention</className>
+            <category>Coach/Accessibility</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>com.deepstudyai.coach.intentions.AddAriaLabelIntention</className>
+            <category>Coach/Accessibility</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>com.deepstudyai.coach.intentions.GenerateTestsIntention</className>
+            <category>Coach/Testing</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>com.deepstudyai.coach.intentions.RefactorCodeIntention</className>
+            <category>Coach/Refactoring</category>
+        </intentionAction>
+
+        <!-- ========================================
+             TOOL WINDOW
+             ======================================== -->
+
+        <toolWindow
+                id="Coach"
+                anchor="right"
+                icon="/icons/coach.svg"
+                factoryClass="com.deepstudyai.coach.ui.CoachToolWindowFactory"/>
+
+        <!-- ========================================
+             SETTINGS
+             ======================================== -->
+
+        <applicationConfigurable
+                parentId="tools"
+                instance="com.deepstudyai.coach.settings.CoachSettingsConfigurable"
+                id="com.deepstudyai.coach.settings"
+                displayName="Coach"/>
+
+        <projectConfigurable
+                parentId="com.deepstudyai.coach.settings"
+                instance="com.deepstudyai.coach.settings.CoachProjectConfigurable"
+                id="com.deepstudyai.coach.settings.project"
+                displayName="Project Settings"/>
+
+        <!-- ========================================
+             NOTIFICATIONS
+             ======================================== -->
+
+        <notificationGroup id="Coach" displayType="BALLOON" isLogByDefault="true"/>
+        <notificationGroup id="Coach.Predictions" displayType="STICKY_BALLOON" isLogByDefault="true"/>
+        <notificationGroup id="Coach.Errors" displayType="BALLOON" isLogByDefault="true"/>
+
+        <!-- ========================================
+             FILE TYPES
+             ======================================== -->
+
+        <fileType
+                name="Coach Wizard"
+                implementationClass="com.deepstudyai.coach.filetypes.CoachWizardFileType"
+                fieldName="INSTANCE"
+                language="Python"
+                extensions="wizard.py"/>
+
+        <!-- ========================================
+             PROJECT TEMPLATES
+             ======================================== -->
+
+        <projectTemplatesFactory
+                implementation="com.deepstudyai.coach.templates.CoachProjectTemplateFactory"/>
+
+        <moduleBuilder
+                builderClass="com.deepstudyai.coach.templates.CoachWizardModuleBuilder"/>
+
+        <!-- ========================================
+             LIVE TEMPLATES
+             ======================================== -->
+
+        <defaultLiveTemplates file="/liveTemplates/Coach.xml"/>
+        <liveTemplateContext implementation="com.deepstudyai.coach.templates.CoachTemplateContextType"/>
+
+        <!-- ========================================
+             ANNOTATORS (For Level 4 Predictions)
+             ======================================== -->
+
+        <annotator
+                language="Python"
+                implementationClass="com.deepstudyai.coach.annotators.CoachPredictionAnnotator"/>
+
+        <annotator
+                language="JavaScript"
+                implementationClass="com.deepstudyai.coach.annotators.CoachPredictionAnnotator"/>
+
+        <annotator
+                language="TypeScript"
+                implementationClass="com.deepstudyai.coach.annotators.CoachPredictionAnnotator"/>
+
+        <!-- ========================================
+             LINE MARKERS (For Wizard Integration)
+             ======================================== -->
+
+        <codeInsight.lineMarkerProvider
+                language="Python"
+                implementationClass="com.deepstudyai.coach.markers.WizardLineMarkerProvider"/>
+
+        <!-- ========================================
+             CODE COMPLETION
+             ======================================== -->
+
+        <completion.contributor
+                language="Python"
+                implementationClass="com.deepstudyai.coach.completion.CoachCompletionContributor"/>
+
+        <!-- ========================================
+             DOCUMENTATION PROVIDER
+             ======================================== -->
+
+        <lang.documentationProvider
+                language="Python"
+                implementationClass="com.deepstudyai.coach.documentation.CoachDocumentationProvider"/>
+
+        <!-- ========================================
+             STARTUP ACTIVITY
+             ======================================== -->
+
+        <postStartupActivity
+                implementation="com.deepstudyai.coach.startup.CoachStartupActivity"/>
+
+        <!-- ========================================
+             PROJECT OPEN/CLOSE LISTENERS
+             ======================================== -->
+
+        <projectOpenProcessor
+                implementation="com.deepstudyai.coach.listeners.CoachProjectOpenProcessor"/>
+
+    </extensions>
+
+    <!-- ========================================
+         ACTIONS
+         ======================================== -->
+
+    <actions>
+        <!-- Main Menu -->
+        <group id="Coach.MainMenu" text="Coach" description="Coach AI Assistant" popup="true">
+            <add-to-group group-id="MainMenu" anchor="before" relative-to-action="HelpMenu"/>
+
+            <action id="Coach.ShowToolWindow"
+                    class="com.deepstudyai.coach.actions.ShowToolWindowAction"
+                    text="Show Coach Panel"
+                    description="Show Coach tool window"
+                    icon="/icons/coach.svg">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt C"/>
+            </action>
+
+            <separator/>
+
+            <action id="Coach.AnalyzeFile"
+                    class="com.deepstudyai.coach.actions.AnalyzeFileAction"
+                    text="Analyze File"
+                    description="Run Coach analysis on current file"
+                    icon="/icons/analyze.svg">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt A"/>
+            </action>
+
+            <action id="Coach.AnalyzeProject"
+                    class="com.deepstudyai.coach.actions.AnalyzeProjectAction"
+                    text="Analyze Project"
+                    description="Run Coach analysis on entire project"
+                    icon="/icons/analyze-project.svg"/>
+
+            <separator/>
+
+            <!-- Wizard-Specific Actions -->
+            <action id="Coach.SecurityAudit"
+                    class="com.deepstudyai.coach.actions.SecurityAuditAction"
+                    text="Security Audit"
+                    description="Run SecurityWizard on current file"
+                    icon="/icons/security.svg"/>
+
+            <action id="Coach.PerformanceProfile"
+                    class="com.deepstudyai.coach.actions.PerformanceProfileAction"
+                    text="Performance Profile"
+                    description="Run PerformanceWizard on current file"
+                    icon="/icons/performance.svg"/>
+
+            <action id="Coach.AccessibilityCheck"
+                    class="com.deepstudyai.coach.actions.AccessibilityCheckAction"
+                    text="Accessibility Check"
+                    description="Run AccessibilityWizard on current file"
+                    icon="/icons/accessibility.svg"/>
+
+            <action id="Coach.GenerateTests"
+                    class="com.deepstudyai.coach.actions.GenerateTestsAction"
+                    text="Generate Tests"
+                    description="Run TestingWizard to generate test cases"
+                    icon="/icons/testing.svg"/>
+
+            <action id="Coach.RefactoringSuggestions"
+                    class="com.deepstudyai.coach.actions.RefactoringSuggestionsAction"
+                    text="Refactoring Suggestions"
+                    description="Run RefactoringWizard for code quality suggestions"
+                    icon="/icons/refactoring.svg"/>
+
+            <action id="Coach.DatabaseReview"
+                    class="com.deepstudyai.coach.actions.DatabaseReviewAction"
+                    text="Database Review"
+                    description="Run DatabaseWizard on queries"
+                    icon="/icons/database.svg"/>
+
+            <action id="Coach.APIReview"
+                    class="com.deepstudyai.coach.actions.APIReviewAction"
+                    text="API Review"
+                    description="Run APIWizard on API code"
+                    icon="/icons/api.svg"/>
+
+            <separator/>
+
+            <!-- Multi-Wizard Actions -->
+            <action id="Coach.MultiWizardReview"
+                    class="com.deepstudyai.coach.actions.MultiWizardReviewAction"
+                    text="Multi-Wizard Review..."
+                    description="Run comprehensive multi-wizard analysis"
+                    icon="/icons/multi-wizard.svg"/>
+
+            <action id="Coach.Level4Prediction"
+                    class="com.deepstudyai.coach.actions.Level4PredictionAction"
+                    text="Level 4 Prediction..."
+                    description="Get 30-90 day prediction for selected code"
+                    icon="/icons/prediction.svg"/>
+
+            <separator/>
+
+            <!-- Framework Actions -->
+            <action id="Coach.NewWizard"
+                    class="com.deepstudyai.coach.actions.NewWizardAction"
+                    text="New Custom Wizard..."
+                    description="Create a new custom Coach wizard"
+                    icon="/icons/new-wizard.svg"/>
+
+            <action id="Coach.NewWizardProject"
+                    class="com.deepstudyai.coach.actions.NewWizardProjectAction"
+                    text="New Wizard Project..."
+                    description="Create a new project for developing Coach wizards"
+                    icon="/icons/new-project.svg"/>
+
+            <separator/>
+
+            <action id="Coach.Settings"
+                    class="com.deepstudyai.coach.actions.ShowSettingsAction"
+                    text="Settings..."
+                    description="Configure Coach settings"/>
+
+            <action id="Coach.Documentation"
+                    class="com.deepstudyai.coach.actions.OpenDocumentationAction"
+                    text="Documentation"
+                    description="Open Coach documentation"/>
+
+            <action id="Coach.RestartLSPServer"
+                    class="com.deepstudyai.coach.actions.RestartLSPServerAction"
+                    text="Restart LSP Server"
+                    description="Restart Coach LSP server"/>
+        </group>
+
+        <!-- Editor Context Menu -->
+        <group id="Coach.EditorPopupMenu">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <separator/>
+            <reference ref="Coach.AnalyzeFile"/>
+            <reference ref="Coach.SecurityAudit"/>
+            <reference ref="Coach.PerformanceProfile"/>
+            <reference ref="Coach.AccessibilityCheck"/>
+            <reference ref="Coach.GenerateTests"/>
+            <reference ref="Coach.MultiWizardReview"/>
+            <reference ref="Coach.Level4Prediction"/>
+        </group>
+
+        <!-- Project View Context Menu -->
+        <group id="Coach.ProjectViewPopupMenu">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <separator/>
+            <reference ref="Coach.AnalyzeFile"/>
+            <reference ref="Coach.AnalyzeProject"/>
+            <reference ref="Coach.SecurityAudit"/>
+        </group>
+
+        <!-- Tool Window Toolbar -->
+        <group id="Coach.ToolWindowToolbar">
+            <action id="Coach.Refresh"
+                    class="com.deepstudyai.coach.actions.RefreshAction"
+                    text="Refresh"
+                    description="Refresh Coach analysis"
+                    icon="AllIcons.Actions.Refresh"/>
+
+            <action id="Coach.Clear"
+                    class="com.deepstudyai.coach.actions.ClearResultsAction"
+                    text="Clear Results"
+                    description="Clear all analysis results"
+                    icon="AllIcons.Actions.GC"/>
+
+            <action id="Coach.Settings"
+                    class="com.deepstudyai.coach.actions.ShowSettingsAction"
+                    text="Settings"
+                    description="Configure Coach"
+                    icon="AllIcons.General.Settings"/>
+        </group>
+    </actions>
+
+    <!-- ========================================
+         LISTENERS
+         ======================================== -->
+
+    <projectListeners>
+        <listener
+                class="com.deepstudyai.coach.listeners.CoachFileEditorListener"
+                topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+
+        <listener
+                class="com.deepstudyai.coach.listeners.CoachDocumentListener"
+                topic="com.intellij.openapi.editor.event.DocumentListener"/>
+    </projectListeners>
+
+    <applicationListeners>
+        <listener
+                class="com.deepstudyai.coach.listeners.CoachSettingsListener"
+                topic="com.deepstudyai.coach.settings.CoachSettingsListener"/>
+    </applicationListeners>
+
+</idea-plugin>

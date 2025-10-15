@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templateSet group="Coach">
+  <!-- Basic Wizard Template -->
+  <template name="cwizard" value="from coach.base_wizard import BaseWizard&#10;from coach.types import WizardResult, Severity&#10;&#10;class $NAME$Wizard(BaseWizard):&#10;    &quot;&quot;&quot;$DESCRIPTION$&quot;&quot;&quot;&#10;    &#10;    def __init__(self):&#10;        super().__init__(&#10;            name=&quot;$NAME$Wizard&quot;,&#10;            description=&quot;$DESCRIPTION$&quot;,&#10;            version=&quot;1.0.0&quot;&#10;        )&#10;    &#10;    def analyze(self, code: str, context: dict) -> WizardResult:&#10;        &quot;&quot;&quot;Analyze the code and return results.&quot;&quot;&quot;&#10;        # TODO: Implement analysis logic&#10;        &#10;        return WizardResult(&#10;            wizard=self.name,&#10;            diagnosis=&quot;$END$&quot;,&#10;            severity=Severity.INFO,&#10;            recommendations=[],&#10;            code_examples=[],&#10;            references=[]&#10;        )" description="Create a new Coach wizard" toReformat="true" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="Python" value="true" />
+    </context>
+  </template>
+
+  <!-- Wizard Result Template -->
+  <template name="cwresult" value="WizardResult(&#10;    wizard=&quot;$WIZARD_NAME$&quot;,&#10;    diagnosis=&quot;$DIAGNOSIS$&quot;,&#10;    severity=Severity.$SEVERITY$,&#10;    recommendations=[&#10;        $RECOMMENDATIONS$&#10;    ],&#10;    code_examples=[],&#10;    references=[]&#10;)$END$" description="Create a WizardResult" toReformat="true" toShortenFQNames="true">
+    <variable name="WIZARD_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DIAGNOSIS" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="SEVERITY" expression="enum(&quot;ERROR&quot;, &quot;WARNING&quot;, &quot;INFO&quot;)" defaultValue="" alwaysStopAt="true" />
+    <variable name="RECOMMENDATIONS" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="Python" value="true" />
+    </context>
+  </template>
+
+  <!-- Code Example Template -->
+  <template name="cwexample" value="CodeExample(&#10;    before=&quot;&quot;&quot;&#10;$BEFORE$&#10;&quot;&quot;&quot;,&#10;    after=&quot;&quot;&quot;&#10;$AFTER$&#10;&quot;&quot;&quot;,&#10;    explanation=&quot;$EXPLANATION$&quot;&#10;)$END$" description="Create a CodeExample" toReformat="true" toShortenFQNames="true">
+    <variable name="BEFORE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="AFTER" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="EXPLANATION" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="Python" value="true" />
+    </context>
+  </template>
+
+  <!-- Wizard Test Template -->
+  <template name="cwtest" value="import pytest&#10;from wizards.$WIZARD_MODULE$ import $WIZARD_CLASS$&#10;&#10;def test_$WIZARD_NAME$_basic():&#10;    &quot;&quot;&quot;Test basic functionality of $WIZARD_CLASS$.&quot;&quot;&quot;&#10;    wizard = $WIZARD_CLASS$()&#10;    &#10;    code = &quot;&quot;&quot;&#10;    $CODE$&#10;    &quot;&quot;&quot;&#10;    &#10;    result = wizard.analyze(code, {})&#10;    &#10;    assert result.wizard == &quot;$WIZARD_CLASS$&quot;&#10;    assert result.diagnosis is not None&#10;    $END$" description="Create a wizard test" toReformat="true" toShortenFQNames="true">
+    <variable name="WIZARD_MODULE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="WIZARD_CLASS" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="WIZARD_NAME" expression="lowercaseAndDash(WIZARD_CLASS)" defaultValue="" alwaysStopAt="false" />
+    <variable name="CODE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="Python" value="true" />
+    </context>
+  </template>
+
+  <!-- Collaboration Config Template -->
+  <template name="cwcollab" value="scenarios:&#10;  - name: $SCENARIO_NAME$&#10;    wizards:&#10;      - $WIZARD1$&#10;      - $WIZARD2$&#10;    description: $DESCRIPTION$&#10;    $END$" description="Create a collaboration scenario" toReformat="true" toShortenFQNames="true">
+    <variable name="SCENARIO_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="WIZARD1" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="WIZARD2" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="yaml" value="true" />
+    </context>
+  </template>
+
+  <!-- Wizard with LangChain Template -->
+  <template name="cwlangchain" value="from coach.base_wizard import BaseWizard&#10;from coach.types import WizardResult, Severity&#10;from langchain.chat_models import ChatOpenAI&#10;from langchain.prompts import ChatPromptTemplate&#10;&#10;class $NAME$Wizard(BaseWizard):&#10;    &quot;&quot;&quot;$DESCRIPTION$&quot;&quot;&quot;&#10;    &#10;    def __init__(self, api_key: str):&#10;        super().__init__(&#10;            name=&quot;$NAME$Wizard&quot;,&#10;            description=&quot;$DESCRIPTION$&quot;,&#10;            version=&quot;1.0.0&quot;&#10;        )&#10;        self.llm = ChatOpenAI(api_key=api_key, model=&quot;gpt-4&quot;)&#10;        self.prompt = ChatPromptTemplate.from_messages([&#10;            (&quot;system&quot;, &quot;You are a code analysis expert.&quot;),&#10;            (&quot;user&quot;, &quot;Analyze this code: {code}&quot;)&#10;        ])&#10;    &#10;    def analyze(self, code: str, context: dict) -> WizardResult:&#10;        &quot;&quot;&quot;Analyze using LLM.&quot;&quot;&quot;&#10;        chain = self.prompt | self.llm&#10;        response = chain.invoke({&quot;code&quot;: code})&#10;        &#10;        return WizardResult(&#10;            wizard=self.name,&#10;            diagnosis=response.content,&#10;            severity=Severity.INFO,&#10;            recommendations=[],&#10;            code_examples=[],&#10;            references=[]&#10;        )&#10;        $END$" description="Create a LangChain-powered wizard" toReformat="true" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="Python" value="true" />
+    </context>
+  </template>
+</templateSet>
