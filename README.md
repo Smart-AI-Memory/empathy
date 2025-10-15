@@ -407,52 +407,52 @@ The Empathy Framework offers unique capabilities that set it apart from traditio
 
 | Feature | Empathy Framework | SonarQube | CodeClimate | GitHub Copilot |
 |---------|------------------|-----------|-------------|----------------|
-| **Level 4 Predictions** (30-90 days ahead) | ✅ Yes | ❌ No | ❌ No | ❌ No |
+| **Level 4 Anticipatory Predictions** | ✅ Yes | ❌ No | ❌ No | ❌ No |
 | **Philosophical Foundation** | ✅ Goleman, Voss, Naval | ❌ Rules-based | ❌ Rules-based | ❌ Statistical |
 | **Free Book Included** | ✅ Pro tier | ❌ No | ❌ No | ❌ No |
 | **Healthcare + Software** | ✅ Both domains | Software only | Software only | Software only |
 | **Open Source Core** | ✅ Apache 2.0 | ❌ Proprietary | ❌ Proprietary | ❌ Proprietary |
 | **Prevention vs Detection** | ✅ Anticipatory | Detection only | Detection only | Suggestion only |
-| **Price (Annual)** | $129-249/year | $3,000+/year | $249/dev/year | $100/year |
+| **Price (Annual)** | Free - $249/year | $3,000+/year | $249/dev/year | $100/year |
 
 ### What Makes Level 4 Anticipatory Different?
 
-Traditional tools tell you about problems **now**. Empathy Framework predicts problems **30-90 days ahead** based on:
+Traditional tools tell you about problems **now**. Empathy Framework predicts problems **before they happen** based on:
 - Code trajectory analysis
 - Team velocity patterns
 - Dependency evolution
 - Historical bug patterns
 - Architecture stress points
 
-**Example**: Instead of "This query is slow," you get "In 60 days, this query will timeout when you hit 10,000 users based on current growth rate. Here's the fix."
+**Example**: Instead of "This query is slow," you get "At your growth rate, this query will timeout when you hit 10,000 users. Here's the optimized version."
 
 ---
 
 ## Commercial IDE Extensions
 
-While the Empathy Framework core is open source, we offer commercial IDE integrations:
+The Empathy Framework core is **100% free and open source**. We offer commercial IDE extensions:
 
 ### Coach for JetBrains & VS Code
 
-**Free Tier (Community)**
-- 3 wizards: Documentation, Refactoring, Debugging
-- Basic analysis only (no Level 4 predictions)
-- Limited to 50 analyses/month
+**Free Tier**
+- Complete Empathy Framework (Apache 2.0)
+- Limited wizard access
+- Basic analysis capabilities
 - Community support (GitHub Discussions)
 
 **Pro Tier ($129/year)**
-- All 16 wizards including Security, Performance, Testing, Compliance
-- Full Level 4 Anticipatory predictions (30-90 days ahead)
-- Unlimited analyses
+- Everything in Free
+- Extended wizard access
+- Full Level 4 Anticipatory predictions
 - **FREE Book**: "Empathy Framework: The Five Levels of AI-Human Collaboration" (PDF, ePub, Mobi - $35 value)
 - Community support
 
-**Business Tier ($249/year per developer)**
+**Business Tier ($249/year)**
 - Everything in Pro
 - Email support (48-hour response time SLA)
+- 3 seats included
 - Team dashboard with usage analytics
-- Custom wizard configuration
-- Volume discounts (10+ licenses: 20% off)
+- 20% off additional seats
 
 **Coming Soon**: JetBrains Marketplace & VS Code Marketplace
 
