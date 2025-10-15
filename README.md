@@ -59,6 +59,35 @@ pip install -r requirements.txt
 
 ### Basic Usage
 
+**For Software Developers (Coach Wizards):**
+```python
+from coach_wizards import SecurityWizard, PerformanceWizard
+
+# Initialize security wizard
+security = SecurityWizard()
+
+# Analyze code for security issues
+code = open("app.py").read()
+result = security.run_full_analysis(
+    code=code,
+    file_path="app.py",
+    language="python",
+    project_context={
+        "team_size": 10,
+        "deployment_frequency": "daily"
+    }
+)
+
+print(f"Security analysis: {result.summary}")
+print(f"Current issues: {len(result.issues)}")
+print(f"Predicted issues (90 days): {len(result.predictions)}")
+
+# Get fix suggestions
+for issue in result.issues:
+    print(f"Fix: {security.suggest_fixes(issue)}")
+```
+
+**For Healthcare (Clinical Agents):**
 ```python
 from agents.compliance_anticipation_agent import ComplianceAnticipationAgent
 
@@ -86,17 +115,30 @@ Empathy/
 │   ├── compliance_anticipation_agent.py  # 90-day audit prediction
 │   ├── trust_building_behaviors.py       # Tactical empathy patterns
 │   └── epic_integration_wizard.py        # Healthcare EHR integration
-├── wizards/                         # Clinical documentation wizards (18 files)
+├── coach_wizards/                   # Software development wizards (16 files + base)
+│   ├── base_wizard.py              # Base wizard implementation
+│   ├── security_wizard.py          # Security vulnerabilities
+│   ├── performance_wizard.py       # Performance optimization
+│   ├── accessibility_wizard.py     # WCAG compliance
+│   ├── testing_wizard.py           # Test coverage & quality
+│   ├── refactoring_wizard.py       # Code quality
+│   ├── database_wizard.py          # Database optimization
+│   ├── api_wizard.py               # API design
+│   ├── debugging_wizard.py         # Error detection
+│   ├── scaling_wizard.py           # Scalability analysis
+│   ├── observability_wizard.py     # Logging & metrics
+│   ├── cicd_wizard.py              # CI/CD pipelines
+│   ├── documentation_wizard.py     # Documentation quality
+│   ├── compliance_wizard.py        # Regulatory compliance
+│   ├── migration_wizard.py         # Code migration
+│   ├── monitoring_wizard.py        # System monitoring
+│   └── localization_wizard.py      # Internationalization
+├── wizards/                         # Clinical documentation wizards (17 files)
 │   ├── sbar_wizard.py              # SBAR reports
 │   ├── soap_note_wizard.py         # SOAP notes
 │   ├── admission_assessment_wizard.py
 │   ├── discharge_summary_wizard.py
-│   ├── shift_handoff_wizard.py
-│   ├── incident_report_wizard.py
-│   ├── clinical_assessment.py
-│   ├── patient_education.py
-│   ├── quality_improvement.py
-│   └── 9 more clinical wizards...
+│   └── 13 more clinical wizards...
 ├── services/                        # Core services
 │   └── wizard_ai_service.py        # Wizard orchestration service
 ├── docs/                            # Framework documentation (8 files)
@@ -137,7 +179,47 @@ Empathy/
 - Integrates with EPIC EHR systems
 - Level 4 anticipatory empathy for clinical workflows
 
-### 2. Clinical Documentation Wizards
+### 2. Coach Software Development Wizards
+
+**16 specialized wizards** for software development with Level 4 Anticipatory Empathy:
+
+**Security & Compliance:**
+- **Security Wizard** ([coach_wizards/security_wizard.py](coach_wizards/security_wizard.py)) - SQL injection, XSS, CSRF, secrets detection
+- **Compliance Wizard** ([coach_wizards/compliance_wizard.py](coach_wizards/compliance_wizard.py)) - GDPR, SOC 2, PII handling
+
+**Performance & Scalability:**
+- **Performance Wizard** ([coach_wizards/performance_wizard.py](coach_wizards/performance_wizard.py)) - N+1 queries, memory leaks, bottlenecks
+- **Database Wizard** ([coach_wizards/database_wizard.py](coach_wizards/database_wizard.py)) - Missing indexes, query optimization
+- **Scaling Wizard** ([coach_wizards/scaling_wizard.py](coach_wizards/scaling_wizard.py)) - Architecture limitations, load handling
+
+**Code Quality:**
+- **Refactoring Wizard** ([coach_wizards/refactoring_wizard.py](coach_wizards/refactoring_wizard.py)) - Code smells, complexity, duplication
+- **Testing Wizard** ([coach_wizards/testing_wizard.py](coach_wizards/testing_wizard.py)) - Coverage analysis, flaky tests
+- **Debugging Wizard** ([coach_wizards/debugging_wizard.py](coach_wizards/debugging_wizard.py)) - Null references, race conditions
+
+**API & Integration:**
+- **API Wizard** ([coach_wizards/api_wizard.py](coach_wizards/api_wizard.py)) - Design consistency, versioning
+- **Migration Wizard** ([coach_wizards/migration_wizard.py](coach_wizards/migration_wizard.py)) - Deprecated APIs, compatibility
+
+**DevOps & Operations:**
+- **CI/CD Wizard** ([coach_wizards/cicd_wizard.py](coach_wizards/cicd_wizard.py)) - Pipeline optimization, deployment risks
+- **Observability Wizard** ([coach_wizards/observability_wizard.py](coach_wizards/observability_wizard.py)) - Logging, metrics, tracing
+- **Monitoring Wizard** ([coach_wizards/monitoring_wizard.py](coach_wizards/monitoring_wizard.py)) - Alerts, SLOs, blind spots
+
+**User Experience:**
+- **Accessibility Wizard** ([coach_wizards/accessibility_wizard.py](coach_wizards/accessibility_wizard.py)) - WCAG compliance, alt text, ARIA
+- **Localization Wizard** ([coach_wizards/localization_wizard.py](coach_wizards/localization_wizard.py)) - i18n, translations, RTL
+
+**Documentation:**
+- **Documentation Wizard** ([coach_wizards/documentation_wizard.py](coach_wizards/documentation_wizard.py)) - Docstrings, examples, clarity
+
+Each wizard implements:
+- **Current Analysis**: Detect issues in code now
+- **Level 4 Predictions**: Forecast issues 30-90 days ahead
+- **Prevention Strategies**: Stop problems before they happen
+- **Fix Suggestions**: Concrete code examples
+
+### 3. Clinical Documentation Wizards
 
 **18 specialized wizards** for healthcare documentation:
 
@@ -169,7 +251,7 @@ Empathy/
 - **Quality Improvement** ([wizards/quality_improvement.py](wizards/quality_improvement.py))
 - **SBAR Report** ([wizards/sbar_report.py](wizards/sbar_report.py))
 
-### 3. Core Services
+### 4. Core Services
 
 **Wizard AI Service** ([services/wizard_ai_service.py](services/wizard_ai_service.py))
 - Orchestrates all clinical wizards
@@ -177,7 +259,7 @@ Empathy/
 - Handles prompt templates and context
 - Integrates with Claude, GPT-4, and other LLMs
 
-### 4. Framework Documentation
+### 5. Framework Documentation
 
 **Technical Guide** ([docs/CHAPTER_EMPATHY_FRAMEWORK.md](docs/CHAPTER_EMPATHY_FRAMEWORK.md))
 - Complete theoretical foundation
@@ -195,7 +277,7 @@ Empathy/
 - Collaborative prompt engineering
 - Building long-term AI partnerships
 
-### 5. Coach Integration Examples
+### 6. Coach Integration Examples
 
 The **Coach** project demonstrates practical implementation of Level 4 Anticipatory Empathy in IDE integrations:
 
