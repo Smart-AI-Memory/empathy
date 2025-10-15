@@ -401,6 +401,63 @@ If you use the Empathy Framework in your research or product, please cite:
 
 ---
 
+## Why Empathy Framework vs Others?
+
+The Empathy Framework offers unique capabilities that set it apart from traditional code analysis tools:
+
+| Feature | Empathy Framework | SonarQube | CodeClimate | GitHub Copilot |
+|---------|------------------|-----------|-------------|----------------|
+| **Level 4 Predictions** (30-90 days ahead) | ✅ Yes | ❌ No | ❌ No | ❌ No |
+| **Philosophical Foundation** | ✅ Goleman, Voss, Naval | ❌ Rules-based | ❌ Rules-based | ❌ Statistical |
+| **Free Book Included** | ✅ Pro tier | ❌ No | ❌ No | ❌ No |
+| **Healthcare + Software** | ✅ Both domains | Software only | Software only | Software only |
+| **Open Source Core** | ✅ Apache 2.0 | ❌ Proprietary | ❌ Proprietary | ❌ Proprietary |
+| **Prevention vs Detection** | ✅ Anticipatory | Detection only | Detection only | Suggestion only |
+| **Price (Annual)** | $129-249/year | $3,000+/year | $249/dev/year | $100/year |
+
+### What Makes Level 4 Anticipatory Different?
+
+Traditional tools tell you about problems **now**. Empathy Framework predicts problems **30-90 days ahead** based on:
+- Code trajectory analysis
+- Team velocity patterns
+- Dependency evolution
+- Historical bug patterns
+- Architecture stress points
+
+**Example**: Instead of "This query is slow," you get "In 60 days, this query will timeout when you hit 10,000 users based on current growth rate. Here's the fix."
+
+---
+
+## Commercial IDE Extensions
+
+While the Empathy Framework core is open source, we offer commercial IDE integrations:
+
+### Coach for JetBrains & VS Code
+
+**Free Tier (Community)**
+- 3 wizards: Documentation, Refactoring, Debugging
+- Basic analysis only (no Level 4 predictions)
+- Limited to 50 analyses/month
+- Community support (GitHub Discussions)
+
+**Pro Tier ($129/year)**
+- All 16 wizards including Security, Performance, Testing, Compliance
+- Full Level 4 Anticipatory predictions (30-90 days ahead)
+- Unlimited analyses
+- **FREE Book**: "Empathy Framework: The Five Levels of AI-Human Collaboration" (PDF, ePub, Mobi - $35 value)
+- Community support
+
+**Business Tier ($249/year per developer)**
+- Everything in Pro
+- Email support (48-hour response time SLA)
+- Team dashboard with usage analytics
+- Custom wizard configuration
+- Volume discounts (10+ licenses: 20% off)
+
+**Coming Soon**: JetBrains Marketplace & VS Code Marketplace
+
+---
+
 ## Acknowledgments
 
 This framework synthesizes insights from:

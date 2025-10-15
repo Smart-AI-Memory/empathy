@@ -1,0 +1,110 @@
+name: Feature Request
+description: Suggest a new feature or enhancement for the Empathy Framework
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Help us understand your needs by providing details below.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem are you trying to solve? What's missing?
+      placeholder: I'm trying to... but I can't because...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How would you like to solve this problem?
+      placeholder: Add a new wizard that... or extend the framework to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What other approaches have you considered?
+      placeholder: I tried using... but it doesn't...
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: What type of feature is this?
+      options:
+        - New Wizard (Coach/Software Development)
+        - New Agent (Healthcare/Clinical)
+        - Framework Enhancement
+        - IDE Integration Improvement
+        - Documentation
+        - Performance
+        - Developer Experience
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this to you?
+      options:
+        - Critical (blocking my work)
+        - High (needed for production)
+        - Medium (would be very helpful)
+        - Low (nice to have)
+    validations:
+      required: true
+
+  - type: textarea
+    id: example
+    attributes:
+      label: Example Usage
+      description: Show how you'd like to use this feature
+      render: python
+      placeholder: |
+        from coach_wizards import NewWizard
+        wizard = NewWizard()
+        result = wizard.analyze(...)
+
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use Case
+      description: Describe your specific use case or scenario
+      placeholder: |
+        I'm building a... and I need to...
+        This would help me by...
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other context, screenshots, or examples
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I would be willing to implement this feature and submit a PR
+          required: false
+        - label: I can help test this feature once implemented
+          required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues and this feature hasn't been requested
+          required: true
+        - label: This feature aligns with the Empathy Framework's philosophy
+          required: true
