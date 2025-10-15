@@ -82,21 +82,37 @@ print(f"Recommended actions: {result.actions}")
 
 ```
 Empathy/
-├── agents/                  # Level 4 Anticipatory agents
-│   ├── compliance_anticipation_agent.py
-│   ├── trust_building_behaviors.py
-│   └── epic_integration_wizard.py
-├── docs/                    # Framework documentation
+├── agents/                          # Level 4 Anticipatory agents (3 files)
+│   ├── compliance_anticipation_agent.py  # 90-day audit prediction
+│   ├── trust_building_behaviors.py       # Tactical empathy patterns
+│   └── epic_integration_wizard.py        # Healthcare EHR integration
+├── wizards/                         # Clinical documentation wizards (18 files)
+│   ├── sbar_wizard.py              # SBAR reports
+│   ├── soap_note_wizard.py         # SOAP notes
+│   ├── admission_assessment_wizard.py
+│   ├── discharge_summary_wizard.py
+│   ├── shift_handoff_wizard.py
+│   ├── incident_report_wizard.py
+│   ├── clinical_assessment.py
+│   ├── patient_education.py
+│   ├── quality_improvement.py
+│   └── 9 more clinical wizards...
+├── services/                        # Core services
+│   └── wizard_ai_service.py        # Wizard orchestration service
+├── docs/                            # Framework documentation (8 files)
 │   ├── CHAPTER_EMPATHY_FRAMEWORK.md
 │   ├── EMPATHY_FRAMEWORK_NON_TECHNICAL_GUIDE.md
 │   ├── TEACHING_AI_YOUR_PHILOSOPHY.md
-│   └── generate_word_doc.py
-├── examples/                # Implementation examples
-│   └── coach/              # Coach IDE integration examples
-├── tests/                   # Test suite
-├── LICENSE                  # Apache 2.0
-├── README.md               # This file
-└── requirements.txt        # Python dependencies
+│   └── 5 more documentation files...
+├── examples/                        # Implementation examples
+│   └── coach/                      # Coach IDE integration (87 files)
+│       ├── jetbrains-plugin-complete/  # IntelliJ IDEA plugin
+│       ├── vscode-extension-complete/  # VS Code extension
+│       └── coach-lsp-server/          # LSP server
+├── tests/                           # Test suite
+├── LICENSE                          # Apache 2.0
+├── README.md                        # This file
+└── requirements.txt                 # Python dependencies
 ```
 
 ---
@@ -121,7 +137,47 @@ Empathy/
 - Integrates with EPIC EHR systems
 - Level 4 anticipatory empathy for clinical workflows
 
-### 2. Framework Documentation
+### 2. Clinical Documentation Wizards
+
+**18 specialized wizards** for healthcare documentation:
+
+**Core Documentation:**
+- **SBAR Wizard** ([wizards/sbar_wizard.py](wizards/sbar_wizard.py)) - Situation, Background, Assessment, Recommendation
+- **SOAP Note Wizard** ([wizards/soap_note_wizard.py](wizards/soap_note_wizard.py)) - Subjective, Objective, Assessment, Plan
+- **Admission Assessment** ([wizards/admission_assessment_wizard.py](wizards/admission_assessment_wizard.py))
+- **Discharge Summary** ([wizards/discharge_summary_wizard.py](wizards/discharge_summary_wizard.py))
+- **Shift Handoff** ([wizards/shift_handoff_wizard.py](wizards/shift_handoff_wizard.py))
+- **Incident Report** ([wizards/incident_report_wizard.py](wizards/incident_report_wizard.py))
+
+**Clinical Assessment:**
+- **Clinical Assessment** ([wizards/clinical_assessment.py](wizards/clinical_assessment.py))
+- **Nursing Assessment** ([wizards/nursing_assessment.py](wizards/nursing_assessment.py))
+
+**Care Planning:**
+- **Care Plan** ([wizards/care_plan.py](wizards/care_plan.py))
+- **Treatment Plan** ([wizards/treatment_plan.py](wizards/treatment_plan.py))
+- **Discharge Planning** ([wizards/discharge_planning.py](wizards/discharge_planning.py))
+
+**Medication Management:**
+- **Dosage Calculation** ([wizards/dosage_calculation.py](wizards/dosage_calculation.py))
+- **Medication Reconciliation** ([wizards/medication_reconciliation.py](wizards/medication_reconciliation.py))
+
+**Patient Care:**
+- **Patient Education** ([wizards/patient_education.py](wizards/patient_education.py))
+
+**Quality & Reporting:**
+- **Quality Improvement** ([wizards/quality_improvement.py](wizards/quality_improvement.py))
+- **SBAR Report** ([wizards/sbar_report.py](wizards/sbar_report.py))
+
+### 3. Core Services
+
+**Wizard AI Service** ([services/wizard_ai_service.py](services/wizard_ai_service.py))
+- Orchestrates all clinical wizards
+- Manages AI model selection and fallback
+- Handles prompt templates and context
+- Integrates with Claude, GPT-4, and other LLMs
+
+### 4. Framework Documentation
 
 **Technical Guide** ([docs/CHAPTER_EMPATHY_FRAMEWORK.md](docs/CHAPTER_EMPATHY_FRAMEWORK.md))
 - Complete theoretical foundation
@@ -139,7 +195,7 @@ Empathy/
 - Collaborative prompt engineering
 - Building long-term AI partnerships
 
-### 3. Coach Integration Examples
+### 5. Coach Integration Examples
 
 The **Coach** project demonstrates practical implementation of Level 4 Anticipatory Empathy in IDE integrations:
 
