@@ -1,0 +1,226 @@
+{
+  "name": "coach-ai",
+  "displayName": "Coach - AI with Level 4 Anticipatory Empathy",
+  "description": "AI development assistant with 16 specialized wizards for comprehensive software development support",
+  "version": "1.0.0",
+  "publisher": "deepstudyai",
+  "icon": "media/icons/coach-icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/empathy-framework"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Debuggers",
+    "Testing",
+    "Other"
+  ],
+  "keywords": [
+    "ai",
+    "assistant",
+    "empathy",
+    "security",
+    "performance",
+    "testing",
+    "debugging",
+    "refactoring",
+    "documentation"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "coach.analyzeFile",
+        "title": "Coach: Analyze Current File",
+        "icon": "$(search)"
+      },
+      {
+        "command": "coach.debugFunction",
+        "title": "Coach: Debug Selected Function",
+        "icon": "$(bug)"
+      },
+      {
+        "command": "coach.generateTests",
+        "title": "Coach: Generate Test Suite",
+        "icon": "$(beaker)"
+      },
+      {
+        "command": "coach.securityAudit",
+        "title": "Coach: Run Security Audit",
+        "icon": "$(shield)"
+      },
+      {
+        "command": "coach.performanceProfile",
+        "title": "Coach: Profile Performance",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "coach.generateAPISpec",
+        "title": "Coach: Generate OpenAPI Spec",
+        "icon": "$(symbol-interface)"
+      },
+      {
+        "command": "coach.a11yCheck",
+        "title": "Coach: Check Accessibility",
+        "icon": "$(accessibility)"
+      },
+      {
+        "command": "coach.refactor",
+        "title": "Coach: Suggest Refactorings",
+        "icon": "$(code)"
+      },
+      {
+        "command": "coach.databaseReview",
+        "title": "Coach: Review Database Schema",
+        "icon": "$(database)"
+      },
+      {
+        "command": "coach.startMultiWizard",
+        "title": "Coach: Multi-Wizard Review",
+        "icon": "$(layers)"
+      },
+      {
+        "command": "coach.showPanel",
+        "title": "Coach: Show Assistant Panel",
+        "icon": "$(robot)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "coach-assistant",
+          "title": "Coach Assistant",
+          "icon": "media/icons/coach-sidebar.svg"
+        }
+      ]
+    },
+    "views": {
+      "coach-assistant": [
+        {
+          "id": "coach.wizardsView",
+          "name": "Wizards",
+          "icon": "media/icons/coach-sidebar.svg"
+        },
+        {
+          "id": "coach.artifactsView",
+          "name": "Artifacts",
+          "icon": "$(files)"
+        },
+        {
+          "id": "coach.patternsView",
+          "name": "Pattern Library",
+          "icon": "$(library)"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Coach",
+      "properties": {
+        "coach.autoTriggers.onFileSave": {
+          "type": "array",
+          "default": ["SecurityWizard", "RefactoringWizard"],
+          "description": "Wizards to run automatically on file save",
+          "items": {
+            "type": "string",
+            "enum": [
+              "SecurityWizard",
+              "PerformanceWizard",
+              "RefactoringWizard",
+              "AccessibilityWizard",
+              "ComplianceWizard"
+            ]
+          }
+        },
+        "coach.autoTriggers.onTestFailure": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically invoke DebuggingWizard when tests fail"
+        },
+        "coach.autoTriggers.onGitCommit": {
+          "type": "boolean",
+          "default": true,
+          "description": "Trigger DocumentationWizard on commit"
+        },
+        "coach.backgroundAnalysis.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable background analysis by wizards"
+        },
+        "coach.backgroundAnalysis.interval": {
+          "type": "number",
+          "default": 10,
+          "description": "Background analysis interval in minutes"
+        },
+        "coach.hoverPredictions.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Level 4 predictions on hover"
+        },
+        "coach.lsp.serverPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to Coach LSP server (auto-detected if empty)"
+        },
+        "coach.lsp.logLevel": {
+          "type": "string",
+          "default": "info",
+          "enum": ["debug", "info", "warning", "error"],
+          "description": "LSP server log level"
+        }
+      }
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "command": "coach.analyzeFile",
+          "group": "coach@1",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "coach.debugFunction",
+          "group": "coach@2",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "coach.securityAudit",
+          "group": "coach@3"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "coach.debugFunction",
+          "when": "editorHasSelection"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.x",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3",
+    "@vscode/test-electron": "^2.3.8",
+    "@vscode/vsce": "^2.22.0"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  }
+}

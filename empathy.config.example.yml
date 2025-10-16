@@ -1,0 +1,45 @@
+# Empathy Framework Configuration Example
+# Copy to .empathy.yml or empathy.config.yml and customize
+
+# Core Settings
+user_id: "alice"
+target_level: 4  # 1-5: Reactive, Guided, Proactive, Anticipatory, Systems
+confidence_threshold: 0.75  # 0.0-1.0
+
+# Trust Settings
+trust_building_rate: 0.05  # How fast trust builds (per success)
+trust_erosion_rate: 0.10   # How fast trust erodes (per failure)
+
+# Persistence Settings
+persistence_enabled: true
+persistence_backend: "sqlite"  # Options: sqlite, json, none
+persistence_path: "./empathy_data"
+
+# State Management
+state_persistence: true
+state_path: "./empathy_state"
+
+# Metrics Settings
+metrics_enabled: true
+metrics_path: "./metrics.db"
+
+# Logging Settings
+log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+log_file: null  # Optional: path to log file
+structured_logging: true
+
+# Pattern Library Settings
+pattern_library_enabled: true
+pattern_sharing: true
+pattern_confidence_threshold: 0.3  # Minimum confidence to use pattern
+
+# Advanced Settings
+async_enabled: true
+feedback_loop_monitoring: true
+leverage_point_analysis: true
+
+# Custom Metadata (optional)
+metadata:
+  organization: "ACME Corp"
+  environment: "production"
+  version: "1.0.0"

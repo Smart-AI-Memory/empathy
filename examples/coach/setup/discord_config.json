@@ -1,0 +1,323 @@
+{
+  "name": "Coach AI - Alpha Testing",
+  "description": "AI development assistant with Level 4 Anticipatory Empathy. Built on LangChain with 16 specialized wizards.",
+  "verification_level": "medium",
+  "default_message_notifications": "only_mentions",
+  "explicit_content_filter": "members_without_roles",
+  "roles": [
+    {
+      "name": "Founder",
+      "color": "#FFD700",
+      "permissions": ["administrator"],
+      "hoist": true,
+      "mentionable": true
+    },
+    {
+      "name": "Developers",
+      "color": "#5865F2",
+      "permissions": [
+        "manage_channels",
+        "manage_messages",
+        "manage_threads",
+        "mention_everyone",
+        "moderate_members"
+      ],
+      "hoist": true,
+      "mentionable": true
+    },
+    {
+      "name": "Alpha Testers",
+      "color": "#57F287",
+      "permissions": [
+        "send_messages",
+        "create_public_threads",
+        "send_messages_in_threads",
+        "embed_links",
+        "attach_files",
+        "add_reactions",
+        "use_external_emojis"
+      ],
+      "hoist": true,
+      "mentionable": true
+    },
+    {
+      "name": "VS Code Testers",
+      "color": "#007ACC",
+      "permissions": [],
+      "hoist": false,
+      "mentionable": true
+    },
+    {
+      "name": "JetBrains Testers",
+      "color": "#FF6F00",
+      "permissions": [],
+      "hoist": false,
+      "mentionable": true
+    },
+    {
+      "name": "Wizard Developers",
+      "color": "#9B59B6",
+      "permissions": [],
+      "hoist": false,
+      "mentionable": true
+    },
+    {
+      "name": "Lurkers",
+      "color": "#95A5A6",
+      "permissions": ["read_messages"],
+      "hoist": false,
+      "mentionable": false
+    }
+  ],
+  "channels": [
+    {
+      "category": "INFORMATION & ONBOARDING",
+      "channels": [
+        {
+          "name": "📜welcome",
+          "type": "text",
+          "permissions": {
+            "@everyone": ["read_messages"],
+            "Alpha Testers": ["read_messages"],
+            "Developers": ["read_messages", "send_messages", "manage_messages"]
+          },
+          "topic": "Welcome to Coach Alpha Testing! Start here 👋"
+        },
+        {
+          "name": "📋rules",
+          "type": "text",
+          "permissions": {
+            "@everyone": ["read_messages"],
+            "Alpha Testers": ["read_messages"],
+            "Developers": ["read_messages", "send_messages", "manage_messages"]
+          },
+          "topic": "Code of conduct and NDA - Please read carefully"
+        },
+        {
+          "name": "📖installation-guide",
+          "type": "text",
+          "permissions": {
+            "@everyone": ["read_messages"],
+            "Alpha Testers": ["read_messages", "create_public_threads"],
+            "Developers": ["read_messages", "send_messages", "manage_messages"]
+          },
+          "topic": "Step-by-step installation for VS Code and JetBrains"
+        },
+        {
+          "name": "📚documentation",
+          "type": "text",
+          "permissions": {
+            "@everyone": ["read_messages"],
+            "Alpha Testers": ["read_messages"],
+            "Developers": ["read_messages", "send_messages", "manage_messages"]
+          },
+          "topic": "All documentation links in one place"
+        }
+      ]
+    },
+    {
+      "category": "GENERAL",
+      "channels": [
+        {
+          "name": "👋introductions",
+          "type": "text",
+          "permissions": {
+            "@everyone": ["read_messages", "send_messages"],
+            "Alpha Testers": ["read_messages", "send_messages"]
+          },
+          "topic": "Introduce yourself to the team!"
+        },
+        {
+          "name": "💬general-chat",
+          "type": "text",
+          "permissions": {
+            "@everyone": ["read_messages", "send_messages"],
+            "Alpha Testers": ["read_messages", "send_messages"]
+          },
+          "topic": "Casual conversation, off-topic chat"
+        },
+        {
+          "name": "🎉wins",
+          "type": "text",
+          "permissions": {
+            "@everyone": ["read_messages", "send_messages"],
+            "Alpha Testers": ["read_messages", "send_messages"]
+          },
+          "topic": "Celebrate your successes! Coach helped you? Share it here 🚀"
+        }
+      ]
+    },
+    {
+      "category": "TESTING",
+      "channels": [
+        {
+          "name": "🐛bugs",
+          "type": "forum",
+          "permissions": {
+            "@everyone": ["read_messages"],
+            "Alpha Testers": ["read_messages", "send_messages", "create_public_threads"],
+            "Developers": ["read_messages", "send_messages", "manage_threads"]
+          },
+          "topic": "Bug reports - Use template, each bug is a thread",
+          "available_tags": [
+            {"name": "🔴 Critical", "moderated": false},
+            {"name": "🟡 High", "moderated": false},
+            {"name": "🔵 Medium", "moderated": false},
+            {"name": "🟢 Low", "moderated": false},
+            {"name": "✅ Fixed", "moderated": true},
+            {"name": "❌ Won't Fix", "moderated": true},
+            {"name": "VS Code", "moderated": false},
+            {"name": "JetBrains", "moderated": false},
+            {"name": "LSP", "moderated": false}
+          ]
+        },
+        {
+          "name": "✨feature-requests",
+          "type": "forum",
+          "permissions": {
+            "@everyone": ["read_messages"],
+            "Alpha Testers": ["read_messages", "send_messages", "create_public_threads"],
+            "Developers": ["read_messages", "send_messages", "manage_threads"]
+          },
+          "topic": "Feature ideas and suggestions - Vote with 👍",
+          "available_tags": [
+            {"name": "Nice-to-have", "moderated": false},
+            {"name": "Important", "moderated": false},
+            {"name": "Blocker", "moderated": false},
+            {"name": "Under Review", "moderated": true},
+            {"name": "Planned", "moderated": true},
+            {"name": "Won't Implement", "moderated": true}
+          ]
+        },
+        {
+          "name": "📊testing-priorities",
+          "type": "text",
+          "permissions": {
+            "@everyone": ["read_messages"],
+            "Alpha Testers": ["read_messages"],
+            "Developers": ["read_messages", "send_messages", "manage_messages"]
+          },
+          "topic": "Weekly testing priorities - What we need you to focus on"
+        }
+      ]
+    },
+    {
+      "category": "SUPPORT",
+      "channels": [
+        {
+          "name": "❓general-help",
+          "type": "text",
+          "permissions": {
+            "@everyone": ["read_messages", "send_messages"],
+            "Alpha Testers": ["read_messages", "send_messages", "create_public_threads"]
+          },
+          "topic": "Questions and troubleshooting - Testers help each other!"
+        },
+        {
+          "name": "💻vs-code-help",
+          "type": "text",
+          "permissions": {
+            "@everyone": ["read_messages", "send_messages"],
+            "Alpha Testers": ["read_messages", "send_messages", "create_public_threads"]
+          },
+          "topic": "VS Code extension issues and questions"
+        },
+        {
+          "name": "🖥️jetbrains-help",
+          "type": "text",
+          "permissions": {
+            "@everyone": ["read_messages", "send_messages"],
+            "Alpha Testers": ["read_messages", "send_messages", "create_public_threads"]
+          },
+          "topic": "JetBrains plugin issues and questions"
+        },
+        {
+          "name": "🧙custom-wizards",
+          "type": "text",
+          "permissions": {
+            "@everyone": ["read_messages", "send_messages"],
+            "Alpha Testers": ["read_messages", "send_messages"]
+          },
+          "topic": "Creating custom wizards with LangChain - Share your creations!"
+        }
+      ]
+    },
+    {
+      "category": "EVENTS",
+      "channels": [
+        {
+          "name": "📆schedule",
+          "type": "text",
+          "permissions": {
+            "@everyone": ["read_messages"],
+            "Alpha Testers": ["read_messages"],
+            "Developers": ["read_messages", "send_messages", "manage_messages"]
+          },
+          "topic": "Weekly office hours, workshops, important dates"
+        },
+        {
+          "name": "🎥office-hours",
+          "type": "voice",
+          "permissions": {
+            "@everyone": ["connect", "speak"],
+            "Alpha Testers": ["connect", "speak"],
+            "Developers": ["connect", "speak", "mute_members"]
+          },
+          "user_limit": 50
+        }
+      ]
+    },
+    {
+      "category": "INTERNAL (Admin Only)",
+      "channels": [
+        {
+          "name": "🔒admin-chat",
+          "type": "text",
+          "permissions": {
+            "@everyone": [],
+            "Developers": ["read_messages", "send_messages"],
+            "Founder": ["read_messages", "send_messages"]
+          },
+          "topic": "Admin coordination - Private"
+        },
+        {
+          "name": "📈analytics",
+          "type": "text",
+          "permissions": {
+            "@everyone": [],
+            "Developers": ["read_messages", "send_messages"],
+            "Founder": ["read_messages", "send_messages"]
+          },
+          "topic": "Metrics tracking and dashboards"
+        }
+      ]
+    }
+  ],
+  "welcome_message": "👋 Welcome to Coach Alpha Testing, {user}!\n\n🎯 **Quick Start**:\n1. Read <#rules> (NDA)\n2. Follow <#installation-guide>\n3. Introduce yourself in <#introductions>\n\n📚 **Resources**:\n- <#documentation> has all guides\n- <#general-help> for questions\n\n💬 **Stay Active**:\n- Weekly office hours: Tuesdays 3pm PT\n- Testing priorities posted in <#testing-priorities>\n\nQuestions? Tag @Developers\n\nLet's build something amazing! 🚀",
+  "auto_reactions": {
+    "🎉wins": ["🎉", "🚀", "✨"]
+  },
+  "bots_recommended": [
+    {
+      "name": "GitHub",
+      "purpose": "Auto-post bug fixes and releases",
+      "url": "https://discord.com/application-directory/487431320314576916"
+    },
+    {
+      "name": "Carl-bot",
+      "purpose": "Welcome messages, reaction roles, polls",
+      "url": "https://carl.gg/"
+    },
+    {
+      "name": "Dyno",
+      "purpose": "Moderation, auto-moderation, logging",
+      "url": "https://dyno.gg/"
+    }
+  ],
+  "invite_settings": {
+    "max_uses": 50,
+    "expires_after": "never",
+    "temporary_membership": false,
+    "unique": true
+  }
+}

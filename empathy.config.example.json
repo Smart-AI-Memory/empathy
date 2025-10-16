@@ -1,0 +1,28 @@
+{
+  "user_id": "alice",
+  "target_level": 4,
+  "confidence_threshold": 0.75,
+  "trust_building_rate": 0.05,
+  "trust_erosion_rate": 0.10,
+  "persistence_enabled": true,
+  "persistence_backend": "sqlite",
+  "persistence_path": "./empathy_data",
+  "state_persistence": true,
+  "state_path": "./empathy_state",
+  "metrics_enabled": true,
+  "metrics_path": "./metrics.db",
+  "log_level": "INFO",
+  "log_file": null,
+  "structured_logging": true,
+  "pattern_library_enabled": true,
+  "pattern_sharing": true,
+  "pattern_confidence_threshold": 0.3,
+  "async_enabled": true,
+  "feedback_loop_monitoring": true,
+  "leverage_point_analysis": true,
+  "metadata": {
+    "organization": "ACME Corp",
+    "environment": "production",
+    "version": "1.0.0"
+  }
+}
