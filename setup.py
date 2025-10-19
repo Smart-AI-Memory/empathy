@@ -11,7 +11,7 @@ setup(
     name="empathy-framework",
     version="1.0.0-beta",
     author="Patrick Roebuck",
-    author_email="hello@deepstudy.ai",
+    author_email="patrick.roebuck@deepstudyai.com",
     description="A five-level maturity model for AI-human collaboration with anticipatory empathy",
     long_description=long_description,
     long_description_content_type="text/markdown",
