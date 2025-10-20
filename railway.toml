@@ -1,10 +1,9 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd backend && pip install -r requirements.txt"
 
 [deploy]
-startCommand = "cd backend && python -m uvicorn main:app --host 0.0.0.0 --port $PORT"
-healthcheckPath = "/api/health"
+startCommand = "npm run start"
+healthcheckPath = "/"
 healthcheckTimeout = 100
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10

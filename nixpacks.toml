@@ -1,14 +1,11 @@
 [phases.setup]
-nixPkgs = ["python3", "gcc"]
+nixPkgs = ["nodejs_20"]
 
 [phases.install]
-cmds = [
-  "python -m venv --copies /opt/venv",
-  ". /opt/venv/bin/activate && cd backend && pip install -r requirements.txt"
-]
+cmds = ["cd website && npm ci"]
 
 [phases.build]
-cmds = []
+cmds = ["cd website && npm run build"]
 
 [start]
-cmd = ". /opt/venv/bin/activate && cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT"
+cmd = "cd website && npm run start"
