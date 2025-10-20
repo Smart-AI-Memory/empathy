@@ -61,15 +61,20 @@ pip install -r requirements.txt
 
 **For Software Developers (Coach Wizards):**
 ```python
-<<<<<<< HEAD
 from coach_wizards import SecurityWizard, PerformanceWizard
 
-# Initialize security wizard
+# Initialize wizards
 security = SecurityWizard()
+performance = PerformanceWizard()
 
 # Analyze code for security issues
-code = open("app.py").read()
-result = security.run_full_analysis(
+code = """
+def login(username, password):
+    query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
+    return db.execute(query)
+"""
+
+security_result = security.run_full_analysis(
     code=code,
     file_path="app.py",
     language="python",
@@ -79,42 +84,11 @@ result = security.run_full_analysis(
     }
 )
 
-print(f"Security analysis: {result.summary}")
-print(f"Current issues: {len(result.issues)}")
-print(f"Predicted issues (90 days): {len(result.predictions)}")
+print(f"Security analysis: {security_result.summary}")
+print(f"Current issues: {len(security_result.issues)}")
+print(f"Predicted issues (90 days): {len(security_result.predictions)}")
 
-# Get fix suggestions
-for issue in result.issues:
-    print(f"Fix: {security.suggest_fixes(issue)}")
-=======
-from empathy_os import EmpathyOS, Level4Anticipatory
-
-# Initialize Level 4 system
-empathy = EmpathyOS(user_id="your_team", target_level=4)
-level4 = Level4Anticipatory()
-
-# Predict future bottlenecks from code trajectory
-trajectory = {
-    "current_state": {
-        "complexity": 8.5,
-        "test_coverage": 65,
-        "coupling": 25
-    },
-    "trajectory": "increasing_complexity",
-    "prediction_horizon": "30_days"
-}
-
-result = level4.respond(trajectory)
-
-print(f"Predicted needs: {len(result['predicted_needs'])}")
-print(f"Bottlenecks: {result['predicted_needs']}")
-
-# Output:
-# Predicted needs: 3
-# Bottlenecks: ['refactoring', 'testing', 'documentation']
-
-# See examples/bug_prediction.py for complete implementation
->>>>>>> 0ead1a9 (  Please enter the commit message for your changes. Lines starting)
+# See examples/ for complete implementations
 ```
 
 **For Healthcare (Clinical Agents):**

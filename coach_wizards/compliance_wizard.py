@@ -93,9 +93,3 @@ class ComplianceWizard(BaseCoachWizard):
         return f"Fix suggestion for {issue.category} issue: {issue.message}"
 
 
-# Example usage
-if __name__ == "__main__":
-    wizard = ComplianceWizard()
-    
-    # Example code to analyze
-    sample_code = 
