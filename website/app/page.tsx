@@ -398,6 +398,9 @@ export default function Home() {
               <Link href="/plugins" className="text-sm text-[var(--muted)] hover:text-[var(--primary)]">
                 Plugins
               </Link>
+              <Link href="/contact" className="text-sm text-[var(--muted)] hover:text-[var(--primary)]">
+                Contact
+              </Link>
             </div>
           </div>
         </div>
