@@ -73,19 +73,27 @@ class BaseLLMProvider(ABC):
 
 class AnthropicProvider(BaseLLMProvider):
     """
-    Anthropic (Claude) provider.
+    Anthropic (Claude) provider with enhanced features.
 
-    Supports Claude 3 family models.
+    Supports Claude 3 family models with advanced capabilities:
+    - Extended context windows (200K tokens)
+    - Prompt caching for faster repeated queries
+    - Thinking mode for complex reasoning
+    - Batch processing for cost optimization
     """
 
     def __init__(
         self,
         api_key: Optional[str] = None,
         model: str = "claude-3-5-sonnet-20241022",
+        use_prompt_caching: bool = True,
+        use_thinking: bool = False,
         **kwargs
     ):
         super().__init__(api_key, **kwargs)
         self.model = model
+        self.use_prompt_caching = use_prompt_caching
+        self.use_thinking = use_thinking
 
         # Lazy import to avoid requiring anthropic if not used
         try:
@@ -104,7 +112,14 @@ class AnthropicProvider(BaseLLMProvider):
         max_tokens: int = 1024,
         **kwargs
     ) -> LLMResponse:
-        """Generate response using Anthropic API"""
+        """
+        Generate response using Anthropic API with enhanced features.
+
+        Claude-specific enhancements:
+        - Prompt caching for repeated system prompts (90% cost reduction)
+        - Extended context (200K tokens) for large codebase analysis
+        - Thinking mode for complex reasoning tasks
+        """
 
         # Build kwargs for Anthropic
         api_kwargs = {
@@ -114,8 +129,24 @@ class AnthropicProvider(BaseLLMProvider):
             "messages": messages
         }
 
-        if system_prompt:
+        # Enable prompt caching for system prompts (Claude-specific)
+        if system_prompt and self.use_prompt_caching:
+            api_kwargs["system"] = [
+                {
+                    "type": "text",
+                    "text": system_prompt,
+                    "cache_control": {"type": "ephemeral"}  # Cache for 5 minutes
+                }
+            ]
+        elif system_prompt:
             api_kwargs["system"] = system_prompt
+
+        # Enable extended thinking for complex tasks (Claude-specific)
+        if self.use_thinking:
+            api_kwargs["thinking"] = {
+                "type": "enabled",
+                "budget_tokens": 2000  # Allow 2K tokens for reasoning
+            }
 
         # Add any additional kwargs
         api_kwargs.update(kwargs)
@@ -123,43 +154,132 @@ class AnthropicProvider(BaseLLMProvider):
         # Call Anthropic API
         response = self.client.messages.create(**api_kwargs)
 
+        # Extract thinking content if present
+        thinking_content = None
+        response_content = ""
+
+        for block in response.content:
+            if hasattr(block, 'type'):
+                if block.type == 'thinking':
+                    thinking_content = block.thinking
+                elif block.type == 'text':
+                    response_content = block.text
+            else:
+                response_content = block.text
+
         # Convert to standardized format
+        metadata = {
+            "input_tokens": response.usage.input_tokens,
+            "output_tokens": response.usage.output_tokens,
+            "provider": "anthropic",
+            "model_family": "claude-3"
+        }
+
+        # Add cache performance metrics if available
+        if hasattr(response.usage, 'cache_creation_input_tokens'):
+            metadata["cache_creation_tokens"] = response.usage.cache_creation_input_tokens
+            metadata["cache_read_tokens"] = response.usage.cache_read_input_tokens
+
+        # Add thinking content if present
+        if thinking_content:
+            metadata["thinking"] = thinking_content
+
         return LLMResponse(
-            content=response.content[0].text,
+            content=response_content,
             model=response.model,
             tokens_used=response.usage.input_tokens + response.usage.output_tokens,
             finish_reason=response.stop_reason,
-            metadata={
-                "input_tokens": response.usage.input_tokens,
-                "output_tokens": response.usage.output_tokens,
-                "provider": "anthropic"
+            metadata=metadata
+        )
+
+    async def analyze_large_codebase(
+        self,
+        codebase_files: List[Dict[str, str]],
+        analysis_prompt: str,
+        **kwargs
+    ) -> LLMResponse:
+        """
+        Analyze large codebases using Claude's 200K context window.
+
+        Claude-specific feature: Can process entire repositories in one call.
+
+        Args:
+            codebase_files: List of {"path": "...", "content": "..."} dicts
+            analysis_prompt: What to analyze for
+            **kwargs: Additional generation parameters
+
+        Returns:
+            LLMResponse with analysis results
+        """
+        # Build context from all files
+        file_context = "\n\n".join([
+            f"# File: {file['path']}\n{file['content']}"
+            for file in codebase_files
+        ])
+
+        # Create system prompt with caching for file context
+        system_parts = [
+            {
+                "type": "text",
+                "text": "You are a code analysis expert using the Empathy Framework.",
+            },
+            {
+                "type": "text",
+                "text": f"Codebase files:\n\n{file_context}",
+                "cache_control": {"type": "ephemeral"}  # Cache the codebase
             }
+        ]
+
+        messages = [
+            {
+                "role": "user",
+                "content": analysis_prompt
+            }
+        ]
+
+        # Use extended max_tokens for comprehensive analysis
+        return await self.generate(
+            messages=messages,
+            system_prompt=None,  # We'll pass it directly in api_kwargs
+            max_tokens=kwargs.pop('max_tokens', 4096),
+            **{**kwargs, "system": system_parts}
         )
 
     def get_model_info(self) -> Dict[str, Any]:
-        """Get Claude model information"""
+        """Get Claude model information with extended context capabilities"""
         model_info = {
             "claude-3-opus-20240229": {
                 "max_tokens": 200000,
                 "cost_per_1m_input": 15.00,
-                "cost_per_1m_output": 75.00
+                "cost_per_1m_output": 75.00,
+                "supports_prompt_caching": True,
+                "supports_thinking": True,
+                "ideal_for": "Complex reasoning, large codebases"
             },
             "claude-3-5-sonnet-20241022": {
                 "max_tokens": 200000,
                 "cost_per_1m_input": 3.00,
-                "cost_per_1m_output": 15.00
+                "cost_per_1m_output": 15.00,
+                "supports_prompt_caching": True,
+                "supports_thinking": True,
+                "ideal_for": "General development, balanced cost/performance"
             },
             "claude-3-haiku-20240307": {
                 "max_tokens": 200000,
                 "cost_per_1m_input": 0.25,
-                "cost_per_1m_output": 1.25
+                "cost_per_1m_output": 1.25,
+                "supports_prompt_caching": True,
+                "supports_thinking": False,
+                "ideal_for": "Fast responses, simple tasks"
             }
         }
 
         return model_info.get(self.model, {
             "max_tokens": 200000,
             "cost_per_1m_input": 3.00,
-            "cost_per_1m_output": 15.00
+            "cost_per_1m_output": 15.00,
+            "supports_prompt_caching": True,
+            "supports_thinking": True
         })
 
 
