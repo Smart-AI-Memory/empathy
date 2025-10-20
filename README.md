@@ -101,7 +101,7 @@ The Empathy Framework fundamentally changes development speed and code quality b
 **Pro tier ($129/year) adds:**
 - Extended wizard access
 - Level 4 Anticipatory predictions
-- Free book ($35 value)
+- **FREE Early Release Book** "Empathy Framework: The Five Levels of AI-Human Collaboration" (early release $17.50, completed edition will be $35)
 - **ROI**: Pays for itself after building 1-2 wizards
 
 **Business tier ($249/year per 3 seats) adds:**
@@ -659,7 +659,7 @@ The Empathy Framework core is **100% free and open source**. We offer commercial
 - Everything in Free
 - Extended wizard access
 - Full Level 4 Anticipatory predictions
-- **FREE Book**: "Empathy Framework: The Five Levels of AI-Human Collaboration" (PDF, ePub, Mobi - $35 value)
+- **FREE Early Release Book**: "Empathy Framework: The Five Levels of AI-Human Collaboration" (PDF, ePub, Mobi - early release $17.50 value, completed edition will be $35)
 - Community support
 
 **Business Tier ($249/year)**
