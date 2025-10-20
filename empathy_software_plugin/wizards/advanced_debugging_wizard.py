@@ -22,7 +22,7 @@ from typing import Dict, Any, List, Optional
 from pathlib import Path
 import logging
 
-from ..base_wizard import BaseWizard
+from .base_wizard import BaseWizard
 from .debugging.linter_parsers import parse_linter_output, LintIssue
 from .debugging.config_loaders import load_config
 from .debugging.fix_applier import apply_fixes, group_issues_by_fixability

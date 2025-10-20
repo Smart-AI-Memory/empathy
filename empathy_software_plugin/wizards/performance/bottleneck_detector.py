@@ -14,8 +14,8 @@ from enum import Enum
 from .profiler_parsers import FunctionProfile
 
 
-class BottleneckType(Enum):
-    """Types of performance bottlenecks"""
+class BottleneckType(str, Enum):
+    """Types of performance bottlenecks (str-based enum for easy comparison)"""
     HOT_PATH = "hot_path"  # Function taking most total time
     CPU_BOUND = "cpu_bound"  # Heavy computation
     IO_BOUND = "io_bound"  # Waiting for I/O
@@ -96,8 +96,8 @@ class BottleneckDetector:
             if profile.percent_total < threshold_percent:
                 continue
 
-            # Detect hot paths (top time consumers)
-            if profile.percent_total > 20:
+            # Detect hot paths (top time consumers >= 20%)
+            if profile.percent_total >= 20:
                 bottlenecks.append(Bottleneck(
                     type=BottleneckType.HOT_PATH,
                     function_name=profile.function_name,

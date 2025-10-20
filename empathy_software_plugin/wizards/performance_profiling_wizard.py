@@ -88,10 +88,11 @@ class PerformanceProfilingWizard(BaseWizard):
 
         # Phase 3: Analyze trajectory (Level 4)
         trajectory_prediction = None
-        if current_metrics and historical_metrics:
+        if historical_metrics:
+            # If no current_metrics provided, analyzer will extract from last historical entry
             trajectory_prediction = self.trajectory_analyzer.analyze_trajectory(
-                current_metrics,
-                historical_metrics
+                current_metrics if current_metrics else historical_metrics,
+                historical_metrics if current_metrics else None
             )
 
         # Phase 4: Generate insights
@@ -133,7 +134,7 @@ class PerformanceProfilingWizard(BaseWizard):
             "bottlenecks": [b.to_dict() for b in bottlenecks],
 
             "trajectory": trajectory_prediction.__dict__ if trajectory_prediction else None,
-            "trajectory_analysis": trajectory_prediction.__dict() if trajectory_prediction else {"state": "unknown", "trends": []},
+            "trajectory_analysis": trajectory_prediction.to_dict() if trajectory_prediction else {"state": "unknown", "trends": []},
 
             "insights": insights,
 
@@ -185,15 +186,11 @@ class PerformanceProfilingWizard(BaseWizard):
     def _estimate_optimization_potential(
         self,
         bottlenecks: List[Bottleneck]
-    ) -> Dict[str, Any]:
+    ) -> str:
         """Estimate potential time savings from optimizations"""
 
         if not bottlenecks:
-            return {
-                "potential_savings": 0,
-                "percentage": 0,
-                "assessment": "No significant bottlenecks detected"
-            }
+            return "LOW"
 
         # Sum time from all bottlenecks
         total_bottleneck_time = sum(b.time_cost for b in bottlenecks)
@@ -205,23 +202,19 @@ class PerformanceProfilingWizard(BaseWizard):
         total_time = bottlenecks[0].time_cost / (bottlenecks[0].percent_total / 100) if bottlenecks else 1
         percentage = (potential_savings / total_time * 100) if total_time > 0 else 0
 
-        return {
-            "potential_savings": potential_savings,
-            "percentage": percentage,
-            "assessment": self._assess_optimization_potential(percentage)
-        }
+        return self._assess_optimization_potential(percentage)
 
     def _assess_optimization_potential(self, percentage: float) -> str:
         """Assess optimization potential"""
 
         if percentage > 30:
-            return "HIGH - Significant performance gains possible"
+            return "HIGH"
         elif percentage > 15:
-            return "MEDIUM - Moderate improvements achievable"
+            return "MEDIUM"
         elif percentage > 5:
-            return "LOW - Minor improvements possible"
+            return "LOW"
         else:
-            return "MINIMAL - Already well-optimized"
+            return "MINIMAL"
 
     def _generate_predictions(
         self,
@@ -317,10 +310,10 @@ class PerformanceProfilingWizard(BaseWizard):
             recommendations.extend(trajectory.recommendations)
 
         # Optimization potential
-        opt_potential = insights.get("optimization_potential", {})
-        if opt_potential.get("percentage", 0) > 10:
+        opt_potential = insights.get("optimization_potential", "LOW")
+        if opt_potential in ["HIGH", "MEDIUM"]:
             recommendations.append(
-                f"Estimated {opt_potential['percentage']:.1f}% performance improvement possible"
+                f"{opt_potential} optimization potential - significant performance gains possible"
             )
 
         return list(set(recommendations))  # Deduplicate

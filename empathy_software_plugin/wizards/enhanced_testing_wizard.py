@@ -63,6 +63,11 @@ class EnhancedTestingWizard(BaseWizard):
                 "risk": "CRITICAL",
                 "reason": "Auth bugs cause security breaches"
             },
+            "payment_processing": {
+                "patterns": [r"payment|charge|transaction|bill|invoice"],
+                "risk": "CRITICAL",
+                "reason": "Payment bugs cause financial loss"
+            },
             "financial_calculations": {
                 "patterns": [r"price\s*=", r"total\s*=", r"amount\s*=", r"\.round\("],
                 "risk": "HIGH",
@@ -140,6 +145,7 @@ class EnhancedTestingWizard(BaseWizard):
             "coverage": coverage_analysis,
             "test_quality": test_quality,
             "risk_gaps": risk_gaps,
+            "high_risk_gaps": risk_gaps,  # Alias for compatibility
             "brittle_tests": brittle_tests,
             "test_suggestions": test_suggestions,
 
@@ -245,9 +251,9 @@ class EnhancedTestingWizard(BaseWizard):
                 with open(test_file, 'r') as f:
                     content = f.read()
 
-                    # Count assertions
+                    # Count assertions (word boundaries to avoid matching in comments/strings)
                     assertion_count = len(re.findall(
-                        r"assert|expect|should|toBe|toEqual|assertEqual",
+                        r"\bassert\s|\bexpect\(|\bshould\(|\btoEqual\(|\bassertEqual\(",
                         content
                     ))
 
