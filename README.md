@@ -59,9 +59,9 @@ The Empathy Framework fundamentally changes development speed and code quality b
 | Create 10 wizards | 160 hours ($8,000) | 30 hours ($1,500) | 130 hours | **$6,500** |
 | Build complete analysis system | 400 hours ($20,000) | 80 hours ($4,000) | 320 hours | **$16,000** |
 
-**Framework cost**: $0 (open source) or $129/year (Pro) or $249/year (Business)
+**Framework cost**: $0 (open source) or $99-129/year (Pro - early release pricing) or $249/year (Business)
 
-**ROI for 10 wizards**: $6,500 saved ÷ $249 cost = **26x return in first year**
+**ROI for 10 wizards**: $6,500 saved ÷ $99 cost = **66x return in first year** (at final Pro pricing)
 
 ### Team ROI Multiplies
 
@@ -77,10 +77,10 @@ The Empathy Framework fundamentally changes development speed and code quality b
 
 **Framework cost for 5 developers**:
 - Free tier: $0
-- Pro tier: $645/year (5 × $129)
+- Pro tier: $495-645/year (5 × $99-129, depending on pricing phase)
 - Business tier: $996/year ($249 × 3 seats + 2 seats at 20% off)
 
-**ROI**: $205,000 saved ÷ $996 cost = **206x return**
+**ROI at final Pro pricing**: $205,000 saved ÷ $495 cost = **414x return**
 
 ### Why the ROI is Transformative
 
@@ -98,10 +98,11 @@ The Empathy Framework fundamentally changes development speed and code quality b
 - Immediate productivity gains
 - **Infinite ROI** (zero cost, positive returns)
 
-**Pro tier ($129/year) adds:**
+**Pro tier ($129/year - Early Release Pricing) adds:**
 - Extended wizard access
 - Level 4 Anticipatory predictions
-- **FREE Early Release Book** "Empathy Framework: The Five Levels of AI-Human Collaboration" (early release $17.50, completed edition will be $35)
+- **INCLUDES Book** "Empathy Framework: The Five Levels of AI-Human Collaboration" (PDF, ePub, Mobi)
+- **Note**: Final pricing will be $99/year (license + book) - lock in early release pricing now!
 - **ROI**: Pays for itself after building 1-2 wizards
 
 **Business tier ($249/year per 3 seats) adds:**
@@ -115,8 +116,8 @@ The Empathy Framework fundamentally changes development speed and code quality b
 **Traditional development**: Days of trial-and-error, debugging, refactoring
 **Empathy Framework**: Hours to production-quality code with consistent patterns
 
-**Cost**: Free to $249/year
-**Return**: 26-206x in measurable time savings alone
+**Cost**: Free to $249/year (Pro tier final pricing: $99/year for license + book)
+**Return**: 66-414x in measurable time savings alone (at final Pro pricing)
 **Intangible benefits**: Better code quality, less stress, more flow state, faster learning
 
 ---
@@ -655,12 +656,13 @@ The Empathy Framework core is **100% free and open source**. We offer commercial
 - Basic analysis capabilities
 - Community support (GitHub Discussions)
 
-**Pro Tier ($129/year)**
+**Pro Tier ($129/year - Early Release Pricing)**
 - Everything in Free
 - Extended wizard access
 - Full Level 4 Anticipatory predictions
-- **FREE Early Release Book**: "Empathy Framework: The Five Levels of AI-Human Collaboration" (PDF, ePub, Mobi - early release $17.50 value, completed edition will be $35)
+- **INCLUDES Book**: "Empathy Framework: The Five Levels of AI-Human Collaboration" (PDF, ePub, Mobi)
 - Community support
+- **Note**: When book is complete, Pro tier (license + book) will be $99/year. Lock in early release pricing now!
 
 **Business Tier ($249/year)**
 - Everything in Pro
