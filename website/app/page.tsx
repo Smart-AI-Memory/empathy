@@ -25,12 +25,10 @@ export default function Home() {
               </Link>
             </div>
             <p className="mt-6 text-sm text-[var(--muted)]">
-              Includes book + license + Claude API credits ($300/year value)
+              Includes book + commercial plugins + updates • Use your own API key
             </p>
             <p className="mt-2 text-xs text-[var(--muted)]">
-              <span className="inline-flex items-center gap-1">
-                Powered by <span className="font-semibold">Claude</span>
-              </span> • Open source core (Apache 2.0)
+              Works with Claude, GPT-4, Gemini, or local models • Open source core (Apache 2.0)
             </p>
           </div>
         </div>
@@ -252,7 +250,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-2xl font-bold mb-2">Pro</h3>
                 <p className="text-4xl font-bold mb-4">$99<span className="text-lg text-[var(--muted)]">/year</span></p>
-                <p className="text-sm text-[var(--muted)] mb-6">Powered by Claude</p>
+                <p className="text-sm text-[var(--muted)] mb-6">Book + License + Updates</p>
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--success)]">✓</span>
@@ -260,23 +258,27 @@ export default function Home() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--accent)]">★</span>
-                    <span className="text-sm"><strong>$300/year Claude API credits</strong></span>
+                    <span className="text-sm"><strong>Book included</strong> (PDF, ePub, Mobi)</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--accent)]">★</span>
-                    <span className="text-sm"><strong>Level 4 predictions</strong> (200K context)</span>
+                    <span className="text-sm"><strong>Commercial IDE plugins</strong> (VS Code, JetBrains)</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--accent)]">★</span>
-                    <span className="text-sm"><strong>Prompt caching</strong> (90% cost savings)</span>
+                    <span className="text-sm"><strong>Claude integration</strong> (optimized for 200K context)</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--success)]">✓</span>
-                    <span className="text-sm">Book included (PDF, ePub, Mobi)</span>
+                    <span className="text-sm">Prompt caching support (90% cost savings)</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--success)]">✓</span>
                     <span className="text-sm">Priority support</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--success)]">✓</span>
+                    <span className="text-sm">Free updates (1.x versions)</span>
                   </li>
                 </ul>
                 <Link href="/book" className="btn btn-primary w-full">
@@ -356,17 +358,17 @@ export default function Home() {
               Ready to Transform Your Development?
             </h2>
             <p className="text-xl mb-8 opacity-90">
-              Get the Pro tier with book, plugins, and Claude API credits included.
+              Get the Pro tier with book, commercial plugins, and priority support.
               Start building anticipatory AI systems today.
             </p>
             <Link href="/book" className="btn bg-white text-[var(--primary)] hover:bg-gray-100 text-lg px-8 py-4">
               Get Pro Access - $99/year
             </Link>
             <p className="mt-6 text-sm opacity-75">
-              Includes: Book (digital) + Developer License + $300/year Claude API credits
+              Includes: Book (PDF/ePub/Mobi) + IDE Plugins + Updates + Priority Support
             </p>
             <p className="mt-2 text-xs opacity-60">
-              Free tier available • Multi-LLM support • Powered by Claude for optimal performance
+              Use your own LLM API key • Works with Claude, GPT-4, Gemini, local models
             </p>
           </div>
         </div>
