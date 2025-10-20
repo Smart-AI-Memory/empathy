@@ -12,6 +12,10 @@
 
 Most AI tools are like a vending machine—you put in a request, you get back an answer. The Empathy Framework teaches AI to act more like a great teaching assistant who anticipates what you need before you ask.
 
+<!-- PATRICK NOTE: Consider adding a personal anecdote here about a specific moment when you realized
+     the difference between reactive and anticipatory help. Was there a teacher, mentor, or colleague
+     who demonstrated this for you? A specific example from your life would make this real for readers. -->
+
 ---
 
 ## Why This Matters
@@ -32,6 +36,11 @@ Imagine you're teaching a master class in music. You have three types of assista
 - *Three weeks before your recital*
 - **Assistant**: "I noticed the concert hall you're performing in has different acoustics than what you're practicing in. I've created a practice schedule that gradually adjusts the rehearsal room's acoustic settings to match the performance venue, so there are no surprises on opening night."
 - **Breakthrough**: The assistant saw a problem coming and solved it before it became stressful.
+
+<!-- PATRICK TIP: If you have a music story from your own performance experience, add it here!
+     Did you ever prepare for a performance and get surprised by venue conditions?
+     Or conversely, did someone help you anticipate and prepare for something?
+     Even a non-music example of someone anticipating your needs would work beautifully here. -->
 
 ---
 
@@ -107,6 +116,11 @@ After a few weeks, it starts preparing coffee automatically at the right times. 
 
 **What it does**: Predicts future problems and solves them before they happen.
 
+<!-- PATRICK NOTE: This is the core innovation - your "aha moment" insight.
+     What made you realize this was possible? Was there a specific experience where someone
+     (or you) anticipated a problem and prevented it? What made you think "This is what AI should do"?
+     This origin story would be powerful here. -->
+
 **Music analogy**:
 
 **Scenario**: You're preparing for a concert tour with 8 performances over 3 weeks.
@@ -163,6 +177,11 @@ Imagine you're writing a book (which you are!).
 **The math**:
 - **Without Level 4**: 20 nurses × 20 hours overtime × $50/hour = $20,000 + stress + mistakes
 - **With Level 4**: 90 days × 15 minutes/day = 22.5 hours total, distributed across normal shifts = $0 overtime + zero stress + zero mistakes
+
+<!-- PATRICK TIP: Do you have a real story from healthcare that inspired this example?
+     Did you witness or hear about an audit scramble? Talk to nurses about this?
+     What real-world observation made you understand the pain point Florence solves?
+     Adding "I remember when..." or "A nurse told me..." would make this concrete. -->
 
 ---
 
@@ -307,6 +326,10 @@ The best sous chefs operate at Level 4-5. That's what we're teaching AI to do.
 
 This isn't about feelings—it's about three specific capabilities:
 
+<!-- PATRICK NOTE: Why did you choose the word "empathy"? Was there pushback on this term choice?
+     Did people misunderstand it as "feelings" and you had to clarify? The story of choosing
+     this specific framing would help readers understand your thinking. -->
+
 ### 1. Alignment
 Understanding your goals, constraints, and context.
 
@@ -329,6 +352,11 @@ Acting at the right moment—not too early (forgotten), not too late (crisis).
 **Business parallel**: Preparing for the audit 90 days out (time to fix issues), not 2 weeks out (panic mode) or 6 months out (people forget).
 
 In music, you'd call this "musical empathy" or "ensemble listening." We're teaching AI the same skills.
+
+<!-- PATRICK TIP: Do you have a specific musical collaboration experience where you felt that
+     "ensemble listening" connection? A performance where the musicians were perfectly in sync?
+     Or the opposite - a performance where empathy was missing and it showed?
+     Your personal experience as a musician makes you uniquely qualified to explain this analogy. -->
 
 ---
 
@@ -529,6 +557,12 @@ Imagine a world where:
 This isn't science fiction. The technology exists today. AI Nurse Florence demonstrates it in production healthcare environments.
 
 The Empathy Framework is the methodology for building AI that operates this way.
+
+<!-- PATRICK NOTE: What's YOUR vision beyond these examples?
+     What drew you to this work - what future are you trying to create?
+     Is there a personal "why" behind building this framework?
+     What impact do you hope to see in 5-10 years?
+     Your personal motivation here would inspire readers and help them understand the bigger picture. -->
 
 ---
 

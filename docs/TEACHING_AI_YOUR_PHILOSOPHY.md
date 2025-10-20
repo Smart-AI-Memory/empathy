@@ -28,6 +28,11 @@ Most developers carry their philosophy implicitly:
 
 The challenge is making this **explicit** so AI can learn and apply it.
 
+<!-- PATRICK NOTE: What's YOUR implicit knowledge that you had to make explicit?
+     What's something you "just knew" that you had to write down for Claude?
+     Was there a specific moment where you realized your implicit preferences were causing inconsistent AI output?
+     That concrete example would illustrate the problem perfectly. -->
+
 ### Why This Matters
 
 When you document your philosophy:
@@ -987,7 +992,12 @@ The investment in documenting your philosophy pays dividends immediately and com
 
 Teaching AI your development philosophy isn't just about AI - it's about codifying the wisdom you've gained from mentors like Shirley Thomas, from your education, and from hard-won production experience. When you make implicit knowledge explicit, everyone benefits: AI becomes more helpful, your code becomes more consistent, your team becomes more aligned, and your book writes itself.
 
-The key insight: **AI learns like you do** - from examples, from patterns, from understanding the "why" behind decisions. Give AI the same quality of teaching you received from your best mentors, and it will serve you with the same quality of assistance.
+<!-- PATRICK NOTE: This is a powerful conclusion - but what's YOUR story here?
+     What specific wisdom from Shirley do you want to preserve?
+     What production lesson cost you sleep but taught you something invaluable?
+     What insight from your education shaped how you build software?
+     End with a personal story that brings this full circle. Make readers feel the connection
+     between human mentorship and AI collaboration. -->
 
 ---
 

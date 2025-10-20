@@ -15,6 +15,11 @@
 
 Understanding how AI assistants like Claude learn and retain information is crucial for effective collaboration. This guide explains the mechanics of AI learning, context management, and how to structure information for optimal AI assistance in software development projects.
 
+<!-- PATRICK NOTE: What made you realize you needed to understand this deeply?
+     Was there a moment where Claude "forgot" something and you thought "Wait, how does this actually work?"
+     Or a breakthrough moment when you figured out the right way to structure information?
+     That "aha moment" story would hook readers right from the start. -->
+
 ---
 
 ## 1. Project Knowledge: How AI Accesses Your Documents
@@ -181,6 +186,11 @@ class ServiceBase:
 
     See docs/CODING_STANDARDS.md for details.
     """
+```
+
+<!-- PATRICK TIP: Who is Shirley Thomas to you? What did you learn from their mentorship?
+     Readers will connect better knowing this is a real mentor who influenced your development philosophy.
+     A sentence or two about what Shirley taught you would make this example more powerful. -->
 
     def __init__(self, logger: logging.Logger):
         self.logger = logger
