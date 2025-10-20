@@ -215,15 +215,19 @@ export default function Home() {
               <div className="bg-[var(--background)] p-8 rounded-lg border-2 border-[var(--border)]">
                 <h3 className="text-2xl font-bold mb-2">Free</h3>
                 <p className="text-4xl font-bold mb-4">$0</p>
-                <p className="text-sm text-[var(--muted)] mb-6">Open source forever</p>
+                <p className="text-sm text-[var(--muted)] mb-6">Open source core</p>
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--success)]">✓</span>
-                    <span className="text-sm">Complete framework (Apache 2.0)</span>
+                    <span className="text-sm">Core framework (Apache 2.0)</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--success)]">✓</span>
-                    <span className="text-sm">All 46 wizards</span>
+                    <span className="text-sm">3 enhanced wizards (examples)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--muted)]">•</span>
+                    <span className="text-sm text-[var(--muted)]">Testing, Performance, Security</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--success)]">✓</span>
@@ -253,8 +257,12 @@ export default function Home() {
                 <p className="text-sm text-[var(--muted)] mb-6">Book + License + Updates</p>
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-start gap-2">
-                    <span className="text-[var(--success)]">✓</span>
-                    <span className="text-sm">Everything in Free</span>
+                    <span className="text-[var(--accent)]">★</span>
+                    <span className="text-sm"><strong>All 46 production wizards</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--muted)]">•</span>
+                    <span className="text-sm text-[var(--muted)]">Software + Healthcare + AI dev</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--accent)]">★</span>
@@ -265,16 +273,12 @@ export default function Home() {
                     <span className="text-sm"><strong>Commercial IDE plugins</strong> (VS Code, JetBrains)</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[var(--accent)]">★</span>
-                    <span className="text-sm"><strong>Claude integration</strong> (optimized for 200K context)</span>
+                    <span className="text-[var(--success)]">✓</span>
+                    <span className="text-sm">Claude 200K context optimization</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--success)]">✓</span>
-                    <span className="text-sm">Prompt caching support (90% cost savings)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-[var(--success)]">✓</span>
-                    <span className="text-sm">Priority support</span>
+                    <span className="text-sm">Priority community support</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--success)]">✓</span>
