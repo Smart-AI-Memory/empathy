@@ -43,6 +43,32 @@ class TrajectoryPrediction:
     confidence: float
     recommendations: List[str]
 
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary format for compatibility"""
+        return {
+            'state': self.trajectory_state,
+            'time_to_critical': self.estimated_time_to_critical,
+            'trends': [
+                {
+                    'metric_name': t.metric_name,
+                    'current_value': t.current_value,
+                    'direction': t.direction,
+                    'rate_of_change': t.rate_of_change,
+                    'concerning': t.concerning,
+                    'severity': 'HIGH' if t.concerning else 'LOW'
+                }
+                for t in self.trends
+            ],
+            'assessment': self.overall_assessment,
+            'confidence': self.confidence,
+            'recommendations': self.recommendations
+        }
+
+    def __getitem__(self, key):
+        """Allow dict-style access for backward compatibility"""
+        d = self.to_dict()
+        return d[key]
+
 
 class PerformanceTrajectoryAnalyzer:
     """
@@ -70,15 +96,19 @@ class PerformanceTrajectoryAnalyzer:
 
     def analyze_trajectory(
         self,
-        current_metrics: Dict[str, float],
-        historical_metrics: List[Dict[str, Any]]
+        current_metrics,  # Can be dict or list
+        historical_metrics=None  # Can be dict or list
     ) -> TrajectoryPrediction:
         """
         Analyze performance trajectory.
 
+        Accepts parameters in either order for backward compatibility:
+        - analyze_trajectory(current_metrics: dict, historical_metrics: list)
+        - analyze_trajectory(historical_metrics: list, current_metrics: dict)
+
         Args:
-            current_metrics: Current performance metrics
-            historical_metrics: Historical data (last N days/hours)
+            current_metrics: Current performance metrics (dict) OR historical data (list)
+            historical_metrics: Historical data (list) OR current metrics (dict)
 
         Returns:
             TrajectoryPrediction with assessment
@@ -93,6 +123,15 @@ class PerformanceTrajectoryAnalyzer:
             >>> if prediction.trajectory_state == "degrading":
             ...     print(f"ALERT: {prediction.overall_assessment}")
         """
+
+        # Auto-detect parameter order (backward compatibility)
+        if isinstance(current_metrics, list) and isinstance(historical_metrics, dict):
+            # Parameters were passed in reverse order
+            current_metrics, historical_metrics = historical_metrics, current_metrics
+        elif isinstance(current_metrics, list) and historical_metrics is None:
+            # Only historical metrics provided
+            historical_metrics = current_metrics
+            current_metrics = historical_metrics[-1] if historical_metrics else {}
 
         if not historical_metrics:
             return TrajectoryPrediction(
@@ -161,24 +200,38 @@ class PerformanceTrajectoryAnalyzer:
     ) -> Optional[PerformanceTrend]:
         """Analyze trend for single metric"""
 
+        # Validate current_value is numeric
+        try:
+            current_value = float(current_value)
+        except (ValueError, TypeError):
+            # Skip non-numeric fields (timestamps, etc.)
+            return None
+
         # Extract historical values
         historical_values = []
         for entry in historical_metrics:
             if metric_name in entry and entry[metric_name] is not None:
-                historical_values.append(float(entry[metric_name]))
+                try:
+                    historical_values.append(float(entry[metric_name]))
+                except (ValueError, TypeError):
+                    # Skip non-numeric fields (timestamps, etc.)
+                    return None
 
         if not historical_values:
             return None
 
-        # Calculate change from most recent
+        # Calculate overall trend from first to current
+        first_value = historical_values[0]
         previous_value = historical_values[-1]
-        change = current_value - previous_value
-        change_percent = (change / previous_value * 100) if previous_value != 0 else 0
 
-        # Determine direction
+        # Overall change from start to current
+        total_change = current_value - first_value
+        change_percent = (total_change / first_value * 100) if first_value != 0 else 0
+
+        # Determine direction based on overall trend
         if abs(change_percent) < 5:
             direction = "stable"
-        elif change > 0:
+        elif total_change > 0:
             # For metrics like response_time, error_rate - increase is bad
             if metric_name in ["response_time", "error_rate", "cpu_usage", "memory_usage"]:
                 direction = "degrading"
@@ -192,13 +245,13 @@ class PerformanceTrajectoryAnalyzer:
 
         # Calculate rate of change (per time period)
         time_periods = len(historical_values)
-        rate_of_change = abs(change) / time_periods if time_periods > 0 else 0
+        rate_of_change = abs(total_change) / time_periods if time_periods > 0 else 0
 
         # Determine if concerning
         concerning, reasoning = self._is_trend_concerning(
             metric_name,
             current_value,
-            change,
+            total_change,
             rate_of_change,
             direction
         )
@@ -207,7 +260,7 @@ class PerformanceTrajectoryAnalyzer:
             metric_name=metric_name,
             current_value=current_value,
             previous_value=previous_value,
-            change=change,
+            change=total_change,
             change_percent=change_percent,
             direction=direction,
             rate_of_change=rate_of_change,

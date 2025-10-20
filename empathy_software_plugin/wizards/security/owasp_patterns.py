@@ -18,6 +18,7 @@ class OWASPCategory(Enum):
     INJECTION = "injection"
     BROKEN_AUTH = "broken_authentication"
     SENSITIVE_DATA = "sensitive_data_exposure"
+    CRYPTOGRAPHIC_FAILURES = "cryptographic_failures"
     XML_EXTERNAL = "xml_external_entities"
     BROKEN_ACCESS = "broken_access_control"
     SECURITY_MISCONFIG = "security_misconfiguration"
@@ -55,10 +56,15 @@ class OWASPPatternDetector:
                 category=OWASPCategory.INJECTION,
                 name="SQL Injection",
                 patterns=[
-                    r"execute\s*\(\s*f['\"].*?{.*?}.*?['\"]",  # Python f-string in SQL
-                    r"execute\s*\(\s*['\"].*?\+.*?['\"]",  # String concatenation
-                    r"query\s*\(\s*['\"].*?\+.*?['\"]",
-                    r"SELECT\s+.*?\+",  # SQL with concatenation
+                    r"f['\"]SELECT .+?\{.+?\}",  # F-string with SQL
+                    r"f['\"]INSERT .+?\{.+?\}",
+                    r"f['\"]UPDATE .+?\{.+?\}",
+                    r"f['\"]DELETE .+?\{.+?\}",
+                    r"['\"]SELECT.*['\"][\s]*\+",  # String concatenation with SQL
+                    r"['\"]INSERT.*['\"][\s]*\+",
+                    r"['\"]UPDATE.*['\"][\s]*\+",
+                    r"['\"]DELETE.*['\"][\s]*\+",
+                    r"execute\s*\(\s*f['\"]",  # execute with f-string
                     r"cursor\.execute.*?%.*?%",  # Old-style formatting
                 ],
                 severity="CRITICAL",
@@ -106,7 +112,7 @@ class OWASPPatternDetector:
                 patterns=[
                     r"password\s*=\s*['\"][^'\"]+['\"]",  # password = "secret"
                     r"api_key\s*=\s*['\"][^'\"]+['\"]",
-                    r"secret\s*=\s*['\"][^'\"]+['\"]",
+                    r"secret[\w_]*\s*=\s*['\"][^'\"]+['\"]",  # secret or secret_token or secret_key
                     r"token\s*=\s*['\"][A-Za-z0-9]{20,}['\"]",
                 ],
                 severity="CRITICAL",
@@ -117,7 +123,7 @@ class OWASPPatternDetector:
 
             # Weak Cryptography
             SecurityPattern(
-                category=OWASPCategory.SENSITIVE_DATA,
+                category=OWASPCategory.CRYPTOGRAPHIC_FAILURES,
                 name="Weak Cryptography",
                 patterns=[
                     r"MD5\(",  # MD5 is broken
