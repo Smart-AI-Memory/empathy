@@ -14,7 +14,11 @@ from pathlib import Path
 import logging
 
 from .base_wizard import BaseWizard
-from .performance.profiler_parsers import parse_profiler_output, FunctionProfile
+from .performance.profiler_parsers import (
+    parse_profiler_output,
+    FunctionProfile,
+    SimpleJSONProfilerParser
+)
 from .performance.bottleneck_detector import BottleneckDetector, Bottleneck
 from .performance.trajectory_analyzer import PerformanceTrajectoryAnalyzer, TrajectoryPrediction
 
@@ -43,7 +47,7 @@ class PerformanceProfilingWizard(BaseWizard):
     def __init__(self):
         super().__init__()
 
-        self.profiler_parser = None  # Set dynamically based on profiler type
+        self.profiler_parser = SimpleJSONProfilerParser()  # Default parser
         self.bottleneck_detector = BottleneckDetector()
         self.trajectory_analyzer = PerformanceTrajectoryAnalyzer()
 
@@ -107,10 +111,15 @@ class PerformanceProfilingWizard(BaseWizard):
             insights
         )
 
+        # Get top function
+        top_func = profiles[0] if profiles else None
+        top_function_str = f"{top_func.function_name} ({top_func.percent_total:.1f}% of time)" if top_func else "None"
+
         return {
             "profiling_summary": {
                 "total_functions": len(profiles),
                 "total_time": sum(p.total_time for p in profiles),
+                "top_function": top_function_str,
                 "top_5_slowest": [
                     {
                         "function": p.function_name,
@@ -124,6 +133,7 @@ class PerformanceProfilingWizard(BaseWizard):
             "bottlenecks": [b.to_dict() for b in bottlenecks],
 
             "trajectory": trajectory_prediction.__dict__ if trajectory_prediction else None,
+            "trajectory_analysis": trajectory_prediction.__dict() if trajectory_prediction else {"state": "unknown", "trends": []},
 
             "insights": insights,
 
