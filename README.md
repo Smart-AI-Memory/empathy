@@ -25,7 +25,8 @@ The Empathy Framework fundamentally changes development speed and code quality b
 ### Proven Development Speed: Hours, Not Days
 
 **Building this framework itself demonstrates the transformative impact:**
-- **16 specialized software wizards** created in hours each, not days
+- **16 specialized Coach software wizards** (security, performance, testing, etc.) - hours each, not days
+- **12 AI development wizards** (prompt engineering, RAG patterns, multi-model, agent orchestration) - hours each
 - **18 clinical documentation wizards** built with the same speed
 - **Complete FastAPI backend** with authentication, analysis endpoints, and service layer - hours
 - **Railway deployment configuration** with Nixpacks, healthchecks, and multi-service setup - hours
