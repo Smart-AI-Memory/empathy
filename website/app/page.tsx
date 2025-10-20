@@ -18,14 +18,19 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link href="/book" className="btn btn-primary text-lg px-8 py-4">
-                Get Early Access - $49
+                Get Pro Access - $99/year
               </Link>
               <Link href="/framework" className="btn btn-outline text-lg px-8 py-4">
-                Explore the Framework
+                Try Free Tier
               </Link>
             </div>
             <p className="mt-6 text-sm text-[var(--muted)]">
-              Includes book + 1 developer license for Software & Healthcare plugins
+              Includes book + license + Claude API credits ($300/year value)
+            </p>
+            <p className="mt-2 text-xs text-[var(--muted)]">
+              <span className="inline-flex items-center gap-1">
+                Powered by <span className="font-semibold">Claude</span>
+              </span> • Open source core (Apache 2.0)
             </p>
           </div>
         </div>
@@ -196,6 +201,129 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Pricing Tiers */}
+      <section className="py-20 bg-[var(--border)] bg-opacity-30">
+        <div className="container">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-4xl font-bold text-center mb-4">
+              Choose Your Tier
+            </h2>
+            <p className="text-xl text-center text-[var(--text-secondary)] mb-12">
+              Multi-LLM support with Claude-optimized features
+            </p>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Free Tier */}
+              <div className="bg-[var(--background)] p-8 rounded-lg border-2 border-[var(--border)]">
+                <h3 className="text-2xl font-bold mb-2">Free</h3>
+                <p className="text-4xl font-bold mb-4">$0</p>
+                <p className="text-sm text-[var(--muted)] mb-6">Open source forever</p>
+                <ul className="space-y-3 mb-8">
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--success)]">✓</span>
+                    <span className="text-sm">Complete framework (Apache 2.0)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--success)]">✓</span>
+                    <span className="text-sm">All 46 wizards</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--success)]">✓</span>
+                    <span className="text-sm">Multi-LLM support</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--success)]">✓</span>
+                    <span className="text-sm">Bring your own API key</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--success)]">✓</span>
+                    <span className="text-sm">Community support</span>
+                  </li>
+                </ul>
+                <Link href="/framework" className="btn btn-outline w-full">
+                  Get Started
+                </Link>
+              </div>
+
+              {/* Pro Tier - Highlighted */}
+              <div className="bg-[var(--accent)] bg-opacity-10 p-8 rounded-lg border-2 border-[var(--accent)] relative">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[var(--accent)] text-white px-4 py-1 rounded-full text-sm font-bold">
+                  RECOMMENDED
+                </div>
+                <h3 className="text-2xl font-bold mb-2">Pro</h3>
+                <p className="text-4xl font-bold mb-4">$99<span className="text-lg text-[var(--muted)]">/year</span></p>
+                <p className="text-sm text-[var(--muted)] mb-6">Powered by Claude</p>
+                <ul className="space-y-3 mb-8">
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--success)]">✓</span>
+                    <span className="text-sm">Everything in Free</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--accent)]">★</span>
+                    <span className="text-sm"><strong>$300/year Claude API credits</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--accent)]">★</span>
+                    <span className="text-sm"><strong>Level 4 predictions</strong> (200K context)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--accent)]">★</span>
+                    <span className="text-sm"><strong>Prompt caching</strong> (90% cost savings)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--success)]">✓</span>
+                    <span className="text-sm">Book included (PDF, ePub, Mobi)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--success)]">✓</span>
+                    <span className="text-sm">Priority support</span>
+                  </li>
+                </ul>
+                <Link href="/book" className="btn btn-primary w-full">
+                  Get Pro Access
+                </Link>
+              </div>
+
+              {/* Business Tier */}
+              <div className="bg-[var(--background)] p-8 rounded-lg border-2 border-[var(--border)]">
+                <h3 className="text-2xl font-bold mb-2">Business</h3>
+                <p className="text-4xl font-bold mb-4">$249<span className="text-lg text-[var(--muted)]">/year</span></p>
+                <p className="text-sm text-[var(--muted)] mb-6">Per 3 seats</p>
+                <ul className="space-y-3 mb-8">
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--success)]">✓</span>
+                    <span className="text-sm">Everything in Pro × 3 seats</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--success)]">✓</span>
+                    <span className="text-sm">Email support (48h SLA)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--success)]">✓</span>
+                    <span className="text-sm">Team dashboard</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--success)]">✓</span>
+                    <span className="text-sm">Shared knowledge base</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-[var(--success)]">✓</span>
+                    <span className="text-sm">Bring your own LLM option</span>
+                  </li>
+                </ul>
+                <Link href="/book" className="btn btn-secondary w-full">
+                  Contact Sales
+                </Link>
+              </div>
+            </div>
+
+            <p className="text-center text-sm text-[var(--muted)] mt-8">
+              All tiers support Claude, GPT-4, Gemini, and local models • Claude recommended for optimal performance
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Open Source Core */}
       <section className="py-20">
         <div className="container">
@@ -228,17 +356,17 @@ export default function Home() {
               Ready to Transform Your Development?
             </h2>
             <p className="text-xl mb-8 opacity-90">
-              Get early access to the book and plugins. Learn the theory, implementation,
-              and start building anticipatory AI systems today.
+              Get the Pro tier with book, plugins, and Claude API credits included.
+              Start building anticipatory AI systems today.
             </p>
             <Link href="/book" className="btn bg-white text-[var(--primary)] hover:bg-gray-100 text-lg px-8 py-4">
-              Get Early Access - $49
+              Get Pro Access - $99/year
             </Link>
             <p className="mt-6 text-sm opacity-75">
-              Includes: Book (digital) + 1 Developer License (Software + Healthcare plugins)
+              Includes: Book (digital) + Developer License + $300/year Claude API credits
             </p>
             <p className="mt-2 text-xs opacity-60">
-              Need more licenses? Each additional copy includes another developer license.
+              Free tier available • Multi-LLM support • Powered by Claude for optimal performance
             </p>
           </div>
         </div>
