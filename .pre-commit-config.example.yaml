@@ -1,0 +1,39 @@
+# Empathy Framework Pre-commit Hooks
+# Copy this to .pre-commit-config.yaml in your project root
+# Install: pip install pre-commit && pre-commit install
+
+repos:
+  - repo: local
+    hooks:
+      # Security scan on every commit
+      - id: empathy-security
+        name: Empathy Security Scan
+        entry: empathy-scan security
+        language: system
+        types: [python]
+        pass_filenames: true
+        stages: [commit]
+        verbose: true
+
+      # Performance scan on push
+      - id: empathy-performance
+        name: Empathy Performance Scan
+        entry: empathy-scan performance
+        language: system
+        types: [python]
+        pass_filenames: true
+        stages: [push]
+        verbose: true
+
+  # Optional: Full scan manually
+  # Run with: pre-commit run empathy-full --all-files
+  - repo: local
+    hooks:
+      - id: empathy-full
+        name: Empathy Full Analysis
+        entry: empathy-scan all
+        language: system
+        types: [python]
+        pass_filenames: true
+        stages: [manual]
+        verbose: true

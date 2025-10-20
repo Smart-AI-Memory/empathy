@@ -53,6 +53,7 @@ setup(
             "empathy-framework=empathy_os.cli:main",
         ],
     },
+    scripts=["bin/empathy-scan"],
     keywords="ai collaboration empathy anticipatory-ai systems-thinking",
     project_urls={
         "Documentation": "https://github.com/Deep-Study-AI/Empathy/docs",

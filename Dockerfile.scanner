@@ -1,0 +1,30 @@
+# Empathy Framework - One-Click Docker Scanner
+# Build: docker build -f Dockerfile.scanner -t empathy-scanner .
+# Run: docker run -v $(pwd):/code empathy-scanner security /code
+
+FROM python:3.11-slim
+
+LABEL org.opencontainers.image.source="https://github.com/Deep-Study-AI/Empathy-framework"
+LABEL org.opencontainers.image.description="Empathy Framework Security & Performance Scanner"
+LABEL org.opencontainers.image.licenses="Apache-2.0"
+
+WORKDIR /app
+
+# Install Empathy Framework
+COPY requirements.txt setup.py README.md ./
+COPY coach_wizards ./coach_wizards
+COPY wizards ./wizards
+COPY agents ./agents
+COPY empathy_os ./empathy_os
+COPY empathy_software_plugin ./empathy_software_plugin
+COPY bin ./bin
+
+RUN pip install --no-cache-dir -e . && \
+    chmod +x /app/bin/empathy-scan
+
+# Add scan script to PATH
+ENV PATH="/app/bin:${PATH}"
+
+# Default command
+ENTRYPOINT ["empathy-scan"]
+CMD ["--help"]

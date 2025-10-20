@@ -44,6 +44,48 @@ Level 5: Systems
 
 ---
 
+## One-Click Quick Start
+
+Get started with Empathy Framework in under 30 seconds:
+
+### Option 1: One-Command Install
+```bash
+curl -sSL https://raw.githubusercontent.com/Deep-Study-AI/empathy-framework/main/install.sh | bash
+```
+
+Then scan your code:
+```bash
+empathy-scan security app.py          # Scan one file for security issues
+empathy-scan performance ./src        # Scan directory for performance issues
+empathy-scan all ./project            # Run all checks on entire project
+```
+
+### Option 2: Docker (Zero Install)
+```bash
+# Security scan
+docker run -v $(pwd):/code ghcr.io/deep-study-ai/empathy-scanner security /code
+
+# Performance scan
+docker run -v $(pwd):/code ghcr.io/deep-study-ai/empathy-scanner performance /code
+
+# Full scan
+docker run -v $(pwd):/code ghcr.io/deep-study-ai/empathy-scanner all /code
+```
+
+### Option 3: Pre-commit Hook (Automatic Scanning)
+```bash
+# Copy the example pre-commit config
+cp .pre-commit-config.example.yaml .pre-commit-hooks.yaml
+
+# Install pre-commit hooks
+pip install pre-commit
+pre-commit install
+
+# Now security scans run on every commit, performance scans on every push!
+```
+
+---
+
 ## Quick Start
 
 ### Installation
@@ -339,108 +381,10 @@ The Empathy Framework integrates Donella Meadows' leverage points:
 
 ## Documentation
 
-<<<<<<< HEAD
 - 📚 **[Framework Guide](docs/CHAPTER_EMPATHY_FRAMEWORK.md)** - Complete technical documentation
 - 🎓 **[Non-Technical Guide](docs/EMPATHY_FRAMEWORK_NON_TECHNICAL_GUIDE.md)** - Accessible introduction
 - 🧑‍🏫 **[Teaching AI](docs/TEACHING_AI_YOUR_PHILOSOPHY.md)** - Alignment and collaboration patterns
 - 💻 **[Coach Examples](examples/coach/)** - Production-ready IDE integrations
-=======
-- **[Full Framework Documentation](docs/empathy-levels.md)** - Complete 5-level model
-- **[Implementation Guide](docs/implementation-guide.md)** - Step-by-step tutorials
-- **[Clinical Applications](docs/clinical-applications.md)** - Healthcare use cases
-- **[Systems Thinking](docs/systems-thinking.md)** - Feedback loops, leverage points
-- **[API Reference](docs/api-reference.md)** - Complete API documentation
-- **[Research Paper](docs/research.md)** - Academic foundations
-
----
-
-## Examples
-
-### Level 3: Proactive Debugging Assistant
-```python
-# examples/debugging_assistant.py
-# Detects when developers struggle and offers help proactively
-# Monitors debugging patterns and intervenes before frustration
-# Provides contextual fixes based on observed patterns
-
-from empathy_os import Level3Proactive
-
-assistant = Level3Proactive()
-# Detects repeated errors and offers assistance
-# See: examples/debugging_assistant.py for complete code
-```
-
-### Level 4: Bug Prediction (Anticipatory)
-```python
-# examples/bug_prediction.py
-# Predicts bugs 30 days before they occur
-# Analyzes code trajectories and anti-patterns
-# Generates preventive actions with leverage points
-
-from empathy_os import Level4Anticipatory, LeveragePointAnalyzer
-
-predictor = BugPredictor(team_id="backend")
-prediction = predictor.predict_bugs(current_metrics, historical_metrics)
-# See: examples/bug_prediction.py for complete implementation
-```
-
-### Quickstart: All 5 Levels
-```python
-# examples/quickstart.py
-# Demonstrates all 5 empathy levels in action
-# Shows progression from reactive to systems thinking
-# Includes pattern library and multi-agent examples
-
-from empathy_os import EmpathyOS
-
-empathy = EmpathyOS(user_id="demo", target_level=4)
-# See: examples/quickstart.py for complete walkthrough
-```
-
----
-
-## Use Cases
-
-### Healthcare
-- **Compliance Anticipation**: Predict audits, prepare documentation
-- **Medication Safety**: Anticipate drug interactions before prescription
-- **Workflow Optimization**: Eliminate waiting for data
-
-### Software Development
-- **Architecture Decisions**: Self-service decision frameworks
-- **Testing Bottlenecks**: Predict scaling issues, design solutions early
-- **Onboarding**: New developers' AI learns from experienced developers' AI
-
-### Customer Service
-- **Issue Prediction**: Anticipate customer problems from usage patterns
-- **Proactive Support**: Resolve issues before customers report them
-- **Knowledge Scaling**: AI learns from all support interactions
-
-### Education
-- **Student Struggle Detection**: Offer help before students ask
-- **Curriculum Gaps**: Identify missing prerequisites proactively
-- **Adaptive Learning**: Structure adjusts to student trajectory
-
----
-
-## Theoretical Foundations
-
-The Empathy Framework integrates insights from:
-
-**Emotional Intelligence** (Daniel Goleman)
-- Self-awareness, self-regulation, social awareness, relationship management
-
-**Tactical Empathy** (Chris Voss)
-- Calibrated questions, labeling, mirroring
-
-**Systems Thinking** (Donella Meadows, Peter Senge)
-- Leverage points, feedback loops, system archetypes
-
-**Clear Thinking** (Naval Ravikant)
-- First principles reasoning without emotional noise
-
-**See**: [Research Paper](docs/research.md) for full academic treatment
->>>>>>> 0ead1a9 (  Please enter the commit message for your changes. Lines starting)
 
 ---
 
