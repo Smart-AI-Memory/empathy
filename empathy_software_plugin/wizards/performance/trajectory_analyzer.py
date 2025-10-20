@@ -399,3 +399,6 @@ class PerformanceTrajectoryAnalyzer:
             trend_confidence = 0.5
 
         return (data_confidence + trend_confidence) / 2
+
+# Alias for backward compatibility
+TrajectoryAnalyzer = PerformanceTrajectoryAnalyzer
