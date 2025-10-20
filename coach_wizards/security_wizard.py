@@ -92,11 +92,3 @@ class SecurityWizard(BaseCoachWizard):
         """
         # Implementation depends on issue type
         return f"Fix suggestion for {issue.category} issue: {issue.message}"
-
-
-# Example usage
-if __name__ == "__main__":
-    wizard = SecurityWizard()
-    
-    # Example code to analyze
-    sample_code = 

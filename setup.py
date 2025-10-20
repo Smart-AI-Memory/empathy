@@ -16,8 +16,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Deep-Study-AI/Empathy",
-    package_dir={"": "src"},
-    packages=find_packages(where="src"),
+    packages=find_packages(include=["coach_wizards", "coach_wizards.*", "empathy_os", "empathy_os.*", "wizards", "wizards.*", "agents", "agents.*", "empathy_software_plugin", "empathy_software_plugin.*", "empathy_healthcare_plugin", "empathy_healthcare_plugin.*", "empathy_llm_toolkit", "empathy_llm_toolkit.*"]),
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",

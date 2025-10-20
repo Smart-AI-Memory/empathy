@@ -93,9 +93,3 @@ class APIWizard(BaseCoachWizard):
         return f"Fix suggestion for {issue.category} issue: {issue.message}"
 
 
-# Example usage
-if __name__ == "__main__":
-    wizard = APIWizard()
-    
-    # Example code to analyze
-    sample_code = 
