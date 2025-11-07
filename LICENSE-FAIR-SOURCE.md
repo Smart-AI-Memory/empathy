@@ -1,0 +1,139 @@
+# Fair Source License, version 0.9
+
+**Copyright © 2025 Deep Study AI, LLC**
+
+## Grant of Rights
+
+**Licensor:** Deep Study AI, LLC
+**Licensed Work:** Empathy Framework
+**Change Date:** January 1, 2029 (4 years from first release)
+**Change License:** Apache License 2.0
+
+---
+
+## Terms
+
+### Grant of Use
+
+Subject to the conditions below, Licensor grants you a non-exclusive, worldwide, royalty-free license to:
+
+- Use the Licensed Work
+- Modify the Licensed Work
+- Create derivative works
+- Distribute copies (subject to restrictions)
+
+### Usage Limits - Free Tier
+
+You may use the Licensed Work **free of charge** if you meet ANY of these conditions:
+
+1. **Educational Use:** You are a student or educator using the Licensed Work for educational purposes
+2. **Small Business:** Your organization has **5 or fewer total employees**
+3. **Personal/Research:** You are using the Licensed Work for personal projects or academic research
+4. **Evaluation:** You are evaluating the Licensed Work for up to 30 days
+
+### Usage Limits - Commercial License Required
+
+A **Commercial License is REQUIRED** if:
+
+1. Your organization has **6 or more employees**, AND
+2. You are using the Licensed Work in a production environment, OR
+3. You are using the Licensed Work to provide services to third parties
+
+**Commercial License:** $99 USD per developer per year
+
+- "Developer" means any employee, contractor, or agent who uses, modifies, or deploys the Licensed Work
+- One license covers all environments (development, staging, production, CI/CD)
+- License includes updates and support
+- Purchase at: https://deepstudyai.com/empathy-framework/pricing
+
+### Restrictions
+
+You may NOT:
+
+1. **Remove or modify** licensing, copyright notices, or attribution
+2. **Circumvent** the usage limits or commercial license requirements
+3. **Offer as a managed service** without a separate reseller agreement
+4. **Sublicense, sell, or rent** the Licensed Work to third parties
+5. **Use the Licensed Work** in violation of applicable laws
+
+### Source Code Availability
+
+The source code for the Licensed Work is available at:
+https://github.com/Deep-Study-AI/Empathy
+
+You may view, inspect, and audit the source code for:
+- Security review
+- Compliance verification
+- Understanding implementation
+- Creating derivative works (subject to this license)
+
+### Attribution
+
+If you distribute the Licensed Work or derivative works, you must:
+
+1. Include this license file
+2. Provide attribution to "Deep Study AI, LLC - Empathy Framework"
+3. Include a link to https://github.com/Deep-Study-AI/Empathy
+
+### Warranty Disclaimer
+
+THE LICENSED WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+### Liability Limitation
+
+IN NO EVENT SHALL LICENSOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE LICENSED WORK.
+
+### Change Date Conversion
+
+On the Change Date (January 1, 2029), this license automatically converts to the Change License (Apache License 2.0), and all restrictions in this Fair Source License no longer apply.
+
+**Rationale:** After 4 years, the Licensed Work becomes fully open source, allowing maximum community benefit while protecting Licensor's commercial interests during the critical growth period.
+
+### Verification Rights
+
+Licensor reserves the right to:
+
+1. Request verification of compliance with usage limits
+2. Audit use of the Licensed Work with reasonable notice
+3. Terminate licenses for violations after 30-day cure period
+
+### Commercial License Purchase
+
+To purchase a Commercial License:
+
+1. Visit: https://deepstudyai.com/empathy-framework/pricing
+2. Email: sales@deepstudyai.com
+3. Complete order form and payment
+4. Receive license key and invoice
+
+Volume discounts available for teams of 20+ developers.
+
+### Definitions
+
+- **Employee:** Any W-2 employee, 1099 contractor working >20 hours/week, or intern
+- **Production Environment:** Any environment serving end users or customers
+- **Developer:** Any person who uses, modifies, or deploys the Licensed Work
+- **Organization:** The legal entity employing you, or yourself if self-employed
+
+### Questions?
+
+For licensing questions, contact: licensing@deepstudyai.com
+
+---
+
+## Why Fair Source?
+
+This license balances:
+
+✅ **Free for small teams** - Students, educators, and small businesses (≤5 employees) use free forever
+✅ **Source code visibility** - Review code for security, compliance, learning
+✅ **Commercial sustainability** - Larger organizations pay to fund development
+✅ **Future open source** - Automatically becomes Apache 2.0 in 4 years
+
+We believe software should be inspectable and accessible while ensuring sustainable development.
+
+---
+
+**Version:** 0.9
+**Last Updated:** November 7, 2025
+**Effective Date:** January 1, 2025

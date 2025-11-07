@@ -59,9 +59,11 @@ The Empathy Framework fundamentally changes development speed and code quality b
 | Create 10 wizards | 160 hours ($8,000) | 30 hours ($1,500) | 130 hours | **$6,500** |
 | Build complete analysis system | 400 hours ($20,000) | 80 hours ($4,000) | 320 hours | **$16,000** |
 
-**Framework cost**: $0 (open source) or $99-129/year (Pro - early release pricing) or $249/year (Business)
+**Framework cost**: $0 (Apache 2.0 open source - free forever)
 
-**ROI for 10 wizards**: $6,500 saved ÷ $99 cost = **66x return in first year** (at final Pro pricing)
+**ROI**: Infinite (zero cost, immediate productivity gains)
+
+*Optional: Priority support available at $99/developer/year for teams wanting direct access to core developers*
 
 ### Team ROI Multiplies
 
@@ -75,12 +77,11 @@ The Empathy Framework fundamentally changes development speed and code quality b
 | **Better code quality** | Fewer production bugs | 2-3 fewer incidents/year | **$30,000** |
 | **Total annual value** | | | **$205,000** |
 
-**Framework cost for 5 developers**:
-- Free tier: $0
-- Pro tier: $495-645/year (5 × $99-129, depending on pricing phase)
-- Business tier: $996/year ($249 × 3 seats + 2 seats at 20% off)
+**Framework cost for 5 developers**: $0 (Apache 2.0 - free forever)
 
-**ROI at final Pro pricing**: $205,000 saved ÷ $495 cost = **414x return**
+**ROI**: Infinite - $205,000 value at zero cost
+
+*Optional: Priority support for 5 developers = $495/year (get direct team access, guaranteed response times, security advisories)*
 
 ### Why the ROI is Transformative
 
@@ -92,33 +93,23 @@ The Empathy Framework fundamentally changes development speed and code quality b
 4. **Knowledge scaling**: Junior developers benefit from senior-level AI assistance
 5. **Consistent patterns**: All code follows the same high-quality architecture
 
-**Free tier gives you:**
-- Complete framework (Apache 2.0 open source)
-- All core capabilities
-- Immediate productivity gains
-- **Infinite ROI** (zero cost, positive returns)
-
-**Pro tier ($129/year - Early Release Pricing) adds:**
-- Extended wizard access
-- Level 4 Anticipatory predictions
-- **INCLUDES Book** "Empathy Framework: The Five Levels of AI-Human Collaboration" (PDF, ePub, Mobi)
-- **Note**: Final pricing will be $99/year (license + book) - lock in early release pricing now!
-- **ROI**: Pays for itself after building 1-2 wizards
-
-**Business tier ($249/year per 3 seats) adds:**
-- Everything in Pro
-- Email support (48-hour SLA)
-- Team dashboard
-- **ROI**: Pays for itself in first week for most teams
+**The framework gives you:**
+- Complete framework (Apache 2.0 open source - free forever)
+- All core capabilities and features
+- No restrictions, no time limits, no credit cards
+- Immediate 4-6x productivity gains
+- **Infinite ROI** (zero cost, transformative returns)
 
 ### The Bottom Line
 
 **Traditional development**: Days of trial-and-error, debugging, refactoring
 **Empathy Framework**: Hours to production-quality code with consistent patterns
 
-**Cost**: Free to $249/year (Pro tier final pricing: $99/year for license + book)
-**Return**: 66-414x in measurable time savings alone (at final Pro pricing)
+**Cost**: $0 (Apache 2.0 open source - free forever)
+**Return**: Infinite ROI - measurable 4-6x productivity gains at zero cost
 **Intangible benefits**: Better code quality, less stress, more flow state, faster learning
+
+*Optional: Priority support available at $99/developer/year for teams wanting direct access to core developers*
 
 ---
 
@@ -571,6 +562,34 @@ We welcome contributions! Please see our [Contributing Guidelines](examples/coac
 
 ---
 
+## 💖 Support This Project
+
+The Empathy Framework is **free and open source** (Apache 2.0) and will always be. If you're using it professionally, please consider supporting development:
+
+### Commercial Support - $99/developer/year
+
+- ✅ **Priority bug fixes** and feature requests
+- ✅ **Direct access** to core development team (Slack/email)
+- ✅ **Security advisories** and early notifications
+- ✅ **Guaranteed response times**
+- ✅ **Upgrade assistance** and migration help
+
+[Get Support →](https://github.com/Deep-Study-AI/Empathy/blob/main/SPONSORSHIP.md)
+
+### Professional Services
+
+- **Custom Wizard Development** - Domain-specific wizards for your industry
+- **Training & Workshops** - Get your team productive in one day
+- **Enterprise Solutions** - Hosted service, custom SLA, dedicated support
+
+[Learn More →](SPONSORSHIP.md) | [Contact Sales →](mailto:sales@deepstudyai.com)
+
+### GitHub Sponsors
+
+Support development directly: [Sponsor on GitHub →](https://github.com/sponsors/Deep-Study-AI)
+
+---
+
 ## License
 
 This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for details.
@@ -625,11 +644,11 @@ The Empathy Framework offers unique capabilities that set it apart from traditio
 |---------|------------------|-----------|-------------|----------------|
 | **Level 4 Anticipatory Predictions** | ✅ Yes | ❌ No | ❌ No | ❌ No |
 | **Philosophical Foundation** | ✅ Goleman, Voss, Naval | ❌ Rules-based | ❌ Rules-based | ❌ Statistical |
-| **Free Book Included** | ✅ Pro tier | ❌ No | ❌ No | ❌ No |
+| **Open Source (Apache 2.0)** | ✅ Yes | ❌ No | ❌ No | ❌ No |
 | **Healthcare + Software** | ✅ Both domains | Software only | Software only | Software only |
 | **Open Source Core** | ✅ Apache 2.0 | ❌ Proprietary | ❌ Proprietary | ❌ Proprietary |
 | **Prevention vs Detection** | ✅ Anticipatory | Detection only | Detection only | Suggestion only |
-| **Price (Annual)** | Free - $249/year | $3,000+/year | $249/dev/year | $100/year |
+| **Price (Annual)** | Free (Apache 2.0) | $3,000+/year | $249/dev/year | $100/year |
 
 ### What Makes Level 4 Anticipatory Different?
 
@@ -644,32 +663,35 @@ Traditional tools tell you about problems **now**. Empathy Framework predicts pr
 
 ---
 
-## Commercial IDE Extensions
+## IDE Extensions & Commercial Support
 
-The Empathy Framework core is **100% free and open source**. We offer commercial IDE extensions:
+The Empathy Framework is **100% free and open source** (Apache 2.0). Optional commercial support and services available:
 
-### Coach for JetBrains & VS Code
+### Priority Support - $99/developer/year
 
-**Free Tier**
-- Complete Empathy Framework (Apache 2.0)
-- Limited wizard access
-- Basic analysis capabilities
-- Community support (GitHub Discussions)
+- Direct access to core development team
+- Priority bug fixes and feature requests
+- Security advisories and early notifications
+- Guaranteed response times
+- Upgrade assistance
 
-**Pro Tier ($129/year - Early Release Pricing)**
-- Everything in Free
-- Extended wizard access
-- Full Level 4 Anticipatory predictions
-- **INCLUDES Book**: "Empathy Framework: The Five Levels of AI-Human Collaboration" (PDF, ePub, Mobi)
-- Community support
-- **Note**: When book is complete, Pro tier (license + book) will be $99/year. Lock in early release pricing now!
+[Get Support →](SPONSORSHIP.md)
 
-**Business Tier ($249/year)**
-- Everything in Pro
-- Email support (48-hour response time SLA)
-- 3 seats included
-- Team dashboard with usage analytics
-- 20% off additional seats
+### Professional Services
+
+- **Custom Wizard Development** - Domain-specific wizards for your industry
+- **Training & Workshops** - Get your team productive quickly
+- **Enterprise Solutions** - Hosted service, dedicated support, custom SLA
+
+[Learn More →](SPONSORSHIP.md)
+
+### IDE Extensions (Coming Soon)
+
+Free extensions for JetBrains & VS Code:
+- One-click wizard access
+- Inline code suggestions
+- Real-time analysis
+- Commit-time checks
 
 **Coming Soon**: JetBrains Marketplace & VS Code Marketplace
 
