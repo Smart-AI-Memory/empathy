@@ -26,6 +26,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 from empathy_os.plugins import get_global_registry
 
+# Initialize colorama for cross-platform ANSI color support (especially Windows)
+try:
+    import colorama
+    colorama.init()
+except ImportError:
+    # Colorama not installed - ANSI colors may not work on Windows CMD
+    pass
+
 
 class Colors:
     """ANSI color codes for terminal output"""
@@ -518,6 +526,116 @@ Examples:
         return wizard_info(args.wizard_id)
 
     return 0
+
+
+def scan_command():
+    """
+    Entry point for empathy-scan command (converted from bin/empathy-scan).
+    One-click security & performance scanner.
+    """
+    if len(sys.argv) < 3:
+        print("Usage: empathy-scan [security|performance|all] <file-or-directory>")
+        print("\nExamples:")
+        print("  empathy-scan security app.py")
+        print("  empathy-scan performance ./src")
+        print("  empathy-scan all ./project")
+        sys.exit(1)
+
+    scan_type = sys.argv[1].lower()
+    target = sys.argv[2]
+
+    # Import wizards
+    try:
+        from coach_wizards import SecurityWizard, PerformanceWizard
+    except ImportError:
+        print("Error: Empathy Framework wizards not installed.")
+        print("Run: pip install empathy-framework[all]")
+        sys.exit(1)
+
+    # Determine if target is file or directory
+    target_path = Path(target)
+    if not target_path.exists():
+        print(f"Error: {target} does not exist")
+        sys.exit(1)
+
+    # Collect files to scan
+    files_to_scan = []
+    if target_path.is_file():
+        files_to_scan = [target_path]
+    else:
+        # Scan directory for Python files
+        files_to_scan = list(target_path.rglob("*.py"))
+
+    if not files_to_scan:
+        print(f"No Python files found in {target}")
+        sys.exit(0)
+
+    print(f"🔍 Scanning {len(files_to_scan)} file(s)...")
+    print()
+
+    total_issues = 0
+    total_predictions = 0
+
+    # Run appropriate wizards
+    wizards = []
+    if scan_type in ["security", "all"]:
+        wizards.append(("Security", SecurityWizard()))
+    if scan_type in ["performance", "all"]:
+        wizards.append(("Performance", PerformanceWizard()))
+
+    if not wizards:
+        print(f"Unknown scan type: {scan_type}")
+        print("Use: security, performance, or all")
+        sys.exit(1)
+
+    # Scan each file
+    for file_path in files_to_scan:
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                code = f.read()
+        except Exception as e:
+            print(f"⚠️  Could not read {file_path}: {e}")
+            continue
+
+        print(f"📄 {file_path}")
+
+        for wizard_name, wizard in wizards:
+            result = wizard.run_full_analysis(
+                code=code,
+                file_path=str(file_path),
+                language="python"
+            )
+
+            if result.issues:
+                print(f"  {wizard_name}: {len(result.issues)} issue(s) found")
+                for issue in result.issues[:3]:  # Show first 3
+                    severity_icon = "🔴" if issue.severity == "high" else "🟡" if issue.severity == "medium" else "🔵"
+                    print(f"    {severity_icon} Line {issue.line_number}: {issue.message}")
+                if len(result.issues) > 3:
+                    print(f"    ... and {len(result.issues) - 3} more")
+                total_issues += len(result.issues)
+            else:
+                print(f"  {wizard_name}: ✅ No issues")
+
+            if result.predictions:
+                print(f"  🔮 {len(result.predictions)} prediction(s) for next 90 days")
+                total_predictions += len(result.predictions)
+
+        print()
+
+    # Summary
+    print("=" * 50)
+    print(f"📊 SUMMARY")
+    print(f"  Files scanned: {len(files_to_scan)}")
+    print(f"  Current issues: {total_issues}")
+    print(f"  Future predictions: {total_predictions}")
+
+    if total_issues > 0:
+        print(f"\n⚠️  Found {total_issues} issue(s) that need attention")
+        sys.exit(1)
+    else:
+        print("\n✅ All checks passed!")
+        sys.exit(0)
 
 
 if __name__ == '__main__':
