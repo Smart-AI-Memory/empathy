@@ -36,3 +36,6 @@ wheels/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Wizards
+wizards/

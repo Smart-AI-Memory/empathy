@@ -9,9 +9,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="empathy-framework",
-    version="1.4.0",
+    version="1.5.0",
     author="Patrick Roebuck",
-    author_email="patrick.roebuck@deepstudyai.com",
+    author_email="patrick.roebuck@smartaimemory.com",
     description="A five-level maturity model for AI-human collaboration with anticipatory empathy",
     long_description=long_description,
     long_description_content_type="text/markdown",
