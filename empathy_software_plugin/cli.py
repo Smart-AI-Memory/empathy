@@ -193,8 +193,8 @@ async def gather_project_context(project_path: str) -> Dict[str, Any]:
                             context['ai_calls'].extend(
                                 parse_ai_calls(str(file_path), content)
                             )
-                except:
-                    pass
+                except Exception:
+                    pass  # Skip files that can't be parsed
 
                 # All Python/JS/TS files are code files
                 context['code_files'].append(str(file_path))
@@ -229,8 +229,8 @@ async def gather_project_context(project_path: str) -> Dict[str, Any]:
         )
         if result.returncode == 0:
             context['version_history'] = parse_git_history(result.stdout)
-    except:
-        pass
+    except Exception:
+        pass  # Skip if git not available or fails
 
     return context
 

@@ -3,6 +3,10 @@ Security Analysis Wizard - Live Demonstration
 
 Shows security vulnerability detection and exploitability assessment.
 
+⚠️  WARNING: This file contains INTENTIONALLY VULNERABLE code for demonstration purposes.
+    DO NOT use this code in production. DO NOT deploy this code to any live system.
+    The vulnerabilities are for educational use only to demonstrate the Security Wizard.
+
 Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
@@ -310,6 +314,8 @@ async def main():
     print("║" + " " * 11 + "SECURITY ANALYSIS WIZARD - DEMONSTRATIONS" + " " * 16 + "║")
     print("║" + " " * 13 + "Vulnerability Detection & Exploit Prediction" + " " * 12 + "║")
     print("╚" + "=" * 68 + "╝")
+    print("\n⚠️  WARNING: This demo uses INTENTIONALLY VULNERABLE code.")
+    print("    For educational purposes only. DO NOT use in production.\n")
 
     await demo_basic_scanning()
     await demo_exploitability()

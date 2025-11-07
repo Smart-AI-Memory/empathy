@@ -405,8 +405,8 @@ def load_config(
         try:
             env_config = EmpathyConfig.from_env()
             config = config.merge(env_config)
-        except:
-            pass  # Use current config
+        except Exception:
+            pass  # Use current config if environment parsing fails
 
     # Validate final configuration
     config.validate()
