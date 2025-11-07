@@ -46,20 +46,24 @@ class TrajectoryPrediction:
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary format for compatibility"""
         return {
-            'state': self.trajectory_state,
-            'time_to_critical': self.estimated_time_to_critical,
+            'trajectory_state': self.trajectory_state,
+            'estimated_time_to_critical': self.estimated_time_to_critical,
             'trends': [
                 {
                     'metric_name': t.metric_name,
                     'current_value': t.current_value,
+                    'previous_value': t.previous_value,
+                    'change': t.change,
+                    'change_percent': t.change_percent,
                     'direction': t.direction,
                     'rate_of_change': t.rate_of_change,
                     'concerning': t.concerning,
+                    'reasoning': t.reasoning,
                     'severity': 'HIGH' if t.concerning else 'LOW'
                 }
                 for t in self.trends
             ],
-            'assessment': self.overall_assessment,
+            'overall_assessment': self.overall_assessment,
             'confidence': self.confidence,
             'recommendations': self.recommendations
         }

@@ -133,7 +133,7 @@ class PerformanceProfilingWizard(BaseWizard):
 
             "bottlenecks": [b.to_dict() for b in bottlenecks],
 
-            "trajectory": trajectory_prediction.__dict__ if trajectory_prediction else None,
+            "trajectory": trajectory_prediction.to_dict() if trajectory_prediction else None,
             "trajectory_analysis": trajectory_prediction.to_dict() if trajectory_prediction else {"state": "unknown", "trends": []},
 
             "insights": insights,
@@ -186,11 +186,15 @@ class PerformanceProfilingWizard(BaseWizard):
     def _estimate_optimization_potential(
         self,
         bottlenecks: List[Bottleneck]
-    ) -> str:
+    ) -> Dict[str, Any]:
         """Estimate potential time savings from optimizations"""
 
         if not bottlenecks:
-            return "LOW"
+            return {
+                "potential_savings": 0.0,
+                "percentage": 0.0,
+                "assessment": "LOW"
+            }
 
         # Sum time from all bottlenecks
         total_bottleneck_time = sum(b.time_cost for b in bottlenecks)
@@ -202,7 +206,11 @@ class PerformanceProfilingWizard(BaseWizard):
         total_time = bottlenecks[0].time_cost / (bottlenecks[0].percent_total / 100) if bottlenecks else 1
         percentage = (potential_savings / total_time * 100) if total_time > 0 else 0
 
-        return self._assess_optimization_potential(percentage)
+        return {
+            "potential_savings": potential_savings,
+            "percentage": percentage,
+            "assessment": self._assess_optimization_potential(percentage)
+        }
 
     def _assess_optimization_potential(self, percentage: float) -> str:
         """Assess optimization potential"""
