@@ -30,7 +30,16 @@ setup(
     ],
     python_requires=">=3.9",
     install_requires=[
-        # Core dependencies (minimal)
+        # Core dependencies
+        "pydantic>=2.0.0",
+        "typing-extensions>=4.0.0",
+        "python-dotenv>=1.0.0",
+        # LLM providers (optional but commonly used)
+        "anthropic>=0.8.0",
+        "openai>=1.6.0",
+        # LangChain ecosystem (for examples)
+        "langchain>=0.1.0",
+        "langchain-core>=0.1.0",
     ],
     extras_require={
         "dev": [
