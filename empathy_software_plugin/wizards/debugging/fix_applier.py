@@ -171,8 +171,15 @@ class ESLintFixApplier(BaseFixApplier):
     def suggest_manual_fix(self, issue: LintIssue) -> str:
         """Suggest manual fix for ESLint issue"""
 
+        # Extract variable name from message if present
+        var_name = "variable"
+        if "'" in issue.message:
+            parts = issue.message.split("'")
+            if len(parts) > 1:
+                var_name = parts[1]
+
         suggestions = {
-            "no-undef": f"Define '{issue.message.split(\"'\")[1]}' or import it",
+            "no-undef": f"Define '{var_name}' or import it",
             "no-unused-vars": f"Remove unused variable or prefix with _",
             "eqeqeq": "Use === instead of ==",
             "no-console": "Remove console.log or use a logger",
