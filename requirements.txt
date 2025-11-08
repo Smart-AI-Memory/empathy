@@ -1,6 +1,6 @@
-# Empathy Framework - Python Dependencies
-# Apache License 2.0
-# Copyright 2025 Deep Study AI, LLC
+# Empathy - Python Dependencies
+# Fair Source License 0.9
+# Copyright 2025 Smart-AI-Memory
 
 # LangChain ecosystem
 langchain>=0.1.0

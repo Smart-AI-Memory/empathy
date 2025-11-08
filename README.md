@@ -14,10 +14,23 @@
 ## Quick Start
 
 ```bash
-# Clone and install from source (PyPI package coming soon)
+# Install core framework
+pip install empathy
+
+# Install with Claude Code + MemDocs transformative stack (recommended)
+pip install empathy[full]
+
+# Or install specific components:
+pip install empathy[llm]      # LLM providers (Anthropic, OpenAI)
+pip install empathy[memdocs]  # MemDocs integration
+pip install empathy[all]      # Everything including dev tools
+```
+
+**Development installation:**
+```bash
 git clone https://github.com/Smart-AI-Memory/empathy.git
 cd empathy
-pip install -r requirements.txt
+pip install -e .[dev]
 ```
 
 ```python

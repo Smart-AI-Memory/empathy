@@ -63,14 +63,14 @@ DEV_REQUIRES = [
 ]
 
 setup(
-    name="empathy-framework",
+    name="empathy",
     version="1.5.0",
     author="Patrick Roebuck",
     author_email="patrick.roebuck@smartaimemory.com",
     description="A five-level maturity model for AI-human collaboration with anticipatory empathy",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Deep-Study-AI/Empathy",
+    url="https://github.com/Smart-AI-Memory/empathy",
     packages=find_packages(
         include=[
             "coach_wizards",
@@ -94,12 +94,13 @@ setup(
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Libraries :: Application Frameworks",
-        "License :: OSI Approved :: Apache Software License",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
+        "Operating System :: OS Independent",
     ],
     python_requires=">=3.10",  # Dropped 3.9 (EOL May 2025)
     install_requires=CORE_REQUIRES,
@@ -131,14 +132,18 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "empathy-framework=empathy_os.cli:main",
-            "empathy-scan=empathy_software_plugin.cli:scan_command",  # Converted from bin/
+            "empathy=empathy_os.cli:main",
+            "empathy-scan=empathy_software_plugin.cli:scan_command",
         ],
     },
-    keywords="ai collaboration empathy anticipatory-ai systems-thinking",
+    keywords="ai collaboration empathy anticipatory-ai systems-thinking llm claude memdocs level-5-ai",
     project_urls={
-        "Documentation": "https://github.com/Deep-Study-AI/Empathy/docs",
-        "Source": "https://github.com/Deep-Study-AI/Empathy",
-        "Tracker": "https://github.com/Deep-Study-AI/Empathy/issues",
+        "Homepage": "https://smartaimemory.com",
+        "Documentation": "https://github.com/Smart-AI-Memory/empathy/tree/main/docs",
+        "Repository": "https://github.com/Smart-AI-Memory/empathy",
+        "Issues": "https://github.com/Smart-AI-Memory/empathy/issues",
+        "Discussions": "https://github.com/Smart-AI-Memory/empathy/discussions",
+        "Changelog": "https://github.com/Smart-AI-Memory/empathy/blob/main/CHANGELOG.md",
+        "Funding": "https://smartaimemory.com",
     },
 )

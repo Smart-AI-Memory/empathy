@@ -1,0 +1,312 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "empathy"
+version = "1.5.0"
+description = "A five-level maturity model for AI-human collaboration with anticipatory empathy"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Patrick Roebuck", email = "patrick.roebuck@smartaimemory.com"}
+]
+maintainers = [
+    {name = "Smart-AI-Memory", email = "support@smartaimemory.com"}
+]
+keywords = [
+    "ai",
+    "collaboration",
+    "empathy",
+    "anticipatory-ai",
+    "systems-thinking",
+    "llm",
+    "claude",
+    "memdocs",
+    "level-5-ai"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+]
+
+# Core dependencies - minimal required for framework to function
+dependencies = [
+    "pydantic>=2.0.0,<3.0.0",
+    "typing-extensions>=4.0.0,<5.0.0",
+    "python-dotenv>=1.0.0,<2.0.0",
+    "structlog>=23.0.0,<25.0.0",
+]
+
+[project.optional-dependencies]
+# LLM providers (user chooses which they need)
+anthropic = ["anthropic>=0.8.0,<1.0.0"]
+openai = ["openai>=1.6.0,<2.0.0"]
+llm = [
+    "anthropic>=0.8.0,<1.0.0",
+    "openai>=1.6.0,<2.0.0",
+]
+
+# MemDocs integration for long-term memory
+memdocs = [
+    "memdocs>=1.0.0",  # Will be available when memdocs is published
+]
+
+# LangChain ecosystem for agents/workflows
+agents = [
+    "langchain>=0.1.0,<0.3.0",
+    "langchain-core>=0.1.0,<0.3.0",
+    "langgraph>=0.1.0,<0.2.0",
+]
+
+# Plugin-specific dependencies
+healthcare = [
+    "python-docx>=0.8.11,<1.0.0",
+    "pyyaml>=6.0,<7.0",
+]
+
+software = [
+    "python-docx>=0.8.11,<1.0.0",
+    "pyyaml>=6.0,<7.0",
+]
+
+# Backend API server (optional)
+backend = [
+    "fastapi>=0.100.0,<1.0.0",
+    "uvicorn>=0.20.0,<1.0.0",
+]
+
+# LSP server for editor integration (optional)
+lsp = [
+    "pygls>=1.0.0,<2.0.0",
+    "lsprotocol>=2023.0.0,<2024.0.0",
+]
+
+# Windows compatibility
+windows = [
+    "colorama>=0.4.6,<1.0.0",  # ANSI color support for Windows CMD
+]
+
+# Development dependencies
+dev = [
+    "pytest>=7.0,<9.0",
+    "pytest-asyncio>=0.21,<1.0",
+    "pytest-cov>=4.0,<5.0",
+    "black>=23.0,<25.0",
+    "mypy>=1.0,<2.0",
+    "ruff>=0.1,<1.0",
+    "coverage>=7.0,<8.0",
+    "bandit>=1.7,<2.0",
+    "pre-commit>=3.0,<4.0",
+]
+
+# Complete installation with Claude Code + MemDocs transformative stack
+full = [
+    # LLM providers
+    "anthropic>=0.8.0,<1.0.0",
+    "openai>=1.6.0,<2.0.0",
+    # MemDocs integration
+    "memdocs>=1.0.0",
+    # Agents
+    "langchain>=0.1.0,<0.3.0",
+    "langchain-core>=0.1.0,<0.3.0",
+    "langgraph>=0.1.0,<0.2.0",
+    # Plugins
+    "python-docx>=0.8.11,<1.0.0",
+    "pyyaml>=6.0,<7.0",
+]
+
+# Everything including development tools
+all = [
+    # LLM providers
+    "anthropic>=0.8.0,<1.0.0",
+    "openai>=1.6.0,<2.0.0",
+    # MemDocs integration
+    "memdocs>=1.0.0",
+    # Agents
+    "langchain>=0.1.0,<0.3.0",
+    "langchain-core>=0.1.0,<0.3.0",
+    "langgraph>=0.1.0,<0.2.0",
+    # Plugins
+    "python-docx>=0.8.11,<1.0.0",
+    "pyyaml>=6.0,<7.0",
+    # Backend
+    "fastapi>=0.100.0,<1.0.0",
+    "uvicorn>=0.20.0,<1.0.0",
+    # LSP
+    "pygls>=1.0.0,<2.0.0",
+    "lsprotocol>=2023.0.0,<2024.0.0",
+    # Windows
+    "colorama>=0.4.6,<1.0.0",
+    # Dev tools
+    "pytest>=7.0,<9.0",
+    "pytest-asyncio>=0.21,<1.0",
+    "pytest-cov>=4.0,<5.0",
+    "black>=23.0,<25.0",
+    "mypy>=1.0,<2.0",
+    "ruff>=0.1,<1.0",
+    "coverage>=7.0,<8.0",
+    "bandit>=1.7,<2.0",
+    "pre-commit>=3.0,<4.0",
+]
+
+[project.scripts]
+empathy = "empathy_os.cli:main"
+empathy-scan = "empathy_software_plugin.cli:scan_command"
+
+[project.urls]
+Homepage = "https://smartaimemory.com"
+Documentation = "https://github.com/Smart-AI-Memory/empathy/tree/main/docs"
+Repository = "https://github.com/Smart-AI-Memory/empathy"
+Issues = "https://github.com/Smart-AI-Memory/empathy/issues"
+Discussions = "https://github.com/Smart-AI-Memory/empathy/discussions"
+Changelog = "https://github.com/Smart-AI-Memory/empathy/blob/main/CHANGELOG.md"
+Funding = "https://smartaimemory.com"
+
+[tool.setuptools]
+# Package discovery
+packages = [
+    "coach_wizards",
+    "empathy_os",
+    "wizards",
+    "agents",
+    "empathy_software_plugin",
+    "empathy_healthcare_plugin",
+    "empathy_healthcare_plugin.protocols",
+    "empathy_llm_toolkit",
+]
+
+[tool.setuptools.package-dir]
+empathy_os = "src/empathy_os"
+
+[tool.setuptools.package-data]
+"*" = ["*.yml", "*.yaml", "*.json", "*.txt", "*.md"]
+
+# Black code formatter configuration
+[tool.black]
+line-length = 100
+target-version = ['py310', 'py311', 'py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+# Ruff linter configuration
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by black)
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]  # unused imports in __init__.py
+
+# MyPy type checker configuration
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = false
+disallow_untyped_decorators = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+follow_imports = "normal"
+ignore_missing_imports = true
+
+# Pytest configuration
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--verbose",
+    "--cov=empathy_os",
+    "--cov=empathy_llm_toolkit",
+    "--cov=empathy_software_plugin",
+    "--cov=empathy_healthcare_plugin",
+    "--cov-report=html",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+    "--cov-fail-under=14",
+    "--asyncio-mode=auto",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "security: marks tests as security-focused",
+    "performance: marks tests as performance benchmarks",
+    "llm: marks tests that require LLM API access",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
+
+# Coverage configuration
+[tool.coverage.run]
+source = ["empathy_os", "empathy_llm_toolkit", "empathy_software_plugin", "empathy_healthcare_plugin"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/__pycache__/*",
+    "*/site-packages/*",
+]
+branch = true
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"

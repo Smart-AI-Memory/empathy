@@ -1,0 +1,43 @@
+# Include documentation
+include README.md
+include LICENSE
+include CHANGELOG.md
+include CONTRIBUTING.md
+include SPONSORSHIP.md
+
+# Include configuration files
+include pyproject.toml
+include setup.py
+include requirements.txt
+include .bandit
+include pytest.ini
+include .coveragerc
+
+# Include all YAML/JSON configs
+recursive-include src *.yml *.yaml *.json
+recursive-include empathy_* *.yml *.yaml *.json
+recursive-include coach_wizards *.yml *.yaml *.json
+recursive-include wizards *.yml *.yaml *.json
+recursive-include agents *.yml *.yaml *.json
+
+# Include documentation
+recursive-include docs *.md *.rst *.txt
+
+# Include examples
+recursive-include examples *.py *.md *.yml *.yaml
+
+# Include tests (for source distributions)
+recursive-include tests *.py
+
+# Exclude unnecessary files
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.pyd
+global-exclude __pycache__
+global-exclude *.so
+global-exclude *.dylib
+global-exclude .DS_Store
+global-exclude .git*
+global-exclude .env
+global-exclude .vscode
+global-exclude .idea
