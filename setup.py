@@ -65,12 +65,14 @@ DEV_REQUIRES = [
 setup(
     name="empathy-framework",
     version="1.5.0",
-    author="Patrick Roebuck",
-    author_email="patrick.roebuck@smartaimemory.com",
+    author="Smart AI Memory Contributors",
+    author_email="contact@smartaimemory.com",
+    maintainer="Smart AI Memory Team",
+    maintainer_email="contact@smartaimemory.com",
     description="A five-level maturity model for AI-human collaboration with anticipatory empathy",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Deep-Study-AI/Empathy",
+    url="https://github.com/Smart-AI-Memory/empathy",
     packages=find_packages(
         include=[
             "coach_wizards",

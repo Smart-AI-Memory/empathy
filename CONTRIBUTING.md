@@ -24,6 +24,17 @@ We are committed to providing a welcoming and inclusive environment. Please be r
 - pip (Python package manager)
 - git
 
+### Configure Git Identity
+
+Before making commits, configure your git author information so your contributions are properly attributed:
+
+```bash
+git config user.name "Your Name"
+git config user.email "your.email@example.com"
+```
+
+📖 **[Complete Git Author Setup Guide](docs/GIT_AUTHOR_SETUP.md)** - Learn how to configure git author information, link commits to your GitHub profile, and troubleshoot common issues.
+
 ### Setup Development Environment
 
 ```bash
