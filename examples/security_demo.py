@@ -12,8 +12,8 @@ Licensed under the Apache License, Version 2.0
 """
 
 import asyncio
-import tempfile
 import os
+import tempfile
 
 # Mock vulnerable code samples
 VULNERABLE_AUTH_CODE = '''
@@ -32,7 +32,7 @@ def login_user(username, password):
     return user is not None
 '''
 
-VULNERABLE_API_CODE = '''
+VULNERABLE_API_CODE = """
 from flask import Flask, request
 
 app = Flask(__name__)
@@ -52,12 +52,14 @@ def display_message():
     msg = request.args.get('message')
     # HIGH: XSS via innerHTML equivalent
     return f"<div>{msg}</div>"
-'''
+"""
 
 VULNERABLE_PAYMENT_CODE = '''
-# CRITICAL: Hardcoded credentials
-API_KEY = "sk_live_51Habcdefghijklmnopqrstu"
-SECRET_TOKEN = "whsec_1234567890abcdefghijklmnop"
+import os
+
+# CRITICAL: Loading credentials - should use secure secret management
+API_KEY = os.getenv("DEMO_STRIPE_API_KEY", "sk_live_DEMO_KEY_NOT_REAL")
+SECRET_TOKEN = os.getenv("DEMO_STRIPE_SECRET", "whsec_DEMO_SECRET_NOT_REAL")
 
 def process_payment(amount, card_number):
     """Process payment - CRITICAL ISSUES!"""
@@ -85,34 +87,33 @@ async def demo_basic_scanning():
     with tempfile.TemporaryDirectory() as tmpdir:
         # Create vulnerable files
         auth_file = os.path.join(tmpdir, "auth.py")
-        with open(auth_file, 'w') as f:
+        with open(auth_file, "w") as f:
             f.write(VULNERABLE_AUTH_CODE)
 
         api_file = os.path.join(tmpdir, "api.py")
-        with open(api_file, 'w') as f:
+        with open(api_file, "w") as f:
             f.write(VULNERABLE_API_CODE)
 
         payment_file = os.path.join(tmpdir, "payment.py")
-        with open(payment_file, 'w') as f:
+        with open(payment_file, "w") as f:
             f.write(VULNERABLE_PAYMENT_CODE)
 
-        result = await wizard.analyze({
-            'source_files': [auth_file, api_file, payment_file],
-            'project_path': tmpdir
-        })
+        result = await wizard.analyze(
+            {"source_files": [auth_file, api_file, payment_file], "project_path": tmpdir}
+        )
 
-        print(f"\n📊 Security Scan Results:")
+        print("\n📊 Security Scan Results:")
         print(f"  Total Vulnerabilities: {result['vulnerabilities_found']}")
 
-        print(f"\n⚠️  By Severity:")
-        by_severity = result['by_severity']
-        for severity in ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']:
+        print("\n⚠️  By Severity:")
+        by_severity = result["by_severity"]
+        for severity in ["CRITICAL", "HIGH", "MEDIUM", "LOW"]:
             count = by_severity.get(severity, 0)
             if count > 0:
                 print(f"    {severity}: {count}")
 
-        print(f"\n📋 By Category:")
-        by_category = result['by_category']
+        print("\n📋 By Category:")
+        by_category = result["by_category"]
         for category, count in sorted(by_category.items(), key=lambda x: -x[1])[:5]:
             print(f"    {category}: {count}")
 
@@ -131,43 +132,41 @@ async def demo_exploitability():
 
     with tempfile.TemporaryDirectory() as tmpdir:
         auth_file = os.path.join(tmpdir, "auth.py")
-        with open(auth_file, 'w') as f:
+        with open(auth_file, "w") as f:
             f.write(VULNERABLE_AUTH_CODE)
 
         api_file = os.path.join(tmpdir, "api.py")
-        with open(api_file, 'w') as f:
+        with open(api_file, "w") as f:
             f.write(VULNERABLE_API_CODE)
 
         # Provide endpoint configuration
         endpoint_config = {
-            auth_file: {
-                "endpoint_public": False,
-                "requires_authentication": True
-            },
+            auth_file: {"endpoint_public": False, "requires_authentication": True},
             api_file: {
                 "endpoint_public": True,  # Public API!
-                "requires_authentication": False  # No auth!
-            }
+                "requires_authentication": False,  # No auth!
+            },
         }
 
-        result = await wizard.analyze({
-            'source_files': [auth_file, api_file],
-            'endpoint_config': endpoint_config
-        })
+        result = await wizard.analyze(
+            {"source_files": [auth_file, api_file], "endpoint_config": endpoint_config}
+        )
 
-        print(f"\n🔍 EXPLOITABILITY ASSESSMENT:\n")
+        print("\n🔍 EXPLOITABILITY ASSESSMENT:\n")
 
-        for assessment in result['exploitability_assessments'][:5]:
+        for assessment in result["exploitability_assessments"][:5]:
             print(f"  [{assessment['exploitability']}] {assessment['vulnerability']['name']}")
-            print(f"      File: {os.path.basename(assessment['vulnerability']['file_path'])}:{assessment['vulnerability']['line_number']}")
+            print(
+                f"      File: {os.path.basename(assessment['vulnerability']['file_path'])}:{assessment['vulnerability']['line_number']}"
+            )
             print(f"      Accessibility: {assessment['accessibility']}")
             print(f"      Attack Complexity: {assessment['attack_complexity']}")
             print(f"      Exploit Likelihood: {assessment['exploit_likelihood']:.0%}")
             print(f"      Mitigation: {assessment['mitigation_urgency']}")
 
-            if assessment['reasoning']:
-                print(f"      Reasoning:")
-                for reason in assessment['reasoning'][:2]:
+            if assessment["reasoning"]:
+                print("      Reasoning:")
+                for reason in assessment["reasoning"][:2]:
                     print(f"        - {reason}")
             print()
 
@@ -186,44 +185,41 @@ async def demo_predictions():
 
     with tempfile.TemporaryDirectory() as tmpdir:
         auth_file = os.path.join(tmpdir, "auth.py")
-        with open(auth_file, 'w') as f:
+        with open(auth_file, "w") as f:
             f.write(VULNERABLE_AUTH_CODE)
 
         api_file = os.path.join(tmpdir, "api.py")
-        with open(api_file, 'w') as f:
+        with open(api_file, "w") as f:
             f.write(VULNERABLE_API_CODE)
 
         payment_file = os.path.join(tmpdir, "payment.py")
-        with open(payment_file, 'w') as f:
+        with open(payment_file, "w") as f:
             f.write(VULNERABLE_PAYMENT_CODE)
 
-        endpoint_config = {
-            api_file: {
-                "endpoint_public": True,
-                "requires_authentication": False
+        endpoint_config = {api_file: {"endpoint_public": True, "requires_authentication": False}}
+
+        result = await wizard.analyze(
+            {
+                "source_files": [auth_file, api_file, payment_file],
+                "endpoint_config": endpoint_config,
             }
-        }
+        )
 
-        result = await wizard.analyze({
-            'source_files': [auth_file, api_file, payment_file],
-            'endpoint_config': endpoint_config
-        })
+        print("\n🔮 PREDICTIONS:\n")
 
-        print(f"\n🔮 PREDICTIONS:\n")
-
-        for pred in result['predictions']:
+        for pred in result["predictions"]:
             print(f"  Type: {pred['type'].upper()}")
             print(f"  Severity: {pred['severity'].upper()}")
             print(f"  {pred['description']}")
 
-            if 'affected_files' in pred:
-                print(f"\n  Affected Files:")
-                for file in pred['affected_files'][:3]:
+            if "affected_files" in pred:
+                print("\n  Affected Files:")
+                for file in pred["affected_files"][:3]:
                     print(f"    - {os.path.basename(file)}")
 
-            if 'prevention_steps' in pred:
-                print(f"\n  Prevention Steps:")
-                for step in pred['prevention_steps'][:3]:
+            if "prevention_steps" in pred:
+                print("\n  Prevention Steps:")
+                for step in pred["prevention_steps"][:3]:
                     print(f"    - {step}")
             print()
 
@@ -242,23 +238,23 @@ async def demo_recommendations():
 
     with tempfile.TemporaryDirectory() as tmpdir:
         auth_file = os.path.join(tmpdir, "auth.py")
-        with open(auth_file, 'w') as f:
+        with open(auth_file, "w") as f:
             f.write(VULNERABLE_AUTH_CODE)
 
         api_file = os.path.join(tmpdir, "api.py")
-        with open(api_file, 'w') as f:
+        with open(api_file, "w") as f:
             f.write(VULNERABLE_API_CODE)
 
-        result = await wizard.analyze({
-            'source_files': [auth_file, api_file],
-            'endpoint_config': {
-                api_file: {"endpoint_public": True}
+        result = await wizard.analyze(
+            {
+                "source_files": [auth_file, api_file],
+                "endpoint_config": {api_file: {"endpoint_public": True}},
             }
-        })
+        )
 
-        print(f"\n📝 RECOMMENDATIONS:\n")
+        print("\n📝 RECOMMENDATIONS:\n")
 
-        for rec in result['recommendations']:
+        for rec in result["recommendations"]:
             print(f"  • {rec}")
 
     print("\n" + "=" * 70)
