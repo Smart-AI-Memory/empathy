@@ -647,10 +647,10 @@ If you use the Empathy Framework in your research or product, please cite:
 
 ```bibtex
 @software{empathy_framework_2025,
-  author = {Roebuck, Patrick},
+  author = {Smart AI Memory},
   title = {Empathy Framework: A Five-Level Maturity Model for AI-Human Collaboration},
   year = {2025},
-  publisher = {Deep Study AI, LLC},
+  publisher = {Smart AI Memory},
   url = {https://github.com/Smart-AI-Memory/empathy},
   license = {Fair-Source-0.9}
 }
@@ -660,10 +660,9 @@ If you use the Empathy Framework in your research or product, please cite:
 
 ## Support & Contact
 
-**Developer:** Patrick Roebuck
-**Email:** patrick.roebuck@deepstudyai.com
-**Organization:** Deep Study AI, LLC
-**GitHub:** https://github.com/Deep-Study-AI
+**Organization:** Smart AI Memory
+**Email:** patrick.roebuck@smartaimemory.com
+**GitHub:** https://github.com/Smart-AI-Memory
 
 **Resources:**
 - Documentation: [docs/](docs/)
@@ -747,6 +746,6 @@ Special thanks to the AI Nurse Florence project for demonstrating Level 4 Antici
 
 ---
 
-**Built with ❤️ by Deep Study AI, LLC**
+**Built with ❤️ by Smart AI Memory**
 
 *Transforming AI-human collaboration from reactive responses to anticipatory problem prevention.*

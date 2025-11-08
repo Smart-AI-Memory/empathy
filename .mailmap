@@ -1,0 +1,14 @@
+# Git mailmap file for author attribution
+# This file maps git commit authors to their preferred name and email
+# 
+# Format: Preferred Name <preferred@email> Commit Name <commit@email>
+# 
+# To configure your git author information:
+#   git config user.name "Your Name"
+#   git config user.email "your.email@example.com"
+#
+# For more information: https://git-scm.com/docs/gitmailmap
+
+# Map commit authors to canonical identity
+Smart AI Memory <patrick.roebuck@smartaimemory.com> GeneAI <patrickroebuck@pm.me>
+Smart AI Memory <patrick.roebuck@smartaimemory.com> copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>

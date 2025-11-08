@@ -9,8 +9,8 @@ Licensed under the Apache License, Version 2.0
 """
 
 __version__ = "1.0.0-beta"
-__author__ = "Patrick Roebuck"
-__email__ = "hello@deepstudy.ai"
+__author__ = "Smart AI Memory"
+__email__ = "patrick.roebuck@smartaimemory.com"
 
 from .config import EmpathyConfig, load_config
 from .core import EmpathyOS
