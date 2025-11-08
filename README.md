@@ -2,12 +2,12 @@
 
 **A five-level maturity model for AI-human collaboration**
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-Fair%20Source%200.9-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-476%20passing-success)](https://github.com/Deep-Study-AI/empathy)
-[![Coverage](https://img.shields.io/badge/coverage-45.4%25-yellow)](https://github.com/Deep-Study-AI/empathy)
-[![Security](https://img.shields.io/badge/security-0%20vulnerabilities-success)](https://github.com/Deep-Study-AI/empathy)
-[![Quality](https://img.shields.io/badge/commercial%20ready-10%2F10-brightgreen)](https://github.com/Deep-Study-AI/empathy)
+[![Tests](https://img.shields.io/badge/tests-476%20passing-success)](https://github.com/Smart-AI-Memory/empathy)
+[![Coverage](https://img.shields.io/badge/coverage-45.4%25-yellow)](https://github.com/Smart-AI-Memory/empathy)
+[![Security](https://img.shields.io/badge/security-0%20vulnerabilities-success)](https://github.com/Smart-AI-Memory/empathy)
+[![Quality](https://img.shields.io/badge/commercial%20ready-10%2F10-brightgreen)](https://github.com/Smart-AI-Memory/empathy)
 
 ---
 
@@ -32,10 +32,13 @@ result = await os.collaborate("Build a secure API endpoint")
 
 The **Empathy Framework** is a systematic approach to building AI systems that progress from reactive responses to anticipatory problem prevention. By integrating emotional intelligence (Goleman), tactical empathy (Voss), systems thinking (Meadows, Senge), and clear reasoning (Naval Ravikant), it provides a maturity model for AI-human collaboration.
 
+**Part of the Smart-AI-Memory ecosystem** - Designed to work seamlessly with [MemDocs](https://github.com/Smart-AI-Memory/memdocs) for intelligent document memory and retrieval, enabling AI systems to maintain long-term context and learn from interactions over time.
+
 **Empathy**, in this context, is not about feelings—it's about:
 - **Alignment**: Understanding the human's goals, context, and constraints
 - **Prediction**: Anticipating future needs based on system trajectory
 - **Timely Action**: Intervening at the right moment with the right support
+- **Memory Integration**: Leveraging MemDocs to maintain context across sessions and learn from patterns
 
 ---
 
@@ -196,7 +199,7 @@ While we don't yet have formal case studies, the framework itself is proof of co
 - Experience immediate, actionable feedback
 - Compare to your current development workflow
 
-Share your experience in [GitHub Discussions](https://github.com/Deep-Study-AI/Empathy/discussions).
+Share your experience in [GitHub Discussions](https://github.com/Smart-AI-Memory/empathy/discussions).
 
 ---
 
@@ -232,7 +235,7 @@ Get started with Empathy Framework in under 30 seconds:
 
 ### Option 1: One-Command Install
 ```bash
-curl -sSL https://raw.githubusercontent.com/Deep-Study-AI/empathy-framework/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/Smart-AI-Memory/empathy/main/install.sh | bash
 ```
 
 Then scan your code:
@@ -245,13 +248,13 @@ empathy-scan all ./project            # Run all checks on entire project
 ### Option 2: Docker (Zero Install)
 ```bash
 # Security scan
-docker run -v $(pwd):/code ghcr.io/deep-study-ai/empathy-scanner security /code
+docker run -v $(pwd):/code ghcr.io/smart-ai-memory/empathy-scanner security /code
 
 # Performance scan
-docker run -v $(pwd):/code ghcr.io/deep-study-ai/empathy-scanner performance /code
+docker run -v $(pwd):/code ghcr.io/smart-ai-memory/empathy-scanner performance /code
 
 # Full scan
-docker run -v $(pwd):/code ghcr.io/deep-study-ai/empathy-scanner all /code
+docker run -v $(pwd):/code ghcr.io/smart-ai-memory/empathy-scanner all /code
 ```
 
 ### Option 3: Pre-commit Hook (Automatic Scanning)
@@ -274,7 +277,7 @@ pre-commit install
 
 ```bash
 # Clone the repository
-git clone https://github.com/Deep-Study-AI/Empathy.git
+git clone https://github.com/Smart-AI-Memory/empathy.git
 cd Empathy
 
 # Install dependencies
@@ -595,7 +598,7 @@ The Empathy Framework is **free and open source** (Apache 2.0) and will always b
 - ✅ **Guaranteed response times**
 - ✅ **Upgrade assistance** and migration help
 
-[Get Support →](https://github.com/Deep-Study-AI/Empathy/blob/main/SPONSORSHIP.md)
+[Get Support →](https://github.com/Smart-AI-Memory/empathy/blob/main/SPONSORSHIP.md)
 
 ### Professional Services
 
@@ -607,21 +610,31 @@ The Empathy Framework is **free and open source** (Apache 2.0) and will always b
 
 ### GitHub Sponsors
 
-Support development directly: [Sponsor on GitHub →](https://github.com/sponsors/Deep-Study-AI)
+Support development directly: [Sponsor on GitHub →](https://github.com/sponsors/Smart-AI-Memory)
 
 ---
 
 ## License
 
-This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **Fair Source License, version 0.9** - see the [LICENSE](LICENSE) file for details.
 
-### Why Apache 2.0?
+### License Terms
 
-The Apache 2.0 license provides:
-- **Patent protection** for AI/ML implementations
-- **Trademark protection** for the "Empathy Framework" brand
-- **Enterprise-friendly** terms for commercial use
-- **Clear attribution** requirements
+- ✅ **Free for students and educators** - Use for educational purposes at no cost
+- ✅ **Free for small businesses** - Organizations with ≤5 employees use free forever
+- ✅ **Free for evaluation** - 30-day trial for any organization size
+- 💼 **Commercial license required** - $99/developer/year for organizations with 6+ employees
+- 🔓 **Auto-converts to open source** - Becomes Apache 2.0 on January 1, 2029
+
+### Why Fair Source?
+
+The Fair Source License balances:
+- **Free access for small teams** - Students, educators, and small businesses (≤5 employees) use free
+- **Source code visibility** - Full source available for security review, compliance, and learning
+- **Sustainable development** - Commercial licensing funds ongoing development and support
+- **Future open source** - Automatically converts to Apache 2.0 after 4 years
+
+[Purchase Commercial License →](https://deepstudyai.com/empathy-framework/pricing) | [Licensing FAQ →](LICENSE)
 
 ---
 
@@ -635,8 +648,8 @@ If you use the Empathy Framework in your research or product, please cite:
   title = {Empathy Framework: A Five-Level Maturity Model for AI-Human Collaboration},
   year = {2025},
   publisher = {Deep Study AI, LLC},
-  url = {https://github.com/Deep-Study-AI/Empathy},
-  license = {Apache-2.0}
+  url = {https://github.com/Smart-AI-Memory/empathy},
+  license = {Fair-Source-0.9}
 }
 ```
 
@@ -644,16 +657,16 @@ If you use the Empathy Framework in your research or product, please cite:
 
 ## Support & Contact
 
-**Developer:** Patrick Roebuck  
-**Email:** patrick.roebuck@deepstudyai.com  
-**Organization:** Deep Study AI, LLC  
+**Developer:** Patrick Roebuck
+**Email:** patrick.roebuck@deepstudyai.com
+**Organization:** Deep Study AI, LLC
 **GitHub:** https://github.com/Deep-Study-AI
 
 **Resources:**
 - Documentation: [docs/](docs/)
 - Examples: [examples/](examples/)
-- Issues: https://github.com/Deep-Study-AI/Empathy/issues
-- Discussions: https://github.com/Deep-Study-AI/Empathy/discussions
+- Issues: https://github.com/Smart-AI-Memory/empathy/issues
+- Discussions: https://github.com/Smart-AI-Memory/empathy/discussions
 
 ---
 
@@ -734,4 +747,3 @@ Special thanks to the AI Nurse Florence project for demonstrating Level 4 Antici
 **Built with ❤️ by Deep Study AI, LLC**
 
 *Transforming AI-human collaboration from reactive responses to anticipatory problem prevention.*
-
