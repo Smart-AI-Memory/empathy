@@ -9,14 +9,14 @@ Licensed under the Apache License, Version 2.0
 
 import json
 import re
-from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 from enum import Enum
-from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 class Severity(Enum):
     """Issue severity levels"""
+
     ERROR = "error"
     WARNING = "warning"
     INFO = "info"
@@ -30,6 +30,7 @@ class LintIssue:
 
     This is the universal format - all parser output converts to this.
     """
+
     file_path: str
     line: int
     column: int
@@ -53,7 +54,7 @@ class LintIssue:
             "linter": self.linter,
             "has_autofix": self.has_autofix,
             "fix_suggestion": self.fix_suggestion,
-            "context": self.context or {}
+            "context": self.context or {},
         }
 
 
@@ -78,7 +79,7 @@ class BaseLinterParser:
 
     def parse_file(self, file_path: str, format: str = "auto") -> List[LintIssue]:
         """Parse linter output from file"""
-        with open(file_path, 'r') as f:
+        with open(file_path, "r") as f:
             return self.parse(f.read(), format)
 
 
@@ -115,24 +116,26 @@ class ESLintParser(BaseLinterParser):
                 file_path = file_result.get("filePath", "")
 
                 for message in file_result.get("messages", []):
-                    issues.append(LintIssue(
-                        file_path=file_path,
-                        line=message.get("line", 0),
-                        column=message.get("column", 0),
-                        rule=message.get("ruleId", "unknown"),
-                        message=message.get("message", ""),
-                        severity=self._map_severity(message.get("severity", 1)),
-                        linter=self.linter_name,
-                        has_autofix=message.get("fix") is not None,
-                        fix_suggestion=str(message.get("fix")) if message.get("fix") else None,
-                        context={
-                            "node_type": message.get("nodeType"),
-                            "end_line": message.get("endLine"),
-                            "end_column": message.get("endColumn")
-                        }
-                    ))
+                    issues.append(
+                        LintIssue(
+                            file_path=file_path,
+                            line=message.get("line", 0),
+                            column=message.get("column", 0),
+                            rule=message.get("ruleId", "unknown"),
+                            message=message.get("message", ""),
+                            severity=self._map_severity(message.get("severity", 1)),
+                            linter=self.linter_name,
+                            has_autofix=message.get("fix") is not None,
+                            fix_suggestion=str(message.get("fix")) if message.get("fix") else None,
+                            context={
+                                "node_type": message.get("nodeType"),
+                                "end_line": message.get("endLine"),
+                                "end_column": message.get("endColumn"),
+                            },
+                        )
+                    )
 
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             # Return empty list if JSON invalid
             pass
 
@@ -159,16 +162,18 @@ class ESLintParser(BaseLinterParser):
             if match and current_file:
                 line_num, col_num, severity, message, rule = match.groups()
 
-                issues.append(LintIssue(
-                    file_path=current_file,
-                    line=int(line_num),
-                    column=int(col_num),
-                    rule=rule,
-                    message=message,
-                    severity=Severity.ERROR if severity == "error" else Severity.WARNING,
-                    linter=self.linter_name,
-                    has_autofix=False  # Can't tell from text format
-                ))
+                issues.append(
+                    LintIssue(
+                        file_path=current_file,
+                        line=int(line_num),
+                        column=int(col_num),
+                        rule=rule,
+                        message=message,
+                        severity=Severity.ERROR if severity == "error" else Severity.WARNING,
+                        linter=self.linter_name,
+                        has_autofix=False,  # Can't tell from text format
+                    )
+                )
 
         return issues
 
@@ -207,21 +212,23 @@ class PylintParser(BaseLinterParser):
             data = json.loads(output)
 
             for item in data:
-                issues.append(LintIssue(
-                    file_path=item.get("path", ""),
-                    line=item.get("line", 0),
-                    column=item.get("column", 0),
-                    rule=item.get("message-id", item.get("symbol", "unknown")),
-                    message=item.get("message", ""),
-                    severity=self._map_severity(item.get("type", "convention")),
-                    linter=self.linter_name,
-                    has_autofix=False,  # Pylint doesn't provide autofixes
-                    context={
-                        "symbol": item.get("symbol"),
-                        "module": item.get("module"),
-                        "obj": item.get("obj")
-                    }
-                ))
+                issues.append(
+                    LintIssue(
+                        file_path=item.get("path", ""),
+                        line=item.get("line", 0),
+                        column=item.get("column", 0),
+                        rule=item.get("symbol", item.get("message-id", "unknown")),
+                        message=item.get("message", ""),
+                        severity=self._map_severity(item.get("type", "convention")),
+                        linter=self.linter_name,
+                        has_autofix=False,  # Pylint doesn't provide autofixes
+                        context={
+                            "symbol": item.get("symbol"),
+                            "module": item.get("module"),
+                            "obj": item.get("obj"),
+                        },
+                    )
+                )
 
         except json.JSONDecodeError:
             pass
@@ -240,17 +247,19 @@ class PylintParser(BaseLinterParser):
             if match:
                 file_path, line_num, col_num, code, message, symbol = match.groups()
 
-                issues.append(LintIssue(
-                    file_path=file_path,
-                    line=int(line_num),
-                    column=int(col_num),
-                    rule=symbol,
-                    message=message,
-                    severity=self._map_severity(code[0]),
-                    linter=self.linter_name,
-                    has_autofix=False,
-                    context={"code": code, "symbol": symbol}
-                ))
+                issues.append(
+                    LintIssue(
+                        file_path=file_path,
+                        line=int(line_num),
+                        column=int(col_num),
+                        rule=symbol,
+                        message=message,
+                        severity=self._map_severity(code[0]),
+                        linter=self.linter_name,
+                        has_autofix=False,
+                        context={"code": code, "symbol": symbol},
+                    )
+                )
 
         return issues
 
@@ -260,12 +269,12 @@ class PylintParser(BaseLinterParser):
             first_char = type_or_code[0].upper() if type_or_code else "C"
 
             mapping = {
-                "E": Severity.ERROR,      # Error
-                "F": Severity.ERROR,      # Fatal
-                "W": Severity.WARNING,    # Warning
-                "R": Severity.INFO,       # Refactor
-                "C": Severity.STYLE,      # Convention
-                "I": Severity.INFO        # Informational
+                "E": Severity.ERROR,  # Error
+                "F": Severity.ERROR,  # Fatal
+                "W": Severity.WARNING,  # Warning
+                "R": Severity.INFO,  # Refactor
+                "C": Severity.STYLE,  # Convention
+                "I": Severity.INFO,  # Informational
             }
 
             return mapping.get(first_char, Severity.INFO)
@@ -293,17 +302,19 @@ class MyPyParser(BaseLinterParser):
             if match:
                 file_path, line_num, severity, message, code = match.groups()
 
-                issues.append(LintIssue(
-                    file_path=file_path,
-                    line=int(line_num),
-                    column=0,  # mypy doesn't always provide column
-                    rule=code or "type-error",
-                    message=message,
-                    severity=Severity.ERROR if severity == "error" else Severity.WARNING,
-                    linter=self.linter_name,
-                    has_autofix=False,
-                    context={"severity_text": severity}
-                ))
+                issues.append(
+                    LintIssue(
+                        file_path=file_path,
+                        line=int(line_num),
+                        column=0,  # mypy doesn't always provide column
+                        rule=code or "type-error",
+                        message=message,
+                        severity=Severity.ERROR if severity == "error" else Severity.WARNING,
+                        linter=self.linter_name,
+                        has_autofix=False,
+                        context={"severity_text": severity},
+                    )
+                )
 
         return issues
 
@@ -328,17 +339,19 @@ class TypeScriptParser(BaseLinterParser):
             if match:
                 file_path, line_num, col_num, severity, code, message = match.groups()
 
-                issues.append(LintIssue(
-                    file_path=file_path,
-                    line=int(line_num),
-                    column=int(col_num),
-                    rule=f"TS{code}",
-                    message=message,
-                    severity=Severity.ERROR if severity == "error" else Severity.WARNING,
-                    linter=self.linter_name,
-                    has_autofix=False,
-                    context={"ts_code": code}
-                ))
+                issues.append(
+                    LintIssue(
+                        file_path=file_path,
+                        line=int(line_num),
+                        column=int(col_num),
+                        rule=f"TS{code}",
+                        message=message,
+                        severity=Severity.ERROR if severity == "error" else Severity.WARNING,
+                        linter=self.linter_name,
+                        has_autofix=False,
+                        context={"ts_code": code},
+                    )
+                )
 
         return issues
 
@@ -368,7 +381,7 @@ class ClippyParser(BaseLinterParser):
 
                 current_issue = {
                     "severity": severity_match.group(1),
-                    "message": severity_match.group(2)
+                    "message": severity_match.group(2),
                 }
                 continue
 
@@ -400,7 +413,7 @@ class ClippyParser(BaseLinterParser):
             message=issue_dict.get("message", ""),
             severity=Severity.ERROR if issue_dict.get("severity") == "error" else Severity.WARNING,
             linter=self.linter_name,
-            has_autofix=False
+            has_autofix=False,
         )
 
 
@@ -416,7 +429,7 @@ class LinterParserFactory:
         "typescript": TypeScriptParser,
         "tsc": TypeScriptParser,
         "clippy": ClippyParser,
-        "rustc": ClippyParser
+        "rustc": ClippyParser,
     }
 
     @classmethod
@@ -449,11 +462,7 @@ class LinterParserFactory:
         return list(cls._parsers.keys())
 
 
-def parse_linter_output(
-    linter_name: str,
-    output: str,
-    format: str = "auto"
-) -> List[LintIssue]:
+def parse_linter_output(linter_name: str, output: str, format: str = "auto") -> List[LintIssue]:
     """
     Convenience function to parse linter output.
 

@@ -19,15 +19,17 @@ from typing import Any, Dict, List, Optional
 
 class LoopType(Enum):
     """Types of feedback loops"""
+
     REINFORCING = "reinforcing"  # Amplifying, can be virtuous or vicious
-    BALANCING = "balancing"      # Stabilizing, seeks equilibrium
+    BALANCING = "balancing"  # Stabilizing, seeks equilibrium
 
 
 class LoopPolarity(Enum):
     """Polarity of reinforcing loops"""
-    VIRTUOUS = "virtuous"    # Positive reinforcing loop (good spiral)
-    VICIOUS = "vicious"      # Negative reinforcing loop (bad spiral)
-    NEUTRAL = "neutral"      # Balancing loops
+
+    VIRTUOUS = "virtuous"  # Positive reinforcing loop (good spiral)
+    VICIOUS = "vicious"  # Negative reinforcing loop (bad spiral)
+    NEUTRAL = "neutral"  # Balancing loops
 
 
 @dataclass
@@ -99,7 +101,7 @@ class FeedbackLoopDetector:
             polarity=LoopPolarity.VIRTUOUS,
             description="Trust building virtuous cycle: Success → Trust ↑ → Delegation ↑ → More Success",
             components=["trust", "success_rate", "delegation_level"],
-            intervention_points=["celebrate_wins", "increase_transparency"]
+            intervention_points=["celebrate_wins", "increase_transparency"],
         )
 
         # R2: Trust erosion loop (vicious)
@@ -109,7 +111,7 @@ class FeedbackLoopDetector:
             polarity=LoopPolarity.VICIOUS,
             description="Trust erosion vicious cycle: Failure → Trust ↓ → Micromanagement ↑ → More Failures",
             components=["trust", "failure_rate", "oversight_level"],
-            intervention_points=["break_cycle", "rebuild_confidence", "adjust_scope"]
+            intervention_points=["break_cycle", "rebuild_confidence", "adjust_scope"],
         )
 
         # B1: Quality control loop (balancing)
@@ -119,16 +121,13 @@ class FeedbackLoopDetector:
             polarity=LoopPolarity.NEUTRAL,
             description="Quality control: Error Rate ↑ → Guardrails ↑ → Error Rate ↓",
             components=["error_rate", "guardrail_strength", "intervention_frequency"],
-            intervention_points=["adjust_guardrails", "calibrate_sensitivity"]
+            intervention_points=["adjust_guardrails", "calibrate_sensitivity"],
         )
 
         # Add to detected loops
         self.detected_loops.extend([trust_building, trust_erosion, quality_control])
 
-    def detect_active_loop(
-        self,
-        session_history: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+    def detect_active_loop(self, session_history: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
         Analyze session history for active feedback loops
 
@@ -158,7 +157,7 @@ class FeedbackLoopDetector:
                 "dominant_loop": None,
                 "loop_strength": 0.0,
                 "trend": "insufficient_data",
-                "recommendation": "Continue collaboration to gather data"
+                "recommendation": "Continue collaboration to gather data",
             }
 
         # Analyze trust trend
@@ -166,11 +165,10 @@ class FeedbackLoopDetector:
         trust_trend = self._calculate_trend(trust_values)
 
         # Analyze success rate trend
-        success_indicators = [
-            1 if s.get("success", False) else 0
-            for s in session_history
-        ]
-        success_rate = sum(success_indicators) / len(success_indicators) if success_indicators else 0.5
+        success_indicators = [1 if s.get("success", False) else 0 for s in session_history]
+        success_rate = (
+            sum(success_indicators) / len(success_indicators) if success_indicators else 0.5
+        )
 
         # Determine active loop
         if trust_trend > 0.1 and success_rate > 0.6:
@@ -182,7 +180,7 @@ class FeedbackLoopDetector:
                 "loop_strength": min(trust_trend * success_rate, 1.0),
                 "trend": "amplifying_positive",
                 "recommendation": "Maintain momentum. Consider increasing delegation.",
-                "details": dominant_loop
+                "details": dominant_loop,
             }
 
         elif trust_trend < -0.1 and success_rate < 0.4:
@@ -194,7 +192,7 @@ class FeedbackLoopDetector:
                 "loop_strength": min(abs(trust_trend) * (1 - success_rate), 1.0),
                 "trend": "amplifying_negative",
                 "recommendation": "INTERVENTION NEEDED: Break the cycle. Reduce scope, rebuild confidence.",
-                "details": dominant_loop
+                "details": dominant_loop,
             }
 
         else:
@@ -206,13 +204,10 @@ class FeedbackLoopDetector:
                 "loop_strength": 0.5,
                 "trend": "stabilizing",
                 "recommendation": "System stable. Monitor for reinforcing loop activation.",
-                "details": dominant_loop
+                "details": dominant_loop,
             }
 
-    def detect_virtuous_cycle(
-        self,
-        history: List[Dict[str, Any]]
-    ) -> bool:
+    def detect_virtuous_cycle(self, history: List[Dict[str, Any]]) -> bool:
         """
         Detect reinforcing positive feedback (virtuous cycle)
 
@@ -260,10 +255,7 @@ class FeedbackLoopDetector:
 
         return is_accelerating
 
-    def detect_vicious_cycle(
-        self,
-        history: List[Dict[str, Any]]
-    ) -> bool:
+    def detect_vicious_cycle(self, history: List[Dict[str, Any]]) -> bool:
         """
         Detect reinforcing negative feedback (vicious cycle)
 
@@ -311,10 +303,7 @@ class FeedbackLoopDetector:
 
         return is_accelerating_down
 
-    def get_intervention_recommendations(
-        self,
-        loop_id: str
-    ) -> List[str]:
+    def get_intervention_recommendations(self, loop_id: str) -> List[str]:
         """
         Get recommended interventions for a specific loop
 

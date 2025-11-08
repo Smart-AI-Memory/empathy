@@ -12,12 +12,12 @@ Licensed under the Apache License, Version 2.0
 
 import json
 import sqlite3
-from pathlib import Path
-from typing import Optional, List, Dict
 from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Optional
 
-from .pattern_library import PatternLibrary, Pattern
 from .core import CollaborationState
+from .pattern_library import Pattern, PatternLibrary
 
 
 class PatternPersistence:
@@ -48,31 +48,33 @@ class PatternPersistence:
             "metadata": {
                 "saved_at": datetime.now().isoformat(),
                 "pattern_count": len(library.patterns),
-                "version": "1.0"
-            }
+                "version": "1.0",
+            },
         }
 
         # Serialize each pattern
         for pattern_id, pattern in library.patterns.items():
-            data["patterns"].append({
-                "id": pattern.id,
-                "agent_id": pattern.agent_id,
-                "pattern_type": pattern.pattern_type,
-                "name": pattern.name,
-                "description": pattern.description,
-                "context": pattern.context,
-                "code": pattern.code,
-                "confidence": pattern.confidence,
-                "usage_count": pattern.usage_count,
-                "success_count": pattern.success_count,
-                "failure_count": pattern.failure_count,
-                "tags": pattern.tags,
-                "discovered_at": pattern.discovered_at.isoformat(),
-                "last_used": pattern.last_used.isoformat() if pattern.last_used else None
-            })
+            data["patterns"].append(
+                {
+                    "id": pattern.id,
+                    "agent_id": pattern.agent_id,
+                    "pattern_type": pattern.pattern_type,
+                    "name": pattern.name,
+                    "description": pattern.description,
+                    "context": pattern.context,
+                    "code": pattern.code,
+                    "confidence": pattern.confidence,
+                    "usage_count": pattern.usage_count,
+                    "success_count": pattern.success_count,
+                    "failure_count": pattern.failure_count,
+                    "tags": pattern.tags,
+                    "discovered_at": pattern.discovered_at.isoformat(),
+                    "last_used": pattern.last_used.isoformat() if pattern.last_used else None,
+                }
+            )
 
         # Write to file
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             json.dump(data, f, indent=2)
 
     @staticmethod
@@ -93,7 +95,7 @@ class PatternPersistence:
         Example:
             >>> library = PatternPersistence.load_from_json("patterns.json")
         """
-        with open(filepath, 'r') as f:
+        with open(filepath, "r") as f:
             data = json.load(f)
 
         library = PatternLibrary()
@@ -114,7 +116,11 @@ class PatternPersistence:
                 failure_count=pattern_data.get("failure_count", 0),
                 tags=pattern_data.get("tags", []),
                 discovered_at=datetime.fromisoformat(pattern_data["discovered_at"]),
-                last_used=datetime.fromisoformat(pattern_data["last_used"]) if pattern_data.get("last_used") else None
+                last_used=(
+                    datetime.fromisoformat(pattern_data["last_used"])
+                    if pattern_data.get("last_used")
+                    else None
+                ),
             )
             library.contribute_pattern(pattern.agent_id, pattern)
 
@@ -144,7 +150,8 @@ class PatternPersistence:
         cursor = conn.cursor()
 
         # Create tables
-        cursor.execute("""
+        cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS patterns (
                 id TEXT PRIMARY KEY,
                 agent_id TEXT NOT NULL,
@@ -162,9 +169,11 @@ class PatternPersistence:
                 last_used TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-        """)
+        """
+        )
 
-        cursor.execute("""
+        cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS pattern_usage (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 pattern_id TEXT NOT NULL,
@@ -173,32 +182,36 @@ class PatternPersistence:
                 used_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (pattern_id) REFERENCES patterns(id)
             )
-        """)
+        """
+        )
 
         # Insert or update patterns
         for pattern in library.patterns.values():
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT OR REPLACE INTO patterns (
                     id, agent_id, pattern_type, name, description, context,
                     code, confidence, usage_count, success_count, failure_count,
                     tags, discovered_at, last_used, updated_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-            """, (
-                pattern.id,
-                pattern.agent_id,
-                pattern.pattern_type,
-                pattern.name,
-                pattern.description,
-                json.dumps(pattern.context),
-                pattern.code,
-                pattern.confidence,
-                pattern.usage_count,
-                pattern.success_count,
-                pattern.failure_count,
-                json.dumps(pattern.tags),
-                pattern.discovered_at.isoformat(),
-                pattern.last_used.isoformat() if pattern.last_used else None
-            ))
+            """,
+                (
+                    pattern.id,
+                    pattern.agent_id,
+                    pattern.pattern_type,
+                    pattern.name,
+                    pattern.description,
+                    json.dumps(pattern.context),
+                    pattern.code,
+                    pattern.confidence,
+                    pattern.usage_count,
+                    pattern.success_count,
+                    pattern.failure_count,
+                    json.dumps(pattern.tags),
+                    pattern.discovered_at.isoformat(),
+                    pattern.last_used.isoformat() if pattern.last_used else None,
+                ),
+            )
 
         conn.commit()
         conn.close()
@@ -242,7 +255,7 @@ class PatternPersistence:
                 failure_count=row["failure_count"],
                 tags=json.loads(row["tags"]),
                 discovered_at=datetime.fromisoformat(row["discovered_at"]),
-                last_used=datetime.fromisoformat(row["last_used"]) if row["last_used"] else None
+                last_used=datetime.fromisoformat(row["last_used"]) if row["last_used"] else None,
             )
             library.contribute_pattern(pattern.agent_id, pattern)
 
@@ -287,10 +300,10 @@ class StateManager:
             "session_start": state.session_start.isoformat(),
             "trust_trajectory": state.trust_trajectory,
             "shared_context": state.shared_context,
-            "saved_at": datetime.now().isoformat()
+            "saved_at": datetime.now().isoformat(),
         }
 
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             json.dump(data, f, indent=2)
 
     def load_state(self, user_id: str) -> Optional[CollaborationState]:
@@ -316,7 +329,7 @@ class StateManager:
             return None
 
         try:
-            with open(filepath, 'r') as f:
+            with open(filepath, "r") as f:
                 data = json.load(f)
 
             state = CollaborationState()
@@ -390,7 +403,8 @@ class MetricsCollector:
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS metrics (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id TEXT NOT NULL,
@@ -400,17 +414,22 @@ class MetricsCollector:
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 metadata TEXT
             )
-        """)
+        """
+        )
 
-        cursor.execute("""
+        cursor.execute(
+            """
             CREATE INDEX IF NOT EXISTS idx_user_level
             ON metrics(user_id, empathy_level)
-        """)
+        """
+        )
 
-        cursor.execute("""
+        cursor.execute(
+            """
             CREATE INDEX IF NOT EXISTS idx_timestamp
             ON metrics(timestamp)
-        """)
+        """
+        )
 
         conn.commit()
         conn.close()
@@ -421,7 +440,7 @@ class MetricsCollector:
         empathy_level: int,
         success: bool,
         response_time_ms: float,
-        metadata: Optional[Dict] = None
+        metadata: Optional[Dict] = None,
     ):
         """
         Record a single metric event
@@ -446,17 +465,20 @@ class MetricsCollector:
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             INSERT INTO metrics (
                 user_id, empathy_level, success, response_time_ms, metadata
             ) VALUES (?, ?, ?, ?, ?)
-        """, (
-            user_id,
-            empathy_level,
-            success,
-            response_time_ms,
-            json.dumps(metadata) if metadata else None
-        ))
+        """,
+            (
+                user_id,
+                empathy_level,
+                success,
+                response_time_ms,
+                json.dumps(metadata) if metadata else None,
+            ),
+        )
 
         conn.commit()
         conn.close()
@@ -480,7 +502,8 @@ class MetricsCollector:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT
                 COUNT(*) as total_operations,
                 SUM(CASE WHEN success THEN 1 ELSE 0 END) as successes,
@@ -489,7 +512,9 @@ class MetricsCollector:
                 MAX(timestamp) as last_use
             FROM metrics
             WHERE user_id = ?
-        """, (user_id,))
+        """,
+            (user_id,),
+        )
 
         row = cursor.fetchone()
 
@@ -500,11 +525,12 @@ class MetricsCollector:
                 "success_rate": 0.0,
                 "avg_response_time_ms": 0.0,
                 "first_use": None,
-                "last_use": None
+                "last_use": None,
             }
 
         # Get per-level breakdown
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT
                 empathy_level,
                 COUNT(*) as operations,
@@ -513,7 +539,9 @@ class MetricsCollector:
             WHERE user_id = ?
             GROUP BY empathy_level
             ORDER BY empathy_level
-        """, (user_id,))
+        """,
+            (user_id,),
+        )
 
         level_stats = {}
         for level_row in cursor.fetchall():
@@ -521,7 +549,7 @@ class MetricsCollector:
             ops = level_row["operations"]
             level_stats[f"level_{level}"] = {
                 "operations": ops,
-                "success_rate": level_row["successes"] / ops if ops > 0 else 0.0
+                "success_rate": level_row["successes"] / ops if ops > 0 else 0.0,
             }
 
         conn.close()
@@ -532,5 +560,5 @@ class MetricsCollector:
             "avg_response_time_ms": row["avg_response_time"],
             "first_use": row["first_use"],
             "last_use": row["last_use"],
-            "by_level": level_stats
+            "by_level": level_stats,
         }

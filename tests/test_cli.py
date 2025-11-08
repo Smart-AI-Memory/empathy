@@ -5,28 +5,26 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import pytest
-import tempfile
-import shutil
-import os
 import json
+import shutil
+import tempfile
 from pathlib import Path
-from unittest.mock import patch
-import sys
 
+import pytest
+
+from empathy_os import EmpathyConfig, Pattern, PatternLibrary
 from empathy_os.cli import (
-    cmd_version,
-    cmd_init,
-    cmd_validate,
     cmd_info,
-    cmd_patterns_list,
-    cmd_patterns_export,
+    cmd_init,
     cmd_metrics_show,
+    cmd_patterns_export,
+    cmd_patterns_list,
     cmd_state_list,
+    cmd_validate,
+    cmd_version,
 )
-from empathy_os import PatternLibrary, Pattern, EmpathyConfig
-from empathy_os.persistence import PatternPersistence, StateManager, MetricsCollector
 from empathy_os.core import CollaborationState
+from empathy_os.persistence import MetricsCollector, PatternPersistence, StateManager
 
 
 @pytest.fixture
@@ -39,6 +37,7 @@ def temp_dir():
 
 class MockArgs:
     """Mock argparse.Namespace for testing"""
+
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -114,7 +113,7 @@ class TestCLIValidate:
         config_path = Path(temp_dir) / "config.json"
 
         # Create invalid config (target_level out of range)
-        with open(config_path, 'w') as f:
+        with open(config_path, "w") as f:
             json.dump({"target_level": 10}, f)
 
         args = MockArgs(config=str(config_path))
@@ -167,7 +166,7 @@ class TestCLIPatternsCommands:
             description="A test pattern",
             context={"test": True},
             code="def test(): pass",
-            tags=["test"]
+            tags=["test"],
         )
 
         library.contribute_pattern("agent1", pattern)
@@ -201,7 +200,7 @@ class TestCLIPatternsCommands:
             description="Test pattern export",
             context={},
             code="pass",
-            tags=[]
+            tags=[],
         )
 
         library.contribute_pattern("agent1", pattern)
@@ -216,7 +215,7 @@ class TestCLIPatternsCommands:
             input=str(json_path),
             input_format="json",
             output=str(sqlite_path),
-            output_format="sqlite"
+            output_format="sqlite",
         )
 
         cmd_patterns_export(args)
@@ -238,10 +237,7 @@ class TestCLIMetricsCommands:
         # Record some metrics
         for i in range(5):
             collector.record_metric(
-                user_id="test_user",
-                empathy_level=3,
-                success=True,
-                response_time_ms=100.0 + i * 10
+                user_id="test_user", empathy_level=3, success=True, response_time_ms=100.0 + i * 10
             )
 
         args = MockArgs(db=str(db_path), user="test_user")
@@ -296,7 +292,8 @@ class TestCLIEdgeCases:
 
     def test_patterns_list_unknown_format(self, temp_dir):
         """Test listing patterns with unknown format"""
-        args = MockArgs(library="/tmp/test.txt", format="unknown")
+        library_path = str(Path(temp_dir) / "test.txt")
+        args = MockArgs(library=library_path, format="unknown")
 
         with pytest.raises(SystemExit):
             cmd_patterns_list(args)
@@ -313,7 +310,7 @@ class TestCLIEdgeCases:
             description="Test",
             context={},
             code="pass",
-            tags=[]
+            tags=[],
         )
 
         library.contribute_pattern("agent1", pattern)
@@ -328,7 +325,7 @@ class TestCLIEdgeCases:
             input=str(sqlite_path),
             input_format="sqlite",
             output=str(json_path),
-            output_format="json"
+            output_format="json",
         )
 
         cmd_patterns_export(args)
@@ -357,7 +354,7 @@ class TestCLIEdgeCases:
             target_level=5,
             confidence_threshold=0.9,
             persistence_backend="json",
-            metrics_enabled=False
+            metrics_enabled=False,
         )
         config.to_json(str(config_path))
 
@@ -395,7 +392,7 @@ class TestCLIEdgeCases:
             description="A test pattern in SQLite",
             context={"test": True},
             code="def test(): pass",
-            tags=["test", "sqlite"]
+            tags=["test", "sqlite"],
         )
 
         library.contribute_pattern("agent1", pattern)

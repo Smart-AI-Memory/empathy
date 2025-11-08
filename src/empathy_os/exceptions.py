@@ -15,6 +15,7 @@ class EmpathyFrameworkError(Exception):
     All custom exceptions in the framework inherit from this class,
     making it easy to catch any framework-specific error.
     """
+
     pass
 
 
@@ -27,6 +28,7 @@ class ValidationError(EmpathyFrameworkError):
         - Wrong type provided
         - Invalid value ranges
     """
+
     pass
 
 
@@ -38,6 +40,7 @@ class PatternNotFoundError(EmpathyFrameworkError):
         - Pattern ID doesn't exist in library
         - No patterns match query criteria
     """
+
     def __init__(self, pattern_id: str, message: str = None):
         self.pattern_id = pattern_id
         if message is None:
@@ -53,6 +56,7 @@ class TrustThresholdError(EmpathyFrameworkError):
         - Trust too low for proactive actions
         - Erosion loop detected
     """
+
     def __init__(self, current_trust: float, required_trust: float, message: str = None):
         self.current_trust = current_trust
         self.required_trust = required_trust
@@ -69,6 +73,7 @@ class ConfidenceThresholdError(EmpathyFrameworkError):
         - Pattern confidence below threshold
         - Prediction uncertainty too high
     """
+
     def __init__(self, confidence: float, threshold: float, message: str = None):
         self.confidence = confidence
         self.threshold = threshold
@@ -86,6 +91,7 @@ class EmpathyLevelError(EmpathyFrameworkError):
         - Level not yet achieved
         - Cannot regress to lower level
     """
+
     def __init__(self, level: int, message: str = None):
         self.level = level
         if message is None:
@@ -101,6 +107,7 @@ class LeveragePointError(EmpathyFrameworkError):
         - No leverage points found
         - Intervention feasibility too low
     """
+
     pass
 
 
@@ -112,6 +119,7 @@ class FeedbackLoopError(EmpathyFrameworkError):
         - Vicious cycle detected but cannot break
         - Insufficient history for loop detection
     """
+
     pass
 
 
@@ -123,4 +131,5 @@ class CollaborationStateError(EmpathyFrameworkError):
         - Invalid state transition
         - State corruption detected
     """
+
     pass

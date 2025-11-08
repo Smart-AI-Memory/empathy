@@ -8,11 +8,11 @@ Licensed under the Apache License, Version 2.0
 """
 
 import logging
-from typing import Dict, List, Optional, Type
-from importlib.metadata import entry_points
 import sys
+from importlib.metadata import entry_points
+from typing import Dict, List, Optional, Type
 
-from .base import BasePlugin, BaseWizard, PluginLoadError, PluginValidationError
+from .base import BasePlugin, BaseWizard, PluginValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -50,9 +50,9 @@ class PluginRegistry:
 
         # Different API for Python 3.9 vs 3.10+
         if sys.version_info >= (3, 10):
-            discovered = entry_points(group='empathy_framework.plugins')
+            discovered = entry_points(group="empathy_framework.plugins")
         else:
-            discovered = entry_points().get('empathy_framework.plugins', [])
+            discovered = entry_points().get("empathy_framework.plugins", [])
 
         for ep in discovered:
             try:
@@ -63,15 +63,10 @@ class PluginRegistry:
                 self.logger.info(f"Successfully loaded plugin: {ep.name}")
             except Exception as e:
                 # Graceful degradation: log but don't crash
-                self.logger.warning(
-                    f"Failed to load plugin '{ep.name}': {e}",
-                    exc_info=True
-                )
+                self.logger.warning(f"Failed to load plugin '{ep.name}': {e}", exc_info=True)
 
         self._auto_discovered = True
-        self.logger.info(
-            f"Auto-discovery complete. {len(self._plugins)} plugins loaded."
-        )
+        self.logger.info(f"Auto-discovery complete. {len(self._plugins)} plugins loaded.")
 
     def register_plugin(self, name: str, plugin: BasePlugin) -> None:
         """
@@ -200,8 +195,8 @@ class PluginRegistry:
         for plugin_name, plugin in self._plugins.items():
             for wizard_id in plugin.list_wizards():
                 info = plugin.get_wizard_info(wizard_id)
-                if info and info.get('empathy_level') == empathy_level:
-                    info['plugin'] = plugin_name
+                if info and info.get("empathy_level") == empathy_level:
+                    info["plugin"] = plugin_name
                     results.append(info)
 
         return results
@@ -226,7 +221,7 @@ class PluginRegistry:
                 for wizard_id in plugin.list_wizards():
                     info = plugin.get_wizard_info(wizard_id)
                     if info:
-                        info['plugin'] = plugin_name
+                        info["plugin"] = plugin_name
                         results.append(info)
 
         return results
@@ -241,17 +236,12 @@ class PluginRegistry:
         if not self._auto_discovered:
             self.auto_discover()
 
-        total_wizards = sum(
-            len(plugin.list_wizards())
-            for plugin in self._plugins.values()
-        )
+        total_wizards = sum(len(plugin.list_wizards()) for plugin in self._plugins.values())
 
         # Count wizards by level
         wizards_by_level = {}
         for level in range(1, 6):
-            wizards_by_level[f"level_{level}"] = len(
-                self.find_wizards_by_level(level)
-            )
+            wizards_by_level[f"level_{level}"] = len(self.find_wizards_by_level(level))
 
         return {
             "total_plugins": len(self._plugins),
@@ -261,11 +251,11 @@ class PluginRegistry:
                     "name": name,
                     "domain": plugin.get_metadata().domain,
                     "version": plugin.get_metadata().version,
-                    "wizard_count": len(plugin.list_wizards())
+                    "wizard_count": len(plugin.list_wizards()),
                 }
                 for name, plugin in self._plugins.items()
             ],
-            "wizards_by_level": wizards_by_level
+            "wizards_by_level": wizards_by_level,
         }
 
 

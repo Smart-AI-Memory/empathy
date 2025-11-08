@@ -65,8 +65,7 @@ class EmergenceDetector:
         self.baseline_metrics: Dict[str, Any] = {}
 
     def detect_emergent_norms(
-        self,
-        team_interactions: List[Dict[str, Any]]
+        self, team_interactions: List[Dict[str, Any]]
     ) -> List[EmergentProperty]:
         """
         Detect team norms that emerged organically
@@ -97,9 +96,7 @@ class EmergenceDetector:
 
         # Detect response time norms
         response_times = [
-            i.get("response_time", 0)
-            for i in team_interactions
-            if "response_time" in i
+            i.get("response_time", 0) for i in team_interactions if "response_time" in i
         ]
 
         if len(response_times) >= 3:
@@ -112,7 +109,7 @@ class EmergenceDetector:
                     description=f"Response time norm emerged: ~{avg_response:.1f} minutes",
                     confidence=consistency,
                     evidence=[{"response_times": response_times}],
-                    components_involved=["ai_agent", "human_user"]
+                    components_involved=["ai_agent", "human_user"],
                 )
                 norms.append(norm)
 
@@ -126,18 +123,14 @@ class EmergenceDetector:
                         description=f"Communication pattern emerged: {pattern_name}",
                         confidence=pattern_data["frequency"],
                         evidence=[pattern_data],
-                        components_involved=["communication_style"]
+                        components_involved=["communication_style"],
                     )
                     norms.append(norm)
 
         self.detected_properties.extend(norms)
         return norms
 
-    def measure_emergence(
-        self,
-        baseline: Dict[str, Any],
-        current: Dict[str, Any]
-    ) -> float:
+    def measure_emergence(self, baseline: Dict[str, Any], current: Dict[str, Any]) -> float:
         """
         Quantify emergence by comparing baseline to current state
 
@@ -198,8 +191,7 @@ class EmergenceDetector:
         return 0.0
 
     def detect_emergent_capabilities(
-        self,
-        historical_states: List[Dict[str, Any]]
+        self, historical_states: List[Dict[str, Any]]
     ) -> List[EmergentProperty]:
         """
         Detect new capabilities that emerged over time
@@ -231,7 +223,7 @@ class EmergenceDetector:
                     description=f"New capability emerged: {key}",
                     confidence=0.8,
                     evidence=[{"state": state, "timestamp": state.get("timestamp")}],
-                    components_involved=["system"]
+                    components_involved=["system"],
                 )
                 capabilities.append(capability)
 
@@ -252,7 +244,7 @@ class EmergenceDetector:
             return 0.0
 
         variance = sum((x - mean) ** 2 for x in values) / len(values)
-        std_dev = variance ** 0.5
+        std_dev = variance**0.5
         cv = std_dev / mean  # Coefficient of variation
 
         # Convert to consistency score (inverse of variation)
@@ -260,8 +252,7 @@ class EmergenceDetector:
         return consistency
 
     def _analyze_communication_patterns(
-        self,
-        interactions: List[Dict[str, Any]]
+        self, interactions: List[Dict[str, Any]]
     ) -> Dict[str, Dict[str, Any]]:
         """
         Analyze communication patterns in interactions
@@ -275,40 +266,29 @@ class EmergenceDetector:
             return patterns
 
         # Detect clarifying questions pattern
-        clarifying_count = sum(
-            1 for i in interactions
-            if i.get("type") == "clarifying_question"
-        )
+        clarifying_count = sum(1 for i in interactions if i.get("type") == "clarifying_question")
         if clarifying_count > 0:
             patterns["clarifying_questions"] = {
                 "frequency": clarifying_count / total_interactions,
                 "count": clarifying_count,
-                "examples": [
-                    i for i in interactions
-                    if i.get("type") == "clarifying_question"
-                ][:3]
+                "examples": [i for i in interactions if i.get("type") == "clarifying_question"][:3],
             }
 
         # Detect proactive suggestions pattern
-        proactive_count = sum(
-            1 for i in interactions
-            if i.get("type") == "proactive_suggestion"
-        )
+        proactive_count = sum(1 for i in interactions if i.get("type") == "proactive_suggestion")
         if proactive_count > 0:
             patterns["proactive_suggestions"] = {
                 "frequency": proactive_count / total_interactions,
                 "count": proactive_count,
-                "examples": [
-                    i for i in interactions
-                    if i.get("type") == "proactive_suggestion"
-                ][:3]
+                "examples": [i for i in interactions if i.get("type") == "proactive_suggestion"][
+                    :3
+                ],
             }
 
         return patterns
 
     def get_detected_properties(
-        self,
-        property_type: Optional[str] = None
+        self, property_type: Optional[str] = None
     ) -> List[EmergentProperty]:
         """
         Get all detected emergent properties, optionally filtered by type
@@ -320,10 +300,7 @@ class EmergenceDetector:
             List of emergent properties
         """
         if property_type:
-            return [
-                p for p in self.detected_properties
-                if p.property_type == property_type
-            ]
+            return [p for p in self.detected_properties if p.property_type == property_type]
         return self.detected_properties
 
     def reset(self):

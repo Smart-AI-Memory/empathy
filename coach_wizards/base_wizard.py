@@ -9,9 +9,9 @@ Licensed under the Apache License, Version 2.0
 
 import logging
 from abc import ABC, abstractmethod
-from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class WizardIssue:
     """Represents an issue found by a wizard"""
+
     severity: str  # 'error', 'warning', 'info'
     message: str
     file_path: str
@@ -32,6 +33,7 @@ class WizardIssue:
 @dataclass
 class WizardPrediction:
     """Level 4 Anticipatory: Predicts future issues"""
+
     predicted_date: datetime
     issue_type: str
     probability: float
@@ -43,6 +45,7 @@ class WizardPrediction:
 @dataclass
 class WizardResult:
     """Result from running a wizard"""
+
     wizard_name: str
     issues: List[WizardIssue]
     predictions: List[WizardPrediction]
@@ -84,11 +87,9 @@ class BaseCoachWizard(ABC):
         pass
 
     @abstractmethod
-    def predict_future_issues(self,
-                             code: str,
-                             file_path: str,
-                             project_context: Dict[str, Any],
-                             timeline_days: int = 90) -> List[WizardPrediction]:
+    def predict_future_issues(
+        self, code: str, file_path: str, project_context: Dict[str, Any], timeline_days: int = 90
+    ) -> List[WizardPrediction]:
         """
         Level 4 Anticipatory: Predict issues 30-90 days ahead
 
@@ -116,11 +117,13 @@ class BaseCoachWizard(ABC):
         """
         pass
 
-    def run_full_analysis(self,
-                         code: str,
-                         file_path: str,
-                         language: str,
-                         project_context: Optional[Dict[str, Any]] = None) -> WizardResult:
+    def run_full_analysis(
+        self,
+        code: str,
+        file_path: str,
+        language: str,
+        project_context: Optional[Dict[str, Any]] = None,
+    ) -> WizardResult:
         """
         Run complete analysis: current issues + future predictions
 
@@ -160,21 +163,19 @@ class BaseCoachWizard(ABC):
             summary=summary,
             analyzed_files=1,
             analysis_time=analysis_time,
-            recommendations=recommendations
+            recommendations=recommendations,
         )
 
-    def _generate_recommendations(self,
-                                 issues: List[WizardIssue],
-                                 predictions: List[WizardPrediction]) -> List[str]:
+    def _generate_recommendations(
+        self, issues: List[WizardIssue], predictions: List[WizardPrediction]
+    ) -> List[str]:
         """Generate actionable recommendations"""
         recommendations = []
 
         # Address current critical issues
-        critical_issues = [i for i in issues if i.severity == 'error']
+        critical_issues = [i for i in issues if i.severity == "error"]
         if critical_issues:
-            recommendations.append(
-                f"Fix {len(critical_issues)} critical issues immediately"
-            )
+            recommendations.append(f"Fix {len(critical_issues)} critical issues immediately")
 
         # Address predictions
         high_probability_predictions = [p for p in predictions if p.probability > 0.7]
@@ -185,12 +186,12 @@ class BaseCoachWizard(ABC):
 
         return recommendations
 
-    def _generate_summary(self,
-                         issues: List[WizardIssue],
-                         predictions: List[WizardPrediction]) -> str:
+    def _generate_summary(
+        self, issues: List[WizardIssue], predictions: List[WizardPrediction]
+    ) -> str:
         """Generate human-readable summary"""
-        error_count = len([i for i in issues if i.severity == 'error'])
-        warning_count = len([i for i in issues if i.severity == 'warning'])
+        error_count = len([i for i in issues if i.severity == "error"])
+        warning_count = len([i for i in issues if i.severity == "warning"])
         prediction_count = len(predictions)
 
         summary = f"{self.name} Analysis: "

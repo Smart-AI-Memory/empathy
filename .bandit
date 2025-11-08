@@ -1,0 +1,25 @@
+[bandit]
+# Bandit configuration for Empathy Framework security scanning
+
+# Exclude test files and examples (intentional vulnerable code for demos)
+exclude: /tests/,/examples/security_demo.py
+
+# Scan these directories
+tests: src/,empathy_software_plugin/,empathy_llm_toolkit/,coach_wizards/,empathy_healthcare_plugin/
+
+# Severity levels to report
+severity: medium
+
+# Confidence levels to report
+confidence: medium
+
+# Skip these test IDs (with justification)
+skips:
+  # B404, B603: subprocess usage is validated in our code
+  # B608: SQL - we use parameterized queries
+
+# Output format
+format: json
+
+# Output file
+output: security_scan_results.json

@@ -1,0 +1,76 @@
+# MemDocs (docint) Configuration for Empathy Framework
+# AI-powered memory and documentation intelligence
+
+project:
+  name: "Empathy Framework"
+  version: "1.5.0"
+  description: "Five-level maturity model for AI-human collaboration with anticipatory empathy"
+  repository: "https://github.com/Deep-Study-AI/Empathy"
+
+# Documentation paths
+docs:
+  input_dir: "docs/"
+  output_dir: ".memdocs/"
+  formats:
+    - markdown
+    - json
+
+# Memory configuration
+memory:
+  enabled: true
+  storage_dir: ".memdocs/memory/"
+  embedding_model: "text-embedding-ada-002"  # OpenAI embeddings
+  context_window: 8000
+
+# Code review settings
+review:
+  include_patterns:
+    - "src/**/*.py"
+    - "empathy_software_plugin/**/*.py"
+    - "empathy_llm_toolkit/**/*.py"
+    - "coach_wizards/**/*.py"
+    - "empathy_healthcare_plugin/**/*.py"
+    - "tests/**/*.py"
+
+  exclude_patterns:
+    - "**/__pycache__/**"
+    - "**/*.pyc"
+    - "**/node_modules/**"
+    - "**/.git/**"
+    - "**/htmlcov/**"
+    - "**/.pytest_cache/**"
+    - "**/backend/**"  # Not part of framework product
+
+  rules: "standard"
+  max_files: 500
+
+# Symbol extraction
+symbols:
+  enabled: true
+  languages:
+    - python
+  extract:
+    - classes
+    - functions
+    - methods
+    - decorators
+
+# AI provider settings
+ai:
+  provider: "anthropic"  # Use Claude for analysis
+  model: "claude-3-sonnet-20240229"
+  temperature: 0.0
+  max_tokens: 4000
+
+# Export settings
+export:
+  claude_context: ".memdocs-context.md"
+  cursor_rules: ".cursorrules"
+  include_symbols: true
+  include_examples: true
+
+# Query settings
+query:
+  top_k: 5
+  similarity_threshold: 0.7
+  rerank: true

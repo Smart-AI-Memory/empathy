@@ -59,6 +59,7 @@ DEV_REQUIRES = [
     "mypy>=1.0,<2.0",
     "ruff>=0.1,<1.0",
     "coverage>=7.0,<8.0",
+    "bandit>=1.7,<2.0",  # Security vulnerability scanning
 ]
 
 setup(

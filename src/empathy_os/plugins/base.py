@@ -8,11 +8,11 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
+import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Dict, List, Any, Optional, Type
 from datetime import datetime
-import logging
+from typing import Any, Dict, List, Optional, Type
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class PluginMetadata:
     """Metadata about a plugin"""
+
     name: str
     version: str
     domain: str
@@ -43,11 +44,7 @@ class BaseWizard(ABC):
     - Pattern-contributing: Wizards share learnings via pattern library
     """
 
-    def __init__(self,
-                 name: str,
-                 domain: str,
-                 empathy_level: int,
-                 category: Optional[str] = None):
+    def __init__(self, name: str, domain: str, empathy_level: int, category: Optional[str] = None):
         """
         Initialize a wizard
 
@@ -112,9 +109,7 @@ class BaseWizard(ABC):
         missing = [key for key in required if key not in context]
 
         if missing:
-            raise ValueError(
-                f"Wizard '{self.name}' missing required context: {missing}"
-            )
+            raise ValueError(f"Wizard '{self.name}' missing required context: {missing}")
 
         return True
 
@@ -139,7 +134,7 @@ class BaseWizard(ABC):
             "wizard": self.name,
             "domain": self.domain,
             "timestamp": datetime.now().isoformat(),
-            "patterns": analysis_result.get("patterns", [])
+            "patterns": analysis_result.get("patterns", []),
         }
 
 
@@ -214,8 +209,7 @@ class BasePlugin(ABC):
         self._wizards = self.register_wizards()
 
         self.logger.info(
-            f"Plugin '{self.get_metadata().name}' initialized with "
-            f"{len(self._wizards)} wizards"
+            f"Plugin '{self.get_metadata().name}' initialized with " f"{len(self._wizards)} wizards"
         )
 
         self._initialized = True
@@ -271,20 +265,23 @@ class BasePlugin(ABC):
             "domain": temp_instance.domain,
             "empathy_level": temp_instance.empathy_level,
             "category": temp_instance.category,
-            "required_context": temp_instance.get_required_context()
+            "required_context": temp_instance.get_required_context(),
         }
 
 
 class PluginError(Exception):
     """Base exception for plugin-related errors"""
+
     pass
 
 
 class PluginLoadError(PluginError):
     """Raised when plugin fails to load"""
+
     pass
 
 
 class PluginValidationError(PluginError):
     """Raised when plugin fails validation"""
+
     pass

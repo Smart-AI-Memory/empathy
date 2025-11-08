@@ -8,23 +8,22 @@ Licensed under the Apache License, Version 2.0
 """
 
 from .base import (
-    BaseWizard,
     BasePlugin,
-    PluginMetadata,
+    BaseWizard,
     PluginError,
     PluginLoadError,
-    PluginValidationError
+    PluginMetadata,
+    PluginValidationError,
 )
-
 from .registry import PluginRegistry, get_global_registry
 
 __all__ = [
-    'BaseWizard',
-    'BasePlugin',
-    'PluginMetadata',
-    'PluginError',
-    'PluginLoadError',
-    'PluginValidationError',
-    'PluginRegistry',
-    'get_global_registry',
+    "BaseWizard",
+    "BasePlugin",
+    "PluginMetadata",
+    "PluginError",
+    "PluginLoadError",
+    "PluginValidationError",
+    "PluginRegistry",
+    "get_global_registry",
 ]

@@ -13,7 +13,7 @@ WIZARD_SPECS = [
         "category": "Security",
         "languages": ["python", "javascript", "typescript", "java", "go", "rust"],
         "detects": ["SQL injection", "XSS", "CSRF", "insecure dependencies", "hardcoded secrets"],
-        "predicts": ["emerging vulnerabilities", "dependency risks", "attack surface growth"]
+        "predicts": ["emerging vulnerabilities", "dependency risks", "attack surface growth"],
     },
     {
         "name": "PerformanceWizard",
@@ -21,8 +21,13 @@ WIZARD_SPECS = [
         "description": "Performance optimization and bottleneck detection",
         "category": "Performance",
         "languages": ["python", "javascript", "typescript", "java", "go", "rust", "cpp"],
-        "detects": ["N+1 queries", "inefficient algorithms", "memory leaks", "slow database queries"],
-        "predicts": ["scalability bottlenecks", "response time degradation", "resource exhaustion"]
+        "detects": [
+            "N+1 queries",
+            "inefficient algorithms",
+            "memory leaks",
+            "slow database queries",
+        ],
+        "predicts": ["scalability bottlenecks", "response time degradation", "resource exhaustion"],
     },
     {
         "name": "AccessibilityWizard",
@@ -30,8 +35,13 @@ WIZARD_SPECS = [
         "description": "Web accessibility (WCAG) compliance",
         "category": "Accessibility",
         "languages": ["html", "jsx", "tsx", "vue", "svelte"],
-        "detects": ["missing alt text", "no ARIA labels", "insufficient color contrast", "keyboard navigation issues"],
-        "predicts": ["compliance violations", "user experience degradation", "legal exposure"]
+        "detects": [
+            "missing alt text",
+            "no ARIA labels",
+            "insufficient color contrast",
+            "keyboard navigation issues",
+        ],
+        "predicts": ["compliance violations", "user experience degradation", "legal exposure"],
     },
     {
         "name": "TestingWizard",
@@ -39,8 +49,13 @@ WIZARD_SPECS = [
         "description": "Test coverage and quality analysis",
         "category": "Testing",
         "languages": ["python", "javascript", "typescript", "java", "go", "rust"],
-        "detects": ["untested code paths", "missing edge cases", "flaky tests", "low code coverage"],
-        "predicts": ["production bugs", "regression risks", "test maintenance burden"]
+        "detects": [
+            "untested code paths",
+            "missing edge cases",
+            "flaky tests",
+            "low code coverage",
+        ],
+        "predicts": ["production bugs", "regression risks", "test maintenance burden"],
     },
     {
         "name": "RefactoringWizard",
@@ -49,7 +64,11 @@ WIZARD_SPECS = [
         "category": "Code Quality",
         "languages": ["python", "javascript", "typescript", "java", "go", "rust", "cpp"],
         "detects": ["code smells", "high complexity", "duplicated code", "god classes"],
-        "predicts": ["maintenance burden increase", "bug introduction risk", "team velocity impact"]
+        "predicts": [
+            "maintenance burden increase",
+            "bug introduction risk",
+            "team velocity impact",
+        ],
     },
     {
         "name": "DatabaseWizard",
@@ -58,7 +77,7 @@ WIZARD_SPECS = [
         "category": "Database",
         "languages": ["sql", "python", "javascript", "typescript", "java", "go"],
         "detects": ["missing indexes", "N+1 queries", "inefficient joins", "schema issues"],
-        "predicts": ["query performance degradation", "data growth impact", "scaling limitations"]
+        "predicts": ["query performance degradation", "data growth impact", "scaling limitations"],
     },
     {
         "name": "APIWizard",
@@ -66,8 +85,17 @@ WIZARD_SPECS = [
         "description": "API design and integration analysis",
         "category": "API",
         "languages": ["python", "javascript", "typescript", "java", "go", "rust"],
-        "detects": ["inconsistent endpoints", "missing validation", "poor error handling", "versioning issues"],
-        "predicts": ["breaking changes impact", "backward compatibility issues", "integration failures"]
+        "detects": [
+            "inconsistent endpoints",
+            "missing validation",
+            "poor error handling",
+            "versioning issues",
+        ],
+        "predicts": [
+            "breaking changes impact",
+            "backward compatibility issues",
+            "integration failures",
+        ],
     },
     {
         "name": "DebuggingWizard",
@@ -75,8 +103,13 @@ WIZARD_SPECS = [
         "description": "Error detection and debugging assistance",
         "category": "Debugging",
         "languages": ["python", "javascript", "typescript", "java", "go", "rust", "cpp"],
-        "detects": ["potential null references", "unhandled exceptions", "race conditions", "logic errors"],
-        "predicts": ["runtime errors", "production incidents", "debugging complexity"]
+        "detects": [
+            "potential null references",
+            "unhandled exceptions",
+            "race conditions",
+            "logic errors",
+        ],
+        "predicts": ["runtime errors", "production incidents", "debugging complexity"],
     },
     {
         "name": "ScalingWizard",
@@ -85,7 +118,7 @@ WIZARD_SPECS = [
         "category": "Scalability",
         "languages": ["python", "javascript", "typescript", "java", "go", "rust"],
         "detects": ["single points of failure", "synchronous bottlenecks", "resource constraints"],
-        "predicts": ["load handling capacity", "scaling challenges", "architecture limitations"]
+        "predicts": ["load handling capacity", "scaling challenges", "architecture limitations"],
     },
     {
         "name": "ObservabilityWizard",
@@ -94,7 +127,7 @@ WIZARD_SPECS = [
         "category": "Observability",
         "languages": ["python", "javascript", "typescript", "java", "go", "rust"],
         "detects": ["missing logs", "no metrics", "poor error tracking", "lack of tracing"],
-        "predicts": ["debugging difficulties", "incident response delays", "unknown unknowns"]
+        "predicts": ["debugging difficulties", "incident response delays", "unknown unknowns"],
     },
     {
         "name": "CICDWizard",
@@ -103,7 +136,7 @@ WIZARD_SPECS = [
         "category": "DevOps",
         "languages": ["yaml", "groovy", "python", "bash"],
         "detects": ["slow pipelines", "flaky tests", "deployment risks", "missing automation"],
-        "predicts": ["deployment failures", "pipeline maintenance burden", "release delays"]
+        "predicts": ["deployment failures", "pipeline maintenance burden", "release delays"],
     },
     {
         "name": "DocumentationWizard",
@@ -112,7 +145,7 @@ WIZARD_SPECS = [
         "category": "Documentation",
         "languages": ["python", "javascript", "typescript", "java", "go", "rust", "markdown"],
         "detects": ["missing docstrings", "outdated docs", "unclear explanations", "no examples"],
-        "predicts": ["knowledge loss", "onboarding difficulties", "support burden"]
+        "predicts": ["knowledge loss", "onboarding difficulties", "support burden"],
     },
     {
         "name": "ComplianceWizard",
@@ -121,7 +154,7 @@ WIZARD_SPECS = [
         "category": "Compliance",
         "languages": ["python", "javascript", "typescript", "java", "go"],
         "detects": ["PII handling issues", "GDPR violations", "SOC 2 gaps", "audit trail missing"],
-        "predicts": ["regulatory audits", "compliance violations", "legal exposure"]
+        "predicts": ["regulatory audits", "compliance violations", "legal exposure"],
     },
     {
         "name": "MigrationWizard",
@@ -130,7 +163,7 @@ WIZARD_SPECS = [
         "category": "Migration",
         "languages": ["python", "javascript", "typescript", "java", "go", "rust"],
         "detects": ["deprecated APIs", "breaking changes", "incompatibilities", "migration risks"],
-        "predicts": ["upgrade complexity", "compatibility issues", "migration timeline"]
+        "predicts": ["upgrade complexity", "compatibility issues", "migration timeline"],
     },
     {
         "name": "MonitoringWizard",
@@ -139,7 +172,7 @@ WIZARD_SPECS = [
         "category": "Monitoring",
         "languages": ["python", "javascript", "typescript", "java", "go", "yaml"],
         "detects": ["missing alerts", "alert fatigue", "no SLOs", "blind spots"],
-        "predicts": ["undetected incidents", "alert storm risk", "monitoring gaps"]
+        "predicts": ["undetected incidents", "alert storm risk", "monitoring gaps"],
     },
     {
         "name": "LocalizationWizard",
@@ -148,8 +181,12 @@ WIZARD_SPECS = [
         "category": "Localization",
         "languages": ["python", "javascript", "typescript", "java", "go", "html", "jsx", "tsx"],
         "detects": ["hardcoded strings", "missing translations", "locale issues", "RTL problems"],
-        "predicts": ["i18n technical debt", "translation maintenance burden", "locale coverage gaps"]
-    }
+        "predicts": [
+            "i18n technical debt",
+            "translation maintenance burden",
+            "locale coverage gaps",
+        ],
+    },
 ]
 
 WIZARD_TEMPLATE = '''"""
@@ -169,25 +206,25 @@ from .base_wizard import BaseCoachWizard, WizardIssue, WizardPrediction
 class {name}(BaseCoachWizard):
     """
     {description}
-    
+
     Detects:
 {detects_list}
-    
+
     Predicts (Level 4):
 {predicts_list}
     """
-    
+
     def __init__(self):
         super().__init__(
             name="{name}",
             category="{category}",
             languages={languages}
         )
-    
+
     def analyze_code(self, code: str, file_path: str, language: str) -> List[WizardIssue]:
         """
         Analyze code for {category_lower} issues
-        
+
         This is a reference implementation. In production, integrate with:
         - Static analysis tools
         - Linters and security scanners
@@ -195,16 +232,16 @@ class {name}(BaseCoachWizard):
         - AI models (Claude, GPT-4)
         """
         issues = []
-        
+
         # Example heuristic detection
         lines = code.split('\\n')
         for i, line in enumerate(lines, 1):
             # Add detection logic based on {category_lower}
             pass
-        
+
         self.logger.info(f"{{self.name}} found {{len(issues)}} issues in {{file_path}}")
         return issues
-    
+
     def predict_future_issues(self,
                              code: str,
                              file_path: str,
@@ -212,7 +249,7 @@ class {name}(BaseCoachWizard):
                              timeline_days: int = 90) -> List[WizardPrediction]:
         """
         Level 4 Anticipatory: Predict {category_lower} issues {{timeline_days}} days ahead
-        
+
         Uses:
         - Historical patterns
         - Code trajectory analysis
@@ -221,20 +258,20 @@ class {name}(BaseCoachWizard):
         - Industry trends
         """
         predictions = []
-        
+
         # Example prediction logic
         # In production, use ML models trained on historical data
-        
+
         self.logger.info(
             f"{{self.name}} predicted {{len(predictions)}} future issues "
             f"for {{file_path}} ({{timeline_days}} days ahead)"
         )
         return predictions
-    
+
     def suggest_fixes(self, issue: WizardIssue) -> str:
         """
         Suggest how to fix a {category_lower} issue
-        
+
         Returns:
             Detailed fix suggestion with code examples
         """
@@ -245,12 +282,12 @@ class {name}(BaseCoachWizard):
 # Example usage
 if __name__ == "__main__":
     wizard = {name}()
-    
+
     # Example code to analyze
     sample_code = '''
 # Add sample code relevant to {category_lower}
-'''
-    
+"""
+
     result = wizard.run_full_analysis(
         code=sample_code,
         file_path="example.py",
@@ -261,47 +298,50 @@ if __name__ == "__main__":
             "code_churn_rate": 0.15
         }}
     )
-    
+
     print(f"Analysis: {{result.summary}}")
     print(f"Issues found: {{len(result.issues)}}")
     print(f"Predictions: {{len(result.predictions)}}")
-'''
+"""
+
 
 def generate_wizard(spec):
     """Generate a wizard file from spec"""
-    detects_list = '\n'.join([f"    - {d}" for d in spec['detects']])
-    predicts_list = '\n'.join([f"    - {p}" for p in spec['predicts']])
-    
+    detects_list = "\n".join([f"    - {d}" for d in spec["detects"]])
+    predicts_list = "\n".join([f"    - {p}" for p in spec["predicts"]])
+
     content = WIZARD_TEMPLATE.format(
-        name=spec['name'],
-        filename=spec['filename'],
-        description=spec['description'],
-        category=spec['category'],
-        category_lower=spec['category'].lower(),
-        languages=spec['languages'],
+        name=spec["name"],
+        filename=spec["filename"],
+        description=spec["description"],
+        category=spec["category"],
+        category_lower=spec["category"].lower(),
+        languages=spec["languages"],
         detects_list=detects_list,
-        predicts_list=predicts_list
+        predicts_list=predicts_list,
     )
-    
-    with open(spec['filename'], 'w') as f:
+
+    with open(spec["filename"], "w") as f:
         f.write(content)
-    
+
     print(f"✓ Generated {spec['filename']}")
+
 
 def main():
     """Generate all 16 Coach wizards"""
     print("Generating 16 Coach wizards...")
     print()
-    
+
     for spec in WIZARD_SPECS:
         generate_wizard(spec)
-    
+
     print()
     print("✓ All 16 Coach wizards generated successfully!")
     print()
     print("Wizards created:")
     for spec in WIZARD_SPECS:
         print(f"  - {spec['name']}: {spec['description']}")
+
 
 if __name__ == "__main__":
     main()

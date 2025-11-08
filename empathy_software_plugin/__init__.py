@@ -11,4 +11,4 @@ Licensed under the Apache License, Version 2.0
 from .plugin import SoftwarePlugin
 
 __version__ = "1.0.0"
-__all__ = ['SoftwarePlugin']
+__all__ = ["SoftwarePlugin"]

@@ -9,16 +9,17 @@ Licensed under the Apache License, Version 2.0
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Dict, List, Optional, Any
 from enum import Enum
+from typing import Any, Dict, List, Optional
 
 
 class PatternType(Enum):
     """Types of patterns that can be detected"""
-    SEQUENTIAL = "sequential"      # User always does X then Y
-    TEMPORAL = "temporal"          # User does X at specific time
-    CONDITIONAL = "conditional"    # When Z happens, user does X
-    PREFERENCE = "preference"      # User prefers format/style X
+
+    SEQUENTIAL = "sequential"  # User always does X then Y
+    TEMPORAL = "temporal"  # User does X at specific time
+    CONDITIONAL = "conditional"  # When Z happens, user does X
+    PREFERENCE = "preference"  # User prefers format/style X
 
 
 @dataclass
@@ -28,11 +29,12 @@ class UserPattern:
 
     Enables Level 3 (Proactive) empathy.
     """
+
     pattern_type: PatternType
-    trigger: str              # What triggers this pattern
-    action: str               # What user typically does
-    confidence: float         # 0.0 to 1.0
-    occurrences: int          # How many times observed
+    trigger: str  # What triggers this pattern
+    action: str  # What user typically does
+    confidence: float  # 0.0 to 1.0
+    occurrences: int  # How many times observed
     last_seen: datetime
     context: Dict[str, Any] = field(default_factory=dict)
 
@@ -48,10 +50,11 @@ class UserPattern:
 @dataclass
 class Interaction:
     """Single interaction in conversation history"""
+
     timestamp: datetime
-    role: str              # "user" or "assistant"
+    role: str  # "user" or "assistant"
     content: str
-    empathy_level: int     # Which level was used
+    empathy_level: int  # Which level was used
     metadata: Dict[str, Any] = field(default_factory=dict)
 
 
@@ -83,7 +86,7 @@ class CollaborationState:
     trust_trajectory: List[float] = field(default_factory=list)
 
     # Empathy level progression
-    current_level: int = 1    # Start at Level 1
+    current_level: int = 1  # Start at Level 1
     level_history: List[int] = field(default_factory=list)
 
     # User preferences learned over time
@@ -93,20 +96,18 @@ class CollaborationState:
     shared_context: Dict[str, Any] = field(default_factory=dict)
 
     def add_interaction(
-        self,
-        role: str,
-        content: str,
-        empathy_level: int,
-        metadata: Optional[Dict] = None
+        self, role: str, content: str, empathy_level: int, metadata: Optional[Dict] = None
     ):
         """Add interaction to history"""
-        self.interactions.append(Interaction(
-            timestamp=datetime.now(),
-            role=role,
-            content=content,
-            empathy_level=empathy_level,
-            metadata=metadata or {}
-        ))
+        self.interactions.append(
+            Interaction(
+                timestamp=datetime.now(),
+                role=role,
+                content=content,
+                empathy_level=empathy_level,
+                metadata=metadata or {},
+            )
+        )
 
         # Track level history
         if role == "assistant":
@@ -136,8 +137,10 @@ class CollaborationState:
         """Add or update a detected pattern"""
         # Check if pattern already exists
         for existing in self.detected_patterns:
-            if (existing.pattern_type == pattern.pattern_type and
-                existing.trigger == pattern.trigger):
+            if (
+                existing.pattern_type == pattern.pattern_type
+                and existing.trigger == pattern.trigger
+            ):
                 # Update existing
                 existing.occurrences = pattern.occurrences
                 existing.confidence = pattern.confidence
@@ -154,9 +157,9 @@ class CollaborationState:
         Returns pattern with highest confidence if found.
         """
         matches = [
-            p for p in self.detected_patterns
-            if p.trigger.lower() in trigger_text.lower() and
-            p.should_act(self.trust_level)
+            p
+            for p in self.detected_patterns
+            if p.trigger.lower() in trigger_text.lower() and p.should_act(self.trust_level)
         ]
 
         if matches:
@@ -166,9 +169,7 @@ class CollaborationState:
         return None
 
     def get_conversation_history(
-        self,
-        max_turns: int = 10,
-        include_metadata: bool = False
+        self, max_turns: int = 10, include_metadata: bool = False
     ) -> List[Dict[str, str]]:
         """
         Get recent conversation history in LLM format.
@@ -183,19 +184,9 @@ class CollaborationState:
         recent = self.interactions[-max_turns:] if max_turns else self.interactions
 
         if include_metadata:
-            return [
-                {
-                    "role": i.role,
-                    "content": i.content,
-                    "metadata": i.metadata
-                }
-                for i in recent
-            ]
+            return [{"role": i.role, "content": i.content, "metadata": i.metadata} for i in recent]
         else:
-            return [
-                {"role": i.role, "content": i.content}
-                for i in recent
-            ]
+            return [{"role": i.role, "content": i.content} for i in recent]
 
     def should_progress_to_level(self, level: int) -> bool:
         """
@@ -214,9 +205,11 @@ class CollaborationState:
             return self.trust_level > 0.6 and len(self.detected_patterns) > 0
 
         if level == 4:
-            return (self.trust_level > 0.7 and
-                    len(self.interactions) > 10 and
-                    len(self.detected_patterns) > 2)
+            return (
+                self.trust_level > 0.7
+                and len(self.interactions) > 10
+                and len(self.detected_patterns) > 2
+            )
 
         if level == 5:
             return self.trust_level > 0.8
@@ -241,7 +234,6 @@ class CollaborationState:
             "patterns_detected": len(self.detected_patterns),
             "current_level": self.current_level,
             "average_level": (
-                sum(self.level_history) / len(self.level_history)
-                if self.level_history else 1
-            )
+                sum(self.level_history) / len(self.level_history) if self.level_history else 1
+            ),
         }

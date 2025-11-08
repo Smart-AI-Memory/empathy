@@ -69,7 +69,7 @@ class EmpathyLevel(ABC):
         action_type: str,
         description: str,
         context: Dict[str, Any],
-        outcome: Optional[str] = None
+        outcome: Optional[str] = None,
     ):
         """Record an action taken at this level"""
         action = EmpathyAction(
@@ -77,7 +77,7 @@ class EmpathyLevel(ABC):
             action_type=action_type,
             description=description,
             context=context,
-            outcome=outcome
+            outcome=outcome,
         )
         self.actions_taken.append(action)
 
@@ -135,13 +135,13 @@ class Level1Reactive(EmpathyLevel):
             "description": f"Responding to request: {request}",
             "initiative": "none",
             "reasoning": "Level 1: Responding only to explicit request",
-            "additional_offers": []  # No proactive offers at Level 1
+            "additional_offers": [],  # No proactive offers at Level 1
         }
 
         self.record_action(
             action_type="reactive_response",
             description=f"Responded to {request} about {subject}",
-            context=context
+            context=context,
         )
 
         return response
@@ -203,27 +203,23 @@ class Level2Guided(EmpathyLevel):
             "initiative": "guided",
             "clarifying_questions": clarifying_questions,
             "suggested_options": self._suggest_exploration_paths(request),
-            "reasoning": "Level 2: Collaboratively exploring to understand needs"
+            "reasoning": "Level 2: Collaboratively exploring to understand needs",
         }
 
         self.record_action(
             action_type="guided_exploration",
             description=f"Asked {len(clarifying_questions)} clarifying questions",
-            context=context
+            context=context,
         )
 
         return response
 
-    def _generate_clarifying_questions(
-        self,
-        request: str,
-        ambiguity: str
-    ) -> List[str]:
+    def _generate_clarifying_questions(self, request: str, ambiguity: str) -> List[str]:
         """Generate clarifying questions based on ambiguity"""
         questions = [
             "What specific aspects are most important to you?",
             "What constraints should we consider?",
-            "What does success look like for this?"
+            "What does success look like for this?",
         ]
 
         if ambiguity == "high":
@@ -236,7 +232,7 @@ class Level2Guided(EmpathyLevel):
         return [
             "We could explore technical approaches",
             "We could focus on user impact",
-            "We could analyze risks and tradeoffs"
+            "We could analyze risks and tradeoffs",
         ]
 
 
@@ -296,22 +292,18 @@ class Level3Proactive(EmpathyLevel):
             "observed_need": observed_need,
             "confidence": confidence,
             "proactive_offer": proactive_actions,
-            "reasoning": "Level 3: Taking initiative on obvious need"
+            "reasoning": "Level 3: Taking initiative on obvious need",
         }
 
         self.record_action(
             action_type="proactive_action",
             description=f"Proactively offered help for {observed_need}",
-            context=context
+            context=context,
         )
 
         return response
 
-    def _identify_proactive_actions(
-        self,
-        need: str,
-        confidence: float
-    ) -> Dict[str, Any]:
+    def _identify_proactive_actions(self, need: str, confidence: float) -> Dict[str, Any]:
         """Identify appropriate proactive actions"""
         if confidence >= 0.8:
             permission_needed = False
@@ -325,7 +317,7 @@ class Level3Proactive(EmpathyLevel):
             "proposed_action": f"Address {need}",
             "permission_needed": permission_needed,
             "confidence_level": confidence,
-            "action_plan": action
+            "action_plan": action,
         }
 
 
@@ -394,42 +386,39 @@ class Level4Anticipatory(EmpathyLevel):
             "predicted_needs": predictions["needs"],
             "preventive_actions": predictions["actions"],
             "confidence": predictions["confidence"],
-            "reasoning": "Level 4: Predicting and preparing for future needs"
+            "reasoning": "Level 4: Predicting and preparing for future needs",
         }
 
         self.record_action(
             action_type="anticipatory_preparation",
             description=f"Predicted {len(predictions['needs'])} future needs",
-            context=context
+            context=context,
         )
 
         return response
 
     def _predict_future_needs(
-        self,
-        current_state: Dict[str, Any],
-        trajectory: str,
-        horizon: str
+        self, current_state: Dict[str, Any], trajectory: str, horizon: str
     ) -> Dict[str, Any]:
         """Predict future needs based on current trajectory"""
         # Simulate prediction logic
         predicted_needs = [
             f"Based on {trajectory} trajectory, will need X in {horizon}",
-            f"Current trend suggests Y will become bottleneck",
-            f"Preparation for Z should begin now"
+            "Current trend suggests Y will become bottleneck",
+            "Preparation for Z should begin now",
         ]
 
         preventive_actions = [
             "Pre-generate required resources",
             "Alert stakeholders to predicted issues",
-            "Prepare mitigation strategies"
+            "Prepare mitigation strategies",
         ]
 
         return {
             "needs": predicted_needs,
             "actions": preventive_actions,
             "confidence": 0.85,
-            "prediction_basis": "trajectory_analysis"
+            "prediction_basis": "trajectory_analysis",
         }
 
 
@@ -500,45 +489,38 @@ class Level5Systems(EmpathyLevel):
             "leverage_point": system_design["leverage"],
             "compounding_value": system_design["value"],
             "ai_ai_sharing": system_design["sharing"],
-            "reasoning": "Level 5: Building structures that help at scale"
+            "reasoning": "Level 5: Building structures that help at scale",
         }
 
         self.record_action(
             action_type="systems_solution",
             description=f"Created system solution for {problem_class}",
-            context=context
+            context=context,
         )
 
         return response
 
     def _design_system_solution(
-        self,
-        problem_class: str,
-        instances: int,
-        pattern: Optional[str]
+        self, problem_class: str, instances: int, pattern: Optional[str]
     ) -> Dict[str, Any]:
         """Design a system-level solution"""
         return {
             "system": {
                 "name": f"{problem_class}_framework",
                 "description": f"Automated system to solve {problem_class}",
-                "components": [
-                    "Pattern detection",
-                    "Auto-generation",
-                    "Shared learning library"
-                ]
+                "components": ["Pattern detection", "Auto-generation", "Shared learning library"],
             },
             "leverage": "Self-organization (Meadows Level 9)",
             "value": {
                 "immediate": f"Solves {instances} existing instances",
                 "compounding": "Each future instance solved automatically",
-                "multiplier": "All agents benefit from pattern library"
+                "multiplier": "All agents benefit from pattern library",
             },
             "sharing": {
                 "mechanism": "Pattern Library",
                 "scope": "All agents in collective",
-                "benefit": "One agent's discovery helps all"
-            }
+                "benefit": "One agent's discovery helps all",
+            },
         }
 
 
@@ -564,6 +546,6 @@ def get_level_class(level: int) -> type:
         2: Level2Guided,
         3: Level3Proactive,
         4: Level4Anticipatory,
-        5: Level5Systems
+        5: Level5Systems,
     }
     return levels.get(level, Level1Reactive)

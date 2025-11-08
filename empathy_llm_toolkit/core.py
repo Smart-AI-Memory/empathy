@@ -7,13 +7,12 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import Optional, Dict, Any, List
 import logging
-from datetime import datetime
+from typing import Any, Dict, Optional
 
-from .providers import BaseLLMProvider, AnthropicProvider, OpenAIProvider, LocalProvider, LLMResponse
-from .state import CollaborationState, UserPattern, PatternType
 from .levels import EmpathyLevel
+from .providers import AnthropicProvider, BaseLLMProvider, LocalProvider, OpenAIProvider
+from .state import CollaborationState, UserPattern
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +41,7 @@ class EmpathyLLM:
         api_key: Optional[str] = None,
         model: Optional[str] = None,
         pattern_library: Optional[Dict] = None,
-        **kwargs
+        **kwargs,
     ):
         """
         Initialize EmpathyLLM.
@@ -64,36 +63,24 @@ class EmpathyLLM:
         # Track collaboration states for different users
         self.states: Dict[str, CollaborationState] = {}
 
-        logger.info(
-            f"EmpathyLLM initialized: provider={provider}, target_level={target_level}"
-        )
+        logger.info(f"EmpathyLLM initialized: provider={provider}, target_level={target_level}")
 
     def _create_provider(
-        self,
-        provider: str,
-        api_key: Optional[str],
-        model: Optional[str],
-        **kwargs
+        self, provider: str, api_key: Optional[str], model: Optional[str], **kwargs
     ) -> BaseLLMProvider:
         """Create appropriate provider instance"""
 
         if provider == "anthropic":
             return AnthropicProvider(
-                api_key=api_key,
-                model=model or "claude-3-5-sonnet-20241022",
-                **kwargs
+                api_key=api_key, model=model or "claude-3-5-sonnet-20241022", **kwargs
             )
         elif provider == "openai":
-            return OpenAIProvider(
-                api_key=api_key,
-                model=model or "gpt-4-turbo-preview",
-                **kwargs
-            )
+            return OpenAIProvider(api_key=api_key, model=model or "gpt-4-turbo-preview", **kwargs)
         elif provider == "local":
             return LocalProvider(
                 endpoint=kwargs.get("endpoint", "http://localhost:11434"),
                 model=model or "llama2",
-                **kwargs
+                **kwargs,
             )
         else:
             raise ValueError(f"Unknown provider: {provider}")
@@ -127,7 +114,7 @@ class EmpathyLLM:
         user_id: str,
         user_input: str,
         context: Optional[Dict[str, Any]] = None,
-        force_level: Optional[int] = None
+        force_level: Optional[int] = None,
     ) -> Dict[str, Any]:
         """
         Main interaction method.
@@ -182,10 +169,7 @@ class EmpathyLLM:
         return result
 
     async def _level_1_reactive(
-        self,
-        user_input: str,
-        state: CollaborationState,
-        context: Dict[str, Any]
+        self, user_input: str, state: CollaborationState, context: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
         Level 1: Reactive - Simple Q&A
@@ -196,23 +180,17 @@ class EmpathyLLM:
             messages=[{"role": "user", "content": user_input}],
             system_prompt=EmpathyLevel.get_system_prompt(1),
             temperature=EmpathyLevel.get_temperature_recommendation(1),
-            max_tokens=EmpathyLevel.get_max_tokens_recommendation(1)
+            max_tokens=EmpathyLevel.get_max_tokens_recommendation(1),
         )
 
         return {
             "content": response.content,
             "proactive": False,
-            "metadata": {
-                "tokens_used": response.tokens_used,
-                "model": response.model
-            }
+            "metadata": {"tokens_used": response.tokens_used, "model": response.model},
         }
 
     async def _level_2_guided(
-        self,
-        user_input: str,
-        state: CollaborationState,
-        context: Dict[str, Any]
+        self, user_input: str, state: CollaborationState, context: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
         Level 2: Guided - Ask clarifying questions
@@ -227,7 +205,7 @@ class EmpathyLLM:
             messages=messages,
             system_prompt=EmpathyLevel.get_system_prompt(2),
             temperature=EmpathyLevel.get_temperature_recommendation(2),
-            max_tokens=EmpathyLevel.get_max_tokens_recommendation(2)
+            max_tokens=EmpathyLevel.get_max_tokens_recommendation(2),
         )
 
         return {
@@ -236,15 +214,12 @@ class EmpathyLLM:
             "metadata": {
                 "tokens_used": response.tokens_used,
                 "model": response.model,
-                "history_turns": len(messages) - 1
-            }
+                "history_turns": len(messages) - 1,
+            },
         }
 
     async def _level_3_proactive(
-        self,
-        user_input: str,
-        state: CollaborationState,
-        context: Dict[str, Any]
+        self, user_input: str, state: CollaborationState, context: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
         Level 3: Proactive - Act on detected patterns
@@ -273,7 +248,7 @@ Was this helpful? If not, I can adjust my pattern detection.
             pattern_info = {
                 "pattern_type": matching_pattern.pattern_type.value,
                 "trigger": matching_pattern.trigger,
-                "confidence": matching_pattern.confidence
+                "confidence": matching_pattern.confidence,
             }
 
         else:
@@ -290,7 +265,7 @@ Was this helpful? If not, I can adjust my pattern detection.
             messages=messages,
             system_prompt=EmpathyLevel.get_system_prompt(3),
             temperature=EmpathyLevel.get_temperature_recommendation(3),
-            max_tokens=EmpathyLevel.get_max_tokens_recommendation(3)
+            max_tokens=EmpathyLevel.get_max_tokens_recommendation(3),
         )
 
         return {
@@ -299,15 +274,12 @@ Was this helpful? If not, I can adjust my pattern detection.
             "metadata": {
                 "tokens_used": response.tokens_used,
                 "model": response.model,
-                "pattern": pattern_info
-            }
+                "pattern": pattern_info,
+            },
         }
 
     async def _level_4_anticipatory(
-        self,
-        user_input: str,
-        state: CollaborationState,
-        context: Dict[str, Any]
+        self, user_input: str, state: CollaborationState, context: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
         Level 4: Anticipatory - Predict future needs
@@ -345,7 +317,7 @@ Use anticipatory format:
             messages=messages,
             system_prompt=EmpathyLevel.get_system_prompt(4),
             temperature=EmpathyLevel.get_temperature_recommendation(4),
-            max_tokens=EmpathyLevel.get_max_tokens_recommendation(4)
+            max_tokens=EmpathyLevel.get_max_tokens_recommendation(4),
         )
 
         return {
@@ -355,15 +327,12 @@ Use anticipatory format:
                 "tokens_used": response.tokens_used,
                 "model": response.model,
                 "trajectory_analyzed": True,
-                "trust_level": state.trust_level
-            }
+                "trust_level": state.trust_level,
+            },
         }
 
     async def _level_5_systems(
-        self,
-        user_input: str,
-        state: CollaborationState,
-        context: Dict[str, Any]
+        self, user_input: str, state: CollaborationState, context: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
         Level 5: Systems - Cross-domain pattern learning
@@ -394,7 +363,7 @@ TASK:
             messages=messages,
             system_prompt=EmpathyLevel.get_system_prompt(5),
             temperature=EmpathyLevel.get_temperature_recommendation(5),
-            max_tokens=EmpathyLevel.get_max_tokens_recommendation(5)
+            max_tokens=EmpathyLevel.get_max_tokens_recommendation(5),
         )
 
         return {
@@ -404,8 +373,8 @@ TASK:
                 "tokens_used": response.tokens_used,
                 "model": response.model,
                 "pattern_library_size": len(self.pattern_library),
-                "systems_level": True
-            }
+                "systems_level": True,
+            },
         }
 
     def update_trust(self, user_id: str, outcome: str, magnitude: float = 1.0):
@@ -420,9 +389,7 @@ TASK:
         state = self._get_or_create_state(user_id)
         state.update_trust(outcome, magnitude)
 
-        logger.info(
-            f"Trust updated for {user_id}: {outcome} -> {state.trust_level:.2f}"
-        )
+        logger.info(f"Trust updated for {user_id}: {outcome} -> {state.trust_level:.2f}")
 
     def add_pattern(self, user_id: str, pattern: UserPattern):
         """
@@ -435,9 +402,7 @@ TASK:
         state = self._get_or_create_state(user_id)
         state.add_pattern(pattern)
 
-        logger.info(
-            f"Pattern added for {user_id}: {pattern.pattern_type.value}"
-        )
+        logger.info(f"Pattern added for {user_id}: {pattern.pattern_type.value}")
 
     def get_statistics(self, user_id: str) -> Dict[str, Any]:
         """

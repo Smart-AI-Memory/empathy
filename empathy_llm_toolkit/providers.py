@@ -8,13 +8,14 @@ Licensed under the Apache License, Version 2.0
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 
 @dataclass
 class LLMResponse:
     """Standardized response from any LLM provider"""
+
     content: str
     model: str
     tokens_used: int
@@ -40,7 +41,7 @@ class BaseLLMProvider(ABC):
         system_prompt: Optional[str] = None,
         temperature: float = 0.7,
         max_tokens: int = 1024,
-        **kwargs
+        **kwargs,
     ) -> LLMResponse:
         """
         Generate response from LLM.
@@ -88,21 +89,27 @@ class AnthropicProvider(BaseLLMProvider):
         model: str = "claude-3-5-sonnet-20241022",
         use_prompt_caching: bool = True,
         use_thinking: bool = False,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(api_key, **kwargs)
         self.model = model
         self.use_prompt_caching = use_prompt_caching
         self.use_thinking = use_thinking
 
+        # Validate API key is provided
+        if not api_key or not api_key.strip():
+            raise ValueError(
+                "API key is required for Anthropic provider. "
+                "Provide via api_key parameter or ANTHROPIC_API_KEY environment variable"
+            )
+
         # Lazy import to avoid requiring anthropic if not used
         try:
             import anthropic
+
             self.client = anthropic.Anthropic(api_key=api_key)
         except ImportError:
-            raise ImportError(
-                "anthropic package required. Install with: pip install anthropic"
-            )
+            raise ImportError("anthropic package required. Install with: pip install anthropic")
 
     async def generate(
         self,
@@ -110,7 +117,7 @@ class AnthropicProvider(BaseLLMProvider):
         system_prompt: Optional[str] = None,
         temperature: float = 0.7,
         max_tokens: int = 1024,
-        **kwargs
+        **kwargs,
     ) -> LLMResponse:
         """
         Generate response using Anthropic API with enhanced features.
@@ -126,7 +133,7 @@ class AnthropicProvider(BaseLLMProvider):
             "model": self.model,
             "max_tokens": max_tokens,
             "temperature": temperature,
-            "messages": messages
+            "messages": messages,
         }
 
         # Enable prompt caching for system prompts (Claude-specific)
@@ -135,7 +142,7 @@ class AnthropicProvider(BaseLLMProvider):
                 {
                     "type": "text",
                     "text": system_prompt,
-                    "cache_control": {"type": "ephemeral"}  # Cache for 5 minutes
+                    "cache_control": {"type": "ephemeral"},  # Cache for 5 minutes
                 }
             ]
         elif system_prompt:
@@ -145,7 +152,7 @@ class AnthropicProvider(BaseLLMProvider):
         if self.use_thinking:
             api_kwargs["thinking"] = {
                 "type": "enabled",
-                "budget_tokens": 2000  # Allow 2K tokens for reasoning
+                "budget_tokens": 2000,  # Allow 2K tokens for reasoning
             }
 
         # Add any additional kwargs
@@ -159,10 +166,10 @@ class AnthropicProvider(BaseLLMProvider):
         response_content = ""
 
         for block in response.content:
-            if hasattr(block, 'type'):
-                if block.type == 'thinking':
+            if hasattr(block, "type"):
+                if block.type == "thinking":
                     thinking_content = block.thinking
-                elif block.type == 'text':
+                elif block.type == "text":
                     response_content = block.text
             else:
                 response_content = block.text
@@ -172,11 +179,11 @@ class AnthropicProvider(BaseLLMProvider):
             "input_tokens": response.usage.input_tokens,
             "output_tokens": response.usage.output_tokens,
             "provider": "anthropic",
-            "model_family": "claude-3"
+            "model_family": "claude-3",
         }
 
         # Add cache performance metrics if available
-        if hasattr(response.usage, 'cache_creation_input_tokens'):
+        if hasattr(response.usage, "cache_creation_input_tokens"):
             metadata["cache_creation_tokens"] = response.usage.cache_creation_input_tokens
             metadata["cache_read_tokens"] = response.usage.cache_read_input_tokens
 
@@ -189,14 +196,11 @@ class AnthropicProvider(BaseLLMProvider):
             model=response.model,
             tokens_used=response.usage.input_tokens + response.usage.output_tokens,
             finish_reason=response.stop_reason,
-            metadata=metadata
+            metadata=metadata,
         )
 
     async def analyze_large_codebase(
-        self,
-        codebase_files: List[Dict[str, str]],
-        analysis_prompt: str,
-        **kwargs
+        self, codebase_files: List[Dict[str, str]], analysis_prompt: str, **kwargs
     ) -> LLMResponse:
         """
         Analyze large codebases using Claude's 200K context window.
@@ -212,10 +216,9 @@ class AnthropicProvider(BaseLLMProvider):
             LLMResponse with analysis results
         """
         # Build context from all files
-        file_context = "\n\n".join([
-            f"# File: {file['path']}\n{file['content']}"
-            for file in codebase_files
-        ])
+        file_context = "\n\n".join(
+            [f"# File: {file['path']}\n{file['content']}" for file in codebase_files]
+        )
 
         # Create system prompt with caching for file context
         system_parts = [
@@ -226,23 +229,18 @@ class AnthropicProvider(BaseLLMProvider):
             {
                 "type": "text",
                 "text": f"Codebase files:\n\n{file_context}",
-                "cache_control": {"type": "ephemeral"}  # Cache the codebase
-            }
+                "cache_control": {"type": "ephemeral"},  # Cache the codebase
+            },
         ]
 
-        messages = [
-            {
-                "role": "user",
-                "content": analysis_prompt
-            }
-        ]
+        messages = [{"role": "user", "content": analysis_prompt}]
 
         # Use extended max_tokens for comprehensive analysis
         return await self.generate(
             messages=messages,
             system_prompt=None,  # We'll pass it directly in api_kwargs
-            max_tokens=kwargs.pop('max_tokens', 4096),
-            **{**kwargs, "system": system_parts}
+            max_tokens=kwargs.pop("max_tokens", 4096),
+            **{**kwargs, "system": system_parts},
         )
 
     def get_model_info(self) -> Dict[str, Any]:
@@ -254,7 +252,7 @@ class AnthropicProvider(BaseLLMProvider):
                 "cost_per_1m_output": 75.00,
                 "supports_prompt_caching": True,
                 "supports_thinking": True,
-                "ideal_for": "Complex reasoning, large codebases"
+                "ideal_for": "Complex reasoning, large codebases",
             },
             "claude-3-5-sonnet-20241022": {
                 "max_tokens": 200000,
@@ -262,7 +260,7 @@ class AnthropicProvider(BaseLLMProvider):
                 "cost_per_1m_output": 15.00,
                 "supports_prompt_caching": True,
                 "supports_thinking": True,
-                "ideal_for": "General development, balanced cost/performance"
+                "ideal_for": "General development, balanced cost/performance",
             },
             "claude-3-haiku-20240307": {
                 "max_tokens": 200000,
@@ -270,17 +268,20 @@ class AnthropicProvider(BaseLLMProvider):
                 "cost_per_1m_output": 1.25,
                 "supports_prompt_caching": True,
                 "supports_thinking": False,
-                "ideal_for": "Fast responses, simple tasks"
-            }
+                "ideal_for": "Fast responses, simple tasks",
+            },
         }
 
-        return model_info.get(self.model, {
-            "max_tokens": 200000,
-            "cost_per_1m_input": 3.00,
-            "cost_per_1m_output": 15.00,
-            "supports_prompt_caching": True,
-            "supports_thinking": True
-        })
+        return model_info.get(
+            self.model,
+            {
+                "max_tokens": 200000,
+                "cost_per_1m_input": 3.00,
+                "cost_per_1m_output": 15.00,
+                "supports_prompt_caching": True,
+                "supports_thinking": True,
+            },
+        )
 
 
 class OpenAIProvider(BaseLLMProvider):
@@ -290,23 +291,24 @@ class OpenAIProvider(BaseLLMProvider):
     Supports GPT-4, GPT-3.5, and other OpenAI models.
     """
 
-    def __init__(
-        self,
-        api_key: Optional[str] = None,
-        model: str = "gpt-4-turbo-preview",
-        **kwargs
-    ):
+    def __init__(self, api_key: Optional[str] = None, model: str = "gpt-4-turbo-preview", **kwargs):
         super().__init__(api_key, **kwargs)
         self.model = model
+
+        # Validate API key is provided
+        if not api_key or not api_key.strip():
+            raise ValueError(
+                "API key is required for OpenAI provider. "
+                "Provide via api_key parameter or OPENAI_API_KEY environment variable"
+            )
 
         # Lazy import
         try:
             import openai
+
             self.client = openai.AsyncOpenAI(api_key=api_key)
         except ImportError:
-            raise ImportError(
-                "openai package required. Install with: pip install openai"
-            )
+            raise ImportError("openai package required. Install with: pip install openai")
 
     async def generate(
         self,
@@ -314,7 +316,7 @@ class OpenAIProvider(BaseLLMProvider):
         system_prompt: Optional[str] = None,
         temperature: float = 0.7,
         max_tokens: int = 1024,
-        **kwargs
+        **kwargs,
     ) -> LLMResponse:
         """Generate response using OpenAI API"""
 
@@ -328,7 +330,7 @@ class OpenAIProvider(BaseLLMProvider):
             messages=messages,
             temperature=temperature,
             max_tokens=max_tokens,
-            **kwargs
+            **kwargs,
         )
 
         # Convert to standardized format
@@ -340,8 +342,8 @@ class OpenAIProvider(BaseLLMProvider):
             metadata={
                 "input_tokens": response.usage.prompt_tokens,
                 "output_tokens": response.usage.completion_tokens,
-                "provider": "openai"
-            }
+                "provider": "openai",
+            },
         )
 
     def get_model_info(self) -> Dict[str, Any]:
@@ -350,25 +352,20 @@ class OpenAIProvider(BaseLLMProvider):
             "gpt-4-turbo-preview": {
                 "max_tokens": 128000,
                 "cost_per_1m_input": 10.00,
-                "cost_per_1m_output": 30.00
+                "cost_per_1m_output": 30.00,
             },
-            "gpt-4": {
-                "max_tokens": 8192,
-                "cost_per_1m_input": 30.00,
-                "cost_per_1m_output": 60.00
-            },
+            "gpt-4": {"max_tokens": 8192, "cost_per_1m_input": 30.00, "cost_per_1m_output": 60.00},
             "gpt-3.5-turbo": {
                 "max_tokens": 16385,
                 "cost_per_1m_input": 0.50,
-                "cost_per_1m_output": 1.50
-            }
+                "cost_per_1m_output": 1.50,
+            },
         }
 
-        return model_info.get(self.model, {
-            "max_tokens": 128000,
-            "cost_per_1m_input": 10.00,
-            "cost_per_1m_output": 30.00
-        })
+        return model_info.get(
+            self.model,
+            {"max_tokens": 128000, "cost_per_1m_input": 10.00, "cost_per_1m_output": 30.00},
+        )
 
 
 class LocalProvider(BaseLLMProvider):
@@ -378,12 +375,7 @@ class LocalProvider(BaseLLMProvider):
     For running models locally.
     """
 
-    def __init__(
-        self,
-        endpoint: str = "http://localhost:11434",
-        model: str = "llama2",
-        **kwargs
-    ):
+    def __init__(self, endpoint: str = "http://localhost:11434", model: str = "llama2", **kwargs):
         super().__init__(api_key=None, **kwargs)
         self.endpoint = endpoint
         self.model = model
@@ -394,7 +386,7 @@ class LocalProvider(BaseLLMProvider):
         system_prompt: Optional[str] = None,
         temperature: float = 0.7,
         max_tokens: int = 1024,
-        **kwargs
+        **kwargs,
     ) -> LLMResponse:
         """Generate response using local model"""
         import aiohttp
@@ -404,20 +396,14 @@ class LocalProvider(BaseLLMProvider):
             "model": self.model,
             "messages": messages,
             "stream": False,
-            "options": {
-                "temperature": temperature,
-                "num_predict": max_tokens
-            }
+            "options": {"temperature": temperature, "num_predict": max_tokens},
         }
 
         if system_prompt:
             payload["system"] = system_prompt
 
         async with aiohttp.ClientSession() as session:
-            async with session.post(
-                f"{self.endpoint}/api/chat",
-                json=payload
-            ) as response:
+            async with session.post(f"{self.endpoint}/api/chat", json=payload) as response:
                 result = await response.json()
 
                 return LLMResponse(
@@ -425,10 +411,7 @@ class LocalProvider(BaseLLMProvider):
                     model=self.model,
                     tokens_used=result.get("eval_count", 0) + result.get("prompt_eval_count", 0),
                     finish_reason="stop",
-                    metadata={
-                        "provider": "local",
-                        "endpoint": self.endpoint
-                    }
+                    metadata={"provider": "local", "endpoint": self.endpoint},
                 )
 
     def get_model_info(self) -> Dict[str, Any]:
@@ -437,5 +420,5 @@ class LocalProvider(BaseLLMProvider):
             "max_tokens": 4096,  # Depends on model
             "cost_per_1m_input": 0.0,  # Free (local)
             "cost_per_1m_output": 0.0,
-            "endpoint": self.endpoint
+            "endpoint": self.endpoint,
         }

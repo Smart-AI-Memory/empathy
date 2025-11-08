@@ -8,7 +8,7 @@ Licensed under the Apache License, Version 2.0
 """
 
 from enum import IntEnum
-from typing import Dict, Optional
+from typing import Dict
 
 
 class EmpathyLevel(IntEnum):
@@ -17,11 +17,12 @@ class EmpathyLevel(IntEnum):
 
     Each level builds on previous levels.
     """
-    REACTIVE = 1        # Help after being asked
-    GUIDED = 2          # Ask clarifying questions
-    PROACTIVE = 3       # Act before being asked (patterns)
-    ANTICIPATORY = 4    # Predict future needs (trajectory)
-    SYSTEMS = 5         # Build structures that scale (cross-domain)
+
+    REACTIVE = 1  # Help after being asked
+    GUIDED = 2  # Ask clarifying questions
+    PROACTIVE = 3  # Act before being asked (patterns)
+    ANTICIPATORY = 4  # Predict future needs (trajectory)
+    SYSTEMS = 5  # Build structures that scale (cross-domain)
 
     @classmethod
     def get_description(cls, level: int) -> str:
@@ -31,7 +32,7 @@ class EmpathyLevel(IntEnum):
             2: "Guided: Ask clarifying questions. Collaborative exploration.",
             3: "Proactive: Act before being asked. Pattern detection.",
             4: "Anticipatory: Predict future needs. Trajectory analysis.",
-            5: "Systems: Build structures that scale. Cross-domain learning."
+            5: "Systems: Build structures that scale. Cross-domain learning.",
         }
         return descriptions.get(level, "Unknown level")
 
@@ -110,7 +111,7 @@ Pattern contribution:
 1. Identify core principle (domain-agnostic)
 2. Show applicability to other domains
 3. Provide adaptation guidelines
-"""
+""",
         }
 
         return base + level_specific.get(level, "")
@@ -143,32 +144,32 @@ Pattern contribution:
                 "conversation_history": False,
                 "user_patterns": False,
                 "trajectory_data": False,
-                "pattern_library": False
+                "pattern_library": False,
             },
             2: {
                 "conversation_history": True,  # Need recent context
                 "user_patterns": False,
                 "trajectory_data": False,
-                "pattern_library": False
+                "pattern_library": False,
             },
             3: {
                 "conversation_history": True,
-                "user_patterns": True,         # Need detected patterns
+                "user_patterns": True,  # Need detected patterns
                 "trajectory_data": False,
-                "pattern_library": False
+                "pattern_library": False,
             },
             4: {
                 "conversation_history": True,
                 "user_patterns": True,
-                "trajectory_data": True,       # Need historical data
-                "pattern_library": False
+                "trajectory_data": True,  # Need historical data
+                "pattern_library": False,
             },
             5: {
                 "conversation_history": True,
                 "user_patterns": True,
                 "trajectory_data": True,
-                "pattern_library": True        # Need cross-domain patterns
-            }
+                "pattern_library": True,  # Need cross-domain patterns
+            },
         }
 
         return requirements.get(level, requirements[1])
@@ -181,11 +182,11 @@ Pattern contribution:
         Higher levels often need longer responses.
         """
         return {
-            1: 1024,   # Reactive: Concise answers
-            2: 1536,   # Guided: Questions + answer
-            3: 2048,   # Proactive: Explanation + action
-            4: 4096,   # Anticipatory: Full analysis
-            5: 4096,   # Systems: Pattern abstraction
+            1: 1024,  # Reactive: Concise answers
+            2: 1536,  # Guided: Questions + answer
+            3: 2048,  # Proactive: Explanation + action
+            4: 4096,  # Anticipatory: Full analysis
+            5: 4096,  # Systems: Pattern abstraction
         }.get(level, 1024)
 
     @classmethod
@@ -205,30 +206,30 @@ Pattern contribution:
                 "One-off questions",
                 "Simple information lookup",
                 "No context needed",
-                "Compliance scenarios"
+                "Compliance scenarios",
             ],
             2: [
                 "Ambiguous requests",
                 "Multiple valid approaches",
                 "Learning user preferences",
-                "High-stakes decisions"
+                "High-stakes decisions",
             ],
             3: [
                 "Established workflows",
                 "Repetitive tasks",
                 "Time-sensitive operations",
-                "Pattern-rich interactions"
+                "Pattern-rich interactions",
             ],
             4: [
                 "Predictable future events",
                 "Growth trajectory visible",
                 "Structural issues emerging",
-                "Prevention better than cure"
+                "Prevention better than cure",
             ],
             5: [
                 "Multiple similar domains",
                 "Reusable patterns identified",
                 "Scaling requirements",
-                "Cross-pollination opportunities"
-            ]
+                "Cross-pollination opportunities",
+            ],
         }.get(level, [])

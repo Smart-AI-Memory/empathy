@@ -8,15 +8,15 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
+import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Dict, List, Optional
-import logging
 
 from .emergence import EmergenceDetector
-from .exceptions import ValidationError, ConfidenceThresholdError
+from .exceptions import ValidationError
 from .feedback_loops import FeedbackLoopDetector
-from .leverage_points import LeveragePointAnalyzer, LeveragePoint
+from .leverage_points import LeveragePoint, LeveragePointAnalyzer
 
 
 @dataclass
@@ -88,7 +88,7 @@ class EmpathyOS:
         user_id: str,
         target_level: int = 3,
         confidence_threshold: float = 0.75,
-        logger: Optional[logging.Logger] = None
+        logger: Optional[logging.Logger] = None,
     ):
         """
         Initialize EmpathyOS
@@ -185,25 +185,30 @@ class EmpathyOS:
         """
         # Input validation
         if not isinstance(user_request, str):
-            raise ValidationError(f"user_request must be a string, got {type(user_request).__name__}")
+            raise ValidationError(
+                f"user_request must be a string, got {type(user_request).__name__}"
+            )
         if not user_request.strip():
             raise ValidationError("user_request cannot be empty")
 
-        self.logger.info("Level 1 reactive request started", extra={
-            "user_id": self.user_id,
-            "empathy_level": 1,
-            "request_length": len(user_request)
-        })
+        self.logger.info(
+            "Level 1 reactive request started",
+            extra={
+                "user_id": self.user_id,
+                "empathy_level": 1,
+                "request_length": len(user_request),
+            },
+        )
 
         self.current_empathy_level = 1
 
         # Process request (implement your domain logic here)
         result = await self._process_request(user_request)
 
-        self.logger.info("Level 1 reactive request completed", extra={
-            "user_id": self.user_id,
-            "success": result.get("status") == "success"
-        })
+        self.logger.info(
+            "Level 1 reactive request completed",
+            extra={"user_id": self.user_id, "success": result.get("status") == "success"},
+        )
 
         # Update collaboration state
         self.collaboration_state.total_interactions += 1
@@ -238,17 +243,22 @@ class EmpathyOS:
         """
         # Input validation
         if not isinstance(user_request, str):
-            raise ValidationError(f"user_request must be a string, got {type(user_request).__name__}")
+            raise ValidationError(
+                f"user_request must be a string, got {type(user_request).__name__}"
+            )
         if not user_request.strip():
             raise ValidationError("user_request cannot be empty")
 
         self.current_empathy_level = 2
 
-        self.logger.info("Level 2 guided request started", extra={
-            "user_id": self.user_id,
-            "empathy_level": 2,
-            "request_length": len(user_request)
-        })
+        self.logger.info(
+            "Level 2 guided request started",
+            extra={
+                "user_id": self.user_id,
+                "empathy_level": 2,
+                "request_length": len(user_request),
+            },
+        )
 
         # Use Voss's calibrated questions
         clarification = await self._ask_calibrated_questions(user_request)
@@ -273,12 +283,15 @@ class EmpathyOS:
         self.collaboration_state.total_interactions += 1
         self.collaboration_state.shared_context.update(clarification)
 
-        self.logger.info("Level 2 guided request completed", extra={
-            "user_id": self.user_id,
-            "empathy_level": 2,
-            "action": "proceed",
-            "clarification_applied": True
-        })
+        self.logger.info(
+            "Level 2 guided request completed",
+            extra={
+                "user_id": self.user_id,
+                "empathy_level": 2,
+                "action": "proceed",
+                "clarification_applied": True,
+            },
+        )
 
         return {
             "level": 2,
@@ -318,11 +331,14 @@ class EmpathyOS:
 
         self.current_empathy_level = 3
 
-        self.logger.info("Level 3 proactive analysis started", extra={
-            "user_id": self.user_id,
-            "empathy_level": 3,
-            "context_keys": list(context.keys())
-        })
+        self.logger.info(
+            "Level 3 proactive analysis started",
+            extra={
+                "user_id": self.user_id,
+                "empathy_level": 3,
+                "context_keys": list(context.keys()),
+            },
+        )
 
         # Detect current patterns
         active_patterns = self._detect_active_patterns(context)
@@ -346,13 +362,18 @@ class EmpathyOS:
             outcome = "success" if result["success"] else "failure"
             self.collaboration_state.update_trust(outcome)
 
-        self.logger.info("Level 3 proactive actions completed", extra={
-            "user_id": self.user_id,
-            "empathy_level": 3,
-            "patterns_detected": len(active_patterns),
-            "actions_taken": len(proactive_actions),
-            "success_rate": sum(1 for r in results if r["success"]) / len(results) if results else 0
-        })
+        self.logger.info(
+            "Level 3 proactive actions completed",
+            extra={
+                "user_id": self.user_id,
+                "empathy_level": 3,
+                "patterns_detected": len(active_patterns),
+                "actions_taken": len(proactive_actions),
+                "success_rate": (
+                    sum(1 for r in results if r["success"]) / len(results) if results else 0
+                ),
+            },
+        )
 
         return {
             "level": 3,
@@ -390,17 +411,22 @@ class EmpathyOS:
         """
         # Input validation
         if not isinstance(system_trajectory, dict):
-            raise ValidationError(f"system_trajectory must be a dict, got {type(system_trajectory).__name__}")
+            raise ValidationError(
+                f"system_trajectory must be a dict, got {type(system_trajectory).__name__}"
+            )
         if not system_trajectory:
             raise ValidationError("system_trajectory cannot be empty")
 
         self.current_empathy_level = 4
 
-        self.logger.info("Level 4 anticipatory prediction started", extra={
-            "user_id": self.user_id,
-            "empathy_level": 4,
-            "trajectory_keys": list(system_trajectory.keys())
-        })
+        self.logger.info(
+            "Level 4 anticipatory prediction started",
+            extra={
+                "user_id": self.user_id,
+                "empathy_level": 4,
+                "trajectory_keys": list(system_trajectory.keys()),
+            },
+        )
 
         # Analyze system trajectory
         predicted_bottlenecks = self._predict_future_bottlenecks(system_trajectory)
@@ -425,13 +451,18 @@ class EmpathyOS:
             outcome = "success" if result["success"] else "failure"
             self.collaboration_state.update_trust(outcome)
 
-        self.logger.info("Level 4 anticipatory interventions completed", extra={
-            "user_id": self.user_id,
-            "empathy_level": 4,
-            "bottlenecks_predicted": len(predicted_bottlenecks),
-            "interventions_executed": len(interventions),
-            "success_rate": sum(1 for r in results if r["success"]) / len(results) if results else 0
-        })
+        self.logger.info(
+            "Level 4 anticipatory interventions completed",
+            extra={
+                "user_id": self.user_id,
+                "empathy_level": 4,
+                "bottlenecks_predicted": len(predicted_bottlenecks),
+                "interventions_executed": len(interventions),
+                "success_rate": (
+                    sum(1 for r in results if r["success"]) / len(results) if results else 0
+                ),
+            },
+        )
 
         return {
             "level": 4,
@@ -471,17 +502,22 @@ class EmpathyOS:
         """
         # Input validation
         if not isinstance(domain_context, dict):
-            raise ValidationError(f"domain_context must be a dict, got {type(domain_context).__name__}")
+            raise ValidationError(
+                f"domain_context must be a dict, got {type(domain_context).__name__}"
+            )
         if not domain_context:
             raise ValidationError("domain_context cannot be empty")
 
         self.current_empathy_level = 5
 
-        self.logger.info("Level 5 systems framework design started", extra={
-            "user_id": self.user_id,
-            "empathy_level": 5,
-            "domain_keys": list(domain_context.keys())
-        })
+        self.logger.info(
+            "Level 5 systems framework design started",
+            extra={
+                "user_id": self.user_id,
+                "empathy_level": 5,
+                "domain_keys": list(domain_context.keys()),
+            },
+        )
 
         # Identify problem class (not individual problem)
         problem_classes = self._identify_problem_classes(domain_context)
@@ -502,13 +538,16 @@ class EmpathyOS:
         # Implement frameworks
         results = await self._implement_frameworks(frameworks)
 
-        self.logger.info("Level 5 systems frameworks implemented", extra={
-            "user_id": self.user_id,
-            "empathy_level": 5,
-            "problem_classes": len(problem_classes),
-            "leverage_points_found": len(leverage_points),
-            "frameworks_deployed": len(frameworks)
-        })
+        self.logger.info(
+            "Level 5 systems frameworks implemented",
+            extra={
+                "user_id": self.user_id,
+                "empathy_level": 5,
+                "problem_classes": len(problem_classes),
+                "leverage_points_found": len(leverage_points),
+                "frameworks_deployed": len(frameworks),
+            },
+        )
 
         return {
             "level": 5,
@@ -648,26 +687,25 @@ class EmpathyOS:
         for action in actions:
             # Validate action has required fields
             if not action.get("action"):
-                results.append({
-                    "action": action,
-                    "success": False,
-                    "error": "Missing 'action' field"
-                })
+                results.append(
+                    {"action": action, "success": False, "error": "Missing 'action' field"}
+                )
                 continue
 
             # Log the action (in production, this would execute real logic)
-            self.logger.debug(f"Executing proactive action: {action.get('action')}", extra={
-                "user_id": self.user_id,
-                "action_type": action.get("action"),
-                "confidence": action.get("confidence", 0)
-            })
+            self.logger.debug(
+                f"Executing proactive action: {action.get('action')}",
+                extra={
+                    "user_id": self.user_id,
+                    "action_type": action.get("action"),
+                    "confidence": action.get("confidence", 0),
+                },
+            )
 
             # Simulate successful execution
-            results.append({
-                "action": action,
-                "success": True,
-                "executed_at": datetime.now().isoformat()
-            })
+            results.append(
+                {"action": action, "success": True, "executed_at": datetime.now().isoformat()}
+            )
 
         return results
 
@@ -749,17 +787,17 @@ class EmpathyOS:
         timeframe_lower = timeframe.lower()
 
         # Pattern: "X days"
-        match = re.search(r'(\d+)\s*days?', timeframe_lower)
+        match = re.search(r"(\d+)\s*days?", timeframe_lower)
         if match:
             return int(match.group(1))
 
         # Pattern: "X weeks"
-        match = re.search(r'(\d+)\s*weeks?', timeframe_lower)
+        match = re.search(r"(\d+)\s*weeks?", timeframe_lower)
         if match:
             return int(match.group(1)) * 7
 
         # Pattern: "X months" or "X-Y months"
-        match = re.search(r'(\d+)(?:-(\d+))?\s*months?', timeframe_lower)
+        match = re.search(r"(\d+)(?:-(\d+))?\s*months?", timeframe_lower)
         if match:
             start = int(match.group(1))
             end = int(match.group(2)) if match.group(2) else start
@@ -778,9 +816,7 @@ class EmpathyOS:
             "timeline": "Implement before threshold",
         }
 
-    async def _execute_anticipatory_interventions(
-        self, interventions: List[Dict]
-    ) -> List[Dict]:
+    async def _execute_anticipatory_interventions(self, interventions: List[Dict]) -> List[Dict]:
         """
         Execute anticipatory interventions
 
@@ -801,28 +837,35 @@ class EmpathyOS:
         for intervention in interventions:
             # Validate intervention has required fields
             if not intervention.get("type"):
-                results.append({
-                    "intervention": intervention,
-                    "success": False,
-                    "error": "Missing 'type' field"
-                })
+                results.append(
+                    {
+                        "intervention": intervention,
+                        "success": False,
+                        "error": "Missing 'type' field",
+                    }
+                )
                 continue
 
             # Log the intervention (in production, this would trigger real infrastructure changes)
-            self.logger.info(f"Executing anticipatory intervention: {intervention.get('type')}", extra={
-                "user_id": self.user_id,
-                "intervention_type": intervention.get("type"),
-                "target": intervention.get("target"),
-                "timeline": intervention.get("timeline")
-            })
+            self.logger.info(
+                f"Executing anticipatory intervention: {intervention.get('type')}",
+                extra={
+                    "user_id": self.user_id,
+                    "intervention_type": intervention.get("type"),
+                    "target": intervention.get("target"),
+                    "timeline": intervention.get("timeline"),
+                },
+            )
 
             # Simulate successful intervention
-            results.append({
-                "intervention": intervention,
-                "success": True,
-                "executed_at": datetime.now().isoformat(),
-                "status": "intervention_deployed"
-            })
+            results.append(
+                {
+                    "intervention": intervention,
+                    "success": True,
+                    "executed_at": datetime.now().isoformat(),
+                    "status": "intervention_deployed",
+                }
+            )
 
         return results
 
@@ -880,29 +923,32 @@ class EmpathyOS:
         for framework in frameworks:
             # Validate framework has required fields
             if not framework.get("name"):
-                results.append({
-                    "framework": framework,
-                    "deployed": False,
-                    "error": "Missing 'name' field"
-                })
+                results.append(
+                    {"framework": framework, "deployed": False, "error": "Missing 'name' field"}
+                )
                 continue
 
             # Log the framework deployment (in production, this would deploy real infrastructure)
-            self.logger.info(f"Deploying systems framework: {framework.get('name')}", extra={
-                "user_id": self.user_id,
-                "framework_name": framework.get("name"),
-                "framework_type": framework.get("type"),
-                "leverage_level": framework.get("leverage_level")
-            })
+            self.logger.info(
+                f"Deploying systems framework: {framework.get('name')}",
+                extra={
+                    "user_id": self.user_id,
+                    "framework_name": framework.get("name"),
+                    "framework_type": framework.get("type"),
+                    "leverage_level": framework.get("leverage_level"),
+                },
+            )
 
             # Simulate successful deployment
-            results.append({
-                "framework": framework,
-                "deployed": True,
-                "deployed_at": datetime.now().isoformat(),
-                "status": "framework_active",
-                "impact_scope": "system_wide"
-            })
+            results.append(
+                {
+                    "framework": framework,
+                    "deployed": True,
+                    "deployed_at": datetime.now().isoformat(),
+                    "status": "framework_active",
+                    "impact_scope": "system_wide",
+                }
+            )
 
         return results
 

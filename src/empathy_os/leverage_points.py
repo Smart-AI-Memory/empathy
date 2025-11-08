@@ -25,22 +25,22 @@ class LeverageLevel(IntEnum):
     """
 
     # Low leverage (easy to change, small impact)
-    PARAMETERS = 1           # Constants, numbers (least effective)
-    BUFFERS = 2             # Stabilizing stocks relative to flows
-    STOCK_FLOW = 3          # Physical structure of system
-    DELAYS = 4              # Length of delays relative to change rate
-    BALANCING_LOOPS = 5     # Strength of negative feedback loops
-    REINFORCING_LOOPS = 6   # Strength of positive feedback loops
+    PARAMETERS = 1  # Constants, numbers (least effective)
+    BUFFERS = 2  # Stabilizing stocks relative to flows
+    STOCK_FLOW = 3  # Physical structure of system
+    DELAYS = 4  # Length of delays relative to change rate
+    BALANCING_LOOPS = 5  # Strength of negative feedback loops
+    REINFORCING_LOOPS = 6  # Strength of positive feedback loops
 
     # Medium leverage
-    INFORMATION_FLOWS = 7   # Structure of information flows
-    RULES = 8               # Rules of the system (incentives, constraints)
-    SELF_ORGANIZATION = 9   # Power to add/change system structure
+    INFORMATION_FLOWS = 7  # Structure of information flows
+    RULES = 8  # Rules of the system (incentives, constraints)
+    SELF_ORGANIZATION = 9  # Power to add/change system structure
 
     # High leverage (hard to change, huge impact)
-    GOALS = 10              # Goals of the system
-    PARADIGM = 11           # Mindset or paradigm out of which system arises
-    TRANSCEND_PARADIGM = 12 # Power to transcend paradigms (most effective)
+    GOALS = 10  # Goals of the system
+    PARADIGM = 11  # Mindset or paradigm out of which system arises
+    TRANSCEND_PARADIGM = 12  # Power to transcend paradigms (most effective)
 
 
 @dataclass
@@ -124,10 +124,7 @@ class LeveragePointAnalyzer:
         """Initialize LeveragePointAnalyzer"""
         self.identified_points: List[LeveragePoint] = []
 
-    def find_leverage_points(
-        self,
-        problem_class: Dict[str, Any]
-    ) -> List[LeveragePoint]:
+    def find_leverage_points(self, problem_class: Dict[str, Any]) -> List[LeveragePoint]:
         """
         Find high-leverage intervention points for a problem class
 
@@ -176,10 +173,7 @@ class LeveragePointAnalyzer:
         self.identified_points.extend(points_ranked)
         return points_ranked
 
-    def rank_by_effectiveness(
-        self,
-        points: List[LeveragePoint]
-    ) -> List[LeveragePoint]:
+    def rank_by_effectiveness(self, points: List[LeveragePoint]) -> List[LeveragePoint]:
         """
         Rank leverage points by Meadows's hierarchy
 
@@ -194,189 +188,197 @@ class LeveragePointAnalyzer:
         """
         return sorted(points, key=lambda p: p.level, reverse=True)
 
-    def _analyze_documentation_problem(
-        self,
-        problem: Dict[str, Any]
-    ) -> List[LeveragePoint]:
+    def _analyze_documentation_problem(self, problem: Dict[str, Any]) -> List[LeveragePoint]:
         """Analyze leverage points for documentation problems"""
         points = []
 
         # High leverage: Change paradigm (how we think about docs)
-        points.append(LeveragePoint(
-            level=LeverageLevel.PARADIGM,
-            description="Shift paradigm: Documentation as learning artifact, not compliance burden",
-            problem_domain="documentation",
-            impact_potential=0.9,
-            implementation_difficulty=0.8,
-            proposed_intervention="Reframe documentation as 'capturing team learning' not 'creating artifacts'",
-            expected_outcomes=[
-                "Developers see value in documentation",
-                "Documentation becomes natural part of workflow",
-                "Quality improves as purpose clarifies"
-            ]
-        ))
+        points.append(
+            LeveragePoint(
+                level=LeverageLevel.PARADIGM,
+                description="Shift paradigm: Documentation as learning artifact, not compliance burden",
+                problem_domain="documentation",
+                impact_potential=0.9,
+                implementation_difficulty=0.8,
+                proposed_intervention="Reframe documentation as 'capturing team learning' not 'creating artifacts'",
+                expected_outcomes=[
+                    "Developers see value in documentation",
+                    "Documentation becomes natural part of workflow",
+                    "Quality improves as purpose clarifies",
+                ],
+            )
+        )
 
         # High leverage: Change goal
-        points.append(LeveragePoint(
-            level=LeverageLevel.GOALS,
-            description="Change goal: From 'comprehensive docs' to 'shared understanding'",
-            problem_domain="documentation",
-            impact_potential=0.85,
-            implementation_difficulty=0.6,
-            proposed_intervention="Optimize for team understanding not document completeness",
-            expected_outcomes=[
-                "Focus on what matters",
-                "Less redundant documentation",
-                "More collaboration"
-            ]
-        ))
+        points.append(
+            LeveragePoint(
+                level=LeverageLevel.GOALS,
+                description="Change goal: From 'comprehensive docs' to 'shared understanding'",
+                problem_domain="documentation",
+                impact_potential=0.85,
+                implementation_difficulty=0.6,
+                proposed_intervention="Optimize for team understanding not document completeness",
+                expected_outcomes=[
+                    "Focus on what matters",
+                    "Less redundant documentation",
+                    "More collaboration",
+                ],
+            )
+        )
 
         # Medium leverage: Self-organization (Level 5 systems thinking)
-        points.append(LeveragePoint(
-            level=LeverageLevel.SELF_ORGANIZATION,
-            description="Enable self-organization: AI agents auto-generate docs from patterns",
-            problem_domain="documentation",
-            impact_potential=0.8,
-            implementation_difficulty=0.5,
-            proposed_intervention="Deploy Level 5 anticipatory system that detects patterns and auto-documents",
-            expected_outcomes=[
-                "Reduce manual documentation by 70%",
-                "Free developers for creative work",
-                "Maintain quality through pattern detection"
-            ]
-        ))
+        points.append(
+            LeveragePoint(
+                level=LeverageLevel.SELF_ORGANIZATION,
+                description="Enable self-organization: AI agents auto-generate docs from patterns",
+                problem_domain="documentation",
+                impact_potential=0.8,
+                implementation_difficulty=0.5,
+                proposed_intervention="Deploy Level 5 anticipatory system that detects patterns and auto-documents",
+                expected_outcomes=[
+                    "Reduce manual documentation by 70%",
+                    "Free developers for creative work",
+                    "Maintain quality through pattern detection",
+                ],
+            )
+        )
 
         # Low leverage: Parameters (quickest but least impactful)
-        points.append(LeveragePoint(
-            level=LeverageLevel.PARAMETERS,
-            description="Adjust parameters: Reduce required documentation fields",
-            problem_domain="documentation",
-            impact_potential=0.3,
-            implementation_difficulty=0.1,
-            proposed_intervention="Cut required fields from 20 to 8",
-            expected_outcomes=["Faster documentation", "May not address root cause"]
-        ))
+        points.append(
+            LeveragePoint(
+                level=LeverageLevel.PARAMETERS,
+                description="Adjust parameters: Reduce required documentation fields",
+                problem_domain="documentation",
+                impact_potential=0.3,
+                implementation_difficulty=0.1,
+                proposed_intervention="Cut required fields from 20 to 8",
+                expected_outcomes=["Faster documentation", "May not address root cause"],
+            )
+        )
 
         return points
 
-    def _analyze_trust_problem(
-        self,
-        problem: Dict[str, Any]
-    ) -> List[LeveragePoint]:
+    def _analyze_trust_problem(self, problem: Dict[str, Any]) -> List[LeveragePoint]:
         """Analyze leverage points for trust problems"""
         points = []
 
         # High leverage: Paradigm shift
-        points.append(LeveragePoint(
-            level=LeverageLevel.PARADIGM,
-            description="Shift paradigm: AI as collaborator, not tool",
-            problem_domain="trust",
-            impact_potential=0.9,
-            implementation_difficulty=0.8,
-            proposed_intervention="Reframe AI relationship from automation to collaboration",
-            expected_outcomes=[
-                "Users engage differently with AI",
-                "Set appropriate expectations",
-                "Build genuine partnership"
-            ]
-        ))
+        points.append(
+            LeveragePoint(
+                level=LeverageLevel.PARADIGM,
+                description="Shift paradigm: AI as collaborator, not tool",
+                problem_domain="trust",
+                impact_potential=0.9,
+                implementation_difficulty=0.8,
+                proposed_intervention="Reframe AI relationship from automation to collaboration",
+                expected_outcomes=[
+                    "Users engage differently with AI",
+                    "Set appropriate expectations",
+                    "Build genuine partnership",
+                ],
+            )
+        )
 
         # High leverage: Information flows
-        points.append(LeveragePoint(
-            level=LeverageLevel.INFORMATION_FLOWS,
-            description="Increase transparency: Show AI reasoning process",
-            problem_domain="trust",
-            impact_potential=0.75,
-            implementation_difficulty=0.4,
-            proposed_intervention="Implement explainable AI with visible reasoning chains",
-            expected_outcomes=[
-                "Users understand AI decisions",
-                "Can verify AI logic",
-                "Trust through transparency"
-            ]
-        ))
+        points.append(
+            LeveragePoint(
+                level=LeverageLevel.INFORMATION_FLOWS,
+                description="Increase transparency: Show AI reasoning process",
+                problem_domain="trust",
+                impact_potential=0.75,
+                implementation_difficulty=0.4,
+                proposed_intervention="Implement explainable AI with visible reasoning chains",
+                expected_outcomes=[
+                    "Users understand AI decisions",
+                    "Can verify AI logic",
+                    "Trust through transparency",
+                ],
+            )
+        )
 
         # Medium leverage: Reinforcing feedback loops
-        points.append(LeveragePoint(
-            level=LeverageLevel.REINFORCING_LOOPS,
-            description="Activate virtuous cycle: Success → Trust → Delegation → More Success",
-            problem_domain="trust",
-            impact_potential=0.7,
-            implementation_difficulty=0.5,
-            proposed_intervention="Start with high-confidence, low-risk tasks to build momentum",
-            expected_outcomes=[
-                "Quick wins build trust",
-                "Positive feedback loop activated",
-                "Natural progression to harder tasks"
-            ]
-        ))
+        points.append(
+            LeveragePoint(
+                level=LeverageLevel.REINFORCING_LOOPS,
+                description="Activate virtuous cycle: Success → Trust → Delegation → More Success",
+                problem_domain="trust",
+                impact_potential=0.7,
+                implementation_difficulty=0.5,
+                proposed_intervention="Start with high-confidence, low-risk tasks to build momentum",
+                expected_outcomes=[
+                    "Quick wins build trust",
+                    "Positive feedback loop activated",
+                    "Natural progression to harder tasks",
+                ],
+            )
+        )
 
         return points
 
-    def _analyze_efficiency_problem(
-        self,
-        problem: Dict[str, Any]
-    ) -> List[LeveragePoint]:
+    def _analyze_efficiency_problem(self, problem: Dict[str, Any]) -> List[LeveragePoint]:
         """Analyze leverage points for efficiency problems"""
         points = []
 
         # High leverage: Goals
-        points.append(LeveragePoint(
-            level=LeverageLevel.GOALS,
-            description="Redefine goal: From 'fast completion' to 'sustainable pace'",
-            problem_domain="efficiency",
-            impact_potential=0.8,
-            implementation_difficulty=0.6,
-            proposed_intervention="Optimize for long-term throughput not short-term speed",
-            expected_outcomes=["Prevent burnout", "Sustainable productivity", "Higher quality"]
-        ))
+        points.append(
+            LeveragePoint(
+                level=LeverageLevel.GOALS,
+                description="Redefine goal: From 'fast completion' to 'sustainable pace'",
+                problem_domain="efficiency",
+                impact_potential=0.8,
+                implementation_difficulty=0.6,
+                proposed_intervention="Optimize for long-term throughput not short-term speed",
+                expected_outcomes=["Prevent burnout", "Sustainable productivity", "Higher quality"],
+            )
+        )
 
         # Medium leverage: Delays
-        points.append(LeveragePoint(
-            level=LeverageLevel.DELAYS,
-            description="Reduce feedback delays: Real-time testing and validation",
-            problem_domain="efficiency",
-            impact_potential=0.65,
-            implementation_difficulty=0.4,
-            proposed_intervention="Implement continuous testing with instant feedback",
-            expected_outcomes=["Faster iteration", "Catch errors early", "Better learning"]
-        ))
+        points.append(
+            LeveragePoint(
+                level=LeverageLevel.DELAYS,
+                description="Reduce feedback delays: Real-time testing and validation",
+                problem_domain="efficiency",
+                impact_potential=0.65,
+                implementation_difficulty=0.4,
+                proposed_intervention="Implement continuous testing with instant feedback",
+                expected_outcomes=["Faster iteration", "Catch errors early", "Better learning"],
+            )
+        )
 
         return points
 
-    def _generic_leverage_analysis(
-        self,
-        problem: Dict[str, Any]
-    ) -> List[LeveragePoint]:
+    def _generic_leverage_analysis(self, problem: Dict[str, Any]) -> List[LeveragePoint]:
         """Generic leverage point analysis for unknown problem types"""
         points = []
 
         # Always consider paradigm shift (highest leverage)
-        points.append(LeveragePoint(
-            level=LeverageLevel.PARADIGM,
-            description="Question underlying assumptions about this problem",
-            problem_domain=problem.get("class", "unknown"),
-            impact_potential=0.8,
-            implementation_difficulty=0.8,
-            proposed_intervention="Examine and challenge fundamental beliefs about problem"
-        ))
+        points.append(
+            LeveragePoint(
+                level=LeverageLevel.PARADIGM,
+                description="Question underlying assumptions about this problem",
+                problem_domain=problem.get("class", "unknown"),
+                impact_potential=0.8,
+                implementation_difficulty=0.8,
+                proposed_intervention="Examine and challenge fundamental beliefs about problem",
+            )
+        )
 
         # Consider information flows
-        points.append(LeveragePoint(
-            level=LeverageLevel.INFORMATION_FLOWS,
-            description="Improve information flow and transparency",
-            problem_domain=problem.get("class", "unknown"),
-            impact_potential=0.6,
-            implementation_difficulty=0.4,
-            proposed_intervention="Make relevant information more accessible to stakeholders"
-        ))
+        points.append(
+            LeveragePoint(
+                level=LeverageLevel.INFORMATION_FLOWS,
+                description="Improve information flow and transparency",
+                problem_domain=problem.get("class", "unknown"),
+                impact_potential=0.6,
+                implementation_difficulty=0.4,
+                proposed_intervention="Make relevant information more accessible to stakeholders",
+            )
+        )
 
         return points
 
     def get_top_leverage_points(
-        self,
-        n: int = 3,
-        min_level: Optional[LeverageLevel] = None
+        self, n: int = 3, min_level: Optional[LeverageLevel] = None
     ) -> List[LeveragePoint]:
         """
         Get top N leverage points, optionally filtered by minimum level
@@ -395,10 +397,7 @@ class LeveragePointAnalyzer:
 
         return sorted(points, key=lambda p: p.level, reverse=True)[:n]
 
-    def analyze_intervention_feasibility(
-        self,
-        point: LeveragePoint
-    ) -> Dict[str, Any]:
+    def analyze_intervention_feasibility(self, point: LeveragePoint) -> Dict[str, Any]:
         """
         Analyze feasibility of intervening at a leverage point
 
@@ -434,7 +433,7 @@ class LeveragePointAnalyzer:
             "feasibility_score": feasibility_score,
             "recommendation": recommendation,
             "risks": point.risks,
-            "expected_outcomes": point.expected_outcomes
+            "expected_outcomes": point.expected_outcomes,
         }
 
     def reset(self):

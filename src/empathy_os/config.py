@@ -11,14 +11,15 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import os
 import json
+import os
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Optional, Dict, Any
-from dataclasses import dataclass, field, asdict
+from typing import Any, Dict, Optional
 
 try:
     import yaml
+
     YAML_AVAILABLE = True
 except ImportError:
     YAML_AVAILABLE = False
@@ -97,11 +98,10 @@ class EmpathyConfig:
         """
         if not YAML_AVAILABLE:
             raise ImportError(
-                "PyYAML is required for YAML configuration. "
-                "Install with: pip install pyyaml"
+                "PyYAML is required for YAML configuration. " "Install with: pip install pyyaml"
             )
 
-        with open(filepath, 'r') as f:
+        with open(filepath, "r") as f:
             data = yaml.safe_load(f)
 
         return cls(**data)
@@ -121,7 +121,7 @@ class EmpathyConfig:
             >>> config = EmpathyConfig.from_json("empathy.config.json")
             >>> empathy = EmpathyOS(config=config)
         """
-        with open(filepath, 'r') as f:
+        with open(filepath, "r") as f:
             data = json.load(f)
 
         return cls(**data)
@@ -156,19 +156,29 @@ class EmpathyConfig:
         for key, value in os.environ.items():
             if key.startswith(prefix):
                 # Convert EMPATHY_USER_ID -> user_id
-                field_name = key[len(prefix):].lower()
+                field_name = key[len(prefix) :].lower()
 
                 # Type conversion based on field name
                 if field_name in ("target_level",):
                     data[field_name] = int(value)
-                elif field_name in ("confidence_threshold", "trust_building_rate",
-                                   "trust_erosion_rate", "pattern_confidence_threshold"):
+                elif field_name in (
+                    "confidence_threshold",
+                    "trust_building_rate",
+                    "trust_erosion_rate",
+                    "pattern_confidence_threshold",
+                ):
                     data[field_name] = float(value)
-                elif field_name in ("persistence_enabled", "state_persistence",
-                                   "metrics_enabled", "structured_logging",
-                                   "pattern_library_enabled", "pattern_sharing",
-                                   "async_enabled", "feedback_loop_monitoring",
-                                   "leverage_point_analysis"):
+                elif field_name in (
+                    "persistence_enabled",
+                    "state_persistence",
+                    "metrics_enabled",
+                    "structured_logging",
+                    "pattern_library_enabled",
+                    "pattern_sharing",
+                    "async_enabled",
+                    "feedback_loop_monitoring",
+                    "leverage_point_analysis",
+                ):
                     data[field_name] = value.lower() in ("true", "1", "yes")
                 else:
                     data[field_name] = value
@@ -206,14 +216,14 @@ class EmpathyConfig:
             "empathy.config.yml",
             "empathy.config.yaml",
             ".empathy.json",
-            "empathy.config.json"
+            "empathy.config.json",
         ]
 
         for path in search_paths:
             if path and Path(path).exists():
-                if path.endswith(('.yml', '.yaml')):
+                if path.endswith((".yml", ".yaml")):
                     return cls.from_yaml(path)
-                elif path.endswith('.json'):
+                elif path.endswith(".json"):
                     return cls.from_json(path)
 
         # No config file found - return default
@@ -232,13 +242,12 @@ class EmpathyConfig:
         """
         if not YAML_AVAILABLE:
             raise ImportError(
-                "PyYAML is required for YAML export. "
-                "Install with: pip install pyyaml"
+                "PyYAML is required for YAML export. " "Install with: pip install pyyaml"
             )
 
         data = asdict(self)
 
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             yaml.dump(data, f, default_flow_style=False, sort_keys=False)
 
     def to_json(self, filepath: str, indent: int = 2):
@@ -255,7 +264,7 @@ class EmpathyConfig:
         """
         data = asdict(self)
 
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             json.dump(data, f, indent=indent)
 
     def to_dict(self) -> Dict[str, Any]:
@@ -345,9 +354,7 @@ class EmpathyConfig:
 
 
 def load_config(
-    filepath: Optional[str] = None,
-    use_env: bool = True,
-    defaults: Optional[Dict[str, Any]] = None
+    filepath: Optional[str] = None, use_env: bool = True, defaults: Optional[Dict[str, Any]] = None
 ) -> EmpathyConfig:
     """
     Load configuration with flexible precedence
@@ -387,8 +394,14 @@ def load_config(
         file_found = True
     else:
         # Check default config file locations
-        for default_path in [".empathy.yml", ".empathy.yaml", "empathy.config.yml",
-                            "empathy.config.yaml", ".empathy.json", "empathy.config.json"]:
+        for default_path in [
+            ".empathy.yml",
+            ".empathy.yaml",
+            "empathy.config.yml",
+            "empathy.config.yaml",
+            ".empathy.json",
+            "empathy.config.json",
+        ]:
             if Path(default_path).exists():
                 file_found = True
                 break

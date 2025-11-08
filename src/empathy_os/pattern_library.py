@@ -69,6 +69,7 @@ class Pattern:
 @dataclass
 class PatternMatch:
     """Result of pattern matching against current context"""
+
     pattern: Pattern
     relevance_score: float  # 0.0-1.0, how relevant to current context
     matching_factors: List[str]  # What made this pattern match
@@ -119,11 +120,7 @@ class PatternLibrary:
         self.agent_contributions: Dict[str, List[str]] = {}  # agent_id -> pattern_ids
         self.pattern_graph: Dict[str, List[str]] = {}  # pattern_id -> related_pattern_ids
 
-    def contribute_pattern(
-        self,
-        agent_id: str,
-        pattern: Pattern
-    ) -> None:
+    def contribute_pattern(self, agent_id: str, pattern: Pattern) -> None:
         """
         Agent contributes a discovered pattern to the library
 
@@ -160,7 +157,7 @@ class PatternLibrary:
         context: Dict[str, Any],
         pattern_type: Optional[str] = None,
         min_confidence: float = 0.5,
-        limit: int = 10
+        limit: int = 10,
     ) -> List[PatternMatch]:
         """
         Query relevant patterns for current context
@@ -194,17 +191,16 @@ class PatternLibrary:
                 continue
 
             # Calculate relevance
-            relevance_score, matching_factors = self._calculate_relevance(
-                pattern,
-                context
-            )
+            relevance_score, matching_factors = self._calculate_relevance(pattern, context)
 
             if relevance_score > 0.3:  # Minimum relevance threshold
-                matches.append(PatternMatch(
-                    pattern=pattern,
-                    relevance_score=relevance_score,
-                    matching_factors=matching_factors
-                ))
+                matches.append(
+                    PatternMatch(
+                        pattern=pattern,
+                        relevance_score=relevance_score,
+                        matching_factors=matching_factors,
+                    )
+                )
 
         # Sort by relevance and limit
         matches.sort(key=lambda m: m.relevance_score, reverse=True)
@@ -222,11 +218,7 @@ class PatternLibrary:
         """
         return self.patterns.get(pattern_id)
 
-    def record_pattern_outcome(
-        self,
-        pattern_id: str,
-        success: bool
-    ):
+    def record_pattern_outcome(self, pattern_id: str, success: bool):
         """
         Record outcome of using a pattern
 
@@ -240,11 +232,7 @@ class PatternLibrary:
         if pattern:
             pattern.record_usage(success)
 
-    def link_patterns(
-        self,
-        pattern_id_1: str,
-        pattern_id_2: str
-    ):
+    def link_patterns(self, pattern_id_1: str, pattern_id_2: str):
         """
         Create a link between related patterns
 
@@ -262,11 +250,7 @@ class PatternLibrary:
             if pattern_id_1 not in self.pattern_graph[pattern_id_2]:
                 self.pattern_graph[pattern_id_2].append(pattern_id_1)
 
-    def get_related_patterns(
-        self,
-        pattern_id: str,
-        depth: int = 1
-    ) -> List[Pattern]:
+    def get_related_patterns(self, pattern_id: str, depth: int = 1) -> List[Pattern]:
         """
         Get patterns related to a given pattern
 
@@ -293,10 +277,7 @@ class PatternLibrary:
 
         return [self.patterns[pid] for pid in related_ids if pid in self.patterns]
 
-    def get_agent_patterns(
-        self,
-        agent_id: str
-    ) -> List[Pattern]:
+    def get_agent_patterns(self, agent_id: str) -> List[Pattern]:
         """
         Get all patterns contributed by a specific agent
 
@@ -309,11 +290,7 @@ class PatternLibrary:
         pattern_ids = self.agent_contributions.get(agent_id, [])
         return [self.patterns[pid] for pid in pattern_ids if pid in self.patterns]
 
-    def get_top_patterns(
-        self,
-        n: int = 10,
-        sort_by: str = "success_rate"
-    ) -> List[Pattern]:
+    def get_top_patterns(self, n: int = 10, sort_by: str = "success_rate") -> List[Pattern]:
         """
         Get top N patterns by specified metric
 
@@ -348,7 +325,7 @@ class PatternLibrary:
                 "total_agents": 0,
                 "total_usage": 0,
                 "average_confidence": 0.0,
-                "average_success_rate": 0.0
+                "average_success_rate": 0.0,
             }
 
         patterns = list(self.patterns.values())
@@ -359,7 +336,8 @@ class PatternLibrary:
         used_patterns = [p for p in patterns if p.usage_count > 0]
         avg_success_rate = (
             sum(p.success_rate for p in used_patterns) / len(used_patterns)
-            if used_patterns else 0.0
+            if used_patterns
+            else 0.0
         )
 
         return {
@@ -368,13 +346,11 @@ class PatternLibrary:
             "total_usage": total_usage,
             "average_confidence": avg_confidence,
             "average_success_rate": avg_success_rate,
-            "patterns_by_type": self._count_by_type()
+            "patterns_by_type": self._count_by_type(),
         }
 
     def _calculate_relevance(
-        self,
-        pattern: Pattern,
-        context: Dict[str, Any]
+        self, pattern: Pattern, context: Dict[str, Any]
     ) -> tuple[float, List[str]]:
         """
         Calculate how relevant a pattern is to current context
@@ -392,10 +368,7 @@ class PatternLibrary:
 
         if common_keys:
             # Calculate how many context values match
-            matches = sum(
-                1 for key in common_keys
-                if pattern.context.get(key) == context.get(key)
-            )
+            matches = sum(1 for key in common_keys if pattern.context.get(key) == context.get(key))
             if common_keys:
                 key_match_ratio = matches / len(common_keys)
                 relevance += key_match_ratio * 0.5

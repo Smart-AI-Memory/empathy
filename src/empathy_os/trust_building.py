@@ -83,10 +83,7 @@ class TrustBuildingBehaviors:
         self.trust_signals: List[TrustSignal] = []
 
     def pre_format_for_handoff(
-        self,
-        data: Dict[str, Any],
-        recipient_role: str,
-        context: str
+        self, data: Dict[str, Any], recipient_role: str, context: str
     ) -> Dict[str, Any]:
         """
         Pre-format data for handoff to reduce recipient's cognitive load
@@ -119,7 +116,7 @@ class TrustBuildingBehaviors:
             "original_data": data,
             "format": self._determine_format(recipient_role, context),
             "timestamp": datetime.now().isoformat(),
-            "reasoning": f"Pre-formatted for {recipient_role} workflow"
+            "reasoning": f"Pre-formatted for {recipient_role} workflow",
         }
 
         # Format based on recipient role and context
@@ -140,7 +137,7 @@ class TrustBuildingBehaviors:
         self._record_trust_signal(
             signal_type="building",
             behavior="pre_format_handoff",
-            evidence=f"Formatted data for {recipient_role}"
+            evidence=f"Formatted data for {recipient_role}",
         )
 
         return formatted
@@ -149,7 +146,7 @@ class TrustBuildingBehaviors:
         self,
         instruction: str,
         detected_ambiguities: List[str],
-        context: Optional[Dict[str, Any]] = None
+        context: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
         Clarify ambiguous instructions before execution to prevent wasted effort
@@ -186,31 +183,25 @@ class TrustBuildingBehaviors:
                 "Detected ambiguities in instruction. Clarifying before acting "
                 "to prevent wasted effort or incorrect execution."
             ),
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
         }
 
         # Generate specific clarifying questions
         for ambiguity in detected_ambiguities:
-            question = self._generate_clarifying_question(
-                instruction,
-                ambiguity,
-                context
-            )
+            question = self._generate_clarifying_question(instruction, ambiguity, context)
             clarification["clarifying_questions"].append(question)
 
         # Record trust signal
         self._record_trust_signal(
             signal_type="building",
             behavior="clarify_ambiguity",
-            evidence=f"Asked for clarification on {len(detected_ambiguities)} ambiguities"
+            evidence=f"Asked for clarification on {len(detected_ambiguities)} ambiguities",
         )
 
         return clarification
 
     def volunteer_structure_during_stress(
-        self,
-        stress_indicators: Dict[str, Any],
-        available_scaffolding: List[str]
+        self, stress_indicators: Dict[str, Any], available_scaffolding: List[str]
     ) -> Dict[str, Any]:
         """
         Volunteer structure/scaffolding during stressful situations
@@ -246,54 +237,55 @@ class TrustBuildingBehaviors:
         stress_level = self._assess_stress_level(stress_indicators)
 
         support = {
-            "stress_assessment": {
-                "level": stress_level,
-                "indicators": stress_indicators
-            },
+            "stress_assessment": {"level": stress_level, "indicators": stress_indicators},
             "offered_support": [],
             "reasoning": (
                 f"Detected {stress_level} stress. Volunteering structural support "
                 "to reduce cognitive load and provide actionable scaffolding."
             ),
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
         }
 
         # Offer appropriate scaffolding based on stress level
         if stress_level in ["high", "critical"]:
             if "prioritization" in available_scaffolding:
-                support["offered_support"].append({
-                    "type": "prioritization",
-                    "description": "Help prioritize tasks using urgency-importance matrix",
-                    "immediate": True
-                })
+                support["offered_support"].append(
+                    {
+                        "type": "prioritization",
+                        "description": "Help prioritize tasks using urgency-importance matrix",
+                        "immediate": True,
+                    }
+                )
 
             if "breakdown" in available_scaffolding:
-                support["offered_support"].append({
-                    "type": "task_breakdown",
-                    "description": "Break overwhelming tasks into smaller, manageable steps",
-                    "immediate": True
-                })
+                support["offered_support"].append(
+                    {
+                        "type": "task_breakdown",
+                        "description": "Break overwhelming tasks into smaller, manageable steps",
+                        "immediate": True,
+                    }
+                )
 
         if "templates" in available_scaffolding:
-            support["offered_support"].append({
-                "type": "templates",
-                "description": "Provide templates to reduce creation effort",
-                "immediate": False
-            })
+            support["offered_support"].append(
+                {
+                    "type": "templates",
+                    "description": "Provide templates to reduce creation effort",
+                    "immediate": False,
+                }
+            )
 
         # Record trust signal
         self._record_trust_signal(
             signal_type="building",
             behavior="volunteer_structure",
-            evidence=f"Offered {len(support['offered_support'])} types of structural support"
+            evidence=f"Offered {len(support['offered_support'])} types of structural support",
         )
 
         return support
 
     def offer_proactive_help(
-        self,
-        struggle_indicators: Dict[str, Any],
-        available_help: List[str]
+        self, struggle_indicators: Dict[str, Any], available_help: List[str]
     ) -> Dict[str, Any]:
         """
         Proactively offer help when collaborator is struggling
@@ -323,49 +315,42 @@ class TrustBuildingBehaviors:
         struggle_type = self._classify_struggle(struggle_indicators)
 
         offer = {
-            "struggle_assessment": {
-                "type": struggle_type,
-                "indicators": struggle_indicators
-            },
+            "struggle_assessment": {"type": struggle_type, "indicators": struggle_indicators},
             "help_offered": [],
             "tone": "supportive_not_condescending",
             "reasoning": (
                 f"Detected {struggle_type} struggle pattern. Offering relevant help "
                 "proactively while respecting autonomy."
             ),
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
         }
 
         # Offer appropriate help based on struggle type
         if struggle_type == "comprehension":
             if "explanation" in available_help:
-                offer["help_offered"].append({
-                    "type": "explanation",
-                    "description": "Provide clearer explanation of concept"
-                })
+                offer["help_offered"].append(
+                    {"type": "explanation", "description": "Provide clearer explanation of concept"}
+                )
             if "examples" in available_help:
-                offer["help_offered"].append({
-                    "type": "examples",
-                    "description": "Show concrete examples"
-                })
+                offer["help_offered"].append(
+                    {"type": "examples", "description": "Show concrete examples"}
+                )
 
         elif struggle_type == "execution":
             if "debugging" in available_help:
-                offer["help_offered"].append({
-                    "type": "debugging",
-                    "description": "Help debug the issue"
-                })
+                offer["help_offered"].append(
+                    {"type": "debugging", "description": "Help debug the issue"}
+                )
             if "guidance" in available_help:
-                offer["help_offered"].append({
-                    "type": "step_by_step",
-                    "description": "Provide step-by-step guidance"
-                })
+                offer["help_offered"].append(
+                    {"type": "step_by_step", "description": "Provide step-by-step guidance"}
+                )
 
         # Record trust signal
         self._record_trust_signal(
             signal_type="building",
             behavior="proactive_help",
-            evidence=f"Offered help for {struggle_type} struggle"
+            evidence=f"Offered help for {struggle_type} struggle",
         )
 
         return offer
@@ -378,11 +363,7 @@ class TrustBuildingBehaviors:
             Analysis of trust evolution over time
         """
         if not self.trust_signals:
-            return {
-                "status": "insufficient_data",
-                "trajectory": "unknown",
-                "signal_count": 0
-            }
+            return {"status": "insufficient_data", "trajectory": "unknown", "signal_count": 0}
 
         building_count = sum(1 for s in self.trust_signals if s.signal_type == "building")
         eroding_count = sum(1 for s in self.trust_signals if s.signal_type == "eroding")
@@ -406,7 +387,7 @@ class TrustBuildingBehaviors:
             "building_signals": building_count,
             "eroding_signals": eroding_count,
             "building_ratio": building_ratio,
-            "recent_behaviors": [s.behavior for s in self.trust_signals[-5:]]
+            "recent_behaviors": [s.behavior for s in self.trust_signals[-5:]],
         }
 
     # Helper methods
@@ -429,7 +410,7 @@ class TrustBuildingBehaviors:
             "key_metrics": self._extract_key_metrics(data),
             "highlights": self._extract_highlights(data),
             "recommendations": self._extract_recommendations(data),
-            "context": context
+            "context": context,
         }
 
     def _create_technical_summary(self, data: Dict, context: str) -> Dict:
@@ -438,7 +419,7 @@ class TrustBuildingBehaviors:
             "type": "technical_detail",
             "details": data,
             "technical_notes": self._extract_technical_notes(data),
-            "context": context
+            "context": context,
         }
 
     def _create_action_oriented_summary(self, data: Dict, context: str) -> Dict:
@@ -447,16 +428,12 @@ class TrustBuildingBehaviors:
             "type": "action_oriented",
             "immediate_actions": self._extract_immediate_actions(data),
             "priorities": self._extract_priorities(data),
-            "context": context
+            "context": context,
         }
 
     def _create_generic_summary(self, data: Dict, context: str) -> Dict:
         """Create generic summary format"""
-        return {
-            "type": "general",
-            "summary": str(data),
-            "context": context
-        }
+        return {"type": "general", "summary": str(data), "context": context}
 
     def _extract_key_metrics(self, data: Dict) -> List[str]:
         """Extract key metrics from data"""
@@ -491,16 +468,13 @@ class TrustBuildingBehaviors:
         return []
 
     def _generate_clarifying_question(
-        self,
-        instruction: str,
-        ambiguity: str,
-        context: Optional[Dict]
+        self, instruction: str, ambiguity: str, context: Optional[Dict]
     ) -> Dict[str, str]:
         """Generate a specific clarifying question"""
         return {
             "ambiguity": ambiguity,
             "question": f"Could you clarify: {ambiguity}",
-            "context": str(context) if context else "none"
+            "context": str(context) if context else "none",
         }
 
     def _assess_stress_level(self, indicators: Dict) -> str:
@@ -526,18 +500,9 @@ class TrustBuildingBehaviors:
         else:
             return "general"
 
-    def _record_trust_signal(
-        self,
-        signal_type: str,
-        behavior: str,
-        evidence: Optional[str] = None
-    ):
+    def _record_trust_signal(self, signal_type: str, behavior: str, evidence: Optional[str] = None):
         """Record a trust signal"""
-        signal = TrustSignal(
-            signal_type=signal_type,
-            behavior=behavior,
-            evidence=evidence
-        )
+        signal = TrustSignal(signal_type=signal_type, behavior=behavior, evidence=evidence)
         self.trust_signals.append(signal)
 
     def reset(self):
