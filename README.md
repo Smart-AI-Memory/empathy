@@ -45,162 +45,89 @@ The **Empathy Framework** is a systematic approach to building AI systems that p
 
 ---
 
-## Transformative Productivity Through Higher Quality Code in Less Time
+## What the Empathy Framework Provides
 
-The Empathy Framework fundamentally changes development speed and code quality by providing intelligent, context-aware assistance at every step.
+A systematic approach to building AI systems with five levels of maturity:
 
-### Proven Development Speed: Hours, Not Days
+**Included Components:**
+- **16 specialized Coach software wizards** - Security, performance, testing, accessibility, and more
+- **18 clinical documentation wizards** - Healthcare-specific implementations
+- **LLM toolkit** - Integration with Claude, GPT-4, and other models
+- **Plugin system** - Extensible architecture for custom domains
+- **FastAPI backend** - REST API for analysis and orchestration
+- **Pre-commit hooks** - Automated code quality checks
 
-**Building this framework itself demonstrates the transformative impact:**
-- **16 specialized Coach software wizards** (security, performance, testing, etc.) - hours each, not days
-- **12 AI development wizards** (prompt engineering, RAG patterns, multi-model, agent orchestration) - hours each
-- **18 clinical documentation wizards** built with the same speed
-- **Complete FastAPI backend** with authentication, analysis endpoints, and service layer - hours
-- **Railway deployment configuration** with Nixpacks, healthchecks, and multi-service setup - hours
-- **One-click implementation tools** (CLI wrapper, Docker, pre-commit hooks, installer) - hours
-
-**What makes this possible:**
-- AI collaboration at Level 4 Anticipatory eliminates trial-and-error
-- Catch errors at development time, not after deployment
-- Context-aware suggestions reduce decision paralysis
-- Structured patterns eliminate boilerplate repetition
-
----
-
-## Return on Investment (ROI)
-
-### Proven Time Savings: 4-6x Development Speed
-
-**Conservative estimate based on actual development:**
-- **Traditional development**: 2-3 days per specialized wizard (16 hours)
-- **With Empathy Framework**: 3-4 hours per specialized wizard
-- **Time multiplier**: 4-5x faster development
-
-### Real-World ROI Calculation
-
-**For a single developer** ($100k/year salary = ~$50/hour):
-
-| Task | Traditional Time | With Framework | Time Saved | Cost Saved |
-|------|------------------|----------------|------------|------------|
-| Create 1 specialized wizard | 16 hours ($800) | 3 hours ($150) | 13 hours | **$650** |
-| Create 10 wizards | 160 hours ($8,000) | 30 hours ($1,500) | 130 hours | **$6,500** |
-| Build complete analysis system | 400 hours ($20,000) | 80 hours ($4,000) | 320 hours | **$16,000** |
-
-**Framework cost**: $0 (Apache 2.0 open source - free forever)
-
-**ROI**: Infinite (zero cost, immediate productivity gains)
-
-*Optional: Priority support available at $99/developer/year for teams wanting direct access to core developers*
-
-### Team ROI Multiplies
-
-**For a 5-developer team** ($100k average salary):
-
-| Metric | Annual Cost | Time Saved per Dev | Annual Savings |
-|--------|-------------|-------------------|----------------|
-| **Faster feature development** | 5 × $100k = $500k | 20% more output | **$100,000** |
-| **Reduced debugging cycles** | Catch issues at commit time | 10% less debug time | **$50,000** |
-| **Faster code reviews** | AI catches common issues | 5% less review time | **$25,000** |
-| **Better code quality** | Fewer production bugs | 2-3 fewer incidents/year | **$30,000** |
-| **Total annual value** | | | **$205,000** |
-
-**Framework cost for 5 developers**: $0 (Apache 2.0 - free forever)
-
-**ROI**: Infinite - $205,000 value at zero cost
-
-*Optional: Priority support for 5 developers = $495/year (get direct team access, guaranteed response times, security advisories)*
-
-### Why the ROI is Transformative
-
-**It's not just speed - it's leverage:**
-
-1. **Compound productivity**: Each wizard you build helps you build the next one faster
-2. **Higher quality baseline**: Start with better patterns, not debugging legacy approaches
-3. **Reduced context switching**: Catch issues immediately, stay in flow state
-4. **Knowledge scaling**: Junior developers benefit from senior-level AI assistance
-5. **Consistent patterns**: All code follows the same high-quality architecture
-
-**The framework gives you:**
-- Complete framework (Apache 2.0 open source - free forever)
-- All core capabilities and features
-- No restrictions, no time limits, no credit cards
-- Immediate 4-6x productivity gains
-- **Infinite ROI** (zero cost, transformative returns)
-
-### The Bottom Line
-
-**Traditional development**: Days of trial-and-error, debugging, refactoring
-**Empathy Framework**: Hours to production-quality code with consistent patterns
-
-**Cost**: $0 (Apache 2.0 open source - free forever)
-**Return**: Infinite ROI - measurable 4-6x productivity gains at zero cost
-**Intangible benefits**: Better code quality, less stress, more flow state, faster learning
-
-*Optional: Priority support available at $99/developer/year for teams wanting direct access to core developers*
+**Framework Philosophy:**
+- Five-level maturity model: Reactive (1) → Guided (2) → Proactive (3) → Anticipatory (4) → Systems (5)
+- Context-aware AI assistance at each level
+- Pattern-based development and sharing
+- Systems thinking integration (Meadows, Senge)
+- Tactical empathy (Voss) and clear reasoning (Ravikant)
 
 ---
 
-### Current Capabilities (Available Now)
+## Current Capabilities
 
-**Immediate Feedback:**
-- One-click setup with zero configuration
-- Pre-commit hooks catch issues before CI/CD
-- Security and performance analysis at commit time
-- Automated code quality checks
+The Empathy Framework provides:
 
-**Pattern Detection:**
-- Identifies SQL injection vulnerabilities
-- Detects XSS and authentication flaws
-- Finds N+1 query patterns
-- Spots common performance anti-patterns
+**Security & Code Quality:**
+- Pre-commit hooks for automated quality checks
+- Security pattern detection (SQL injection, XSS, CSRF)
+- Performance anti-pattern identification
+- 16 specialized software wizards for different aspects
+
+**AI Integration:**
+- LLM toolkit with Claude Sonnet 4.5 and GPT-4 support
+- Async API calls with prompt caching
+- Thinking mode for complex reasoning
+- Multi-model fallback support
+
+**Healthcare Domain:**
+- 18 clinical documentation wizards
+- SBAR, SOAP note, and assessment generators
+- HIPAA-compliant patterns
+- Integration points for EHR systems
 
 **Developer Experience:**
 - Works on single files or entire projects
-- Multiple deployment options (CLI, Docker, pre-commit hooks)
-- Integrates with existing workflows
-- Open source core with commercial extensions
+- FastAPI backend for REST API access
+- Plugin architecture for extensibility
+- Pattern library for Level 5 sharing
 
-### Real Development Experience
+## Development Status
 
-**Traditional Development:**
-- Write wizard → Test → Debug → Refactor → Repeat for days
-- Each new wizard requires research, pattern discovery, testing setup
-- Copy-paste from previous code, adapt, debug edge cases
-- 2-3 days per specialized wizard
+**Production Ready:**
+- ✅ Core framework architecture
+- ✅ LLM toolkit and provider integrations
+- ✅ Pre-commit hooks and quality tools
+- ✅ 494 tests passing (14.7% coverage)
+- ✅ Multi-platform support (Linux, macOS, Windows)
 
-**With Empathy Framework:**
-- Define wizard purpose and patterns → AI generates structure → Review and refine → Hours to completion
-- Framework provides tested patterns, APIs, and integration points
-- Consistent architecture across all wizards
-- Multiple wizards created in a single day
+**In Development:**
+- ⚙️ Level 4 Anticipatory prediction accuracy validation
+- ⚙️ Productivity benchmarks and case studies
+- ⚙️ Extended test coverage (targeting 80%+)
+- ⚙️ PyPI package distribution
+- ⚙️ CLI tools and Docker images
 
-**Building the framework demonstrated:**
-- Higher quality code from the start (fewer bugs, better patterns)
-- Faster iteration cycles (catch issues immediately)
-- Reduced cognitive load (AI handles boilerplate, you focus on logic)
-- Scalable development patterns (16 wizards with consistent quality)
+## Try It Yourself
 
-### Level 4 Anticipatory Features (Architecture Ready)
+```bash
+# Clone and install
+git clone https://github.com/Smart-AI-Memory/empathy.git
+cd empathy
+pip install -r requirements.txt
 
-The framework supports Level 4 Anticipatory Empathy:
-- Wizard infrastructure and prediction APIs implemented
-- AI models for trajectory analysis and pattern forecasting in development
-- Architecture designed for proactive recommendations
+# Set up API key
+cp .env.example .env
+# Edit .env and add your ANTHROPIC_API_KEY
 
-**Next Steps:**
-- Validate prediction accuracy across diverse codebases
-- Measure productivity impact in team environments
-- Establish benchmarks for anticipatory vs reactive development
+# Run tests (non-LLM tests don't need API key)
+pytest -m "not llm"
 
-### Invitation to Experience the Transformation
-
-While we don't yet have formal case studies, the framework itself is proof of concept - built rapidly with AI collaboration using the patterns it embodies.
-
-**Try it yourself:**
-- Install in 30 seconds with one-click setup
-- Run security or performance scans on your code
-- Experience immediate, actionable feedback
-- Compare to your current development workflow
+# Run full test suite (requires API key)
+pytest
+```
 
 Share your experience in [GitHub Discussions](https://github.com/Smart-AI-Memory/empathy/discussions).
 
@@ -232,9 +159,7 @@ Level 5: Systems
 
 ---
 
-## One-Click Quick Start
-
-Get started with Empathy Framework in under 30 seconds:
+## Quick Start Options
 
 ### Option 1: One-Command Install
 ```bash
@@ -386,7 +311,7 @@ Empathy/
 │       ├── vscode-extension-complete/  # VS Code extension
 │       └── coach-lsp-server/          # LSP server
 ├── tests/                           # Test suite
-├── LICENSE                          # Apache 2.0
+├── LICENSE                          # Fair Source 0.9
 ├── README.md                        # This file
 └── requirements.txt                 # Python dependencies
 ```
@@ -591,7 +516,7 @@ We welcome contributions! Please see our [Contributing Guidelines](examples/coac
 
 ## 💖 Support This Project
 
-The Empathy Framework is **free and open source** (Apache 2.0) and will always be. If you're using it professionally, please consider supporting development:
+The Empathy Framework is **source available** (Fair Source 0.9) - free for students, educators, and small teams (≤5 employees). Commercial licensing required for larger organizations:
 
 ### Commercial Support - $99/developer/year
 
@@ -681,11 +606,11 @@ The Empathy Framework offers unique capabilities that set it apart from traditio
 |---------|------------------|-----------|-------------|----------------|
 | **Level 4 Anticipatory Predictions** | ✅ Yes | ❌ No | ❌ No | ❌ No |
 | **Philosophical Foundation** | ✅ Goleman, Voss, Naval | ❌ Rules-based | ❌ Rules-based | ❌ Statistical |
-| **Open Source (Apache 2.0)** | ✅ Yes | ❌ No | ❌ No | ❌ No |
+| **Source Available** | ✅ Fair Source 0.9 | ❌ No | ❌ No | ❌ No |
 | **Healthcare + Software** | ✅ Both domains | Software only | Software only | Software only |
-| **Open Source Core** | ✅ Apache 2.0 | ❌ Proprietary | ❌ Proprietary | ❌ Proprietary |
+| **Free for Small Teams** | ✅ ≤5 employees | ❌ Proprietary | ❌ Proprietary | ❌ Proprietary |
 | **Prevention vs Detection** | ✅ Anticipatory | Detection only | Detection only | Suggestion only |
-| **Price (Annual)** | Free (Apache 2.0) | $3,000+/year | $249/dev/year | $100/year |
+| **Price (Annual)** | $99/dev (6+ employees) | $3,000+/year | $249/dev/year | $100/year |
 
 ### What Makes Level 4 Anticipatory Different?
 
@@ -702,7 +627,7 @@ Traditional tools tell you about problems **now**. Empathy Framework predicts pr
 
 ## IDE Extensions & Commercial Support
 
-The Empathy Framework is **100% free and open source** (Apache 2.0). Optional commercial support and services available:
+The Empathy Framework uses Fair Source licensing. Commercial support and services available:
 
 ### Priority Support - $99/developer/year
 
@@ -730,7 +655,7 @@ Free extensions for JetBrains & VS Code:
 - Real-time analysis
 - Commit-time checks
 
-**Coming Soon**: JetBrains Marketplace & VS Code Marketplace
+**In Development**: JetBrains Marketplace & VS Code Marketplace extensions
 
 ---
 
