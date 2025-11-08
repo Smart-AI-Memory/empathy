@@ -1,10 +1,10 @@
-# Support Empathy Framework Development
+# Support Empathy Development
 
-The Empathy Framework is **source available** (Fair Source 0.9) and **free for students, educators, and small teams (≤5 employees)**. We're committed to making the framework accessible while ensuring sustainable development.
+The Empathy is **source available** (Fair Source 0.9) and **free for students, educators, and small teams (≤5 employees)**. We're committed to making the framework accessible while ensuring sustainable development.
 
 ## 🎯 Commercial Support & Services
 
-If you're using Empathy Framework professionally, consider supporting development through our commercial offerings:
+If you're using Empathy professionally, consider supporting development through our commercial offerings:
 
 ### Commercial License - $99/developer/year
 
@@ -158,6 +158,6 @@ A: We love that! GitHub Sponsors starting at $5/month helps a lot and is greatly
 
 ## 🙏 Thank You
 
-Every GitHub star, contribution, and sponsorship helps make Empathy Framework better for everyone. Thank you for being part of this journey!
+Every GitHub star, contribution, and sponsorship helps make Empathy better for everyone. Thank you for being part of this journey!
 
 **Star us on GitHub** ⭐ https://github.com/Deep-Study-AI/Empathy

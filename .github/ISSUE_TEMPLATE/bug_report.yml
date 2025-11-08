@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report a bug in the Empathy Framework
+description: Report a bug in the Empathy
 title: "[Bug]: "
 labels: ["bug", "triage"]
 body:
@@ -84,7 +84,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: Empathy Framework Version
+      label: Empathy Version
       description: What version are you using?
       placeholder: "1.0.0"
     validations:

@@ -1,5 +1,5 @@
 name: Feature Request
-description: Suggest a new feature or enhancement for the Empathy Framework
+description: Suggest a new feature or enhancement for the Empathy
 title: "[Feature]: "
 labels: ["enhancement", "triage"]
 body:
@@ -106,5 +106,5 @@ body:
       options:
         - label: I have searched existing issues and this feature hasn't been requested
           required: true
-        - label: This feature aligns with the Empathy Framework's philosophy
+        - label: This feature aligns with the Empathy's philosophy
           required: true

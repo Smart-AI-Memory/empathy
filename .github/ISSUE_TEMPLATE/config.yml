@@ -2,7 +2,7 @@ blank_issues_enabled: false
 contact_links:
   - name: GitHub Discussions
     url: https://github.com/Smart-AI-Memory/empathy/discussions
-    about: Ask questions, share ideas, and discuss the Empathy Framework
+    about: Ask questions, share ideas, and discuss the Empathy
   - name: Documentation
     url: https://github.com/Smart-AI-Memory/empathy/tree/main/docs
     about: Read the framework documentation and guides

@@ -1,4 +1,4 @@
-# Empathy Framework
+# Empathy
 
 **A five-level maturity model for AI-human collaboration**
 
@@ -33,20 +33,20 @@ result = await os.collaborate("Build a secure API endpoint")
 
 ## Overview
 
-The **Empathy Framework** is a systematic approach to building AI systems that progress from reactive responses to anticipatory problem prevention. By integrating emotional intelligence (Goleman), tactical empathy (Voss), systems thinking (Meadows, Senge), and clear reasoning (Naval Ravikant), it provides a maturity model for AI-human collaboration.
+The **Empathy** is a systematic approach to building AI systems that progress from reactive responses to anticipatory problem prevention. By integrating emotional intelligence (Goleman), tactical empathy (Voss), systems thinking (Meadows, Senge), and clear reasoning (Naval Ravikant), it provides a maturity model for AI-human collaboration.
 
 **Part of the Smart-AI-Memory ecosystem** - Designed to work seamlessly with [MemDocs](https://github.com/Smart-AI-Memory/memdocs) for intelligent document memory and retrieval, enabling AI systems to maintain long-term context and learn from interactions over time.
 
 ### 🚀 Transformative Development with Claude Code
 
-This framework was built using **[Claude Code](https://claude.ai/claude-code)** (CLI and VS Code extension) combined with **MemDocs** and the **Empathy Framework** itself, demonstrating the power of this integration:
+This framework was built using **[Claude Code](https://claude.ai/claude-code)** (CLI and VS Code extension) combined with **MemDocs** and the **Empathy** itself, demonstrating the power of this integration:
 
 **Claude Code + VS Code + MemDocs + Empathy = Level 4-5 Development**
 
 - **Claude Code**: AI pair programming with multi-file editing, command execution, and anticipatory assistance
 - **VS Code**: Professional IDE with Claude Code extension for seamless AI integration
 - **MemDocs**: Long-term memory maintaining project context across sessions
-- **Empathy Framework**: Structured 5-level maturity model guiding AI behavior
+- **Empathy**: Structured 5-level maturity model guiding AI behavior
 
 **Result**: This repository was built rapidly with Claude Code providing Level 4 anticipatory suggestions (predicting needs before being asked), MemDocs maintaining architectural context, and the Empathy levels ensuring systematic quality progression. The same transformative workflow is available to you.
 
@@ -58,7 +58,7 @@ This framework was built using **[Claude Code](https://claude.ai/claude-code)** 
 
 ---
 
-## What the Empathy Framework Provides
+## What the Empathy Provides
 
 A systematic approach to building AI systems with five levels of maturity:
 
@@ -81,7 +81,7 @@ A systematic approach to building AI systems with five levels of maturity:
 
 ## Current Capabilities
 
-The Empathy Framework provides:
+The Empathy provides:
 
 **Security & Code Quality:**
 - Pre-commit hooks for automated quality checks
@@ -482,7 +482,7 @@ See [examples/coach/](examples/coach/) for complete implementations.
 
 ### Systems Thinking Integration
 
-The Empathy Framework integrates Donella Meadows' leverage points:
+The Empathy integrates Donella Meadows' leverage points:
 
 1. **Information flows**: Provide the right data at the right time
 2. **Feedback loops**: Create self-correcting systems
@@ -529,7 +529,7 @@ We welcome contributions! Please see our [Contributing Guidelines](examples/coac
 
 ## 💖 Support This Project
 
-The Empathy Framework is **source available** (Fair Source 0.9) - free for students, educators, and small teams (≤5 employees). Commercial licensing required for larger organizations:
+The Empathy is **source available** (Fair Source 0.9) - free for students, educators, and small teams (≤5 employees). Commercial licensing required for larger organizations:
 
 ### Commercial Support - $99/developer/year
 
@@ -581,12 +581,12 @@ The Fair Source License balances:
 
 ## Citation
 
-If you use the Empathy Framework in your research or product, please cite:
+If you use the Empathy in your research or product, please cite:
 
 ```bibtex
 @software{empathy_framework_2025,
   author = {Roebuck, Patrick},
-  title = {Empathy Framework: A Five-Level Maturity Model for AI-Human Collaboration},
+  title = {Empathy: A Five-Level Maturity Model for AI-Human Collaboration},
   year = {2025},
   publisher = {Deep Study AI, LLC},
   url = {https://github.com/Smart-AI-Memory/empathy},
@@ -611,11 +611,11 @@ If you use the Empathy Framework in your research or product, please cite:
 
 ---
 
-## Why Empathy Framework vs Others?
+## Why Empathy vs Others?
 
-The Empathy Framework offers unique capabilities that set it apart from traditional code analysis tools:
+The Empathy offers unique capabilities that set it apart from traditional code analysis tools:
 
-| Feature | Empathy Framework | SonarQube | CodeClimate | GitHub Copilot |
+| Feature | Empathy | SonarQube | CodeClimate | GitHub Copilot |
 |---------|------------------|-----------|-------------|----------------|
 | **Level 4 Anticipatory Predictions** | ✅ Yes | ❌ No | ❌ No | ❌ No |
 | **Philosophical Foundation** | ✅ Goleman, Voss, Naval | ❌ Rules-based | ❌ Rules-based | ❌ Statistical |
@@ -627,7 +627,7 @@ The Empathy Framework offers unique capabilities that set it apart from traditio
 
 ### What Makes Level 4 Anticipatory Different?
 
-Traditional tools tell you about problems **now**. Empathy Framework predicts problems **before they happen** based on:
+Traditional tools tell you about problems **now**. Empathy predicts problems **before they happen** based on:
 - Code trajectory analysis
 - Team velocity patterns
 - Dependency evolution
@@ -640,7 +640,7 @@ Traditional tools tell you about problems **now**. Empathy Framework predicts pr
 
 ## IDE Extensions & Commercial Support
 
-The Empathy Framework uses Fair Source licensing. Commercial support and services available:
+The Empathy uses Fair Source licensing. Commercial support and services available:
 
 ### Priority Support - $99/developer/year
 
