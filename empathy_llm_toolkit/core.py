@@ -72,7 +72,7 @@ class EmpathyLLM:
 
         if provider == "anthropic":
             return AnthropicProvider(
-                api_key=api_key, model=model or "claude-3-5-sonnet-20241022", **kwargs
+                api_key=api_key, model=model or "claude-sonnet-4-5-20250929", **kwargs
             )
         elif provider == "openai":
             return OpenAIProvider(api_key=api_key, model=model or "gpt-4-turbo-preview", **kwargs)

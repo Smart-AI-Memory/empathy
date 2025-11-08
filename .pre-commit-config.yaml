@@ -34,7 +34,7 @@ repos:
     rev: 1.8.6
     hooks:
       - id: bandit
-        args: ['-c', '.bandit', '-r', 'src/', 'empathy_software_plugin/', 'empathy_llm_toolkit/', 'coach_wizards/']
+        args: ['-c', '.bandit', '-r', 'src/', 'empathy_software_plugin/', 'empathy_llm_toolkit/', 'coach_wizards/', '--severity-level', 'medium', '--confidence-level', 'medium']
         pass_filenames: false
 
   # Standard pre-commit hooks

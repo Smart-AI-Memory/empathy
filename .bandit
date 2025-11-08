@@ -1,2 +1,3 @@
-[bandit]
-exclude = /tests/,/examples/security_demo.py
+exclude_dirs:
+  - /tests/
+  - /examples/security_demo.py
