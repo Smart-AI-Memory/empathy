@@ -242,7 +242,7 @@ class AdvancedDebuggingWizard(BaseWizard):
         total_issues = len(issues)
         critical = risk_summary["by_risk_level"]["critical"]
         high = risk_summary["by_risk_level"]["high"]
-        medium = risk_summary["by_risk_level"]["medium"]
+        _ = risk_summary["by_risk_level"]["medium"]
 
         # Simple trajectory analysis
         # In real implementation, would compare with historical data

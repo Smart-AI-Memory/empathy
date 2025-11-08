@@ -371,7 +371,6 @@ class TestCLIEdgeCases:
     def test_metrics_show_no_data(self, temp_dir, capsys):
         """Test showing metrics for user with no data"""
         db_path = Path(temp_dir) / "empty_metrics.db"
-        collector = MetricsCollector(str(db_path))
 
         args = MockArgs(db=str(db_path), user="nonexistent_user")
         cmd_metrics_show(args)

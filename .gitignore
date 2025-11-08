@@ -39,3 +39,21 @@ htmlcov/
 
 # Wizards
 wizards/
+
+# Test and Coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+*.pyc
+__pycache__/
+
+# Security
+security_scan_results.json
+
+# MemDocs
+.memdocs/
+.memdocs-context.md
+
+# Code Quality
+.mypy_cache/
+.ruff_cache/
