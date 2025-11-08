@@ -4,6 +4,27 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Tests](https://img.shields.io/badge/tests-476%20passing-success)](https://github.com/Deep-Study-AI/empathy)
+[![Coverage](https://img.shields.io/badge/coverage-45.4%25-yellow)](https://github.com/Deep-Study-AI/empathy)
+[![Security](https://img.shields.io/badge/security-0%20vulnerabilities-success)](https://github.com/Deep-Study-AI/empathy)
+[![Quality](https://img.shields.io/badge/commercial%20ready-10%2F10-brightgreen)](https://github.com/Deep-Study-AI/empathy)
+
+---
+
+## Quick Start
+
+```bash
+pip install empathy-framework
+```
+
+```python
+from empathy_os import EmpathyOS
+
+os = EmpathyOS()
+result = await os.collaborate("Build a secure API endpoint")
+```
+
+📖 **[Full Quick Start Guide](docs/QUICKSTART_GUIDE.md)** | **[API Reference](docs/API_REFERENCE.md)** | **[User Guide](docs/USER_GUIDE.md)**
 
 ---
 

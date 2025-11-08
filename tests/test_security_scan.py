@@ -18,7 +18,7 @@ class TestSecurityScanning:
         """Run Bandit security scanner and ensure no high/medium severity issues"""
 
         # Run bandit scan
-        result = subprocess.run(
+        subprocess.run(
             [
                 "bandit",
                 "-r",
