@@ -49,6 +49,7 @@ __pycache__/
 
 # Security
 security_scan_results.json
+.env
 
 # MemDocs
 .memdocs/
