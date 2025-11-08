@@ -547,7 +547,7 @@ The Empathy Framework is **source available** (Fair Source 0.9) - free for stude
 - **Training & Workshops** - Get your team productive in one day
 - **Enterprise Solutions** - Hosted service, custom SLA, dedicated support
 
-[Learn More →](SPONSORSHIP.md) | [Contact Sales →](mailto:sales@deepstudyai.com)
+[Learn More →](SPONSORSHIP.md) | [Contact Sales →](mailto:support@smartaimemory.com)
 
 ### GitHub Sponsors
 
@@ -575,7 +575,7 @@ The Fair Source License balances:
 - **Sustainable development** - Commercial licensing funds ongoing development and support
 - **Future open source** - Automatically converts to Apache 2.0 after 4 years
 
-**Commercial licensing:** Email [sales@deepstudyai.com](mailto:sales@deepstudyai.com) | [Licensing FAQ →](LICENSE)
+**Commercial licensing:** Email [support@smartaimemory.com](mailto:support@smartaimemory.com) | [Licensing FAQ →](LICENSE)
 
 ---
 
@@ -599,9 +599,9 @@ If you use the Empathy Framework in your research or product, please cite:
 ## Support & Contact
 
 **Developer:** Patrick Roebuck
-**Email:** patrick.roebuck@deepstudyai.com
-**Organization:** Deep Study AI, LLC
-**GitHub:** https://github.com/Deep-Study-AI
+**Email:** patrick.roebuck@smartaimemory.com
+**Organization:** Smart-AI-Memory
+**GitHub:** https://github.com/Smart-AI-Memory
 
 **Resources:**
 - Documentation: [docs/](docs/)
@@ -685,6 +685,6 @@ Special thanks to the AI Nurse Florence project for demonstrating Level 4 Antici
 
 ---
 
-**Built with ❤️ by Deep Study AI, LLC**
+**Built with ❤️ by Smart-AI-Memory**
 
 *Transforming AI-human collaboration from reactive responses to anticipatory problem prevention.*

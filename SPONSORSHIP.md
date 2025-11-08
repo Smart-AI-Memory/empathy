@@ -18,7 +18,7 @@ If you're using Empathy Framework professionally, consider supporting developmen
 ✅ **Updates and upgrades** for the license period
 ✅ **Contribute to sustainable development**
 
-**To purchase:** Email [sales@deepstudyai.com](mailto:sales@deepstudyai.com?subject=Empathy%20Framework%20Commercial%20License)
+**To purchase:** Email [support@smartaimemory.com](mailto:support@smartaimemory.com?subject=Empathy%20Framework%20Commercial%20License)
 
 ---
 
@@ -34,7 +34,7 @@ Need domain-specific wizards for your industry?
 - **Architecture review** and best practices
 - **Team training** and onboarding
 
-[Request Consultation →](mailto:sales@deepstudyai.com)
+[Request Consultation →](mailto:support@smartaimemory.com)
 
 ---
 
@@ -48,7 +48,7 @@ Get your team up to speed quickly:
 - **Hands-on coding** with real-world examples
 - **Q&A sessions** with framework creators
 
-[Schedule Training →](mailto:training@deepstudyai.com)
+[Schedule Training →](mailto:training@smartaimemory.com)
 
 ---
 
@@ -76,7 +76,7 @@ For organizations needing more:
 - Integration with legacy systems
 - Compliance and audit support
 
-[Contact Enterprise Sales →](mailto:enterprise@deepstudyai.com)
+[Contact Enterprise Sales →](mailto:enterprise@smartaimemory.com)
 
 ---
 
@@ -138,7 +138,7 @@ A: **Support** ($99/year) is ongoing help with the framework. **Services** (cust
 A: Yes! $99/year covers one developer. Teams of 5+ get volume discounts.
 
 **Q: Do you offer free support for open source projects?**
-A: Yes! Email opensource@deepstudyai.com with your project details.
+A: Yes! Email opensource@smartaimemory.com with your project details.
 
 **Q: What if I just want to say thank you?**
 A: We love that! GitHub Sponsors starting at $5/month helps a lot and is greatly appreciated.
@@ -147,12 +147,12 @@ A: We love that! GitHub Sponsors starting at $5/month helps a lot and is greatly
 
 ## 📧 Contact
 
-- **General inquiries**: hello@deepstudyai.com
-- **Support sales**: support@deepstudyai.com
-- **Enterprise**: enterprise@deepstudyai.com
-- **Custom development**: sales@deepstudyai.com
-- **Training**: training@deepstudyai.com
-- **Open source projects**: opensource@deepstudyai.com
+- **General inquiries**: hello@smartaimemory.com
+- **Commercial licensing**: support@smartaimemory.com
+- **Enterprise**: enterprise@smartaimemory.com
+- **Custom development**: support@smartaimemory.com
+- **Training**: training@smartaimemory.com
+- **Open source projects**: opensource@smartaimemory.com
 
 ---
 
