@@ -227,17 +227,17 @@ export default function Home() {
           </p>
 
           <div className="max-w-5xl mx-auto grid gap-8">
-            {/* Medical Workflows Dashboard */}
+            {/* Medical Wizards Dashboard */}
             <div className="bg-[var(--background)] p-8 rounded-lg border-2 border-[var(--border)] hover:border-[var(--accent)] transition-all">
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="text-4xl">🏥</div>
-                    <h3 className="text-2xl font-bold">Medical Workflows Dashboard</h3>
+                    <h3 className="text-2xl font-bold">Medical Wizards Dashboard</h3>
                   </div>
                   <p className="text-[var(--text-secondary)] mb-4">
                     Production healthcare application demonstrating Level 4 Anticipatory Intelligence
-                    for clinical workflows. Features patient trajectory analysis, protocol compliance
+                    with clinical wizards. Features patient trajectory analysis, protocol compliance
                     monitoring, and predictive risk assessment.
                   </p>
 

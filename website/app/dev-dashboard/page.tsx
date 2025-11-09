@@ -213,11 +213,11 @@ export default function DevDashboard() {
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-xs">
                   <span className="text-[var(--success)]">✓</span>
-                  <span>Workflow automation</span>
+                  <span>Multi-wizard coordination</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <span className="text-[var(--success)]">✓</span>
-                  <span>Agent coordination</span>
+                  <span>Agent orchestration</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <span className="text-[var(--success)]">✓</span>

@@ -23,10 +23,10 @@ export default function MedicalDashboard() {
           <div className="max-w-4xl mx-auto text-center">
             <div className="text-6xl mb-6">🏥</div>
             <h1 className="text-4xl font-bold mb-4">
-              Medical Workflows <span className="text-gradient">Dashboard</span>
+              Medical Wizards <span className="text-gradient">Dashboard</span>
             </h1>
             <p className="text-xl text-[var(--text-secondary)] mb-6">
-              Level 4 Anticipatory Intelligence for Clinical Workflows
+              Level 4 Anticipatory Intelligence for Clinical Wizards
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
               <span className="px-3 py-1 bg-[var(--primary)] bg-opacity-10 text-[var(--primary)] rounded-full text-sm font-semibold">
@@ -295,7 +295,7 @@ export default function MedicalDashboard() {
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-6">
-              Build Your Own Medical Workflows
+              Build Your Own Medical Wizards
             </h2>
             <p className="text-xl text-[var(--text-secondary)] mb-8">
               The Empathy Framework is open source and production-ready.
