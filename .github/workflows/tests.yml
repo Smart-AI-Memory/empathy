@@ -28,12 +28,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pytest pytest-cov pytest-asyncio
+        pip install -e .[dev]
 
     - name: Run tests with coverage
       run: |
-        pytest --cov --cov-report=xml --cov-report=term-missing -v
+        pytest
       env:
         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 

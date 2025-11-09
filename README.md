@@ -3,11 +3,13 @@
 **A five-level maturity model for AI-human collaboration**
 
 [![License](https://img.shields.io/badge/License-Fair%20Source%200.9-blue.svg)](LICENSE)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-553%20passing-success)](https://github.com/Smart-AI-Memory/empathy)
-[![Coverage](https://img.shields.io/badge/coverage-63.87%25-green)](https://github.com/Smart-AI-Memory/empathy)
-[![Security](https://img.shields.io/badge/security-0%20vulnerabilities-success)](https://github.com/Smart-AI-Memory/empathy)
-[![Quality](https://img.shields.io/badge/commercial%20ready-10%2F10-brightgreen)](https://github.com/Smart-AI-Memory/empathy)
+[![PyPI version](https://img.shields.io/pypi/v/empathy.svg)](https://pypi.org/project/empathy/)
+[![Python 3.10+](https://img.shields.io/pypi/pyversions/empathy.svg)](https://www.python.org/downloads/)
+[![Tests](https://github.com/Smart-AI-Memory/empathy/actions/workflows/tests.yml/badge.svg)](https://github.com/Smart-AI-Memory/empathy/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/gh/Smart-AI-Memory/empathy/branch/main/graph/badge.svg)](https://codecov.io/gh/Smart-AI-Memory/empathy)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Downloads](https://img.shields.io/pypi/dm/empathy.svg)](https://pypi.org/project/empathy/)
 
 ---
 
