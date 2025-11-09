@@ -113,7 +113,7 @@ export default function FrameworkPage() {
               <div>
                 <h3 className="text-2xl font-bold mb-4">Installation</h3>
                 <pre className="bg-[var(--foreground)] text-[var(--background)] p-4 rounded-lg overflow-x-auto">
-                  <code>pip install empathy-framework</code>
+                  <code>pip install empathy</code>
                 </pre>
               </div>
 
