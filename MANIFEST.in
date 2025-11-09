@@ -1,17 +1,18 @@
 # Include documentation
 include README.md
 include LICENSE
+include LICENSE-COMMERCIAL.md
 include CHANGELOG.md
 include CONTRIBUTING.md
 include SPONSORSHIP.md
+include CODE_OF_CONDUCT.md
 
 # Include configuration files
 include pyproject.toml
 include setup.py
 include requirements.txt
 include .bandit
-include pytest.ini
-include .coveragerc
+include codecov.yml
 
 # Include all YAML/JSON configs
 recursive-include src *.yml *.yaml *.json
@@ -25,9 +26,6 @@ recursive-include docs *.md *.rst *.txt
 
 # Include examples
 recursive-include examples *.py *.md *.yml *.yaml
-
-# Include tests (for source distributions)
-recursive-include tests *.py
 
 # Exclude unnecessary files
 global-exclude *.pyc
