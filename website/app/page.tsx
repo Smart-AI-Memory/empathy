@@ -128,9 +128,14 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <button className="btn btn-secondary flex-1" disabled>
-                  Coming Soon
-                </button>
+                <a
+                  href="https://github.com/Smart-AI-Memory/MemDocs"
+                  className="btn btn-secondary flex-1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View on GitHub
+                </a>
               </div>
             </div>
           </div>
