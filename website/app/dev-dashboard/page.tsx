@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import WizardPlayground from '@/components/WizardPlayground';
 
 export default function DevDashboard() {
   return (
@@ -70,8 +71,20 @@ export default function DevDashboard() {
         </div>
       </section>
 
-      {/* Software Development Wizards */}
+      {/* Interactive Wizard Playground */}
       <section className="py-12 bg-[var(--border)] bg-opacity-20">
+        <div className="container">
+          <h2 className="text-3xl font-bold text-center mb-4">Try Software Wizards</h2>
+          <p className="text-center text-[var(--text-secondary)] mb-12 max-w-3xl mx-auto">
+            Select a wizard below and provide code or requirements to see
+            Level 4 Anticipatory Intelligence in action.
+          </p>
+          <WizardPlayground category="software" />
+        </div>
+      </section>
+
+      {/* Software Development Wizards */}
+      <section className="py-12">
         <div className="container">
           <h2 className="text-3xl font-bold text-center mb-12">Development Intelligence Wizards</h2>
 

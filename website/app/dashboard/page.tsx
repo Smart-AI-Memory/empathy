@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import WizardPlayground from '@/components/WizardPlayground';
 
 export default function MedicalDashboard() {
   return (
@@ -70,8 +71,20 @@ export default function MedicalDashboard() {
         </div>
       </section>
 
-      {/* Clinical Monitoring Features */}
+      {/* Interactive Wizard Playground */}
       <section className="py-12 bg-[var(--border)] bg-opacity-20">
+        <div className="container">
+          <h2 className="text-3xl font-bold text-center mb-4">Try Healthcare Wizards</h2>
+          <p className="text-center text-[var(--text-secondary)] mb-12 max-w-3xl mx-auto">
+            Select a wizard below and provide patient data or clinical information to see
+            Level 4 Anticipatory Intelligence in action.
+          </p>
+          <WizardPlayground category="healthcare" />
+        </div>
+      </section>
+
+      {/* Clinical Monitoring Features */}
+      <section className="py-12">
         <div className="container">
           <h2 className="text-3xl font-bold text-center mb-12">Clinical Monitoring Capabilities</h2>
 
