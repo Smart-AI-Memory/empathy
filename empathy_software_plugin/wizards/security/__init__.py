@@ -3,8 +3,31 @@ Security Analysis Components
 
 Supporting modules for Security Analysis Wizard.
 
-Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Copyright 2025 Smart-AI-Memory
+Licensed under Fair Source License 0.9
 """
 
-__all__ = []
+from .exploit_analyzer import ExploitAnalyzer
+from .owasp_patterns import OWASPPatternDetector
+from .vulnerability_scanner import (
+    DependencyVulnerability,
+    Severity,
+    Vulnerability,
+    VulnerabilityScanner,
+    VulnerabilityScanReport,
+    VulnerabilityType,
+)
+
+__all__ = [
+    # Vulnerability Scanning
+    "VulnerabilityScanner",
+    "Vulnerability",
+    "DependencyVulnerability",
+    "VulnerabilityScanReport",
+    "VulnerabilityType",
+    "Severity",
+    # Exploit Analysis
+    "ExploitAnalyzer",
+    # OWASP Patterns
+    "OWASPPatternDetector",
+]
