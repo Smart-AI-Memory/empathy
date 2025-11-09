@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "empathy"
-version = "1.5.0"
+version = "1.6.0"
 description = "A five-level maturity model for AI-human collaboration with anticipatory empathy"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -27,7 +27,7 @@ keywords = [
     "level-5-ai"
 ]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries :: Application Frameworks",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
