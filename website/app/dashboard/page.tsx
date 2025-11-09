@@ -29,16 +29,16 @@ export default function MedicalDashboard() {
               Level 4 Anticipatory Intelligence for Clinical Wizards
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
-              <span className="px-3 py-1 bg-[var(--primary)] bg-opacity-10 text-[var(--primary)] rounded-full text-sm font-semibold">
+              <span className="px-3 py-1 bg-[var(--primary)] text-white rounded-full text-sm font-semibold">
                 Claude Code
               </span>
-              <span className="px-3 py-1 bg-[var(--accent)] bg-opacity-10 text-[var(--accent)] rounded-full text-sm font-semibold">
+              <span className="px-3 py-1 bg-[var(--accent)] text-white rounded-full text-sm font-semibold">
                 Empathy Framework
               </span>
-              <span className="px-3 py-1 bg-[var(--secondary)] bg-opacity-10 text-[var(--secondary)] rounded-full text-sm font-semibold">
+              <span className="px-3 py-1 bg-[var(--secondary)] text-white rounded-full text-sm font-semibold">
                 MemDocs
               </span>
-              <span className="px-3 py-1 bg-[var(--border)] text-[var(--muted)] rounded-full text-sm">
+              <span className="px-3 py-1 bg-[var(--muted)] text-white rounded-full text-sm font-semibold">
                 VS Code
               </span>
             </div>
