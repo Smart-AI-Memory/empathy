@@ -298,7 +298,7 @@ export default function MedicalDashboard() {
               Build Your Own Medical Wizards
             </h2>
             <p className="text-xl text-[var(--text-secondary)] mb-8">
-              The Empathy Framework is open source and production-ready.
+              The Empathy Framework is Fair Source licensed and production-ready.
               Start building anticipatory AI for healthcare today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

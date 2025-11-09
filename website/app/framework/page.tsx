@@ -25,7 +25,7 @@ export default function FrameworkPage() {
               Empathy Framework <span className="text-gradient">Core</span>
             </h1>
             <p className="text-2xl text-[var(--text-secondary)] mb-8">
-              Open source foundation for building Level 4 Anticipatory AI systems
+              Fair Source foundation for building Level 4 Anticipatory AI systems
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
@@ -229,7 +229,7 @@ result = await wizard.analyze({"data": your_data})`}
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl font-bold mb-6">Join the Community</h2>
             <p className="text-xl text-[var(--text-secondary)] mb-12">
-              The Empathy Framework is open source and welcomes contributions from developers worldwide.
+              The Empathy Framework is Fair Source licensed and welcomes contributions from developers worldwide.
             </p>
 
             <div className="grid md:grid-cols-3 gap-6">
