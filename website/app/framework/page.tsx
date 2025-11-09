@@ -247,15 +247,15 @@ result = await wizard.analyze({"data": your_data})`}
               </a>
 
               <a
-                href="https://github.com/Smart-AI-Memory/empathy/discussions"
+                href="https://github.com/Smart-AI-Memory/empathy/issues"
                 className="p-6 border-2 border-[var(--border)] rounded-lg hover:border-[var(--primary)] transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <div className="text-3xl mb-3">💬</div>
-                <h3 className="text-lg font-bold mb-2">Join Discussions</h3>
+                <h3 className="text-lg font-bold mb-2">Get Support</h3>
                 <p className="text-sm text-[var(--text-secondary)]">
-                  Ask questions and share your wizards
+                  Ask questions and get help from the community
                 </p>
               </a>
 
