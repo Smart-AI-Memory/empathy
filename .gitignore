@@ -37,8 +37,8 @@ wheels/
 .coverage
 htmlcov/
 
-# Wizards
-wizards/
+# Healthcare Wizards (top-level only - keep plugin wizards)
+/wizards/
 
 # Test and Coverage
 coverage.xml
