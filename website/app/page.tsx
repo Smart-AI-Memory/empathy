@@ -103,24 +103,28 @@ export default function Home() {
                 <div className="text-4xl">📚</div>
                 <h3 className="text-2xl font-bold">MemDocs</h3>
               </div>
-              <p className="text-sm text-[var(--muted)] mb-4">Long-term Memory Integration</p>
+              <p className="text-sm text-[var(--muted)] mb-4">Project-Specific Memory System</p>
               <p className="text-[var(--text-secondary)] mb-6">
-                Persistent context and memory system for AI applications. Enables AI to maintain
-                long-term memory across sessions, learn from historical interactions, and build
-                continuity in conversations.
+                Persistent project-specific memory that works seamlessly with Empathy Framework.
+                MemDocs enables AI to remember context, decisions, and patterns across sessions,
+                creating true continuity in your AI-human collaboration.
               </p>
               <div className="space-y-3 mb-6">
                 <div className="flex items-start gap-2">
                   <span className="text-[var(--success)] mt-1">✓</span>
-                  <span className="text-sm"><strong>Persistent memory</strong> across sessions</span>
+                  <span className="text-sm"><strong>Project-specific memories</strong> that persist across sessions</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <span className="text-[var(--success)] mt-1">✓</span>
-                  <span className="text-sm"><strong>Pattern learning</strong> from historical data</span>
+                  <span className="text-sm"><strong>Integrated with Empathy Framework</strong> for Level 5 intelligence</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <span className="text-[var(--success)] mt-1">✓</span>
-                  <span className="text-sm"><strong>Seamless integration</strong> with Empathy Framework</span>
+                  <span className="text-sm"><strong>Pattern learning</strong> from historical interactions</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-[var(--success)] mt-1">✓</span>
+                  <span className="text-sm"><strong>Context continuity</strong> across development sessions</span>
                 </div>
               </div>
               <div className="flex gap-3">
@@ -145,7 +149,7 @@ export default function Home() {
             </p>
 
             <div className="bg-[var(--background)] p-8 rounded-lg border-2 border-[var(--accent)] border-opacity-20">
-              <div className="grid md:grid-cols-2 gap-8">
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
                 <div>
                   <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                     <span>🚀</span> Development Velocity
@@ -153,7 +157,7 @@ export default function Home() {
                   <p className="text-[var(--text-secondary)] mb-4">
                     Build production-quality applications <strong>10x faster</strong> with AI that
                     anticipates your needs, prevents bugs before they happen, and maintains context
-                    across sessions.
+                    across sessions with MemDocs.
                   </p>
                 </div>
 
@@ -169,7 +173,30 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-[var(--border)]">
+              <div className="mb-6 p-6 bg-[var(--border)] bg-opacity-20 rounded-lg">
+                <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
+                  <span>📚</span> How MemDocs & Empathy Work Together
+                </h3>
+                <div className="grid md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-[var(--text-secondary)]">
+                      <strong>Empathy Framework</strong> provides the intelligence levels—from reactive
+                      to anticipatory AI that predicts problems before they happen.
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[var(--text-secondary)]">
+                      <strong>MemDocs</strong> provides persistent project-specific memory, enabling
+                      the framework to remember context, patterns, and decisions across sessions.
+                    </p>
+                  </div>
+                </div>
+                <p className="text-sm text-[var(--muted)] mt-4 text-center">
+                  Together, they create <strong>Level 5 Transformative Intelligence</strong> that learns and evolves with your projects.
+                </p>
+              </div>
+
+              <div className="pt-6 border-t border-[var(--border)]">
                 <p className="text-sm text-[var(--muted)] italic text-center">
                   "The framework transformed our AI development workflow. Instead of discovering
                   issues weeks later during debugging, the wizards alerted us to emerging problems
