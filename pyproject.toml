@@ -27,7 +27,7 @@ keywords = [
     "level-5-ai"
 ]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries :: Application Frameworks",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
@@ -266,7 +266,7 @@ addopts = [
     "--cov-report=html",
     "--cov-report=term-missing",
     "--cov-report=xml",
-    "--cov-fail-under=14",
+    "--cov-fail-under=70",
     "--asyncio-mode=auto",
 ]
 markers = [
