@@ -99,7 +99,7 @@ export default function DocsPage() {
                   Or install from source:
                 </p>
                 <pre className="bg-[var(--foreground)] text-[var(--background)] p-4 rounded-lg">
-{`git clone https://github.com/deepstudyai/empathy-framework.git
+{`git clone https://github.com/Smart-AI-Memory/empathy.git
 cd empathy-framework
 pip install -e .`}
                 </pre>

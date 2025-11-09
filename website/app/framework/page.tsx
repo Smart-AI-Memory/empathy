@@ -29,7 +29,7 @@ export default function FrameworkPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="https://github.com/deepstudyai/empathy-framework"
+                href="https://github.com/Smart-AI-Memory/empathy"
                 className="btn btn-primary"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -234,7 +234,7 @@ result = await wizard.analyze({"data": your_data})`}
 
             <div className="grid md:grid-cols-3 gap-6">
               <a
-                href="https://github.com/deepstudyai/empathy-framework"
+                href="https://github.com/Smart-AI-Memory/empathy"
                 className="p-6 border-2 border-[var(--border)] rounded-lg hover:border-[var(--primary)] transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -247,7 +247,7 @@ result = await wizard.analyze({"data": your_data})`}
               </a>
 
               <a
-                href="https://github.com/deepstudyai/empathy-framework/discussions"
+                href="https://github.com/Smart-AI-Memory/empathy/discussions"
                 className="p-6 border-2 border-[var(--border)] rounded-lg hover:border-[var(--primary)] transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"

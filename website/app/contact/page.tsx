@@ -289,15 +289,15 @@ export default function ContactPage() {
               <div className="text-center p-6 bg-[var(--border)] bg-opacity-30 rounded-lg">
                 <div className="text-3xl mb-3">📧</div>
                 <h3 className="font-bold mb-2">Email</h3>
-                <a href="mailto:patrick.roebuck@deepstudyai.com" className="text-sm text-[var(--accent)] hover:underline">
-                  patrick.roebuck@deepstudyai.com
+                <a href="mailto:contact@smartaimemory.com" className="text-sm text-[var(--accent)] hover:underline">
+                  contact@smartaimemory.com
                 </a>
               </div>
 
               <div className="text-center p-6 bg-[var(--border)] bg-opacity-30 rounded-lg">
                 <div className="text-3xl mb-3">💬</div>
                 <h3 className="font-bold mb-2">GitHub Discussions</h3>
-                <a href="https://github.com/Deep-Study-AI/empathy-framework/discussions" className="text-sm text-[var(--accent)] hover:underline" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/Smart-AI-Memory/empathy/discussions" className="text-sm text-[var(--accent)] hover:underline" target="_blank" rel="noopener noreferrer">
                   Community Support
                 </a>
               </div>
@@ -305,7 +305,7 @@ export default function ContactPage() {
               <div className="text-center p-6 bg-[var(--border)] bg-opacity-30 rounded-lg">
                 <div className="text-3xl mb-3">🐛</div>
                 <h3 className="font-bold mb-2">Bug Reports</h3>
-                <a href="https://github.com/Deep-Study-AI/empathy-framework/issues" className="text-sm text-[var(--accent)] hover:underline" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/Smart-AI-Memory/empathy/issues" className="text-sm text-[var(--accent)] hover:underline" target="_blank" rel="noopener noreferrer">
                   GitHub Issues
                 </a>
               </div>
