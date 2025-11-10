@@ -10,7 +10,7 @@ readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.10"
 license = {file = "LICENSE"}
 authors = [
-    {name = "Patrick Roebuck", email = "patrick.roebuck@smartaimemory.com"}
+    {name = "Patrick Roebuck", email = "patrick.roebuck1955@gmail.com"}
 ]
 maintainers = [
     {name = "Smart-AI-Memory", email = "support@smartaimemory.com"}

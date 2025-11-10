@@ -66,7 +66,7 @@ setup(
     name="empathy",
     version="1.5.0",
     author="Patrick Roebuck",
-    author_email="patrick.roebuck@smartaimemory.com",
+    author_email="patrick.roebuck1955@gmail.com",
     description="A five-level maturity model for AI-human collaboration with anticipatory empathy",
     long_description=long_description,
     long_description_content_type="text/markdown",

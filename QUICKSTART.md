@@ -454,8 +454,8 @@ python examples/performance_demo.py
 ### Support
 
 - **Community Support** (Free tier): GitHub Issues
-- **Email Support** (Commercial license): patrick.roebuck@smartaimemory.com
-- **Documentation**: https://github.com/Deep-Study-AI/empathy
+- **Email Support** (Commercial license): patrick.roebuck1955@gmail.com
+- **Documentation**: https://github.com/Smart-AI-Memory/empathy
 
 ---
 
