@@ -7,12 +7,13 @@ Provides CLI commands for:
 - Viewing metrics and statistics
 - Configuration management
 
-Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Copyright 2025 Smart-AI-Memory
+Licensed under Fair Source License 0.9
 """
 
 import argparse
 import sys
+from importlib.metadata import version as get_version
 
 from empathy_os import EmpathyConfig, load_config
 from empathy_os.logging_config import get_logger
@@ -24,9 +25,14 @@ logger = get_logger(__name__)
 def cmd_version(args):
     """Display version information"""
     logger.info("Displaying version information")
-    print("Empathy Framework v1.0.0")
-    print("Copyright 2025 Deep Study AI, LLC")
-    print("Licensed under the Apache License, Version 2.0")
+    try:
+        version = get_version("empathy")
+    except Exception:
+        version = "unknown"
+    print(f"Empathy v{version}")
+    print("Copyright 2025 Smart-AI-Memory")
+    print("Licensed under Fair Source License 0.9")
+    print("\n✨ Built with Claude Code + MemDocs + VS Code transformative stack")
 
 
 def cmd_init(args):
@@ -51,7 +57,7 @@ def cmd_init(args):
 
     print("\nNext steps:")
     print(f"  1. Edit {output_path} to customize settings")
-    print("  2. Use 'empathy-framework run' to start using the framework")
+    print("  2. Use 'empathy run' to start using the framework")
 
 
 def cmd_validate(args):
@@ -237,8 +243,8 @@ def cmd_state_list(args):
 def main():
     """Main CLI entry point"""
     parser = argparse.ArgumentParser(
-        prog="empathy-framework",
-        description="Empathy Framework - Build AI systems with 5 levels of empathy",
+        prog="empathy",
+        description="Empathy - Build AI systems with 5 levels of empathy",
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
