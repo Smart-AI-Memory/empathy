@@ -623,7 +623,7 @@ If you use the Empathy in your research or product, please cite:
 ## Support & Contact
 
 **Developer:** Patrick Roebuck
-**Email:** patrick.roebuck@smartaimemory.com
+**Email:** patrick.roebuck1955@gmail.com
 **Organization:** Smart-AI-Memory
 **GitHub:** https://github.com/Smart-AI-Memory
 
