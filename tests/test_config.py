@@ -828,3 +828,44 @@ class TestConfigJSONRoundTrip:
         assert loaded.metadata["version"] == "1.0.0"
         assert loaded.metadata["environment"] == "production"
         assert loaded.metadata["nested"]["key"] == "value"
+
+
+class TestConfigFromFileElif:
+    """Test from_file JSON elif branch"""
+
+    def test_from_file_json_explicit_elif(self, temp_dir):
+        """Test from_file with .json extension triggers elif branch (line 226)"""
+        # This test explicitly covers the elif path.endswith(".json") branch
+        filepath = Path(temp_dir) / "test_config.json"
+
+        with open(filepath, "w") as f:
+            json.dump({"user_id": "json_elif_test", "target_level": 2}, f)
+
+        # Call from_file with explicit JSON path
+        config = EmpathyConfig.from_file(str(filepath))
+
+        assert config.user_id == "json_elif_test"
+        assert config.target_level == 2
+
+
+class TestLoadConfigDefaultPathDetection:
+    """Test load_config default path detection"""
+
+    def test_load_config_finds_default_json_file(self, temp_dir):
+        """Test load_config finds and uses .empathy.json file (lines 406-407)"""
+        original_cwd = os.getcwd()
+        try:
+            os.chdir(temp_dir)
+
+            # Create .empathy.json in current directory
+            with open(".empathy.json", "w") as f:
+                json.dump({"user_id": "default_json_user", "target_level": 3}, f)
+
+            # Call load_config without filepath (should find .empathy.json)
+            config = load_config(filepath=None, use_env=False)
+
+            assert config.user_id == "default_json_user"
+            assert config.target_level == 3
+
+        finally:
+            os.chdir(original_cwd)

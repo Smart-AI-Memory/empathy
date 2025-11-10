@@ -512,3 +512,180 @@ async def test_interact_includes_level_description(mock_provider):
 
         assert "level_description" in result
         assert result["level_description"] is not None
+
+
+# ============================================================================
+# Level 3 Proactive Pattern Matching Tests - TARGETS MISSING LINES 234-248
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_level_3_proactive_with_matching_pattern_builds_prompt(mock_provider):
+    """Test Level 3 builds proactive prompt when pattern matches - COVERS 234-248"""
+    from datetime import datetime
+
+    with patch("empathy_llm_toolkit.core.AnthropicProvider", return_value=mock_provider):
+        llm = EmpathyLLM(provider="anthropic", target_level=3)
+
+        # Increase trust level so pattern will trigger (needs > 0.6)
+        llm.update_trust("test_user", "success", magnitude=1.0)
+        llm.update_trust("test_user", "success", magnitude=1.0)
+
+        # Add a high-confidence pattern that will match
+        pattern = UserPattern(
+            pattern_type=PatternType.SEQUENTIAL,
+            trigger="run tests",
+            action="check coverage report",
+            confidence=0.92,
+            occurrences=8,
+            last_seen=datetime.now(),
+        )
+        llm.add_pattern("test_user", pattern)
+
+        # Trigger the pattern with matching input
+        result = await llm.interact(
+            user_id="test_user",
+            user_input="run tests",  # Matches the trigger
+            force_level=3,
+        )
+
+        # Verify proactive behavior
+        assert result["level_used"] == 3
+        assert result["proactive"] is True
+        assert result["metadata"]["pattern"] is not None
+        assert result["metadata"]["pattern"]["trigger"] == "run tests"
+        assert result["metadata"]["pattern"]["confidence"] == 0.92
+        assert result["metadata"]["pattern"]["pattern_type"] == PatternType.SEQUENTIAL.value
+
+        # Verify the provider was called (prompt was built and used)
+        mock_provider.generate.assert_called()
+        call_args = mock_provider.generate.call_args
+        messages = call_args[1]["messages"]
+
+        # Should have the proactive prompt
+        assert len(messages) == 1
+        assert "pattern" in messages[0]["content"].lower()
+        assert "run tests" in messages[0]["content"]
+        assert "check coverage report" in messages[0]["content"]
+
+
+@pytest.mark.asyncio
+async def test_level_3_proactive_pattern_includes_confidence_in_prompt(mock_provider):
+    """Test Level 3 includes confidence in proactive prompt"""
+    from datetime import datetime
+
+    with patch("empathy_llm_toolkit.core.AnthropicProvider", return_value=mock_provider):
+        llm = EmpathyLLM(provider="anthropic", target_level=3)
+
+        # Increase trust level so pattern will trigger (needs > 0.6)
+        llm.update_trust("test_user", "success", magnitude=1.0)
+        llm.update_trust("test_user", "success", magnitude=1.0)
+
+        pattern = UserPattern(
+            pattern_type=PatternType.CONDITIONAL,
+            trigger="error occurs",
+            action="check logs",
+            confidence=0.85,
+            occurrences=5,
+            last_seen=datetime.now(),
+        )
+        llm.add_pattern("test_user", pattern)
+
+        result = await llm.interact(
+            user_id="test_user",
+            user_input="error occurs",
+            force_level=3,
+        )
+
+        assert result["proactive"] is True
+        assert result["metadata"]["pattern"]["confidence"] == 0.85
+
+        # Check that confidence is in the prompt
+        call_args = mock_provider.generate.call_args
+        messages = call_args[1]["messages"]
+        prompt_content = messages[0]["content"]
+        assert "85%" in prompt_content or "0.85" in prompt_content
+
+
+# ============================================================================
+# Level 5 Systems Empty Pattern Library Tests - TARGETS MISSING LINE 344->347
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_level_5_systems_with_empty_pattern_library(mock_provider):
+    """Test Level 5 with empty pattern library - COVERS 344->347"""
+    with patch("empathy_llm_toolkit.core.AnthropicProvider", return_value=mock_provider):
+        # Initialize with empty pattern library (default)
+        llm = EmpathyLLM(provider="anthropic", target_level=5)
+
+        result = await llm.interact(
+            user_id="test_user",
+            user_input="Analyze this system",
+            force_level=5,
+        )
+
+        assert result["level_used"] == 5
+        assert result["metadata"]["pattern_library_size"] == 0
+
+        # Verify the prompt was built correctly
+        call_args = mock_provider.generate.call_args
+        messages = call_args[1]["messages"]
+        # The pattern context would be in the last message (the prompt we built)
+        last_message = messages[-1]["content"]
+
+        # Should NOT include pattern library section when empty
+        assert "SHARED PATTERN LIBRARY:" not in last_message
+
+
+@pytest.mark.asyncio
+async def test_level_5_systems_with_populated_pattern_library(mock_provider):
+    """Test Level 5 with populated pattern library"""
+    pattern_lib = {
+        "error_handling": {"pattern": "try-catch", "domains": ["backend", "frontend"]},
+        "validation": {"pattern": "schema-based", "domains": ["api", "database"]},
+    }
+
+    with patch("empathy_llm_toolkit.core.AnthropicProvider", return_value=mock_provider):
+        llm = EmpathyLLM(provider="anthropic", target_level=5, pattern_library=pattern_lib)
+
+        result = await llm.interact(
+            user_id="test_user",
+            user_input="Implement error handling",
+            force_level=5,
+        )
+
+        assert result["level_used"] == 5
+        assert result["metadata"]["pattern_library_size"] == 2
+
+        # Verify the prompt includes pattern library
+        call_args = mock_provider.generate.call_args
+        messages = call_args[1]["messages"]
+        last_message = messages[-1]["content"]
+
+        # Should include pattern library section
+        assert "SHARED PATTERN LIBRARY:" in last_message
+        assert "error_handling" in str(pattern_lib)
+
+
+@pytest.mark.asyncio
+async def test_level_5_systems_pattern_library_in_prompt(mock_provider):
+    """Test Level 5 includes pattern library in prompt when available"""
+    pattern_lib = {"test_pattern": "test_value"}
+
+    with patch("empathy_llm_toolkit.core.AnthropicProvider", return_value=mock_provider):
+        llm = EmpathyLLM(provider="anthropic", target_level=5, pattern_library=pattern_lib)
+
+        await llm.interact(
+            user_id="test_user",
+            user_input="Test request",
+            force_level=5,
+        )
+
+        # Verify pattern library context was included
+        call_args = mock_provider.generate.call_args
+        messages = call_args[1]["messages"]
+        last_message = messages[-1]["content"]
+
+        # Pattern library should be in the prompt
+        assert "test_pattern" in last_message or str(pattern_lib) in last_message

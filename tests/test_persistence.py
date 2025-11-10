@@ -5,21 +5,21 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import pytest
 import json
-import sqlite3
-from pathlib import Path
-from datetime import datetime
-import tempfile
 import shutil
+import sqlite3
+import tempfile
+from pathlib import Path
+
+import pytest
 
 from empathy_os import (
-    PatternLibrary,
+    EmpathyOS,
+    MetricsCollector,
     Pattern,
+    PatternLibrary,
     PatternPersistence,
     StateManager,
-    MetricsCollector,
-    EmpathyOS
 )
 
 
@@ -44,7 +44,7 @@ def sample_library():
         description="A test pattern",
         context={"environment": "test"},
         code="def example(): pass",
-        tags=["test", "sample"]
+        tags=["test", "sample"],
     )
 
     pattern2 = Pattern(
@@ -55,7 +55,7 @@ def sample_library():
         description="Another test pattern",
         context={"environment": "production"},
         code="def another(): pass",
-        tags=["test", "production"]
+        tags=["test", "production"],
     )
 
     library.contribute_pattern("agent1", pattern1)
@@ -81,7 +81,7 @@ class TestPatternPersistenceJSON:
         assert filepath.exists()
 
         # Verify JSON structure
-        with open(filepath, 'r') as f:
+        with open(filepath) as f:
             data = json.load(f)
 
         assert "patterns" in data
@@ -153,7 +153,7 @@ class TestPatternPersistenceJSON:
         """Test loading corrupt JSON raises error"""
         filepath = Path(temp_dir) / "corrupt.json"
 
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             f.write("not valid json{")
 
         with pytest.raises(json.JSONDecodeError):
@@ -258,7 +258,7 @@ class TestStateManager:
         assert filepath.exists()
 
         # Verify content
-        with open(filepath, 'r') as f:
+        with open(filepath) as f:
             data = json.load(f)
 
         assert data["user_id"] == "test_user"
@@ -348,6 +348,55 @@ class TestStateManager:
         assert loaded_state.failed_interventions == 2
         assert loaded_state.shared_context == {"key": "value"}
 
+    def test_load_state_corrupted_json(self, temp_dir):
+        """Test load_state with corrupted JSON returns None (lines 346-348)"""
+        manager = StateManager(storage_path=temp_dir)
+
+        # Create a corrupted JSON file
+        filepath = Path(temp_dir) / "corrupted_user.json"
+        with open(filepath, "w") as f:
+            f.write("{invalid json syntax")
+
+        # Should return None without crashing
+        state = manager.load_state("corrupted_user")
+        assert state is None
+
+    def test_load_state_missing_key(self, temp_dir):
+        """Test load_state with missing required key returns None"""
+        manager = StateManager(storage_path=temp_dir)
+
+        # Create a JSON file missing required keys
+        filepath = Path(temp_dir) / "incomplete_user.json"
+        with open(filepath, "w") as f:
+            json.dump({"user_id": "incomplete_user"}, f)  # Missing trust_level, etc.
+
+        # Should return None due to KeyError
+        state = manager.load_state("incomplete_user")
+        assert state is None
+
+    def test_load_state_invalid_date_format(self, temp_dir):
+        """Test load_state with invalid date format returns None"""
+        manager = StateManager(storage_path=temp_dir)
+
+        # Create a JSON file with invalid date format
+        filepath = Path(temp_dir) / "bad_date_user.json"
+        data = {
+            "user_id": "bad_date_user",
+            "trust_level": 0.5,
+            "total_interactions": 1,
+            "successful_interventions": 1,
+            "failed_interventions": 0,
+            "session_start": "not-a-valid-date-format",
+            "trust_trajectory": [],
+            "shared_context": {},
+        }
+        with open(filepath, "w") as f:
+            json.dump(data, f)
+
+        # Should return None due to ValueError in datetime.fromisoformat
+        state = manager.load_state("bad_date_user")
+        assert state is None
+
 
 class TestMetricsCollector:
     """Test MetricsCollector for telemetry"""
@@ -362,7 +411,7 @@ class TestMetricsCollector:
             empathy_level=4,
             success=True,
             response_time_ms=250.5,
-            metadata={"bottlenecks": 3}
+            metadata={"bottlenecks": 3},
         )
 
         # Verify recorded
@@ -384,7 +433,7 @@ class TestMetricsCollector:
                 user_id="test_user",
                 empathy_level=4,
                 success=(i % 5 != 0),  # 8 successes, 2 failures (i=0,5 are failures)
-                response_time_ms=200.0 + i * 10
+                response_time_ms=200.0 + i * 10,
             )
 
         stats = collector.get_user_stats("test_user")
@@ -402,12 +451,9 @@ class TestMetricsCollector:
 
         # Record metrics for different levels
         for level in [1, 2, 3, 4, 5]:
-            for i in range(level * 2):  # More operations at higher levels
+            for _ in range(level * 2):  # More operations at higher levels
                 collector.record_metric(
-                    user_id="test_user",
-                    empathy_level=level,
-                    success=True,
-                    response_time_ms=100.0
+                    user_id="test_user", empathy_level=level, success=True, response_time_ms=100.0
                 )
 
         stats = collector.get_user_stats("test_user")
@@ -438,7 +484,7 @@ class TestMetricsCollector:
             empathy_level=4,
             success=True,
             response_time_ms=300.0,
-            metadata={"intervention_count": 5, "risk_level": "high"}
+            metadata={"intervention_count": 5, "risk_level": "high"},
         )
 
         # Verify metadata stored
