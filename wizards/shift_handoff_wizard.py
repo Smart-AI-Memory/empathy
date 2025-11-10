@@ -8,11 +8,10 @@ Based on best practices for bedside handoff communication.
 
 import logging
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any
 from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException, status
-
 from src.services import get_service
 from src.utils.api_responses import create_success_response
 from src.utils.config import get_settings
@@ -57,7 +56,7 @@ try:
 except ImportError:
     _has_redis = False
 
-_wizard_sessions: Dict[str, Dict[str, Any]] = {}
+_wizard_sessions: dict[str, dict[str, Any]] = {}
 
 
 # Shift handoff wizard steps
@@ -124,7 +123,7 @@ SHIFT_HANDOFF_STEPS = {
 }
 
 
-async def _store_wizard_session(wizard_id: str, session_data: Dict[str, Any]):
+async def _store_wizard_session(wizard_id: str, session_data: dict[str, Any]):
     """Store wizard session in Redis or memory."""
     if _has_redis:
         try:
@@ -143,7 +142,7 @@ async def _store_wizard_session(wizard_id: str, session_data: Dict[str, Any]):
     _wizard_sessions[wizard_id] = session_data
 
 
-async def _get_wizard_session(wizard_id: str) -> Optional[Dict[str, Any]]:
+async def _get_wizard_session(wizard_id: str) -> dict[str, Any] | None:
     """Retrieve wizard session from Redis or memory."""
     if _has_redis:
         try:
@@ -151,7 +150,9 @@ async def _get_wizard_session(wizard_id: str) -> Optional[Dict[str, Any]]:
             if redis_client:
                 data = await redis_client.get(f"wizard_session:{wizard_id}")
                 if data:
-                    return eval(data)  # Convert string back to dict
+                    import json
+
+                    return json.loads(data)  # Safely parse JSON string to dict
         except Exception:
             pass
 
@@ -159,7 +160,7 @@ async def _get_wizard_session(wizard_id: str) -> Optional[Dict[str, Any]]:
     return _wizard_sessions.get(wizard_id)
 
 
-def _get_step_data(step_number: int) -> Dict[str, Any]:
+def _get_step_data(step_number: int) -> dict[str, Any]:
     """Get step configuration data."""
     if step_number not in SHIFT_HANDOFF_STEPS:
         raise ValueError(f"Invalid step number: {step_number}")
@@ -215,7 +216,7 @@ async def start_shift_handoff_wizard():
     summary="Submit shift handoff wizard step",
     description="Submit data for current step and advance to next step in shift handoff workflow.",
 )
-async def submit_shift_handoff_step(wizard_id: str, step_data: Dict[str, Any]):
+async def submit_shift_handoff_step(wizard_id: str, step_data: dict[str, Any]):
     """Submit step data and advance wizard."""
     try:
         # Get session
@@ -252,8 +253,7 @@ async def submit_shift_handoff_step(wizard_id: str, step_data: Dict[str, Any]):
                     "progress": {
                         "current": session["current_step"],
                         "total": session["total_steps"],
-                        "percentage": (session["current_step"] / session["total_steps"])
-                        * 100,
+                        "percentage": (session["current_step"] / session["total_steps"]) * 100,
                     },
                 },
                 message=f"Step {current_step} completed",
@@ -289,7 +289,7 @@ async def submit_shift_handoff_step(wizard_id: str, step_data: Dict[str, Any]):
     summary="Enhance shift handoff text with AI",
     description="Use AI to professionalize and enhance shift handoff notes.",
 )
-async def enhance_shift_handoff_text(wizard_id: str, text_data: Dict[str, Any]):
+async def enhance_shift_handoff_text(wizard_id: str, text_data: dict[str, Any]):
     """Enhance text using AI service."""
     try:
         # Get AI service
@@ -349,7 +349,7 @@ async def get_shift_handoff_report(wizard_id: str):
         )
 
 
-async def _generate_handoff_report(collected_data: Dict[str, Any]) -> Dict[str, Any]:
+async def _generate_handoff_report(collected_data: dict[str, Any]) -> dict[str, Any]:
     """Generate final shift handoff report from collected data."""
     # Compile all steps into structured handoff report
     report = {
@@ -366,7 +366,7 @@ async def _generate_handoff_report(collected_data: Dict[str, Any]) -> Dict[str, 
     return report
 
 
-def _format_handoff_narrative(collected_data: Dict[str, Any]) -> str:
+def _format_handoff_narrative(collected_data: dict[str, Any]) -> str:
     """Format collected data into narrative handoff report."""
     sections = []
 

@@ -1,0 +1,64 @@
+# OpenSSF Scorecard - Automated Security Assessment
+# This workflow runs security checks against OpenSSF best practices
+# Results are uploaded to GitHub Security tab and published to OpenSSF dashboard
+
+name: OpenSSF Scorecard
+
+on:
+  # Run on branch protection rule changes
+  branch_protection_rule:
+
+  # Run weekly on Sundays at midnight UTC
+  schedule:
+    - cron: '0 0 * * 0'
+
+  # Run on every push to main branch
+  push:
+    branches: [main]
+
+  # Allow manual triggering
+  workflow_dispatch:
+
+# Restrict default permissions to read-only
+permissions: read-all
+
+jobs:
+  analysis:
+    name: Scorecard analysis
+    runs-on: ubuntu-latest
+
+    permissions:
+      # Needed to upload SARIF results to GitHub Security tab
+      security-events: write
+      # Needed to publish results to OpenSSF dashboard
+      id-token: write
+      # Needed to read repository contents
+      contents: read
+      # Needed to read GitHub Actions
+      actions: read
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: "Run OpenSSF Scorecard analysis"
+        uses: ossf/scorecard-action@v2
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          # Publish results to OpenSSF public dashboard
+          publish_results: true
+
+      - name: "Upload SARIF results to GitHub Security"
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
+
+      - name: "Upload results as artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: scorecard-results
+          path: results.sarif
+          retention-days: 30
