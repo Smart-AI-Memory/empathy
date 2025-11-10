@@ -10,14 +10,16 @@ Tests cover:
 - Provider factory patterns
 """
 
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import Mock, AsyncMock, patch, MagicMock
+
 from empathy_llm_toolkit.providers import (
-    LLMResponse,
-    BaseLLMProvider,
     AnthropicProvider,
-    OpenAIProvider,
+    BaseLLMProvider,
+    LLMResponse,
     LocalProvider,
+    OpenAIProvider,
 )
 
 
@@ -58,7 +60,9 @@ class TestBaseLLMProvider:
         """Test BaseLLMProvider can be initialized with api_key and kwargs"""
 
         class ConcreteProvider(BaseLLMProvider):
-            async def generate(self, messages, system_prompt=None, temperature=0.7, max_tokens=1024, **kwargs):
+            async def generate(
+                self, messages, system_prompt=None, temperature=0.7, max_tokens=1024, **kwargs
+            ):
                 return LLMResponse("test", "model", 10, "stop", {})
 
             def get_model_info(self):
@@ -73,7 +77,9 @@ class TestBaseLLMProvider:
         """Test BaseLLMProvider can be initialized without api_key"""
 
         class ConcreteProvider(BaseLLMProvider):
-            async def generate(self, messages, system_prompt=None, temperature=0.7, max_tokens=1024, **kwargs):
+            async def generate(
+                self, messages, system_prompt=None, temperature=0.7, max_tokens=1024, **kwargs
+            ):
                 return LLMResponse("test", "model", 10, "stop", {})
 
             def get_model_info(self):
@@ -86,7 +92,9 @@ class TestBaseLLMProvider:
         """Test token estimation for short text"""
 
         class ConcreteProvider(BaseLLMProvider):
-            async def generate(self, messages, system_prompt=None, temperature=0.7, max_tokens=1024, **kwargs):
+            async def generate(
+                self, messages, system_prompt=None, temperature=0.7, max_tokens=1024, **kwargs
+            ):
                 return LLMResponse("test", "model", 10, "stop", {})
 
             def get_model_info(self):
@@ -102,7 +110,9 @@ class TestBaseLLMProvider:
         """Test token estimation for longer text"""
 
         class ConcreteProvider(BaseLLMProvider):
-            async def generate(self, messages, system_prompt=None, temperature=0.7, max_tokens=1024, **kwargs):
+            async def generate(
+                self, messages, system_prompt=None, temperature=0.7, max_tokens=1024, **kwargs
+            ):
                 return LLMResponse("test", "model", 10, "stop", {})
 
             def get_model_info(self):
@@ -118,7 +128,9 @@ class TestBaseLLMProvider:
         """Test token estimation for empty text"""
 
         class ConcreteProvider(BaseLLMProvider):
-            async def generate(self, messages, system_prompt=None, temperature=0.7, max_tokens=1024, **kwargs):
+            async def generate(
+                self, messages, system_prompt=None, temperature=0.7, max_tokens=1024, **kwargs
+            ):
                 return LLMResponse("test", "model", 10, "stop", {})
 
             def get_model_info(self):
@@ -362,6 +374,510 @@ class TestProviderComparison:
             assert isinstance(anthropic.get_model_info(), dict)
             assert isinstance(openai.get_model_info(), dict)
             assert isinstance(local.get_model_info(), dict)
+
+
+class TestAnthropicProviderGenerate:
+    """Test Anthropic provider generate method and response handling"""
+
+    @pytest.mark.asyncio
+    async def test_anthropic_generate_basic(self):
+        """Test basic Anthropic generate call"""
+        mock_anthropic = MagicMock()
+        mock_client = MagicMock()
+        mock_anthropic.Anthropic.return_value = mock_client
+
+        # Mock response
+        mock_response = MagicMock()
+        mock_response.model = "claude-3-sonnet"
+        mock_response.stop_reason = "end_turn"
+        mock_response.usage = MagicMock()
+        mock_response.usage.input_tokens = 100
+        mock_response.usage.output_tokens = 50
+
+        # Mock content block (text type)
+        mock_block = MagicMock()
+        mock_block.type = "text"
+        mock_block.text = "Test response"
+        mock_response.content = [mock_block]
+
+        mock_client.messages.create.return_value = mock_response
+
+        with patch.dict("sys.modules", {"anthropic": mock_anthropic}):
+            provider = AnthropicProvider(api_key="test-key")
+
+            messages = [{"role": "user", "content": "Hello"}]
+            result = await provider.generate(messages)
+
+            assert result.content == "Test response"
+            assert result.model == "claude-3-sonnet"
+            assert result.tokens_used == 150
+            assert result.finish_reason == "end_turn"
+            assert result.metadata["provider"] == "anthropic"
+
+    @pytest.mark.asyncio
+    async def test_anthropic_generate_with_system_prompt_and_caching(self):
+        """Test Anthropic generate with system prompt and prompt caching"""
+        mock_anthropic = MagicMock()
+        mock_client = MagicMock()
+        mock_anthropic.Anthropic.return_value = mock_client
+
+        mock_response = MagicMock()
+        mock_response.model = "claude-3-sonnet"
+        mock_response.stop_reason = "end_turn"
+        mock_response.usage = MagicMock()
+        mock_response.usage.input_tokens = 100
+        mock_response.usage.output_tokens = 50
+        mock_response.usage.cache_creation_input_tokens = 200
+        mock_response.usage.cache_read_input_tokens = 150
+
+        mock_block = MagicMock()
+        mock_block.type = "text"
+        mock_block.text = "Cached response"
+        mock_response.content = [mock_block]
+
+        mock_client.messages.create.return_value = mock_response
+
+        with patch.dict("sys.modules", {"anthropic": mock_anthropic}):
+            provider = AnthropicProvider(api_key="test-key", use_prompt_caching=True)
+
+            messages = [{"role": "user", "content": "Hello"}]
+            result = await provider.generate(messages, system_prompt="You are helpful")
+
+            assert result.content == "Cached response"
+            assert result.metadata["cache_creation_tokens"] == 200
+            assert result.metadata["cache_read_tokens"] == 150
+
+    @pytest.mark.asyncio
+    async def test_anthropic_generate_without_caching(self):
+        """Test Anthropic generate with system prompt but no caching"""
+        mock_anthropic = MagicMock()
+        mock_client = MagicMock()
+        mock_anthropic.Anthropic.return_value = mock_client
+
+        mock_response = MagicMock()
+        mock_response.model = "claude-3-sonnet"
+        mock_response.stop_reason = "end_turn"
+        mock_response.usage = MagicMock()
+        mock_response.usage.input_tokens = 100
+        mock_response.usage.output_tokens = 50
+
+        mock_block = MagicMock()
+        mock_block.type = "text"
+        mock_block.text = "Regular response"
+        mock_response.content = [mock_block]
+
+        mock_client.messages.create.return_value = mock_response
+
+        with patch.dict("sys.modules", {"anthropic": mock_anthropic}):
+            provider = AnthropicProvider(api_key="test-key", use_prompt_caching=False)
+
+            messages = [{"role": "user", "content": "Hello"}]
+            result = await provider.generate(messages, system_prompt="You are helpful")
+
+            assert result.content == "Regular response"
+
+    @pytest.mark.asyncio
+    async def test_anthropic_generate_with_thinking_mode(self):
+        """Test Anthropic generate with thinking mode enabled"""
+        mock_anthropic = MagicMock()
+        mock_client = MagicMock()
+        mock_anthropic.Anthropic.return_value = mock_client
+
+        mock_response = MagicMock()
+        mock_response.model = "claude-3-sonnet"
+        mock_response.stop_reason = "end_turn"
+        mock_response.usage = MagicMock()
+        mock_response.usage.input_tokens = 100
+        mock_response.usage.output_tokens = 50
+
+        # Mock thinking block
+        mock_thinking_block = MagicMock()
+        mock_thinking_block.type = "thinking"
+        mock_thinking_block.thinking = "Let me think about this..."
+
+        # Mock text block
+        mock_text_block = MagicMock()
+        mock_text_block.type = "text"
+        mock_text_block.text = "Based on my thinking..."
+
+        mock_response.content = [mock_thinking_block, mock_text_block]
+
+        mock_client.messages.create.return_value = mock_response
+
+        with patch.dict("sys.modules", {"anthropic": mock_anthropic}):
+            provider = AnthropicProvider(api_key="test-key", use_thinking=True)
+
+            messages = [{"role": "user", "content": "Complex question"}]
+            result = await provider.generate(messages)
+
+            assert result.content == "Based on my thinking..."
+            assert result.metadata["thinking"] == "Let me think about this..."
+
+    @pytest.mark.asyncio
+    async def test_anthropic_generate_with_legacy_content_block(self):
+        """Test Anthropic generate with content block without type attribute"""
+        mock_anthropic = MagicMock()
+        mock_client = MagicMock()
+        mock_anthropic.Anthropic.return_value = mock_client
+
+        mock_response = MagicMock()
+        mock_response.model = "claude-3-sonnet"
+        mock_response.stop_reason = "end_turn"
+        mock_response.usage = MagicMock()
+        mock_response.usage.input_tokens = 100
+        mock_response.usage.output_tokens = 50
+
+        # Mock content block without type attribute (legacy format)
+        mock_block = MagicMock()
+        del mock_block.type  # Remove type attribute
+        mock_block.text = "Legacy response"
+        mock_response.content = [mock_block]
+
+        mock_client.messages.create.return_value = mock_response
+
+        with patch.dict("sys.modules", {"anthropic": mock_anthropic}):
+            provider = AnthropicProvider(api_key="test-key")
+
+            messages = [{"role": "user", "content": "Hello"}]
+            result = await provider.generate(messages)
+
+            assert result.content == "Legacy response"
+
+    @pytest.mark.asyncio
+    async def test_anthropic_generate_with_unknown_block_type(self):
+        """Test Anthropic generate with unknown block type (skip it)"""
+        mock_anthropic = MagicMock()
+        mock_client = MagicMock()
+        mock_anthropic.Anthropic.return_value = mock_client
+
+        mock_response = MagicMock()
+        mock_response.model = "claude-3-sonnet"
+        mock_response.stop_reason = "end_turn"
+        mock_response.usage = MagicMock()
+        mock_response.usage.input_tokens = 100
+        mock_response.usage.output_tokens = 50
+
+        # Mock block with unknown type
+        mock_unknown_block = MagicMock()
+        mock_unknown_block.type = "unknown_type"
+
+        # Mock text block
+        mock_text_block = MagicMock()
+        mock_text_block.type = "text"
+        mock_text_block.text = "Text response"
+
+        mock_response.content = [mock_unknown_block, mock_text_block]
+
+        mock_client.messages.create.return_value = mock_response
+
+        with patch.dict("sys.modules", {"anthropic": mock_anthropic}):
+            provider = AnthropicProvider(api_key="test-key")
+
+            messages = [{"role": "user", "content": "Hello"}]
+            result = await provider.generate(messages)
+
+            # Should get text from the text block, unknown block skipped
+            assert result.content == "Text response"
+
+    @pytest.mark.asyncio
+    async def test_anthropic_generate_without_cache_metrics(self):
+        """Test Anthropic generate without cache metrics in response"""
+        mock_anthropic = MagicMock()
+        mock_client = MagicMock()
+        mock_anthropic.Anthropic.return_value = mock_client
+
+        mock_response = MagicMock()
+        mock_response.model = "claude-3-sonnet"
+        mock_response.stop_reason = "end_turn"
+
+        # Create usage object without cache attributes
+        mock_usage = type("obj", (object,), {"input_tokens": 100, "output_tokens": 50})()
+        mock_response.usage = mock_usage
+
+        mock_block = MagicMock()
+        mock_block.type = "text"
+        mock_block.text = "Response without cache"
+        mock_response.content = [mock_block]
+
+        mock_client.messages.create.return_value = mock_response
+
+        with patch.dict("sys.modules", {"anthropic": mock_anthropic}):
+            provider = AnthropicProvider(api_key="test-key", use_prompt_caching=True)
+
+            messages = [{"role": "user", "content": "Hello"}]
+            result = await provider.generate(messages, system_prompt="You are helpful")
+
+            assert result.content == "Response without cache"
+            # Should not have cache metrics
+            assert "cache_creation_tokens" not in result.metadata
+            assert "cache_read_tokens" not in result.metadata
+
+    @pytest.mark.asyncio
+    async def test_anthropic_generate_without_thinking_content(self):
+        """Test Anthropic generate without thinking content"""
+        mock_anthropic = MagicMock()
+        mock_client = MagicMock()
+        mock_anthropic.Anthropic.return_value = mock_client
+
+        mock_response = MagicMock()
+        mock_response.model = "claude-3-sonnet"
+        mock_response.stop_reason = "end_turn"
+        mock_response.usage = MagicMock()
+        mock_response.usage.input_tokens = 100
+        mock_response.usage.output_tokens = 50
+
+        # Only text block, no thinking
+        mock_text_block = MagicMock()
+        mock_text_block.type = "text"
+        mock_text_block.text = "Simple response"
+        mock_response.content = [mock_text_block]
+
+        mock_client.messages.create.return_value = mock_response
+
+        with patch.dict("sys.modules", {"anthropic": mock_anthropic}):
+            provider = AnthropicProvider(api_key="test-key", use_thinking=True)
+
+            messages = [{"role": "user", "content": "Hello"}]
+            result = await provider.generate(messages)
+
+            assert result.content == "Simple response"
+            # Should not have thinking metadata
+            assert "thinking" not in result.metadata
+
+    @pytest.mark.asyncio
+    async def test_anthropic_generate_with_thinking_no_cache(self):
+        """Test Anthropic generate with thinking but no cache metrics"""
+        mock_anthropic = MagicMock()
+        mock_client = MagicMock()
+        mock_anthropic.Anthropic.return_value = mock_client
+
+        mock_response = MagicMock()
+        mock_response.model = "claude-3-sonnet"
+        mock_response.stop_reason = "end_turn"
+
+        # Create usage object without cache attributes
+        mock_usage = type("obj", (object,), {"input_tokens": 100, "output_tokens": 50})()
+        mock_response.usage = mock_usage
+
+        # Mock thinking block
+        mock_thinking_block = MagicMock()
+        mock_thinking_block.type = "thinking"
+        mock_thinking_block.thinking = "Reasoning..."
+
+        # Mock text block
+        mock_text_block = MagicMock()
+        mock_text_block.type = "text"
+        mock_text_block.text = "Response with thinking"
+
+        mock_response.content = [mock_thinking_block, mock_text_block]
+
+        mock_client.messages.create.return_value = mock_response
+
+        with patch.dict("sys.modules", {"anthropic": mock_anthropic}):
+            provider = AnthropicProvider(api_key="test-key", use_thinking=True)
+
+            messages = [{"role": "user", "content": "Complex task"}]
+            result = await provider.generate(messages)
+
+            assert result.content == "Response with thinking"
+            assert result.metadata["thinking"] == "Reasoning..."
+            # Should not have cache metrics
+            assert "cache_creation_tokens" not in result.metadata
+
+    @pytest.mark.asyncio
+    async def test_anthropic_analyze_large_codebase(self):
+        """Test Anthropic analyze_large_codebase method"""
+        mock_anthropic = MagicMock()
+        mock_client = MagicMock()
+        mock_anthropic.Anthropic.return_value = mock_client
+
+        mock_response = MagicMock()
+        mock_response.model = "claude-3-sonnet"
+        mock_response.stop_reason = "end_turn"
+        mock_response.usage = MagicMock()
+        mock_response.usage.input_tokens = 1000
+        mock_response.usage.output_tokens = 500
+
+        mock_block = MagicMock()
+        mock_block.type = "text"
+        mock_block.text = "Analysis complete"
+        mock_response.content = [mock_block]
+
+        mock_client.messages.create.return_value = mock_response
+
+        with patch.dict("sys.modules", {"anthropic": mock_anthropic}):
+            provider = AnthropicProvider(api_key="test-key")
+
+            codebase_files = [
+                {"path": "main.py", "content": "print('hello')"},
+                {"path": "utils.py", "content": "def helper(): pass"},
+            ]
+            result = await provider.analyze_large_codebase(codebase_files, "Analyze this code")
+
+            assert result.content == "Analysis complete"
+            assert result.tokens_used == 1500
+
+
+class TestOpenAIProviderGenerate:
+    """Test OpenAI provider generate method"""
+
+    @pytest.mark.asyncio
+    async def test_openai_generate_basic(self):
+        """Test basic OpenAI generate call"""
+        mock_openai = MagicMock()
+        mock_client = MagicMock()
+        mock_openai.AsyncOpenAI.return_value = mock_client
+
+        # Mock response
+        mock_response = MagicMock()
+        mock_response.model = "gpt-4"
+        mock_response.usage = MagicMock()
+        mock_response.usage.prompt_tokens = 100
+        mock_response.usage.completion_tokens = 50
+        mock_response.usage.total_tokens = 150
+
+        mock_choice = MagicMock()
+        mock_choice.message.content = "OpenAI response"
+        mock_choice.finish_reason = "stop"
+        mock_response.choices = [mock_choice]
+
+        # Mock async create method
+        async def mock_create(*args, **kwargs):
+            return mock_response
+
+        mock_client.chat.completions.create = mock_create
+
+        with patch.dict("sys.modules", {"openai": mock_openai}):
+            provider = OpenAIProvider(api_key="test-key")
+
+            messages = [{"role": "user", "content": "Hello"}]
+            result = await provider.generate(messages)
+
+            assert result.content == "OpenAI response"
+            assert result.model == "gpt-4"
+            assert result.tokens_used == 150
+            assert result.finish_reason == "stop"
+            assert result.metadata["provider"] == "openai"
+
+    @pytest.mark.asyncio
+    async def test_openai_generate_with_system_prompt(self):
+        """Test OpenAI generate with system prompt"""
+        mock_openai = MagicMock()
+        mock_client = MagicMock()
+        mock_openai.AsyncOpenAI.return_value = mock_client
+
+        mock_response = MagicMock()
+        mock_response.model = "gpt-4"
+        mock_response.usage = MagicMock()
+        mock_response.usage.prompt_tokens = 150
+        mock_response.usage.completion_tokens = 75
+        mock_response.usage.total_tokens = 225
+
+        mock_choice = MagicMock()
+        mock_choice.message.content = "System-aware response"
+        mock_choice.finish_reason = "stop"
+        mock_response.choices = [mock_choice]
+
+        async def mock_create(*args, **kwargs):
+            # Verify system prompt was added
+            assert kwargs["messages"][0]["role"] == "system"
+            assert kwargs["messages"][0]["content"] == "You are helpful"
+            return mock_response
+
+        mock_client.chat.completions.create = mock_create
+
+        with patch.dict("sys.modules", {"openai": mock_openai}):
+            provider = OpenAIProvider(api_key="test-key")
+
+            messages = [{"role": "user", "content": "Hello"}]
+            result = await provider.generate(messages, system_prompt="You are helpful")
+
+            assert result.content == "System-aware response"
+
+
+class TestLocalProviderGenerate:
+    """Test Local provider generate method"""
+
+    @pytest.mark.asyncio
+    async def test_local_provider_generate_basic(self):
+        """Test basic Local provider generate call"""
+        pytest.importorskip("aiohttp")  # Skip if aiohttp not installed
+
+        provider = LocalProvider(endpoint="http://localhost:11434", model="llama2")
+
+        messages = [{"role": "user", "content": "Hello"}]
+
+        # Mock aiohttp response
+        mock_response_data = {
+            "message": {"content": "Local response"},
+            "eval_count": 50,
+            "prompt_eval_count": 100,
+        }
+
+        async def mock_post(*args, **kwargs):
+            mock_resp = MagicMock()
+
+            async def mock_json():
+                return mock_response_data
+
+            mock_resp.json = mock_json
+            mock_resp.__aenter__ = AsyncMock(return_value=mock_resp)
+            mock_resp.__aexit__ = AsyncMock(return_value=None)
+            return mock_resp
+
+        mock_session = MagicMock()
+        mock_session.post = mock_post
+        mock_session.__aenter__ = AsyncMock(return_value=mock_session)
+        mock_session.__aexit__ = AsyncMock(return_value=None)
+
+        with patch("aiohttp.ClientSession", return_value=mock_session):
+            result = await provider.generate(messages)
+
+            assert result.content == "Local response"
+            assert result.model == "llama2"
+            assert result.tokens_used == 150
+            assert result.finish_reason == "stop"
+            assert result.metadata["provider"] == "local"
+
+    @pytest.mark.asyncio
+    async def test_local_provider_generate_with_system_prompt(self):
+        """Test Local provider generate with system prompt"""
+        pytest.importorskip("aiohttp")  # Skip if aiohttp not installed
+
+        provider = LocalProvider(endpoint="http://localhost:11434", model="llama2")
+
+        messages = [{"role": "user", "content": "Hello"}]
+
+        mock_response_data = {
+            "message": {"content": "System-aware local response"},
+            "eval_count": 50,
+            "prompt_eval_count": 100,
+        }
+
+        async def mock_post(*args, **kwargs):
+            # Verify system prompt in payload
+            assert "system" in kwargs["json"]
+            assert kwargs["json"]["system"] == "You are helpful"
+
+            mock_resp = MagicMock()
+
+            async def mock_json():
+                return mock_response_data
+
+            mock_resp.json = mock_json
+            mock_resp.__aenter__ = AsyncMock(return_value=mock_resp)
+            mock_resp.__aexit__ = AsyncMock(return_value=None)
+            return mock_resp
+
+        mock_session = MagicMock()
+        mock_session.post = mock_post
+        mock_session.__aenter__ = AsyncMock(return_value=mock_session)
+        mock_session.__aexit__ = AsyncMock(return_value=None)
+
+        with patch("aiohttp.ClientSession", return_value=mock_session):
+            result = await provider.generate(messages, system_prompt="You are helpful")
+
+            assert result.content == "System-aware local response"
 
 
 if __name__ == "__main__":
