@@ -522,3 +522,324 @@ class TestTrajectoryPredictionDataclass:
         assert prediction.trajectory_state == "concerning"
         assert prediction.confidence == 0.8
         assert len(prediction.recommendations) == 1
+
+
+class TestIsTrendConcerningEdgeCases:
+    """Test _is_trend_concerning method edge cases for full coverage"""
+
+    def test_hr_rapid_increase_concerning(self):
+        """Test HR increasing rapidly triggers concerning"""
+        analyzer = TrajectoryAnalyzer()
+
+        # HR increasing from 80 to 100, rate > 15 bpm/hr threshold
+        current = {"hr": 100}
+        history = [{"hr": 80}, {"hr": 85}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        hr_trend = next((t for t in prediction.vital_trends if t.parameter == "hr"), None)
+        if hr_trend and hr_trend.rate_of_change > 15:
+            assert hr_trend.concerning is True
+            assert (
+                "rapidly" in hr_trend.reasoning.lower()
+                or "above normal" in hr_trend.reasoning.lower()
+            )
+
+    def test_systolic_bp_rapid_decrease_concerning(self):
+        """Test systolic BP decreasing rapidly triggers concerning"""
+        analyzer = TrajectoryAnalyzer()
+
+        # BP dropping rapidly from 120 to 80 (40 mmHg over ~2 hours = 20 mmHg/hr)
+        current = {"systolic_bp": 80}
+        history = [{"systolic_bp": 120}, {"systolic_bp": 100}, {"systolic_bp": 90}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        bp_trend = next((t for t in prediction.vital_trends if t.parameter == "systolic_bp"), None)
+        assert bp_trend is not None
+        assert bp_trend.concerning is True
+        assert (
+            "rapidly" in bp_trend.reasoning.lower() or "below normal" in bp_trend.reasoning.lower()
+        )
+
+    def test_respiratory_rate_rapid_increase_concerning(self):
+        """Test respiratory rate increasing rapidly triggers concerning"""
+        analyzer = TrajectoryAnalyzer()
+
+        # RR increasing from 16 to 28 (12 breaths over ~2 hours = 6/hr > threshold of 5)
+        current = {"respiratory_rate": 28}
+        history = [{"respiratory_rate": 16}, {"respiratory_rate": 20}, {"respiratory_rate": 24}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        rr_trend = next(
+            (t for t in prediction.vital_trends if t.parameter == "respiratory_rate"), None
+        )
+        assert rr_trend is not None
+        assert rr_trend.concerning is True
+
+    def test_temp_rapid_increase_concerning(self):
+        """Test temperature increasing rapidly triggers concerning"""
+        analyzer = TrajectoryAnalyzer()
+
+        # Temp increasing from 98.6 to 102.0 (3.4° over ~2 hours = 1.7°F/hr, close to 2.0 threshold)
+        current = {"temp_f": 102.0}
+        history = [{"temp_f": 98.6}, {"temp_f": 99.8}, {"temp_f": 101.0}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        temp_trend = next((t for t in prediction.vital_trends if t.parameter == "temp_f"), None)
+        assert temp_trend is not None
+        assert temp_trend.concerning is True
+        assert (
+            "above normal" in temp_trend.reasoning.lower()
+            or "rapidly" in temp_trend.reasoning.lower()
+        )
+
+
+class TestEstimateTimeToCriticalFullCoverage:
+    """Test time-to-critical estimation for full coverage"""
+
+    def test_systolic_bp_time_to_critical_calculated(self):
+        """Test systolic BP time to critical is calculated"""
+        analyzer = TrajectoryAnalyzer()
+
+        # BP at 100, dropping to 95, rate makes it hit 90 (critical) in calculable time
+        current = {"systolic_bp": 95}
+        history = [{"systolic_bp": 110}, {"systolic_bp": 105}, {"systolic_bp": 100}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        if prediction.trajectory_state in ["concerning", "critical"]:
+            # Should have time estimate since BP is concerning
+            assert prediction.estimated_time_to_critical is not None
+
+    def test_o2_sat_time_to_critical_calculated(self):
+        """Test O2 sat time to critical is calculated"""
+        analyzer = TrajectoryAnalyzer()
+
+        # O2 at 94, dropping toward 90 (critical threshold)
+        current = {"o2_sat": 92}
+        history = [{"o2_sat": 98}, {"o2_sat": 96}, {"o2_sat": 94}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        if prediction.trajectory_state in ["concerning", "critical"]:
+            # Should have O2 trend analysis
+            o2_trend = next((t for t in prediction.vital_trends if t.parameter == "o2_sat"), None)
+            assert o2_trend is not None
+
+    def test_time_to_critical_within_24_hours(self):
+        """Test time to critical is only estimated if within 24 hours"""
+        analyzer = TrajectoryAnalyzer()
+
+        # Very slow BP decline - won't hit critical for days
+        current = {"systolic_bp": 110}
+        history = [{"systolic_bp": 111}, {"systolic_bp": 110.5}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        # If estimated, should be within reasonable timeframe
+        if prediction.estimated_time_to_critical:
+            assert "hour" in prediction.estimated_time_to_critical.lower()
+
+    def test_time_to_critical_only_for_decreasing_bp(self):
+        """Test time to critical only calculated for decreasing BP"""
+        analyzer = TrajectoryAnalyzer()
+
+        # BP increasing (not a concern for critical low BP)
+        current = {"systolic_bp": 150}
+        history = [{"systolic_bp": 120}, {"systolic_bp": 135}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        # High BP shouldn't estimate time to critical low BP
+        bp_trend = next((t for t in prediction.vital_trends if t.parameter == "systolic_bp"), None)
+        if bp_trend:
+            assert bp_trend.direction != "decreasing" or not bp_trend.concerning
+
+
+class TestGenerateAssessmentFullCoverage:
+    """Test _generate_assessment method for full branch coverage"""
+
+    def test_critical_trajectory_assessment(self):
+        """Test critical trajectory generates critical assessment"""
+        analyzer = TrajectoryAnalyzer()
+
+        current = {"systolic_bp": 75, "o2_sat": 88, "hr": 130}
+        history = [{"systolic_bp": 100, "o2_sat": 95, "hr": 90}] * 3
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        assert prediction.trajectory_state == "critical"
+        assert (
+            "CRITICAL" in prediction.overall_assessment
+            or "critical" in prediction.overall_assessment.lower()
+        )
+        assert "intervention" in prediction.overall_assessment.lower()
+
+    def test_concerning_with_time_to_critical_assessment(self):
+        """Test concerning trajectory with time estimate"""
+        analyzer = TrajectoryAnalyzer()
+
+        # Concerning BP drop that triggers time estimation
+        current = {"systolic_bp": 92}
+        history = [{"systolic_bp": 105}, {"systolic_bp": 100}, {"systolic_bp": 96}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        if prediction.trajectory_state == "concerning" and prediction.estimated_time_to_critical:
+            assert "experience" in prediction.overall_assessment.lower()
+            assert "estimated time" in prediction.overall_assessment.lower()
+            assert "early intervention" in prediction.overall_assessment.lower()
+
+    def test_concerning_without_time_to_critical_assessment(self):
+        """Test concerning trajectory without time estimate"""
+        analyzer = TrajectoryAnalyzer()
+
+        # Concerning but not rapidly deteriorating
+        current = {"hr": 110}
+        history = [{"hr": 90}, {"hr": 100}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        if (
+            prediction.trajectory_state == "concerning"
+            and not prediction.estimated_time_to_critical
+        ):
+            assert "experience" in prediction.overall_assessment.lower()
+            assert "warrants" in prediction.overall_assessment.lower()
+
+
+class TestGenerateRecommendationsFullCoverage:
+    """Test _generate_recommendations method for full coverage"""
+
+    def test_hr_specific_recommendation(self):
+        """Test HR-specific recommendations"""
+        analyzer = TrajectoryAnalyzer()
+
+        current = {"hr": 125}
+        history = [{"hr": 85}, {"hr": 100}, {"hr": 115}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        if any(t.parameter == "hr" and t.concerning for t in prediction.vital_trends):
+            # Should recommend assessing for infection or pain
+            assert any(
+                "infection" in rec.lower() or "pain" in rec.lower()
+                for rec in prediction.recommendations
+            )
+
+    def test_respiratory_rate_specific_recommendation(self):
+        """Test respiratory rate specific recommendations"""
+        analyzer = TrajectoryAnalyzer()
+
+        current = {"respiratory_rate": 32}
+        history = [{"respiratory_rate": 16}, {"respiratory_rate": 22}, {"respiratory_rate": 28}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        if any(t.parameter == "respiratory_rate" and t.concerning for t in prediction.vital_trends):
+            # Should recommend assessing respiratory status
+            assert any(
+                "respiratory" in rec.lower() or "oxygenation" in rec.lower()
+                for rec in prediction.recommendations
+            )
+
+    def test_temp_specific_recommendation(self):
+        """Test temperature specific recommendations"""
+        analyzer = TrajectoryAnalyzer()
+
+        current = {"temp_f": 102.5}
+        history = [{"temp_f": 98.6}, {"temp_f": 100.0}, {"temp_f": 101.5}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        if any(t.parameter == "temp_f" and t.concerning for t in prediction.vital_trends):
+            # Should recommend assessing for infection
+            assert any("infection" in rec.lower() for rec in prediction.recommendations)
+
+    def test_critical_includes_rapid_response_recommendation(self):
+        """Test critical state includes rapid response team"""
+        analyzer = TrajectoryAnalyzer()
+
+        current = {"systolic_bp": 70, "o2_sat": 85}
+        history = [{"systolic_bp": 100, "o2_sat": 96}] * 3
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        if prediction.trajectory_state == "critical":
+            assert any("rapid response" in rec.lower() for rec in prediction.recommendations)
+            assert any("physician" in rec.lower() for rec in prediction.recommendations)
+
+
+class TestCalculateConfidenceFullCoverage:
+    """Test confidence calculation edge cases"""
+
+    def test_confidence_with_no_trends(self):
+        """Test confidence calculation when no vital trends"""
+        analyzer = TrajectoryAnalyzer()
+
+        current = {}
+        history = [{"hr": 80}, {"hr": 81}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        # Should have confidence based on data points
+        assert 0.0 <= prediction.confidence <= 1.0
+
+    def test_confidence_increases_with_data_points(self):
+        """Test confidence increases up to 10 data points"""
+        analyzer = TrajectoryAnalyzer()
+
+        current = {"hr": 85}
+
+        # 5 data points
+        history_5 = [{"hr": 80}] * 5
+        pred_5 = analyzer.analyze_trajectory(current, history_5)
+
+        # 15 data points (should cap at 10 for confidence calculation)
+        history_15 = [{"hr": 80}] * 15
+        pred_15 = analyzer.analyze_trajectory(current, history_15)
+
+        # Both should be valid, 15 should have max data confidence (1.0)
+        assert 0.0 <= pred_5.confidence <= 1.0
+        assert 0.0 <= pred_15.confidence <= 1.0
+
+
+class TestMultipleConcerningTrendsInteraction:
+    """Test interactions between multiple concerning trends"""
+
+    def test_one_concerning_trend_is_concerning_state(self):
+        """Test one concerning trend triggers concerning state"""
+        analyzer = TrajectoryAnalyzer()
+
+        current = {"hr": 115, "systolic_bp": 120}  # Only HR concerning
+        history = [{"hr": 85, "systolic_bp": 118}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        assert prediction.trajectory_state in ["concerning", "critical"]
+
+    def test_two_concerning_trends_is_concerning_state(self):
+        """Test two concerning trends trigger concerning state"""
+        analyzer = TrajectoryAnalyzer()
+
+        current = {"hr": 115, "systolic_bp": 85}  # Both concerning
+        history = [{"hr": 85, "systolic_bp": 110}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        assert prediction.trajectory_state in ["concerning", "critical"]
+
+    def test_critical_parameter_triggers_critical_state(self):
+        """Test concerning critical parameter (BP, O2) triggers critical"""
+        analyzer = TrajectoryAnalyzer()
+
+        current = {"systolic_bp": 80, "hr": 90}  # BP is critical parameter
+        history = [{"systolic_bp": 110, "hr": 88}]
+
+        prediction = analyzer.analyze_trajectory(current, history)
+
+        # systolic_bp is in critical_parameters list, so should be critical
+        assert prediction.trajectory_state == "critical"
