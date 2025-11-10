@@ -40,6 +40,11 @@ class TestBaseException:
         """Test base exception inherits from Exception"""
         assert issubclass(EmpathyFrameworkError, Exception)
 
+    def test_base_exception_without_message(self):
+        """Test EmpathyFrameworkError can be raised without message"""
+        with pytest.raises(EmpathyFrameworkError):
+            raise EmpathyFrameworkError()
+
 
 class TestValidationError:
     """Test validation error"""
@@ -63,6 +68,11 @@ class TestValidationError:
         message = "Invalid input: expected string, got int"
         with pytest.raises(ValidationError, match=message):
             raise ValidationError(message)
+
+    def test_validation_error_without_message(self):
+        """Test ValidationError can be raised without message"""
+        with pytest.raises(ValidationError):
+            raise ValidationError()
 
 
 class TestPatternNotFoundError:
@@ -247,6 +257,11 @@ class TestLeveragePointError:
         with pytest.raises(LeveragePointError, match=message):
             raise LeveragePointError(message)
 
+    def test_leverage_point_error_without_message(self):
+        """Test LeveragePointError can be raised without message"""
+        with pytest.raises(LeveragePointError):
+            raise LeveragePointError()
+
 
 class TestFeedbackLoopError:
     """Test feedback loop error"""
@@ -266,6 +281,11 @@ class TestFeedbackLoopError:
         with pytest.raises(FeedbackLoopError, match=message):
             raise FeedbackLoopError(message)
 
+    def test_feedback_loop_error_without_message(self):
+        """Test FeedbackLoopError can be raised without message"""
+        with pytest.raises(FeedbackLoopError):
+            raise FeedbackLoopError()
+
 
 class TestCollaborationStateError:
     """Test collaboration state error"""
@@ -284,6 +304,11 @@ class TestCollaborationStateError:
         message = "State corruption detected"
         with pytest.raises(CollaborationStateError, match=message):
             raise CollaborationStateError(message)
+
+    def test_collaboration_state_error_without_message(self):
+        """Test CollaborationStateError can be raised without message"""
+        with pytest.raises(CollaborationStateError):
+            raise CollaborationStateError()
 
 
 class TestExceptionHierarchy:
@@ -341,7 +366,7 @@ class TestExceptionUsagePatterns:
             try:
                 raise ValidationError("Original error")
             except EmpathyFrameworkError:
-                raise ValidationError("Re-raised with new message")
+                raise ValidationError("Re-raised with new message") from None
 
     def test_multiple_exception_types(self):
         """Test handling multiple exception types"""
@@ -374,3 +399,102 @@ class TestExceptionUsagePatterns:
         except ValidationError as e:
             assert e.__cause__ is not None
             assert isinstance(e.__cause__, ValueError)
+
+
+class TestExceptionEdgeCases:
+    """Test edge cases and special scenarios"""
+
+    def test_empty_string_messages(self):
+        """Test exceptions with empty string messages"""
+        with pytest.raises(ValidationError):
+            raise ValidationError("")
+
+    def test_none_pattern_id(self):
+        """Test PatternNotFoundError with None in pattern_id"""
+        # While not ideal, the code should handle it
+        error = PatternNotFoundError(None)
+        assert error.pattern_id is None
+        assert "None" in str(error)
+
+    def test_negative_trust_values(self):
+        """Test TrustThresholdError with negative values"""
+        error = TrustThresholdError(-0.5, 0.5)
+        assert error.current_trust == -0.5
+        assert error.required_trust == 0.5
+        assert "-0.50" in str(error)
+
+    def test_very_large_confidence_values(self):
+        """Test ConfidenceThresholdError with values > 1.0"""
+        error = ConfidenceThresholdError(0.95, 1.5)
+        assert error.confidence == 0.95
+        assert error.threshold == 1.5
+        assert "0.95" in str(error)
+        assert "1.50" in str(error)
+
+    def test_very_large_empathy_level(self):
+        """Test EmpathyLevelError with very large level"""
+        error = EmpathyLevelError(999)
+        assert error.level == 999
+        assert "999" in str(error)
+
+    def test_exception_str_representation(self):
+        """Test string representation of exceptions"""
+        error1 = ValidationError("test message")
+        assert str(error1) == "test message"
+
+        error2 = PatternNotFoundError("pattern_123")
+        assert "pattern_123" in str(error2)
+
+        error3 = TrustThresholdError(0.3, 0.7)
+        assert "0.30" in str(error3)
+
+    def test_exception_repr(self):
+        """Test repr of exceptions"""
+        error = ValidationError("test")
+        repr_str = repr(error)
+        assert "ValidationError" in repr_str
+
+    def test_exception_args(self):
+        """Test exception args tuple"""
+        message = "test error message"
+        error = ValidationError(message)
+        assert error.args[0] == message
+
+    def test_pattern_error_with_empty_message(self):
+        """Test PatternNotFoundError with empty custom message"""
+        error = PatternNotFoundError("pattern_id", "")
+        assert error.pattern_id == "pattern_id"
+        assert str(error) == ""
+
+    def test_trust_error_with_equal_values(self):
+        """Test TrustThresholdError when current equals required"""
+        error = TrustThresholdError(0.5, 0.5)
+        assert error.current_trust == 0.5
+        assert error.required_trust == 0.5
+
+    def test_confidence_error_with_zero_values(self):
+        """Test ConfidenceThresholdError with zero values"""
+        error = ConfidenceThresholdError(0.0, 0.0)
+        assert error.confidence == 0.0
+        assert error.threshold == 0.0
+        assert "0.00" in str(error)
+
+    def test_multiline_error_messages(self):
+        """Test exceptions with multiline messages"""
+        multiline_msg = "Error occurred:\nLine 1\nLine 2\nLine 3"
+        error = ValidationError(multiline_msg)
+        assert str(error) == multiline_msg
+        assert "\n" in str(error)
+
+    def test_unicode_in_error_messages(self):
+        """Test exceptions with unicode characters"""
+        unicode_msg = "Error: \u2713 check failed \u2717"
+        error = ValidationError(unicode_msg)
+        assert str(error) == unicode_msg
+
+    def test_special_characters_in_pattern_id(self):
+        """Test PatternNotFoundError with special characters in pattern_id"""
+        pattern_id = "pattern-with-special_chars.123"
+        error = PatternNotFoundError(pattern_id)
+        assert error.pattern_id == pattern_id
+        assert pattern_id in str(error)
