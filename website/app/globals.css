@@ -104,6 +104,40 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.02em;
 }
 
+/* Headings on dark/gradient backgrounds should be white */
+.gradient-primary h1,
+.gradient-primary h2,
+.gradient-primary h3,
+.gradient-primary h4,
+.gradient-primary h5,
+.gradient-primary h6,
+.gradient-accent h1,
+.gradient-accent h2,
+.gradient-accent h3,
+.gradient-accent h4,
+.gradient-accent h5,
+.gradient-accent h6,
+.text-white h1,
+.text-white h2,
+.text-white h3,
+.text-white h4,
+.text-white h5,
+.text-white h6,
+.bg-primary h1,
+.bg-primary h2,
+.bg-primary h3,
+.bg-primary h4,
+.bg-primary h5,
+.bg-primary h6,
+.bg-accent h1,
+.bg-accent h2,
+.bg-accent h3,
+.bg-accent h4,
+.bg-accent h5,
+.bg-accent h6 {
+  color: white !important;
+}
+
 h1 {
   font-size: 3.5rem;
 }
@@ -155,6 +189,21 @@ pre code {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Dark background utility - ensures all text and headings are white */
+.dark-bg,
+.dark-bg * {
+  color: white;
+}
+
+.dark-bg a {
+  color: white;
+  text-decoration: underline;
+}
+
+.dark-bg a:hover {
+  opacity: 0.8;
 }
 
 /* Container */
