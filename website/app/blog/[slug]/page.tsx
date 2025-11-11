@@ -90,7 +90,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                   {post.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-3 py-1 bg-[var(--primary)] bg-opacity-10 text-[var(--primary)] rounded-full text-sm font-semibold"
+                      className="px-3 py-1 bg-[var(--border)] text-[var(--text-primary)] rounded-full text-sm font-semibold"
                     >
                       {tag}
                     </span>
