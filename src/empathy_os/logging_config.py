@@ -16,7 +16,6 @@ import logging.handlers
 import os
 import sys
 from pathlib import Path
-from typing import Dict, Optional
 
 
 class StructuredFormatter(logging.Formatter):
@@ -74,8 +73,8 @@ class StructuredFormatter(logging.Formatter):
 def create_logger(
     name: str,
     level: int = logging.INFO,
-    log_file: Optional[str] = None,
-    log_dir: Optional[str] = None,
+    log_file: str | None = None,
+    log_dir: str | None = None,
     use_color: bool = True,
     include_context: bool = False,
     max_bytes: int = 10 * 1024 * 1024,  # 10MB
@@ -144,13 +143,13 @@ class LoggingConfig:
     """Centralized logging configuration manager."""
 
     _configured = False
-    _loggers: Dict[str, logging.Logger] = {}
+    _loggers: dict[str, logging.Logger] = {}
 
     @classmethod
     def configure(
         cls,
         level: int = logging.INFO,
-        log_dir: Optional[str] = None,
+        log_dir: str | None = None,
         use_color: bool = True,
         include_context: bool = False,
     ) -> None:
@@ -180,7 +179,7 @@ class LoggingConfig:
     def get_logger(
         cls,
         name: str,
-        level: Optional[int] = None,
+        level: int | None = None,
     ) -> logging.Logger:
         """
         Get or create a logger instance.

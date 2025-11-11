@@ -11,57 +11,59 @@ import asyncio
 import json
 
 # Mock profiling data for demonstration
-MOCK_PROFILE_DATA = json.dumps({
-    "functions": [
-        {
-            "name": "process_user_data",
-            "file": "/app/api.py",
-            "line": 42,
-            "total_time": 2.5,
-            "self_time": 0.3,
-            "calls": 150,
-            "cumulative_time": 2.5,
-            "percent": 45.0
-        },
-        {
-            "name": "fetch_user_posts",
-            "file": "/app/database.py",
-            "line": 105,
-            "total_time": 1.8,
-            "self_time": 0.1,
-            "calls": 1500,  # High call count - potential N+1!
-            "cumulative_time": 1.8,
-            "percent": 32.0
-        },
-        {
-            "name": "calculate_recommendations",
-            "file": "/app/recommendations.py",
-            "line": 78,
-            "total_time": 0.8,
-            "self_time": 0.8,
-            "calls": 10,
-            "cumulative_time": 0.8,
-            "percent": 14.0
-        },
-        {
-            "name": "send_notification",
-            "file": "/app/notifications.py",
-            "line": 23,
-            "total_time": 0.4,
-            "self_time": 0.4,
-            "calls": 50,
-            "cumulative_time": 0.4,
-            "percent": 7.0
-        }
-    ]
-})
+MOCK_PROFILE_DATA = json.dumps(
+    {
+        "functions": [
+            {
+                "name": "process_user_data",
+                "file": "/app/api.py",
+                "line": 42,
+                "total_time": 2.5,
+                "self_time": 0.3,
+                "calls": 150,
+                "cumulative_time": 2.5,
+                "percent": 45.0,
+            },
+            {
+                "name": "fetch_user_posts",
+                "file": "/app/database.py",
+                "line": 105,
+                "total_time": 1.8,
+                "self_time": 0.1,
+                "calls": 1500,  # High call count - potential N+1!
+                "cumulative_time": 1.8,
+                "percent": 32.0,
+            },
+            {
+                "name": "calculate_recommendations",
+                "file": "/app/recommendations.py",
+                "line": 78,
+                "total_time": 0.8,
+                "self_time": 0.8,
+                "calls": 10,
+                "cumulative_time": 0.8,
+                "percent": 14.0,
+            },
+            {
+                "name": "send_notification",
+                "file": "/app/notifications.py",
+                "line": 23,
+                "total_time": 0.4,
+                "self_time": 0.4,
+                "calls": 50,
+                "cumulative_time": 0.4,
+                "percent": 7.0,
+            },
+        ]
+    }
+)
 
 # Mock performance metrics over time
 MOCK_METRICS_HISTORY = [
     {"time": "day1", "response_time": 0.2, "throughput": 150, "error_rate": 0.001},
     {"time": "day2", "response_time": 0.35, "throughput": 140, "error_rate": 0.002},
     {"time": "day3", "response_time": 0.55, "throughput": 125, "error_rate": 0.004},
-    {"time": "day4", "response_time": 0.8, "throughput": 110, "error_rate": 0.007}
+    {"time": "day4", "response_time": 0.8, "throughput": 110, "error_rate": 0.007},
 ]
 
 CURRENT_METRICS = {
@@ -69,7 +71,7 @@ CURRENT_METRICS = {
     "throughput": 95,
     "error_rate": 0.010,
     "cpu_usage": 0.75,
-    "memory_usage": 0.82
+    "memory_usage": 0.82,
 }
 
 
@@ -79,23 +81,24 @@ async def demo_basic_profiling():
     print("DEMO 1: Basic Performance Profiling Analysis")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.performance_profiling_wizard import PerformanceProfilingWizard
+    from empathy_software_plugin.wizards.performance_profiling_wizard import (
+        PerformanceProfilingWizard,
+    )
 
     wizard = PerformanceProfilingWizard()
 
-    result = await wizard.analyze({
-        'profiler_data': MOCK_PROFILE_DATA,
-        'profiler_type': 'simple_json'
-    })
+    result = await wizard.analyze(
+        {"profiler_data": MOCK_PROFILE_DATA, "profiler_type": "simple_json"}
+    )
 
-    summary = result['profiling_summary']
+    summary = result["profiling_summary"]
 
-    print(f"\n📊 Profiling Summary:")
+    print("\n📊 Profiling Summary:")
     print(f"  Total Functions: {summary['total_functions']}")
     print(f"  Total Time: {summary['total_time']:.2f}s")
 
-    print(f"\n🐌 Top 5 Slowest Functions:")
-    for func in summary['top_5_slowest']:
+    print("\n🐌 Top 5 Slowest Functions:")
+    for func in summary["top_5_slowest"]:
         print(f"  {func['function']}: {func['time']:.2f}s ({func['percent']:.1f}%)")
 
     print("\n" + "=" * 70)
@@ -107,24 +110,30 @@ async def demo_bottleneck_detection():
     print("DEMO 2: Bottleneck Detection")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.performance_profiling_wizard import PerformanceProfilingWizard
+    from empathy_software_plugin.wizards.performance_profiling_wizard import (
+        PerformanceProfilingWizard,
+    )
 
     wizard = PerformanceProfilingWizard()
 
-    result = await wizard.analyze({
-        'profiler_data': MOCK_PROFILE_DATA,
-        'profiler_type': 'simple_json',
-        'threshold_percent': 5.0
-    })
+    result = await wizard.analyze(
+        {
+            "profiler_data": MOCK_PROFILE_DATA,
+            "profiler_type": "simple_json",
+            "threshold_percent": 5.0,
+        }
+    )
 
-    bottlenecks = result['bottlenecks']
+    bottlenecks = result["bottlenecks"]
 
     print(f"\n⚠️  BOTTLENECKS DETECTED: {len(bottlenecks)}\n")
 
     for bottleneck in bottlenecks:
         print(f"  [{bottleneck['severity']}] {bottleneck['type'].upper()}")
         print(f"      Function: {bottleneck['function_name']}")
-        print(f"      Time Cost: {bottleneck['time_cost']:.2f}s ({bottleneck['percent_total']:.1f}%)")
+        print(
+            f"      Time Cost: {bottleneck['time_cost']:.2f}s ({bottleneck['percent_total']:.1f}%)"
+        )
         print(f"      Reason: {bottleneck['reasoning']}")
         print(f"      Fix: {bottleneck['fix_suggestion']}")
         print()
@@ -138,36 +147,40 @@ async def demo_trajectory_prediction():
     print("DEMO 3: Level 4 - Performance Trajectory Prediction")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.performance_profiling_wizard import PerformanceProfilingWizard
+    from empathy_software_plugin.wizards.performance_profiling_wizard import (
+        PerformanceProfilingWizard,
+    )
 
     wizard = PerformanceProfilingWizard()
 
-    result = await wizard.analyze({
-        'profiler_data': MOCK_PROFILE_DATA,
-        'profiler_type': 'simple_json',
-        'current_metrics': CURRENT_METRICS,
-        'historical_metrics': MOCK_METRICS_HISTORY
-    })
+    result = await wizard.analyze(
+        {
+            "profiler_data": MOCK_PROFILE_DATA,
+            "profiler_type": "simple_json",
+            "current_metrics": CURRENT_METRICS,
+            "historical_metrics": MOCK_METRICS_HISTORY,
+        }
+    )
 
-    trajectory = result['trajectory']
+    trajectory = result["trajectory"]
 
     if trajectory:
-        print(f"\n📈 Trajectory Analysis:")
+        print("\n📈 Trajectory Analysis:")
         print(f"  State: {trajectory['trajectory_state'].upper()}")
         print(f"  Confidence: {trajectory['confidence']:.2f}")
 
-        if trajectory['estimated_time_to_critical']:
+        if trajectory["estimated_time_to_critical"]:
             print(f"  ⏰ Time to Critical: {trajectory['estimated_time_to_critical']}")
 
-        print(f"\n📊 Performance Trends:")
-        for trend in trajectory['trends']:
-            if trend['concerning']:
+        print("\n📊 Performance Trends:")
+        for trend in trajectory["trends"]:
+            if trend["concerning"]:
                 print(f"  ⚠️  {trend['metric_name']}: {trend['direction']}")
                 print(f"      Current: {trend['current_value']:.3f}")
                 print(f"      Change: {trend['change']:+.3f} ({trend['change_percent']:+.1f}%)")
                 print(f"      {trend['reasoning']}")
 
-        print(f"\n🔮 Assessment:")
+        print("\n🔮 Assessment:")
         print(f"  {trajectory['overall_assessment']}")
 
     print("\n" + "=" * 70)
@@ -179,32 +192,36 @@ async def demo_predictions():
     print("DEMO 4: Level 4 - Performance Predictions")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.performance_profiling_wizard import PerformanceProfilingWizard
+    from empathy_software_plugin.wizards.performance_profiling_wizard import (
+        PerformanceProfilingWizard,
+    )
 
     wizard = PerformanceProfilingWizard()
 
-    result = await wizard.analyze({
-        'profiler_data': MOCK_PROFILE_DATA,
-        'profiler_type': 'simple_json',
-        'current_metrics': CURRENT_METRICS,
-        'historical_metrics': MOCK_METRICS_HISTORY
-    })
+    result = await wizard.analyze(
+        {
+            "profiler_data": MOCK_PROFILE_DATA,
+            "profiler_type": "simple_json",
+            "current_metrics": CURRENT_METRICS,
+            "historical_metrics": MOCK_METRICS_HISTORY,
+        }
+    )
 
-    print(f"\n🔮 PREDICTIONS:\n")
+    print("\n🔮 PREDICTIONS:\n")
 
-    for pred in result['predictions']:
+    for pred in result["predictions"]:
         print(f"  Type: {pred['type'].upper()}")
         print(f"  Severity: {pred['severity'].upper()}")
         print(f"  {pred['description']}")
 
-        if 'affected_functions' in pred:
-            print(f"\n  Affected Functions:")
-            for func in pred['affected_functions']:
+        if "affected_functions" in pred:
+            print("\n  Affected Functions:")
+            for func in pred["affected_functions"]:
                 print(f"    - {func}")
 
-        if 'prevention_steps' in pred:
-            print(f"\n  Prevention Steps:")
-            for step in pred['prevention_steps']:
+        if "prevention_steps" in pred:
+            print("\n  Prevention Steps:")
+            for step in pred["prevention_steps"]:
                 print(f"    - {step}")
         print()
 
@@ -217,31 +234,32 @@ async def demo_insights():
     print("DEMO 5: Performance Insights & Optimization Potential")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.performance_profiling_wizard import PerformanceProfilingWizard
+    from empathy_software_plugin.wizards.performance_profiling_wizard import (
+        PerformanceProfilingWizard,
+    )
 
     wizard = PerformanceProfilingWizard()
 
-    result = await wizard.analyze({
-        'profiler_data': MOCK_PROFILE_DATA,
-        'profiler_type': 'simple_json'
-    })
+    result = await wizard.analyze(
+        {"profiler_data": MOCK_PROFILE_DATA, "profiler_type": "simple_json"}
+    )
 
-    insights = result['insights']
+    insights = result["insights"]
 
-    print(f"\n📊 Performance Insights:")
+    print("\n📊 Performance Insights:")
     print(f"  Dominant Pattern: {insights['dominant_pattern']}")
     print(f"  I/O Bound Operations: {insights['io_bound_operations']}")
     print(f"  CPU Bound Operations: {insights['cpu_bound_operations']}")
     print(f"  N+1 Query Patterns: {insights['n_plus_one_queries']}")
 
-    print(f"\n💡 Optimization Potential:")
-    opt = insights['optimization_potential']
+    print("\n💡 Optimization Potential:")
+    opt = insights["optimization_potential"]
     print(f"  Potential Savings: {opt['potential_savings']:.2f}s")
     print(f"  Percentage: {opt['percentage']:.1f}%")
     print(f"  Assessment: {opt['assessment']}")
 
-    print(f"\n📝 Recommendations:")
-    for rec in result['recommendations'][:5]:
+    print("\n📝 Recommendations:")
+    for rec in result["recommendations"][:5]:
         print(f"  • {rec}")
 
     print("\n" + "=" * 70)

@@ -8,7 +8,6 @@ Licensed under the Apache License, Version 2.0
 """
 
 from enum import IntEnum
-from typing import Dict
 
 
 class EmpathyLevel(IntEnum):
@@ -133,7 +132,7 @@ Pattern contribution:
         return temps.get(level, 0.7)
 
     @classmethod
-    def get_required_context(cls, level: int) -> Dict[str, bool]:
+    def get_required_context(cls, level: int) -> dict[str, bool]:
         """
         Get context requirements for each level.
 

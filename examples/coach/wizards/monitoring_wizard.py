@@ -9,17 +9,14 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import re
-from typing import List, Dict, Any
-
 from .base_wizard import (
     BaseWizard,
-    WizardTask,
-    WizardOutput,
-    WizardArtifact,
-    WizardRisk,
-    WizardHandoff,
     EmpathyChecks,
+    WizardArtifact,
+    WizardHandoff,
+    WizardOutput,
+    WizardRisk,
+    WizardTask,
 )
 
 
@@ -36,15 +33,25 @@ class MonitoringWizard(BaseWizard):
     def can_handle(self, task: WizardTask) -> float:
         """Determine if this is a monitoring/observability task"""
         # High-priority monitoring phrases (worth 2 points each)
-        monitoring_phrases = [
-            "monitoring", "observability", "slo", "sli", "alert", "incident"
-        ]
+        monitoring_phrases = ["monitoring", "observability", "slo", "sli", "alert", "incident"]
 
         # Secondary indicators (worth 1 point each)
         secondary_keywords = [
-            "dashboard", "grafana", "prometheus", "datadog", "new relic",
-            "metrics", "logging", "tracing", "apm", "uptime", "downtime",
-            "runbook", "postmortem", "on-call", "pager"
+            "dashboard",
+            "grafana",
+            "prometheus",
+            "datadog",
+            "new relic",
+            "metrics",
+            "logging",
+            "tracing",
+            "apm",
+            "uptime",
+            "downtime",
+            "runbook",
+            "postmortem",
+            "on-call",
+            "pager",
         ]
 
         task_lower = (task.task + " " + task.context).lower()
@@ -73,38 +80,18 @@ class MonitoringWizard(BaseWizard):
             WizardArtifact(
                 type="doc",
                 title="Observability Strategy",
-                content=self._generate_observability_strategy(diagnosis)
+                content=self._generate_observability_strategy(diagnosis),
             ),
-            WizardArtifact(
-                type="doc",
-                title="SLO Definitions",
-                content=slo_definitions
-            ),
-            WizardArtifact(
-                type="code",
-                title="Alert Rules (Prometheus)",
-                content=alert_rules
-            ),
-            WizardArtifact(
-                type="code",
-                title="Grafana Dashboards",
-                content=dashboards
-            ),
-            WizardArtifact(
-                type="doc",
-                title="Incident Response Runbooks",
-                content=runbooks
-            ),
+            WizardArtifact(type="doc", title="SLO Definitions", content=slo_definitions),
+            WizardArtifact(type="code", title="Alert Rules (Prometheus)", content=alert_rules),
+            WizardArtifact(type="code", title="Grafana Dashboards", content=dashboards),
+            WizardArtifact(type="doc", title="Incident Response Runbooks", content=runbooks),
             WizardArtifact(
                 type="doc",
                 title="Postmortem Template",
-                content=self._create_postmortem_template(task)
+                content=self._create_postmortem_template(task),
             ),
-            WizardArtifact(
-                type="doc",
-                title="Monitoring Forecast",
-                content=monitoring_forecast
-            )
+            WizardArtifact(type="doc", title="Monitoring Forecast", content=monitoring_forecast),
         ]
 
         plan = [
@@ -114,13 +101,17 @@ class MonitoringWizard(BaseWizard):
             "4. Configure alerting rules",
             "5. Write incident response runbooks",
             "6. Test alert escalation",
-            "7. Set up on-call rotation"
+            "7. Set up on-call rotation",
         ]
 
         empathy_checks = EmpathyChecks(
-            cognitive=f"Considered on-call engineers: alert fatigue, sleep disruption, incident stress",
-            emotional=f"Acknowledged: Being woken at 3am is stressful, alerts must be actionable",
-            anticipatory=monitoring_forecast[:200] + "..." if len(monitoring_forecast) > 200 else monitoring_forecast
+            cognitive="Considered on-call engineers: alert fatigue, sleep disruption, incident stress",
+            emotional="Acknowledged: Being woken at 3am is stressful, alerts must be actionable",
+            anticipatory=(
+                monitoring_forecast[:200] + "..."
+                if len(monitoring_forecast) > 200
+                else monitoring_forecast
+            ),
         )
 
         return WizardOutput(
@@ -132,7 +123,7 @@ class MonitoringWizard(BaseWizard):
             handoffs=self._create_handoffs(task),
             next_actions=plan[:5] + self._generate_anticipatory_actions(task),
             empathy_checks=empathy_checks,
-            confidence=self.can_handle(task)
+            confidence=self.can_handle(task),
         )
 
     def _analyze_monitoring_requirements(self, task: WizardTask) -> str:
@@ -159,7 +150,11 @@ class MonitoringWizard(BaseWizard):
             types.append("Full Observability Stack")
 
         analysis += f"**Monitoring Type**: {', '.join(types)}\n"
-        analysis += f"**Context**: {task.context[:300]}...\n" if len(task.context) > 300 else f"**Context**: {task.context}\n"
+        analysis += (
+            f"**Context**: {task.context[:300]}...\n"
+            if len(task.context) > 300
+            else f"**Context**: {task.context}\n"
+        )
 
         return analysis
 
@@ -190,7 +185,7 @@ class MonitoringWizard(BaseWizard):
         slos += "**SLI**: 95th percentile response time for API requests\n"
         slos += "**SLO**: p95 < 500ms\n"
         slos += "**Measurement**: 95% of requests complete within 500ms\n\n"
-        slos += "**Why this target**: User perception of \"instant\" is ~1s, we aim for 2x safety margin\n\n"
+        slos += '**Why this target**: User perception of "instant" is ~1s, we aim for 2x safety margin\n\n'
         slos += "**Breakdown by endpoint**:\n"
         slos += "- GET requests: p95 < 200ms (read-heavy)\n"
         slos += "- POST requests: p95 < 500ms (write operations)\n"
@@ -246,7 +241,7 @@ class MonitoringWizard(BaseWizard):
         alerts += "      - alert: HighErrorRate\n"
         alerts += "        expr: |\n"
         alerts += "          (\n"
-        alerts += "            sum(rate(http_requests_total{status=~\"5..\"}[5m]))\n"
+        alerts += '            sum(rate(http_requests_total{status=~"5.."}[5m]))\n'
         alerts += "            /\n"
         alerts += "            sum(rate(http_requests_total[5m]))\n"
         alerts += "          ) > 0.05\n"
@@ -254,9 +249,9 @@ class MonitoringWizard(BaseWizard):
         alerts += "        labels:\n"
         alerts += "          severity: critical\n"
         alerts += "        annotations:\n"
-        alerts += "          summary: \"High error rate (> 5%)\"\n"
-        alerts += "          description: \"Error rate is {{ $value | humanizePercentage }} (threshold: 5%)\"\n"
-        alerts += "          runbook: \"https://wiki.company.com/runbooks/high-error-rate\"\n\n"
+        alerts += '          summary: "High error rate (> 5%)"\n'
+        alerts += '          description: "Error rate is {{ $value | humanizePercentage }} (threshold: 5%)"\n'
+        alerts += '          runbook: "https://wiki.company.com/runbooks/high-error-rate"\n\n'
 
         alerts += "      - alert: HighLatency\n"
         alerts += "        expr: |\n"
@@ -267,9 +262,9 @@ class MonitoringWizard(BaseWizard):
         alerts += "        labels:\n"
         alerts += "          severity: critical\n"
         alerts += "        annotations:\n"
-        alerts += "          summary: \"High latency (p95 > 500ms)\"\n"
-        alerts += "          description: \"p95 latency is {{ $value }}s (threshold: 0.5s)\"\n"
-        alerts += "          runbook: \"https://wiki.company.com/runbooks/high-latency\"\n\n"
+        alerts += '          summary: "High latency (p95 > 500ms)"\n'
+        alerts += '          description: "p95 latency is {{ $value }}s (threshold: 0.5s)"\n'
+        alerts += '          runbook: "https://wiki.company.com/runbooks/high-latency"\n\n'
 
         alerts += "      - alert: ServiceDown\n"
         alerts += "        expr: up == 0\n"
@@ -277,9 +272,9 @@ class MonitoringWizard(BaseWizard):
         alerts += "        labels:\n"
         alerts += "          severity: critical\n"
         alerts += "        annotations:\n"
-        alerts += "          summary: \"Service {{ $labels.instance }} is down\"\n"
-        alerts += "          description: \"Service has been down for 2 minutes\"\n"
-        alerts += "          runbook: \"https://wiki.company.com/runbooks/service-down\"\n\n"
+        alerts += '          summary: "Service {{ $labels.instance }} is down"\n'
+        alerts += '          description: "Service has been down for 2 minutes"\n'
+        alerts += '          runbook: "https://wiki.company.com/runbooks/service-down"\n\n'
 
         alerts += "      # Medium Severity: Alert, but don't page (Slack/email)\n"
         alerts += "      - alert: HighMemoryUsage\n"
@@ -293,28 +288,28 @@ class MonitoringWizard(BaseWizard):
         alerts += "        labels:\n"
         alerts += "          severity: warning\n"
         alerts += "        annotations:\n"
-        alerts += "          summary: \"High memory usage (< 15% available)\"\n"
-        alerts += "          description: \"Available memory: {{ $value | humanizePercentage }}\"\n\n"
+        alerts += '          summary: "High memory usage (< 15% available)"\n'
+        alerts += '          description: "Available memory: {{ $value | humanizePercentage }}"\n\n'
 
         alerts += "      - alert: DiskSpaceLow\n"
         alerts += "        expr: |\n"
         alerts += "          (\n"
-        alerts += "            node_filesystem_avail_bytes{mountpoint=\"/\"}\n"
+        alerts += '            node_filesystem_avail_bytes{mountpoint="/"}\n'
         alerts += "            /\n"
-        alerts += "            node_filesystem_size_bytes{mountpoint=\"/\"}\n"
+        alerts += '            node_filesystem_size_bytes{mountpoint="/"}\n'
         alerts += "          ) < 0.15\n"
         alerts += "        for: 10m\n"
         alerts += "        labels:\n"
         alerts += "          severity: warning\n"
         alerts += "        annotations:\n"
-        alerts += "          summary: \"Disk space low (< 15% available)\"\n"
-        alerts += "          description: \"Available: {{ $value | humanizePercentage }}\"\n\n"
+        alerts += '          summary: "Disk space low (< 15% available)"\n'
+        alerts += '          description: "Available: {{ $value | humanizePercentage }}"\n\n'
 
         alerts += "      # SLO Budget Alerts\n"
         alerts += "      - alert: ErrorBudgetBurning\n"
         alerts += "        expr: |\n"
         alerts += "          (\n"
-        alerts += "            sum(rate(http_requests_total{status=~\"5..\"}[1h]))\n"
+        alerts += '            sum(rate(http_requests_total{status=~"5.."}[1h]))\n'
         alerts += "            /\n"
         alerts += "            sum(rate(http_requests_total[1h]))\n"
         alerts += "          ) > 0.001  # 0.1% error rate = SLO threshold\n"
@@ -322,8 +317,10 @@ class MonitoringWizard(BaseWizard):
         alerts += "        labels:\n"
         alerts += "          severity: warning\n"
         alerts += "        annotations:\n"
-        alerts += "          summary: \"Error budget burning fast\"\n"
-        alerts += "          description: \"At current rate, error budget will be exhausted in < 7 days\"\n"
+        alerts += '          summary: "Error budget burning fast"\n'
+        alerts += (
+            '          description: "At current rate, error budget will be exhausted in < 7 days"\n'
+        )
         alerts += "```\n\n"
 
         alerts += "## Alert Severity Levels\n\n"
@@ -390,8 +387,8 @@ class MonitoringWizard(BaseWizard):
         dashboards += "          {\n"
         dashboards += '            "expr": "(\n'
         dashboards += '              sum(rate(http_requests_total{status!~\\"5..\\"}[30d]))\n'
-        dashboards += '              /\n'
-        dashboards += '              sum(rate(http_requests_total[30d]))\n'
+        dashboards += "              /\n"
+        dashboards += "              sum(rate(http_requests_total[30d]))\n"
         dashboards += '            ) * 100"\n'
         dashboards += "          }\n"
         dashboards += "        ],\n"
@@ -468,9 +465,15 @@ class MonitoringWizard(BaseWizard):
         runbooks += "| Cause | Symptoms | Fix |\n"
         runbooks += "|-------|----------|-----|\n"
         runbooks += "| Bad deployment | Errors started after deploy | Rollback deployment |\n"
-        runbooks += "| Database overload | Timeout errors | Scale up database or add read replicas |\n"
-        runbooks += "| External API down | 502 errors | Enable circuit breaker, serve cached data |\n"
-        runbooks += "| Memory leak | OOM errors, crashes | Restart pods, investigate memory leak |\n\n"
+        runbooks += (
+            "| Database overload | Timeout errors | Scale up database or add read replicas |\n"
+        )
+        runbooks += (
+            "| External API down | 502 errors | Enable circuit breaker, serve cached data |\n"
+        )
+        runbooks += (
+            "| Memory leak | OOM errors, crashes | Restart pods, investigate memory leak |\n\n"
+        )
 
         runbooks += "**Mitigation**:\n"
         runbooks += "```bash\n"
@@ -482,7 +485,9 @@ class MonitoringWizard(BaseWizard):
         runbooks += "kubectl rollout restart deployment/api -n production\n"
         runbooks += "```\n\n"
 
-        runbooks += "**Escalation**: If not resolved in 15 minutes, escalate to engineering lead\n\n"
+        runbooks += (
+            "**Escalation**: If not resolved in 15 minutes, escalate to engineering lead\n\n"
+        )
         runbooks += "---\n\n"
 
         runbooks += "## Runbook: High Latency\n\n"
@@ -538,7 +543,9 @@ class MonitoringWizard(BaseWizard):
         runbooks += "# Restart deployment\n"
         runbooks += "kubectl rollout restart deployment/api -n production\n\n"
         runbooks += "# If pods are pending (no resources)\n"
-        runbooks += "kubectl scale deployment/api --replicas=5 -n production  # Scale down temporarily\n"
+        runbooks += (
+            "kubectl scale deployment/api --replicas=5 -n production  # Scale down temporarily\n"
+        )
         runbooks += "```\n\n"
 
         runbooks += "**Communication**:\n"
@@ -599,7 +606,9 @@ class MonitoringWizard(BaseWizard):
         template += "|--------|-------|----------|----------|\n"
         template += "| Increase DB connection pool to 50 | @engineer | 2025-01-20 | P0 |\n"
         template += "| Add connection pool monitoring | @sre | 2025-01-25 | P1 |\n"
-        template += "| Update deployment checklist to verify config | @team-lead | 2025-01-30 | P2 |\n"
+        template += (
+            "| Update deployment checklist to verify config | @team-lead | 2025-01-30 | P2 |\n"
+        )
         template += "| Conduct load test with realistic traffic | @qa | 2025-02-05 | P2 |\n\n"
 
         template += "## Lessons Learned\n\n"
@@ -642,7 +651,9 @@ class MonitoringWizard(BaseWizard):
         forecast += "- Consolidate related alerts (one root cause = one alert)\n\n"
 
         forecast += "### ⚠️ Blind Spot Incident (45 days)\n"
-        forecast += "**Prediction**: Incident occurs in unmonitored area (queue depth, cache hit rate)\n"
+        forecast += (
+            "**Prediction**: Incident occurs in unmonitored area (queue depth, cache hit rate)\n"
+        )
         forecast += "**Impact**: Late detection, prolonged outage, customer impact\n"
         forecast += "**Preventive Action**:\n"
         forecast += "- Add monitoring for: queue depth, cache hit rate, DB connection pool\n"
@@ -723,50 +734,62 @@ class MonitoringWizard(BaseWizard):
 
         return strategy
 
-    def _identify_risks(self, task: WizardTask, slo_definitions: str) -> List[WizardRisk]:
+    def _identify_risks(self, task: WizardTask, slo_definitions: str) -> list[WizardRisk]:
         """Identify monitoring risks"""
         risks = []
 
-        risks.append(WizardRisk(
-            risk="Alert fatigue leads to ignored pages and missed incidents",
-            mitigation="Tune alert thresholds. Track false positive rate. Review alerts weekly.",
-            severity="high"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Alert fatigue leads to ignored pages and missed incidents",
+                mitigation="Tune alert thresholds. Track false positive rate. Review alerts weekly.",
+                severity="high",
+            )
+        )
 
-        risks.append(WizardRisk(
-            risk="Monitoring blind spots allow incidents to go undetected",
-            mitigation="Quarterly architecture review for monitoring gaps. Monitor dependencies.",
-            severity="high"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Monitoring blind spots allow incidents to go undetected",
+                mitigation="Quarterly architecture review for monitoring gaps. Monitor dependencies.",
+                severity="high",
+            )
+        )
 
-        risks.append(WizardRisk(
-            risk="Outdated runbooks slow down incident response",
-            mitigation="Update runbooks after every incident. Test in game days.",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Outdated runbooks slow down incident response",
+                mitigation="Update runbooks after every incident. Test in game days.",
+                severity="medium",
+            )
+        )
 
-        risks.append(WizardRisk(
-            risk="On-call burnout due to excessive paging",
-            mitigation="Limit to <3 pages/week. Provide comp time. Improve automation.",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="On-call burnout due to excessive paging",
+                mitigation="Limit to <3 pages/week. Provide comp time. Improve automation.",
+                severity="medium",
+            )
+        )
 
         return risks
 
-    def _create_handoffs(self, task: WizardTask) -> List[WizardHandoff]:
+    def _create_handoffs(self, task: WizardTask) -> list[WizardHandoff]:
         """Create handoffs for monitoring work"""
         handoffs = []
 
         if task.role == "developer":
-            handoffs.append(WizardHandoff(
-                owner="SRE / Platform Team",
-                what="Set up monitoring infrastructure (Prometheus, Grafana), configure alerting, on-call rotation",
-                when="Before production launch"
-            ))
-            handoffs.append(WizardHandoff(
-                owner="Engineering Team",
-                what="Write and maintain runbooks, participate in on-call rotation, respond to incidents",
-                when="Ongoing"
-            ))
+            handoffs.append(
+                WizardHandoff(
+                    owner="SRE / Platform Team",
+                    what="Set up monitoring infrastructure (Prometheus, Grafana), configure alerting, on-call rotation",
+                    when="Before production launch",
+                )
+            )
+            handoffs.append(
+                WizardHandoff(
+                    owner="Engineering Team",
+                    what="Write and maintain runbooks, participate in on-call rotation, respond to incidents",
+                    when="Ongoing",
+                )
+            )
 
         return handoffs

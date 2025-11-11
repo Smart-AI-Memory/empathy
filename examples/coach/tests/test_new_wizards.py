@@ -8,19 +8,9 @@ Licensed under the Apache License, Version 2.0
 """
 
 import pytest
+
 from examples.coach import Coach, WizardTask
-from examples.coach.wizards import (
-    PerformanceWizard,
-    RefactoringWizard,
-    APIWizard,
-    DatabaseWizard,
-    DevOpsWizard,
-    OnboardingWizard,
-    AccessibilityWizard,
-    LocalizationWizard,
-    ComplianceWizard,
-    MonitoringWizard,
-)
+from examples.coach.wizards import APIWizard, ComplianceWizard, DatabaseWizard, PerformanceWizard
 
 
 class TestNewWizardRouting:
@@ -36,7 +26,7 @@ class TestNewWizardRouting:
             "API endpoint has high latency (2s response time)",
             "Performance bottleneck in user dashboard",
             "Need to optimize query performance",
-            "Application memory usage too high"
+            "Application memory usage too high",
         ]
 
         for task_desc in test_cases:
@@ -44,7 +34,7 @@ class TestNewWizardRouting:
                 role="developer",
                 task=task_desc,
                 context="Performance issue",
-                risk_tolerance="medium"
+                risk_tolerance="medium",
             )
             result = await coach.process(task, multi_wizard=False)
             assert "PerformanceWizard" in result.routing, f"Failed for: {task_desc}"
@@ -60,15 +50,12 @@ class TestNewWizardRouting:
             "God class with 500 lines needs to be split",
             "Technical debt is slowing us down",
             "Duplicate code across multiple files",
-            "Improve code quality and maintainability"
+            "Improve code quality and maintainability",
         ]
 
         for task_desc in test_cases:
             task = WizardTask(
-                role="developer",
-                task=task_desc,
-                context="Code quality",
-                risk_tolerance="low"
+                role="developer", task=task_desc, context="Code quality", risk_tolerance="low"
             )
             result = await coach.process(task, multi_wizard=False)
             assert "RefactoringWizard" in result.routing, f"Failed for: {task_desc}"
@@ -84,15 +71,12 @@ class TestNewWizardRouting:
             "Create OpenAPI specification for endpoints",
             "Need API versioning strategy",
             "Generate Swagger documentation",
-            "Build new GraphQL endpoint"
+            "Build new GraphQL endpoint",
         ]
 
         for task_desc in test_cases:
             task = WizardTask(
-                role="developer",
-                task=task_desc,
-                context="API development",
-                risk_tolerance="medium"
+                role="developer", task=task_desc, context="API development", risk_tolerance="medium"
             )
             result = await coach.process(task, multi_wizard=False)
             assert "APIWizard" in result.routing, f"Failed for: {task_desc}"
@@ -108,15 +92,12 @@ class TestNewWizardRouting:
             "Create Alembic migration for user table",
             "SQL query is slow and needs optimization",
             "Need to add indexes for performance",
-            "Database migration for production"
+            "Database migration for production",
         ]
 
         for task_desc in test_cases:
             task = WizardTask(
-                role="developer",
-                task=task_desc,
-                context="Database work",
-                risk_tolerance="low"
+                role="developer", task=task_desc, context="Database work", risk_tolerance="low"
             )
             result = await coach.process(task, multi_wizard=False)
             assert "DatabaseWizard" in result.routing, f"Failed for: {task_desc}"
@@ -132,15 +113,12 @@ class TestNewWizardRouting:
             "Deploy application to Kubernetes cluster",
             "Create Terraform infrastructure code",
             "Automate deployment process",
-            "Configure Docker containers for app"
+            "Configure Docker containers for app",
         ]
 
         for task_desc in test_cases:
             task = WizardTask(
-                role="developer",
-                task=task_desc,
-                context="Infrastructure",
-                risk_tolerance="medium"
+                role="developer", task=task_desc, context="Infrastructure", risk_tolerance="medium"
             )
             result = await coach.process(task, multi_wizard=False)
             assert "DevOpsWizard" in result.routing, f"Failed for: {task_desc}"
@@ -156,15 +134,12 @@ class TestNewWizardRouting:
             "Knowledge transfer needed for handoff",
             "Create learning path for junior engineer",
             "Ramp up new team member quickly",
-            "Generate codebase tour for new dev"
+            "Generate codebase tour for new dev",
         ]
 
         for task_desc in test_cases:
             task = WizardTask(
-                role="team_lead",
-                task=task_desc,
-                context="Team growth",
-                risk_tolerance="low"
+                role="team_lead", task=task_desc, context="Team growth", risk_tolerance="low"
             )
             result = await coach.process(task, multi_wizard=False)
             assert "OnboardingWizard" in result.routing, f"Failed for: {task_desc}"
@@ -180,7 +155,7 @@ class TestNewWizardRouting:
             "Add screen reader support to forms",
             "Fix accessibility violations in UI",
             "Ensure keyboard navigation works",
-            "Improve color contrast for better a11y"
+            "Improve color contrast for better a11y",
         ]
 
         for task_desc in test_cases:
@@ -188,7 +163,7 @@ class TestNewWizardRouting:
                 role="developer",
                 task=task_desc,
                 context="Accessibility requirements",
-                risk_tolerance="medium"
+                risk_tolerance="medium",
             )
             result = await coach.process(task, multi_wizard=False)
             assert "AccessibilityWizard" in result.routing, f"Failed for: {task_desc}"
@@ -204,7 +179,7 @@ class TestNewWizardRouting:
             "Extract strings for translation",
             "Implement localization framework",
             "Support RTL languages like Arabic",
-            "Create multilingual version of app"
+            "Create multilingual version of app",
         ]
 
         for task_desc in test_cases:
@@ -212,7 +187,7 @@ class TestNewWizardRouting:
                 role="developer",
                 task=task_desc,
                 context="Global expansion",
-                risk_tolerance="medium"
+                risk_tolerance="medium",
             )
             result = await coach.process(task, multi_wizard=False)
             assert "LocalizationWizard" in result.routing, f"Failed for: {task_desc}"
@@ -228,7 +203,7 @@ class TestNewWizardRouting:
             "HIPAA compliance check needed",
             "GDPR compliance for EU customers",
             "Security audit preparation",
-            "ISO 27001 certification requirements"
+            "ISO 27001 certification requirements",
         ]
 
         for task_desc in test_cases:
@@ -236,7 +211,7 @@ class TestNewWizardRouting:
                 role="team_lead",
                 task=task_desc,
                 context="Compliance requirements",
-                risk_tolerance="low"
+                risk_tolerance="low",
             )
             result = await coach.process(task, multi_wizard=False)
             assert "ComplianceWizard" in result.routing, f"Failed for: {task_desc}"
@@ -252,7 +227,7 @@ class TestNewWizardRouting:
             "Define SLO for API availability",
             "Create incident response runbooks",
             "Configure Grafana alerts",
-            "Implement observability for microservices"
+            "Implement observability for microservices",
         ]
 
         for task_desc in test_cases:
@@ -260,7 +235,7 @@ class TestNewWizardRouting:
                 role="developer",
                 task=task_desc,
                 context="Production monitoring",
-                risk_tolerance="low"
+                risk_tolerance="low",
             )
             result = await coach.process(task, multi_wizard=False)
             assert "MonitoringWizard" in result.routing, f"Failed for: {task_desc}"
@@ -279,7 +254,7 @@ class TestCollaborationPatterns:
             role="developer",
             task="Build new api endpoint for user profiles",
             context="Need REST endpoint with auth",
-            risk_tolerance="medium"
+            risk_tolerance="medium",
         )
 
         result = await coach.process(task, multi_wizard=True)
@@ -301,7 +276,7 @@ class TestCollaborationPatterns:
             role="developer",
             task="Database migration for production schema change",
             context="Need to add new tables with zero downtime",
-            risk_tolerance="low"
+            risk_tolerance="low",
         )
 
         result = await coach.process(task, multi_wizard=True)
@@ -319,7 +294,7 @@ class TestCollaborationPatterns:
             role="developer",
             task="Performance issue with slow database queries",
             context="API response time is 3 seconds, needs to be under 200ms",
-            risk_tolerance="high"
+            risk_tolerance="high",
         )
 
         result = await coach.process(task, multi_wizard=True)
@@ -337,7 +312,7 @@ class TestCollaborationPatterns:
             role="team_lead",
             task="Compliance audit preparation for SOC 2",
             context="Audit scheduled in 60 days",
-            risk_tolerance="low"
+            risk_tolerance="low",
         )
 
         result = await coach.process(task, multi_wizard=True)
@@ -359,7 +334,7 @@ class TestWizardOutputQuality:
             role="developer",
             task="Optimize slow API endpoint",
             context="Endpoint returns 500ms, need < 200ms",
-            risk_tolerance="medium"
+            risk_tolerance="medium",
         )
 
         output = wizard.execute(task)
@@ -385,7 +360,7 @@ class TestWizardOutputQuality:
             role="developer",
             task="Create database migration for user_preferences table",
             context="Need new table with foreign key to users",
-            risk_tolerance="low"
+            risk_tolerance="low",
         )
 
         output = wizard.execute(task)
@@ -410,7 +385,7 @@ class TestWizardOutputQuality:
             role="developer",
             task="Design REST API for user management",
             context="CRUD operations with authentication",
-            risk_tolerance="medium"
+            risk_tolerance="medium",
         )
 
         output = wizard.execute(task)
@@ -434,10 +409,7 @@ class TestEdgeCases:
         coach = Coach()
 
         task = WizardTask(
-            role="developer",
-            task="Fix the thing",
-            context="It's broken",
-            risk_tolerance="medium"
+            role="developer", task="Fix the thing", context="It's broken", risk_tolerance="medium"
         )
 
         result = await coach.process(task, multi_wizard=False)
@@ -455,7 +427,7 @@ class TestEdgeCases:
             role="developer",
             task="Performance optimization needed",
             context="",
-            risk_tolerance="medium"
+            risk_tolerance="medium",
         )
 
         result = await coach.process(task, multi_wizard=False)
@@ -472,7 +444,7 @@ class TestEdgeCases:
             role="developer",
             task="Build secure API with monitoring",
             context="Need authentication, rate limiting, and observability",
-            risk_tolerance="low"
+            risk_tolerance="low",
         )
 
         result = await coach.process(task, multi_wizard=True)
@@ -482,7 +454,10 @@ class TestEdgeCases:
 
         # Should have synthesis
         assert result.synthesis, "Should synthesize multiple outputs"
-        assert "Combined Actions" in result.synthesis or "Additional Recommendations" in result.synthesis
+        assert (
+            "Combined Actions" in result.synthesis
+            or "Additional Recommendations" in result.synthesis
+        )
 
 
 class TestLevel4Anticipatory:
@@ -497,7 +472,7 @@ class TestLevel4Anticipatory:
             role="developer",
             task="Current performance is acceptable but worried about scaling",
             context="200ms response time at 1K users/day",
-            risk_tolerance="medium"
+            risk_tolerance="medium",
         )
 
         output = wizard.execute(task)
@@ -506,7 +481,9 @@ class TestLevel4Anticipatory:
         assert output.empathy_checks.anticipatory, "Should have anticipatory empathy"
 
         # Should have scaling forecast artifact
-        scaling_artifact = next((a for a in output.artifacts if "Scaling" in a.title or "Projection" in a.title), None)
+        scaling_artifact = next(
+            (a for a in output.artifacts if "Scaling" in a.title or "Projection" in a.title), None
+        )
         assert scaling_artifact is not None, "Should predict future scaling issues"
         assert "days" in scaling_artifact.content.lower(), "Should include timeline predictions"
 
@@ -519,7 +496,7 @@ class TestLevel4Anticipatory:
             role="team_lead",
             task="We'll need SOC 2 certification eventually",
             context="Growing startup, no compliance work done yet",
-            risk_tolerance="low"
+            risk_tolerance="low",
         )
 
         output = wizard.execute(task)
@@ -546,7 +523,7 @@ class TestPerformance:
             role="developer",
             task="Optimize database queries",
             context="Slow performance",
-            risk_tolerance="medium"
+            risk_tolerance="medium",
         )
 
         start = time.time()

@@ -9,13 +9,14 @@ Licensed under the Apache License, Version 2.0
 
 import json
 import re
-from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 
 class ProfilerType(Enum):
     """Types of profilers"""
+
     CPROFILE = "cprofile"
     PYINSTRUMENT = "pyinstrument"
     CHROME_DEVTOOLS = "chrome_devtools"
@@ -30,6 +31,7 @@ class FunctionProfile:
 
     Universal format across all profilers.
     """
+
     function_name: str
     file_path: str
     line_number: int
@@ -39,10 +41,10 @@ class FunctionProfile:
     cumulative_time: float  # seconds
     percent_total: float
     profiler: str
-    children: Optional[List['FunctionProfile']] = None
-    metadata: Optional[Dict[str, Any]] = None
+    children: list["FunctionProfile"] | None = None
+    metadata: dict[str, Any] | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return {
             "function_name": self.function_name,
@@ -55,7 +57,7 @@ class FunctionProfile:
             "percent_total": self.percent_total,
             "profiler": self.profiler,
             "children": [c.to_dict() for c in (self.children or [])],
-            "metadata": self.metadata or {}
+            "metadata": self.metadata or {},
         }
 
 
@@ -65,7 +67,7 @@ class BaseProfilerParser:
     def __init__(self, profiler_name: str):
         self.profiler_name = profiler_name
 
-    def parse(self, data: str) -> List[FunctionProfile]:
+    def parse(self, data: str) -> list[FunctionProfile]:
         """Parse profiler output"""
         raise NotImplementedError
 
@@ -80,7 +82,7 @@ class CProfileParser(BaseProfilerParser):
     def __init__(self):
         super().__init__("cprofile")
 
-    def parse(self, data: str) -> List[FunctionProfile]:
+    def parse(self, data: str) -> list[FunctionProfile]:
         """Parse cProfile text output"""
         profiles = []
 
@@ -91,26 +93,31 @@ class CProfileParser(BaseProfilerParser):
         for line in data.split("\n"):
             match = re.match(pattern, line.strip())
             if match:
-                (ncalls, tottime, percall_tot, cumtime, percall_cum,
-                 filepath, lineno, funcname) = match.groups()
+                (ncalls, tottime, percall_tot, cumtime, percall_cum, filepath, lineno, funcname) = (
+                    match.groups()
+                )
 
-                profiles.append(FunctionProfile(
-                    function_name=funcname,
-                    file_path=filepath,
-                    line_number=int(lineno),
-                    total_time=float(tottime),
-                    self_time=float(tottime),  # tottime is self time in cProfile
-                    call_count=int(ncalls),
-                    cumulative_time=float(cumtime),
-                    percent_total=0.0,  # Calculate later
-                    profiler=self.profiler_name
-                ))
+                profiles.append(
+                    FunctionProfile(
+                        function_name=funcname,
+                        file_path=filepath,
+                        line_number=int(lineno),
+                        total_time=float(tottime),
+                        self_time=float(tottime),  # tottime is self time in cProfile
+                        call_count=int(ncalls),
+                        cumulative_time=float(cumtime),
+                        percent_total=0.0,  # Calculate later
+                        profiler=self.profiler_name,
+                    )
+                )
 
         # Calculate percentages
         if profiles:
             total_time = sum(p.total_time for p in profiles)
             for profile in profiles:
-                profile.percent_total = (profile.total_time / total_time * 100) if total_time > 0 else 0
+                profile.percent_total = (
+                    (profile.total_time / total_time * 100) if total_time > 0 else 0
+                )
 
         # Sort by total time descending
         profiles.sort(key=lambda p: p.total_time, reverse=True)
@@ -128,7 +135,7 @@ class ChromeDevToolsParser(BaseProfilerParser):
     def __init__(self):
         super().__init__("chrome_devtools")
 
-    def parse(self, data: str) -> List[FunctionProfile]:
+    def parse(self, data: str) -> list[FunctionProfile]:
         """Parse Chrome DevTools JSON"""
         profiles = []
 
@@ -147,10 +154,7 @@ class ChromeDevToolsParser(BaseProfilerParser):
                     dur = event.get("dur", 0) / 1000000  # Convert microseconds to seconds
 
                     if name not in function_times:
-                        function_times[name] = {
-                            "total_time": 0,
-                            "call_count": 0
-                        }
+                        function_times[name] = {"total_time": 0, "call_count": 0}
 
                     function_times[name]["total_time"] += dur
                     function_times[name]["call_count"] += 1
@@ -159,17 +163,21 @@ class ChromeDevToolsParser(BaseProfilerParser):
             total_time = sum(data["total_time"] for data in function_times.values())
 
             for func_name, data in function_times.items():
-                profiles.append(FunctionProfile(
-                    function_name=func_name,
-                    file_path="",  # Chrome doesn't always provide
-                    line_number=0,
-                    total_time=data["total_time"],
-                    self_time=data["total_time"],
-                    call_count=data["call_count"],
-                    cumulative_time=data["total_time"],
-                    percent_total=(data["total_time"] / total_time * 100) if total_time > 0 else 0,
-                    profiler=self.profiler_name
-                ))
+                profiles.append(
+                    FunctionProfile(
+                        function_name=func_name,
+                        file_path="",  # Chrome doesn't always provide
+                        line_number=0,
+                        total_time=data["total_time"],
+                        self_time=data["total_time"],
+                        call_count=data["call_count"],
+                        cumulative_time=data["total_time"],
+                        percent_total=(
+                            (data["total_time"] / total_time * 100) if total_time > 0 else 0
+                        ),
+                        profiler=self.profiler_name,
+                    )
+                )
 
             profiles.sort(key=lambda p: p.total_time, reverse=True)
 
@@ -189,7 +197,7 @@ class SimpleJSONProfilerParser(BaseProfilerParser):
     def __init__(self):
         super().__init__("simple_json")
 
-    def parse(self, data: str) -> List[FunctionProfile]:
+    def parse(self, data: str) -> list[FunctionProfile]:
         """Parse simple JSON format"""
         profiles = []
 
@@ -199,17 +207,19 @@ class SimpleJSONProfilerParser(BaseProfilerParser):
             functions = parsed.get("functions", [])
 
             for func in functions:
-                profiles.append(FunctionProfile(
-                    function_name=func.get("name", "unknown"),
-                    file_path=func.get("file", ""),
-                    line_number=func.get("line", 0),
-                    total_time=func.get("total_time", 0.0),
-                    self_time=func.get("self_time", 0.0),
-                    call_count=func.get("calls", 0),
-                    cumulative_time=func.get("cumulative_time", 0.0),
-                    percent_total=func.get("percent", 0.0),
-                    profiler=self.profiler_name
-                ))
+                profiles.append(
+                    FunctionProfile(
+                        function_name=func.get("name", "unknown"),
+                        file_path=func.get("file", ""),
+                        line_number=func.get("line", 0),
+                        total_time=func.get("total_time", 0.0),
+                        self_time=func.get("self_time", 0.0),
+                        call_count=func.get("calls", 0),
+                        cumulative_time=func.get("cumulative_time", 0.0),
+                        percent_total=func.get("percent", 0.0),
+                        profiler=self.profiler_name,
+                    )
+                )
 
             profiles.sort(key=lambda p: p.total_time, reverse=True)
 
@@ -225,7 +235,7 @@ class ProfilerParserFactory:
     _parsers = {
         "cprofile": CProfileParser,
         "chrome_devtools": ChromeDevToolsParser,
-        "simple_json": SimpleJSONProfilerParser
+        "simple_json": SimpleJSONProfilerParser,
     }
 
     @classmethod
@@ -242,10 +252,7 @@ class ProfilerParserFactory:
         return parser_class()
 
 
-def parse_profiler_output(
-    profiler_type: str,
-    data: str
-) -> List[FunctionProfile]:
+def parse_profiler_output(profiler_type: str, data: str) -> list[FunctionProfile]:
     """
     Convenience function to parse profiler output.
 

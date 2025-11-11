@@ -6,12 +6,8 @@ Licensed under the Apache License, Version 2.0
 """
 
 import pytest
-from empathy_os.feedback_loops import (
-    FeedbackLoopDetector,
-    FeedbackLoop,
-    LoopType,
-    LoopPolarity
-)
+
+from empathy_os.feedback_loops import FeedbackLoop, FeedbackLoopDetector, LoopPolarity, LoopType
 
 
 class TestFeedbackLoop:
@@ -24,7 +20,7 @@ class TestFeedbackLoop:
             loop_type=LoopType.REINFORCING,
             polarity=LoopPolarity.VIRTUOUS,
             description="Test virtuous cycle",
-            components=["trust", "success"]
+            components=["trust", "success"],
         )
 
         assert loop.loop_id == "test_loop"
@@ -138,7 +134,7 @@ class TestFeedbackLoopDetector:
             {"trust": 0.3, "success": True},
             {"trust": 0.45, "success": True},
             {"trust": 0.65, "success": True},
-            {"trust": 0.85, "success": True}  # Strong acceleration
+            {"trust": 0.85, "success": True},  # Strong acceleration
         ]
 
         result = detector.detect_active_loop(history)
@@ -156,7 +152,7 @@ class TestFeedbackLoopDetector:
             {"trust": 0.7, "success": False},
             {"trust": 0.5, "success": False},
             {"trust": 0.3, "success": False},
-            {"trust": 0.1, "success": False}
+            {"trust": 0.1, "success": False},
         ]
 
         result = detector.detect_active_loop(history)
@@ -174,7 +170,7 @@ class TestFeedbackLoopDetector:
             {"trust": 0.5, "success": True},
             {"trust": 0.55, "success": False},
             {"trust": 0.5, "success": True},
-            {"trust": 0.52, "success": True}
+            {"trust": 0.52, "success": True},
         ]
 
         result = detector.detect_active_loop(history)
@@ -210,7 +206,7 @@ class TestFeedbackLoopDetector:
             loop_type=LoopType.REINFORCING,
             polarity=LoopPolarity.VIRTUOUS,
             description="Custom test loop",
-            components=["test"]
+            components=["test"],
         )
 
         detector.register_custom_loop(custom_loop)
@@ -237,7 +233,7 @@ class TestFeedbackLoopDetector:
             loop_type=LoopType.BALANCING,
             polarity=LoopPolarity.NEUTRAL,
             description="Temporary",
-            components=[]
+            components=[],
         )
         detector.register_custom_loop(custom_loop)
 

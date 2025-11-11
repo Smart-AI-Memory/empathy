@@ -10,16 +10,16 @@ Licensed under the Apache License, Version 2.0
 """
 
 import re
-from typing import List, Dict, Any
+from typing import Any
 
 from .base_wizard import (
     BaseWizard,
-    WizardTask,
-    WizardOutput,
-    WizardArtifact,
-    WizardRisk,
-    WizardHandoff,
     EmpathyChecks,
+    WizardArtifact,
+    WizardHandoff,
+    WizardOutput,
+    WizardRisk,
+    WizardTask,
 )
 
 
@@ -36,8 +36,17 @@ class DebuggingWizard(BaseWizard):
     def can_handle(self, task: WizardTask) -> float:
         """Determine if this is a debugging task"""
         debug_keywords = [
-            "bug", "error", "fail", "crash", "500", "exception",
-            "trace", "stack", "debug", "broken", "issue"
+            "bug",
+            "error",
+            "fail",
+            "crash",
+            "500",
+            "exception",
+            "trace",
+            "stack",
+            "debug",
+            "broken",
+            "issue",
         ]
 
         task_lower = (task.task + " " + task.context).lower()
@@ -74,26 +83,14 @@ class DebuggingWizard(BaseWizard):
 
         # Step 9: Create artifacts
         artifacts = [
-            WizardArtifact(
-                type="doc",
-                title="Root Cause Analysis",
-                content=diagnosis
-            ),
-            WizardArtifact(
-                type="code",
-                title="Proposed Patch",
-                content=patch
-            ),
-            WizardArtifact(
-                type="code",
-                title="Regression Test",
-                content=test
-            ),
+            WizardArtifact(type="doc", title="Root Cause Analysis", content=diagnosis),
+            WizardArtifact(type="code", title="Proposed Patch", content=patch),
+            WizardArtifact(type="code", title="Regression Test", content=test),
             WizardArtifact(
                 type="checklist",
                 title="Deployment Checklist",
-                content=self._create_deployment_checklist(task)
-            )
+                content=self._create_deployment_checklist(task),
+            ),
         ]
 
         # Step 10: Generate next actions
@@ -103,7 +100,7 @@ class DebuggingWizard(BaseWizard):
             "Run regression test suite",
             "Code review with senior dev",
             "Deploy to staging, monitor for 1 hour",
-            "Deploy to production with rollback plan ready"
+            "Deploy to production with rollback plan ready",
         ]
 
         # Add anticipatory actions
@@ -113,23 +110,21 @@ class DebuggingWizard(BaseWizard):
         # Step 11: Create handoffs
         handoffs = []
         if task.role == "developer":
-            handoffs.append(WizardHandoff(
-                owner="senior_dev",
-                what="Code review of patch",
-                when="Before deployment"
-            ))
+            handoffs.append(
+                WizardHandoff(
+                    owner="senior_dev", what="Code review of patch", when="Before deployment"
+                )
+            )
         if emotional_state["urgency"] == "high":
-            handoffs.append(WizardHandoff(
-                owner="pm",
-                what="Timeline impact assessment",
-                when="Within 1 hour"
-            ))
+            handoffs.append(
+                WizardHandoff(owner="pm", what="Timeline impact assessment", when="Within 1 hour")
+            )
 
         # Step 12: Empathy checks
         empathy_checks = EmpathyChecks(
             cognitive=f"Considered {task.role} constraints: {constraints['output_style'] if 'output_style' in constraints else 'standard'} output, {task.risk_tolerance} risk tolerance",
             emotional=f"Acknowledged {'high' if emotional_state['urgency'] == 'high' else 'normal'} pressure situation with {len(emotional_state['stress_indicators'])} stress indicators",
-            anticipatory=f"Provided {len(anticipatory_actions)} proactive actions: regression test, rollback plan, deployment checklist"
+            anticipatory=f"Provided {len(anticipatory_actions)} proactive actions: regression test, rollback plan, deployment checklist",
         )
 
         return WizardOutput(
@@ -141,7 +136,7 @@ class DebuggingWizard(BaseWizard):
             handoffs=handoffs,
             next_actions=next_actions,
             empathy_checks=empathy_checks,
-            confidence=self.can_handle(task)
+            confidence=self.can_handle(task),
         )
 
     def _analyze_error(self, task: WizardTask) -> str:
@@ -164,56 +159,70 @@ class DebuggingWizard(BaseWizard):
         # Generic
         return "Error detected in logs - requires reproduction and detailed analysis"
 
-    def _form_hypotheses(self, task: WizardTask, diagnosis: str) -> List[Dict[str, Any]]:
+    def _form_hypotheses(self, task: WizardTask, diagnosis: str) -> list[dict[str, Any]]:
         """Form 2-3 hypotheses about root cause"""
         hypotheses = []
 
         if "null" in diagnosis.lower():
-            hypotheses.append({
-                "cause": "Missing configuration value on cold start",
-                "likelihood": "high",
-                "test": "Check config loading in startup sequence"
-            })
-            hypotheses.append({
-                "cause": "Race condition in initialization",
-                "likelihood": "medium",
-                "test": "Add logging to init order"
-            })
+            hypotheses.append(
+                {
+                    "cause": "Missing configuration value on cold start",
+                    "likelihood": "high",
+                    "test": "Check config loading in startup sequence",
+                }
+            )
+            hypotheses.append(
+                {
+                    "cause": "Race condition in initialization",
+                    "likelihood": "medium",
+                    "test": "Add logging to init order",
+                }
+            )
 
         elif "500" in diagnosis:
-            hypotheses.append({
-                "cause": "Unhandled exception in request handler",
-                "likelihood": "high",
-                "test": "Review recent code changes in handlers"
-            })
-            hypotheses.append({
-                "cause": "Database connection failure",
-                "likelihood": "medium",
-                "test": "Check DB connection pool settings"
-            })
+            hypotheses.append(
+                {
+                    "cause": "Unhandled exception in request handler",
+                    "likelihood": "high",
+                    "test": "Review recent code changes in handlers",
+                }
+            )
+            hypotheses.append(
+                {
+                    "cause": "Database connection failure",
+                    "likelihood": "medium",
+                    "test": "Check DB connection pool settings",
+                }
+            )
 
         elif "timeout" in diagnosis.lower():
-            hypotheses.append({
-                "cause": "Slow database query (N+1 problem)",
-                "likelihood": "high",
-                "test": "Enable query logging and check for loops"
-            })
-            hypotheses.append({
-                "cause": "Downstream service latency",
-                "likelihood": "medium",
-                "test": "Add timeout monitoring to external calls"
-            })
+            hypotheses.append(
+                {
+                    "cause": "Slow database query (N+1 problem)",
+                    "likelihood": "high",
+                    "test": "Enable query logging and check for loops",
+                }
+            )
+            hypotheses.append(
+                {
+                    "cause": "Downstream service latency",
+                    "likelihood": "medium",
+                    "test": "Add timeout monitoring to external calls",
+                }
+            )
 
         else:
-            hypotheses.append({
-                "cause": "Unknown - requires log analysis",
-                "likelihood": "unknown",
-                "test": "Reproduce with verbose logging"
-            })
+            hypotheses.append(
+                {
+                    "cause": "Unknown - requires log analysis",
+                    "likelihood": "unknown",
+                    "test": "Reproduce with verbose logging",
+                }
+            )
 
         return hypotheses[:3]  # Max 3 hypotheses
 
-    def _create_repro_plan(self, task: WizardTask, hypotheses: List[Dict]) -> List[str]:
+    def _create_repro_plan(self, task: WizardTask, hypotheses: list[dict]) -> list[str]:
         """Create minimal reproduction plan"""
         plan = [
             "Set up staging environment with same config as production",
@@ -231,12 +240,12 @@ class DebuggingWizard(BaseWizard):
     def _extract_component(self, task: WizardTask) -> str:
         """Extract component name from context"""
         # Simple heuristic: look for capitalized words or "Service X" pattern
-        match = re.search(r'Service ([A-Z]\w*)|([A-Z]\w+Service)', task.context)
+        match = re.search(r"Service ([A-Z]\w*)|([A-Z]\w+Service)", task.context)
         if match:
             return match.group(1) or match.group(2)
         return "affected component"
 
-    def _generate_patch(self, task: WizardTask, hypotheses: List[Dict]) -> str:
+    def _generate_patch(self, task: WizardTask, hypotheses: list[dict]) -> str:
         """Generate proposed patch (simplified example)"""
         if hypotheses and "null" in hypotheses[0]["cause"].lower():
             return """# Proposed Patch: Add null guard and default config
@@ -275,7 +284,7 @@ Lines changed: ~3-5
 Risk: Low - improves error visibility
 """
 
-    def _create_regression_test(self, task: WizardTask, hypotheses: List[Dict]) -> str:
+    def _create_regression_test(self, task: WizardTask, hypotheses: list[dict]) -> str:
         """Create regression test"""
         return """# Regression Test
 
@@ -319,26 +328,28 @@ def test_error_response_format():
 - [ ] Incident post-mortem scheduled (if critical)
 """
 
-    def _identify_risks(self, task: WizardTask, hypotheses: List[Dict]) -> List[WizardRisk]:
+    def _identify_risks(self, task: WizardTask, hypotheses: list[dict]) -> list[WizardRisk]:
         """Identify deployment risks"""
         risks = [
             WizardRisk(
                 risk="Patch doesn't address root cause",
                 mitigation="Test all hypotheses before deploying",
-                severity="high" if task.risk_tolerance == "low" else "medium"
+                severity="high" if task.risk_tolerance == "low" else "medium",
             ),
             WizardRisk(
                 risk="Introduces new edge case",
                 mitigation="Comprehensive regression testing + code review",
-                severity="medium"
-            )
+                severity="medium",
+            ),
         ]
 
         if task.risk_tolerance == "low":
-            risks.append(WizardRisk(
-                risk="Production deployment causes outage",
-                mitigation="Deploy during low-traffic window with immediate rollback capability",
-                severity="high"
-            ))
+            risks.append(
+                WizardRisk(
+                    risk="Production deployment causes outage",
+                    mitigation="Deploy during low-traffic window with immediate rollback capability",
+                    severity="high",
+                )
+            )
 
         return risks

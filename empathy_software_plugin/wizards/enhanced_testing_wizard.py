@@ -9,10 +9,10 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import Dict, Any, List, Optional
-from pathlib import Path
-import re
 import logging
+import re
+from pathlib import Path
+from typing import Any
 
 from .base_wizard import BaseWizard
 
@@ -46,36 +46,36 @@ class EnhancedTestingWizard(BaseWizard):
             "error_handling": {
                 "patterns": [r"try\s*:", r"except\s+\w+:", r"catch\s*\("],
                 "risk": "HIGH",
-                "reason": "Error paths often cause production failures"
+                "reason": "Error paths often cause production failures",
             },
             "database_operations": {
                 "patterns": [r"\.execute\(", r"\.query\(", r"\.save\(", r"\.update\("],
                 "risk": "HIGH",
-                "reason": "Database operations prone to edge case bugs"
+                "reason": "Database operations prone to edge case bugs",
             },
             "user_input": {
                 "patterns": [r"request\.", r"input\(", r"readLine\("],
                 "risk": "CRITICAL",
-                "reason": "Unvalidated input leads to security issues"
+                "reason": "Unvalidated input leads to security issues",
             },
             "authentication": {
                 "patterns": [r"login", r"authenticate", r"verify.*password"],
                 "risk": "CRITICAL",
-                "reason": "Auth bugs cause security breaches"
+                "reason": "Auth bugs cause security breaches",
             },
             "payment_processing": {
                 "patterns": [r"payment|charge|transaction|bill|invoice"],
                 "risk": "CRITICAL",
-                "reason": "Payment bugs cause financial loss"
+                "reason": "Payment bugs cause financial loss",
             },
             "financial_calculations": {
                 "patterns": [r"price\s*=", r"total\s*=", r"amount\s*=", r"\.round\("],
                 "risk": "HIGH",
-                "reason": "Money calculations must be exact"
-            }
+                "reason": "Money calculations must be exact",
+            },
         }
 
-    async def analyze(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
         """
         Analyze test quality and coverage.
 
@@ -88,10 +88,10 @@ class EnhancedTestingWizard(BaseWizard):
         Returns:
             Analysis with test quality, coverage gaps, bug risk predictions
         """
-        project_path = context.get('project_path', '.')
-        coverage_data = context.get('coverage_report', {})
-        test_files = context.get('test_files', [])
-        source_files = context.get('source_files', [])
+        project_path = context.get("project_path", ".")
+        coverage_data = context.get("coverage_report", {})
+        test_files = context.get("test_files", [])
+        source_files = context.get("source_files", [])
 
         # Auto-discover if not provided
         if not source_files:
@@ -101,45 +101,25 @@ class EnhancedTestingWizard(BaseWizard):
             test_files = self._discover_test_files(project_path)
 
         # Phase 1: Analyze test coverage
-        coverage_analysis = self._analyze_coverage(
-            coverage_data,
-            source_files
-        )
+        coverage_analysis = self._analyze_coverage(coverage_data, source_files)
 
         # Phase 2: Analyze test quality
-        test_quality = self._analyze_test_quality(
-            test_files,
-            source_files
-        )
+        test_quality = self._analyze_test_quality(test_files, source_files)
 
         # Phase 3: Identify high-risk untested code (Level 4)
-        risk_gaps = self._identify_risk_gaps(
-            source_files,
-            coverage_data
-        )
+        risk_gaps = self._identify_risk_gaps(source_files, coverage_data)
 
         # Phase 4: Detect brittle tests
         brittle_tests = self._detect_brittle_tests(test_files)
 
         # Phase 5: Generate smart test suggestions (Level 4)
-        test_suggestions = self._generate_test_suggestions(
-            risk_gaps,
-            coverage_analysis
-        )
+        test_suggestions = self._generate_test_suggestions(risk_gaps, coverage_analysis)
 
         # Phase 6: Predictions (Level 4)
-        predictions = self._generate_predictions(
-            risk_gaps,
-            brittle_tests,
-            coverage_analysis
-        )
+        predictions = self._generate_predictions(risk_gaps, brittle_tests, coverage_analysis)
 
         # Phase 7: Recommendations
-        recommendations = self._generate_recommendations(
-            coverage_analysis,
-            test_quality,
-            risk_gaps
-        )
+        recommendations = self._generate_recommendations(coverage_analysis, test_quality, risk_gaps)
 
         return {
             "coverage": coverage_analysis,
@@ -148,14 +128,13 @@ class EnhancedTestingWizard(BaseWizard):
             "high_risk_gaps": risk_gaps,  # Alias for compatibility
             "brittle_tests": brittle_tests,
             "test_suggestions": test_suggestions,
-
             # Standard wizard outputs
             "predictions": predictions,
             "recommendations": recommendations,
-            "confidence": 0.85
+            "confidence": 0.85,
         }
 
-    def _discover_source_files(self, project_path: str) -> List[str]:
+    def _discover_source_files(self, project_path: str) -> list[str]:
         """Discover source files in project"""
         source_files = []
         project = Path(project_path)
@@ -168,12 +147,16 @@ class EnhancedTestingWizard(BaseWizard):
         # JavaScript/TypeScript
         for ext in ["*.js", "*.ts", "*.jsx", "*.tsx"]:
             for file in project.rglob(ext):
-                if "/test" not in str(file) and ".test." not in file.name and ".spec." not in file.name:
+                if (
+                    "/test" not in str(file)
+                    and ".test." not in file.name
+                    and ".spec." not in file.name
+                ):
                     source_files.append(str(file))
 
         return source_files[:100]  # Limit for performance
 
-    def _discover_test_files(self, project_path: str) -> List[str]:
+    def _discover_test_files(self, project_path: str) -> list[str]:
         """Discover test files in project"""
         test_files = []
         project = Path(project_path)
@@ -193,10 +176,8 @@ class EnhancedTestingWizard(BaseWizard):
         return test_files
 
     def _analyze_coverage(
-        self,
-        coverage_data: Dict[str, Any],
-        source_files: List[str]
-    ) -> Dict[str, Any]:
+        self, coverage_data: dict[str, Any], source_files: list[str]
+    ) -> dict[str, Any]:
         """Analyze test coverage"""
 
         if not coverage_data:
@@ -205,7 +186,7 @@ class EnhancedTestingWizard(BaseWizard):
                 "line_coverage": 0,
                 "branch_coverage": 0,
                 "uncovered_files": len(source_files),
-                "status": "no_coverage_data"
+                "status": "no_coverage_data",
             }
 
         # Extract coverage metrics
@@ -232,14 +213,12 @@ class EnhancedTestingWizard(BaseWizard):
             "total_lines": total_lines,
             "covered_lines": covered_lines,
             "uncovered_lines": total_lines - covered_lines,
-            "status": "analyzed"
+            "status": "analyzed",
         }
 
     def _analyze_test_quality(
-        self,
-        test_files: List[str],
-        source_files: List[str]
-    ) -> Dict[str, Any]:
+        self, test_files: list[str], source_files: list[str]
+    ) -> dict[str, Any]:
         """Analyze test quality beyond coverage"""
 
         total_tests = len(test_files)
@@ -248,14 +227,15 @@ class EnhancedTestingWizard(BaseWizard):
 
         for test_file in test_files:
             try:
-                with open(test_file, 'r') as f:
+                with open(test_file) as f:
                     content = f.read()
 
                     # Count assertions (word boundaries to avoid matching in comments/strings)
-                    assertion_count = len(re.findall(
-                        r"\bassert\s|\bexpect\(|\bshould\(|\btoEqual\(|\bassertEqual\(",
-                        content
-                    ))
+                    assertion_count = len(
+                        re.findall(
+                            r"\bassert\s|\bexpect\(|\bshould\(|\btoEqual\(|\bassertEqual\(", content
+                        )
+                    )
 
                     if assertion_count > 0:
                         tests_with_assertions += 1
@@ -273,19 +253,12 @@ class EnhancedTestingWizard(BaseWizard):
             "total_assertions": assertions_found,
             "test_to_source_ratio": ratio,
             "quality_score": self._calculate_quality_score(
-                total_tests,
-                tests_with_assertions,
-                assertions_found,
-                ratio
-            )
+                total_tests, tests_with_assertions, assertions_found, ratio
+            ),
         }
 
     def _calculate_quality_score(
-        self,
-        total_tests: int,
-        tests_with_assertions: int,
-        assertions_found: int,
-        ratio: float
+        self, total_tests: int, tests_with_assertions: int, assertions_found: int, ratio: float
     ) -> float:
         """Calculate overall test quality score (0-100)"""
 
@@ -303,19 +276,13 @@ class EnhancedTestingWizard(BaseWizard):
         ratio_score = min(ratio * 100, 100)  # 1:1 or better = 100
 
         # Weighted average
-        quality_score = (
-            assertion_score * 0.4 +
-            assertion_depth_score * 0.3 +
-            ratio_score * 0.3
-        )
+        quality_score = assertion_score * 0.4 + assertion_depth_score * 0.3 + ratio_score * 0.3
 
         return round(quality_score, 2)
 
     def _identify_risk_gaps(
-        self,
-        source_files: List[str],
-        coverage_data: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+        self, source_files: list[str], coverage_data: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """
         Identify high-risk code that lacks tests.
 
@@ -326,7 +293,7 @@ class EnhancedTestingWizard(BaseWizard):
 
         for source_file in source_files[:50]:  # Limit for performance
             try:
-                with open(source_file, 'r') as f:
+                with open(source_file) as f:
                     content = f.read()
 
                 # Check if file is covered
@@ -338,14 +305,16 @@ class EnhancedTestingWizard(BaseWizard):
                         matches = re.findall(pattern, content, re.IGNORECASE)
 
                         if matches and not is_covered:
-                            risk_gaps.append({
-                                "file": source_file,
-                                "pattern": pattern_name,
-                                "risk_level": pattern_info["risk"],
-                                "reason": pattern_info["reason"],
-                                "occurrences": len(matches),
-                                "prediction": f"In our experience, untested {pattern_name} causes production bugs"
-                            })
+                            risk_gaps.append(
+                                {
+                                    "file": source_file,
+                                    "pattern": pattern_name,
+                                    "risk_level": pattern_info["risk"],
+                                    "reason": pattern_info["reason"],
+                                    "occurrences": len(matches),
+                                    "prediction": f"In our experience, untested {pattern_name} causes production bugs",
+                                }
+                            )
                             break  # One gap per file per pattern
 
             except Exception as e:
@@ -357,7 +326,7 @@ class EnhancedTestingWizard(BaseWizard):
 
         return risk_gaps
 
-    def _detect_brittle_tests(self, test_files: List[str]) -> List[Dict[str, Any]]:
+    def _detect_brittle_tests(self, test_files: list[str]) -> list[dict[str, Any]]:
         """Detect tests that are likely to break often"""
 
         brittle_tests = []
@@ -365,30 +334,32 @@ class EnhancedTestingWizard(BaseWizard):
         brittle_patterns = {
             "sleep/wait": {
                 "pattern": r"sleep\(|wait\(|setTimeout\(",
-                "reason": "Timing-based tests are flaky"
+                "reason": "Timing-based tests are flaky",
             },
             "hardcoded_values": {
                 "pattern": r"==\s*\d{10,}|===\s*\d{10,}",  # Long numbers
-                "reason": "Hardcoded IDs/timestamps break easily"
+                "reason": "Hardcoded IDs/timestamps break easily",
             },
             "test_order_dependency": {
                 "pattern": r"test.*order|sequential|beforeAll.*state",
-                "reason": "Tests should be independent"
-            }
+                "reason": "Tests should be independent",
+            },
         }
 
         for test_file in test_files[:50]:
             try:
-                with open(test_file, 'r') as f:
+                with open(test_file) as f:
                     content = f.read()
 
                 for pattern_name, pattern_info in brittle_patterns.items():
                     if re.search(pattern_info["pattern"], content):
-                        brittle_tests.append({
-                            "file": test_file,
-                            "pattern": pattern_name,
-                            "reason": pattern_info["reason"]
-                        })
+                        brittle_tests.append(
+                            {
+                                "file": test_file,
+                                "pattern": pattern_name,
+                                "reason": pattern_info["reason"],
+                            }
+                        )
 
             except Exception as e:
                 logger.warning(f"Could not analyze {test_file}: {e}")
@@ -396,27 +367,27 @@ class EnhancedTestingWizard(BaseWizard):
         return brittle_tests
 
     def _generate_test_suggestions(
-        self,
-        risk_gaps: List[Dict[str, Any]],
-        coverage_analysis: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+        self, risk_gaps: list[dict[str, Any]], coverage_analysis: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """Generate smart test suggestions based on risk"""
 
         suggestions = []
 
         # Suggest tests for high-risk gaps first
         for gap in risk_gaps[:10]:  # Top 10
-            suggestions.append({
-                "priority": gap["risk_level"],
-                "file": gap["file"],
-                "test_type": f"Test {gap['pattern']}",
-                "rationale": gap["reason"],
-                "suggested_tests": self._suggest_specific_tests(gap["pattern"])
-            })
+            suggestions.append(
+                {
+                    "priority": gap["risk_level"],
+                    "file": gap["file"],
+                    "test_type": f"Test {gap['pattern']}",
+                    "rationale": gap["reason"],
+                    "suggested_tests": self._suggest_specific_tests(gap["pattern"]),
+                }
+            )
 
         return suggestions
 
-    def _suggest_specific_tests(self, pattern: str) -> List[str]:
+    def _suggest_specific_tests(self, pattern: str) -> list[str]:
         """Suggest specific tests for pattern"""
 
         test_templates = {
@@ -424,42 +395,42 @@ class EnhancedTestingWizard(BaseWizard):
                 "Test with invalid input",
                 "Test with network failure",
                 "Test with timeout",
-                "Verify error message clarity"
+                "Verify error message clarity",
             ],
             "database_operations": [
                 "Test with empty result set",
                 "Test with duplicate keys",
                 "Test with connection failure",
-                "Test transaction rollback"
+                "Test transaction rollback",
             ],
             "user_input": [
                 "Test with malformed input",
                 "Test with SQL injection attempt",
                 "Test with XSS payload",
-                "Test with empty/null input"
+                "Test with empty/null input",
             ],
             "authentication": [
                 "Test with invalid credentials",
                 "Test with expired token",
                 "Test with missing permissions",
-                "Test session timeout"
+                "Test session timeout",
             ],
             "financial_calculations": [
                 "Test with edge case amounts (0, negative)",
                 "Test rounding behavior",
                 "Test currency conversion",
-                "Test overflow/underflow"
-            ]
+                "Test overflow/underflow",
+            ],
         }
 
         return test_templates.get(pattern, ["Add comprehensive tests"])
 
     def _generate_predictions(
         self,
-        risk_gaps: List[Dict[str, Any]],
-        brittle_tests: List[Dict[str, Any]],
-        coverage_analysis: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+        risk_gaps: list[dict[str, Any]],
+        brittle_tests: list[dict[str, Any]],
+        coverage_analysis: dict[str, Any],
+    ) -> list[dict[str, Any]]:
         """Generate Level 4 predictions"""
 
         predictions = []
@@ -467,60 +438,66 @@ class EnhancedTestingWizard(BaseWizard):
         # Prediction 1: Critical risk gaps
         critical_gaps = [g for g in risk_gaps if g["risk_level"] == "CRITICAL"]
         if critical_gaps:
-            predictions.append({
-                "type": "production_bug_risk",
-                "severity": "critical",
-                "description": (
-                    f"{len(critical_gaps)} critical code paths lack tests. "
-                    f"In our experience, untested {critical_gaps[0]['pattern']} "
-                    "causes production incidents."
-                ),
-                "affected_files": [g["file"] for g in critical_gaps[:5]],
-                "prevention_steps": [
-                    f"Add tests for {g['pattern']}" for g in critical_gaps[:3]
-                ]
-            })
+            predictions.append(
+                {
+                    "type": "production_bug_risk",
+                    "severity": "critical",
+                    "description": (
+                        f"{len(critical_gaps)} critical code paths lack tests. "
+                        f"In our experience, untested {critical_gaps[0]['pattern']} "
+                        "causes production incidents."
+                    ),
+                    "affected_files": [g["file"] for g in critical_gaps[:5]],
+                    "prevention_steps": [
+                        f"Add tests for {g['pattern']}" for g in critical_gaps[:3]
+                    ],
+                }
+            )
 
         # Prediction 2: Brittle test maintenance burden
         if len(brittle_tests) > 5:
-            predictions.append({
-                "type": "test_maintenance_burden",
-                "severity": "medium",
-                "description": (
-                    f"{len(brittle_tests)} brittle tests detected. "
-                    "In our experience, these break often and slow development."
-                ),
-                "prevention_steps": [
-                    "Refactor tests to remove timing dependencies",
-                    "Use test fixtures instead of hardcoded values",
-                    "Ensure test independence"
-                ]
-            })
+            predictions.append(
+                {
+                    "type": "test_maintenance_burden",
+                    "severity": "medium",
+                    "description": (
+                        f"{len(brittle_tests)} brittle tests detected. "
+                        "In our experience, these break often and slow development."
+                    ),
+                    "prevention_steps": [
+                        "Refactor tests to remove timing dependencies",
+                        "Use test fixtures instead of hardcoded values",
+                        "Ensure test independence",
+                    ],
+                }
+            )
 
         # Prediction 3: Low coverage trajectory
         if coverage_analysis["overall_coverage"] < 60:
-            predictions.append({
-                "type": "coverage_trajectory",
-                "severity": "high",
-                "description": (
-                    f"Coverage at {coverage_analysis['overall_coverage']:.1f}%. "
-                    "In our experience, projects below 70% see more production bugs."
-                ),
-                "prevention_steps": [
-                    "Set coverage target of 70%+",
-                    "Add pre-commit hooks to prevent coverage drops",
-                    "Focus on high-risk code first"
-                ]
-            })
+            predictions.append(
+                {
+                    "type": "coverage_trajectory",
+                    "severity": "high",
+                    "description": (
+                        f"Coverage at {coverage_analysis['overall_coverage']:.1f}%. "
+                        "In our experience, projects below 70% see more production bugs."
+                    ),
+                    "prevention_steps": [
+                        "Set coverage target of 70%+",
+                        "Add pre-commit hooks to prevent coverage drops",
+                        "Focus on high-risk code first",
+                    ],
+                }
+            )
 
         return predictions
 
     def _generate_recommendations(
         self,
-        coverage_analysis: Dict[str, Any],
-        test_quality: Dict[str, Any],
-        risk_gaps: List[Dict[str, Any]]
-    ) -> List[str]:
+        coverage_analysis: dict[str, Any],
+        test_quality: dict[str, Any],
+        risk_gaps: list[dict[str, Any]],
+    ) -> list[str]:
         """Generate actionable recommendations"""
 
         recommendations = []
@@ -535,9 +512,7 @@ class EnhancedTestingWizard(BaseWizard):
         # Quality recommendations
         quality_score = test_quality.get("quality_score", 0)
         if quality_score < 60:
-            recommendations.append(
-                f"Improve test quality score from {quality_score:.1f} to 60+"
-            )
+            recommendations.append(f"Improve test quality score from {quality_score:.1f} to 60+")
 
         # Risk-based recommendations
         critical_gaps = [g for g in risk_gaps if g["risk_level"] == "CRITICAL"]
@@ -548,15 +523,11 @@ class EnhancedTestingWizard(BaseWizard):
 
         high_risk_gaps = [g for g in risk_gaps if g["risk_level"] == "HIGH"]
         if high_risk_gaps:
-            recommendations.append(
-                f"HIGH PRIORITY: Test {len(high_risk_gaps)} high-risk areas"
-            )
+            recommendations.append(f"HIGH PRIORITY: Test {len(high_risk_gaps)} high-risk areas")
 
         # Test-to-source ratio
         ratio = test_quality.get("test_to_source_ratio", 0)
         if ratio < 0.5:
-            recommendations.append(
-                f"Add more test files (currently {ratio:.2f}:1, target 1:1)"
-            )
+            recommendations.append(f"Add more test files (currently {ratio:.2f}:1, target 1:1)")
 
         return recommendations

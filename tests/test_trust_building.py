@@ -5,11 +5,7 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import pytest
-from empathy_os.trust_building import (
-    TrustBuildingBehaviors,
-    TrustSignal
-)
+from empathy_os.trust_building import TrustBuildingBehaviors, TrustSignal
 
 
 class TestTrustSignal:
@@ -21,7 +17,7 @@ class TestTrustSignal:
             signal_type="building",
             behavior="pre_format_handoff",
             evidence="Formatted data for manager",
-            impact=0.7
+            impact=0.7,
         )
 
         assert signal.signal_type == "building"
@@ -31,10 +27,7 @@ class TestTrustSignal:
 
     def test_trust_signal_defaults(self):
         """Test trust signal with default values"""
-        signal = TrustSignal(
-            signal_type="eroding",
-            behavior="missed_deadline"
-        )
+        signal = TrustSignal(signal_type="eroding", behavior="missed_deadline")
 
         assert signal.evidence is None
         assert signal.impact == 0.5  # Default
@@ -53,16 +46,10 @@ class TestTrustBuildingBehaviors:
         """Test pre-formatting for executive"""
         behaviors = TrustBuildingBehaviors()
 
-        data = {
-            "tasks": 10,
-            "completed": 7,
-            "metrics": {"speed": 0.8}
-        }
+        data = {"tasks": 10, "completed": 7, "metrics": {"speed": 0.8}}
 
         formatted = behaviors.pre_format_for_handoff(
-            data=data,
-            recipient_role="executive",
-            context="board_meeting"
+            data=data, recipient_role="executive", context="board_meeting"
         )
 
         assert "original_data" in formatted
@@ -82,9 +69,7 @@ class TestTrustBuildingBehaviors:
         data = {"code": "test", "lines": 100}
 
         formatted = behaviors.pre_format_for_handoff(
-            data=data,
-            recipient_role="developer",
-            context="code_review"
+            data=data, recipient_role="developer", context="code_review"
         )
 
         assert formatted["format"] == "technical_detail"
@@ -97,9 +82,7 @@ class TestTrustBuildingBehaviors:
         data = {"tasks": ["T1", "T2", "T3"]}
 
         formatted = behaviors.pre_format_for_handoff(
-            data=data,
-            recipient_role="team_lead",
-            context="sprint_planning"
+            data=data, recipient_role="team_lead", context="sprint_planning"
         )
 
         assert formatted["format"] == "action_oriented"
@@ -112,9 +95,7 @@ class TestTrustBuildingBehaviors:
         data = {"info": "data"}
 
         formatted = behaviors.pre_format_for_handoff(
-            data=data,
-            recipient_role="unknown_role",
-            context="general"
+            data=data, recipient_role="unknown_role", context="general"
         )
 
         assert formatted["format"] == "general"
@@ -128,8 +109,7 @@ class TestTrustBuildingBehaviors:
         ambiguities = ["which environment?", "which changes?"]
 
         clarification = behaviors.clarify_before_acting(
-            instruction=instruction,
-            detected_ambiguities=ambiguities
+            instruction=instruction, detected_ambiguities=ambiguities
         )
 
         assert clarification["original_instruction"] == instruction
@@ -150,9 +130,7 @@ class TestTrustBuildingBehaviors:
         context = {"project": "backend", "urgency": "high"}
 
         clarification = behaviors.clarify_before_acting(
-            instruction=instruction,
-            detected_ambiguities=ambiguities,
-            context=context
+            instruction=instruction, detected_ambiguities=ambiguities, context=context
         )
 
         assert len(clarification["clarifying_questions"]) == 1
@@ -168,13 +146,12 @@ class TestTrustBuildingBehaviors:
             "task_count": 20,
             "deadline_proximity": "12h",
             "complexity": "high",
-            "team_capacity": "low"
+            "team_capacity": "low",
         }
         scaffolding = ["prioritization", "breakdown", "templates"]
 
         support = behaviors.volunteer_structure_during_stress(
-            stress_indicators=stress_indicators,
-            available_scaffolding=scaffolding
+            stress_indicators=stress_indicators, available_scaffolding=scaffolding
         )
 
         assert support["stress_assessment"]["level"] == "critical"
@@ -192,16 +169,11 @@ class TestTrustBuildingBehaviors:
         """Test volunteering structure during high stress"""
         behaviors = TrustBuildingBehaviors()
 
-        stress_indicators = {
-            "task_count": 15,
-            "deadline_proximity": "24h",
-            "complexity": "medium"
-        }
+        stress_indicators = {"task_count": 15, "deadline_proximity": "24h", "complexity": "medium"}
         scaffolding = ["prioritization", "templates"]
 
         support = behaviors.volunteer_structure_during_stress(
-            stress_indicators=stress_indicators,
-            available_scaffolding=scaffolding
+            stress_indicators=stress_indicators, available_scaffolding=scaffolding
         )
 
         assert support["stress_assessment"]["level"] == "high"
@@ -211,15 +183,11 @@ class TestTrustBuildingBehaviors:
         """Test volunteering structure during moderate stress"""
         behaviors = TrustBuildingBehaviors()
 
-        stress_indicators = {
-            "task_count": 8,
-            "deadline": "3d"
-        }
+        stress_indicators = {"task_count": 8, "deadline": "3d"}
         scaffolding = ["templates"]
 
         support = behaviors.volunteer_structure_during_stress(
-            stress_indicators=stress_indicators,
-            available_scaffolding=scaffolding
+            stress_indicators=stress_indicators, available_scaffolding=scaffolding
         )
 
         assert support["stress_assessment"]["level"] == "moderate"
@@ -228,15 +196,11 @@ class TestTrustBuildingBehaviors:
         """Test offering help for comprehension struggle"""
         behaviors = TrustBuildingBehaviors()
 
-        struggle_indicators = {
-            "time_on_task": 45,
-            "confusion_signals": 3
-        }
+        struggle_indicators = {"time_on_task": 45, "confusion_signals": 3}
         available_help = ["explanation", "examples", "guidance"]
 
         offer = behaviors.offer_proactive_help(
-            struggle_indicators=struggle_indicators,
-            available_help=available_help
+            struggle_indicators=struggle_indicators, available_help=available_help
         )
 
         assert offer["struggle_assessment"]["type"] == "comprehension"
@@ -254,15 +218,11 @@ class TestTrustBuildingBehaviors:
         """Test offering help for execution struggle"""
         behaviors = TrustBuildingBehaviors()
 
-        struggle_indicators = {
-            "repeated_errors": 5,
-            "failed_attempts": 3
-        }
+        struggle_indicators = {"repeated_errors": 5, "failed_attempts": 3}
         available_help = ["debugging", "guidance", "examples"]
 
         offer = behaviors.offer_proactive_help(
-            struggle_indicators=struggle_indicators,
-            available_help=available_help
+            struggle_indicators=struggle_indicators, available_help=available_help
         )
 
         assert offer["struggle_assessment"]["type"] == "execution"
@@ -357,12 +317,7 @@ class TestTrustBuildingBehaviors:
         """Test extracting key metrics"""
         behaviors = TrustBuildingBehaviors()
 
-        data = {
-            "count": 10,
-            "score": 0.85,
-            "name": "test",
-            "value": 42.5
-        }
+        data = {"count": 10, "score": 0.85, "name": "test", "value": 42.5}
 
         metrics = behaviors._extract_key_metrics(data)
 
@@ -406,9 +361,7 @@ class TestTrustBuildingBehaviors:
         assert len(behaviors.trust_signals) == 0
 
         behaviors._record_trust_signal(
-            signal_type="building",
-            behavior="helpful_action",
-            evidence="Did something helpful"
+            signal_type="building", behavior="helpful_action", evidence="Did something helpful"
         )
 
         assert len(behaviors.trust_signals) == 1
@@ -437,30 +390,26 @@ class TestTrustBuildingBehaviors:
         # 1. Pre-format data for handoff
         data = {"tasks": 10, "completed": 7}
         formatted = behaviors.pre_format_for_handoff(
-            data=data,
-            recipient_role="manager",
-            context="status_update"
+            data=data, recipient_role="manager", context="status_update"
         )
         assert "summary" in formatted
 
         # 2. Clarify ambiguous instruction
         clarification = behaviors.clarify_before_acting(
-            instruction="Update the report",
-            detected_ambiguities=["which report?", "when?"]
+            instruction="Update the report", detected_ambiguities=["which report?", "when?"]
         )
         assert clarification["status"] == "needs_clarification"
 
         # 3. Volunteer structure during stress
         support = behaviors.volunteer_structure_during_stress(
             stress_indicators={"task_count": 15, "deadline": "12h", "complexity": "high"},
-            available_scaffolding=["prioritization", "breakdown"]
+            available_scaffolding=["prioritization", "breakdown"],
         )
         assert len(support["offered_support"]) > 0
 
         # 4. Offer proactive help
         help_offer = behaviors.offer_proactive_help(
-            struggle_indicators={"repeated_errors": 3},
-            available_help=["debugging", "explanation"]
+            struggle_indicators={"repeated_errors": 3}, available_help=["debugging", "explanation"]
         )
         assert len(help_offer["help_offered"]) > 0
 
@@ -474,11 +423,7 @@ class TestTrustBuildingBehaviors:
         """Test creating different summary formats"""
         behaviors = TrustBuildingBehaviors()
 
-        data = {
-            "metric1": 10,
-            "metric2": 0.85,
-            "info": "test"
-        }
+        data = {"metric1": 10, "metric2": 0.85, "info": "test"}
 
         # Executive summary
         exec_summary = behaviors._create_executive_summary(data, "meeting")
@@ -518,7 +463,7 @@ class TestTrustBuildingBehaviors:
         question = behaviors._generate_clarifying_question(
             instruction="Deploy changes",
             ambiguity="which environment?",
-            context={"project": "backend"}
+            context={"project": "backend"},
         )
 
         assert "ambiguity" in question

@@ -6,11 +6,8 @@ Licensed under the Apache License, Version 2.0
 """
 
 import pytest
-import asyncio
-from empathy_os.core import (
-    EmpathyOS,
-    CollaborationState
-)
+
+from empathy_os.core import CollaborationState, EmpathyOS
 from empathy_os.exceptions import ValidationError
 
 
@@ -148,11 +145,7 @@ class TestEmpathyOSCore:
 
     def test_initialization_custom_confidence(self):
         """Test initialization with custom confidence threshold"""
-        empathy = EmpathyOS(
-            user_id="test_user",
-            target_level=3,
-            confidence_threshold=0.85
-        )
+        empathy = EmpathyOS(user_id="test_user", target_level=3, confidence_threshold=0.85)
 
         assert empathy.confidence_threshold == 0.85
 
@@ -161,15 +154,15 @@ class TestEmpathyOSCore:
         empathy = EmpathyOS(user_id="test_user")
 
         # Check feedback detector
-        assert hasattr(empathy, 'feedback_detector')
+        assert hasattr(empathy, "feedback_detector")
         assert empathy.feedback_detector is not None
 
         # Check emergence detector
-        assert hasattr(empathy, 'emergence_detector')
+        assert hasattr(empathy, "emergence_detector")
         assert empathy.emergence_detector is not None
 
         # Check leverage analyzer
-        assert hasattr(empathy, 'leverage_analyzer')
+        assert hasattr(empathy, "leverage_analyzer")
         assert empathy.leverage_analyzer is not None
 
     def test_collaboration_state_accessible(self):
@@ -212,10 +205,7 @@ class TestEmpathyOSCore:
 
     def test_confidence_threshold_valid_range(self):
         """Test confidence threshold in valid range"""
-        empathy = EmpathyOS(
-            user_id="test",
-            confidence_threshold=0.9
-        )
+        empathy = EmpathyOS(user_id="test", confidence_threshold=0.9)
 
         assert 0.0 <= empathy.confidence_threshold <= 1.0
 
@@ -284,10 +274,7 @@ class TestEmpathyOSCore:
         """Test integration with leverage point analyzer"""
         empathy = EmpathyOS(user_id="test_user")
 
-        problem = {
-            "class": "trust_deficit",
-            "description": "Low trust in AI"
-        }
+        problem = {"class": "trust_deficit", "description": "Low trust in AI"}
 
         # Use leverage analyzer
         points = empathy.leverage_analyzer.find_leverage_points(problem)
@@ -310,10 +297,7 @@ class TestEmpathyOSCore:
         assert empathy.collaboration_state.successful_interventions == 8
 
         # Check for virtuous cycle
-        history = [
-            {"trust": 0.5 + (i * 0.05), "success": True}
-            for i in range(8)
-        ]
+        history = [{"trust": 0.5 + (i * 0.05), "success": True} for i in range(8)]
 
         is_virtuous = empathy.feedback_detector.detect_virtuous_cycle(history)
         assert is_virtuous
@@ -401,11 +385,7 @@ class TestEmpathyOSAsyncMethods:
         """Test Level 3 proactive with high confidence pattern"""
         empathy = EmpathyOS(user_id="test_user", target_level=3)
 
-        context = {
-            "user_activity": "debugging",
-            "error_count": 5,
-            "time_on_task": 30
-        }
+        context = {"user_activity": "debugging", "error_count": 5, "time_on_task": 30}
 
         result = await empathy.level_3_proactive(context)
 
@@ -424,7 +404,7 @@ class TestEmpathyOSAsyncMethods:
             "feature_count_increasing": True,
             "current_feature_count": 20,
             "growth_rate": 3,
-            "threshold": 25
+            "threshold": 25,
         }
 
         result = await empathy.level_4_anticipatory(trajectory)
@@ -444,7 +424,7 @@ class TestEmpathyOSAsyncMethods:
         problem_pattern = {
             "class": "documentation_burden",
             "instances": 18,
-            "time_per_instance": 120
+            "time_per_instance": 120,
         }
 
         result = await empathy.level_5_systems(problem_pattern)
@@ -487,7 +467,7 @@ class TestEmpathyOSAsyncMethods:
             "feature_count_increasing": True,
             "current_feature_count": 20,
             "growth_rate": 3,
-            "threshold": 25
+            "threshold": 25,
         }
         await empathy.level_4_anticipatory(trajectory)
         assert empathy.current_empathy_level == 4
@@ -515,7 +495,7 @@ class TestEmpathyOSAsyncMethods:
             "error_count": 10,
             "time_on_task": 60,
             "repeated_pattern": True,
-            "error_type": "NullPointerException"
+            "error_type": "NullPointerException",
         }
 
         result = await empathy.level_3_proactive(context)
@@ -534,7 +514,7 @@ class TestEmpathyOSAsyncMethods:
             "current_feature_count": 20,
             "growth_rate": 5,  # Higher growth rate
             "threshold": 25,
-            "impact": "high"  # High impact to trigger intervention
+            "impact": "high",  # High impact to trigger intervention
         }
 
         result = await empathy.level_4_anticipatory(trajectory)
@@ -553,7 +533,7 @@ class TestEmpathyOSAsyncMethods:
             "instances": 25,
             "time_per_instance": 180,
             "recurring": True,
-            "impact": "high"
+            "impact": "high",
         }
 
         result = await empathy.level_5_systems(domain_context)
@@ -587,7 +567,7 @@ class TestEmpathyOSAsyncMethods:
             "feature_count_increasing": True,
             "current_feature_count": 20,
             "growth_rate": 3,
-            "threshold": 25
+            "threshold": 25,
         }
 
         result = await empathy.level_4_anticipatory(trajectory)
@@ -704,10 +684,7 @@ class TestEmpathyOSAsyncMethods:
         empathy = EmpathyOS(user_id="test_user", target_level=3)
 
         # Context with repeated_action triggers 0.85 confidence pattern
-        context = {
-            "repeated_action": True,
-            "user_activity": "testing"
-        }
+        context = {"repeated_action": True, "user_activity": "testing"}
 
         result = await empathy.level_3_proactive(context)
 
@@ -728,7 +705,7 @@ class TestEmpathyOSAsyncMethods:
             "current_feature_count": 20,
             "growth_rate": 5,
             "threshold": 25,
-            "impact": "high"  # This should pass the _should_anticipate check
+            "impact": "high",  # This should pass the _should_anticipate check
         }
 
         result = await empathy.level_4_anticipatory(trajectory)
@@ -748,7 +725,7 @@ class TestEmpathyOSAsyncMethods:
         domain_context = {
             "recurring_documentation_burden": True,
             "instances": 15,
-            "time_per_instance": 120
+            "time_per_instance": 120,
         }
 
         result = await empathy.level_5_systems(domain_context)
@@ -823,7 +800,7 @@ class TestEmpathyOSAsyncMethods:
         empathy.feedback_detector.detect_active_loop = lambda h: {
             "dominant_loop": "R2_trust_erosion",
             "loop_type": "reinforcing",
-            "trend": "negative"
+            "trend": "negative",
         }
 
         result = empathy.monitor_feedback_loops(session_history)
@@ -852,7 +829,7 @@ class TestEmpathyOSAsyncMethods:
         empathy.feedback_detector.detect_active_loop = lambda h: {
             "dominant_loop": "R1_trust_building",
             "loop_type": "reinforcing",
-            "trend": "positive"
+            "trend": "positive",
         }
 
         result = empathy.monitor_feedback_loops(session_history)
@@ -908,8 +885,8 @@ class TestEmpathyOSAsyncMethods:
             "needs_clarification": True,
             "responses": {
                 "What is your goal?": "Increase efficiency",
-                "When do you need this?": "By Friday"
-            }
+                "When do you need this?": "By Friday",
+            },
         }
 
         result = empathy._refine_request("Update the system", clarification)
@@ -925,7 +902,7 @@ class TestEmpathyOSAsyncMethods:
 
         clarification = {
             "needs_clarification": True,
-            "questions": ["What is your goal?"]
+            "questions": ["What is your goal?"],
             # No 'responses' key - questions asked but not answered yet
         }
 
@@ -970,7 +947,7 @@ class TestEmpathyOSAsyncMethods:
         bottleneck = {
             "confidence": 0.5,  # Below threshold
             "timeframe": "60 days",
-            "impact": "high"
+            "impact": "high",
         }
 
         assert empathy._should_anticipate(bottleneck) is False
@@ -979,11 +956,7 @@ class TestEmpathyOSAsyncMethods:
         """Test _should_anticipate rejects too-soon timeframe"""
         empathy = EmpathyOS(user_id="test_user", target_level=4, confidence_threshold=0.75)
 
-        bottleneck = {
-            "confidence": 0.85,
-            "timeframe": "15 days",  # < 30 days
-            "impact": "high"
-        }
+        bottleneck = {"confidence": 0.85, "timeframe": "15 days", "impact": "high"}  # < 30 days
 
         assert empathy._should_anticipate(bottleneck) is False
 
@@ -991,11 +964,7 @@ class TestEmpathyOSAsyncMethods:
         """Test _should_anticipate rejects too-far timeframe"""
         empathy = EmpathyOS(user_id="test_user", target_level=4, confidence_threshold=0.75)
 
-        bottleneck = {
-            "confidence": 0.85,
-            "timeframe": "150 days",  # > 120 days
-            "impact": "high"
-        }
+        bottleneck = {"confidence": 0.85, "timeframe": "150 days", "impact": "high"}  # > 120 days
 
         assert empathy._should_anticipate(bottleneck) is False
 
@@ -1006,7 +975,7 @@ class TestEmpathyOSAsyncMethods:
         bottleneck = {
             "confidence": 0.85,
             "timeframe": "60 days",
-            "impact": "low"  # Not high or critical
+            "impact": "low",  # Not high or critical
         }
 
         assert empathy._should_anticipate(bottleneck) is False
@@ -1015,11 +984,7 @@ class TestEmpathyOSAsyncMethods:
         """Test _should_anticipate accepts valid bottleneck"""
         empathy = EmpathyOS(user_id="test_user", target_level=4, confidence_threshold=0.75)
 
-        bottleneck = {
-            "confidence": 0.85,
-            "timeframe": "60 days",
-            "impact": "high"
-        }
+        bottleneck = {"confidence": 0.85, "timeframe": "60 days", "impact": "high"}
 
         assert empathy._should_anticipate(bottleneck) is True
 

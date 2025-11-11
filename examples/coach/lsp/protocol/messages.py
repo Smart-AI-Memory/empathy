@@ -3,13 +3,14 @@ Custom LSP Messages for Coach
 Defines custom request/response types
 """
 
-from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass
 class WizardTaskRequest:
     """Request to run a specific wizard"""
+
     wizard_name: str
     task: str
     role: str = "developer"
@@ -21,9 +22,10 @@ class WizardTaskRequest:
 @dataclass
 class WizardResponse:
     """Response from wizard execution"""
+
     wizard_name: str
     diagnosis: str
-    artifacts: List[Dict[str, str]]
+    artifacts: list[dict[str, str]]
     confidence: float
     empathy_level: int
 
@@ -31,27 +33,30 @@ class WizardResponse:
 @dataclass
 class MultiWizardRequest:
     """Request for multi-wizard collaboration"""
+
     scenario: str
-    file_uris: List[str]
-    context: Optional[str] = None
+    file_uris: list[str]
+    context: str | None = None
 
 
 @dataclass
 class HealthCheckResponse:
     """Health check response"""
+
     status: str
     version: str
     wizards: int
-    wizard_names: List[str]
+    wizard_names: list[str]
     uptime_seconds: int
 
 
 @dataclass
 class PredictionRequest:
     """Request for Level 4 prediction"""
+
     context_type: str
     current_value: Any
-    additional_context: Optional[str] = None
+    additional_context: str | None = None
 
 
 # LSP Custom Method Names

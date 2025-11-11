@@ -17,8 +17,9 @@ Licensed under the Apache License, Version 2.0
 
 import logging
 import operator
+from collections.abc import Sequence
 from datetime import datetime, timedelta
-from typing import Annotated, Dict, List, Sequence, TypedDict
+from typing import Annotated, TypedDict
 
 from langchain_core.messages import AIMessage, BaseMessage
 from langgraph.graph import END, StateGraph
@@ -49,7 +50,7 @@ class ComplianceAgentState(TypedDict):
     # Progress Tracking
     # =========================================================================
     current_step: int  # 1-5
-    completed_steps: List[int]
+    completed_steps: list[int]
     messages: Annotated[Sequence[BaseMessage], operator.add]
 
     # =========================================================================
@@ -82,20 +83,14 @@ class ComplianceAgentState(TypedDict):
     compliance_percentage: float  # 0.0-100.0
 
     # Item-Level Detail
-    compliance_categories: List[
-        str
-    ]  # ["medication_safety", "documentation", "patient_safety"]
-    category_scores: Dict[
-        str, float
-    ]  # {"medication_safety": 95.0, "documentation": 88.0}
+    compliance_categories: list[str]  # ["medication_safety", "documentation", "patient_safety"]
+    category_scores: dict[str, float]  # {"medication_safety": 95.0, "documentation": 88.0}
 
     # =========================================================================
     # Gap Identification (Step 3) - Answers: "What needs fixing?"
     # =========================================================================
-    compliance_gaps: List[Dict]  # Detailed gap information
-    gap_severity_distribution: Dict[
-        str, int
-    ]  # {"critical": 2, "high": 5, "medium": 10}
+    compliance_gaps: list[dict]  # Detailed gap information
+    gap_severity_distribution: dict[str, int]  # {"critical": 2, "high": 5, "medium": 10}
 
     # Gap Structure:
     # {
@@ -117,10 +112,10 @@ class ComplianceAgentState(TypedDict):
     # =========================================================================
     documentation_prepared: bool
     documentation_url: str  # Secure storage location
-    documentation_files: List[str]  # ["compliance_summary.pdf", "gap_analysis.xlsx"]
+    documentation_files: list[str]  # ["compliance_summary.pdf", "gap_analysis.xlsx"]
 
     # Documentation Package Contents:
-    documentation_package: Dict
+    documentation_package: dict
     # {
     #   "summary_report": {...},
     #   "evidence_files": [...],
@@ -133,11 +128,11 @@ class ComplianceAgentState(TypedDict):
     # Stakeholder Notification (Step 5) - Answers: "Who needs to act?"
     # =========================================================================
     notification_sent: bool
-    notification_recipients: List[str]  # ["charge_nurse", "nurse_manager", "cno"]
+    notification_recipients: list[str]  # ["charge_nurse", "nurse_manager", "cno"]
     notification_timestamp: str  # ISO timestamp
 
     # Action Items (Assigned Work)
-    action_items: List[Dict]
+    action_items: list[dict]
     # {
     #   "action_id": "action_001",
     #   "gap_id": "gap_001",
@@ -175,11 +170,11 @@ class ComplianceAgentState(TypedDict):
     # =========================================================================
     # Error Handling & Audit Trail
     # =========================================================================
-    errors: List[str]
-    warnings: List[str]
+    errors: list[str]
+    warnings: list[str]
 
     # Full Audit Trail
-    audit_trail: List[Dict]
+    audit_trail: list[dict]
     # {
     #   "timestamp": "2025-01-20T10:00:00Z",
     #   "step": "predict_audit",
@@ -370,9 +365,7 @@ def predict_next_audit(state: ComplianceAgentState) -> ComplianceAgentState:
     - Allows time to fix gaps without pressure
     """
 
-    logger.info(
-        f"[Step 1] Predicting {state['audit_type']} audit for {state['hospital_id']}"
-    )
+    logger.info(f"[Step 1] Predicting {state['audit_type']} audit for {state['hospital_id']}")
 
     # Add to audit trail
     state["audit_trail"].append(
@@ -478,9 +471,7 @@ def check_anticipation_window(state: ComplianceAgentState) -> ComplianceAgentSta
     - Avoids wasted effort (too early) or crisis mode (too late)
     """
 
-    logger.info(
-        f"[Step 2] Checking anticipation window ({state['days_until_audit']} days)"
-    )
+    logger.info(f"[Step 2] Checking anticipation window ({state['days_until_audit']} days)")
 
     days_until = state["days_until_audit"]
 
@@ -488,7 +479,9 @@ def check_anticipation_window(state: ComplianceAgentState) -> ComplianceAgentSta
         state["is_within_anticipation_window"] = True
         state["time_to_act"] = "timely"
         state["anticipation_window_days"] = days_until
-        message = f"✅ Within optimal anticipation window ({days_until} days). Perfect time to prepare."
+        message = (
+            f"✅ Within optimal anticipation window ({days_until} days). Perfect time to prepare."
+        )
 
     elif days_until > 120:
         state["is_within_anticipation_window"] = False
@@ -626,9 +619,7 @@ def assess_current_compliance(state: ComplianceAgentState) -> ComplianceAgentSta
     category_pct = {}
     for cat, scores in category_scores.items():
         category_pct[cat] = (
-            (scores["compliant"] / scores["total"] * 100)
-            if scores["total"] > 0
-            else 0.0
+            (scores["compliant"] / scores["total"] * 100) if scores["total"] > 0 else 0.0
         )
 
     # Update state
@@ -650,9 +641,7 @@ def assess_current_compliance(state: ComplianceAgentState) -> ComplianceAgentSta
     state["last_updated"] = datetime.now().isoformat()
 
     # Message
-    status_emoji = (
-        "✅" if compliance_pct >= 95 else "⚠️" if compliance_pct >= 85 else "🚨"
-    )
+    status_emoji = "✅" if compliance_pct >= 95 else "⚠️" if compliance_pct >= 85 else "🚨"
     state["messages"].append(
         AIMessage(
             content=f"{status_emoji} Compliance Assessment: {compliance_pct:.1f}% "
@@ -801,9 +790,7 @@ def identify_compliance_gaps(state: ComplianceAgentState) -> ComplianceAgentStat
             "details": {
                 "gap_count": len(gaps),
                 "severity_distribution": severity_dist,
-                "gaps": [
-                    {"id": g["gap_id"], "description": g["description"]} for g in gaps
-                ],
+                "gaps": [{"id": g["gap_id"], "description": g["description"]} for g in gaps],
             },
             "user": "system",
         }
@@ -937,9 +924,7 @@ def send_anticipatory_notifications(
 
     for gap in state["compliance_gaps"]:
         assignee = determine_assignee(gap)
-        deadline = calculate_deadline(
-            gap, state["days_until_audit"], state["next_audit_date"]
-        )
+        deadline = calculate_deadline(gap, state["days_until_audit"], state["next_audit_date"])
 
         action_items.append(
             {
@@ -1075,7 +1060,7 @@ def schedule_continuous_monitoring(state: ComplianceAgentState) -> ComplianceAge
 # =============================================================================
 
 
-def get_audit_requirements(audit_type: str) -> List[Dict]:
+def get_audit_requirements(audit_type: str) -> list[dict]:
     """
     Get compliance requirements for audit type
 
@@ -1177,7 +1162,7 @@ def calculate_audit_readiness_score(state: ComplianceAgentState) -> float:
     return round(readiness_score, 1)
 
 
-def determine_assignee(gap: Dict) -> str:
+def determine_assignee(gap: dict) -> str:
     """
     Determine who should be assigned to fix this gap
 
@@ -1209,7 +1194,7 @@ def determine_assignee(gap: Dict) -> str:
         return "charge_nurse"  # Default
 
 
-def calculate_deadline(gap: Dict, days_until_audit: int, audit_date: str) -> str:
+def calculate_deadline(gap: dict, days_until_audit: int, audit_date: str) -> str:
     """
     Calculate appropriate deadline for fixing gap
 
@@ -1261,7 +1246,7 @@ def get_assignee_email(assignee: str, hospital_id: str) -> str:
     return email_map.get(assignee, f"{assignee}@{hospital_id}.hospital.com")
 
 
-def compose_notification(state: ComplianceAgentState, action_items: List[Dict]) -> Dict:
+def compose_notification(state: ComplianceAgentState, action_items: list[dict]) -> dict:
     """
     Compose notification with all relevant information
     """
@@ -1290,9 +1275,7 @@ def compose_notification(state: ComplianceAgentState, action_items: List[Dict]) 
 
 **Category Breakdown:**
 """
-        + "\n".join(
-            f"- {cat}: {score:.1f}%" for cat, score in state["category_scores"].items()
-        )
+        + "\n".join(f"- {cat}: {score:.1f}%" for cat, score in state["category_scores"].items())
         + f"""
 
 ---
@@ -1314,11 +1297,7 @@ def compose_notification(state: ComplianceAgentState, action_items: List[Dict]) 
             f"   → Time: {item['estimated_time']}"
             for i, item in enumerate(action_items[:3])
         )
-        + (
-            f"\n... and {len(action_items) - 3} more action items"
-            if len(action_items) > 3
-            else ""
-        )
+        + (f"\n... and {len(action_items) - 3} more action items" if len(action_items) > 3 else "")
         + f"""
 
 ---
@@ -1353,18 +1332,14 @@ without stress or rushed work during audit week.
         "action_items": action_items,
         "documentation_url": state["documentation_url"],
         "priority": (
-            "high"
-            if state["gap_severity_distribution"].get("critical", 0) > 0
-            else "medium"
+            "high" if state["gap_severity_distribution"].get("critical", 0) > 0 else "medium"
         ),
     }
 
     return notification
 
 
-def send_notification_to_recipients(
-    notification: Dict, recipients: List[str], hospital_id: str
-):
+def send_notification_to_recipients(notification: dict, recipients: list[str], hospital_id: str):
     """
     Send notification via configured channels
 
@@ -1407,9 +1382,7 @@ async def run_compliance_agent(
         Final agent state with all results
     """
 
-    logger.info(
-        f"Starting Compliance Anticipation Agent for {hospital_id} ({audit_type})"
-    )
+    logger.info(f"Starting Compliance Anticipation Agent for {hospital_id} ({audit_type})")
 
     # Create agent
     agent = create_compliance_agent()

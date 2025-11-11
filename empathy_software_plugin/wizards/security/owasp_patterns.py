@@ -8,13 +8,14 @@ Licensed under the Apache License, Version 2.0
 """
 
 import re
-from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 
 class OWASPCategory(Enum):
     """OWASP Top 10 categories"""
+
     INJECTION = "injection"
     BROKEN_AUTH = "broken_authentication"
     SENSITIVE_DATA = "sensitive_data_exposure"
@@ -31,9 +32,10 @@ class OWASPCategory(Enum):
 @dataclass
 class SecurityPattern:
     """Security vulnerability pattern"""
+
     category: OWASPCategory
     name: str
-    patterns: List[str]  # Regex patterns
+    patterns: list[str]  # Regex patterns
     severity: str  # "CRITICAL", "HIGH", "MEDIUM", "LOW"
     description: str
     example_vulnerable: str
@@ -48,7 +50,7 @@ class OWASPPatternDetector:
     def __init__(self):
         self.patterns = self._build_pattern_library()
 
-    def _build_pattern_library(self) -> List[SecurityPattern]:
+    def _build_pattern_library(self) -> list[SecurityPattern]:
         """Build library of OWASP patterns"""
         return [
             # SQL Injection
@@ -70,9 +72,8 @@ class OWASPPatternDetector:
                 severity="CRITICAL",
                 description="SQL query built with string concatenation - vulnerable to injection",
                 example_vulnerable="cursor.execute(f\"SELECT * FROM users WHERE name='{username}'\")",
-                example_safe="cursor.execute('SELECT * FROM users WHERE name = ?', (username,))"
+                example_safe="cursor.execute('SELECT * FROM users WHERE name = ?', (username,))",
             ),
-
             # Command Injection
             SecurityPattern(
                 category=OWASPCategory.INJECTION,
@@ -86,9 +87,8 @@ class OWASPPatternDetector:
                 severity="CRITICAL",
                 description="Command execution with unsanitized input",
                 example_vulnerable="os.system('rm ' + user_file)",
-                example_safe="subprocess.run(['rm', user_file])"
+                example_safe="subprocess.run(['rm', user_file])",
             ),
-
             # XSS (Cross-Site Scripting)
             SecurityPattern(
                 category=OWASPCategory.XSS,
@@ -102,9 +102,8 @@ class OWASPPatternDetector:
                 severity="HIGH",
                 description="User input rendered without sanitization",
                 example_vulnerable="element.innerHTML = userInput",
-                example_safe="element.textContent = userInput"
+                example_safe="element.textContent = userInput",
             ),
-
             # Hardcoded Credentials
             SecurityPattern(
                 category=OWASPCategory.BROKEN_AUTH,
@@ -118,9 +117,8 @@ class OWASPPatternDetector:
                 severity="CRITICAL",
                 description="Hardcoded credentials in source code",
                 example_vulnerable="password = 'admin123'",
-                example_safe="password = os.environ.get('DB_PASSWORD')"
+                example_safe="password = os.environ.get('DB_PASSWORD')",
             ),
-
             # Weak Cryptography
             SecurityPattern(
                 category=OWASPCategory.CRYPTOGRAPHIC_FAILURES,
@@ -134,9 +132,8 @@ class OWASPPatternDetector:
                 severity="HIGH",
                 description="Weak or broken cryptographic algorithm",
                 example_vulnerable="hashlib.md5(password)",
-                example_safe="hashlib.sha256(password)"
+                example_safe="hashlib.sha256(password)",
             ),
-
             # Missing Authentication
             SecurityPattern(
                 category=OWASPCategory.BROKEN_AUTH,
@@ -148,9 +145,8 @@ class OWASPPatternDetector:
                 severity="CRITICAL",
                 description="Endpoint lacks authentication check",
                 example_vulnerable="@app.route('/admin')\\ndef admin_panel():",
-                example_safe="@app.route('/admin')\\n@require_auth\\ndef admin_panel():"
+                example_safe="@app.route('/admin')\\n@require_auth\\ndef admin_panel():",
             ),
-
             # Insecure Deserialization
             SecurityPattern(
                 category=OWASPCategory.INSECURE_DESERIALIZATION,
@@ -163,9 +159,8 @@ class OWASPPatternDetector:
                 severity="CRITICAL",
                 description="Deserializing untrusted data",
                 example_vulnerable="pickle.loads(user_data)",
-                example_safe="json.loads(user_data)"
+                example_safe="json.loads(user_data)",
             ),
-
             # Sensitive Data Logging
             SecurityPattern(
                 category=OWASPCategory.SENSITIVE_DATA,
@@ -179,9 +174,8 @@ class OWASPPatternDetector:
                 severity="HIGH",
                 description="Logging sensitive data",
                 example_vulnerable="logger.info(f'Login: {username}:{password}')",
-                example_safe="logger.info(f'Login: {username}:***')"
+                example_safe="logger.info(f'Login: {username}:***')",
             ),
-
             # Path Traversal
             SecurityPattern(
                 category=OWASPCategory.BROKEN_ACCESS,
@@ -193,9 +187,8 @@ class OWASPPatternDetector:
                 severity="HIGH",
                 description="File path built from user input",
                 example_vulnerable="open('/uploads/' + user_file)",
-                example_safe="open(os.path.join(UPLOAD_DIR, secure_filename(user_file)))"
+                example_safe="open(os.path.join(UPLOAD_DIR, secure_filename(user_file)))",
             ),
-
             # CSRF Missing Protection
             SecurityPattern(
                 category=OWASPCategory.BROKEN_ACCESS,
@@ -206,15 +199,11 @@ class OWASPPatternDetector:
                 severity="MEDIUM",
                 description="POST endpoint without CSRF protection",
                 example_vulnerable="@app.route('/transfer', methods=['POST'])\\ndef transfer():",
-                example_safe="@app.route('/transfer', methods=['POST'])\\n@csrf_protect\\ndef transfer():"
-            )
+                example_safe="@app.route('/transfer', methods=['POST'])\\n@csrf_protect\\ndef transfer():",
+            ),
         ]
 
-    def detect_vulnerabilities(
-        self,
-        code: str,
-        file_path: str = ""
-    ) -> List[Dict[str, Any]]:
+    def detect_vulnerabilities(self, code: str, file_path: str = "") -> list[dict[str, Any]]:
         """
         Detect vulnerabilities in code.
 
@@ -233,24 +222,23 @@ class OWASPPatternDetector:
 
                 for match in matches:
                     # Find line number
-                    line_number = code[:match.start()].count('\n') + 1
+                    line_number = code[: match.start()].count("\n") + 1
 
-                    vulnerabilities.append({
-                        "category": pattern_def.category.value,
-                        "name": pattern_def.name,
-                        "severity": pattern_def.severity,
-                        "file_path": file_path,
-                        "line_number": line_number,
-                        "matched_code": match.group(0),
-                        "description": pattern_def.description,
-                        "example_safe": pattern_def.example_safe
-                    })
+                    vulnerabilities.append(
+                        {
+                            "category": pattern_def.category.value,
+                            "name": pattern_def.name,
+                            "severity": pattern_def.severity,
+                            "file_path": file_path,
+                            "line_number": line_number,
+                            "matched_code": match.group(0),
+                            "description": pattern_def.description,
+                            "example_safe": pattern_def.example_safe,
+                        }
+                    )
 
         return vulnerabilities
 
-    def get_pattern_by_category(
-        self,
-        category: OWASPCategory
-    ) -> List[SecurityPattern]:
+    def get_pattern_by_category(self, category: OWASPCategory) -> list[SecurityPattern]:
         """Get all patterns for a category"""
         return [p for p in self.patterns if p.category == category]

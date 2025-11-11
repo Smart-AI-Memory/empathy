@@ -9,15 +9,14 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
-from datetime import datetime, timedelta
-from statistics import mean, stdev
+from typing import Any
 
 
 @dataclass
 class VitalTrend:
     """Trend analysis for a single vital sign"""
+
     parameter: str
     current_value: float
     previous_value: float
@@ -36,12 +35,13 @@ class TrajectoryPrediction:
 
     This is Level 4 - predicting BEFORE criteria met.
     """
+
     trajectory_state: str  # "stable", "improving", "concerning", "critical"
-    estimated_time_to_critical: Optional[str]
-    vital_trends: List[VitalTrend]
+    estimated_time_to_critical: str | None
+    vital_trends: list[VitalTrend]
     overall_assessment: str
     confidence: float
-    recommendations: List[str]
+    recommendations: list[str]
 
 
 class TrajectoryAnalyzer:
@@ -59,7 +59,7 @@ class TrajectoryAnalyzer:
             "diastolic_bp": (60, 90),
             "respiratory_rate": (12, 20),
             "temp_f": (97.0, 99.5),
-            "o2_sat": (95, 100)
+            "o2_sat": (95, 100),
         }
 
         # Define concerning rates of change
@@ -67,13 +67,11 @@ class TrajectoryAnalyzer:
             "hr": 15,  # bpm increase over 2 hours
             "systolic_bp": 20,  # mmHg decrease
             "respiratory_rate": 5,  # breaths/min increase
-            "temp_f": 2.0  # degrees increase
+            "temp_f": 2.0,  # degrees increase
         }
 
     def analyze_trajectory(
-        self,
-        current_data: Dict[str, float],
-        historical_data: List[Dict[str, Any]]
+        self, current_data: dict[str, float], historical_data: list[dict[str, Any]]
     ) -> TrajectoryPrediction:
         """
         Analyze patient trajectory from historical vitals.
@@ -103,7 +101,7 @@ class TrajectoryAnalyzer:
                 vital_trends=[],
                 overall_assessment="Insufficient historical data for trajectory analysis",
                 confidence=0.3,
-                recommendations=["Continue monitoring"]
+                recommendations=["Continue monitoring"],
             )
 
         # Analyze trends for each vital sign
@@ -113,11 +111,7 @@ class TrajectoryAnalyzer:
             if parameter in ["mental_status"]:  # Skip non-numeric
                 continue
 
-            trend = self._analyze_parameter_trend(
-                parameter,
-                current_value,
-                historical_data
-            )
+            trend = self._analyze_parameter_trend(parameter, current_value, historical_data)
 
             if trend:
                 vital_trends.append(trend)
@@ -128,23 +122,13 @@ class TrajectoryAnalyzer:
         # Estimate time to critical (if concerning)
         time_to_critical = None
         if trajectory_state in ["concerning", "critical"]:
-            time_to_critical = self._estimate_time_to_critical(
-                vital_trends,
-                current_data
-            )
+            time_to_critical = self._estimate_time_to_critical(vital_trends, current_data)
 
         # Generate overall assessment
-        assessment = self._generate_assessment(
-            trajectory_state,
-            vital_trends,
-            time_to_critical
-        )
+        assessment = self._generate_assessment(trajectory_state, vital_trends, time_to_critical)
 
         # Generate recommendations
-        recommendations = self._generate_recommendations(
-            trajectory_state,
-            vital_trends
-        )
+        recommendations = self._generate_recommendations(trajectory_state, vital_trends)
 
         # Calculate confidence
         confidence = self._calculate_confidence(historical_data, vital_trends)
@@ -155,15 +139,12 @@ class TrajectoryAnalyzer:
             vital_trends=vital_trends,
             overall_assessment=assessment,
             confidence=confidence,
-            recommendations=recommendations
+            recommendations=recommendations,
         )
 
     def _analyze_parameter_trend(
-        self,
-        parameter: str,
-        current_value: float,
-        historical_data: List[Dict[str, Any]]
-    ) -> Optional[VitalTrend]:
+        self, parameter: str, current_value: float, historical_data: list[dict[str, Any]]
+    ) -> VitalTrend | None:
         """Analyze trend for single parameter"""
 
         # Extract historical values
@@ -195,11 +176,7 @@ class TrajectoryAnalyzer:
 
         # Determine if concerning
         concerning, reasoning = self._is_trend_concerning(
-            parameter,
-            current_value,
-            change,
-            rate_of_change,
-            direction
+            parameter, current_value, change, rate_of_change, direction
         )
 
         return VitalTrend(
@@ -211,7 +188,7 @@ class TrajectoryAnalyzer:
             direction=direction,
             rate_of_change=rate_of_change,
             concerning=concerning,
-            reasoning=reasoning
+            reasoning=reasoning,
         )
 
     def _is_trend_concerning(
@@ -220,7 +197,7 @@ class TrajectoryAnalyzer:
         current_value: float,
         change: float,
         rate_of_change: float,
-        direction: str
+        direction: str,
     ) -> tuple[bool, str]:
         """Determine if trend is concerning"""
 
@@ -240,10 +217,18 @@ class TrajectoryAnalyzer:
             if parameter == "hr" and direction == "increasing" and rate_of_change > threshold:
                 return True, f"HR increasing rapidly (+{change:.0f} bpm)"
 
-            if parameter == "systolic_bp" and direction == "decreasing" and rate_of_change > threshold:
+            if (
+                parameter == "systolic_bp"
+                and direction == "decreasing"
+                and rate_of_change > threshold
+            ):
                 return True, f"BP decreasing rapidly (-{abs(change):.0f} mmHg)"
 
-            if parameter == "respiratory_rate" and direction == "increasing" and rate_of_change > threshold:
+            if (
+                parameter == "respiratory_rate"
+                and direction == "increasing"
+                and rate_of_change > threshold
+            ):
                 return True, f"RR increasing rapidly (+{change:.0f} /min)"
 
             if parameter == "temp_f" and direction == "increasing" and rate_of_change > threshold:
@@ -251,10 +236,7 @@ class TrajectoryAnalyzer:
 
         return False, "Within normal trajectory"
 
-    def _determine_trajectory_state(
-        self,
-        vital_trends: List[VitalTrend]
-    ) -> str:
+    def _determine_trajectory_state(self, vital_trends: list[VitalTrend]) -> str:
         """Determine overall trajectory state"""
 
         concerning_trends = [t for t in vital_trends if t.concerning]
@@ -265,8 +247,7 @@ class TrajectoryAnalyzer:
         # Count concerning trends by severity
         critical_parameters = ["systolic_bp", "o2_sat"]
         critical_concerning = sum(
-            1 for t in concerning_trends
-            if t.parameter in critical_parameters
+            1 for t in concerning_trends if t.parameter in critical_parameters
         )
 
         if critical_concerning >= 1:
@@ -281,10 +262,8 @@ class TrajectoryAnalyzer:
         return "stable"
 
     def _estimate_time_to_critical(
-        self,
-        vital_trends: List[VitalTrend],
-        current_data: Dict[str, float]
-    ) -> Optional[str]:
+        self, vital_trends: list[VitalTrend], current_data: dict[str, float]
+    ) -> str | None:
         """
         Estimate time until patient meets critical criteria.
 
@@ -321,10 +300,7 @@ class TrajectoryAnalyzer:
         return None
 
     def _generate_assessment(
-        self,
-        trajectory_state: str,
-        vital_trends: List[VitalTrend],
-        time_to_critical: Optional[str]
+        self, trajectory_state: str, vital_trends: list[VitalTrend], time_to_critical: str | None
     ) -> str:
         """Generate overall assessment"""
 
@@ -359,10 +335,8 @@ class TrajectoryAnalyzer:
         return "Patient trajectory under assessment."
 
     def _generate_recommendations(
-        self,
-        trajectory_state: str,
-        vital_trends: List[VitalTrend]
-    ) -> List[str]:
+        self, trajectory_state: str, vital_trends: list[VitalTrend]
+    ) -> list[str]:
         """Generate actionable recommendations"""
 
         if trajectory_state == "stable":
@@ -392,9 +366,7 @@ class TrajectoryAnalyzer:
         return recommendations
 
     def _calculate_confidence(
-        self,
-        historical_data: List[Dict[str, Any]],
-        vital_trends: List[VitalTrend]
+        self, historical_data: list[dict[str, Any]], vital_trends: list[VitalTrend]
     ) -> float:
         """Calculate confidence in prediction"""
 

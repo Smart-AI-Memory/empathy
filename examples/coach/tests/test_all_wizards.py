@@ -8,16 +8,10 @@ Licensed under the Apache License, Version 2.0
 """
 
 import pytest
+
 from examples.coach import Coach, WizardTask
-from examples.coach.wizards import (
-    DebuggingWizard,
-    DocumentationWizard,
-    DesignReviewWizard,
-    TestingWizard,
-    RetrospectiveWizard,
-    SecurityWizard,
-)
 from examples.coach.shared_learning import SharedLearningSystem
+from examples.coach.wizards import DebuggingWizard, DocumentationWizard, SecurityWizard
 
 
 class TestWizardRouting:
@@ -33,15 +27,12 @@ class TestWizardRouting:
             "Application crashes when user logs in",
             "Exception thrown in payment processing",
             "Debug stack trace showing null pointer",
-            "System failing with timeout errors"
+            "System failing with timeout errors",
         ]
 
         for task_desc in test_cases:
             task = WizardTask(
-                role="developer",
-                task=task_desc,
-                context="Production issue",
-                risk_tolerance="low"
+                role="developer", task=task_desc, context="Production issue", risk_tolerance="low"
             )
             result = await coach.process(task, multi_wizard=False)
             assert "DebuggingWizard" in result.routing, f"Failed for: {task_desc}"
@@ -57,7 +48,7 @@ class TestWizardRouting:
             "Need onboarding documentation for new devs",
             "Create handoff guide for project",
             "Documentation unclear about setup process",
-            "Write tutorial for API usage"
+            "Write tutorial for API usage",
         ]
 
         for task_desc in test_cases:
@@ -65,7 +56,7 @@ class TestWizardRouting:
                 role="team_lead",
                 task=task_desc,
                 context="Documentation gap",
-                risk_tolerance="medium"
+                risk_tolerance="medium",
             )
             result = await coach.process(task, multi_wizard=False)
             assert "DocumentationWizard" in result.routing, f"Failed for: {task_desc}"
@@ -81,7 +72,7 @@ class TestWizardRouting:
             "Evaluate trade-offs of serverless vs containers",
             "Refactor monolith into smaller services",
             "Technical debt in current design",
-            "Scalability review needed for system"
+            "Scalability review needed for system",
         ]
 
         for task_desc in test_cases:
@@ -89,7 +80,7 @@ class TestWizardRouting:
                 role="architect",
                 task=task_desc,
                 context="Architecture planning",
-                risk_tolerance="low"
+                risk_tolerance="low",
             )
             result = await coach.process(task, multi_wizard=False)
             assert "DesignReviewWizard" in result.routing, f"Failed for: {task_desc}"
@@ -105,7 +96,7 @@ class TestWizardRouting:
             "Need integration tests for API endpoints",
             "Create test plan for new feature",
             "Unit tests missing for authentication",
-            "QA review shows quality issues"
+            "QA review shows quality issues",
         ]
 
         for task_desc in test_cases:
@@ -113,7 +104,7 @@ class TestWizardRouting:
                 role="developer",
                 task=task_desc,
                 context="Quality improvement",
-                risk_tolerance="medium"
+                risk_tolerance="medium",
             )
             result = await coach.process(task, multi_wizard=False)
             assert "TestingWizard" in result.routing, f"Failed for: {task_desc}"
@@ -129,15 +120,12 @@ class TestWizardRouting:
             "Post-mortem for project completion",
             "Process improvement workshop needed",
             "Team morale is low, need feedback session",
-            "Lessons learned from incident"
+            "Lessons learned from incident",
         ]
 
         for task_desc in test_cases:
             task = WizardTask(
-                role="team_lead",
-                task=task_desc,
-                context="Team improvement",
-                risk_tolerance="low"
+                role="team_lead", task=task_desc, context="Team improvement", risk_tolerance="low"
             )
             result = await coach.process(task, multi_wizard=False)
             assert "RetrospectiveWizard" in result.routing, f"Failed for: {task_desc}"
@@ -153,15 +141,12 @@ class TestWizardRouting:
             "Vulnerability found in authentication",
             "Penetration testing review needed",
             "Check for SQL injection risks",
-            "OWASP compliance review"
+            "OWASP compliance review",
         ]
 
         for task_desc in test_cases:
             task = WizardTask(
-                role="developer",
-                task=task_desc,
-                context="Security concern",
-                risk_tolerance="low"
+                role="developer", task=task_desc, context="Security concern", risk_tolerance="low"
             )
             result = await coach.process(task, multi_wizard=False)
             assert "SecurityWizard" in result.routing, f"Failed for: {task_desc}"
@@ -178,7 +163,7 @@ class TestWizardOutputQuality:
             role="developer",
             task="Production bug: 500 errors on user login",
             context="NullPointerException in auth service, logs show config is null",
-            risk_tolerance="low"
+            risk_tolerance="low",
         )
 
         output = wizard.execute(task)
@@ -209,7 +194,7 @@ class TestWizardOutputQuality:
             role="team_lead",
             task="README missing setup instructions",
             context="New developers can't get started, no database setup docs",
-            risk_tolerance="medium"
+            risk_tolerance="medium",
         )
 
         output = wizard.execute(task)
@@ -227,7 +212,7 @@ class TestWizardOutputQuality:
             role="developer",
             task="Security review before launch",
             context="Web app with authentication, payment processing, user data",
-            risk_tolerance="low"
+            risk_tolerance="low",
         )
 
         output = wizard.execute(task)
@@ -256,7 +241,7 @@ class TestMultiWizardCollaboration:
             role="developer",
             task="Critical bug blocks release, hotfix process not documented",
             context="500 errors in production, README doesn't explain hotfix procedure",
-            risk_tolerance="low"
+            risk_tolerance="low",
         )
 
         result = await coach.process(task, multi_wizard=True)
@@ -276,7 +261,7 @@ class TestMultiWizardCollaboration:
             role="developer",
             task="SQL injection vulnerability found, no security tests",
             context="Security audit revealed SQL injection, test coverage lacks security tests",
-            risk_tolerance="low"
+            risk_tolerance="low",
         )
 
         result = await coach.process(task, multi_wizard=True)
@@ -298,7 +283,7 @@ class TestSharedLearningSystem:
             description="Test pattern for QA",
             code="def test(): pass",
             tags=["test", "qa"],
-            context={"env": "test"}
+            context={"env": "test"},
         )
 
         assert pattern.agent_id == "TestWizard"
@@ -315,7 +300,7 @@ class TestSharedLearningSystem:
             pattern_type="type1",
             description="Pattern 1",
             code="code1",
-            tags=["tag1", "common"]
+            tags=["tag1", "common"],
         )
 
         learning.contribute_pattern(
@@ -323,7 +308,7 @@ class TestSharedLearningSystem:
             pattern_type="type2",
             description="Pattern 2",
             code="code2",
-            tags=["tag2", "common"]
+            tags=["tag2", "common"],
         )
 
         # Query by tag
@@ -351,10 +336,7 @@ class TestEdgeCases:
         """Should handle empty task gracefully"""
         coach = Coach()
         task = WizardTask(
-            role="developer",
-            task="",
-            context="Some context",
-            risk_tolerance="medium"
+            role="developer", task="", context="Some context", risk_tolerance="medium"
         )
 
         result = await coach.process(task)
@@ -368,10 +350,7 @@ class TestEdgeCases:
         long_context = "Context " * 1000  # Very long context
 
         task = WizardTask(
-            role="developer",
-            task="Bug in system",
-            context=long_context,
-            risk_tolerance="medium"
+            role="developer", task="Bug in system", context=long_context, risk_tolerance="medium"
         )
 
         result = await coach.process(task)
@@ -385,7 +364,7 @@ class TestEdgeCases:
             role="developer",
             task="Bug with <script>alert('xss')</script> in input",
             context="SQL: SELECT * FROM users WHERE id = '; DROP TABLE users; --",
-            risk_tolerance="high"
+            risk_tolerance="high",
         )
 
         result = await coach.process(task)
@@ -403,7 +382,7 @@ class TestEdgeCases:
                 role="developer",
                 task="Test task",
                 context="Test context",
-                risk_tolerance=risk_level
+                risk_tolerance=risk_level,
             )
 
             result = await coach.process(task)
@@ -423,18 +402,17 @@ class TestEmpathyChecks:
 
         for role in roles:
             task = WizardTask(
-                role=role,
-                task="Bug in system",
-                context="500 error",
-                risk_tolerance="low"
+                role=role, task="Bug in system", context="500 error", risk_tolerance="low"
             )
             output = wizard.execute(task)
             outputs.append(output)
 
         # Check that empathy checks mention roles
         for i, output in enumerate(outputs):
-            assert roles[i] in output.empathy_checks.cognitive.lower() or \
-                   "developer" in output.empathy_checks.cognitive.lower()
+            assert (
+                roles[i] in output.empathy_checks.cognitive.lower()
+                or "developer" in output.empathy_checks.cognitive.lower()
+            )
 
     def test_emotional_empathy_detects_stress(self):
         """Emotional empathy should detect stress indicators"""
@@ -445,7 +423,7 @@ class TestEmpathyChecks:
             role="developer",
             task="CRITICAL: Production down, users can't access system",
             context="Urgent fix needed, boss is angry, customers complaining",
-            risk_tolerance="low"
+            risk_tolerance="low",
         )
 
         output_stressed = wizard.execute(task_stressed)
@@ -462,15 +440,17 @@ class TestEmpathyChecks:
             role="developer",
             task="Security review",
             context="New feature with user data",
-            risk_tolerance="low"
+            risk_tolerance="low",
         )
 
         output = wizard.execute(task)
 
         # Should have anticipatory actions
-        assert "proactive" in output.empathy_checks.anticipatory.lower() or \
-               "preventive" in output.empathy_checks.anticipatory.lower() or \
-               len(output.empathy_checks.anticipatory) > 30
+        assert (
+            "proactive" in output.empathy_checks.anticipatory.lower()
+            or "preventive" in output.empathy_checks.anticipatory.lower()
+            or len(output.empathy_checks.anticipatory) > 30
+        )
 
 
 class TestPerformance:
@@ -483,10 +463,7 @@ class TestPerformance:
 
         coach = Coach()
         task = WizardTask(
-            role="developer",
-            task="Bug fix needed",
-            context="Simple bug",
-            risk_tolerance="medium"
+            role="developer", task="Bug fix needed", context="Simple bug", risk_tolerance="medium"
         )
 
         start = time.time()
@@ -507,7 +484,7 @@ class TestPerformance:
             role="developer",
             task="Bug with missing documentation and poor test coverage",
             context="Complex issue requiring multiple wizards",
-            risk_tolerance="low"
+            risk_tolerance="low",
         )
 
         start = time.time()
@@ -530,7 +507,7 @@ class TestConfidenceScoring:
             role="developer",
             task="Security vulnerability SQL injection found",
             context="Security audit revealed critical SQL injection vulnerability",
-            risk_tolerance="low"
+            risk_tolerance="low",
         )
 
         result = await coach.process(task, multi_wizard=False)
@@ -546,7 +523,7 @@ class TestConfidenceScoring:
             role="developer",
             task="Need to improve system",
             context="General improvements needed",
-            risk_tolerance="medium"
+            risk_tolerance="medium",
         )
 
         result = await coach.process(task, multi_wizard=False)

@@ -9,17 +9,16 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import re
-from typing import List, Dict, Any
+from typing import Any
 
 from .base_wizard import (
     BaseWizard,
-    WizardTask,
-    WizardOutput,
-    WizardArtifact,
-    WizardRisk,
-    WizardHandoff,
     EmpathyChecks,
+    WizardArtifact,
+    WizardHandoff,
+    WizardOutput,
+    WizardRisk,
+    WizardTask,
 )
 
 
@@ -36,14 +35,20 @@ class APIWizard(BaseWizard):
     def can_handle(self, task: WizardTask) -> float:
         """Determine if this is an API design task"""
         # High-priority API phrases (worth 2 points each)
-        api_phrases = [
-            "api", "endpoint", "rest", "graphql", "openapi", "swagger"
-        ]
+        api_phrases = ["api", "endpoint", "rest", "graphql", "openapi", "swagger"]
 
         # Secondary indicators (worth 1 point each)
         secondary_keywords = [
-            "http", "json", "request", "response", "schema", "route",
-            "controller", "versioning", "documentation", "postman"
+            "http",
+            "json",
+            "request",
+            "response",
+            "schema",
+            "route",
+            "controller",
+            "versioning",
+            "documentation",
+            "postman",
         ]
 
         task_lower = (task.task + " " + task.context).lower()
@@ -68,31 +73,17 @@ class APIWizard(BaseWizard):
         api_sprawl_forecast = self._predict_api_sprawl(task, design)
 
         artifacts = [
-            WizardArtifact(
-                type="doc",
-                title="API Design Document",
-                content=diagnosis
-            ),
-            WizardArtifact(
-                type="code",
-                title="OpenAPI 3.1 Specification",
-                content=openapi_spec
-            ),
+            WizardArtifact(type="doc", title="API Design Document", content=diagnosis),
+            WizardArtifact(type="code", title="OpenAPI 3.1 Specification", content=openapi_spec),
             WizardArtifact(
                 type="code",
                 title="API Implementation (FastAPI)",
-                content=self._generate_implementation(task, design)
+                content=self._generate_implementation(task, design),
             ),
+            WizardArtifact(type="doc", title="Versioning Strategy", content=versioning_strategy),
             WizardArtifact(
-                type="doc",
-                title="Versioning Strategy",
-                content=versioning_strategy
+                type="doc", title="API Documentation", content=self._generate_api_docs(task, design)
             ),
-            WizardArtifact(
-                type="doc",
-                title="API Documentation",
-                content=self._generate_api_docs(task, design)
-            )
         ]
 
         plan = [
@@ -102,13 +93,13 @@ class APIWizard(BaseWizard):
             "4. Implement endpoints with validation",
             "5. Generate interactive documentation (Swagger UI)",
             "6. Create client SDK or Postman collection",
-            "7. Set up versioning strategy"
+            "7. Set up versioning strategy",
         ]
 
         empathy_checks = EmpathyChecks(
-            cognitive=f"Considered API consumers: developers, mobile apps, third-party integrations",
-            emotional=f"Acknowledged: Good API design prevents future breaking changes and customer frustration",
-            anticipatory=api_sprawl_forecast[:200] + "..."
+            cognitive="Considered API consumers: developers, mobile apps, third-party integrations",
+            emotional="Acknowledged: Good API design prevents future breaking changes and customer frustration",
+            anticipatory=api_sprawl_forecast[:200] + "...",
         )
 
         return WizardOutput(
@@ -118,9 +109,13 @@ class APIWizard(BaseWizard):
             artifacts=artifacts,
             risks=self._identify_risks(task),
             handoffs=self._create_handoffs(task),
-            next_actions=["Review OpenAPI spec", "Test endpoints with Postman", "Generate client SDK"],
+            next_actions=[
+                "Review OpenAPI spec",
+                "Test endpoints with Postman",
+                "Generate client SDK",
+            ],
             empathy_checks=empathy_checks,
-            confidence=self.can_handle(task)
+            confidence=self.can_handle(task),
         )
 
     def _analyze_api_requirements(self, task: WizardTask) -> str:
@@ -136,7 +131,7 @@ class APIWizard(BaseWizard):
 **Context**: {task.context[:300]}...
 """
 
-    def _design_api_endpoints(self, task: WizardTask) -> List[Dict[str, Any]]:
+    def _design_api_endpoints(self, task: WizardTask) -> list[dict[str, Any]]:
         """Design API endpoints"""
         # Example endpoints based on common patterns
         endpoints = [
@@ -145,21 +140,21 @@ class APIWizard(BaseWizard):
                 "path": "/api/v1/users",
                 "summary": "List all users",
                 "query_params": ["page", "limit", "sort"],
-                "response": "200: List of user objects"
+                "response": "200: List of user objects",
             },
             {
                 "method": "GET",
                 "path": "/api/v1/users/{id}",
                 "summary": "Get user by ID",
                 "path_params": ["id"],
-                "response": "200: User object, 404: Not found"
+                "response": "200: User object, 404: Not found",
             },
             {
                 "method": "POST",
                 "path": "/api/v1/users",
                 "summary": "Create new user",
                 "request_body": "User object",
-                "response": "201: Created user, 400: Validation error"
+                "response": "201: Created user, 400: Validation error",
             },
             {
                 "method": "PUT",
@@ -167,19 +162,19 @@ class APIWizard(BaseWizard):
                 "summary": "Update user",
                 "path_params": ["id"],
                 "request_body": "User object",
-                "response": "200: Updated user, 404: Not found"
+                "response": "200: Updated user, 404: Not found",
             },
             {
                 "method": "DELETE",
                 "path": "/api/v1/users/{id}",
                 "summary": "Delete user",
                 "path_params": ["id"],
-                "response": "204: No content, 404: Not found"
-            }
+                "response": "204: No content, 404: Not found",
+            },
         ]
         return endpoints
 
-    def _generate_openapi_spec(self, task: WizardTask, design: List[Dict]) -> str:
+    def _generate_openapi_spec(self, task: WizardTask, design: list[dict]) -> str:
         """Generate OpenAPI 3.1 specification following OpenAI/Anthropic conventions"""
         return """openapi: 3.1.0
 info:
@@ -677,7 +672,7 @@ security:
   - BearerAuth: []
 """
 
-    def _generate_implementation(self, task: WizardTask, design: List[Dict]) -> str:
+    def _generate_implementation(self, task: WizardTask, design: list[dict]) -> str:
         """Generate FastAPI implementation"""
         return """# FastAPI Implementation with OpenAI/Anthropic Conventions
 from fastapi import FastAPI, HTTPException, Query, Path, Request, Response
@@ -1094,7 +1089,7 @@ async def create_completion(request: CompletionRequest):
 import asyncio
 """
 
-    def _recommend_versioning(self, task: WizardTask, design: List[Dict]) -> str:
+    def _recommend_versioning(self, task: WizardTask, design: list[dict]) -> str:
         """Recommend API versioning strategy"""
         return """# API Versioning Strategy
 
@@ -1171,7 +1166,7 @@ async def list_users_v1(response: Response):
 ```
 """
 
-    def _predict_api_sprawl(self, task: WizardTask, design: List[Dict]) -> str:
+    def _predict_api_sprawl(self, task: WizardTask, design: list[dict]) -> str:
         """Level 4: Predict API sprawl issues"""
         return """# API Sprawl Forecast (Level 4: Anticipatory)
 
@@ -1207,7 +1202,7 @@ async def list_users_v1(response: Response):
 - **Week 12**: Create API client SDK to reduce consumer pain
 """
 
-    def _generate_api_docs(self, task: WizardTask, design: List[Dict]) -> str:
+    def _generate_api_docs(self, task: WizardTask, design: list[dict]) -> str:
         """Generate API documentation"""
         return """# API Documentation
 
@@ -1291,37 +1286,37 @@ All errors return consistent format:
 - `500 Internal Server Error`: Server error
 """
 
-    def _identify_risks(self, task: WizardTask) -> List[WizardRisk]:
+    def _identify_risks(self, task: WizardTask) -> list[WizardRisk]:
         """Identify API design risks"""
         return [
             WizardRisk(
                 risk="Breaking changes may disrupt existing API consumers",
                 mitigation="Use API versioning (URL-based) and 6-month deprecation period",
-                severity="high"
+                severity="high",
             ),
             WizardRisk(
                 risk="Inconsistent endpoint design leads to confusion",
                 mitigation="Follow REST conventions strictly, use OpenAPI spec for validation",
-                severity="medium"
+                severity="medium",
             ),
             WizardRisk(
                 risk="Missing rate limiting may allow abuse",
                 mitigation="Implement rate limiting (100 req/min per user) before public launch",
-                severity="high"
-            )
+                severity="high",
+            ),
         ]
 
-    def _create_handoffs(self, task: WizardTask) -> List[WizardHandoff]:
+    def _create_handoffs(self, task: WizardTask) -> list[WizardHandoff]:
         """Create handoffs for API work"""
         return [
             WizardHandoff(
                 owner="DevOps",
                 what="Set up API gateway with rate limiting and monitoring",
-                when="Before production deployment"
+                when="Before production deployment",
             ),
             WizardHandoff(
                 owner="Technical Writer",
                 what="Create comprehensive API documentation and usage examples",
-                when="After OpenAPI spec finalized"
-            )
+                when="After OpenAPI spec finalized",
+            ),
         ]

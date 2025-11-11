@@ -10,29 +10,31 @@ Licensed under the Apache License, Version 2.0
 """
 
 import json
-from typing import Dict, Any, List, Optional
-from pathlib import Path
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
 
 
 @dataclass
 class ProtocolCriterion:
     """A single criterion in a protocol"""
+
     parameter: str
     condition: str  # "<=", ">=", "==", "!=", "altered", etc.
-    value: Optional[Any] = None
+    value: Any | None = None
     points: int = 0
-    description: Optional[str] = None
+    description: str | None = None
 
 
 @dataclass
 class ProtocolIntervention:
     """A required intervention"""
+
     order: int
     action: str
     timing: str
     required: bool = True
-    parameters: Optional[Dict[str, Any]] = None
+    parameters: dict[str, Any] | None = None
 
 
 @dataclass
@@ -42,29 +44,30 @@ class ClinicalProtocol:
 
     This is the "linting config" for healthcare - defines the rules.
     """
+
     name: str
     version: str
-    applies_to: List[str]
+    applies_to: list[str]
 
     # Screening criteria (when to activate protocol)
-    screening_criteria: List[ProtocolCriterion]
+    screening_criteria: list[ProtocolCriterion]
     screening_threshold: int
 
     # Required interventions (what to do)
-    interventions: List[ProtocolIntervention]
+    interventions: list[ProtocolIntervention]
 
     # Monitoring requirements
     monitoring_frequency: str
     reassessment_timing: str
 
     # Escalation criteria (when to call for help)
-    escalation_criteria: Optional[List[str]] = None
+    escalation_criteria: list[str] | None = None
 
     # Documentation requirements
-    documentation_requirements: Optional[List[str]] = None
+    documentation_requirements: list[str] | None = None
 
     # Raw protocol data
-    raw_protocol: Optional[Dict[str, Any]] = None
+    raw_protocol: dict[str, Any] | None = None
 
 
 class ProtocolLoader:
@@ -75,7 +78,7 @@ class ProtocolLoader:
     the protocol configuration.
     """
 
-    def __init__(self, protocol_directory: Optional[str] = None):
+    def __init__(self, protocol_directory: str | None = None):
         if protocol_directory:
             self.protocol_dir = Path(protocol_directory)
         else:
@@ -102,16 +105,15 @@ class ProtocolLoader:
 
         if not protocol_file.exists():
             raise FileNotFoundError(
-                f"Protocol not found: {protocol_name}\n"
-                f"Looked in: {self.protocol_dir}"
+                f"Protocol not found: {protocol_name}\n" f"Looked in: {self.protocol_dir}"
             )
 
-        with open(protocol_file, 'r') as f:
+        with open(protocol_file) as f:
             data = json.load(f)
 
         return self._parse_protocol(data)
 
-    def _parse_protocol(self, data: Dict[str, Any]) -> ClinicalProtocol:
+    def _parse_protocol(self, data: dict[str, Any]) -> ClinicalProtocol:
         """Parse protocol JSON into ClinicalProtocol object"""
 
         # Parse screening criteria
@@ -119,24 +121,28 @@ class ProtocolLoader:
         criteria = []
 
         for crit in screening_data.get("criteria", []):
-            criteria.append(ProtocolCriterion(
-                parameter=crit["parameter"],
-                condition=crit["condition"],
-                value=crit.get("value"),
-                points=crit.get("points", 0),
-                description=crit.get("description")
-            ))
+            criteria.append(
+                ProtocolCriterion(
+                    parameter=crit["parameter"],
+                    condition=crit["condition"],
+                    value=crit.get("value"),
+                    points=crit.get("points", 0),
+                    description=crit.get("description"),
+                )
+            )
 
         # Parse interventions
         interventions = []
         for interv in data.get("interventions", []):
-            interventions.append(ProtocolIntervention(
-                order=interv["order"],
-                action=interv["action"],
-                timing=interv["timing"],
-                required=interv.get("required", True),
-                parameters=interv.get("parameters")
-            ))
+            interventions.append(
+                ProtocolIntervention(
+                    order=interv["order"],
+                    action=interv["action"],
+                    timing=interv["timing"],
+                    required=interv.get("required", True),
+                    parameters=interv.get("parameters"),
+                )
+            )
 
         # Parse monitoring requirements
         monitoring = data.get("monitoring_requirements", {})
@@ -152,10 +158,10 @@ class ProtocolLoader:
             reassessment_timing=monitoring.get("reassessment", "hourly"),
             escalation_criteria=data.get("escalation_criteria", {}).get("if", []),
             documentation_requirements=data.get("documentation_requirements", []),
-            raw_protocol=data
+            raw_protocol=data,
         )
 
-    def list_available_protocols(self) -> List[str]:
+    def list_available_protocols(self) -> list[str]:
         """List all available protocols"""
         if not self.protocol_dir.exists():
             return []
@@ -166,7 +172,7 @@ class ProtocolLoader:
 
         return sorted(protocols)
 
-    def validate_protocol(self, protocol: ClinicalProtocol) -> List[str]:
+    def validate_protocol(self, protocol: ClinicalProtocol) -> list[str]:
         """
         Validate protocol structure.
 
@@ -194,7 +200,7 @@ class ProtocolLoader:
         return errors
 
 
-def load_protocol(protocol_name: str, protocol_dir: Optional[str] = None) -> ClinicalProtocol:
+def load_protocol(protocol_name: str, protocol_dir: str | None = None) -> ClinicalProtocol:
     """
     Convenience function to load a protocol.
 

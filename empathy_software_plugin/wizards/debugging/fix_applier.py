@@ -8,31 +8,30 @@ Licensed under the Apache License, Version 2.0
 """
 
 import subprocess
-from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
-from pathlib import Path
-import re
+from typing import Any
 
-from .linter_parsers import LintIssue, Severity
+from .linter_parsers import LintIssue
 
 
 @dataclass
 class FixResult:
     """Result of attempting to fix an issue"""
+
     issue: LintIssue
     success: bool
     method: str  # "autofix", "manual_suggestion", "skipped"
-    changes_made: Optional[str] = None
-    error: Optional[str] = None
+    changes_made: str | None = None
+    error: str | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return {
             "issue": self.issue.to_dict(),
             "success": self.success,
             "method": self.method,
             "changes_made": self.changes_made,
-            "error": self.error
+            "error": self.error,
         }
 
 
@@ -59,11 +58,7 @@ class BaseFixApplier:
         """
         raise NotImplementedError
 
-    def apply_fixes_batch(
-        self,
-        issues: List[LintIssue],
-        dry_run: bool = False
-    ) -> List[FixResult]:
+    def apply_fixes_batch(self, issues: list[LintIssue], dry_run: bool = False) -> list[FixResult]:
         """Apply fixes for multiple issues"""
         results = []
         for issue in issues:
@@ -108,7 +103,7 @@ class ESLintFixApplier(BaseFixApplier):
             "indent",
             "arrow-spacing",
             "prefer-const",
-            "no-var"
+            "no-var",
         }
 
     def can_autofix(self, issue: LintIssue) -> bool:
@@ -126,7 +121,7 @@ class ESLintFixApplier(BaseFixApplier):
                 success=False,
                 method="manual_suggestion",
                 changes_made=None,
-                error=None
+                error=None,
             )
 
         if dry_run:
@@ -134,7 +129,7 @@ class ESLintFixApplier(BaseFixApplier):
                 issue=issue,
                 success=True,
                 method="autofix",
-                changes_made="Would fix with ESLint --fix"
+                changes_made="Would fix with ESLint --fix",
             )
 
         # Run ESLint --fix on specific file
@@ -143,29 +138,24 @@ class ESLintFixApplier(BaseFixApplier):
                 ["npx", "eslint", "--fix", issue.file_path],
                 capture_output=True,
                 text=True,
-                timeout=30
+                timeout=30,
             )
 
             return FixResult(
                 issue=issue,
                 success=result.returncode == 0,
                 method="autofix",
-                changes_made=f"ESLint --fix applied to {issue.file_path}"
+                changes_made=f"ESLint --fix applied to {issue.file_path}",
             )
 
         except subprocess.TimeoutExpired:
-            return FixResult(
-                issue=issue,
-                success=False,
-                method="autofix",
-                error="ESLint timeout"
-            )
+            return FixResult(issue=issue, success=False, method="autofix", error="ESLint timeout")
         except FileNotFoundError:
             return FixResult(
                 issue=issue,
                 success=False,
                 method="autofix",
-                error="ESLint not found (run npm install)"
+                error="ESLint not found (run npm install)",
             )
 
     def suggest_manual_fix(self, issue: LintIssue) -> str:
@@ -180,16 +170,13 @@ class ESLintFixApplier(BaseFixApplier):
 
         suggestions = {
             "no-undef": f"Define '{var_name}' or import it",
-            "no-unused-vars": f"Remove unused variable or prefix with _",
+            "no-unused-vars": "Remove unused variable or prefix with _",
             "eqeqeq": "Use === instead of ==",
             "no-console": "Remove console.log or use a logger",
-            "prefer-const": "Change 'let' to 'const' if variable never reassigned"
+            "prefer-const": "Change 'let' to 'const' if variable never reassigned",
         }
 
-        return suggestions.get(
-            issue.rule,
-            f"Manual fix required for {issue.rule}: {issue.message}"
-        )
+        return suggestions.get(issue.rule, f"Manual fix required for {issue.rule}: {issue.message}")
 
 
 class PylintFixApplier(BaseFixApplier):
@@ -214,7 +201,7 @@ class PylintFixApplier(BaseFixApplier):
             "trailing-whitespace",
             "line-too-long",
             "bad-whitespace",
-            "bad-indentation"
+            "bad-indentation",
         }
 
         return issue.rule in formatting_rules
@@ -225,27 +212,18 @@ class PylintFixApplier(BaseFixApplier):
         if not self.can_autofix(issue):
             suggestion = self.suggest_manual_fix(issue)
             return FixResult(
-                issue=issue,
-                success=False,
-                method="manual_suggestion",
-                changes_made=suggestion
+                issue=issue, success=False, method="manual_suggestion", changes_made=suggestion
             )
 
         if dry_run:
             return FixResult(
-                issue=issue,
-                success=True,
-                method="autofix",
-                changes_made="Would format with black"
+                issue=issue, success=True, method="autofix", changes_made="Would format with black"
             )
 
         # Try black first
         try:
             result = subprocess.run(
-                ["black", issue.file_path],
-                capture_output=True,
-                text=True,
-                timeout=30
+                ["black", issue.file_path], capture_output=True, text=True, timeout=30
             )
 
             if result.returncode == 0:
@@ -253,7 +231,7 @@ class PylintFixApplier(BaseFixApplier):
                     issue=issue,
                     success=True,
                     method="autofix",
-                    changes_made=f"Formatted with black: {issue.file_path}"
+                    changes_made=f"Formatted with black: {issue.file_path}",
                 )
 
         except (FileNotFoundError, subprocess.TimeoutExpired):
@@ -265,7 +243,7 @@ class PylintFixApplier(BaseFixApplier):
                 ["autopep8", "--in-place", issue.file_path],
                 capture_output=True,
                 text=True,
-                timeout=30
+                timeout=30,
             )
 
             if result.returncode == 0:
@@ -273,7 +251,7 @@ class PylintFixApplier(BaseFixApplier):
                     issue=issue,
                     success=True,
                     method="autofix",
-                    changes_made=f"Formatted with autopep8: {issue.file_path}"
+                    changes_made=f"Formatted with autopep8: {issue.file_path}",
                 )
 
         except (FileNotFoundError, subprocess.TimeoutExpired):
@@ -283,7 +261,7 @@ class PylintFixApplier(BaseFixApplier):
             issue=issue,
             success=False,
             method="manual_suggestion",
-            error="black/autopep8 not available"
+            error="black/autopep8 not available",
         )
 
     def suggest_manual_fix(self, issue: LintIssue) -> str:
@@ -292,16 +270,13 @@ class PylintFixApplier(BaseFixApplier):
         suggestions = {
             "unused-variable": "Remove variable or prefix with _",
             "unused-import": "Remove unused import",
-            "invalid-name": f"Rename to follow naming conventions",
+            "invalid-name": "Rename to follow naming conventions",
             "missing-docstring": "Add docstring to function/class",
             "too-many-arguments": "Reduce parameters or use config object",
-            "no-else-return": "Remove else after return statement"
+            "no-else-return": "Remove else after return statement",
         }
 
-        return suggestions.get(
-            issue.rule,
-            f"Manual fix required: {issue.message}"
-        )
+        return suggestions.get(issue.rule, f"Manual fix required: {issue.message}")
 
 
 class TypeScriptFixApplier(BaseFixApplier):
@@ -323,10 +298,7 @@ class TypeScriptFixApplier(BaseFixApplier):
         suggestion = self.suggest_manual_fix(issue)
 
         return FixResult(
-            issue=issue,
-            success=False,
-            method="manual_suggestion",
-            changes_made=suggestion
+            issue=issue, success=False, method="manual_suggestion", changes_made=suggestion
         )
 
     def suggest_manual_fix(self, issue: LintIssue) -> str:
@@ -342,7 +314,7 @@ class TypeScriptFixApplier(BaseFixApplier):
                 "2339": "Property doesn't exist - check object structure",
                 "2304": "Cannot find name - import or define the type/variable",
                 "2551": "Property doesn't exist - check for typos",
-                "7006": "Add type annotation - implicit any"
+                "7006": "Add type annotation - implicit any",
             }
 
             suggestion = suggestions.get(code, f"Fix type error: {issue.message}")
@@ -359,7 +331,7 @@ class FixApplierFactory:
         "pylint": PylintFixApplier,
         "typescript": TypeScriptFixApplier,
         "tsc": TypeScriptFixApplier,
-        "mypy": PylintFixApplier  # Similar to Pylint (no autofix)
+        "mypy": PylintFixApplier,  # Similar to Pylint (no autofix)
     }
 
     @classmethod
@@ -377,11 +349,8 @@ class FixApplierFactory:
 
 
 def apply_fixes(
-    linter_name: str,
-    issues: List[LintIssue],
-    dry_run: bool = False,
-    auto_only: bool = False
-) -> List[FixResult]:
+    linter_name: str, issues: list[LintIssue], dry_run: bool = False, auto_only: bool = False
+) -> list[FixResult]:
     """
     Apply fixes for list of issues.
 
@@ -408,9 +377,8 @@ def apply_fixes(
 
 
 def group_issues_by_fixability(
-    linter_name: str,
-    issues: List[LintIssue]
-) -> Dict[str, List[LintIssue]]:
+    linter_name: str, issues: list[LintIssue]
+) -> dict[str, list[LintIssue]]:
     """
     Group issues by whether they can be auto-fixed.
 
@@ -432,7 +400,4 @@ def group_issues_by_fixability(
         else:
             manual.append(issue)
 
-    return {
-        "auto_fixable": auto_fixable,
-        "manual": manual
-    }
+    return {"auto_fixable": auto_fixable, "manual": manual}

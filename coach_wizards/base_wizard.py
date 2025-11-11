@@ -11,7 +11,7 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -23,9 +23,9 @@ class WizardIssue:
     severity: str  # 'error', 'warning', 'info'
     message: str
     file_path: str
-    line_number: Optional[int]
-    code_snippet: Optional[str]
-    fix_suggestion: Optional[str]
+    line_number: int | None
+    code_snippet: str | None
+    fix_suggestion: str | None
     category: str
     confidence: float  # 0.0 to 1.0
 
@@ -38,7 +38,7 @@ class WizardPrediction:
     issue_type: str
     probability: float
     impact: str  # 'low', 'medium', 'high', 'critical'
-    prevention_steps: List[str]
+    prevention_steps: list[str]
     reasoning: str
 
 
@@ -47,12 +47,12 @@ class WizardResult:
     """Result from running a wizard"""
 
     wizard_name: str
-    issues: List[WizardIssue]
-    predictions: List[WizardPrediction]
+    issues: list[WizardIssue]
+    predictions: list[WizardPrediction]
     summary: str
     analyzed_files: int
     analysis_time: float
-    recommendations: List[str]
+    recommendations: list[str]
 
 
 class BaseCoachWizard(ABC):
@@ -65,14 +65,14 @@ class BaseCoachWizard(ABC):
     - Provides prevention strategies
     """
 
-    def __init__(self, name: str, category: str, languages: List[str]):
+    def __init__(self, name: str, category: str, languages: list[str]):
         self.name = name
         self.category = category
         self.languages = languages
         self.logger = logging.getLogger(f"coach.{name}")
 
     @abstractmethod
-    def analyze_code(self, code: str, file_path: str, language: str) -> List[WizardIssue]:
+    def analyze_code(self, code: str, file_path: str, language: str) -> list[WizardIssue]:
         """
         Analyze code for current issues
 
@@ -88,8 +88,8 @@ class BaseCoachWizard(ABC):
 
     @abstractmethod
     def predict_future_issues(
-        self, code: str, file_path: str, project_context: Dict[str, Any], timeline_days: int = 90
-    ) -> List[WizardPrediction]:
+        self, code: str, file_path: str, project_context: dict[str, Any], timeline_days: int = 90
+    ) -> list[WizardPrediction]:
         """
         Level 4 Anticipatory: Predict issues 30-90 days ahead
 
@@ -122,7 +122,7 @@ class BaseCoachWizard(ABC):
         code: str,
         file_path: str,
         language: str,
-        project_context: Optional[Dict[str, Any]] = None,
+        project_context: dict[str, Any] | None = None,
     ) -> WizardResult:
         """
         Run complete analysis: current issues + future predictions
@@ -167,8 +167,8 @@ class BaseCoachWizard(ABC):
         )
 
     def _generate_recommendations(
-        self, issues: List[WizardIssue], predictions: List[WizardPrediction]
-    ) -> List[str]:
+        self, issues: list[WizardIssue], predictions: list[WizardPrediction]
+    ) -> list[str]:
         """Generate actionable recommendations"""
         recommendations = []
 
@@ -187,7 +187,7 @@ class BaseCoachWizard(ABC):
         return recommendations
 
     def _generate_summary(
-        self, issues: List[WizardIssue], predictions: List[WizardPrediction]
+        self, issues: list[WizardIssue], predictions: list[WizardPrediction]
     ) -> str:
         """Generate human-readable summary"""
         error_count = len([i for i in issues if i.severity == "error"])

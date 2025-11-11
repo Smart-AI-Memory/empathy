@@ -9,9 +9,9 @@ Licensed under the Apache License, Version 2.0
 
 import json
 import re
-from typing import Dict, Any, Optional, List
-from pathlib import Path
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
 
 
 @dataclass
@@ -21,15 +21,16 @@ class LintConfig:
 
     Unified format across all linters.
     """
+
     linter: str
     config_file: str
-    rules: Dict[str, Any]
-    extends: List[str]
-    plugins: List[str]
-    severity_overrides: Dict[str, str]
-    raw_config: Dict[str, Any]
+    rules: dict[str, Any]
+    extends: list[str]
+    plugins: list[str]
+    severity_overrides: dict[str, str]
+    raw_config: dict[str, Any]
 
-    def get_rule_severity(self, rule_name: str) -> Optional[str]:
+    def get_rule_severity(self, rule_name: str) -> str | None:
         """Get configured severity for rule"""
         rule_config = self.rules.get(rule_name)
 
@@ -63,7 +64,7 @@ class BaseConfigLoader:
         """Load configuration from file"""
         raise NotImplementedError
 
-    def find_config(self, start_dir: str) -> Optional[str]:
+    def find_config(self, start_dir: str) -> str | None:
         """Find config file starting from directory"""
         raise NotImplementedError
 
@@ -85,13 +86,13 @@ class ESLintConfigLoader(BaseConfigLoader):
         ".eslintrc.js",
         ".eslintrc.yml",
         ".eslintrc.yaml",
-        "package.json"
+        "package.json",
     ]
 
     def __init__(self):
         super().__init__("eslint")
 
-    def find_config(self, start_dir: str) -> Optional[str]:
+    def find_config(self, start_dir: str) -> str | None:
         """Find ESLint config file"""
         current = Path(start_dir).resolve()
 
@@ -125,14 +126,14 @@ class ESLintConfigLoader(BaseConfigLoader):
             return self._load_js_config(path)
 
         # Handle JSON files
-        with open(path, 'r') as f:
+        with open(path) as f:
             config_data = json.load(f)
 
         return self._parse_config(config_data, str(path))
 
     def _load_package_json(self, path: Path) -> LintConfig:
         """Load ESLint config from package.json"""
-        with open(path, 'r') as f:
+        with open(path) as f:
             package_data = json.load(f)
 
         eslint_config = package_data.get("eslintConfig", {})
@@ -144,7 +145,7 @@ class ESLintConfigLoader(BaseConfigLoader):
 
         Limited support - extracts JSON-like objects.
         """
-        with open(path, 'r') as f:
+        with open(path) as f:
             content = f.read()
 
         # Try to find module.exports = { ... }
@@ -166,12 +167,12 @@ class ESLintConfigLoader(BaseConfigLoader):
                     extends=[],
                     plugins=[],
                     severity_overrides={},
-                    raw_config={"note": "JS config - limited parsing"}
+                    raw_config={"note": "JS config - limited parsing"},
                 )
 
         raise ValueError(f"Could not parse JS config: {path}")
 
-    def _parse_config(self, config_data: Dict, config_file: str) -> LintConfig:
+    def _parse_config(self, config_data: dict, config_file: str) -> LintConfig:
         """Parse ESLint config data"""
         return LintConfig(
             linter=self.linter_name,
@@ -180,10 +181,10 @@ class ESLintConfigLoader(BaseConfigLoader):
             extends=self._normalize_extends(config_data.get("extends")),
             plugins=config_data.get("plugins", []),
             severity_overrides={},
-            raw_config=config_data
+            raw_config=config_data,
         )
 
-    def _normalize_extends(self, extends_value: Any) -> List[str]:
+    def _normalize_extends(self, extends_value: Any) -> list[str]:
         """Normalize extends to list"""
         if extends_value is None:
             return []
@@ -208,7 +209,7 @@ class PylintConfigLoader(BaseConfigLoader):
     def __init__(self):
         super().__init__("pylint")
 
-    def find_config(self, start_dir: str) -> Optional[str]:
+    def find_config(self, start_dir: str) -> str | None:
         """Find Pylint config file"""
         current = Path(start_dir).resolve()
 
@@ -250,7 +251,7 @@ class PylintConfigLoader(BaseConfigLoader):
             except ImportError:
                 raise ImportError("tomli or tomllib required for pyproject.toml")
 
-        with open(path, 'rb') as f:
+        with open(path, "rb") as f:
             data = tomli.load(f)
 
         pylint_config = data.get("tool", {}).get("pylint", {})
@@ -277,7 +278,7 @@ class PylintConfigLoader(BaseConfigLoader):
             extends=[],
             plugins=pylint_config.get("load-plugins", []),
             severity_overrides={},
-            raw_config=pylint_config
+            raw_config=pylint_config,
         )
 
     def _load_ini_style(self, path: Path) -> LintConfig:
@@ -311,7 +312,7 @@ class PylintConfigLoader(BaseConfigLoader):
             extends=[],
             plugins=[p.strip() for p in plugins],
             severity_overrides={},
-            raw_config=dict(config.items()) if hasattr(config, 'items') else {}
+            raw_config=dict(config.items()) if hasattr(config, "items") else {},
         )
 
 
@@ -325,7 +326,7 @@ class TypeScriptConfigLoader(BaseConfigLoader):
     def __init__(self):
         super().__init__("typescript")
 
-    def find_config(self, start_dir: str) -> Optional[str]:
+    def find_config(self, start_dir: str) -> str | None:
         """Find tsconfig.json"""
         current = Path(start_dir).resolve()
 
@@ -348,12 +349,12 @@ class TypeScriptConfigLoader(BaseConfigLoader):
         if not path.exists():
             raise FileNotFoundError(f"Config file not found: {config_path}")
 
-        with open(path, 'r') as f:
+        with open(path) as f:
             # TypeScript allows comments in JSON
             content = f.read()
             # Remove comments (simplified)
-            content = re.sub(r'//.*?\n', '\n', content)
-            content = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
+            content = re.sub(r"//.*?\n", "\n", content)
+            content = re.sub(r"/\*.*?\*/", "", content, flags=re.DOTALL)
 
             config_data = json.loads(content)
 
@@ -371,7 +372,7 @@ class TypeScriptConfigLoader(BaseConfigLoader):
             extends=[config_data.get("extends", "")],
             plugins=[],
             severity_overrides={},
-            raw_config=config_data
+            raw_config=config_data,
         )
 
 
@@ -382,7 +383,7 @@ class ConfigLoaderFactory:
         "eslint": ESLintConfigLoader,
         "pylint": PylintConfigLoader,
         "typescript": TypeScriptConfigLoader,
-        "tsc": TypeScriptConfigLoader
+        "tsc": TypeScriptConfigLoader,
     }
 
     @classmethod
@@ -399,12 +400,14 @@ class ConfigLoaderFactory:
         return loader_class()
 
     @classmethod
-    def get_supported_linters(cls) -> List[str]:
+    def get_supported_linters(cls) -> list[str]:
         """Get supported linters"""
         return list(cls._loaders.keys())
 
 
-def load_config(linter_name: str, config_path: Optional[str] = None, start_dir: Optional[str] = None) -> Optional[LintConfig]:
+def load_config(
+    linter_name: str, config_path: str | None = None, start_dir: str | None = None
+) -> LintConfig | None:
     """
     Load linting configuration.
 

@@ -9,38 +9,40 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import List, Dict, Optional
 from dataclasses import dataclass, field
 
-from empathy_os import EmpathyOS, EmpathyConfig
+from empathy_os import EmpathyConfig, EmpathyOS
 
-from .wizards.base_wizard import BaseWizard, WizardTask, WizardOutput
+from .wizards.accessibility_wizard import AccessibilityWizard
+from .wizards.api_wizard import APIWizard
+from .wizards.base_wizard import BaseWizard, WizardOutput, WizardTask
+from .wizards.compliance_wizard import ComplianceWizard
+from .wizards.database_wizard import DatabaseWizard
+
 # Original 6 wizards
 from .wizards.debugging_wizard import DebuggingWizard
-from .wizards.documentation_wizard import DocumentationWizard
 from .wizards.design_review_wizard import DesignReviewWizard
-from .wizards.testing_wizard import TestingWizard
-from .wizards.retrospective_wizard import RetrospectiveWizard
-from .wizards.security_wizard import SecurityWizard
+from .wizards.devops_wizard import DevOpsWizard
+from .wizards.documentation_wizard import DocumentationWizard
+from .wizards.localization_wizard import LocalizationWizard
+from .wizards.monitoring_wizard import MonitoringWizard
+from .wizards.onboarding_wizard import OnboardingWizard
+
 # New 10 wizards
 from .wizards.performance_wizard import PerformanceWizard
 from .wizards.refactoring_wizard import RefactoringWizard
-from .wizards.api_wizard import APIWizard
-from .wizards.database_wizard import DatabaseWizard
-from .wizards.devops_wizard import DevOpsWizard
-from .wizards.onboarding_wizard import OnboardingWizard
-from .wizards.accessibility_wizard import AccessibilityWizard
-from .wizards.localization_wizard import LocalizationWizard
-from .wizards.compliance_wizard import ComplianceWizard
-from .wizards.monitoring_wizard import MonitoringWizard
+from .wizards.retrospective_wizard import RetrospectiveWizard
+from .wizards.security_wizard import SecurityWizard
+from .wizards.testing_wizard import TestingWizard
 
 
 @dataclass
 class CoachOutput:
     """Complete Coach response"""
-    routing: List[str]  # Which wizards were used
+
+    routing: list[str]  # Which wizards were used
     primary_output: WizardOutput  # Main wizard output
-    secondary_outputs: List[WizardOutput] = field(default_factory=list)  # Additional wizard outputs
+    secondary_outputs: list[WizardOutput] = field(default_factory=list)  # Additional wizard outputs
     synthesis: str = ""  # Combined recommendations across wizards
     overall_confidence: float = 0.0
 
@@ -55,7 +57,7 @@ class Coach:
     3. Anticipate needs and provide proactive assistance (Anticipatory Empathy)
     """
 
-    def __init__(self, config: Optional[EmpathyConfig] = None):
+    def __init__(self, config: EmpathyConfig | None = None):
         """
         Initialize Coach with wizards
 
@@ -66,36 +68,31 @@ class Coach:
         self.empathy = EmpathyOS(
             user_id=self.config.user_id,
             target_level=self.config.target_level,
-            confidence_threshold=self.config.confidence_threshold
+            confidence_threshold=self.config.confidence_threshold,
         )
 
         # Initialize wizard registry (16 total wizards)
         # Order matters for tie-breaking: more specialized wizards first
-        self.wizards: List[BaseWizard] = [
+        self.wizards: list[BaseWizard] = [
             # Critical infrastructure (highest priority)
             SecurityWizard(config=self.config),
             ComplianceWizard(config=self.config),
-
             # Development workflow (daily use)
             DebuggingWizard(config=self.config),
             TestingWizard(config=self.config),
             RefactoringWizard(config=self.config),
             PerformanceWizard(config=self.config),
-
             # Architecture & design
             DesignReviewWizard(config=self.config),
             APIWizard(config=self.config),
             DatabaseWizard(config=self.config),
-
             # Infrastructure & ops
             DevOpsWizard(config=self.config),
             MonitoringWizard(config=self.config),
-
             # Cross-cutting concerns
             DocumentationWizard(config=self.config),
             AccessibilityWizard(config=self.config),
             LocalizationWizard(config=self.config),
-
             # Team & process
             OnboardingWizard(config=self.config),
             RetrospectiveWizard(config=self.config),
@@ -104,30 +101,24 @@ class Coach:
         # Pre-defined collaboration patterns for common workflows
         self.collaboration_patterns = {
             "new_api_endpoint": [
-                "APIWizard", "SecurityWizard", "TestingWizard", "DocumentationWizard"
+                "APIWizard",
+                "SecurityWizard",
+                "TestingWizard",
+                "DocumentationWizard",
             ],
-            "database_migration": [
-                "DatabaseWizard", "DevOpsWizard", "MonitoringWizard"
-            ],
-            "production_incident": [
-                "MonitoringWizard", "DebuggingWizard", "RetrospectiveWizard"
-            ],
+            "database_migration": ["DatabaseWizard", "DevOpsWizard", "MonitoringWizard"],
+            "production_incident": ["MonitoringWizard", "DebuggingWizard", "RetrospectiveWizard"],
             "new_feature_launch": [
-                "DesignReviewWizard", "TestingWizard", "SecurityWizard",
-                "DocumentationWizard", "MonitoringWizard"
+                "DesignReviewWizard",
+                "TestingWizard",
+                "SecurityWizard",
+                "DocumentationWizard",
+                "MonitoringWizard",
             ],
-            "performance_issue": [
-                "PerformanceWizard", "DatabaseWizard", "RefactoringWizard"
-            ],
-            "compliance_audit": [
-                "ComplianceWizard", "SecurityWizard", "DocumentationWizard"
-            ],
-            "global_expansion": [
-                "LocalizationWizard", "AccessibilityWizard", "ComplianceWizard"
-            ],
-            "new_developer_onboarding": [
-                "OnboardingWizard", "DocumentationWizard"
-            ],
+            "performance_issue": ["PerformanceWizard", "DatabaseWizard", "RefactoringWizard"],
+            "compliance_audit": ["ComplianceWizard", "SecurityWizard", "DocumentationWizard"],
+            "global_expansion": ["LocalizationWizard", "AccessibilityWizard", "ComplianceWizard"],
+            "new_developer_onboarding": ["OnboardingWizard", "DocumentationWizard"],
         }
 
     async def process(self, task: WizardTask, multi_wizard: bool = True) -> CoachOutput:
@@ -170,10 +161,10 @@ class Coach:
             primary_output=primary_output,
             secondary_outputs=secondary_outputs,
             synthesis=synthesis,
-            overall_confidence=overall_confidence
+            overall_confidence=overall_confidence,
         )
 
-    def _route_task(self, task: WizardTask, multi_wizard: bool) -> List[tuple[BaseWizard, float]]:
+    def _route_task(self, task: WizardTask, multi_wizard: bool) -> list[tuple[BaseWizard, float]]:
         """
         Route task to wizard(s) based on confidence scores and collaboration patterns
 
@@ -221,8 +212,7 @@ class Coach:
 
         return scores
 
-    def _synthesize_outputs(self, primary: WizardOutput,
-                           secondary: List[WizardOutput]) -> str:
+    def _synthesize_outputs(self, primary: WizardOutput, secondary: list[WizardOutput]) -> str:
         """
         Synthesize recommendations across multiple wizards
 
@@ -254,7 +244,7 @@ class Coach:
 
         return synthesis
 
-    def _calculate_overall_confidence(self, routing: List[tuple[BaseWizard, float]]) -> float:
+    def _calculate_overall_confidence(self, routing: list[tuple[BaseWizard, float]]) -> float:
         """Calculate overall confidence from wizard scores"""
         if not routing:
             return 0.0
@@ -279,12 +269,7 @@ class Coach:
             f"I need help with: {task.task}. Context: {task.context}"
         )
 
-        from .wizards.base_wizard import (
-            WizardArtifact,
-            WizardRisk,
-            WizardHandoff,
-            EmpathyChecks
-        )
+        from .wizards.base_wizard import EmpathyChecks, WizardArtifact, WizardRisk
 
         fallback_output = WizardOutput(
             wizard_name="Coach (Fallback)",
@@ -293,34 +278,39 @@ class Coach:
                 "Clarify specific requirements",
                 "Identify appropriate resources/tools",
                 "Break down into smaller tasks",
-                "Consult with domain expert if needed"
+                "Consult with domain expert if needed",
             ],
             artifacts=[
                 WizardArtifact(
                     type="doc",
                     title="Suggested Approach",
-                    content=empathy_response.get("result", empathy_response.get("reasoning", "Unable to determine specific approach for this task"))
+                    content=empathy_response.get(
+                        "result",
+                        empathy_response.get(
+                            "reasoning", "Unable to determine specific approach for this task"
+                        ),
+                    ),
                 )
             ],
             risks=[
                 WizardRisk(
                     risk="Task unclear or outside wizard capabilities",
                     mitigation="Refine task description with more specific keywords",
-                    severity="medium"
+                    severity="medium",
                 )
             ],
             handoffs=[],
             next_actions=[
                 "Rephrase task with specific keywords (bug, doc, design, etc.)",
                 "Consult Coach documentation for supported task types",
-                "Break complex task into smaller subtasks"
+                "Break complex task into smaller subtasks",
             ],
             empathy_checks=EmpathyChecks(
                 cognitive=f"Considered {task.role} perspective but task unclear",
                 emotional="Acknowledged potential frustration with unclear routing",
-                anticipatory="Provided guidance on how to better utilize Coach"
+                anticipatory="Provided guidance on how to better utilize Coach",
             ),
-            confidence=0.2
+            confidence=0.2,
         )
 
         return CoachOutput(
@@ -328,10 +318,10 @@ class Coach:
             primary_output=fallback_output,
             secondary_outputs=[],
             synthesis="No specific wizard matched this task. Please refine your request.",
-            overall_confidence=0.2
+            overall_confidence=0.2,
         )
 
-    def list_wizards(self) -> List[Dict[str, str]]:
+    def list_wizards(self) -> list[dict[str, str]]:
         """
         List available wizards and their capabilities
 
@@ -342,7 +332,9 @@ class Coach:
             {
                 "name": wizard.name,
                 "type": wizard.__class__.__name__,
-                "description": wizard.__doc__.split('\n')[1].strip() if wizard.__doc__ else "No description"
+                "description": (
+                    wizard.__doc__.split("\n")[1].strip() if wizard.__doc__ else "No description"
+                ),
             }
             for wizard in self.wizards
         ]
@@ -359,7 +351,7 @@ def main():
         task="Bug blocks release; 500 errors after deployment",
         context="Service X returns 500 after deploy; logs show null pointer. README outdated for hotfix process.",
         preferences="concise; patch + regression test",
-        risk_tolerance="low"
+        risk_tolerance="low",
     )
 
     result1 = coach.process(task1, multi_wizard=True)
@@ -369,7 +361,7 @@ def main():
     print(f"Primary Diagnosis: {result1.primary_output.diagnosis}")
     print(f"Next Actions: {result1.primary_output.next_actions[:3]}")
 
-    print("\n" + "="*60 + "\n")
+    print("\n" + "=" * 60 + "\n")
 
     # Example 2: Documentation task
     print("=== Example 2: Documentation Task ===\n")
@@ -378,7 +370,7 @@ def main():
         task="Onboarding docs unclear; new devs confused about setup",
         context="README missing setup steps; environment config undocumented",
         preferences="Quick start guide for junior devs",
-        risk_tolerance="medium"
+        risk_tolerance="medium",
     )
 
     result2 = coach.process(task2, multi_wizard=False)

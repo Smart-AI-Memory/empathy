@@ -7,7 +7,7 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import Any, Dict, List
+from typing import Any
 
 from .base_wizard import BaseCoachWizard, WizardIssue, WizardPrediction
 
@@ -35,7 +35,7 @@ class AccessibilityWizard(BaseCoachWizard):
             languages=["html", "jsx", "tsx", "vue", "svelte"],
         )
 
-    def analyze_code(self, code: str, file_path: str, language: str) -> List[WizardIssue]:
+    def analyze_code(self, code: str, file_path: str, language: str) -> list[WizardIssue]:
         """
         Analyze code for accessibility issues
 
@@ -57,8 +57,8 @@ class AccessibilityWizard(BaseCoachWizard):
         return issues
 
     def predict_future_issues(
-        self, code: str, file_path: str, project_context: Dict[str, Any], timeline_days: int = 90
-    ) -> List[WizardPrediction]:
+        self, code: str, file_path: str, project_context: dict[str, Any], timeline_days: int = 90
+    ) -> list[WizardPrediction]:
         """
         Level 4 Anticipatory: Predict accessibility issues {timeline_days} days ahead
 

@@ -9,16 +9,16 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import List, Dict, Any
+from typing import Any
 
 from .base_wizard import (
     BaseWizard,
-    WizardTask,
-    WizardOutput,
-    WizardArtifact,
-    WizardRisk,
-    WizardHandoff,
     EmpathyChecks,
+    WizardArtifact,
+    WizardHandoff,
+    WizardOutput,
+    WizardRisk,
+    WizardTask,
 )
 
 
@@ -35,9 +35,16 @@ class RetrospectiveWizard(BaseWizard):
     def can_handle(self, task: WizardTask) -> float:
         """Determine if this is a retrospective task"""
         retro_keywords = [
-            "retrospective", "retro", "sprint review", "lessons learned",
-            "postmortem", "post-mortem", "process improvement",
-            "team feedback", "what went well", "morale"
+            "retrospective",
+            "retro",
+            "sprint review",
+            "lessons learned",
+            "postmortem",
+            "post-mortem",
+            "process improvement",
+            "team feedback",
+            "what went well",
+            "morale",
         ]
 
         task_lower = (task.task + " " + task.context).lower()
@@ -73,25 +80,15 @@ class RetrospectiveWizard(BaseWizard):
         # Step 8: Create artifacts
         artifacts = [
             WizardArtifact(
-                type="doc",
-                title=f"{retro_format} Retrospective Template",
-                content=retro_structure
+                type="doc", title=f"{retro_format} Retrospective Template", content=retro_structure
             ),
             WizardArtifact(
-                type="doc",
-                title="Team Patterns Analysis",
-                content=self._format_patterns(patterns)
+                type="doc", title="Team Patterns Analysis", content=self._format_patterns(patterns)
             ),
             WizardArtifact(
-                type="doc",
-                title="Action Items",
-                content=self._format_action_items(action_items)
+                type="doc", title="Action Items", content=self._format_action_items(action_items)
             ),
-            WizardArtifact(
-                type="doc",
-                title="Team Health Dashboard",
-                content=team_health
-            )
+            WizardArtifact(type="doc", title="Team Health Dashboard", content=team_health),
         ]
 
         # Step 9: Create plan
@@ -101,7 +98,7 @@ class RetrospectiveWizard(BaseWizard):
             "Facilitate discussion using chosen format",
             "Document insights and action items",
             "Assign owners to action items",
-            "Schedule follow-up to review progress"
+            "Schedule follow-up to review progress",
         ]
 
         # Step 10: Generate next actions
@@ -110,7 +107,7 @@ class RetrospectiveWizard(BaseWizard):
             "Create shared doc for async input",
             "Facilitate retrospective meeting",
             "Document outcomes and share with team",
-            "Add action items to next sprint planning"
+            "Add action items to next sprint planning",
         ]
 
         # Add anticipatory actions
@@ -120,15 +117,9 @@ class RetrospectiveWizard(BaseWizard):
         # Step 11: Create handoffs
         handoffs = [
             WizardHandoff(
-                owner="team_lead",
-                what="Facilitate retrospective meeting",
-                when="Within 2 weeks"
+                owner="team_lead", what="Facilitate retrospective meeting", when="Within 2 weeks"
             ),
-            WizardHandoff(
-                owner="team",
-                what="Implement agreed action items",
-                when="Next sprint"
-            )
+            WizardHandoff(owner="team", what="Implement agreed action items", when="Next sprint"),
         ]
 
         # Step 12: Assess risks
@@ -136,25 +127,25 @@ class RetrospectiveWizard(BaseWizard):
             WizardRisk(
                 risk="Retrospective becomes blame session",
                 mitigation="Set ground rules, focus on systems not people, use 'I' statements",
-                severity="medium"
+                severity="medium",
             ),
             WizardRisk(
                 risk="Action items never implemented",
                 mitigation="Assign clear owners, add to sprint backlog, review in next retro",
-                severity="medium"
+                severity="medium",
             ),
             WizardRisk(
                 risk="Team disengagement if no improvements seen",
                 mitigation="Start with small wins, celebrate successes, show tangible changes",
-                severity="low"
-            )
+                severity="low",
+            ),
         ]
 
         # Step 13: Empathy checks
         empathy_checks = EmpathyChecks(
             cognitive=f"Considered team dynamics and {team_context['team_size']} team members' perspectives",
             emotional=f"Acknowledged {team_context['morale']} morale and {len(patterns)} identified patterns",
-            anticipatory=f"Provided {len(action_items)} proactive improvements to prevent future friction"
+            anticipatory=f"Provided {len(action_items)} proactive improvements to prevent future friction",
         )
 
         return WizardOutput(
@@ -166,10 +157,10 @@ class RetrospectiveWizard(BaseWizard):
             handoffs=handoffs,
             next_actions=next_actions,
             empathy_checks=empathy_checks,
-            confidence=self.can_handle(task)
+            confidence=self.can_handle(task),
         )
 
-    def _assess_team_context(self, task: WizardTask) -> Dict[str, Any]:
+    def _assess_team_context(self, task: WizardTask) -> dict[str, Any]:
         """Assess team context"""
         context_lower = task.context.lower()
 
@@ -182,7 +173,9 @@ class RetrospectiveWizard(BaseWizard):
 
         # Assess morale
         morale = "normal"
-        if any(word in context_lower for word in ["stressed", "burnout", "overworked", "frustrated"]):
+        if any(
+            word in context_lower for word in ["stressed", "burnout", "overworked", "frustrated"]
+        ):
             morale = "low"
         elif any(word in context_lower for word in ["great", "excellent", "motivated"]):
             morale = "high"
@@ -198,13 +191,9 @@ class RetrospectiveWizard(BaseWizard):
         if "technical debt" in context_lower:
             issues.append("technical_debt")
 
-        return {
-            "team_size": team_size,
-            "morale": morale,
-            "issues": issues
-        }
+        return {"team_size": team_size, "morale": morale, "issues": issues}
 
-    def _choose_retro_format(self, task: WizardTask, team_context: Dict) -> str:
+    def _choose_retro_format(self, task: WizardTask, team_context: dict) -> str:
         """Choose appropriate retrospective format"""
         # Choose based on team context
         if team_context["morale"] == "low":
@@ -222,7 +211,7 @@ class RetrospectiveWizard(BaseWizard):
             "Mad Sad Glad": self._mad_sad_glad_format(),
             "Start Stop Continue": self._start_stop_continue_format(),
             "4Ls (Liked, Learned, Lacked, Longed For)": self._four_ls_format(),
-            "What Went Well / What Didn't / Action Items": self._classic_format()
+            "What Went Well / What Didn't / Action Items": self._classic_format(),
         }
 
         return formats.get(retro_format, self._classic_format())
@@ -403,70 +392,84 @@ Template:
 Recognize individual contributions.
 """
 
-    def _identify_team_patterns(self, task: WizardTask, team_context: Dict) -> List[Dict[str, str]]:
+    def _identify_team_patterns(self, task: WizardTask, team_context: dict) -> list[dict[str, str]]:
         """Identify patterns in team dynamics"""
         patterns = []
 
         issues = team_context["issues"]
 
         if "communication" in issues:
-            patterns.append({
-                "pattern": "Communication gaps",
-                "impact": "Misalignment, rework, frustration",
-                "root_cause": "Async-first culture, timezone differences, or unclear channels",
-                "suggestion": "Daily standups, use of project management tools, clear ownership"
-            })
+            patterns.append(
+                {
+                    "pattern": "Communication gaps",
+                    "impact": "Misalignment, rework, frustration",
+                    "root_cause": "Async-first culture, timezone differences, or unclear channels",
+                    "suggestion": "Daily standups, use of project management tools, clear ownership",
+                }
+            )
 
         if "timeline_pressure" in issues:
-            patterns.append({
-                "pattern": "Chronic deadline pressure",
-                "impact": "Burnout, technical debt, quality issues",
-                "root_cause": "Underestimation, scope creep, or external pressure",
-                "suggestion": "Better estimation, buffer time, say no to scope changes"
-            })
+            patterns.append(
+                {
+                    "pattern": "Chronic deadline pressure",
+                    "impact": "Burnout, technical debt, quality issues",
+                    "root_cause": "Underestimation, scope creep, or external pressure",
+                    "suggestion": "Better estimation, buffer time, say no to scope changes",
+                }
+            )
 
         if "team_conflict" in issues:
-            patterns.append({
-                "pattern": "Team conflict or disagreement",
-                "impact": "Slow decision-making, low morale, attrition risk",
-                "root_cause": "Unclear roles, different values, or lack of psychological safety",
-                "suggestion": "Team charter, conflict resolution process, 1-on-1s"
-            })
+            patterns.append(
+                {
+                    "pattern": "Team conflict or disagreement",
+                    "impact": "Slow decision-making, low morale, attrition risk",
+                    "root_cause": "Unclear roles, different values, or lack of psychological safety",
+                    "suggestion": "Team charter, conflict resolution process, 1-on-1s",
+                }
+            )
 
         if "technical_debt" in issues:
-            patterns.append({
-                "pattern": "Accumulating technical debt",
-                "impact": "Slower velocity, more bugs, developer frustration",
-                "root_cause": "Pressure to ship, lack of refactoring time",
-                "suggestion": "Dedicated refactoring time, tech debt tracking, quality metrics"
-            })
+            patterns.append(
+                {
+                    "pattern": "Accumulating technical debt",
+                    "impact": "Slower velocity, more bugs, developer frustration",
+                    "root_cause": "Pressure to ship, lack of refactoring time",
+                    "suggestion": "Dedicated refactoring time, tech debt tracking, quality metrics",
+                }
+            )
 
         # Generic patterns
         if not patterns:
-            patterns = [{
-                "pattern": "Room for process improvement",
-                "impact": "Potential for increased efficiency",
-                "root_cause": "Normal team evolution",
-                "suggestion": "Regular retrospectives to identify specific areas"
-            }]
+            patterns = [
+                {
+                    "pattern": "Room for process improvement",
+                    "impact": "Potential for increased efficiency",
+                    "root_cause": "Normal team evolution",
+                    "suggestion": "Regular retrospectives to identify specific areas",
+                }
+            ]
 
         return patterns
 
-    def _generate_action_items(self, task: WizardTask, patterns: List[Dict]) -> List[Dict[str, str]]:
+    def _generate_action_items(
+        self, task: WizardTask, patterns: list[dict]
+    ) -> list[dict[str, str]]:
         """Generate action items from patterns"""
         actions = []
 
         for pattern in patterns[:3]:  # Top 3 patterns
-            actions.append({
-                "action": pattern["suggestion"],
-                "owner": "Team Lead",
-                "timeline": "Next sprint",
-                "success_criteria": f"Reduced {pattern['pattern'].lower()}"
-            })
+            actions.append(
+                {
+                    "action": pattern["suggestion"],
+                    "owner": "Team Lead",
+                    "timeline": "Next sprint",
+                    "success_criteria": f"Reduced {pattern['pattern'].lower()}",
+                }
+            )
 
         return actions
 
-    def _assess_team_health(self, task: WizardTask, team_context: Dict) -> str:
+    def _assess_team_health(self, task: WizardTask, team_context: dict) -> str:
         """Assess overall team health"""
         return f"""# Team Health Dashboard
 
@@ -501,11 +504,11 @@ Recognize individual contributions.
 *Assessment Date*: [Current Date]
 """
 
-    def _create_diagnosis(self, team_context: Dict, patterns: List[Dict]) -> str:
+    def _create_diagnosis(self, team_context: dict, patterns: list[dict]) -> str:
         """Create diagnosis"""
         return f"Team retrospective needed for {team_context['team_size']} team with {team_context['morale']} morale; {len(patterns)} improvement patterns identified"
 
-    def _format_patterns(self, patterns: List[Dict]) -> str:
+    def _format_patterns(self, patterns: list[dict]) -> str:
         """Format patterns as documentation"""
         content = "# Team Patterns Analysis\n\n"
 
@@ -518,7 +521,7 @@ Recognize individual contributions.
 
         return content
 
-    def _format_action_items(self, actions: List[Dict]) -> str:
+    def _format_action_items(self, actions: list[dict]) -> str:
         """Format action items"""
         content = "# Retrospective Action Items\n\n"
 

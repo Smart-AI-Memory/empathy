@@ -6,6 +6,7 @@ Licensed under the Apache License, Version 2.0
 """
 
 import pytest
+
 from empathy_os import Pattern, PatternLibrary
 
 
@@ -19,7 +20,7 @@ class TestPattern:
             agent_id="test_agent",
             pattern_type="sequential",
             name="Test Pattern",
-            description="A test pattern"
+            description="A test pattern",
         )
 
         assert pattern.id == "pat_001"
@@ -35,7 +36,7 @@ class TestPattern:
             agent_id="agent1",
             pattern_type="sequential",
             name="Test",
-            description="Test"
+            description="Test",
         )
 
         assert pattern.success_rate == 0.0
@@ -57,7 +58,7 @@ class TestPattern:
             pattern_type="sequential",
             name="Test",
             description="Test",
-            confidence=0.5
+            confidence=0.5,
         )
 
         # Confidence shouldn't update with < 5 uses
@@ -89,7 +90,7 @@ class TestPatternLibrary:
             agent_id="agent1",
             pattern_type="sequential",
             name="Test",
-            description="Test pattern"
+            description="Test pattern",
         )
 
         library.contribute_pattern("agent1", pattern)
@@ -109,7 +110,7 @@ class TestPatternLibrary:
             pattern_type="sequential",
             name="High confidence",
             description="Test",
-            confidence=0.9
+            confidence=0.9,
         )
         library.contribute_pattern("agent1", pattern1)
 
@@ -120,16 +121,12 @@ class TestPatternLibrary:
             pattern_type="sequential",
             name="Low confidence",
             description="Test",
-            confidence=0.3
+            confidence=0.3,
         )
         library.contribute_pattern("agent2", pattern2)
 
         # Query with high confidence threshold
-        matches = library.query_patterns(
-            "agent3",
-            context={"test": True},
-            min_confidence=0.7
-        )
+        matches = library.query_patterns("agent3", context={"test": True}, min_confidence=0.7)
 
         # Should only get high confidence pattern
         assert len(matches) <= 1
@@ -146,7 +143,7 @@ class TestPatternLibrary:
             pattern_type="sequential",
             name="Sequential pattern",
             description="Test",
-            confidence=0.8
+            confidence=0.8,
         )
         library.contribute_pattern("agent1", pattern1)
 
@@ -156,15 +153,13 @@ class TestPatternLibrary:
             pattern_type="temporal",
             name="Temporal pattern",
             description="Test",
-            confidence=0.8
+            confidence=0.8,
         )
         library.contribute_pattern("agent1", pattern2)
 
         # Query for sequential only
         matches = library.query_patterns(
-            "agent2",
-            context={"test": True},
-            pattern_type="sequential"
+            "agent2", context={"test": True}, pattern_type="sequential"
         )
 
         assert all(m.pattern.pattern_type == "sequential" for m in matches)
@@ -177,7 +172,7 @@ class TestPatternLibrary:
             agent_id="agent1",
             pattern_type="sequential",
             name="Test",
-            description="Test"
+            description="Test",
         )
         library.contribute_pattern("agent1", pattern)
 
@@ -191,8 +186,20 @@ class TestPatternLibrary:
         """Test linking related patterns"""
         library = PatternLibrary()
 
-        pattern1 = Pattern(id="pat_001", agent_id="agent1", pattern_type="sequential", name="P1", description="Test")
-        pattern2 = Pattern(id="pat_002", agent_id="agent1", pattern_type="sequential", name="P2", description="Test")
+        pattern1 = Pattern(
+            id="pat_001",
+            agent_id="agent1",
+            pattern_type="sequential",
+            name="P1",
+            description="Test",
+        )
+        pattern2 = Pattern(
+            id="pat_002",
+            agent_id="agent1",
+            pattern_type="sequential",
+            name="P2",
+            description="Test",
+        )
 
         library.contribute_pattern("agent1", pattern1)
         library.contribute_pattern("agent1", pattern2)
@@ -207,9 +214,27 @@ class TestPatternLibrary:
         """Test getting patterns by agent"""
         library = PatternLibrary()
 
-        pattern1 = Pattern(id="pat_001", agent_id="agent1", pattern_type="sequential", name="P1", description="Test")
-        pattern2 = Pattern(id="pat_002", agent_id="agent1", pattern_type="sequential", name="P2", description="Test")
-        pattern3 = Pattern(id="pat_003", agent_id="agent2", pattern_type="sequential", name="P3", description="Test")
+        pattern1 = Pattern(
+            id="pat_001",
+            agent_id="agent1",
+            pattern_type="sequential",
+            name="P1",
+            description="Test",
+        )
+        pattern2 = Pattern(
+            id="pat_002",
+            agent_id="agent1",
+            pattern_type="sequential",
+            name="P2",
+            description="Test",
+        )
+        pattern3 = Pattern(
+            id="pat_003",
+            agent_id="agent2",
+            pattern_type="sequential",
+            name="P3",
+            description="Test",
+        )
 
         library.contribute_pattern("agent1", pattern1)
         library.contribute_pattern("agent1", pattern2)
@@ -231,7 +256,7 @@ class TestPatternLibrary:
                 pattern_type="sequential",
                 name=f"Pattern {i}",
                 description="Test",
-                confidence=0.5 + (i * 0.1)
+                confidence=0.5 + (i * 0.1),
             )
             library.contribute_pattern("agent1", pattern)
 
@@ -254,7 +279,7 @@ class TestPatternLibrary:
                 pattern_type="sequential",
                 name=f"Pattern {i}",
                 description="Test",
-                confidence=0.8
+                confidence=0.8,
             )
             library.contribute_pattern(f"agent_{i % 2}", pattern)
 
@@ -290,8 +315,20 @@ class TestPatternLibrary:
         """Test getting related patterns with depth 0"""
         library = PatternLibrary()
 
-        pattern1 = Pattern(id="pat_001", agent_id="agent1", pattern_type="sequential", name="P1", description="Test")
-        pattern2 = Pattern(id="pat_002", agent_id="agent1", pattern_type="sequential", name="P2", description="Test")
+        pattern1 = Pattern(
+            id="pat_001",
+            agent_id="agent1",
+            pattern_type="sequential",
+            name="P1",
+            description="Test",
+        )
+        pattern2 = Pattern(
+            id="pat_002",
+            agent_id="agent1",
+            pattern_type="sequential",
+            name="P2",
+            description="Test",
+        )
 
         library.contribute_pattern("agent1", pattern1)
         library.contribute_pattern("agent1", pattern2)
@@ -311,9 +348,27 @@ class TestPatternLibrary:
         library = PatternLibrary()
 
         # Create chain: pat_001 -> pat_002 -> pat_003
-        pattern1 = Pattern(id="pat_001", agent_id="agent1", pattern_type="sequential", name="P1", description="Test")
-        pattern2 = Pattern(id="pat_002", agent_id="agent1", pattern_type="sequential", name="P2", description="Test")
-        pattern3 = Pattern(id="pat_003", agent_id="agent1", pattern_type="sequential", name="P3", description="Test")
+        pattern1 = Pattern(
+            id="pat_001",
+            agent_id="agent1",
+            pattern_type="sequential",
+            name="P1",
+            description="Test",
+        )
+        pattern2 = Pattern(
+            id="pat_002",
+            agent_id="agent1",
+            pattern_type="sequential",
+            name="P2",
+            description="Test",
+        )
+        pattern3 = Pattern(
+            id="pat_003",
+            agent_id="agent1",
+            pattern_type="sequential",
+            name="P3",
+            description="Test",
+        )
 
         library.contribute_pattern("agent1", pattern1)
         library.contribute_pattern("agent1", pattern2)
@@ -342,7 +397,7 @@ class TestPatternLibrary:
                 pattern_type="sequential",
                 name=f"Pattern {i}",
                 description="Test",
-                confidence=0.8
+                confidence=0.8,
             )
             library.contribute_pattern("agent1", pattern)
 
@@ -359,13 +414,25 @@ class TestPatternLibrary:
         library = PatternLibrary()
 
         # Pattern with 100% success
-        pattern1 = Pattern(id="pat_001", agent_id="agent1", pattern_type="sequential", name="P1", description="Test")
+        pattern1 = Pattern(
+            id="pat_001",
+            agent_id="agent1",
+            pattern_type="sequential",
+            name="P1",
+            description="Test",
+        )
         library.contribute_pattern("agent1", pattern1)
         library.record_pattern_outcome("pat_001", success=True)
         library.record_pattern_outcome("pat_001", success=True)
 
         # Pattern with 50% success
-        pattern2 = Pattern(id="pat_002", agent_id="agent1", pattern_type="sequential", name="P2", description="Test")
+        pattern2 = Pattern(
+            id="pat_002",
+            agent_id="agent1",
+            pattern_type="sequential",
+            name="P2",
+            description="Test",
+        )
         library.contribute_pattern("agent1", pattern2)
         library.record_pattern_outcome("pat_002", success=True)
         library.record_pattern_outcome("pat_002", success=False)
@@ -387,14 +454,13 @@ class TestPatternLibrary:
             description="Very specific pattern",
             confidence=0.9,
             context={"domain": "healthcare", "specific_feature": "very_specific"},
-            tags=["healthcare", "specific"]
+            tags=["healthcare", "specific"],
         )
         library.contribute_pattern("agent1", pattern)
 
         # Query with completely different context
         matches = library.query_patterns(
-            "agent2",
-            context={"domain": "education", "different": "context"}
+            "agent2", context={"domain": "education", "different": "context"}
         )
 
         # Should have low or no matches due to relevance threshold
@@ -412,7 +478,7 @@ class TestPatternLibrary:
             name="Test pattern",
             description="Test",
             confidence=0.8,
-            tags=["python", "testing"]
+            tags=["python", "testing"],
         )
         library.contribute_pattern("agent1", pattern1)
 
@@ -423,14 +489,13 @@ class TestPatternLibrary:
             name="Different pattern",
             description="Test",
             confidence=0.8,
-            tags=["javascript", "frontend"]
+            tags=["javascript", "frontend"],
         )
         library.contribute_pattern("agent1", pattern2)
 
         # Query all patterns (relevance scoring is internal)
         matches = library.query_patterns(
-            "agent2",
-            context={"language": "python", "task": "testing"}
+            "agent2", context={"language": "python", "task": "testing"}
         )
 
         # Patterns should be returned (relevance calculation is internal to implementation)
@@ -442,8 +507,20 @@ class TestPatternLibrary:
         library = PatternLibrary()
 
         # Add patterns and record usage
-        pattern1 = Pattern(id="pat_001", agent_id="agent1", pattern_type="sequential", name="P1", description="Test")
-        pattern2 = Pattern(id="pat_002", agent_id="agent1", pattern_type="sequential", name="P2", description="Test")
+        pattern1 = Pattern(
+            id="pat_001",
+            agent_id="agent1",
+            pattern_type="sequential",
+            name="P1",
+            description="Test",
+        )
+        pattern2 = Pattern(
+            id="pat_002",
+            agent_id="agent1",
+            pattern_type="sequential",
+            name="P2",
+            description="Test",
+        )
 
         library.contribute_pattern("agent1", pattern1)
         library.contribute_pattern("agent1", pattern2)
@@ -468,7 +545,7 @@ class TestPatternLibrary:
             pattern_type="sequential",
             name="Code pattern",
             description="Test",
-            code="def test():\n    return True"
+            code="def test():\n    return True",
         )
 
         assert pattern.code is not None
@@ -486,7 +563,7 @@ class TestPatternLibrary:
                 pattern_type="sequential",
                 name=f"Pattern {i}",
                 description="Test",
-                confidence=0.8
+                confidence=0.8,
             )
             library.contribute_pattern("agent1", pattern)
 
@@ -500,7 +577,13 @@ class TestPatternLibrary:
         """Test getting patterns for agent with no contributions"""
         library = PatternLibrary()
 
-        pattern = Pattern(id="pat_001", agent_id="agent1", pattern_type="sequential", name="P1", description="Test")
+        pattern = Pattern(
+            id="pat_001",
+            agent_id="agent1",
+            pattern_type="sequential",
+            name="P1",
+            description="Test",
+        )
         library.contribute_pattern("agent1", pattern)
 
         # Query for different agent
@@ -514,7 +597,7 @@ class TestPatternLibrary:
             agent_id="agent1",
             pattern_type="sequential",
             name="Test",
-            description="Test"
+            description="Test",
         )
 
         assert pattern.last_used is None
@@ -535,14 +618,14 @@ class TestPatternLibrary:
             name="Test pattern",
             description="Test",
             confidence=0.8,
-            context={"domain": "healthcare", "feature": "patient_care"}
+            context={"domain": "healthcare", "feature": "patient_care"},
         )
         library.contribute_pattern("agent1", pattern)
 
         # Query with matching context
         matches = library.query_patterns(
             "agent2",
-            context={"domain": "healthcare", "feature": "patient_care", "extra": "ignored"}
+            context={"domain": "healthcare", "feature": "patient_care", "extra": "ignored"},
         )
 
         # Should find pattern with matching context
@@ -562,14 +645,13 @@ class TestPatternLibrary:
             name="Test",
             description="Test",
             confidence=0.8,
-            context={"domain": "healthcare"}
+            context={"domain": "healthcare"},
         )
         library.contribute_pattern("agent1", pattern)
 
         # Query with completely different context
         matches = library.query_patterns(
-            "agent2",
-            context={"domain": "finance", "unrelated": "data"}
+            "agent2", context={"domain": "finance", "unrelated": "data"}
         )
 
         # Should filter out due to low relevance
@@ -587,7 +669,7 @@ class TestPatternLibrary:
             name="Test",
             description="Test",
             confidence=0.8,
-            tags=["python", "testing", "automation"]
+            tags=["python", "testing", "automation"],
         )
         library.contribute_pattern("agent1", pattern)
 
@@ -596,10 +678,7 @@ class TestPatternLibrary:
             library.record_pattern_outcome("pat_001", success=True)
 
         # Query with matching tags
-        matches = library.query_patterns(
-            "agent2",
-            context={"tags": ["python", "testing"]}
-        )
+        matches = library.query_patterns("agent2", context={"tags": ["python", "testing"]})
 
         # Should find pattern with tag relevance + success rate boost
         assert len(matches) > 0
@@ -620,7 +699,7 @@ class TestPatternLibrary:
             name="Test",
             description="Test",
             confidence=0.8,
-            context={"task": "test"}
+            context={"task": "test"},
         )
         library.contribute_pattern("agent1", pattern)
 
@@ -629,10 +708,7 @@ class TestPatternLibrary:
             library.record_pattern_outcome("pat_001", success=True)
 
         # Query
-        matches = library.query_patterns(
-            "agent2",
-            context={"task": "test"}
-        )
+        matches = library.query_patterns("agent2", context={"task": "test"})
 
         # High success rate should boost relevance
         assert len(matches) > 0
@@ -641,8 +717,9 @@ class TestPatternLibrary:
             pattern_match = matches[0]
             assert pattern_match.pattern.success_rate > 0.7
             # Should mention high success rate in matching factors
-            assert any("success rate" in str(factor).lower()
-                      for factor in pattern_match.matching_factors)
+            assert any(
+                "success rate" in str(factor).lower() for factor in pattern_match.matching_factors
+            )
 
     def test_relevance_mixed_factors(self):
         """Test relevance with multiple matching factors"""
@@ -656,7 +733,7 @@ class TestPatternLibrary:
             description="Test",
             confidence=0.8,
             context={"domain": "testing", "language": "python"},
-            tags=["automation", "pytest"]
+            tags=["automation", "pytest"],
         )
         library.contribute_pattern("agent1", pattern)
 
@@ -668,12 +745,7 @@ class TestPatternLibrary:
 
         # Query with context that matches multiple factors
         matches = library.query_patterns(
-            "agent2",
-            context={
-                "domain": "testing",
-                "language": "python",
-                "tags": ["automation"]
-            }
+            "agent2", context={"domain": "testing", "language": "python", "tags": ["automation"]}
         )
 
         # Should have high relevance from multiple factors
@@ -695,7 +767,7 @@ class TestPatternLibrary:
             pattern_type="sequential",
             name="Test",
             description="Test",
-            confidence=0.8
+            confidence=0.8,
         )
         library.contribute_pattern("agent1", pattern)
 
@@ -716,14 +788,13 @@ class TestPatternLibrary:
             name="Test",
             description="Test",
             confidence=0.8,
-            context={"domain": "healthcare", "feature": "patient", "priority": "high"}
+            context={"domain": "healthcare", "feature": "patient", "priority": "high"},
         )
         library.contribute_pattern("agent1", pattern)
 
         # Query matching only some context keys
         matches = library.query_patterns(
-            "agent2",
-            context={"domain": "healthcare", "feature": "doctor", "priority": "high"}
+            "agent2", context={"domain": "healthcare", "feature": "doctor", "priority": "high"}
         )
 
         # Should calculate relevance based on partial matches
@@ -741,7 +812,7 @@ class TestPatternLibrary:
                 agent_id="agent1",
                 pattern_type="sequential",
                 name=f"Sequential {i}",
-                description="Test"
+                description="Test",
             )
             library.contribute_pattern("agent1", pattern)
 
@@ -751,7 +822,7 @@ class TestPatternLibrary:
                 agent_id="agent1",
                 pattern_type="temporal",
                 name=f"Temporal {i}",
-                description="Test"
+                description="Test",
             )
             library.contribute_pattern("agent1", pattern)
 
@@ -765,8 +836,20 @@ class TestPatternLibrary:
         library = PatternLibrary()
 
         # Add patterns
-        pattern1 = Pattern(id="pat_001", agent_id="agent1", pattern_type="sequential", name="P1", description="Test")
-        pattern2 = Pattern(id="pat_002", agent_id="agent1", pattern_type="sequential", name="P2", description="Test")
+        pattern1 = Pattern(
+            id="pat_001",
+            agent_id="agent1",
+            pattern_type="sequential",
+            name="P1",
+            description="Test",
+        )
+        pattern2 = Pattern(
+            id="pat_002",
+            agent_id="agent1",
+            pattern_type="sequential",
+            name="P2",
+            description="Test",
+        )
         library.contribute_pattern("agent1", pattern1)
         library.contribute_pattern("agent1", pattern2)
         library.link_patterns("pat_001", "pat_002")
@@ -795,7 +878,7 @@ class TestPatternLibrary:
             description="Test",
             confidence=0.9,
             context={"a": "1", "b": "2", "c": "3", "d": "4"},
-            tags=["tag1", "tag2", "tag3"]
+            tags=["tag1", "tag2", "tag3"],
         )
         library.contribute_pattern("agent1", pattern)
 
@@ -806,7 +889,7 @@ class TestPatternLibrary:
         # Query with all matching factors
         matches = library.query_patterns(
             "agent2",
-            context={"a": "1", "b": "2", "c": "3", "d": "4", "tags": ["tag1", "tag2", "tag3"]}
+            context={"a": "1", "b": "2", "c": "3", "d": "4", "tags": ["tag1", "tag2", "tag3"]},
         )
 
         # Relevance should be clamped to 1.0

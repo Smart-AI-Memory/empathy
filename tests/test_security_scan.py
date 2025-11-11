@@ -41,7 +41,7 @@ class TestSecurityScanning:
         )
 
         # Read results
-        with open("security_scan_results.json", "r") as f:
+        with open("security_scan_results.json") as f:
             scan_data = json.load(f)
 
         issues = scan_data.get("results", [])

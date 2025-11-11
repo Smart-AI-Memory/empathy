@@ -6,11 +6,11 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import pytest
-import asyncio
-import tempfile
 import os
+import tempfile
 from pathlib import Path
+
+import pytest
 
 from ..server import CoachLanguageServer
 
@@ -28,7 +28,7 @@ class TestEndToEnd:
     @pytest.fixture
     def test_file_python(self):
         """Create a temporary Python test file"""
-        content = '''
+        content = """
 def get_user(user_id):
     # SQL injection vulnerability
     query = f"SELECT * FROM users WHERE id={user_id}"
@@ -42,12 +42,8 @@ def slow_function():
         # This causes N queries!
         user.orders = get_orders_for_user(user.id)
     return users
-'''
-        with tempfile.NamedTemporaryFile(
-            mode='w',
-            suffix='.py',
-            delete=False
-        ) as f:
+"""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(content)
             temp_path = f.name
 
@@ -68,7 +64,7 @@ def slow_function():
                 uri=f"file://{test_file_python}",
                 language_id="python",
                 version=1,
-                text=Path(test_file_python).read_text()
+                text=Path(test_file_python).read_text(),
             )
         )
 
@@ -83,9 +79,9 @@ def slow_function():
                 {
                     "role": "developer",
                     "task": "Check for security vulnerabilities",
-                    "context": f"file://{test_file_python}"
-                }
-            ]
+                    "context": f"file://{test_file_python}",
+                },
+            ],
         )
 
         # Verify SecurityWizard found the SQL injection
@@ -107,9 +103,9 @@ def slow_function():
                 {
                     "role": "developer",
                     "task": "Analyze performance issues",
-                    "context": f"file://{test_file_python}"
-                }
-            ]
+                    "context": f"file://{test_file_python}",
+                },
+            ],
         )
 
         # Verify PerformanceWizard ran
@@ -121,11 +117,7 @@ def slow_function():
         """Test: Multi-wizard review of API endpoint"""
 
         result = await server.command_handlers["coach/multiWizardReview"](
-            server,
-            [
-                "new_api_endpoint",
-                [f"file://{test_file_python}"]
-            ]
+            server, ["new_api_endpoint", [f"file://{test_file_python}"]]
         )
 
         # Should activate multiple wizards
@@ -138,9 +130,7 @@ def slow_function():
         """Test: Hover over code → Level 4 prediction"""
 
         # Simulate hover over connection pool code
-        prediction = await server._get_prediction(
-            "pool_size=10 connection pooling database"
-        )
+        prediction = await server._get_prediction("pool_size=10 connection pooling database")
 
         # Should return Level 4 prediction
         assert prediction is not None
@@ -157,12 +147,8 @@ def slow_function():
             server,
             [
                 "PerformanceWizard",
-                {
-                    "role": "developer",
-                    "task": "Test caching",
-                    "context": "Same context"
-                }
-            ]
+                {"role": "developer", "task": "Test caching", "context": "Same context"},
+            ],
         )
         duration1 = time.time() - start1
 
@@ -172,12 +158,8 @@ def slow_function():
             server,
             [
                 "PerformanceWizard",
-                {
-                    "role": "developer",
-                    "task": "Test caching",
-                    "context": "Same context"
-                }
-            ]
+                {"role": "developer", "task": "Test caching", "context": "Same context"},
+            ],
         )
         duration2 = time.time() - start2
 
@@ -193,11 +175,7 @@ def slow_function():
         # Try to run non-existent wizard
         try:
             result = await server.command_handlers["coach/runWizard"](
-                server,
-                [
-                    "NonExistentWizard",
-                    {"role": "developer", "task": "Test"}
-                ]
+                server, ["NonExistentWizard", {"role": "developer", "task": "Test"}]
             )
             # Should return error, not crash
             assert "error" in str(result).lower() or result is None
@@ -250,9 +228,9 @@ class TestRealWorldScenarios:
                 {
                     "role": "new_developer",
                     "task": "Create onboarding plan for Python backend developer",
-                    "context": "Team uses Django, PostgreSQL, Redis, deployed on AWS"
-                }
-            ]
+                    "context": "Team uses Django, PostgreSQL, Redis, deployed on AWS",
+                },
+            ],
         )
 
         assert "OnboardingWizard" in result["routing"]
@@ -270,9 +248,9 @@ class TestRealWorldScenarios:
                     "role": "developer",
                     "task": "Debug 500 errors in payment API",
                     "context": "Users report payment failures, logs show database timeout",
-                    "risk_tolerance": "low"  # Production!
-                }
-            ]
+                    "risk_tolerance": "low",  # Production!
+                },
+            ],
         )
 
         assert "DebuggingWizard" in result["routing"]
@@ -289,9 +267,9 @@ class TestRealWorldScenarios:
                 {
                     "role": "tech_lead",
                     "task": "Create scaling plan for 10x traffic increase",
-                    "context": "Current: 10K req/day, Target: 100K req/day in 3 months"
-                }
-            ]
+                    "context": "Current: 10K req/day, Target: 100K req/day in 3 months",
+                },
+            ],
         )
 
         # PerformanceWizard should provide Level 4 predictions
@@ -333,8 +311,8 @@ class TestPerformance:
             server,
             [
                 "PerformanceWizard",
-                {"role": "developer", "task": "Quick analysis", "context": "Small file"}
-            ]
+                {"role": "developer", "task": "Quick analysis", "context": "Small file"},
+            ],
         )
         duration = time.time() - start
 
@@ -347,15 +325,13 @@ class TestPerformance:
 
         # Prime cache
         await server.command_handlers["coach/runWizard"](
-            server,
-            ["PerformanceWizard", {"role": "developer", "task": "Cache test"}]
+            server, ["PerformanceWizard", {"role": "developer", "task": "Cache test"}]
         )
 
         # Measure cache hit
         start = time.time()
         result = await server.command_handlers["coach/runWizard"](
-            server,
-            ["PerformanceWizard", {"role": "developer", "task": "Cache test"}]
+            server, ["PerformanceWizard", {"role": "developer", "task": "Cache test"}]
         )
         duration = time.time() - start
 

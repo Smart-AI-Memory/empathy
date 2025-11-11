@@ -6,9 +6,9 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import time
-from typing import Dict, Any, Optional
 import logging
+import time
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -24,10 +24,10 @@ class ResultCache:
             ttl: Time-to-live in seconds (default 5 minutes)
         """
         self.ttl = ttl
-        self._cache: Dict[str, Dict[str, Any]] = {}
+        self._cache: dict[str, dict[str, Any]] = {}
         logger.info(f"ResultCache initialized with TTL={ttl}s")
 
-    def get(self, key: str) -> Optional[Any]:
+    def get(self, key: str) -> Any | None:
         """Get value from cache"""
         if key in self._cache:
             entry = self._cache[key]
@@ -42,10 +42,7 @@ class ResultCache:
 
     def set(self, key: str, value: Any):
         """Set value in cache"""
-        self._cache[key] = {
-            "value": value,
-            "timestamp": time.time()
-        }
+        self._cache[key] = {"value": value, "timestamp": time.time()}
         logger.debug(f"Cache set: {key}")
 
     def clear(self):
@@ -66,21 +63,19 @@ class ResultCache:
         """Remove expired entries"""
         now = time.time()
         expired_keys = [
-            key for key, entry in self._cache.items()
-            if now - entry["timestamp"] >= self.ttl
+            key for key, entry in self._cache.items() if now - entry["timestamp"] >= self.ttl
         ]
         for key in expired_keys:
             del self._cache[key]
         if expired_keys:
             logger.debug(f"Cleaned up {len(expired_keys)} expired cache entries")
 
-    def stats(self) -> Dict[str, Any]:
+    def stats(self) -> dict[str, Any]:
         """Get cache statistics"""
         return {
             "total_entries": len(self._cache),
             "ttl": self.ttl,
             "oldest_entry_age": min(
-                (time.time() - entry["timestamp"] for entry in self._cache.values()),
-                default=0
-            )
+                (time.time() - entry["timestamp"] for entry in self._cache.values()), default=0
+            ),
         }

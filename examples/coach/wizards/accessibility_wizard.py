@@ -9,17 +9,16 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import re
-from typing import List, Dict, Any
+from typing import Any
 
 from .base_wizard import (
     BaseWizard,
-    WizardTask,
-    WizardOutput,
-    WizardArtifact,
-    WizardRisk,
-    WizardHandoff,
     EmpathyChecks,
+    WizardArtifact,
+    WizardHandoff,
+    WizardOutput,
+    WizardRisk,
+    WizardTask,
 )
 
 
@@ -36,15 +35,23 @@ class AccessibilityWizard(BaseWizard):
     def can_handle(self, task: WizardTask) -> float:
         """Determine if this is an accessibility task"""
         # High-priority accessibility phrases (worth 2 points each)
-        accessibility_phrases = [
-            "accessibility", "a11y", "wcag", "screen reader", "aria"
-        ]
+        accessibility_phrases = ["accessibility", "a11y", "wcag", "screen reader", "aria"]
 
         # Secondary indicators (worth 1 point each)
         secondary_keywords = [
-            "contrast", "keyboard", "focus", "alt text", "semantic html",
-            "inclusive", "disability", "section 508", "ada compliance",
-            "voiceover", "nvda", "jaws", "color blind"
+            "contrast",
+            "keyboard",
+            "focus",
+            "alt text",
+            "semantic html",
+            "inclusive",
+            "disability",
+            "section 508",
+            "ada compliance",
+            "voiceover",
+            "nvda",
+            "jaws",
+            "color blind",
         ]
 
         task_lower = (task.task + " " + task.context).lower()
@@ -97,33 +104,23 @@ class AccessibilityWizard(BaseWizard):
             WizardArtifact(
                 type="doc",
                 title="WCAG Audit Report",
-                content=self._generate_audit_report(diagnosis, audit_results)
+                content=self._generate_audit_report(diagnosis, audit_results),
             ),
             WizardArtifact(
-                type="code",
-                title="Remediation Code Examples",
-                content=remediation_code
+                type="code", title="Remediation Code Examples", content=remediation_code
             ),
+            WizardArtifact(type="code", title="Keyboard Navigation Tests", content=keyboard_tests),
             WizardArtifact(
-                type="code",
-                title="Keyboard Navigation Tests",
-                content=keyboard_tests
-            ),
-            WizardArtifact(
-                type="code",
-                title="ARIA Labels Implementation",
-                content=aria_implementation
+                type="code", title="ARIA Labels Implementation", content=aria_implementation
             ),
             WizardArtifact(
                 type="checklist",
                 title="Accessibility Testing Checklist",
-                content=self._create_testing_checklist(task)
+                content=self._create_testing_checklist(task),
             ),
             WizardArtifact(
-                type="doc",
-                title="Accessibility Forecast",
-                content=accessibility_forecast
-            )
+                type="doc", title="Accessibility Forecast", content=accessibility_forecast
+            ),
         ]
 
         # Step 12: Generate next actions
@@ -131,9 +128,13 @@ class AccessibilityWizard(BaseWizard):
 
         # Step 13: Create empathy checks
         empathy_checks = EmpathyChecks(
-            cognitive=f"Considered users with disabilities: vision, motor, cognitive, hearing impairments",
-            emotional=f"Acknowledged: Accessibility is about human dignity and equal access",
-            anticipatory=accessibility_forecast[:200] + "..." if len(accessibility_forecast) > 200 else accessibility_forecast
+            cognitive="Considered users with disabilities: vision, motor, cognitive, hearing impairments",
+            emotional="Acknowledged: Accessibility is about human dignity and equal access",
+            anticipatory=(
+                accessibility_forecast[:200] + "..."
+                if len(accessibility_forecast) > 200
+                else accessibility_forecast
+            ),
         )
 
         return WizardOutput(
@@ -145,7 +146,7 @@ class AccessibilityWizard(BaseWizard):
             handoffs=self._create_handoffs(task),
             next_actions=next_actions,
             empathy_checks=empathy_checks,
-            confidence=self.can_handle(task)
+            confidence=self.can_handle(task),
         )
 
     def _analyze_accessibility_requirements(self, task: WizardTask) -> str:
@@ -173,112 +174,130 @@ class AccessibilityWizard(BaseWizard):
 
         analysis += f"**Category**: {', '.join(categories)}\n\n"
         analysis += "**Target Compliance Level**: WCAG 2.1 Level AA (minimum legal requirement)\n"
-        analysis += f"**Context**: {task.context[:300]}...\n" if len(task.context) > 300 else f"**Context**: {task.context}\n"
+        analysis += (
+            f"**Context**: {task.context[:300]}...\n"
+            if len(task.context) > 300
+            else f"**Context**: {task.context}\n"
+        )
 
         return analysis
 
-    def _audit_accessibility(self, task: WizardTask) -> List[Dict[str, Any]]:
+    def _audit_accessibility(self, task: WizardTask) -> list[dict[str, Any]]:
         """Audit for accessibility issues (Level 3: Proactive)"""
         issues = []
 
         task_lower = (task.task + " " + task.context).lower()
 
         # WCAG 2.1 Level A issues
-        issues.append({
-            "criterion": "1.1.1 Non-text Content",
-            "level": "A",
-            "severity": "critical",
-            "issue": "Images missing alt text",
-            "impact": "Screen reader users cannot understand image content",
-            "remediation": [
-                "Add descriptive alt text to all images",
-                "Use alt=\"\" for decorative images",
-                "Provide text alternatives for complex graphics"
-            ]
-        })
+        issues.append(
+            {
+                "criterion": "1.1.1 Non-text Content",
+                "level": "A",
+                "severity": "critical",
+                "issue": "Images missing alt text",
+                "impact": "Screen reader users cannot understand image content",
+                "remediation": [
+                    "Add descriptive alt text to all images",
+                    'Use alt="" for decorative images',
+                    "Provide text alternatives for complex graphics",
+                ],
+            }
+        )
 
-        issues.append({
-            "criterion": "1.3.1 Info and Relationships",
-            "level": "A",
-            "severity": "high",
-            "issue": "Improper heading structure (skipped levels)",
-            "impact": "Screen reader users cannot navigate by headings",
-            "remediation": [
-                "Use semantic HTML: <h1>, <h2>, <h3> in order",
-                "Don't skip heading levels (h1 → h3)",
-                "One <h1> per page for main heading"
-            ]
-        })
+        issues.append(
+            {
+                "criterion": "1.3.1 Info and Relationships",
+                "level": "A",
+                "severity": "high",
+                "issue": "Improper heading structure (skipped levels)",
+                "impact": "Screen reader users cannot navigate by headings",
+                "remediation": [
+                    "Use semantic HTML: <h1>, <h2>, <h3> in order",
+                    "Don't skip heading levels (h1 → h3)",
+                    "One <h1> per page for main heading",
+                ],
+            }
+        )
 
         # WCAG 2.1 Level AA issues
-        issues.append({
-            "criterion": "1.4.3 Contrast (Minimum)",
-            "level": "AA",
-            "severity": "high",
-            "issue": "Insufficient color contrast (text on background)",
-            "impact": "Low vision users cannot read text",
-            "remediation": [
-                "Ensure 4.5:1 contrast for normal text",
-                "Ensure 3:1 contrast for large text (18pt+)",
-                "Use color contrast checker tool"
-            ]
-        })
+        issues.append(
+            {
+                "criterion": "1.4.3 Contrast (Minimum)",
+                "level": "AA",
+                "severity": "high",
+                "issue": "Insufficient color contrast (text on background)",
+                "impact": "Low vision users cannot read text",
+                "remediation": [
+                    "Ensure 4.5:1 contrast for normal text",
+                    "Ensure 3:1 contrast for large text (18pt+)",
+                    "Use color contrast checker tool",
+                ],
+            }
+        )
 
-        issues.append({
-            "criterion": "2.1.1 Keyboard",
-            "level": "A",
-            "severity": "critical",
-            "issue": "Interactive elements not keyboard accessible",
-            "impact": "Keyboard-only users cannot interact with UI",
-            "remediation": [
-                "Ensure all interactive elements have keyboard focus",
-                "Use semantic HTML (button, a, input)",
-                "Add tabindex=\"0\" if custom interactive elements needed"
-            ]
-        })
+        issues.append(
+            {
+                "criterion": "2.1.1 Keyboard",
+                "level": "A",
+                "severity": "critical",
+                "issue": "Interactive elements not keyboard accessible",
+                "impact": "Keyboard-only users cannot interact with UI",
+                "remediation": [
+                    "Ensure all interactive elements have keyboard focus",
+                    "Use semantic HTML (button, a, input)",
+                    'Add tabindex="0" if custom interactive elements needed',
+                ],
+            }
+        )
 
-        issues.append({
-            "criterion": "2.4.3 Focus Order",
-            "level": "A",
-            "severity": "medium",
-            "issue": "Tab order doesn't follow visual order",
-            "impact": "Keyboard users get disoriented",
-            "remediation": [
-                "Ensure DOM order matches visual order",
-                "Avoid positive tabindex values",
-                "Test tab navigation flow"
-            ]
-        })
+        issues.append(
+            {
+                "criterion": "2.4.3 Focus Order",
+                "level": "A",
+                "severity": "medium",
+                "issue": "Tab order doesn't follow visual order",
+                "impact": "Keyboard users get disoriented",
+                "remediation": [
+                    "Ensure DOM order matches visual order",
+                    "Avoid positive tabindex values",
+                    "Test tab navigation flow",
+                ],
+            }
+        )
 
-        issues.append({
-            "criterion": "2.4.7 Focus Visible",
-            "level": "AA",
-            "severity": "high",
-            "issue": "Focus indicator not visible or removed",
-            "impact": "Keyboard users can't see where they are",
-            "remediation": [
-                "Don't remove outline: none on :focus",
-                "Provide visible focus indicator (border, shadow)",
-                "Ensure 3:1 contrast for focus indicator"
-            ]
-        })
+        issues.append(
+            {
+                "criterion": "2.4.7 Focus Visible",
+                "level": "AA",
+                "severity": "high",
+                "issue": "Focus indicator not visible or removed",
+                "impact": "Keyboard users can't see where they are",
+                "remediation": [
+                    "Don't remove outline: none on :focus",
+                    "Provide visible focus indicator (border, shadow)",
+                    "Ensure 3:1 contrast for focus indicator",
+                ],
+            }
+        )
 
-        issues.append({
-            "criterion": "4.1.2 Name, Role, Value",
-            "level": "A",
-            "severity": "critical",
-            "issue": "Custom widgets missing ARIA labels/roles",
-            "impact": "Screen readers can't identify or operate controls",
-            "remediation": [
-                "Add ARIA roles: role=\"button\", role=\"dialog\"",
-                "Add ARIA labels: aria-label=\"Close\"",
-                "Add ARIA states: aria-expanded, aria-selected"
-            ]
-        })
+        issues.append(
+            {
+                "criterion": "4.1.2 Name, Role, Value",
+                "level": "A",
+                "severity": "critical",
+                "issue": "Custom widgets missing ARIA labels/roles",
+                "impact": "Screen readers can't identify or operate controls",
+                "remediation": [
+                    'Add ARIA roles: role="button", role="dialog"',
+                    'Add ARIA labels: aria-label="Close"',
+                    "Add ARIA states: aria-expanded, aria-selected",
+                ],
+            }
+        )
 
         return issues
 
-    def _create_remediation_plan(self, task: WizardTask, audit_results: List[Dict]) -> List[str]:
+    def _create_remediation_plan(self, task: WizardTask, audit_results: list[dict]) -> list[str]:
         """Create step-by-step remediation plan"""
         plan = ["## Accessibility Remediation Plan (Priority Ordered)\n"]
 
@@ -287,11 +306,13 @@ class AccessibilityWizard(BaseWizard):
         sorted_issues = sorted(audit_results, key=lambda i: severity_order.get(i["severity"], 3))
 
         for i, issue in enumerate(sorted_issues, 1):
-            plan.append(f"\n### Step {i}: Fix {issue['criterion']} (WCAG {issue['level']}, {issue['severity']})")
+            plan.append(
+                f"\n### Step {i}: Fix {issue['criterion']} (WCAG {issue['level']}, {issue['severity']})"
+            )
             plan.append(f"**Issue**: {issue['issue']}")
             plan.append(f"**Impact**: {issue['impact']}")
             plan.append("\n**Remediation Steps**:")
-            for j, step in enumerate(issue['remediation'], 1):
+            for j, step in enumerate(issue["remediation"], 1):
                 plan.append(f"  {j}. {step}")
 
         plan.append(f"\n### Step {len(sorted_issues)+1}: Validation")
@@ -302,18 +323,18 @@ class AccessibilityWizard(BaseWizard):
 
         return plan
 
-    def _generate_remediation_code(self, task: WizardTask, audit_results: List[Dict]) -> str:
+    def _generate_remediation_code(self, task: WizardTask, audit_results: list[dict]) -> str:
         """Generate accessibility remediation code"""
         code = "# Accessibility Remediation Examples\n\n"
 
         code += "## 1. Add Alt Text to Images\n\n"
         code += "```html\n"
         code += "<!-- Before (Inaccessible): -->\n"
-        code += "<img src=\"logo.png\">\n\n"
+        code += '<img src="logo.png">\n\n'
         code += "<!-- After (Accessible): -->\n"
-        code += "<img src=\"logo.png\" alt=\"Company Logo - Click to go home\">\n\n"
+        code += '<img src="logo.png" alt="Company Logo - Click to go home">\n\n'
         code += "<!-- Decorative image (no alt needed): -->\n"
-        code += "<img src=\"decorative-divider.png\" alt=\"\" role=\"presentation\">\n"
+        code += '<img src="decorative-divider.png" alt="" role="presentation">\n'
         code += "```\n\n"
 
         code += "## 2. Fix Heading Structure\n\n"
@@ -345,16 +366,16 @@ class AccessibilityWizard(BaseWizard):
         code += "## 4. Enable Keyboard Navigation\n\n"
         code += "```html\n"
         code += "<!-- Before (Inaccessible - div not keyboard accessible): -->\n"
-        code += "<div onclick=\"openModal()\">Click me</div>\n\n"
+        code += '<div onclick="openModal()">Click me</div>\n\n'
         code += "<!-- After (Accessible - button is keyboard accessible): -->\n"
-        code += "<button onclick=\"openModal()\" type=\"button\">Click me</button>\n\n"
+        code += '<button onclick="openModal()" type="button">Click me</button>\n\n'
         code += "<!-- Or if you must use div: -->\n"
         code += "<div \n"
-        code += "  onclick=\"openModal()\" \n"
+        code += '  onclick="openModal()" \n'
         code += "  onkeydown=\"if(event.key === 'Enter' || event.key === ' ') openModal()\"\n"
-        code += "  tabindex=\"0\" \n"
-        code += "  role=\"button\"\n"
-        code += "  aria-label=\"Open modal\">\n"
+        code += '  tabindex="0" \n'
+        code += '  role="button"\n'
+        code += '  aria-label="Open modal">\n'
         code += "  Click me\n"
         code += "</div>\n"
         code += "```\n\n"
@@ -380,26 +401,26 @@ class AccessibilityWizard(BaseWizard):
         code += "## 6. Add ARIA Labels to Custom Widgets\n\n"
         code += "```html\n"
         code += "<!-- Before (Inaccessible - no screen reader support): -->\n"
-        code += "<div class=\"custom-dropdown\">\n"
-        code += "  <div class=\"selected\">Select option</div>\n"
-        code += "  <ul class=\"options\">\n"
+        code += '<div class="custom-dropdown">\n'
+        code += '  <div class="selected">Select option</div>\n'
+        code += '  <ul class="options">\n'
         code += "    <li>Option 1</li>\n"
         code += "    <li>Option 2</li>\n"
         code += "  </ul>\n"
         code += "</div>\n\n"
         code += "<!-- After (Accessible - ARIA support): -->\n"
-        code += "<div class=\"custom-dropdown\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\">\n"
+        code += '<div class="custom-dropdown" role="combobox" aria-expanded="false" aria-haspopup="listbox">\n'
         code += "  <div \n"
-        code += "    class=\"selected\" \n"
-        code += "    tabindex=\"0\" \n"
-        code += "    role=\"button\" \n"
-        code += "    aria-label=\"Select option\"\n"
-        code += "    aria-controls=\"options-list\">\n"
+        code += '    class="selected" \n'
+        code += '    tabindex="0" \n'
+        code += '    role="button" \n'
+        code += '    aria-label="Select option"\n'
+        code += '    aria-controls="options-list">\n'
         code += "    Select option\n"
         code += "  </div>\n"
-        code += "  <ul id=\"options-list\" class=\"options\" role=\"listbox\">\n"
-        code += "    <li role=\"option\" tabindex=\"-1\">Option 1</li>\n"
-        code += "    <li role=\"option\" tabindex=\"-1\">Option 2</li>\n"
+        code += '  <ul id="options-list" class="options" role="listbox">\n'
+        code += '    <li role="option" tabindex="-1">Option 1</li>\n'
+        code += '    <li role="option" tabindex="-1">Option 2</li>\n'
         code += "  </ul>\n"
         code += "</div>\n"
         code += "```\n\n"
@@ -407,16 +428,16 @@ class AccessibilityWizard(BaseWizard):
         code += "## 7. Form Labels and Error Messages\n\n"
         code += "```html\n"
         code += "<!-- Before (Inaccessible): -->\n"
-        code += "<input type=\"email\" placeholder=\"Email\">\n"
-        code += "<span class=\"error\">Invalid email</span>\n\n"
+        code += '<input type="email" placeholder="Email">\n'
+        code += '<span class="error">Invalid email</span>\n\n'
         code += "<!-- After (Accessible): -->\n"
-        code += "<label for=\"email-input\">Email address</label>\n"
+        code += '<label for="email-input">Email address</label>\n'
         code += "<input \n"
-        code += "  type=\"email\" \n"
-        code += "  id=\"email-input\"\n"
-        code += "  aria-describedby=\"email-error\"\n"
-        code += "  aria-invalid=\"true\">\n"
-        code += "<span id=\"email-error\" role=\"alert\" class=\"error\">\n"
+        code += '  type="email" \n'
+        code += '  id="email-input"\n'
+        code += '  aria-describedby="email-error"\n'
+        code += '  aria-invalid="true">\n'
+        code += '<span id="email-error" role="alert" class="error">\n'
         code += "  Invalid email format. Please use format: name@example.com\n"
         code += "</span>\n"
         code += "```\n"
@@ -512,7 +533,7 @@ class AccessibilityWizard(BaseWizard):
         tests += "- [ ] Escape closes modals/dropdowns\n"
         tests += "- [ ] Focus is visible at all times\n"
         tests += "- [ ] Focus doesn't get trapped (except in modals)\n"
-        tests += "- [ ] Skip links work (\"Skip to main content\")\n"
+        tests += '- [ ] Skip links work ("Skip to main content")\n'
 
         return tests
 
@@ -525,15 +546,15 @@ class AccessibilityWizard(BaseWizard):
         aria += "### 1. Button (Custom Div)\n\n"
         aria += "```html\n"
         aria += "<div \n"
-        aria += "  role=\"button\" \n"
-        aria += "  tabindex=\"0\"\n"
-        aria += "  aria-label=\"Delete item\"\n"
-        aria += "  onclick=\"deleteItem()\"\n"
+        aria += '  role="button" \n'
+        aria += '  tabindex="0"\n'
+        aria += '  aria-label="Delete item"\n'
+        aria += '  onclick="deleteItem()"\n'
         aria += "  onkeydown=\"if(event.key === 'Enter' || event.key === ' ') deleteItem()\">\n"
         aria += "  🗑️\n"
         aria += "</div>\n\n"
         aria += "<!-- Better: Use semantic HTML -->\n"
-        aria += "<button type=\"button\" aria-label=\"Delete item\" onclick=\"deleteItem()\">\n"
+        aria += '<button type="button" aria-label="Delete item" onclick="deleteItem()">\n'
         aria += "  🗑️\n"
         aria += "</button>\n"
         aria += "```\n\n"
@@ -541,13 +562,13 @@ class AccessibilityWizard(BaseWizard):
         aria += "### 2. Toggle Button (Show/Hide)\n\n"
         aria += "```html\n"
         aria += "<button \n"
-        aria += "  type=\"button\"\n"
-        aria += "  aria-expanded=\"false\" \n"
-        aria += "  aria-controls=\"details-section\"\n"
-        aria += "  onclick=\"toggleDetails()\">\n"
+        aria += '  type="button"\n'
+        aria += '  aria-expanded="false" \n'
+        aria += '  aria-controls="details-section"\n'
+        aria += '  onclick="toggleDetails()">\n'
         aria += "  Show Details\n"
         aria += "</button>\n\n"
-        aria += "<div id=\"details-section\" hidden>\n"
+        aria += '<div id="details-section" hidden>\n'
         aria += "  Details content...\n"
         aria += "</div>\n\n"
         aria += "<!-- JavaScript updates aria-expanded when toggled -->\n"
@@ -566,59 +587,59 @@ class AccessibilityWizard(BaseWizard):
         aria += "### 3. Modal Dialog\n\n"
         aria += "```html\n"
         aria += "<div \n"
-        aria += "  role=\"dialog\" \n"
-        aria += "  aria-labelledby=\"dialog-title\"\n"
-        aria += "  aria-describedby=\"dialog-description\"\n"
-        aria += "  aria-modal=\"true\">\n"
+        aria += '  role="dialog" \n'
+        aria += '  aria-labelledby="dialog-title"\n'
+        aria += '  aria-describedby="dialog-description"\n'
+        aria += '  aria-modal="true">\n'
         aria += "  \n"
-        aria += "  <h2 id=\"dialog-title\">Confirm Action</h2>\n"
-        aria += "  <p id=\"dialog-description\">Are you sure you want to delete this item?</p>\n"
+        aria += '  <h2 id="dialog-title">Confirm Action</h2>\n'
+        aria += '  <p id="dialog-description">Are you sure you want to delete this item?</p>\n'
         aria += "  \n"
-        aria += "  <button type=\"button\" onclick=\"confirm()\">Confirm</button>\n"
-        aria += "  <button type=\"button\" onclick=\"cancel()\">Cancel</button>\n"
+        aria += '  <button type="button" onclick="confirm()">Confirm</button>\n'
+        aria += '  <button type="button" onclick="cancel()">Cancel</button>\n'
         aria += "</div>\n"
         aria += "```\n\n"
 
         aria += "### 4. Live Region (Status Updates)\n\n"
         aria += "```html\n"
         aria += "<!-- Polite: Announces when screen reader is idle -->\n"
-        aria += "<div aria-live=\"polite\" aria-atomic=\"true\" role=\"status\">\n"
+        aria += '<div aria-live="polite" aria-atomic="true" role="status">\n'
         aria += "  Item added to cart\n"
         aria += "</div>\n\n"
         aria += "<!-- Assertive: Announces immediately (use sparingly) -->\n"
-        aria += "<div aria-live=\"assertive\" role=\"alert\">\n"
+        aria += '<div aria-live="assertive" role="alert">\n'
         aria += "  Error: Failed to save changes\n"
         aria += "</div>\n"
         aria += "```\n\n"
 
         aria += "### 5. Tab Navigation\n\n"
         aria += "```html\n"
-        aria += "<div role=\"tablist\" aria-label=\"Settings\">\n"
+        aria += '<div role="tablist" aria-label="Settings">\n'
         aria += "  <button \n"
-        aria += "    role=\"tab\" \n"
-        aria += "    aria-selected=\"true\" \n"
-        aria += "    aria-controls=\"panel-general\"\n"
-        aria += "    id=\"tab-general\">\n"
+        aria += '    role="tab" \n'
+        aria += '    aria-selected="true" \n'
+        aria += '    aria-controls="panel-general"\n'
+        aria += '    id="tab-general">\n'
         aria += "    General\n"
         aria += "  </button>\n"
         aria += "  <button \n"
-        aria += "    role=\"tab\" \n"
-        aria += "    aria-selected=\"false\" \n"
-        aria += "    aria-controls=\"panel-privacy\"\n"
-        aria += "    id=\"tab-privacy\">\n"
+        aria += '    role="tab" \n'
+        aria += '    aria-selected="false" \n'
+        aria += '    aria-controls="panel-privacy"\n'
+        aria += '    id="tab-privacy">\n'
         aria += "    Privacy\n"
         aria += "  </button>\n"
         aria += "</div>\n\n"
-        aria += "<div id=\"panel-general\" role=\"tabpanel\" aria-labelledby=\"tab-general\">\n"
+        aria += '<div id="panel-general" role="tabpanel" aria-labelledby="tab-general">\n'
         aria += "  General settings content...\n"
         aria += "</div>\n"
-        aria += "<div id=\"panel-privacy\" role=\"tabpanel\" aria-labelledby=\"tab-privacy\" hidden>\n"
+        aria += '<div id="panel-privacy" role="tabpanel" aria-labelledby="tab-privacy" hidden>\n'
         aria += "  Privacy settings content...\n"
         aria += "</div>\n"
         aria += "```\n\n"
 
         aria += "## ARIA Best Practices\n\n"
-        aria += "1. **Use semantic HTML first**: `<button>` over `<div role=\"button\">`\n"
+        aria += '1. **Use semantic HTML first**: `<button>` over `<div role="button">`\n'
         aria += "2. **Don't override semantics**: Don't use `role=\"button\"` on `<button>`\n"
         aria += "3. **Keep it simple**: Only add ARIA when HTML semantics insufficient\n"
         aria += "4. **Test with screen readers**: NVDA (Windows), VoiceOver (Mac/iOS)\n"
@@ -678,17 +699,17 @@ class AccessibilityWizard(BaseWizard):
         checklist += "## Content Testing\n\n"
         checklist += "- [ ] Page has `<title>`\n"
         checklist += "- [ ] Headings describe content\n"
-        checklist += "- [ ] Links have descriptive text (not \"click here\")\n"
-        checklist += "- [ ] Language specified: `<html lang=\"en\">`\n"
+        checklist += '- [ ] Links have descriptive text (not "click here")\n'
+        checklist += '- [ ] Language specified: `<html lang="en">`\n'
         checklist += "- [ ] Form errors announced to screen readers\n"
 
         return checklist
 
-    def _predict_accessibility_barriers(self, task: WizardTask, audit_results: List[Dict]) -> str:
+    def _predict_accessibility_barriers(self, task: WizardTask, audit_results: list[dict]) -> str:
         """Level 4: Predict accessibility barriers"""
         forecast = "# Accessibility Forecast (Level 4: Anticipatory)\n\n"
 
-        critical_issues = [i for i in audit_results if i['severity'] == 'critical']
+        critical_issues = [i for i in audit_results if i["severity"] == "critical"]
 
         forecast += "## Current State\n"
         forecast += f"- Critical issues: {len(critical_issues)}\n"
@@ -698,7 +719,9 @@ class AccessibilityWizard(BaseWizard):
         forecast += "## Projected Barriers (Before User Impact)\n\n"
 
         forecast += "### ⚠️ Screen Reader Users Blocked (Now)\n"
-        forecast += "**Prediction**: Missing ARIA labels will prevent screen reader users from using app\n"
+        forecast += (
+            "**Prediction**: Missing ARIA labels will prevent screen reader users from using app\n"
+        )
         forecast += "**Impact**: 5-8% of users (blind/low vision) completely blocked\n"
         forecast += "**Preventive Action**:\n"
         forecast += "- Fix critical ARIA issues NOW (before launch)\n"
@@ -714,7 +737,9 @@ class AccessibilityWizard(BaseWizard):
         forecast += "- Test entire user flow with keyboard only\n\n"
 
         forecast += "### ⚠️ Low Vision Users Struggle (Week 2)\n"
-        forecast += "**Prediction**: Insufficient contrast will make text unreadable for low vision users\n"
+        forecast += (
+            "**Prediction**: Insufficient contrast will make text unreadable for low vision users\n"
+        )
         forecast += "**Impact**: 8-10% of users (low vision, age-related) strain to read\n"
         forecast += "**Preventive Action**:\n"
         forecast += "- Check contrast for ALL text (4.5:1 minimum)\n"
@@ -751,15 +776,15 @@ class AccessibilityWizard(BaseWizard):
 
         return forecast
 
-    def _generate_audit_report(self, diagnosis: str, audit_results: List[Dict]) -> str:
+    def _generate_audit_report(self, diagnosis: str, audit_results: list[dict]) -> str:
         """Generate comprehensive WCAG audit report"""
         report = f"{diagnosis}\n\n"
 
         report += "## WCAG 2.1 Compliance Summary\n\n"
 
-        critical = len([i for i in audit_results if i['severity'] == 'critical'])
-        high = len([i for i in audit_results if i['severity'] == 'high'])
-        medium = len([i for i in audit_results if i['severity'] == 'medium'])
+        critical = len([i for i in audit_results if i["severity"] == "critical"])
+        high = len([i for i in audit_results if i["severity"] == "high"])
+        medium = len([i for i in audit_results if i["severity"] == "medium"])
 
         report += f"- **Critical**: {critical} issues (MUST fix before launch)\n"
         report += f"- **High**: {high} issues (Should fix soon)\n"
@@ -776,53 +801,63 @@ class AccessibilityWizard(BaseWizard):
             report += f"**Issue**: {issue['issue']}\n"
             report += f"**Impact**: {issue['impact']}\n\n"
             report += "**Remediation**:\n"
-            for step in issue['remediation']:
+            for step in issue["remediation"]:
                 report += f"- {step}\n"
             report += "\n"
 
         return report
 
-    def _identify_risks(self, task: WizardTask, remediation_plan: List[str]) -> List[WizardRisk]:
+    def _identify_risks(self, task: WizardTask, remediation_plan: list[str]) -> list[WizardRisk]:
         """Identify accessibility risks"""
         risks = []
 
         # Legal risk
-        risks.append(WizardRisk(
-            risk="Non-compliance may trigger ADA/Section 508 lawsuits",
-            mitigation="Achieve WCAG 2.1 AA compliance before public launch. Document testing. Create accessibility statement.",
-            severity="high"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Non-compliance may trigger ADA/Section 508 lawsuits",
+                mitigation="Achieve WCAG 2.1 AA compliance before public launch. Document testing. Create accessibility statement.",
+                severity="high",
+            )
+        )
 
         # User exclusion risk
-        risks.append(WizardRisk(
-            risk="Accessibility barriers exclude 15-20% of potential users",
-            mitigation="Fix critical issues immediately. Test with assistive technologies. Include disabled users in testing.",
-            severity="high"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Accessibility barriers exclude 15-20% of potential users",
+                mitigation="Fix critical issues immediately. Test with assistive technologies. Include disabled users in testing.",
+                severity="high",
+            )
+        )
 
         # Technical debt risk
-        risks.append(WizardRisk(
-            risk="Retrofitting accessibility is 10x more expensive than building it in",
-            mitigation="Include accessibility in code reviews. Add automated tests. Train developers on WCAG.",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Retrofitting accessibility is 10x more expensive than building it in",
+                mitigation="Include accessibility in code reviews. Add automated tests. Train developers on WCAG.",
+                severity="medium",
+            )
+        )
 
         return risks
 
-    def _create_handoffs(self, task: WizardTask) -> List[WizardHandoff]:
+    def _create_handoffs(self, task: WizardTask) -> list[WizardHandoff]:
         """Create handoffs for accessibility work"""
         handoffs = []
 
         if task.role == "developer":
-            handoffs.append(WizardHandoff(
-                owner="QA / Accessibility Specialist",
-                what="Manual screen reader testing, keyboard testing, WCAG compliance verification",
-                when="Before every release"
-            ))
-            handoffs.append(WizardHandoff(
-                owner="Legal / Compliance",
-                what="Review accessibility statement, ensure ADA/Section 508 compliance",
-                when="Before public launch"
-            ))
+            handoffs.append(
+                WizardHandoff(
+                    owner="QA / Accessibility Specialist",
+                    what="Manual screen reader testing, keyboard testing, WCAG compliance verification",
+                    when="Before every release",
+                )
+            )
+            handoffs.append(
+                WizardHandoff(
+                    owner="Legal / Compliance",
+                    what="Review accessibility statement, ensure ADA/Section 508 compliance",
+                    when="Before public launch",
+                )
+            )
 
         return handoffs

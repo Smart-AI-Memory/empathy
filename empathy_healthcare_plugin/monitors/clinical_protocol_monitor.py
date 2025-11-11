@@ -9,13 +9,13 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import Dict, Any, List, Optional
-from datetime import datetime
 import logging
+from datetime import datetime
+from typing import Any
 
-from .monitoring.protocol_loader import ProtocolLoader, ClinicalProtocol
 from .monitoring.protocol_checker import ProtocolChecker, ProtocolCheckResult
-from .monitoring.sensor_parsers import parse_sensor_data, normalize_vitals
+from .monitoring.protocol_loader import ClinicalProtocol, ProtocolLoader
+from .monitoring.sensor_parsers import normalize_vitals, parse_sensor_data
 from .monitoring.trajectory_analyzer import TrajectoryAnalyzer, TrajectoryPrediction
 
 logger = logging.getLogger(__name__)
@@ -35,22 +35,19 @@ class ClinicalProtocolMonitor:
     5. Generate alerts and documentation
     """
 
-    def __init__(self, protocol_directory: Optional[str] = None):
+    def __init__(self, protocol_directory: str | None = None):
         self.protocol_loader = ProtocolLoader(protocol_directory)
         self.protocol_checker = ProtocolChecker()
         self.trajectory_analyzer = TrajectoryAnalyzer()
 
         # Active protocols per patient
-        self.active_protocols: Dict[str, ClinicalProtocol] = {}
+        self.active_protocols: dict[str, ClinicalProtocol] = {}
 
         # Historical data per patient
-        self.patient_history: Dict[str, List[Dict[str, Any]]] = {}
+        self.patient_history: dict[str, list[dict[str, Any]]] = {}
 
     def load_protocol(
-        self,
-        patient_id: str,
-        protocol_name: str,
-        patient_context: Optional[Dict[str, Any]] = None
+        self, patient_id: str, protocol_name: str, patient_context: dict[str, Any] | None = None
     ) -> ClinicalProtocol:
         """
         Load and activate protocol for patient.
@@ -78,7 +75,7 @@ class ClinicalProtocolMonitor:
 
         return protocol
 
-    async def analyze(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
         """
         Main analysis method - unified interface.
 
@@ -92,11 +89,11 @@ class ClinicalProtocolMonitor:
         Returns:
             Comprehensive analysis with alerts, predictions, recommendations
         """
-        patient_id = context.get('patient_id')
-        sensor_data = context.get('sensor_data')
-        sensor_format = context.get('sensor_format', 'simple_json')
-        protocol_name = context.get('protocol_name')
-        intervention_status = context.get('intervention_status', {})
+        patient_id = context.get("patient_id")
+        sensor_data = context.get("sensor_data")
+        sensor_format = context.get("sensor_format", "simple_json")
+        protocol_name = context.get("protocol_name")
+        intervention_status = context.get("intervention_status", {})
 
         if not patient_id:
             return {"error": "patient_id required"}
@@ -124,10 +121,7 @@ class ClinicalProtocolMonitor:
         if patient_id not in self.patient_history:
             self.patient_history[patient_id] = []
 
-        historical_entry = {
-            "timestamp": datetime.now().isoformat(),
-            **normalized_data
-        }
+        historical_entry = {"timestamp": datetime.now().isoformat(), **normalized_data}
         self.patient_history[patient_id].append(historical_entry)
 
         # Keep last 24 hours only
@@ -136,44 +130,29 @@ class ClinicalProtocolMonitor:
 
         # Phase 1: Check protocol compliance
         compliance_result = self.protocol_checker.check_compliance(
-            protocol,
-            normalized_data,
-            intervention_status
+            protocol, normalized_data, intervention_status
         )
 
         # Phase 2: Analyze trajectory (Level 4)
         trajectory_prediction = self.trajectory_analyzer.analyze_trajectory(
-            normalized_data,
-            self.patient_history[patient_id][:-1]  # Exclude current reading
+            normalized_data, self.patient_history[patient_id][:-1]  # Exclude current reading
         )
 
         # Phase 3: Generate alerts
-        alerts = self._generate_alerts(
-            compliance_result,
-            trajectory_prediction
-        )
+        alerts = self._generate_alerts(compliance_result, trajectory_prediction)
 
         # Phase 4: Generate recommendations
         recommendations = self._generate_recommendations(
-            compliance_result,
-            trajectory_prediction,
-            protocol
+            compliance_result, trajectory_prediction, protocol
         )
 
         # Phase 5: Generate predictions (Level 4)
-        predictions = self._generate_predictions(
-            trajectory_prediction,
-            compliance_result
-        )
+        predictions = self._generate_predictions(trajectory_prediction, compliance_result)
 
         return {
             "patient_id": patient_id,
-            "protocol": {
-                "name": protocol.name,
-                "version": protocol.version
-            },
+            "protocol": {"name": protocol.name, "version": protocol.version},
             "current_vitals": normalized_data,
-
             # Protocol compliance (like linter output)
             "protocol_compliance": {
                 "activated": compliance_result.protocol_activated,
@@ -185,13 +164,12 @@ class ClinicalProtocolMonitor:
                         "action": d.intervention.action,
                         "status": d.status.value,
                         "due": d.intervention.timing,
-                        "reasoning": d.reasoning
+                        "reasoning": d.reasoning,
                     }
                     for d in compliance_result.deviations
                 ],
-                "compliant": compliance_result.compliant_items
+                "compliant": compliance_result.compliant_items,
             },
-
             # Trajectory analysis (Level 4)
             "trajectory": {
                 "state": trajectory_prediction.trajectory_state,
@@ -203,63 +181,67 @@ class ClinicalProtocolMonitor:
                         "change": t.change,
                         "direction": t.direction,
                         "concerning": t.concerning,
-                        "reasoning": t.reasoning
+                        "reasoning": t.reasoning,
                     }
                     for t in trajectory_prediction.vital_trends
                 ],
                 "assessment": trajectory_prediction.overall_assessment,
-                "confidence": trajectory_prediction.confidence
+                "confidence": trajectory_prediction.confidence,
             },
-
             # Alerts
             "alerts": alerts,
-
             # Standard wizard outputs
             "predictions": predictions,
             "recommendations": recommendations,
-            "confidence": trajectory_prediction.confidence
+            "confidence": trajectory_prediction.confidence,
         }
 
     def _generate_alerts(
-        self,
-        compliance: ProtocolCheckResult,
-        trajectory: TrajectoryPrediction
-    ) -> List[Dict[str, Any]]:
+        self, compliance: ProtocolCheckResult, trajectory: TrajectoryPrediction
+    ) -> list[dict[str, Any]]:
         """Generate alerts based on compliance and trajectory"""
         alerts = []
 
         # Protocol activation alert
         if compliance.protocol_activated:
-            alerts.append({
-                "type": "protocol_activated",
-                "severity": "high",
-                "message": compliance.recommendation
-            })
+            alerts.append(
+                {
+                    "type": "protocol_activated",
+                    "severity": "high",
+                    "message": compliance.recommendation,
+                }
+            )
 
         # Overdue intervention alerts
         overdue = [d for d in compliance.deviations if d.status.value == "overdue"]
         if overdue:
-            alerts.append({
-                "type": "intervention_overdue",
-                "severity": "critical",
-                "message": f"{len(overdue)} interventions overdue",
-                "details": [d.intervention.action for d in overdue]
-            })
+            alerts.append(
+                {
+                    "type": "intervention_overdue",
+                    "severity": "critical",
+                    "message": f"{len(overdue)} interventions overdue",
+                    "details": [d.intervention.action for d in overdue],
+                }
+            )
 
         # Trajectory alerts (Level 4 - early warning)
         if trajectory.trajectory_state == "critical":
-            alerts.append({
-                "type": "trajectory_critical",
-                "severity": "critical",
-                "message": trajectory.overall_assessment
-            })
+            alerts.append(
+                {
+                    "type": "trajectory_critical",
+                    "severity": "critical",
+                    "message": trajectory.overall_assessment,
+                }
+            )
         elif trajectory.trajectory_state == "concerning":
-            alerts.append({
-                "type": "trajectory_concerning",
-                "severity": "warning",
-                "message": trajectory.overall_assessment,
-                "time_to_critical": trajectory.estimated_time_to_critical
-            })
+            alerts.append(
+                {
+                    "type": "trajectory_concerning",
+                    "severity": "warning",
+                    "message": trajectory.overall_assessment,
+                    "time_to_critical": trajectory.estimated_time_to_critical,
+                }
+            )
 
         return alerts
 
@@ -267,8 +249,8 @@ class ClinicalProtocolMonitor:
         self,
         compliance: ProtocolCheckResult,
         trajectory: TrajectoryPrediction,
-        protocol: ClinicalProtocol
-    ) -> List[str]:
+        protocol: ClinicalProtocol,
+    ) -> list[str]:
         """Generate actionable recommendations"""
         recommendations = []
 
@@ -288,34 +270,36 @@ class ClinicalProtocolMonitor:
         return list(set(recommendations))  # Deduplicate
 
     def _generate_predictions(
-        self,
-        trajectory: TrajectoryPrediction,
-        compliance: ProtocolCheckResult
-    ) -> List[Dict[str, Any]]:
+        self, trajectory: TrajectoryPrediction, compliance: ProtocolCheckResult
+    ) -> list[dict[str, Any]]:
         """Generate Level 4 predictions"""
         predictions = []
 
         # Trajectory-based predictions
         if trajectory.trajectory_state in ["concerning", "critical"]:
-            predictions.append({
-                "type": "patient_deterioration",
-                "severity": "high" if trajectory.trajectory_state == "critical" else "medium",
-                "description": trajectory.overall_assessment,
-                "time_horizon": trajectory.estimated_time_to_critical,
-                "confidence": trajectory.confidence,
-                "prevention_steps": trajectory.recommendations
-            })
+            predictions.append(
+                {
+                    "type": "patient_deterioration",
+                    "severity": "high" if trajectory.trajectory_state == "critical" else "medium",
+                    "description": trajectory.overall_assessment,
+                    "time_horizon": trajectory.estimated_time_to_critical,
+                    "confidence": trajectory.confidence,
+                    "prevention_steps": trajectory.recommendations,
+                }
+            )
 
         # Compliance-based predictions
         if compliance.protocol_activated and compliance.deviations:
-            predictions.append({
-                "type": "protocol_deviation_risk",
-                "severity": "high",
-                "description": "In our experience, protocol deviations correlate with adverse outcomes",
-                "prevention_steps": [
-                    "Complete pending interventions",
-                    "Document deviations and rationale"
-                ]
-            })
+            predictions.append(
+                {
+                    "type": "protocol_deviation_risk",
+                    "severity": "high",
+                    "description": "In our experience, protocol deviations correlate with adverse outcomes",
+                    "prevention_steps": [
+                        "Complete pending interventions",
+                        "Document deviations and rationale",
+                    ],
+                }
+            )
 
         return predictions

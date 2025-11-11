@@ -8,20 +8,21 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import Dict, List, Any, Optional
-from datetime import datetime
 from dataclasses import dataclass, field
+from datetime import datetime
+from typing import Any
 
-from empathy_os import PatternLibrary, Pattern
+from empathy_os import Pattern, PatternLibrary
 
 
 @dataclass
 class WizardInsight:
     """Insight learned by a wizard"""
+
     wizard_name: str
     insight_type: str  # "success_pattern", "failure_pattern", "optimization"
     description: str
-    context: Dict[str, Any]
+    context: dict[str, Any]
     confidence: float
     timestamp: datetime = field(default_factory=datetime.now)
     usage_count: int = 0
@@ -39,12 +40,18 @@ class SharedLearningSystem:
     def __init__(self):
         """Initialize shared learning system"""
         self.pattern_library = PatternLibrary()
-        self.insights: Dict[str, List[WizardInsight]] = {}
-        self.wizard_collaborations: Dict[str, int] = {}  # Track wizard-to-wizard learning
+        self.insights: dict[str, list[WizardInsight]] = {}
+        self.wizard_collaborations: dict[str, int] = {}  # Track wizard-to-wizard learning
 
-    def contribute_pattern(self, wizard_name: str, pattern_type: str,
-                          description: str, code: str, tags: List[str],
-                          context: Optional[Dict[str, Any]] = None) -> Pattern:
+    def contribute_pattern(
+        self,
+        wizard_name: str,
+        pattern_type: str,
+        description: str,
+        code: str,
+        tags: list[str],
+        context: dict[str, Any] | None = None,
+    ) -> Pattern:
         """
         Wizard contributes a learned pattern
 
@@ -67,16 +74,19 @@ class SharedLearningSystem:
             description=description,
             context=context or {},
             code=code,
-            tags=tags
+            tags=tags,
         )
 
         self.pattern_library.contribute_pattern(wizard_name, pattern)
 
         return pattern
 
-    def query_patterns(self, pattern_type: Optional[str] = None,
-                      tags: Optional[List[str]] = None,
-                      min_confidence: float = 0.5) -> List[Pattern]:
+    def query_patterns(
+        self,
+        pattern_type: str | None = None,
+        tags: list[str] | None = None,
+        min_confidence: float = 0.5,
+    ) -> list[Pattern]:
         """
         Query patterns from the shared library
 
@@ -122,8 +132,9 @@ class SharedLearningSystem:
 
         self.insights[wizard_name].append(insight)
 
-    def get_insights_for_wizard(self, wizard_name: str,
-                               insight_type: Optional[str] = None) -> List[WizardInsight]:
+    def get_insights_for_wizard(
+        self, wizard_name: str, insight_type: str | None = None
+    ) -> list[WizardInsight]:
         """
         Get insights relevant to a wizard
 
@@ -159,11 +170,11 @@ class SharedLearningSystem:
         key = f"{wizard1}->{wizard2}"
         self.wizard_collaborations[key] = self.wizard_collaborations.get(key, 0) + 1
 
-    def get_collaboration_stats(self) -> Dict[str, int]:
+    def get_collaboration_stats(self) -> dict[str, int]:
         """Get collaboration statistics between wizards"""
         return self.wizard_collaborations.copy()
 
-    def get_top_patterns(self, limit: int = 10) -> List[Pattern]:
+    def get_top_patterns(self, limit: int = 10) -> list[Pattern]:
         """
         Get top patterns by usage and success rate
 
@@ -179,14 +190,11 @@ class SharedLearningSystem:
             all_patterns.append(pattern)
 
         # Sort by success rate and usage
-        all_patterns.sort(
-            key=lambda p: (p.success_rate, p.usage_count, p.confidence),
-            reverse=True
-        )
+        all_patterns.sort(key=lambda p: (p.success_rate, p.usage_count, p.confidence), reverse=True)
 
         return all_patterns[:limit]
 
-    def analyze_wizard_strengths(self) -> Dict[str, Dict[str, Any]]:
+    def analyze_wizard_strengths(self) -> dict[str, dict[str, Any]]:
         """
         Analyze each wizard's strengths based on contributed patterns
 
@@ -210,7 +218,9 @@ class SharedLearningSystem:
             for p in patterns:
                 pattern_types[p.pattern_type] = pattern_types.get(p.pattern_type, 0) + 1
 
-            specialization = max(pattern_types.items(), key=lambda x: x[1])[0] if pattern_types else "general"
+            specialization = (
+                max(pattern_types.items(), key=lambda x: x[1])[0] if pattern_types else "general"
+            )
 
             analysis[wizard_name] = {
                 "total_patterns": len(patterns),
@@ -218,12 +228,12 @@ class SharedLearningSystem:
                 "avg_success_rate": avg_success_rate,
                 "total_usage": total_usage,
                 "specialization": specialization,
-                "pattern_diversity": len(pattern_types)
+                "pattern_diversity": len(pattern_types),
             }
 
         return analysis
 
-    def recommend_wizard_for_task(self, task_type: str) -> Optional[str]:
+    def recommend_wizard_for_task(self, task_type: str) -> str | None:
         """
         Recommend which wizard is best for a task type based on learned patterns
 
@@ -242,7 +252,9 @@ class SharedLearningSystem:
         # Count contributions by wizard
         wizard_contributions = {}
         for pattern in patterns:
-            wizard_contributions[pattern.agent_id] = wizard_contributions.get(pattern.agent_id, 0) + 1
+            wizard_contributions[pattern.agent_id] = (
+                wizard_contributions.get(pattern.agent_id, 0) + 1
+            )
 
         # Return wizard with most high-quality contributions
         if wizard_contributions:

@@ -23,8 +23,8 @@ PATIENT_TIMELINE = [
             "respiratory_rate": 16,
             "temp_f": 98.6,
             "o2_sat": 97,
-            "mental_status": "normal"
-        }
+            "mental_status": "normal",
+        },
     },
     # Hour 1 - Early signs
     {
@@ -36,8 +36,8 @@ PATIENT_TIMELINE = [
             "respiratory_rate": 18,
             "temp_f": 99.2,
             "o2_sat": 96,
-            "mental_status": "normal"
-        }
+            "mental_status": "normal",
+        },
     },
     # Hour 2 - Trending concerning
     {
@@ -49,8 +49,8 @@ PATIENT_TIMELINE = [
             "respiratory_rate": 22,
             "temp_f": 100.5,
             "o2_sat": 95,
-            "mental_status": "normal"
-        }
+            "mental_status": "normal",
+        },
     },
     # Hour 3 - Meets sepsis criteria (qSOFA = 2)
     {
@@ -62,9 +62,9 @@ PATIENT_TIMELINE = [
             "respiratory_rate": 24,
             "temp_f": 101.5,
             "o2_sat": 94,
-            "mental_status": "normal"
-        }
-    }
+            "mental_status": "normal",
+        },
+    },
 ]
 
 
@@ -83,39 +83,31 @@ async def demo_basic_monitoring():
     monitor.load_protocol(
         patient_id="12345",
         protocol_name="sepsis",
-        patient_context={
-            "age": 65,
-            "surgery": "abdominal",
-            "post_op_day": 2
-        }
+        patient_context={"age": 65, "surgery": "abdominal", "post_op_day": 2},
     )
 
     # Check current vitals
     current_vitals = PATIENT_TIMELINE[-1]["vitals"]
 
-    sensor_data = json.dumps({
-        "patient_id": "12345",
-        "timestamp": "2024-01-20T15:00:00Z",
-        "vitals": current_vitals
-    })
+    sensor_data = json.dumps(
+        {"patient_id": "12345", "timestamp": "2024-01-20T15:00:00Z", "vitals": current_vitals}
+    )
 
-    result = await monitor.analyze({
-        "patient_id": "12345",
-        "sensor_data": sensor_data,
-        "sensor_format": "simple_json"
-    })
+    result = await monitor.analyze(
+        {"patient_id": "12345", "sensor_data": sensor_data, "sensor_format": "simple_json"}
+    )
 
-    print(f"\n📊 Current Vitals:")
+    print("\n📊 Current Vitals:")
     for key, value in current_vitals.items():
         print(f"  {key}: {value}")
 
-    print(f"\n⚠️  Protocol Status:")
+    print("\n⚠️  Protocol Status:")
     compliance = result["protocol_compliance"]
     print(f"  Activated: {compliance['activated']}")
     print(f"  Score: {compliance['score']}/{compliance['threshold']}")
     print(f"  Alert Level: {compliance['alert_level']}")
 
-    print(f"\n💡 Alerts:")
+    print("\n💡 Alerts:")
     for alert in result["alerts"]:
         print(f"  [{alert['severity'].upper()}] {alert['message']}")
 
@@ -136,37 +128,40 @@ async def demo_trajectory_prediction():
     # Process historical data to build trajectory
     print("\n⏱️  Processing patient history...")
     for i, entry in enumerate(PATIENT_TIMELINE):
-        sensor_data = json.dumps({
-            "patient_id": "12345",
-            "timestamp": f"2024-01-20T{entry['time']}:00Z",
-            "vitals": entry["vitals"]
-        })
+        sensor_data = json.dumps(
+            {
+                "patient_id": "12345",
+                "timestamp": f"2024-01-20T{entry['time']}:00Z",
+                "vitals": entry["vitals"],
+            }
+        )
 
-        result = await monitor.analyze({
-            "patient_id": "12345",
-            "sensor_data": sensor_data
-        })
+        result = await monitor.analyze({"patient_id": "12345", "sensor_data": sensor_data})
 
-        print(f"\n{entry['time']} - {['Stable', 'Early Changes', 'Concerning', 'SEPSIS CRITERIA MET'][i]}")
-        print(f"  HR: {entry['vitals']['hr']}, BP: {entry['vitals']['systolic_bp']}/{entry['vitals']['diastolic_bp']}, RR: {entry['vitals']['respiratory_rate']}")
+        print(
+            f"\n{entry['time']} - {['Stable', 'Early Changes', 'Concerning', 'SEPSIS CRITERIA MET'][i]}"
+        )
+        print(
+            f"  HR: {entry['vitals']['hr']}, BP: {entry['vitals']['systolic_bp']}/{entry['vitals']['diastolic_bp']}, RR: {entry['vitals']['respiratory_rate']}"
+        )
 
     # Show final trajectory analysis
     trajectory = result["trajectory"]
 
-    print(f"\n📈 Trajectory Analysis:")
+    print("\n📈 Trajectory Analysis:")
     print(f"  State: {trajectory['state'].upper()}")
     print(f"  Confidence: {trajectory['confidence']:.2f}")
 
     if trajectory["estimated_time_to_critical"]:
         print(f"  ⏰ Est. Time to Critical: {trajectory['estimated_time_to_critical']}")
 
-    print(f"\n📊 Vital Sign Trends:")
+    print("\n📊 Vital Sign Trends:")
     for trend in trajectory["trends"]:
         if trend["concerning"]:
             print(f"  ⚠️  {trend['parameter']}: {trend['direction']} ({trend['change']:+.0f})")
             print(f"      {trend['reasoning']}")
 
-    print(f"\n🔮 Assessment:")
+    print("\n🔮 Assessment:")
     print(f"  {trajectory['assessment']}")
 
     print("\n" + "=" * 70)
@@ -185,56 +180,53 @@ async def demo_full_workflow():
 
     # Process all historical data
     for entry in PATIENT_TIMELINE:
-        sensor_data = json.dumps({
-            "patient_id": "12345",
-            "timestamp": f"2024-01-20T{entry['time']}:00Z",
-            "vitals": entry["vitals"]
-        })
+        sensor_data = json.dumps(
+            {
+                "patient_id": "12345",
+                "timestamp": f"2024-01-20T{entry['time']}:00Z",
+                "vitals": entry["vitals"],
+            }
+        )
 
-        await monitor.analyze({
-            "patient_id": "12345",
-            "sensor_data": sensor_data
-        })
+        await monitor.analyze({"patient_id": "12345", "sensor_data": sensor_data})
 
     # Now check with intervention status
     print("\n📋 Sepsis Protocol Activated at 15:00")
     print("Required Interventions:")
 
     intervention_status = {
-        "obtain_blood_cultures": {
-            "completed": False,
-            "time_due": None
-        },
+        "obtain_blood_cultures": {"completed": False, "time_due": None},
         "administer_broad_spectrum_antibiotics": {
             "completed": False,
-            "time_due": datetime.now() + timedelta(hours=1)
+            "time_due": datetime.now() + timedelta(hours=1),
         },
-        "measure_lactate": {
-            "completed": False,
-            "time_due": None
-        }
+        "measure_lactate": {"completed": False, "time_due": None},
     }
 
-    result = await monitor.analyze({
-        "patient_id": "12345",
-        "sensor_data": json.dumps({
+    result = await monitor.analyze(
+        {
             "patient_id": "12345",
-            "timestamp": "2024-01-20T15:00:00Z",
-            "vitals": PATIENT_TIMELINE[-1]["vitals"]
-        }),
-        "intervention_status": intervention_status
-    })
+            "sensor_data": json.dumps(
+                {
+                    "patient_id": "12345",
+                    "timestamp": "2024-01-20T15:00:00Z",
+                    "vitals": PATIENT_TIMELINE[-1]["vitals"],
+                }
+            ),
+            "intervention_status": intervention_status,
+        }
+    )
 
-    print(f"\n📝 Protocol Compliance:")
+    print("\n📝 Protocol Compliance:")
     for deviation in result["protocol_compliance"]["deviations"]:
         print(f"  [ {deviation['status'].upper()} ] {deviation['action']}")
         print(f"      Due: {deviation['due']}")
 
-    print(f"\n🎯 Recommendations:")
+    print("\n🎯 Recommendations:")
     for rec in result["recommendations"]:
         print(f"  - {rec}")
 
-    print(f"\n🔮 Predictions:")
+    print("\n🔮 Predictions:")
     for pred in result["predictions"]:
         print(f"  Type: {pred['type']}")
         print(f"  Severity: {pred['severity']}")

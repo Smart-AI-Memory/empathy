@@ -5,14 +5,15 @@ Comprehensive error handling and recovery
 
 import logging
 import traceback
-from typing import Optional, Dict, Any
 from enum import Enum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
 class ErrorCode(Enum):
     """Error codes for Coach LSP"""
+
     # LSP standard error codes
     PARSE_ERROR = -32700
     INVALID_REQUEST = -32600
@@ -37,20 +38,16 @@ class CoachLSPError(Exception):
         self,
         message: str,
         code: ErrorCode = ErrorCode.INTERNAL_ERROR,
-        data: Optional[Dict[str, Any]] = None
+        data: dict[str, Any] | None = None,
     ):
         self.message = message
         self.code = code
         self.data = data or {}
         super().__init__(message)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to LSP error response format"""
-        return {
-            "code": self.code.value,
-            "message": self.message,
-            "data": self.data
-        }
+        return {"code": self.code.value, "message": self.message, "data": self.data}
 
 
 class WizardNotFoundError(CoachLSPError):
@@ -60,7 +57,7 @@ class WizardNotFoundError(CoachLSPError):
         super().__init__(
             message=f"Wizard '{wizard_name}' not found",
             code=ErrorCode.WIZARD_NOT_FOUND,
-            data={"wizard_name": wizard_name}
+            data={"wizard_name": wizard_name},
         )
 
 
@@ -71,7 +68,7 @@ class WizardExecutionError(CoachLSPError):
         super().__init__(
             message=f"Wizard '{wizard_name}' execution failed: {reason}",
             code=ErrorCode.WIZARD_EXECUTION_FAILED,
-            data={"wizard_name": wizard_name, "reason": reason}
+            data={"wizard_name": wizard_name, "reason": reason},
         )
 
 
@@ -82,7 +79,7 @@ class ContextCollectionError(CoachLSPError):
         super().__init__(
             message=f"Failed to collect context: {reason}",
             code=ErrorCode.CONTEXT_COLLECTION_FAILED,
-            data={"reason": reason}
+            data={"reason": reason},
         )
 
 
@@ -93,11 +90,11 @@ class LLMAPIError(CoachLSPError):
         super().__init__(
             message=f"LLM API error ({provider}): {reason}",
             code=ErrorCode.LLM_API_ERROR,
-            data={"provider": provider, "reason": reason}
+            data={"provider": provider, "reason": reason},
         )
 
 
-def handle_error(error: Exception, context: str = "") -> Dict[str, Any]:
+def handle_error(error: Exception, context: str = "") -> dict[str, Any]:
     """
     Handle and log errors consistently
 
@@ -117,7 +114,7 @@ def handle_error(error: Exception, context: str = "") -> Dict[str, Any]:
         error = CoachLSPError(
             message=str(error),
             code=ErrorCode.INTERNAL_ERROR,
-            data={"context": context, "type": type(error).__name__}
+            data={"context": context, "type": type(error).__name__},
         )
 
     return error.to_dict()

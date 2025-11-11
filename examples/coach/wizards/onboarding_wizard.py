@@ -9,17 +9,16 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import re
-from typing import List, Dict, Any
+from typing import Any
 
 from .base_wizard import (
     BaseWizard,
-    WizardTask,
-    WizardOutput,
-    WizardArtifact,
-    WizardRisk,
-    WizardHandoff,
     EmpathyChecks,
+    WizardArtifact,
+    WizardHandoff,
+    WizardOutput,
+    WizardRisk,
+    WizardTask,
 )
 
 
@@ -37,13 +36,25 @@ class OnboardingWizard(BaseWizard):
         """Determine if this is an onboarding task"""
         # High-priority onboarding phrases (worth 2 points each)
         onboarding_phrases = [
-            "onboarding", "onboard", "new developer", "ramp up", "knowledge transfer"
+            "onboarding",
+            "onboard",
+            "new developer",
+            "ramp up",
+            "knowledge transfer",
         ]
 
         # Secondary indicators (worth 1 point each)
         secondary_keywords = [
-            "learning", "documentation", "training", "tutorial", "getting started",
-            "setup", "introduction", "new hire", "new team member", "codebase tour"
+            "learning",
+            "documentation",
+            "training",
+            "tutorial",
+            "getting started",
+            "setup",
+            "introduction",
+            "new hire",
+            "new team member",
+            "codebase tour",
         ]
 
         task_lower = (task.task + " " + task.context).lower()
@@ -96,33 +107,19 @@ class OnboardingWizard(BaseWizard):
             WizardArtifact(
                 type="doc",
                 title="Onboarding Guide",
-                content=self._generate_onboarding_guide(diagnosis, learning_path)
+                content=self._generate_onboarding_guide(diagnosis, learning_path),
             ),
-            WizardArtifact(
-                type="doc",
-                title="Codebase Architecture Tour",
-                content=codebase_tour
-            ),
-            WizardArtifact(
-                type="doc",
-                title="Project Glossary",
-                content=glossary
-            ),
-            WizardArtifact(
-                type="doc",
-                title="Interactive Tutorials",
-                content=tutorials
-            ),
+            WizardArtifact(type="doc", title="Codebase Architecture Tour", content=codebase_tour),
+            WizardArtifact(type="doc", title="Project Glossary", content=glossary),
+            WizardArtifact(type="doc", title="Interactive Tutorials", content=tutorials),
             WizardArtifact(
                 type="checklist",
                 title="30-60-90 Day Onboarding Checklist",
-                content=self._create_onboarding_checklist(task)
+                content=self._create_onboarding_checklist(task),
             ),
             WizardArtifact(
-                type="doc",
-                title="Onboarding Success Forecast",
-                content=onboarding_forecast
-            )
+                type="doc", title="Onboarding Success Forecast", content=onboarding_forecast
+            ),
         ]
 
         # Step 12: Generate next actions
@@ -130,9 +127,13 @@ class OnboardingWizard(BaseWizard):
 
         # Step 13: Create empathy checks
         empathy_checks = EmpathyChecks(
-            cognitive=f"Considered new developer constraints: learning curve, unfamiliar tech stack, information overload",
-            emotional=f"Acknowledged: Starting a new role is stressful and overwhelming",
-            anticipatory=onboarding_forecast[:200] + "..." if len(onboarding_forecast) > 200 else onboarding_forecast
+            cognitive="Considered new developer constraints: learning curve, unfamiliar tech stack, information overload",
+            emotional="Acknowledged: Starting a new role is stressful and overwhelming",
+            anticipatory=(
+                onboarding_forecast[:200] + "..."
+                if len(onboarding_forecast) > 200
+                else onboarding_forecast
+            ),
         )
 
         return WizardOutput(
@@ -144,7 +145,7 @@ class OnboardingWizard(BaseWizard):
             handoffs=self._create_handoffs(task),
             next_actions=next_actions,
             empathy_checks=empathy_checks,
-            confidence=self.can_handle(task)
+            confidence=self.can_handle(task),
         )
 
     def _analyze_onboarding_requirements(self, task: WizardTask) -> str:
@@ -172,11 +173,15 @@ class OnboardingWizard(BaseWizard):
 
         analysis += f"**Category**: {', '.join(categories)}\n\n"
         analysis += f"**Target Role**: {task.role}\n"
-        analysis += f"**Context**: {task.context[:300]}...\n" if len(task.context) > 300 else f"**Context**: {task.context}\n"
+        analysis += (
+            f"**Context**: {task.context[:300]}...\n"
+            if len(task.context) > 300
+            else f"**Context**: {task.context}\n"
+        )
 
         return analysis
 
-    def _detect_knowledge_gaps(self, task: WizardTask) -> List[Dict[str, Any]]:
+    def _detect_knowledge_gaps(self, task: WizardTask) -> list[dict[str, Any]]:
         """Detect knowledge gaps (Level 3: Proactive)"""
         gaps = []
 
@@ -184,68 +189,78 @@ class OnboardingWizard(BaseWizard):
 
         # Technical knowledge gaps
         if any(kw in task_lower for kw in ["python", "backend", "api"]):
-            gaps.append({
-                "area": "Python Backend Development",
-                "priority": "high",
-                "description": "Understanding FastAPI, async patterns, database ORM",
-                "resources": [
-                    "Read: FastAPI documentation (https://fastapi.tiangolo.com)",
-                    "Tutorial: Build a simple REST API",
-                    "Code review: Review existing API endpoints"
-                ]
-            })
+            gaps.append(
+                {
+                    "area": "Python Backend Development",
+                    "priority": "high",
+                    "description": "Understanding FastAPI, async patterns, database ORM",
+                    "resources": [
+                        "Read: FastAPI documentation (https://fastapi.tiangolo.com)",
+                        "Tutorial: Build a simple REST API",
+                        "Code review: Review existing API endpoints",
+                    ],
+                }
+            )
 
         if any(kw in task_lower for kw in ["react", "frontend", "ui"]):
-            gaps.append({
-                "area": "React Frontend Development",
-                "priority": "high",
-                "description": "Understanding React hooks, state management, component patterns",
-                "resources": [
-                    "Read: React documentation (https://react.dev)",
-                    "Tutorial: Build a simple component",
-                    "Pair programming: Work with senior frontend dev"
-                ]
-            })
+            gaps.append(
+                {
+                    "area": "React Frontend Development",
+                    "priority": "high",
+                    "description": "Understanding React hooks, state management, component patterns",
+                    "resources": [
+                        "Read: React documentation (https://react.dev)",
+                        "Tutorial: Build a simple component",
+                        "Pair programming: Work with senior frontend dev",
+                    ],
+                }
+            )
 
         # Architecture knowledge gaps
-        gaps.append({
-            "area": "System Architecture",
-            "priority": "high",
-            "description": "Understanding how services communicate, data flow, deployment",
-            "resources": [
-                "Review: Architecture diagram (C4 model)",
-                "Read: Architecture Decision Records (ADRs)",
-                "Meeting: Architecture walkthrough with tech lead"
-            ]
-        })
+        gaps.append(
+            {
+                "area": "System Architecture",
+                "priority": "high",
+                "description": "Understanding how services communicate, data flow, deployment",
+                "resources": [
+                    "Review: Architecture diagram (C4 model)",
+                    "Read: Architecture Decision Records (ADRs)",
+                    "Meeting: Architecture walkthrough with tech lead",
+                ],
+            }
+        )
 
         # Process knowledge gaps
-        gaps.append({
-            "area": "Development Workflow",
-            "priority": "medium",
-            "description": "Git workflow, code review process, deployment pipeline",
-            "resources": [
-                "Read: CONTRIBUTING.md",
-                "Shadow: Watch a complete feature development cycle",
-                "Practice: Submit first PR with guidance"
-            ]
-        })
+        gaps.append(
+            {
+                "area": "Development Workflow",
+                "priority": "medium",
+                "description": "Git workflow, code review process, deployment pipeline",
+                "resources": [
+                    "Read: CONTRIBUTING.md",
+                    "Shadow: Watch a complete feature development cycle",
+                    "Practice: Submit first PR with guidance",
+                ],
+            }
+        )
 
         # Domain knowledge gaps
-        gaps.append({
-            "area": "Business Domain",
-            "priority": "medium",
-            "description": "Understanding business model, user personas, key features",
-            "resources": [
-                "Read: Product documentation",
-                "Meeting: Product manager overview session",
-                "Hands-on: Use the product as an end-user"
-            ]
-        })
+        gaps.append(
+            {
+                "area": "Business Domain",
+                "priority": "medium",
+                "description": "Understanding business model, user personas, key features",
+                "resources": [
+                    "Read: Product documentation",
+                    "Meeting: Product manager overview session",
+                    "Hands-on: Use the product as an end-user",
+                ],
+            }
+        )
 
         return gaps
 
-    def _create_learning_path(self, task: WizardTask, gaps: List[Dict]) -> List[str]:
+    def _create_learning_path(self, task: WizardTask, gaps: list[dict]) -> list[str]:
         """Create structured learning path"""
         path = ["## 30-60-90 Day Learning Path\n"]
 
@@ -376,7 +391,7 @@ class OnboardingWizard(BaseWizard):
         tour += "# Custom exceptions are caught by middleware\n"
         tour += "from src.exceptions import UserAlreadyExistsError\n\n"
         tour += "if user_exists:\n"
-        tour += "    raise UserAlreadyExistsError(f\"User {email} already exists\")\n"
+        tour += '    raise UserAlreadyExistsError(f"User {email} already exists")\n'
         tour += "```\n\n"
 
         tour += "### Configuration\n"
@@ -407,7 +422,9 @@ class OnboardingWizard(BaseWizard):
         glossary += "| **ORM** | Object-Relational Mapping - Database abstraction layer (e.g., SQLAlchemy) |\n"
         glossary += "| **JWT** | JSON Web Token - Authentication token format |\n"
         glossary += "| **CRUD** | Create, Read, Update, Delete - Basic database operations |\n"
-        glossary += "| **DTO** | Data Transfer Object - Object for transferring data between layers |\n"
+        glossary += (
+            "| **DTO** | Data Transfer Object - Object for transferring data between layers |\n"
+        )
         glossary += "| **Middleware** | Code that runs before/after request handling (auth, logging, etc.) |\n"
         glossary += "| **Migration** | Database schema change script (versioned) |\n"
         glossary += "| **Serializer** | Converts objects to/from JSON |\n\n"
@@ -441,7 +458,7 @@ class OnboardingWizard(BaseWizard):
 
         return glossary
 
-    def _generate_tutorials(self, task: WizardTask, gaps: List[Dict]) -> str:
+    def _generate_tutorials(self, task: WizardTask, gaps: list[dict]) -> str:
         """Generate interactive tutorials"""
         tutorials = "# Interactive Tutorials\n\n"
 
@@ -459,7 +476,7 @@ class OnboardingWizard(BaseWizard):
         tutorials += "   import logging\n"
         tutorials += "   logger = logging.getLogger(__name__)\n\n"
         tutorials += "   def get_user(user_id: str):\n"
-        tutorials += "       logger.info(f\"Fetching user {user_id}\")  # <- Add this line\n"
+        tutorials += '       logger.info(f"Fetching user {user_id}")  # <- Add this line\n'
         tutorials += "       return user_service.get(user_id)\n"
         tutorials += "   ```\n\n"
 
@@ -471,7 +488,7 @@ class OnboardingWizard(BaseWizard):
         tutorials += "4. Commit and push\n"
         tutorials += "   ```bash\n"
         tutorials += "   git add src/api/routes/users.py\n"
-        tutorials += "   git commit -m \"Add logging to get_user endpoint\"\n"
+        tutorials += '   git commit -m "Add logging to get_user endpoint"\n'
         tutorials += "   git push origin tutorial/my-first-change\n"
         tutorials += "   ```\n\n"
 
@@ -488,14 +505,14 @@ class OnboardingWizard(BaseWizard):
         tutorials += "   \n"
         tutorials += "   router = APIRouter()\n"
         tutorials += "   \n"
-        tutorials += "   @router.get(\"/users/{user_id}/profile\")\n"
+        tutorials += '   @router.get("/users/{user_id}/profile")\n'
         tutorials += "   async def get_user_profile(user_id: str):\n"
-        tutorials += "       \"\"\"Get user profile information\"\"\"\n"
+        tutorials += '       """Get user profile information"""\n'
         tutorials += "       # Start with a simple stub that returns the structure\n"
         tutorials += "       return {\n"
-        tutorials += "           \"user_id\": user_id,\n"
-        tutorials += "           \"email\": \"user@example.com\",\n"
-        tutorials += "           \"name\": \"Example User\"\n"
+        tutorials += '           "user_id": user_id,\n'
+        tutorials += '           "email": "user@example.com",\n'
+        tutorials += '           "name": "Example User"\n'
         tutorials += "       }\n"
         tutorials += "   ```\n\n"
 
@@ -503,19 +520,19 @@ class OnboardingWizard(BaseWizard):
         tutorials += "   ```python\n"
         tutorials += "   # tests/api/test_users.py\n"
         tutorials += "   def test_get_user_profile():\n"
-        tutorials += "       response = client.get(\"/api/v1/users/123/profile\")\n"
+        tutorials += '       response = client.get("/api/v1/users/123/profile")\n'
         tutorials += "       assert response.status_code == 200\n"
-        tutorials += "       assert \"email\" in response.json()\n"
+        tutorials += '       assert "email" in response.json()\n'
         tutorials += "   ```\n\n"
 
         tutorials += "3. Implement the endpoint\n"
         tutorials += "   ```python\n"
-        tutorials += "   @router.get(\"/users/{user_id}/profile\")\n"
+        tutorials += '   @router.get("/users/{user_id}/profile")\n'
         tutorials += "   async def get_user_profile(user_id: str):\n"
         tutorials += "       user = await user_service.get(user_id)\n"
         tutorials += "       if not user:\n"
-        tutorials += "           raise HTTPException(status_code=404, detail=\"User not found\")\n"
-        tutorials += "       return {\"email\": user.email, \"name\": user.name}\n"
+        tutorials += '           raise HTTPException(status_code=404, detail="User not found")\n'
+        tutorials += '       return {"email": user.email, "name": user.name}\n'
         tutorials += "   ```\n\n"
 
         tutorials += "4. Run tests and verify\n"
@@ -607,7 +624,7 @@ class OnboardingWizard(BaseWizard):
 
         return checklist
 
-    def _predict_onboarding_challenges(self, task: WizardTask, gaps: List[Dict]) -> str:
+    def _predict_onboarding_challenges(self, task: WizardTask, gaps: list[dict]) -> str:
         """Level 4: Predict onboarding challenges"""
         forecast = "# Onboarding Success Forecast (Level 4: Anticipatory)\n\n"
 
@@ -679,12 +696,14 @@ class OnboardingWizard(BaseWizard):
 
         return forecast
 
-    def _generate_onboarding_guide(self, diagnosis: str, learning_path: List[str]) -> str:
+    def _generate_onboarding_guide(self, diagnosis: str, learning_path: list[str]) -> str:
         """Generate comprehensive onboarding guide"""
         guide = f"{diagnosis}\n\n"
 
         guide += "## Welcome!\n\n"
-        guide += "We're excited to have you on the team! This guide will help you get up to speed.\n\n"
+        guide += (
+            "We're excited to have you on the team! This guide will help you get up to speed.\n\n"
+        )
 
         guide += "## Philosophy\n\n"
         guide += "- **Ask questions early and often**: There are no dumb questions\n"
@@ -704,59 +723,73 @@ class OnboardingWizard(BaseWizard):
 
         return guide
 
-    def _identify_risks(self, task: WizardTask, learning_path: List[str]) -> List[WizardRisk]:
+    def _identify_risks(self, task: WizardTask, learning_path: list[str]) -> list[WizardRisk]:
         """Identify onboarding risks"""
         risks = []
 
         # Information overload risk
-        risks.append(WizardRisk(
-            risk="New hire may feel overwhelmed by information volume",
-            mitigation="Break learning into small chunks. Prioritize essential knowledge. Daily check-ins with mentor.",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="New hire may feel overwhelmed by information volume",
+                mitigation="Break learning into small chunks. Prioritize essential knowledge. Daily check-ins with mentor.",
+                severity="medium",
+            )
+        )
 
         # Insufficient mentorship risk
-        risks.append(WizardRisk(
-            risk="Mentor may not have sufficient time to support new hire",
-            mitigation="Allocate 20% of mentor's time to onboarding support. Adjust their workload accordingly.",
-            severity="high"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Mentor may not have sufficient time to support new hire",
+                mitigation="Allocate 20% of mentor's time to onboarding support. Adjust their workload accordingly.",
+                severity="high",
+            )
+        )
 
         # Slow ramp-up risk
-        risks.append(WizardRisk(
-            risk="New hire may take longer than expected to become productive",
-            mitigation="Set realistic expectations (60-90 days). Measure progress weekly. Provide additional support if needed.",
-            severity="low"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="New hire may take longer than expected to become productive",
+                mitigation="Set realistic expectations (60-90 days). Measure progress weekly. Provide additional support if needed.",
+                severity="low",
+            )
+        )
 
         # Cultural fit risk
-        risks.append(WizardRisk(
-            risk="New hire may struggle with team culture or communication style",
-            mitigation="Pair with 'culture buddy' for informal questions. Regular 1:1s with manager to surface concerns early.",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="New hire may struggle with team culture or communication style",
+                mitigation="Pair with 'culture buddy' for informal questions. Regular 1:1s with manager to surface concerns early.",
+                severity="medium",
+            )
+        )
 
         return risks
 
-    def _create_handoffs(self, task: WizardTask) -> List[WizardHandoff]:
+    def _create_handoffs(self, task: WizardTask) -> list[WizardHandoff]:
         """Create handoffs for onboarding"""
         handoffs = []
 
         if task.role == "developer":
-            handoffs.append(WizardHandoff(
-                owner="Assigned Mentor (Senior Developer)",
-                what="Daily check-ins, code review, technical guidance for first 90 days",
-                when="Throughout onboarding period"
-            ))
-            handoffs.append(WizardHandoff(
-                owner="Engineering Manager",
-                what="Weekly 1:1s, progress tracking, career development discussions",
-                when="Throughout onboarding and beyond"
-            ))
-            handoffs.append(WizardHandoff(
-                owner="HR / People Ops",
-                what="Administrative onboarding, benefits setup, equipment provisioning",
-                when="First week"
-            ))
+            handoffs.append(
+                WizardHandoff(
+                    owner="Assigned Mentor (Senior Developer)",
+                    what="Daily check-ins, code review, technical guidance for first 90 days",
+                    when="Throughout onboarding period",
+                )
+            )
+            handoffs.append(
+                WizardHandoff(
+                    owner="Engineering Manager",
+                    what="Weekly 1:1s, progress tracking, career development discussions",
+                    when="Throughout onboarding and beyond",
+                )
+            )
+            handoffs.append(
+                WizardHandoff(
+                    owner="HR / People Ops",
+                    what="Administrative onboarding, benefits setup, equipment provisioning",
+                    when="First week",
+                )
+            )
 
         return handoffs

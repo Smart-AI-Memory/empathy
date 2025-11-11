@@ -13,7 +13,7 @@ Licensed under the Apache License, Version 2.0
 
 from dataclasses import dataclass, field
 from enum import IntEnum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class LeverageLevel(IntEnum):
@@ -57,10 +57,10 @@ class LeveragePoint:
     problem_domain: str
     impact_potential: float = 0.5  # 0.0-1.0
     implementation_difficulty: float = 0.5  # 0.0-1.0
-    current_state: Optional[str] = None
-    proposed_intervention: Optional[str] = None
-    expected_outcomes: List[str] = field(default_factory=list)
-    risks: List[str] = field(default_factory=list)
+    current_state: str | None = None
+    proposed_intervention: str | None = None
+    expected_outcomes: list[str] = field(default_factory=list)
+    risks: list[str] = field(default_factory=list)
 
 
 class LeveragePointAnalyzer:
@@ -122,9 +122,9 @@ class LeveragePointAnalyzer:
 
     def __init__(self):
         """Initialize LeveragePointAnalyzer"""
-        self.identified_points: List[LeveragePoint] = []
+        self.identified_points: list[LeveragePoint] = []
 
-    def find_leverage_points(self, problem_class: Dict[str, Any]) -> List[LeveragePoint]:
+    def find_leverage_points(self, problem_class: dict[str, Any]) -> list[LeveragePoint]:
         """
         Find high-leverage intervention points for a problem class
 
@@ -149,7 +149,7 @@ class LeveragePointAnalyzer:
             ... }
             >>> points = analyzer.find_leverage_points(problem)
         """
-        points: List[LeveragePoint] = []
+        points: list[LeveragePoint] = []
         problem_type = problem_class.get("class", "unknown")
         description = problem_class.get("description", "")
 
@@ -173,7 +173,7 @@ class LeveragePointAnalyzer:
         self.identified_points.extend(points_ranked)
         return points_ranked
 
-    def rank_by_effectiveness(self, points: List[LeveragePoint]) -> List[LeveragePoint]:
+    def rank_by_effectiveness(self, points: list[LeveragePoint]) -> list[LeveragePoint]:
         """
         Rank leverage points by Meadows's hierarchy
 
@@ -188,7 +188,7 @@ class LeveragePointAnalyzer:
         """
         return sorted(points, key=lambda p: p.level, reverse=True)
 
-    def _analyze_documentation_problem(self, problem: Dict[str, Any]) -> List[LeveragePoint]:
+    def _analyze_documentation_problem(self, problem: dict[str, Any]) -> list[LeveragePoint]:
         """Analyze leverage points for documentation problems"""
         points = []
 
@@ -258,7 +258,7 @@ class LeveragePointAnalyzer:
 
         return points
 
-    def _analyze_trust_problem(self, problem: Dict[str, Any]) -> List[LeveragePoint]:
+    def _analyze_trust_problem(self, problem: dict[str, Any]) -> list[LeveragePoint]:
         """Analyze leverage points for trust problems"""
         points = []
 
@@ -315,7 +315,7 @@ class LeveragePointAnalyzer:
 
         return points
 
-    def _analyze_efficiency_problem(self, problem: Dict[str, Any]) -> List[LeveragePoint]:
+    def _analyze_efficiency_problem(self, problem: dict[str, Any]) -> list[LeveragePoint]:
         """Analyze leverage points for efficiency problems"""
         points = []
 
@@ -347,7 +347,7 @@ class LeveragePointAnalyzer:
 
         return points
 
-    def _generic_leverage_analysis(self, problem: Dict[str, Any]) -> List[LeveragePoint]:
+    def _generic_leverage_analysis(self, problem: dict[str, Any]) -> list[LeveragePoint]:
         """Generic leverage point analysis for unknown problem types"""
         points = []
 
@@ -378,8 +378,8 @@ class LeveragePointAnalyzer:
         return points
 
     def get_top_leverage_points(
-        self, n: int = 3, min_level: Optional[LeverageLevel] = None
-    ) -> List[LeveragePoint]:
+        self, n: int = 3, min_level: LeverageLevel | None = None
+    ) -> list[LeveragePoint]:
         """
         Get top N leverage points, optionally filtered by minimum level
 
@@ -397,7 +397,7 @@ class LeveragePointAnalyzer:
 
         return sorted(points, key=lambda p: p.level, reverse=True)[:n]
 
-    def analyze_intervention_feasibility(self, point: LeveragePoint) -> Dict[str, Any]:
+    def analyze_intervention_feasibility(self, point: LeveragePoint) -> dict[str, Any]:
         """
         Analyze feasibility of intervening at a leverage point
 

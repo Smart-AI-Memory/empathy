@@ -14,7 +14,7 @@ Licensed under the Apache License, Version 2.0
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class LoopType(Enum):
@@ -45,11 +45,11 @@ class FeedbackLoop:
     loop_type: LoopType
     polarity: LoopPolarity
     description: str
-    components: List[str]  # Variables involved in the loop
+    components: list[str]  # Variables involved in the loop
     strength: float = 0.5  # 0.0-1.0, how strong is the loop effect
     detected_at: datetime = field(default_factory=datetime.now)
-    evidence: List[Dict[str, Any]] = field(default_factory=list)
-    intervention_points: List[str] = field(default_factory=list)
+    evidence: list[dict[str, Any]] = field(default_factory=list)
+    intervention_points: list[str] = field(default_factory=list)
 
 
 class FeedbackLoopDetector:
@@ -89,7 +89,7 @@ class FeedbackLoopDetector:
 
     def __init__(self):
         """Initialize FeedbackLoopDetector"""
-        self.detected_loops: List[FeedbackLoop] = []
+        self.detected_loops: list[FeedbackLoop] = []
         self._initialize_standard_loops()
 
     def _initialize_standard_loops(self):
@@ -127,7 +127,7 @@ class FeedbackLoopDetector:
         # Add to detected loops
         self.detected_loops.extend([trust_building, trust_erosion, quality_control])
 
-    def detect_active_loop(self, session_history: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def detect_active_loop(self, session_history: list[dict[str, Any]]) -> dict[str, Any]:
         """
         Analyze session history for active feedback loops
 
@@ -207,7 +207,7 @@ class FeedbackLoopDetector:
                 "details": dominant_loop,
             }
 
-    def detect_virtuous_cycle(self, history: List[Dict[str, Any]]) -> bool:
+    def detect_virtuous_cycle(self, history: list[dict[str, Any]]) -> bool:
         """
         Detect reinforcing positive feedback (virtuous cycle)
 
@@ -255,7 +255,7 @@ class FeedbackLoopDetector:
 
         return is_accelerating
 
-    def detect_vicious_cycle(self, history: List[Dict[str, Any]]) -> bool:
+    def detect_vicious_cycle(self, history: list[dict[str, Any]]) -> bool:
         """
         Detect reinforcing negative feedback (vicious cycle)
 
@@ -303,7 +303,7 @@ class FeedbackLoopDetector:
 
         return is_accelerating_down
 
-    def get_intervention_recommendations(self, loop_id: str) -> List[str]:
+    def get_intervention_recommendations(self, loop_id: str) -> list[str]:
         """
         Get recommended interventions for a specific loop
 
@@ -323,7 +323,7 @@ class FeedbackLoopDetector:
             return loop.intervention_points
         return []
 
-    def _calculate_trend(self, values: List[float]) -> float:
+    def _calculate_trend(self, values: list[float]) -> float:
         """
         Calculate trend direction and magnitude
 
@@ -351,7 +351,7 @@ class FeedbackLoopDetector:
         slope = numerator / denominator
         return slope
 
-    def _get_loop_by_id(self, loop_id: str) -> Optional[FeedbackLoop]:
+    def _get_loop_by_id(self, loop_id: str) -> FeedbackLoop | None:
         """Get a loop by its ID"""
         for loop in self.detected_loops:
             if loop.loop_id == loop_id:
@@ -367,7 +367,7 @@ class FeedbackLoopDetector:
         """
         self.detected_loops.append(loop)
 
-    def get_all_loops(self) -> List[FeedbackLoop]:
+    def get_all_loops(self) -> list[FeedbackLoop]:
         """Get all registered feedback loops"""
         return self.detected_loops
 

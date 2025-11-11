@@ -5,7 +5,7 @@ Provides AI-powered assistance for clinical wizards
 
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from langchain_anthropic import ChatAnthropic
 from langchain_core.output_parsers import JsonOutputParser
@@ -19,51 +19,33 @@ logger = logging.getLogger(__name__)
 class SepsisAssessment(BaseModel):
     """Structured output for sepsis screening suggestions"""
 
-    suspected_infection_source: str = Field(
-        description="Most likely source of infection"
-    )
-    risk_factors_present: List[str] = Field(
-        description="List of identified risk factors"
-    )
-    qsofa_prediction: Dict[str, Any] = Field(
-        description="Predicted qSOFA score components"
-    )
-    recommended_interventions: List[str] = Field(
+    suspected_infection_source: str = Field(description="Most likely source of infection")
+    risk_factors_present: list[str] = Field(description="List of identified risk factors")
+    qsofa_prediction: dict[str, Any] = Field(description="Predicted qSOFA score components")
+    recommended_interventions: list[str] = Field(
         description="Recommended sepsis bundle interventions"
     )
-    clinical_reasoning: str = Field(
-        description="Brief clinical reasoning for suggestions"
-    )
+    clinical_reasoning: str = Field(description="Brief clinical reasoning for suggestions")
 
 
 class StrokeAssessment(BaseModel):
     """Structured output for stroke assessment suggestions"""
 
-    cincinnati_findings: Dict[str, str] = Field(
-        description="Cincinnati Stroke Scale findings"
-    )
-    nihss_predictions: Dict[str, int] = Field(
-        description="Predicted NIHSS component scores"
-    )
+    cincinnati_findings: dict[str, str] = Field(description="Cincinnati Stroke Scale findings")
+    nihss_predictions: dict[str, int] = Field(description="Predicted NIHSS component scores")
     tpa_eligible: bool = Field(description="Whether patient appears tPA eligible")
-    contraindications: List[str] = Field(
-        description="Any tPA contraindications identified"
-    )
-    time_critical_actions: List[str] = Field(description="Immediate actions needed")
+    contraindications: list[str] = Field(description="Any tPA contraindications identified")
+    time_critical_actions: list[str] = Field(description="Immediate actions needed")
     clinical_reasoning: str = Field(description="Brief clinical reasoning")
 
 
 class CardiacAssessment(BaseModel):
     """Structured output for cardiac assessment suggestions"""
 
-    heart_score_components: Dict[str, int] = Field(
-        description="HEART score component predictions"
-    )
-    ecg_findings: Dict[str, Any] = Field(description="Predicted ECG findings")
+    heart_score_components: dict[str, int] = Field(description="HEART score component predictions")
+    ecg_findings: dict[str, Any] = Field(description="Predicted ECG findings")
     stemi_alert: bool = Field(description="Whether STEMI criteria may be met")
-    recommended_interventions: List[str] = Field(
-        description="Recommended cardiac interventions"
-    )
+    recommended_interventions: list[str] = Field(description="Recommended cardiac interventions")
     disposition_recommendation: str = Field(description="Suggested disposition")
     clinical_reasoning: str = Field(description="Brief clinical reasoning")
 
@@ -84,9 +66,9 @@ class WizardAIService:
 
     async def suggest_sepsis_assessment(
         self,
-        patient_context: Dict[str, Any],
-        current_vitals: Optional[Dict[str, Any]] = None,
-        recent_labs: Optional[Dict[str, Any]] = None,
+        patient_context: dict[str, Any],
+        current_vitals: dict[str, Any] | None = None,
+        recent_labs: dict[str, Any] | None = None,
     ) -> SepsisAssessment:
         """
         Provide AI-powered suggestions for sepsis screening wizard
@@ -163,9 +145,9 @@ Provide sepsis screening suggestions with clear clinical reasoning.""",
 
     async def suggest_stroke_assessment(
         self,
-        patient_context: Dict[str, Any],
+        patient_context: dict[str, Any],
         symptom_onset_time: str,
-        current_symptoms: Dict[str, Any],
+        current_symptoms: dict[str, Any],
     ) -> StrokeAssessment:
         """
         Provide AI-powered suggestions for stroke assessment wizard
@@ -232,17 +214,15 @@ Provide stroke assessment suggestions with focus on tPA eligibility.""",
                 nihss_predictions={},
                 tpa_eligible=False,
                 contraindications=["Manual assessment required"],
-                time_critical_actions=[
-                    "Complete manual Cincinnati and NIHSS assessment"
-                ],
+                time_critical_actions=["Complete manual Cincinnati and NIHSS assessment"],
                 clinical_reasoning="AI suggestion unavailable - proceed with manual assessment",
             )
 
     async def suggest_cardiac_assessment(
         self,
-        patient_context: Dict[str, Any],
-        chest_pain_characteristics: Dict[str, Any],
-        vital_signs: Dict[str, Any],
+        patient_context: dict[str, Any],
+        chest_pain_characteristics: dict[str, Any],
+        vital_signs: dict[str, Any],
     ) -> CardiacAssessment:
         """
         Provide AI-powered suggestions for cardiac assessment wizard
@@ -318,9 +298,9 @@ Provide cardiac assessment suggestions with HEART score and disposition recommen
         self,
         wizard_type: str,
         field_name: str,
-        patient_context: Dict[str, Any],
-        current_wizard_data: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        patient_context: dict[str, Any],
+        current_wizard_data: dict[str, Any],
+    ) -> dict[str, Any]:
         """
         Provide AI suggestion for a specific wizard field
 
@@ -376,7 +356,7 @@ Suggest an appropriate value for this field with brief clinical reasoning.""",
 
 
 # Singleton instance
-_wizard_ai_service: Optional[WizardAIService] = None
+_wizard_ai_service: WizardAIService | None = None
 
 
 def get_wizard_ai_service() -> WizardAIService:

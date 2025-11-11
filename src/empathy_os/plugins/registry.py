@@ -10,7 +10,6 @@ Licensed under the Apache License, Version 2.0
 import logging
 import sys
 from importlib.metadata import entry_points
-from typing import Dict, List, Optional, Type
 
 from .base import BasePlugin, BaseWizard, PluginValidationError
 
@@ -29,7 +28,7 @@ class PluginRegistry:
     """
 
     def __init__(self):
-        self._plugins: Dict[str, BasePlugin] = {}
+        self._plugins: dict[str, BasePlugin] = {}
         self._auto_discovered = False
         self.logger = logging.getLogger("empathy.plugins.registry")
 
@@ -96,7 +95,7 @@ class PluginRegistry:
             f"version: {metadata.version})"
         )
 
-    def get_plugin(self, name: str) -> Optional[BasePlugin]:
+    def get_plugin(self, name: str) -> BasePlugin | None:
         """
         Get a plugin by name.
 
@@ -115,7 +114,7 @@ class PluginRegistry:
 
         return plugin
 
-    def list_plugins(self) -> List[str]:
+    def list_plugins(self) -> list[str]:
         """
         List all registered plugin names.
 
@@ -127,7 +126,7 @@ class PluginRegistry:
 
         return list(self._plugins.keys())
 
-    def list_all_wizards(self) -> Dict[str, List[str]]:
+    def list_all_wizards(self) -> dict[str, list[str]]:
         """
         List all wizards from all plugins.
 
@@ -143,7 +142,7 @@ class PluginRegistry:
 
         return result
 
-    def get_wizard(self, plugin_name: str, wizard_id: str) -> Optional[Type[BaseWizard]]:
+    def get_wizard(self, plugin_name: str, wizard_id: str) -> type[BaseWizard] | None:
         """
         Get a wizard from a specific plugin.
 
@@ -161,7 +160,7 @@ class PluginRegistry:
 
         return plugin.get_wizard(wizard_id)
 
-    def get_wizard_info(self, plugin_name: str, wizard_id: str) -> Optional[Dict]:
+    def get_wizard_info(self, plugin_name: str, wizard_id: str) -> dict | None:
         """
         Get information about a wizard.
 
@@ -178,7 +177,7 @@ class PluginRegistry:
 
         return plugin.get_wizard_info(wizard_id)
 
-    def find_wizards_by_level(self, empathy_level: int) -> List[Dict]:
+    def find_wizards_by_level(self, empathy_level: int) -> list[dict]:
         """
         Find all wizards operating at a specific empathy level.
 
@@ -201,7 +200,7 @@ class PluginRegistry:
 
         return results
 
-    def find_wizards_by_domain(self, domain: str) -> List[Dict]:
+    def find_wizards_by_domain(self, domain: str) -> list[dict]:
         """
         Find all wizards for a specific domain.
 
@@ -226,7 +225,7 @@ class PluginRegistry:
 
         return results
 
-    def get_statistics(self) -> Dict:
+    def get_statistics(self) -> dict:
         """
         Get registry statistics.
 
@@ -260,7 +259,7 @@ class PluginRegistry:
 
 
 # Global registry instance
-_global_registry: Optional[PluginRegistry] = None
+_global_registry: PluginRegistry | None = None
 
 
 def get_global_registry() -> PluginRegistry:

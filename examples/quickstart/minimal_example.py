@@ -12,8 +12,9 @@ Usage:
     python minimal_example.py
 """
 
-from coach_wizards.security_wizard import SecurityWizard
 from datetime import datetime
+
+from coach_wizards.security_wizard import SecurityWizard
 
 # Sample code with security issues
 SAMPLE_CODE = """
@@ -29,6 +30,7 @@ def get_user(user_id):
 API_KEY = "sk-1234567890abcdef"  # Hardcoded secret!
 """
 
+
 def main():
     print("=" * 60)
     print("Empathy Framework - Minimal Example")
@@ -42,14 +44,14 @@ def main():
     print("\n2. Analyzing code for current security issues...")
     result = wizard.run_full_analysis(
         code=SAMPLE_CODE,
-        file_path='sample.py',
-        language='python',
+        file_path="sample.py",
+        language="python",
         project_context={
             "team_size": 5,
             "deployment_frequency": "daily",
             "user_count": 1000,
-            "growth_rate": "20% monthly"
-        }
+            "growth_rate": "20% monthly",
+        },
     )
 
     # Display current issues
@@ -73,10 +75,12 @@ def main():
     for i, pred in enumerate(result.predictions, 1):
         days_ahead = (pred.predicted_date - datetime.now()).days
         print(f"\n[{i}] {pred.impact.upper()}: {pred.issue_type}")
-        print(f"    Predicted Date: {pred.predicted_date.strftime('%Y-%m-%d')} ({days_ahead} days from now)")
+        print(
+            f"    Predicted Date: {pred.predicted_date.strftime('%Y-%m-%d')} ({days_ahead} days from now)"
+        )
         print(f"    Probability: {pred.probability:.0%}")
         print(f"    Reasoning: {pred.reasoning}")
-        print(f"    Prevention Steps:")
+        print("    Prevention Steps:")
         for step in pred.prevention_steps:
             print(f"      - {step}")
 
@@ -86,9 +90,10 @@ def main():
     print(f"{'='*60}")
     print(f"✓ Found {len(result.issues)} current security issues")
     print(f"✓ Predicted {len(result.predictions)} future issues")
-    print(f"✓ Time saved: Prevented issues before they became incidents")
-    print(f"\nThis is Level 4 Anticipatory Empathy in action!")
+    print("✓ Time saved: Prevented issues before they became incidents")
+    print("\nThis is Level 4 Anticipatory Empathy in action!")
     print(f"{'='*60}\n")
+
 
 if __name__ == "__main__":
     main()

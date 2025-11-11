@@ -9,7 +9,7 @@ Licensed under the Apache License, Version 2.0
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 @dataclass
@@ -20,7 +20,7 @@ class LLMResponse:
     model: str
     tokens_used: int
     finish_reason: str
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
 
 class BaseLLMProvider(ABC):
@@ -30,15 +30,15 @@ class BaseLLMProvider(ABC):
     Provides unified interface regardless of backend.
     """
 
-    def __init__(self, api_key: Optional[str] = None, **kwargs):
+    def __init__(self, api_key: str | None = None, **kwargs):
         self.api_key = api_key
         self.config = kwargs
 
     @abstractmethod
     async def generate(
         self,
-        messages: List[Dict[str, str]],
-        system_prompt: Optional[str] = None,
+        messages: list[dict[str, str]],
+        system_prompt: str | None = None,
         temperature: float = 0.7,
         max_tokens: int = 1024,
         **kwargs,
@@ -59,7 +59,7 @@ class BaseLLMProvider(ABC):
         pass
 
     @abstractmethod
-    def get_model_info(self) -> Dict[str, Any]:
+    def get_model_info(self) -> dict[str, Any]:
         """Get information about the model being used"""
         pass
 
@@ -85,7 +85,7 @@ class AnthropicProvider(BaseLLMProvider):
 
     def __init__(
         self,
-        api_key: Optional[str] = None,
+        api_key: str | None = None,
         model: str = "claude-sonnet-4-5-20250929",
         use_prompt_caching: bool = True,
         use_thinking: bool = False,
@@ -113,8 +113,8 @@ class AnthropicProvider(BaseLLMProvider):
 
     async def generate(
         self,
-        messages: List[Dict[str, str]],
-        system_prompt: Optional[str] = None,
+        messages: list[dict[str, str]],
+        system_prompt: str | None = None,
         temperature: float = 0.7,
         max_tokens: int = 1024,
         **kwargs,
@@ -200,7 +200,7 @@ class AnthropicProvider(BaseLLMProvider):
         )
 
     async def analyze_large_codebase(
-        self, codebase_files: List[Dict[str, str]], analysis_prompt: str, **kwargs
+        self, codebase_files: list[dict[str, str]], analysis_prompt: str, **kwargs
     ) -> LLMResponse:
         """
         Analyze large codebases using Claude's 200K context window.
@@ -243,7 +243,7 @@ class AnthropicProvider(BaseLLMProvider):
             **{**kwargs, "system": system_parts},
         )
 
-    def get_model_info(self) -> Dict[str, Any]:
+    def get_model_info(self) -> dict[str, Any]:
         """Get Claude model information with extended context capabilities"""
         model_info = {
             "claude-3-opus-20240229": {
@@ -291,7 +291,7 @@ class OpenAIProvider(BaseLLMProvider):
     Supports GPT-4, GPT-3.5, and other OpenAI models.
     """
 
-    def __init__(self, api_key: Optional[str] = None, model: str = "gpt-4-turbo-preview", **kwargs):
+    def __init__(self, api_key: str | None = None, model: str = "gpt-4-turbo-preview", **kwargs):
         super().__init__(api_key, **kwargs)
         self.model = model
 
@@ -312,8 +312,8 @@ class OpenAIProvider(BaseLLMProvider):
 
     async def generate(
         self,
-        messages: List[Dict[str, str]],
-        system_prompt: Optional[str] = None,
+        messages: list[dict[str, str]],
+        system_prompt: str | None = None,
         temperature: float = 0.7,
         max_tokens: int = 1024,
         **kwargs,
@@ -346,7 +346,7 @@ class OpenAIProvider(BaseLLMProvider):
             },
         )
 
-    def get_model_info(self) -> Dict[str, Any]:
+    def get_model_info(self) -> dict[str, Any]:
         """Get OpenAI model information"""
         model_info = {
             "gpt-4-turbo-preview": {
@@ -382,8 +382,8 @@ class LocalProvider(BaseLLMProvider):
 
     async def generate(
         self,
-        messages: List[Dict[str, str]],
-        system_prompt: Optional[str] = None,
+        messages: list[dict[str, str]],
+        system_prompt: str | None = None,
         temperature: float = 0.7,
         max_tokens: int = 1024,
         **kwargs,
@@ -414,7 +414,7 @@ class LocalProvider(BaseLLMProvider):
                     metadata={"provider": "local", "endpoint": self.endpoint},
                 )
 
-    def get_model_info(self) -> Dict[str, Any]:
+    def get_model_info(self) -> dict[str, Any]:
         """Get local model information"""
         return {
             "max_tokens": 4096,  # Depends on model

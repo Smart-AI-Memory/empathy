@@ -49,7 +49,7 @@ async def main():
         role="developer",
         task="Fix performance bottleneck in API",
         context="Slow database queries",
-        risk_tolerance="medium"
+        risk_tolerance="medium",
     )
 
     result = await coach.process(task, multi_wizard=False)
@@ -63,7 +63,7 @@ async def main():
         role="developer",
         task="Build new API endpoint for user management",
         context="Need authentication and documentation",
-        risk_tolerance="low"
+        risk_tolerance="low",
     )
 
     result = await coach.process(task, multi_wizard=True)
@@ -80,7 +80,7 @@ async def main():
         "performance_issue",
         "compliance_audit",
         "global_expansion",
-        "new_developer_onboarding"
+        "new_developer_onboarding",
     ]
 
     for pattern in patterns:
@@ -113,7 +113,8 @@ async def main():
     print("✅ HEALTH CHECK PASSED - All systems operational!")
     print("=" * 60)
     print("\nCoach is ready to use. Example usage:")
-    print("""
+    print(
+        """
 from examples.coach import Coach, WizardTask
 
 coach = Coach()
@@ -124,7 +125,8 @@ task = WizardTask(
 )
 result = await coach.process(task)
 print(result.primary_output.diagnosis)
-    """)
+    """
+    )
 
     return True
 

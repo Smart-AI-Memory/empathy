@@ -12,7 +12,7 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Type
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ class PluginMetadata:
     author: str
     license: str
     requires_core_version: str  # Minimum core framework version
-    dependencies: List[str] = None  # Additional package dependencies
+    dependencies: list[str] = None  # Additional package dependencies
 
 
 class BaseWizard(ABC):
@@ -44,7 +44,7 @@ class BaseWizard(ABC):
     - Pattern-contributing: Wizards share learnings via pattern library
     """
 
-    def __init__(self, name: str, domain: str, empathy_level: int, category: Optional[str] = None):
+    def __init__(self, name: str, domain: str, empathy_level: int, category: str | None = None):
         """
         Initialize a wizard
 
@@ -61,7 +61,7 @@ class BaseWizard(ABC):
         self.logger = logging.getLogger(f"wizard.{domain}.{name}")
 
     @abstractmethod
-    async def analyze(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
         """
         Analyze the given context and return results.
 
@@ -82,7 +82,7 @@ class BaseWizard(ABC):
         pass
 
     @abstractmethod
-    def get_required_context(self) -> List[str]:
+    def get_required_context(self) -> list[str]:
         """
         Declare what context fields this wizard needs.
 
@@ -95,7 +95,7 @@ class BaseWizard(ABC):
         """
         pass
 
-    def validate_context(self, context: Dict[str, Any]) -> bool:
+    def validate_context(self, context: dict[str, Any]) -> bool:
         """
         Validate that context contains required fields.
 
@@ -117,7 +117,7 @@ class BaseWizard(ABC):
         """Get the empathy level this wizard operates at"""
         return self.empathy_level
 
-    def contribute_patterns(self, analysis_result: Dict[str, Any]) -> Dict[str, Any]:
+    def contribute_patterns(self, analysis_result: dict[str, Any]) -> dict[str, Any]:
         """
         Extract patterns from analysis for the shared pattern library.
 
@@ -152,7 +152,7 @@ class BasePlugin(ABC):
 
     def __init__(self):
         self.logger = logging.getLogger(f"plugin.{self.get_metadata().domain}")
-        self._wizards: Dict[str, Type[BaseWizard]] = {}
+        self._wizards: dict[str, type[BaseWizard]] = {}
         self._initialized = False
 
     @abstractmethod
@@ -166,7 +166,7 @@ class BasePlugin(ABC):
         pass
 
     @abstractmethod
-    def register_wizards(self) -> Dict[str, Type[BaseWizard]]:
+    def register_wizards(self) -> dict[str, type[BaseWizard]]:
         """
         Register all wizards provided by this plugin.
 
@@ -181,7 +181,7 @@ class BasePlugin(ABC):
         """
         pass
 
-    def register_patterns(self) -> Dict[str, Any]:
+    def register_patterns(self) -> dict[str, Any]:
         """
         Register domain-specific patterns for the pattern library.
 
@@ -214,7 +214,7 @@ class BasePlugin(ABC):
 
         self._initialized = True
 
-    def get_wizard(self, wizard_id: str) -> Optional[Type[BaseWizard]]:
+    def get_wizard(self, wizard_id: str) -> type[BaseWizard] | None:
         """
         Get a wizard by ID.
 
@@ -229,7 +229,7 @@ class BasePlugin(ABC):
 
         return self._wizards.get(wizard_id)
 
-    def list_wizards(self) -> List[str]:
+    def list_wizards(self) -> list[str]:
         """
         List all wizard IDs provided by this plugin.
 
@@ -241,7 +241,7 @@ class BasePlugin(ABC):
 
         return list(self._wizards.keys())
 
-    def get_wizard_info(self, wizard_id: str) -> Optional[Dict[str, Any]]:
+    def get_wizard_info(self, wizard_id: str) -> dict[str, Any] | None:
         """
         Get information about a wizard without instantiating it.
 

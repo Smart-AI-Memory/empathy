@@ -30,7 +30,7 @@ def print_wizard_output(result, show_artifacts=False):
             print(f"   • {artifact.type.upper()}: {artifact.title}")
         print()
 
-    print(f"🎬 Top Next Actions:")
+    print("🎬 Top Next Actions:")
     for action in result.primary_output.next_actions[:3]:
         print(f"   ✓ {action}")
     print()
@@ -45,7 +45,7 @@ def demo_1_debugging():
         task="Critical bug: Users cannot log in, 500 errors",
         context="Authentication service throwing NullPointerException. Logs show config value is null. Production down.",
         preferences="Urgent fix needed",
-        risk_tolerance="low"
+        risk_tolerance="low",
     )
 
     coach = Coach()
@@ -61,7 +61,7 @@ def demo_1_debugging():
         description="Add null guard and default config value",
         code="if config is None: config = get_default()",
         tags=["debugging", "null", "config"],
-        context={"severity": "critical", "type": "auth"}
+        context={"severity": "critical", "type": "auth"},
     )
 
     print("✓ DebuggingWizard contributed pattern to shared learning\n")
@@ -76,7 +76,7 @@ def demo_2_documentation():
         task="New developers taking 3 days to get set up instead of 1",
         context="README missing database setup, environment config unclear, no local dev guide",
         preferences="Quick start for beginners",
-        risk_tolerance="medium"
+        risk_tolerance="medium",
     )
 
     coach = Coach()
@@ -92,7 +92,7 @@ def demo_2_documentation():
         description="Step-by-step setup guide with prerequisites and verification",
         code="# Prerequisites\n# Installation\n# Configuration\n# Verify",
         tags=["documentation", "onboarding", "setup"],
-        context={"audience": "beginners"}
+        context={"audience": "beginners"},
     )
 
     print("✓ DocumentationWizard contributed pattern to shared learning\n")
@@ -107,7 +107,7 @@ def demo_3_design_review():
         task="Architecture review needed for new microservices design",
         context="Planning to split monolith into microservices. Need to evaluate trade-offs, scalability, and operational complexity.",
         preferences="Detailed analysis of trade-offs",
-        risk_tolerance="low"
+        risk_tolerance="low",
     )
 
     coach = Coach()
@@ -123,7 +123,7 @@ def demo_3_design_review():
         description="Microservices trade-off analysis with ADR",
         code="ADR template with context, decision, consequences",
         tags=["architecture", "microservices", "tradeoffs"],
-        context={"pattern": "microservices"}
+        context={"pattern": "microservices"},
     )
 
     print("✓ DesignReviewWizard contributed pattern to shared learning\n")
@@ -138,7 +138,7 @@ def demo_4_testing():
         task="Test coverage is only 40%, need to improve to 80%",
         context="Authentication module untested. No integration tests. Missing edge case tests.",
         preferences="Prioritized test plan",
-        risk_tolerance="medium"
+        risk_tolerance="medium",
     )
 
     coach = Coach()
@@ -154,7 +154,7 @@ def demo_4_testing():
         description="Coverage improvement plan with prioritized scenarios",
         code="def test_authentication(): # AAA pattern",
         tags=["testing", "coverage", "test_plan"],
-        context={"coverage_target": 80}
+        context={"coverage_target": 80},
     )
 
     print("✓ TestingWizard contributed pattern to shared learning\n")
@@ -169,7 +169,7 @@ def demo_5_retrospective():
         task="Team retrospective needed after tough sprint",
         context="Team stressed from deadline pressure. Communication issues. Some technical debt accumulated.",
         preferences="Mad Sad Glad format",
-        risk_tolerance="low"
+        risk_tolerance="low",
     )
 
     coach = Coach()
@@ -185,7 +185,7 @@ def demo_5_retrospective():
         description="Mad Sad Glad format for processing team emotions",
         code="# Mad: frustrations\n# Sad: disappointments\n# Glad: wins",
         tags=["retrospective", "team", "morale"],
-        context={"team_health": "stressed"}
+        context={"team_health": "stressed"},
     )
 
     print("✓ RetrospectiveWizard contributed pattern to shared learning\n")
@@ -200,7 +200,7 @@ def demo_6_security():
         task="Security audit needed before launch",
         context="Web application with user authentication, payment processing, personal data storage. Need OWASP review.",
         preferences="Comprehensive security checklist",
-        risk_tolerance="low"
+        risk_tolerance="low",
     )
 
     coach = Coach()
@@ -216,7 +216,7 @@ def demo_6_security():
         description="STRIDE threat modeling for web applications",
         code="# Spoofing\n# Tampering\n# Repudiation\n# Info Disclosure\n# DoS\n# Elevation",
         tags=["security", "threat_model", "STRIDE"],
-        context={"compliance": ["PCI-DSS", "GDPR"]}
+        context={"compliance": ["PCI-DSS", "GDPR"]},
     )
 
     print("✓ SecurityWizard contributed pattern to shared learning\n")
@@ -231,7 +231,7 @@ def demo_7_multi_wizard():
         task="Production incident: Security breach via SQL injection",
         context="Attacker exploited SQL injection in search endpoint. Need to fix bug, document incident, improve testing, review security.",
         preferences="Comprehensive incident response",
-        risk_tolerance="low"
+        risk_tolerance="low",
     )
 
     coach = Coach()
@@ -250,7 +250,7 @@ def demo_7_multi_wizard():
             print(f"    → {output.wizard_name}: {output.diagnosis}")
         print()
 
-    print(f"💡 Synthesized Recommendations:")
+    print("💡 Synthesized Recommendations:")
     print(f"{result.synthesis}\n")
 
     # Record collaborations
@@ -309,7 +309,9 @@ def main():
     for name, demo_func in demos:
         demo_func()
         if demo_func != demo_8_learning_summary:
-            input(f"\n{'─' * 80}\n Press Enter for next demo: {demos[demos.index((name, demo_func)) + 1][0] if demos.index((name, demo_func)) < len(demos) - 1 else 'Summary'}...")
+            input(
+                f"\n{'─' * 80}\n Press Enter for next demo: {demos[demos.index((name, demo_func)) + 1][0] if demos.index((name, demo_func)) < len(demos) - 1 else 'Summary'}..."
+            )
 
     print_section("DEMO COMPLETE")
     print("Coach now demonstrates:")

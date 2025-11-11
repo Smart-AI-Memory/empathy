@@ -10,33 +10,35 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import List, Dict, Any
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
-from .linter_parsers import LintIssue, Severity
+from .linter_parsers import LintIssue
 
 
 class BugRisk(Enum):
     """Bug risk levels"""
-    CRITICAL = "critical"      # Will definitely cause runtime errors
-    HIGH = "high"              # Very likely to cause bugs
-    MEDIUM = "medium"          # May cause subtle bugs
-    LOW = "low"                # Unlikely to cause bugs
-    STYLE = "style"            # Style only, no bug risk
+
+    CRITICAL = "critical"  # Will definitely cause runtime errors
+    HIGH = "high"  # Very likely to cause bugs
+    MEDIUM = "medium"  # May cause subtle bugs
+    LOW = "low"  # Unlikely to cause bugs
+    STYLE = "style"  # Style only, no bug risk
 
 
 @dataclass
 class RiskAssessment:
     """Risk assessment for a linting issue"""
+
     issue: LintIssue
     risk_level: BugRisk
     reasoning: str
     impact: str
     likelihood: float  # 0.0 to 1.0
-    prevention_steps: List[str]
+    prevention_steps: list[str]
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return {
             "issue": self.issue.to_dict(),
@@ -44,7 +46,7 @@ class RiskAssessment:
             "reasoning": self.reasoning,
             "impact": self.impact,
             "likelihood": self.likelihood,
-            "prevention_steps": self.prevention_steps
+            "prevention_steps": self.prevention_steps,
         }
 
 
@@ -65,7 +67,7 @@ class BugRiskAnalyzer:
         self.pylint_risk_patterns = self._get_pylint_patterns()
         self.typescript_risk_patterns = self._get_typescript_patterns()
 
-    def analyze(self, issues: List[LintIssue]) -> List[RiskAssessment]:
+    def analyze(self, issues: list[LintIssue]) -> list[RiskAssessment]:
         """
         Analyze issues and return risk assessments.
 
@@ -87,7 +89,7 @@ class BugRiskAnalyzer:
             BugRisk.HIGH: 1,
             BugRisk.MEDIUM: 2,
             BugRisk.LOW: 3,
-            BugRisk.STYLE: 4
+            BugRisk.STYLE: 4,
         }
 
         assessments.sort(key=lambda a: risk_order[a.risk_level])
@@ -110,13 +112,16 @@ class BugRiskAnalyzer:
             patterns = {}
 
         # Get pattern for this rule
-        pattern = patterns.get(issue.rule, {
-            "risk": BugRisk.MEDIUM,
-            "reasoning": "Unknown rule - assess manually",
-            "impact": "Uncertain impact",
-            "likelihood": 0.5,
-            "prevention_steps": ["Review manually", "Check documentation"]
-        })
+        pattern = patterns.get(
+            issue.rule,
+            {
+                "risk": BugRisk.MEDIUM,
+                "reasoning": "Unknown rule - assess manually",
+                "impact": "Uncertain impact",
+                "likelihood": 0.5,
+                "prevention_steps": ["Review manually", "Check documentation"],
+            },
+        )
 
         return RiskAssessment(
             issue=issue,
@@ -124,10 +129,10 @@ class BugRiskAnalyzer:
             reasoning=pattern["reasoning"],
             impact=pattern["impact"],
             likelihood=pattern["likelihood"],
-            prevention_steps=pattern["prevention_steps"]
+            prevention_steps=pattern["prevention_steps"],
         )
 
-    def _get_eslint_patterns(self) -> Dict[str, Dict]:
+    def _get_eslint_patterns(self) -> dict[str, dict]:
         """ESLint rule → bug risk patterns"""
         return {
             # CRITICAL - Guaranteed runtime errors
@@ -139,8 +144,8 @@ class BugRiskAnalyzer:
                 "prevention_steps": [
                     "Add import/require statement",
                     "Define variable before use",
-                    "Check for typos in variable name"
-                ]
+                    "Check for typos in variable name",
+                ],
             },
             "no-unreachable": {
                 "risk": BugRisk.CRITICAL,
@@ -149,10 +154,9 @@ class BugRiskAnalyzer:
                 "likelihood": 1.0,
                 "prevention_steps": [
                     "Remove unreachable code",
-                    "Move logic before return statement"
-                ]
+                    "Move logic before return statement",
+                ],
             },
-
             # HIGH - Very likely to cause bugs
             "eqeqeq": {
                 "risk": BugRisk.HIGH,
@@ -161,30 +165,23 @@ class BugRiskAnalyzer:
                 "likelihood": 0.8,
                 "prevention_steps": [
                     "Use === for type-safe comparison",
-                    "Explicitly convert types before comparison"
-                ]
+                    "Explicitly convert types before comparison",
+                ],
             },
             "no-constant-condition": {
                 "risk": BugRisk.HIGH,
                 "reasoning": "Constant condition in if/while likely logic error",
                 "impact": "Dead code or infinite loop",
                 "likelihood": 0.9,
-                "prevention_steps": [
-                    "Review conditional logic",
-                    "Replace with actual condition"
-                ]
+                "prevention_steps": ["Review conditional logic", "Replace with actual condition"],
             },
             "no-dupe-keys": {
                 "risk": BugRisk.HIGH,
                 "reasoning": "Duplicate object keys - later value silently overwrites",
                 "impact": "Lost data, incorrect object state",
                 "likelihood": 0.9,
-                "prevention_steps": [
-                    "Remove duplicate key",
-                    "Use unique property names"
-                ]
+                "prevention_steps": ["Remove duplicate key", "Use unique property names"],
             },
-
             # MEDIUM - May cause subtle bugs
             "no-shadow": {
                 "risk": BugRisk.MEDIUM,
@@ -193,20 +190,16 @@ class BugRiskAnalyzer:
                 "likelihood": 0.5,
                 "prevention_steps": [
                     "Rename inner variable",
-                    "Use distinct names for different scopes"
-                ]
+                    "Use distinct names for different scopes",
+                ],
             },
             "no-implicit-coercion": {
                 "risk": BugRisk.MEDIUM,
                 "reasoning": "Implicit type coercion can cause unexpected results",
                 "impact": "Type-related bugs in edge cases",
                 "likelihood": 0.6,
-                "prevention_steps": [
-                    "Use explicit type conversion",
-                    "Add type checks"
-                ]
+                "prevention_steps": ["Use explicit type conversion", "Add type checks"],
             },
-
             # LOW - Unlikely to cause bugs
             "no-unused-vars": {
                 "risk": BugRisk.LOW,
@@ -215,28 +208,27 @@ class BugRiskAnalyzer:
                 "likelihood": 0.1,
                 "prevention_steps": [
                     "Remove unused variable",
-                    "Prefix with _ if intentionally unused"
-                ]
+                    "Prefix with _ if intentionally unused",
+                ],
             },
-
             # STYLE - No bug risk
             "semi": {
                 "risk": BugRisk.STYLE,
                 "reasoning": "Missing semicolon - ASI handles it",
                 "impact": "None (style preference)",
                 "likelihood": 0.0,
-                "prevention_steps": ["Add semicolon for consistency"]
+                "prevention_steps": ["Add semicolon for consistency"],
             },
             "quotes": {
                 "risk": BugRisk.STYLE,
                 "reasoning": "Quote style has no functional impact",
                 "impact": "None (style preference)",
                 "likelihood": 0.0,
-                "prevention_steps": ["Use consistent quote style"]
-            }
+                "prevention_steps": ["Use consistent quote style"],
+            },
         }
 
-    def _get_pylint_patterns(self) -> Dict[str, Dict]:
+    def _get_pylint_patterns(self) -> dict[str, dict]:
         """Pylint rule → bug risk patterns"""
         return {
             # CRITICAL
@@ -245,22 +237,15 @@ class BugRiskAnalyzer:
                 "reasoning": "Undefined variable will raise NameError",
                 "impact": "Application crash",
                 "likelihood": 1.0,
-                "prevention_steps": [
-                    "Import missing module",
-                    "Define variable before use"
-                ]
+                "prevention_steps": ["Import missing module", "Define variable before use"],
             },
             "used-before-assignment": {
                 "risk": BugRisk.CRITICAL,
                 "reasoning": "Variable used before assignment raises UnboundLocalError",
                 "impact": "Runtime error",
                 "likelihood": 1.0,
-                "prevention_steps": [
-                    "Initialize variable before use",
-                    "Check control flow logic"
-                ]
+                "prevention_steps": ["Initialize variable before use", "Check control flow logic"],
             },
-
             # HIGH
             "no-member": {
                 "risk": BugRisk.HIGH,
@@ -270,62 +255,50 @@ class BugRiskAnalyzer:
                 "prevention_steps": [
                     "Check object has attribute",
                     "Use hasattr() or getattr()",
-                    "Fix typo in attribute name"
-                ]
+                    "Fix typo in attribute name",
+                ],
             },
             "arguments-differ": {
                 "risk": BugRisk.HIGH,
                 "reasoning": "Method signature mismatch breaks contract",
                 "impact": "Incorrect method calls, TypeError",
                 "likelihood": 0.8,
-                "prevention_steps": [
-                    "Match parent class signature",
-                    "Update all callers"
-                ]
+                "prevention_steps": ["Match parent class signature", "Update all callers"],
             },
-
             # MEDIUM
             "dangerous-default-value": {
                 "risk": BugRisk.MEDIUM,
                 "reasoning": "Mutable default arguments share state",
                 "impact": "Unexpected state persistence across calls",
                 "likelihood": 0.7,
-                "prevention_steps": [
-                    "Use None as default",
-                    "Initialize in function body"
-                ]
+                "prevention_steps": ["Use None as default", "Initialize in function body"],
             },
-
             # LOW
             "unused-variable": {
                 "risk": BugRisk.LOW,
                 "reasoning": "Unused variable is just clutter",
                 "impact": "Minimal - slight confusion",
                 "likelihood": 0.1,
-                "prevention_steps": [
-                    "Remove variable",
-                    "Prefix with _ if intentional"
-                ]
+                "prevention_steps": ["Remove variable", "Prefix with _ if intentional"],
             },
-
             # STYLE
             "missing-docstring": {
                 "risk": BugRisk.STYLE,
                 "reasoning": "Missing documentation, not a bug",
                 "impact": "None (documentation quality)",
                 "likelihood": 0.0,
-                "prevention_steps": ["Add docstring"]
+                "prevention_steps": ["Add docstring"],
             },
             "invalid-name": {
                 "risk": BugRisk.STYLE,
                 "reasoning": "Naming convention violation",
                 "impact": "None (style preference)",
                 "likelihood": 0.0,
-                "prevention_steps": ["Rename to follow convention"]
-            }
+                "prevention_steps": ["Rename to follow convention"],
+            },
         }
 
-    def _get_typescript_patterns(self) -> Dict[str, Dict]:
+    def _get_typescript_patterns(self) -> dict[str, dict]:
         """TypeScript error → bug risk patterns"""
         return {
             # CRITICAL
@@ -334,46 +307,32 @@ class BugRiskAnalyzer:
                 "reasoning": "Undefined identifier will cause ReferenceError",
                 "impact": "Runtime error",
                 "likelihood": 1.0,
-                "prevention_steps": [
-                    "Import missing type/variable",
-                    "Define before use"
-                ]
+                "prevention_steps": ["Import missing type/variable", "Define before use"],
             },
             "TS2322": {  # Type mismatch
                 "risk": BugRisk.HIGH,
                 "reasoning": "Type mismatch often indicates logic error",
                 "impact": "Incorrect value handling, potential runtime errors",
                 "likelihood": 0.8,
-                "prevention_steps": [
-                    "Fix type mismatch",
-                    "Add type conversion",
-                    "Review logic"
-                ]
+                "prevention_steps": ["Fix type mismatch", "Add type conversion", "Review logic"],
             },
             "TS2345": {  # Argument type mismatch
                 "risk": BugRisk.HIGH,
                 "reasoning": "Wrong argument type causes incorrect behavior",
                 "impact": "Function receives unexpected input",
                 "likelihood": 0.8,
-                "prevention_steps": [
-                    "Fix argument type",
-                    "Update function signature"
-                ]
+                "prevention_steps": ["Fix argument type", "Update function signature"],
             },
             "TS2339": {  # Property doesn't exist
                 "risk": BugRisk.HIGH,
                 "reasoning": "Accessing non-existent property",
                 "impact": "undefined value, potential TypeError",
                 "likelihood": 0.7,
-                "prevention_steps": [
-                    "Add property to type",
-                    "Check property exists",
-                    "Fix typo"
-                ]
-            }
+                "prevention_steps": ["Add property to type", "Check property exists", "Fix typo"],
+            },
         }
 
-    def generate_summary(self, assessments: List[RiskAssessment]) -> Dict[str, Any]:
+    def generate_summary(self, assessments: list[RiskAssessment]) -> dict[str, Any]:
         """
         Generate summary of risk assessments.
 
@@ -385,7 +344,7 @@ class BugRiskAnalyzer:
             BugRisk.HIGH: [],
             BugRisk.MEDIUM: [],
             BugRisk.LOW: [],
-            BugRisk.STYLE: []
+            BugRisk.STYLE: [],
         }
 
         for assessment in assessments:
@@ -397,12 +356,10 @@ class BugRiskAnalyzer:
             BugRisk.HIGH: 5,
             BugRisk.MEDIUM: 2,
             BugRisk.LOW: 0.5,
-            BugRisk.STYLE: 0
+            BugRisk.STYLE: 0,
         }
 
-        total_risk_score = sum(
-            risk_scores[a.risk_level] for a in assessments
-        )
+        total_risk_score = sum(risk_scores[a.risk_level] for a in assessments)
 
         # Generate alert message
         critical_count = len(by_risk[BugRisk.CRITICAL])
@@ -423,22 +380,17 @@ class BugRiskAnalyzer:
                 "high": high_count,
                 "medium": len(by_risk[BugRisk.MEDIUM]),
                 "low": len(by_risk[BugRisk.LOW]),
-                "style": len(by_risk[BugRisk.STYLE])
+                "style": len(by_risk[BugRisk.STYLE]),
             },
             "total_risk_score": total_risk_score,
             "alert_level": alert_level,
             "top_risks": [a.to_dict() for a in assessments[:5]],  # Top 5
             "recommendation": self._generate_recommendation(
                 critical_count, high_count, len(by_risk[BugRisk.MEDIUM])
-            )
+            ),
         }
 
-    def _generate_recommendation(
-        self,
-        critical: int,
-        high: int,
-        medium: int
-    ) -> str:
+    def _generate_recommendation(self, critical: int, high: int, medium: int) -> str:
         """Generate Level 4 recommendation"""
 
         if critical > 0:

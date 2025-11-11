@@ -7,15 +7,16 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import List, Dict, Any
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 from .profiler_parsers import FunctionProfile
 
 
 class BottleneckType(str, Enum):
     """Types of performance bottlenecks (str-based enum for easy comparison)"""
+
     HOT_PATH = "hot_path"  # Function taking most total time
     CPU_BOUND = "cpu_bound"  # Heavy computation
     IO_BOUND = "io_bound"  # Waiting for I/O
@@ -27,6 +28,7 @@ class BottleneckType(str, Enum):
 @dataclass
 class Bottleneck:
     """Identified performance bottleneck"""
+
     type: BottleneckType
     function_name: str
     file_path: str
@@ -36,9 +38,9 @@ class Bottleneck:
     percent_total: float
     reasoning: str
     fix_suggestion: str
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return {
             "type": self.type.value,
@@ -50,7 +52,7 @@ class Bottleneck:
             "percent_total": self.percent_total,
             "reasoning": self.reasoning,
             "fix_suggestion": self.fix_suggestion,
-            "metadata": self.metadata
+            "metadata": self.metadata,
         }
 
 
@@ -62,20 +64,36 @@ class BottleneckDetector:
     def __init__(self):
         # Patterns indicating different bottleneck types
         self.io_patterns = [
-            "read", "write", "open", "close", "socket", "request",
-            "query", "execute", "fetch", "select", "insert", "update"
+            "read",
+            "write",
+            "open",
+            "close",
+            "socket",
+            "request",
+            "query",
+            "execute",
+            "fetch",
+            "select",
+            "insert",
+            "update",
         ]
 
         self.computation_patterns = [
-            "sort", "calculate", "compute", "process", "transform",
-            "encode", "decode", "compress", "encrypt", "hash"
+            "sort",
+            "calculate",
+            "compute",
+            "process",
+            "transform",
+            "encode",
+            "decode",
+            "compress",
+            "encrypt",
+            "hash",
         ]
 
     def detect_bottlenecks(
-        self,
-        profiles: List[FunctionProfile],
-        threshold_percent: float = 5.0
-    ) -> List[Bottleneck]:
+        self, profiles: list[FunctionProfile], threshold_percent: float = 5.0
+    ) -> list[Bottleneck]:
         """
         Detect bottlenecks from profiling data.
 
@@ -98,48 +116,54 @@ class BottleneckDetector:
 
             # Detect hot paths (top time consumers >= 20%)
             if profile.percent_total >= 20:
-                bottlenecks.append(Bottleneck(
-                    type=BottleneckType.HOT_PATH,
-                    function_name=profile.function_name,
-                    file_path=profile.file_path,
-                    line_number=profile.line_number,
-                    severity=self._determine_severity(profile.percent_total),
-                    time_cost=profile.total_time,
-                    percent_total=profile.percent_total,
-                    reasoning=f"Consumes {profile.percent_total:.1f}% of total execution time",
-                    fix_suggestion=self._suggest_hot_path_fix(profile),
-                    metadata={"call_count": profile.call_count}
-                ))
+                bottlenecks.append(
+                    Bottleneck(
+                        type=BottleneckType.HOT_PATH,
+                        function_name=profile.function_name,
+                        file_path=profile.file_path,
+                        line_number=profile.line_number,
+                        severity=self._determine_severity(profile.percent_total),
+                        time_cost=profile.total_time,
+                        percent_total=profile.percent_total,
+                        reasoning=f"Consumes {profile.percent_total:.1f}% of total execution time",
+                        fix_suggestion=self._suggest_hot_path_fix(profile),
+                        metadata={"call_count": profile.call_count},
+                    )
+                )
 
             # Detect I/O bound operations
             if self._is_io_bound(profile):
-                bottlenecks.append(Bottleneck(
-                    type=BottleneckType.IO_BOUND,
-                    function_name=profile.function_name,
-                    file_path=profile.file_path,
-                    line_number=profile.line_number,
-                    severity=self._determine_severity(profile.percent_total),
-                    time_cost=profile.total_time,
-                    percent_total=profile.percent_total,
-                    reasoning=f"I/O operation taking {profile.total_time:.2f}s",
-                    fix_suggestion=self._suggest_io_fix(profile),
-                    metadata={"call_count": profile.call_count}
-                ))
+                bottlenecks.append(
+                    Bottleneck(
+                        type=BottleneckType.IO_BOUND,
+                        function_name=profile.function_name,
+                        file_path=profile.file_path,
+                        line_number=profile.line_number,
+                        severity=self._determine_severity(profile.percent_total),
+                        time_cost=profile.total_time,
+                        percent_total=profile.percent_total,
+                        reasoning=f"I/O operation taking {profile.total_time:.2f}s",
+                        fix_suggestion=self._suggest_io_fix(profile),
+                        metadata={"call_count": profile.call_count},
+                    )
+                )
 
             # Detect potential N+1 queries
             if self._is_n_plus_one(profile):
-                bottlenecks.append(Bottleneck(
-                    type=BottleneckType.N_PLUS_ONE,
-                    function_name=profile.function_name,
-                    file_path=profile.file_path,
-                    line_number=profile.line_number,
-                    severity="HIGH",
-                    time_cost=profile.total_time,
-                    percent_total=profile.percent_total,
-                    reasoning=f"Database query called {profile.call_count} times - potential N+1",
-                    fix_suggestion="Add eager loading or batch queries",
-                    metadata={"call_count": profile.call_count}
-                ))
+                bottlenecks.append(
+                    Bottleneck(
+                        type=BottleneckType.N_PLUS_ONE,
+                        function_name=profile.function_name,
+                        file_path=profile.file_path,
+                        line_number=profile.line_number,
+                        severity="HIGH",
+                        time_cost=profile.total_time,
+                        percent_total=profile.percent_total,
+                        reasoning=f"Database query called {profile.call_count} times - potential N+1",
+                        fix_suggestion="Add eager loading or batch queries",
+                        metadata={"call_count": profile.call_count},
+                    )
+                )
 
         # Sort by severity and time cost
         severity_order = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3}

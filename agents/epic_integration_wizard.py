@@ -10,8 +10,9 @@ you may not use this file except in compliance with the License.
 
 import logging
 import operator
+from collections.abc import Sequence
 from datetime import datetime
-from typing import Annotated, Sequence, TypedDict
+from typing import Annotated, TypedDict
 
 from langchain_core.messages import AIMessage, BaseMessage
 from langgraph.graph import END, StateGraph
@@ -152,18 +153,12 @@ async def step_1_prerequisites(state: WizardState) -> WizardState:
     # Even if automated prerequisites fail, user can still configure Epic manually
     if state["prerequisites_passed"]:
         state["messages"].append(
-            AIMessage(
-                content="✅ All prerequisites met. Ready to configure Epic integration."
-            )
+            AIMessage(content="✅ All prerequisites met. Ready to configure Epic integration.")
         )
     else:
         # Don't block progression - just warn user
-        state["warnings"].append(
-            f"Some automated prerequisites missing: {', '.join(missing)}"
-        )
-        state["messages"].append(
-            AIMessage(content=f"⚠️  Manual entry mode: {', '.join(missing)}")
-        )
+        state["warnings"].append(f"Some automated prerequisites missing: {', '.join(missing)}")
+        state["messages"].append(AIMessage(content=f"⚠️  Manual entry mode: {', '.join(missing)}"))
 
     return state
 
@@ -237,9 +232,7 @@ async def step_3_connection_test(state: WizardState) -> WizardState:
             state["connection_test_error"] = str(e)
             state["connection_test_passed"] = False
             state["errors"].append(f"OAuth token request failed: {str(e)}")
-            state["messages"].append(
-                AIMessage(content=f"❌ Connection failed: {str(e)}")
-            )
+            state["messages"].append(AIMessage(content=f"❌ Connection failed: {str(e)}"))
             return state
 
         state["completed_steps"].append(3)
@@ -291,9 +284,7 @@ async def step_4_resource_permissions(state: WizardState) -> WizardState:
     state["completed_steps"].append(4)
     state["current_step"] = 5
     state["messages"].append(
-        AIMessage(
-            content=f"✅ Configured {len(scopes)} resource permissions: {', '.join(scopes)}"
-        )
+        AIMessage(content=f"✅ Configured {len(scopes)} resource permissions: {', '.join(scopes)}")
     )
 
     return state
@@ -336,9 +327,7 @@ async def step_5_test_patient_lookup(state: WizardState) -> WizardState:
 
         if search_result.get("total", 0) > 0:
             patient = search_result["entry"][0]["resource"]
-            patient_name = (
-                f"{patient['name'][0]['given'][0]} {patient['name'][0]['family']}"
-            )
+            patient_name = f"{patient['name'][0]['given'][0]} {patient['name'][0]['family']}"
 
             state["patient_data_retrieved"] = True
             state["retrieved_patient_name"] = patient_name
@@ -360,9 +349,7 @@ async def step_5_test_patient_lookup(state: WizardState) -> WizardState:
         logger.error(f"Patient lookup failed: {e}", exc_info=True)
         state["patient_test_error"] = str(e)
         state["errors"].append(f"Patient lookup error: {str(e)}")
-        state["messages"].append(
-            AIMessage(content=f"❌ Patient lookup failed: {str(e)}")
-        )
+        state["messages"].append(AIMessage(content=f"❌ Patient lookup failed: {str(e)}"))
 
     return state
 

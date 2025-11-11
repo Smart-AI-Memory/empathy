@@ -9,17 +9,16 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import re
-from typing import List, Dict, Any
+from typing import Any
 
 from .base_wizard import (
     BaseWizard,
-    WizardTask,
-    WizardOutput,
-    WizardArtifact,
-    WizardRisk,
-    WizardHandoff,
     EmpathyChecks,
+    WizardArtifact,
+    WizardHandoff,
+    WizardOutput,
+    WizardRisk,
+    WizardTask,
 )
 
 
@@ -37,14 +36,29 @@ class PerformanceWizard(BaseWizard):
         """Determine if this is a performance optimization task"""
         # High-priority performance phrases (worth 2 points each)
         performance_phrases = [
-            "performance", "slow", "bottleneck", "optimize", "latency",
-            "timeout", "profile", "benchmark", "scale", "scaling"
+            "performance",
+            "slow",
+            "bottleneck",
+            "optimize",
+            "latency",
+            "timeout",
+            "profile",
+            "benchmark",
+            "scale",
+            "scaling",
         ]
 
         # Secondary indicators (worth 1 point each)
         secondary_keywords = [
-            "query", "memory", "cpu", "cache", "n+1", "database",
-            "response time", "load time", "throughput"
+            "query",
+            "memory",
+            "cpu",
+            "cache",
+            "n+1",
+            "database",
+            "response time",
+            "load time",
+            "throughput",
         ]
 
         task_lower = (task.task + " " + task.context).lower()
@@ -94,28 +108,16 @@ class PerformanceWizard(BaseWizard):
             WizardArtifact(
                 type="doc",
                 title="Performance Analysis Report",
-                content=self._generate_performance_report(diagnosis, bottlenecks, scaling_analysis)
+                content=self._generate_performance_report(diagnosis, bottlenecks, scaling_analysis),
             ),
-            WizardArtifact(
-                type="code",
-                title="Optimized Code",
-                content=optimized_code
-            ),
-            WizardArtifact(
-                type="code",
-                title="Benchmark Suite",
-                content=benchmarks
-            ),
+            WizardArtifact(type="code", title="Optimized Code", content=optimized_code),
+            WizardArtifact(type="code", title="Benchmark Suite", content=benchmarks),
             WizardArtifact(
                 type="doc",
                 title="Caching Strategy",
-                content=self._generate_caching_strategy(task, bottlenecks)
+                content=self._generate_caching_strategy(task, bottlenecks),
             ),
-            WizardArtifact(
-                type="doc",
-                title="Scaling Projection",
-                content=scaling_analysis
-            )
+            WizardArtifact(type="doc", title="Scaling Projection", content=scaling_analysis),
         ]
 
         # Step 11: Generate next actions
@@ -125,7 +127,9 @@ class PerformanceWizard(BaseWizard):
         empathy_checks = EmpathyChecks(
             cognitive=f"Considered {task.role}'s constraints: {', '.join(constraints.keys())}",
             emotional=f"Acknowledged pressure: {emotional_state['urgency']} urgency, {emotional_state['pressure']} pressure",
-            anticipatory=scaling_analysis[:200] + "..." if len(scaling_analysis) > 200 else scaling_analysis
+            anticipatory=(
+                scaling_analysis[:200] + "..." if len(scaling_analysis) > 200 else scaling_analysis
+            ),
         )
 
         return WizardOutput(
@@ -137,12 +141,12 @@ class PerformanceWizard(BaseWizard):
             handoffs=self._create_handoffs(task),
             next_actions=next_actions,
             empathy_checks=empathy_checks,
-            confidence=self.can_handle(task)
+            confidence=self.can_handle(task),
         )
 
     def _analyze_performance(self, task: WizardTask) -> str:
         """Analyze performance issue from task description"""
-        analysis = f"# Performance Analysis\n\n"
+        analysis = "# Performance Analysis\n\n"
         analysis += f"**Issue**: {task.task}\n\n"
 
         # Categorize performance issue
@@ -164,98 +168,114 @@ class PerformanceWizard(BaseWizard):
             categories.append("General Performance")
 
         analysis += f"**Category**: {', '.join(categories)}\n\n"
-        analysis += f"**Context**: {task.context[:300]}...\n" if len(task.context) > 300 else f"**Context**: {task.context}\n"
+        analysis += (
+            f"**Context**: {task.context[:300]}...\n"
+            if len(task.context) > 300
+            else f"**Context**: {task.context}\n"
+        )
 
         return analysis
 
-    def _profile_bottlenecks(self, task: WizardTask) -> List[Dict[str, Any]]:
+    def _profile_bottlenecks(self, task: WizardTask) -> list[dict[str, Any]]:
         """Identify performance bottlenecks"""
         bottlenecks = []
         task_lower = (task.task + " " + task.context).lower()
 
         # Database bottlenecks
         if "database" in task_lower or "query" in task_lower or "sql" in task_lower:
-            bottlenecks.append({
-                "type": "database",
-                "issue": "Slow database queries",
-                "severity": "high",
-                "impact": "78% of response time",
-                "solutions": [
-                    "Add database indexes on frequently queried columns",
-                    "Use query caching (Redis) for read-heavy operations",
-                    "Implement connection pooling to reduce overhead",
-                    "Consider read replicas for scaling reads"
-                ]
-            })
+            bottlenecks.append(
+                {
+                    "type": "database",
+                    "issue": "Slow database queries",
+                    "severity": "high",
+                    "impact": "78% of response time",
+                    "solutions": [
+                        "Add database indexes on frequently queried columns",
+                        "Use query caching (Redis) for read-heavy operations",
+                        "Implement connection pooling to reduce overhead",
+                        "Consider read replicas for scaling reads",
+                    ],
+                }
+            )
 
         # N+1 query problem
         if "n+1" in task_lower or "loop" in task_lower:
-            bottlenecks.append({
-                "type": "n+1_query",
-                "issue": "N+1 query problem detected",
-                "severity": "critical",
-                "impact": "Queries scale linearly with data (O(n))",
-                "solutions": [
-                    "Use select_related() / prefetch_related() for eager loading",
-                    "Batch queries using DataLoader pattern",
-                    "Implement GraphQL query depth limiting"
-                ]
-            })
+            bottlenecks.append(
+                {
+                    "type": "n+1_query",
+                    "issue": "N+1 query problem detected",
+                    "severity": "critical",
+                    "impact": "Queries scale linearly with data (O(n))",
+                    "solutions": [
+                        "Use select_related() / prefetch_related() for eager loading",
+                        "Batch queries using DataLoader pattern",
+                        "Implement GraphQL query depth limiting",
+                    ],
+                }
+            )
 
         # Memory issues
         if "memory" in task_lower:
-            bottlenecks.append({
-                "type": "memory",
-                "issue": "High memory usage",
-                "severity": "medium",
-                "impact": "May lead to OOM crashes under load",
-                "solutions": [
-                    "Implement pagination for large datasets",
-                    "Use generators/iterators instead of loading all data",
-                    "Profile with memory_profiler to find leaks",
-                    "Consider streaming responses for large payloads"
-                ]
-            })
+            bottlenecks.append(
+                {
+                    "type": "memory",
+                    "issue": "High memory usage",
+                    "severity": "medium",
+                    "impact": "May lead to OOM crashes under load",
+                    "solutions": [
+                        "Implement pagination for large datasets",
+                        "Use generators/iterators instead of loading all data",
+                        "Profile with memory_profiler to find leaks",
+                        "Consider streaming responses for large payloads",
+                    ],
+                }
+            )
 
         # Algorithm complexity
         if "slow" in task_lower or "algorithm" in task_lower:
-            bottlenecks.append({
-                "type": "algorithm",
-                "issue": "Inefficient algorithm complexity",
-                "severity": "high",
-                "impact": "Response time grows exponentially with data",
-                "solutions": [
-                    "Replace O(n²) nested loops with O(n log n) sorting + binary search",
-                    "Use hash maps (O(1) lookup) instead of lists (O(n) lookup)",
-                    "Implement memoization for recursive functions",
-                    "Consider parallel processing for independent computations"
-                ]
-            })
+            bottlenecks.append(
+                {
+                    "type": "algorithm",
+                    "issue": "Inefficient algorithm complexity",
+                    "severity": "high",
+                    "impact": "Response time grows exponentially with data",
+                    "solutions": [
+                        "Replace O(n²) nested loops with O(n log n) sorting + binary search",
+                        "Use hash maps (O(1) lookup) instead of lists (O(n) lookup)",
+                        "Implement memoization for recursive functions",
+                        "Consider parallel processing for independent computations",
+                    ],
+                }
+            )
 
         # Default bottleneck if none detected
         if not bottlenecks:
-            bottlenecks.append({
-                "type": "general",
-                "issue": "Performance degradation",
-                "severity": "medium",
-                "impact": "Response times exceeding acceptable thresholds",
-                "solutions": [
-                    "Profile code with cProfile/py-spy to identify hot paths",
-                    "Implement caching for frequently accessed data",
-                    "Optimize database queries with EXPLAIN ANALYZE",
-                    "Consider horizontal scaling if current optimization insufficient"
-                ]
-            })
+            bottlenecks.append(
+                {
+                    "type": "general",
+                    "issue": "Performance degradation",
+                    "severity": "medium",
+                    "impact": "Response times exceeding acceptable thresholds",
+                    "solutions": [
+                        "Profile code with cProfile/py-spy to identify hot paths",
+                        "Implement caching for frequently accessed data",
+                        "Optimize database queries with EXPLAIN ANALYZE",
+                        "Consider horizontal scaling if current optimization insufficient",
+                    ],
+                }
+            )
 
         return bottlenecks
 
-    def _create_optimization_plan(self, task: WizardTask, bottlenecks: List[Dict]) -> List[str]:
+    def _create_optimization_plan(self, task: WizardTask, bottlenecks: list[dict]) -> list[str]:
         """Create step-by-step optimization plan"""
         plan = ["## Optimization Plan\n"]
 
         for i, bottleneck in enumerate(bottlenecks, 1):
-            plan.append(f"{i}. **Fix {bottleneck['type']} issue** (Severity: {bottleneck['severity']})")
-            for j, solution in enumerate(bottleneck['solutions'][:2], 1):  # Top 2 solutions
+            plan.append(
+                f"{i}. **Fix {bottleneck['type']} issue** (Severity: {bottleneck['severity']})"
+            )
+            for j, solution in enumerate(bottleneck["solutions"][:2], 1):  # Top 2 solutions
                 plan.append(f"   {chr(96+j)}. {solution}")
 
         # Add validation steps
@@ -265,14 +285,14 @@ class PerformanceWizard(BaseWizard):
 
         return plan
 
-    def _generate_optimized_code(self, task: WizardTask, bottlenecks: List[Dict]) -> str:
+    def _generate_optimized_code(self, task: WizardTask, bottlenecks: list[dict]) -> str:
         """Generate optimized code examples"""
         code = "# Performance Optimization Examples\n\n"
 
         for bottleneck in bottlenecks:
             code += f"## {bottleneck['type'].replace('_', ' ').title()} Optimization\n\n"
 
-            if bottleneck['type'] == "database":
+            if bottleneck["type"] == "database":
                 code += """# Before (Slow):
 # No index, full table scan
 results = db.query("SELECT * FROM users WHERE email = ?", email)
@@ -289,7 +309,7 @@ def get_user_by_email(email):
 
 """
 
-            elif bottleneck['type'] == "n+1_query":
+            elif bottleneck["type"] == "n+1_query":
                 code += """# Before (N+1 Problem):
 users = User.query.all()
 for user in users:
@@ -306,7 +326,7 @@ for user in users:
 
 """
 
-            elif bottleneck['type'] == "algorithm":
+            elif bottleneck["type"] == "algorithm":
                 code += """# Before (O(n²)):
 def find_duplicates(items):
     duplicates = []
@@ -330,7 +350,7 @@ def find_duplicates(items):
 
 """
 
-            elif bottleneck['type'] == "memory":
+            elif bottleneck["type"] == "memory":
                 code += """# Before (Loads all data into memory):
 def export_all_users():
     users = User.query.all()  # May load millions of rows!
@@ -348,7 +368,7 @@ def export_all_users():
 
         return code
 
-    def _create_benchmarks(self, task: WizardTask, bottlenecks: List[Dict]) -> str:
+    def _create_benchmarks(self, task: WizardTask, bottlenecks: list[dict]) -> str:
         """Create benchmark test suite"""
         benchmarks = """# Performance Benchmark Suite
 # Run with: pytest benchmark_performance.py --benchmark-only
@@ -411,7 +431,7 @@ class PerformanceUser(HttpUser):
 """
         return benchmarks
 
-    def _predict_scaling_issues(self, task: WizardTask, bottlenecks: List[Dict]) -> str:
+    def _predict_scaling_issues(self, task: WizardTask, bottlenecks: list[dict]) -> str:
         """Level 4: Anticipate future scaling issues"""
         prediction = "# Scaling Trajectory Analysis (Level 4: Anticipatory)\n\n"
 
@@ -424,7 +444,9 @@ class PerformanceUser(HttpUser):
 
         # Predict database scaling issues
         prediction += "### ⚠️ Database Connection Exhaustion (45 days)\n"
-        prediction += "**Prediction**: At 5K req/day growth rate, connection pool will saturate in ~45 days\n"
+        prediction += (
+            "**Prediction**: At 5K req/day growth rate, connection pool will saturate in ~45 days\n"
+        )
         prediction += "**Impact**: Requests will timeout (503 errors)\n"
         prediction += "**Preventive Action**:\n"
         prediction += "- Increase connection pool size from 10 → 50 connections\n"
@@ -433,7 +455,9 @@ class PerformanceUser(HttpUser):
 
         # Predict query performance degradation
         prediction += "### ⚠️ Query Performance Degradation (60 days)\n"
-        prediction += "**Prediction**: At 50K rows/month growth, queries will exceed 500ms p95 in ~60 days\n"
+        prediction += (
+            "**Prediction**: At 50K rows/month growth, queries will exceed 500ms p95 in ~60 days\n"
+        )
         prediction += "**Impact**: User-visible slowness, potential SLA breach\n"
         prediction += "**Preventive Action**:\n"
         prediction += "- Add database indexes NOW (takes effect immediately)\n"
@@ -442,7 +466,9 @@ class PerformanceUser(HttpUser):
 
         # Predict memory issues
         prediction += "### ⚠️ Memory Pressure (90 days)\n"
-        prediction += "**Prediction**: At current data growth, in-memory caching will exceed available RAM\n"
+        prediction += (
+            "**Prediction**: At current data growth, in-memory caching will exceed available RAM\n"
+        )
         prediction += "**Impact**: Cache thrashing, increased database load\n"
         prediction += "**Preventive Action**:\n"
         prediction += "- Implement cache eviction policy (LRU)\n"
@@ -457,7 +483,9 @@ class PerformanceUser(HttpUser):
 
         return prediction
 
-    def _generate_performance_report(self, diagnosis: str, bottlenecks: List[Dict], scaling: str) -> str:
+    def _generate_performance_report(
+        self, diagnosis: str, bottlenecks: list[dict], scaling: str
+    ) -> str:
         """Generate comprehensive performance report"""
         report = f"{diagnosis}\n\n"
         report += "## Identified Bottlenecks\n\n"
@@ -466,7 +494,7 @@ class PerformanceUser(HttpUser):
             report += f"### {i}. {bottleneck['issue']} (Severity: {bottleneck['severity']})\n"
             report += f"**Impact**: {bottleneck['impact']}\n\n"
             report += "**Recommended Solutions**:\n"
-            for solution in bottleneck['solutions']:
+            for solution in bottleneck["solutions"]:
                 report += f"- {solution}\n"
             report += "\n"
 
@@ -474,13 +502,15 @@ class PerformanceUser(HttpUser):
 
         return report
 
-    def _generate_caching_strategy(self, task: WizardTask, bottlenecks: List[Dict]) -> str:
+    def _generate_caching_strategy(self, task: WizardTask, bottlenecks: list[dict]) -> str:
         """Generate caching strategy recommendations"""
         strategy = "# Caching Strategy\n\n"
 
         strategy += "## Cache Layers\n\n"
         strategy += "### 1. Application-Level Cache (In-Memory)\n"
-        strategy += "- **Use case**: Hot data accessed frequently (< 1 second staleness acceptable)\n"
+        strategy += (
+            "- **Use case**: Hot data accessed frequently (< 1 second staleness acceptable)\n"
+        )
         strategy += "- **Implementation**: Python `functools.lru_cache` or Flask-Caching\n"
         strategy += "- **TTL**: 60-300 seconds\n"
         strategy += "- **Example**: User profile data, configuration settings\n\n"
@@ -499,7 +529,9 @@ class PerformanceUser(HttpUser):
 
         strategy += "## Cache Invalidation Strategy\n\n"
         strategy += "- **Time-based**: Set appropriate TTL based on data volatility\n"
-        strategy += "- **Event-based**: Invalidate on write operations (user update → bust profile cache)\n"
+        strategy += (
+            "- **Event-based**: Invalidate on write operations (user update → bust profile cache)\n"
+        )
         strategy += "- **Version-based**: Include version tag in cache key\n\n"
 
         strategy += "## Expected Impact\n"
@@ -509,48 +541,58 @@ class PerformanceUser(HttpUser):
 
         return strategy
 
-    def _identify_risks(self, task: WizardTask, bottlenecks: List[Dict]) -> List[WizardRisk]:
+    def _identify_risks(self, task: WizardTask, bottlenecks: list[dict]) -> list[WizardRisk]:
         """Identify optimization risks"""
         risks = []
 
         # Index creation risk
-        if any(b['type'] == 'database' for b in bottlenecks):
-            risks.append(WizardRisk(
-                risk="Database index creation may lock table during creation",
-                mitigation="Use CREATE INDEX CONCURRENTLY (Postgres) for zero-downtime indexing",
-                severity="low"
-            ))
+        if any(b["type"] == "database" for b in bottlenecks):
+            risks.append(
+                WizardRisk(
+                    risk="Database index creation may lock table during creation",
+                    mitigation="Use CREATE INDEX CONCURRENTLY (Postgres) for zero-downtime indexing",
+                    severity="low",
+                )
+            )
 
         # Caching risk
-        risks.append(WizardRisk(
-            risk="Caching may serve stale data after updates",
-            mitigation="Implement cache invalidation on write operations or use short TTL (60-300s)",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Caching may serve stale data after updates",
+                mitigation="Implement cache invalidation on write operations or use short TTL (60-300s)",
+                severity="medium",
+            )
+        )
 
         # Over-optimization risk
-        risks.append(WizardRisk(
-            risk="Premature optimization may add complexity without significant benefit",
-            mitigation="Always benchmark before/after to validate improvements (target: 30%+ gain)",
-            severity="low"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Premature optimization may add complexity without significant benefit",
+                mitigation="Always benchmark before/after to validate improvements (target: 30%+ gain)",
+                severity="low",
+            )
+        )
 
         return risks
 
-    def _create_handoffs(self, task: WizardTask) -> List[WizardHandoff]:
+    def _create_handoffs(self, task: WizardTask) -> list[WizardHandoff]:
         """Create handoffs for performance work"""
         handoffs = []
 
         if task.role == "developer":
-            handoffs.append(WizardHandoff(
-                owner="DevOps/SRE",
-                what="Configure Redis cache cluster and monitoring dashboards",
-                when="Before production deployment"
-            ))
-            handoffs.append(WizardHandoff(
-                owner="DBA",
-                what="Review and approve database index creation plan",
-                when="Before executing DDL statements"
-            ))
+            handoffs.append(
+                WizardHandoff(
+                    owner="DevOps/SRE",
+                    what="Configure Redis cache cluster and monitoring dashboards",
+                    when="Before production deployment",
+                )
+            )
+            handoffs.append(
+                WizardHandoff(
+                    owner="DBA",
+                    what="Review and approve database index creation plan",
+                    when="Before executing DDL statements",
+                )
+            )
 
         return handoffs

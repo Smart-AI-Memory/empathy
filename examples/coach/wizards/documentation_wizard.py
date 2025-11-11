@@ -9,16 +9,14 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import List, Dict, Any
-
 from .base_wizard import (
     BaseWizard,
-    WizardTask,
-    WizardOutput,
-    WizardArtifact,
-    WizardRisk,
-    WizardHandoff,
     EmpathyChecks,
+    WizardArtifact,
+    WizardHandoff,
+    WizardOutput,
+    WizardRisk,
+    WizardTask,
 )
 
 
@@ -35,8 +33,16 @@ class DocumentationWizard(BaseWizard):
     def can_handle(self, task: WizardTask) -> float:
         """Determine if this is a documentation task"""
         doc_keywords = [
-            "doc", "readme", "documentation", "unclear", "confusing",
-            "onboarding", "handoff", "guide", "tutorial", "explain"
+            "doc",
+            "readme",
+            "documentation",
+            "unclear",
+            "confusing",
+            "onboarding",
+            "handoff",
+            "guide",
+            "tutorial",
+            "explain",
         ]
 
         task_lower = (task.task + " " + task.context).lower()
@@ -71,25 +77,19 @@ class DocumentationWizard(BaseWizard):
 
         # Step 8: Create artifacts
         artifacts = [
-            WizardArtifact(
-                type="doc",
-                title=f"{doc_type} Documentation",
-                content=doc_content
-            ),
-            WizardArtifact(
-                type="checklist",
-                title="Handoff Checklist",
-                content=handoff_checklist
-            )
+            WizardArtifact(type="doc", title=f"{doc_type} Documentation", content=doc_content),
+            WizardArtifact(type="checklist", title="Handoff Checklist", content=handoff_checklist),
         ]
 
         # Add gap-filling artifacts if identified
         if potential_gaps:
-            artifacts.append(WizardArtifact(
-                type="doc",
-                title="Identified Documentation Gaps",
-                content=self._format_gaps(potential_gaps)
-            ))
+            artifacts.append(
+                WizardArtifact(
+                    type="doc",
+                    title="Identified Documentation Gaps",
+                    content=self._format_gaps(potential_gaps),
+                )
+            )
 
         # Step 9: Create plan
         plan = [
@@ -97,7 +97,7 @@ class DocumentationWizard(BaseWizard):
             f"Write {doc_type} addressing {len(pain_points)} pain points",
             "Review with target audience member",
             "Update README/docs with new content",
-            "Add to onboarding checklist"
+            "Add to onboarding checklist",
         ]
 
         # Step 10: Generate next actions
@@ -106,7 +106,7 @@ class DocumentationWizard(BaseWizard):
             "Request review from target role",
             "Update main README with link",
             "Add to team wiki/docs site",
-            "Share in team channel"
+            "Share in team channel",
         ]
 
         # Add anticipatory actions
@@ -118,13 +118,13 @@ class DocumentationWizard(BaseWizard):
             WizardRisk(
                 risk="Documentation becomes stale quickly",
                 mitigation="Add 'Last Updated' date and assign owner for quarterly review",
-                severity="medium"
+                severity="medium",
             ),
             WizardRisk(
                 risk="Too technical for target audience",
                 mitigation="Include glossary and 'Prerequisites' section",
-                severity="low"
-            )
+                severity="low",
+            ),
         ]
 
         # Step 12: Create handoffs
@@ -132,7 +132,7 @@ class DocumentationWizard(BaseWizard):
             WizardHandoff(
                 owner=audience["role"],
                 what="Review documentation for clarity",
-                when="Before merging"
+                when="Before merging",
             )
         ]
 
@@ -140,7 +140,7 @@ class DocumentationWizard(BaseWizard):
         empathy_checks = EmpathyChecks(
             cognitive=f"Considered {audience['role']} perspective with {audience['experience']} experience level",
             emotional=f"Acknowledged confusion/frustration from {len(pain_points)} identified pain points",
-            anticipatory=f"Proactively identified {len(potential_gaps)} potential doc gaps and created handoff checklist"
+            anticipatory=f"Proactively identified {len(potential_gaps)} potential doc gaps and created handoff checklist",
         )
 
         return WizardOutput(
@@ -152,15 +152,12 @@ class DocumentationWizard(BaseWizard):
             handoffs=handoffs,
             next_actions=next_actions,
             empathy_checks=empathy_checks,
-            confidence=self.can_handle(task)
+            confidence=self.can_handle(task),
         )
 
-    def _identify_audience(self, task: WizardTask) -> Dict[str, str]:
+    def _identify_audience(self, task: WizardTask) -> dict[str, str]:
         """Identify target audience for docs"""
-        audience = {
-            "role": task.role,
-            "experience": "intermediate"
-        }
+        audience = {"role": task.role, "experience": "intermediate"}
 
         # Detect experience level from context
         if "new" in task.context.lower() or "onboarding" in task.task.lower():
@@ -170,7 +167,7 @@ class DocumentationWizard(BaseWizard):
 
         return audience
 
-    def _identify_pain_points(self, task: WizardTask) -> List[str]:
+    def _identify_pain_points(self, task: WizardTask) -> list[str]:
         """Identify documentation pain points"""
         pain_points = []
 
@@ -183,7 +180,7 @@ class DocumentationWizard(BaseWizard):
             "confusing": "Confusing structure or terminology",
             "handoff": "Handoff process not documented",
             "setup": "Setup/installation instructions missing",
-            "example": "Missing examples or use cases"
+            "example": "Missing examples or use cases",
         }
 
         for keyword, pain in pain_keywords.items():
@@ -196,7 +193,7 @@ class DocumentationWizard(BaseWizard):
 
         return pain_points
 
-    def _determine_doc_type(self, task: WizardTask, pain_points: List[str]) -> str:
+    def _determine_doc_type(self, task: WizardTask, pain_points: list[str]) -> str:
         """Determine what type of doc to create"""
         task_lower = task.task.lower() + " " + task.context.lower()
 
@@ -215,12 +212,13 @@ class DocumentationWizard(BaseWizard):
         else:
             return "Quick Start Guide"
 
-    def _create_diagnosis(self, audience: Dict, pain_points: List[str], doc_type: str) -> str:
+    def _create_diagnosis(self, audience: dict, pain_points: list[str], doc_type: str) -> str:
         """Create diagnosis of documentation needs"""
         return f"{doc_type} needed for {audience['role']} ({audience['experience']} level) to address: {', '.join(pain_points[:2])}"
 
-    def _generate_documentation(self, task: WizardTask, audience: Dict,
-                                pain_points: List[str], doc_type: str) -> str:
+    def _generate_documentation(
+        self, task: WizardTask, audience: dict, pain_points: list[str], doc_type: str
+    ) -> str:
         """Generate the actual documentation"""
 
         if doc_type == "Handoff Guide":
@@ -284,7 +282,7 @@ Availability: [Your availability]
 *Handoff To*: [Recipient name/role]
 """
 
-    def _generate_readme_section(self, task: WizardTask, pain_points: List[str]) -> str:
+    def _generate_readme_section(self, task: WizardTask, pain_points: list[str]) -> str:
         """Generate README section addressing pain points"""
         return """# [Feature/Component Name]
 
@@ -491,7 +489,7 @@ See [Troubleshooting Guide](link) or ask in #engineering-help
 *Last Updated*: [Date]
 """
 
-    def _generate_quick_start(self, task: WizardTask, audience: Dict) -> str:
+    def _generate_quick_start(self, task: WizardTask, audience: dict) -> str:
         """Generate quick start guide"""
         return """# Quick Start Guide
 
@@ -552,7 +550,7 @@ You should now have [description of end state].
 *Last Updated*: [Date]
 """
 
-    def _create_handoff_checklist(self, task: WizardTask, audience: Dict) -> str:
+    def _create_handoff_checklist(self, task: WizardTask, audience: dict) -> str:
         """Create handoff checklist"""
         return """# Documentation Handoff Checklist
 
@@ -568,7 +566,7 @@ You should now have [description of end state].
 - [ ] Feedback loop established (how to report issues)
 """
 
-    def _identify_potential_gaps(self, task: WizardTask, doc_type: str) -> List[str]:
+    def _identify_potential_gaps(self, task: WizardTask, doc_type: str) -> list[str]:
         """Proactively identify potential documentation gaps"""
         gaps = []
 
@@ -587,7 +585,7 @@ You should now have [description of end state].
 
         return gaps
 
-    def _format_gaps(self, gaps: List[str]) -> str:
+    def _format_gaps(self, gaps: list[str]) -> str:
         """Format identified gaps as doc"""
         content = "# Identified Documentation Gaps\n\n"
         content += "The following related documentation should be considered:\n\n"

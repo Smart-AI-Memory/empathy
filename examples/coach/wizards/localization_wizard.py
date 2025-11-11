@@ -9,17 +9,16 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import re
-from typing import List, Dict, Any
+from typing import Any
 
 from .base_wizard import (
     BaseWizard,
-    WizardTask,
-    WizardOutput,
-    WizardArtifact,
-    WizardRisk,
-    WizardHandoff,
     EmpathyChecks,
+    WizardArtifact,
+    WizardHandoff,
+    WizardOutput,
+    WizardRisk,
+    WizardTask,
 )
 
 
@@ -37,14 +36,29 @@ class LocalizationWizard(BaseWizard):
         """Determine if this is a localization task"""
         # High-priority localization phrases (worth 2 points each)
         localization_phrases = [
-            "i18n", "l10n", "localization", "translation", "internationalization"
+            "i18n",
+            "l10n",
+            "localization",
+            "translation",
+            "internationalization",
         ]
 
         # Secondary indicators (worth 1 point each)
         secondary_keywords = [
-            "locale", "language", "multilingual", "translate", "rtl",
-            "right-to-left", "arabic", "japanese", "chinese", "spanish",
-            "gettext", "format.js", "react-intl", "django-i18n"
+            "locale",
+            "language",
+            "multilingual",
+            "translate",
+            "rtl",
+            "right-to-left",
+            "arabic",
+            "japanese",
+            "chinese",
+            "spanish",
+            "gettext",
+            "format.js",
+            "react-intl",
+            "django-i18n",
         ]
 
         task_lower = (task.task + " " + task.context).lower()
@@ -73,33 +87,21 @@ class LocalizationWizard(BaseWizard):
             WizardArtifact(
                 type="doc",
                 title="Localization Strategy",
-                content=self._generate_localization_strategy(diagnosis, framework_setup)
+                content=self._generate_localization_strategy(diagnosis, framework_setup),
             ),
+            WizardArtifact(type="code", title="i18n Framework Setup", content=framework_setup),
             WizardArtifact(
-                type="code",
-                title="i18n Framework Setup",
-                content=framework_setup
+                type="code", title="Translation Files (JSON)", content=translation_files
             ),
-            WizardArtifact(
-                type="code",
-                title="Translation Files (JSON)",
-                content=translation_files
-            ),
-            WizardArtifact(
-                type="code",
-                title="RTL (Right-to-Left) Support",
-                content=rtl_support
-            ),
+            WizardArtifact(type="code", title="RTL (Right-to-Left) Support", content=rtl_support),
             WizardArtifact(
                 type="doc",
                 title="Translation Workflow Guide",
-                content=self._create_translation_workflow(task)
+                content=self._create_translation_workflow(task),
             ),
             WizardArtifact(
-                type="doc",
-                title="Localization Forecast",
-                content=localization_forecast
-            )
+                type="doc", title="Localization Forecast", content=localization_forecast
+            ),
         ]
 
         plan = [
@@ -109,13 +111,17 @@ class LocalizationWizard(BaseWizard):
             "4. Implement locale switching UI",
             "5. Add RTL support for Arabic/Hebrew",
             "6. Handle date/time/currency formatting",
-            "7. Test with all target locales"
+            "7. Test with all target locales",
         ]
 
         empathy_checks = EmpathyChecks(
-            cognitive=f"Considered global users: language barriers, cultural differences, reading direction",
-            emotional=f"Acknowledged: Users feel excluded when app not in their language",
-            anticipatory=localization_forecast[:200] + "..." if len(localization_forecast) > 200 else localization_forecast
+            cognitive="Considered global users: language barriers, cultural differences, reading direction",
+            emotional="Acknowledged: Users feel excluded when app not in their language",
+            anticipatory=(
+                localization_forecast[:200] + "..."
+                if len(localization_forecast) > 200
+                else localization_forecast
+            ),
         )
 
         return WizardOutput(
@@ -127,7 +133,7 @@ class LocalizationWizard(BaseWizard):
             handoffs=self._create_handoffs(task),
             next_actions=plan[:3] + self._generate_anticipatory_actions(task),
             empathy_checks=empathy_checks,
-            confidence=self.can_handle(task)
+            confidence=self.can_handle(task),
         )
 
     def _analyze_localization_requirements(self, task: WizardTask) -> str:
@@ -159,43 +165,47 @@ class LocalizationWizard(BaseWizard):
 
         analysis += f"**Target Languages**: {', '.join(languages)}\n"
         analysis += f"**RTL Support Needed**: {'Yes' if 'RTL' in ', '.join(languages) else 'No'}\n"
-        analysis += f"**Context**: {task.context[:300]}...\n" if len(task.context) > 300 else f"**Context**: {task.context}\n"
+        analysis += (
+            f"**Context**: {task.context[:300]}...\n"
+            if len(task.context) > 300
+            else f"**Context**: {task.context}\n"
+        )
 
         return analysis
 
-    def _extract_strings(self, task: WizardTask) -> List[Dict[str, Any]]:
+    def _extract_strings(self, task: WizardTask) -> list[dict[str, Any]]:
         """Extract translatable strings (Level 3: Proactive)"""
         strings = [
             {
                 "key": "welcome.title",
                 "text": "Welcome to our application",
                 "context": "Homepage hero section",
-                "notes": "Keep friendly and welcoming tone"
+                "notes": "Keep friendly and welcoming tone",
             },
             {
                 "key": "auth.login",
                 "text": "Log in",
                 "context": "Login button",
-                "notes": "Action verb, keep concise"
+                "notes": "Action verb, keep concise",
             },
             {
                 "key": "auth.login.error",
                 "text": "Invalid email or password",
                 "context": "Login error message",
-                "notes": "Don't reveal which field is wrong (security)"
+                "notes": "Don't reveal which field is wrong (security)",
             },
             {
                 "key": "items.count",
                 "text": "{count, plural, =0 {No items} =1 {1 item} other {# items}}",
                 "context": "Item counter",
-                "notes": "Plural forms vary by language"
+                "notes": "Plural forms vary by language",
             },
             {
                 "key": "date.format",
                 "text": "{date, date, long}",
                 "context": "Date formatting",
-                "notes": "Locale-specific format"
-            }
+                "notes": "Locale-specific format",
+            },
         ]
 
         return strings
@@ -217,7 +227,9 @@ class LocalizationWizard(BaseWizard):
             framework += "### Setup\n"
             framework += "```javascript\n"
             framework += "// src/i18n/i18n.js\n"
-            framework += "import { createIntl, createIntlCache, RawIntlProvider } from 'react-intl';\n\n"
+            framework += (
+                "import { createIntl, createIntlCache, RawIntlProvider } from 'react-intl';\n\n"
+            )
             framework += "const cache = createIntlCache();\n\n"
             framework += "const messages = {\n"
             framework += "  en: () => import('./locales/en.json'),\n"
@@ -255,18 +267,18 @@ class LocalizationWizard(BaseWizard):
             framework += "  return (\n"
             framework += "    <div>\n"
             framework += "      {/* Declarative */}\n"
-            framework += "      <h1><FormattedMessage id=\"welcome.title\" /></h1>\n\n"
+            framework += '      <h1><FormattedMessage id="welcome.title" /></h1>\n\n'
             framework += "      {/* Imperative */}\n"
             framework += "      <button title={intl.formatMessage({ id: 'auth.login' })}>\n"
             framework += "        {intl.formatMessage({ id: 'auth.login' })}\n"
             framework += "      </button>\n\n"
             framework += "      {/* Plurals */}\n"
             framework += "      <FormattedMessage \n"
-            framework += "        id=\"items.count\" \n"
+            framework += '        id="items.count" \n'
             framework += "        values={{ count: items.length }} \n"
             framework += "      />\n\n"
             framework += "      {/* Dates */}\n"
-            framework += "      <FormattedDate value={new Date()} year=\"numeric\" month=\"long\" day=\"numeric\" />\n"
+            framework += '      <FormattedDate value={new Date()} year="numeric" month="long" day="numeric" />\n'
             framework += "    </div>\n"
             framework += "  );\n"
             framework += "}\n"
@@ -293,7 +305,7 @@ class LocalizationWizard(BaseWizard):
             framework += "```python\n"
             framework += "from django.utils.translation import gettext as _, ngettext\n\n"
             framework += "# Simple translation\n"
-            framework += "message = _(\"Welcome to our application\")\n\n"
+            framework += 'message = _("Welcome to our application")\n\n'
             framework += "# Pluralization\n"
             framework += "count = 5\n"
             framework += "message = ngettext(\n"
@@ -315,7 +327,7 @@ class LocalizationWizard(BaseWizard):
 
         return framework
 
-    def _generate_translation_files(self, task: WizardTask, strings: List[Dict]) -> str:
+    def _generate_translation_files(self, task: WizardTask, strings: list[dict]) -> str:
         """Generate translation files"""
         files = "# Translation Files\n\n"
 
@@ -336,7 +348,7 @@ class LocalizationWizard(BaseWizard):
             "auth.login": "Iniciar sesión",
             "auth.login.error": "Correo electrónico o contraseña inválidos",
             "items.count": "{count, plural, =0 {Sin artículos} =1 {1 artículo} other {# artículos}}",
-            "date.format": "{date, date, long}"
+            "date.format": "{date, date, long}",
         }
         for i, s in enumerate(strings):
             key = s["key"]
@@ -367,7 +379,7 @@ class LocalizationWizard(BaseWizard):
         rtl += "## CSS for RTL Languages (Arabic, Hebrew)\n\n"
         rtl += "```css\n"
         rtl += "/* Automatically flip layout for RTL */\n"
-        rtl += "html[dir=\"rtl\"] {\n"
+        rtl += 'html[dir="rtl"] {\n'
         rtl += "  direction: rtl;\n"
         rtl += "}\n\n"
 
@@ -409,11 +421,11 @@ class LocalizationWizard(BaseWizard):
         rtl += "```javascript\n"
         rtl += "import { createGlobalStyle } from 'styled-components';\n\n"
         rtl += "const GlobalStyle = createGlobalStyle`\n"
-        rtl += "  html[dir=\"rtl\"] {\n"
+        rtl += '  html[dir="rtl"] {\n'
         rtl += "    direction: rtl;\n"
         rtl += "  }\n"
         rtl += "  \n"
-        rtl += "  html[dir=\"ltr\"] {\n"
+        rtl += '  html[dir="ltr"] {\n'
         rtl += "    direction: ltr;\n"
         rtl += "  }\n"
         rtl += "`;\n\n"
@@ -504,7 +516,7 @@ class LocalizationWizard(BaseWizard):
 
         return workflow
 
-    def _predict_localization_challenges(self, task: WizardTask, strings: List[Dict]) -> str:
+    def _predict_localization_challenges(self, task: WizardTask, strings: list[dict]) -> str:
         """Level 4: Predict localization challenges"""
         forecast = "# Localization Forecast (Level 4: Anticipatory)\n\n"
 
@@ -516,7 +528,9 @@ class LocalizationWizard(BaseWizard):
         forecast += "## Projected Challenges (Next 30-90 Days)\n\n"
 
         forecast += "### ⚠️ Text Expansion Breaks UI (Week 2)\n"
-        forecast += "**Prediction**: German text 30% longer than English, breaks fixed-width layouts\n"
+        forecast += (
+            "**Prediction**: German text 30% longer than English, breaks fixed-width layouts\n"
+        )
         forecast += "**Impact**: Broken UI, text overflow, poor UX in German locale\n"
         forecast += "**Preventive Action**:\n"
         forecast += "- Use flexible layouts (min-width, not fixed width)\n"
@@ -526,11 +540,11 @@ class LocalizationWizard(BaseWizard):
 
         forecast += "### ⚠️ Pluralization Bugs (Week 3)\n"
         forecast += "**Prediction**: Naive pluralization (count !== 1 ? 's' : '') fails in Slavic languages\n"
-        forecast += "**Impact**: \"1 items\", \"21 item\" - grammatically incorrect\n"
+        forecast += '**Impact**: "1 items", "21 item" - grammatically incorrect\n'
         forecast += "**Cause**: Russian/Polish have 3-4 plural forms, not just 2\n"
         forecast += "**Preventive Action**:\n"
         forecast += "- Use ICU MessageFormat for plurals\n"
-        forecast += "- Never concatenate strings (\"Count: \" + count + \" items\")\n"
+        forecast += '- Never concatenate strings ("Count: " + count + " items")\n'
         forecast += "- Test with languages having complex plurals (Polish, Arabic)\n\n"
 
         forecast += "### ⚠️ Date/Time Confusion (Week 4)\n"
@@ -538,11 +552,13 @@ class LocalizationWizard(BaseWizard):
         forecast += "**Impact**: 01/06/2025 = Jan 6 or June 1?\n"
         forecast += "**Preventive Action**:\n"
         forecast += "- Use locale-aware formatting (Intl.DateTimeFormat)\n"
-        forecast += "- Show full month name to avoid confusion (\"January 6, 2025\")\n"
+        forecast += '- Show full month name to avoid confusion ("January 6, 2025")\n'
         forecast += "- Use ISO 8601 for data storage (YYYY-MM-DD)\n\n"
 
         forecast += "### ⚠️ RTL Layout Chaos (30 days)\n"
-        forecast += "**Prediction**: Arabic/Hebrew users see broken layouts (text flows wrong direction)\n"
+        forecast += (
+            "**Prediction**: Arabic/Hebrew users see broken layouts (text flows wrong direction)\n"
+        )
         forecast += "**Impact**: Unusable interface for 5% of global users\n"
         forecast += "**Preventive Action**:\n"
         forecast += "- Use CSS logical properties (padding-inline-start, not padding-left)\n"
@@ -553,7 +569,7 @@ class LocalizationWizard(BaseWizard):
         forecast += "**Prediction**: Idioms, humor, cultural references don't translate\n"
         forecast += "**Impact**: Confusion, offense, brand damage\n"
         forecast += "**Examples**:\n"
-        forecast += "- \"Piece of cake\" → Meaningless in other languages\n"
+        forecast += '- "Piece of cake" → Meaningless in other languages\n'
         forecast += "- Red = danger (China: red = prosperity)\n"
         forecast += "- Thumbs up 👍 (offensive in some Middle Eastern countries)\n"
         forecast += "**Preventive Action**:\n"
@@ -608,50 +624,62 @@ class LocalizationWizard(BaseWizard):
 
         return strategy
 
-    def _identify_risks(self, task: WizardTask, plan: List[str]) -> List[WizardRisk]:
+    def _identify_risks(self, task: WizardTask, plan: list[str]) -> list[WizardRisk]:
         """Identify localization risks"""
         risks = []
 
-        risks.append(WizardRisk(
-            risk="Translation quality issues lead to poor UX or brand damage",
-            mitigation="Use professional translators for critical content. Native speaker review before launch.",
-            severity="high"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Translation quality issues lead to poor UX or brand damage",
+                mitigation="Use professional translators for critical content. Native speaker review before launch.",
+                severity="high",
+            )
+        )
 
-        risks.append(WizardRisk(
-            risk="Hardcoded strings missed during extraction, breaking localized UI",
-            mitigation="Automated string extraction in CI/CD. Fail builds if hardcoded strings detected.",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Hardcoded strings missed during extraction, breaking localized UI",
+                mitigation="Automated string extraction in CI/CD. Fail builds if hardcoded strings detected.",
+                severity="medium",
+            )
+        )
 
-        risks.append(WizardRisk(
-            risk="RTL layout breaks UI for Arabic/Hebrew users",
-            mitigation="Use CSS logical properties. Test with RTL languages from day 1.",
-            severity="high"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="RTL layout breaks UI for Arabic/Hebrew users",
+                mitigation="Use CSS logical properties. Test with RTL languages from day 1.",
+                severity="high",
+            )
+        )
 
-        risks.append(WizardRisk(
-            risk="Translation debt accumulates faster than team can handle",
-            mitigation="Integrate with translation service (Lokalise, Phrase). Automate translation workflow.",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Translation debt accumulates faster than team can handle",
+                mitigation="Integrate with translation service (Lokalise, Phrase). Automate translation workflow.",
+                severity="medium",
+            )
+        )
 
         return risks
 
-    def _create_handoffs(self, task: WizardTask) -> List[WizardHandoff]:
+    def _create_handoffs(self, task: WizardTask) -> list[WizardHandoff]:
         """Create handoffs for localization work"""
         handoffs = []
 
         if task.role == "developer":
-            handoffs.append(WizardHandoff(
-                owner="Translation Team / Service",
-                what="Translate extracted strings, maintain translation memory, cultural adaptation",
-                when="Continuously as strings are added"
-            ))
-            handoffs.append(WizardHandoff(
-                owner="Native Speaker Reviewers",
-                what="QA translations, test in-app, verify cultural appropriateness",
-                when="Before each release"
-            ))
+            handoffs.append(
+                WizardHandoff(
+                    owner="Translation Team / Service",
+                    what="Translate extracted strings, maintain translation memory, cultural adaptation",
+                    when="Continuously as strings are added",
+                )
+            )
+            handoffs.append(
+                WizardHandoff(
+                    owner="Native Speaker Reviewers",
+                    what="QA translations, test in-app, verify cultural appropriateness",
+                    when="Before each release",
+                )
+            )
 
         return handoffs

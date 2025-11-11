@@ -2,8 +2,8 @@
 Layer 3 AI Analyzer - Proactive Intelligence
 Notices patterns and offers improvements using AI assistance.
 """
-from typing import Dict, Any, List
-import asyncio
+
+from typing import Any
 
 from .base_analyzer import BaseAnalyzer, Issue, IssueSeverity
 
@@ -19,7 +19,7 @@ class AIAnalyzer(BaseAnalyzer):
     def level(self) -> int:
         return 3  # Level 3: Proactive
 
-    async def analyze(self, context: Dict[str, Any]) -> List[Issue]:
+    async def analyze(self, context: dict[str, Any]) -> list[Issue]:
         """
         Perform AI-powered proactive analysis.
 
@@ -45,43 +45,47 @@ class AIAnalyzer(BaseAnalyzer):
 
         return issues
 
-    async def _analyze_code_patterns(self, code: str) -> List[Issue]:
+    async def _analyze_code_patterns(self, code: str) -> list[Issue]:
         """Analyze code for patterns and potential improvements."""
         issues = []
 
         # Check for common issues
         if "try:" in code and "except:" in code:
             if "except Exception:" in code or "except:" in code:
-                issues.append(self._create_issue(
-                    title="Overly broad exception handling",
-                    description="Using broad exception catching can hide errors. Consider catching specific exceptions.",
-                    severity=IssueSeverity.MEDIUM,
-                    category="error_handling",
-                    recommendations=[
-                        "Catch specific exception types",
-                        "Log exceptions appropriately",
-                        "Consider letting critical exceptions propagate"
-                    ],
-                    confidence=0.85
-                ))
+                issues.append(
+                    self._create_issue(
+                        title="Overly broad exception handling",
+                        description="Using broad exception catching can hide errors. Consider catching specific exceptions.",
+                        severity=IssueSeverity.MEDIUM,
+                        category="error_handling",
+                        recommendations=[
+                            "Catch specific exception types",
+                            "Log exceptions appropriately",
+                            "Consider letting critical exceptions propagate",
+                        ],
+                        confidence=0.85,
+                    )
+                )
 
         # Check for potential performance issues
         if "for " in code and ".append(" in code and "[]" in code:
-            issues.append(self._create_issue(
-                title="Potential inefficient list building",
-                description="Consider using list comprehension for better performance.",
-                severity=IssueSeverity.LOW,
-                category="performance",
-                recommendations=[
-                    "Use list comprehension instead of append in loop",
-                    "Consider generator expressions for large datasets"
-                ],
-                confidence=0.70
-            ))
+            issues.append(
+                self._create_issue(
+                    title="Potential inefficient list building",
+                    description="Consider using list comprehension for better performance.",
+                    severity=IssueSeverity.LOW,
+                    category="performance",
+                    recommendations=[
+                        "Use list comprehension instead of append in loop",
+                        "Consider generator expressions for large datasets",
+                    ],
+                    confidence=0.70,
+                )
+            )
 
         return issues
 
-    async def _analyze_metrics(self, metrics: Dict[str, Any]) -> List[Issue]:
+    async def _analyze_metrics(self, metrics: dict[str, Any]) -> list[Issue]:
         """Analyze code metrics for potential issues."""
         issues = []
 
@@ -89,39 +93,43 @@ class AIAnalyzer(BaseAnalyzer):
         if "complexity" in metrics:
             complexity = metrics["complexity"]
             if complexity > 10:
-                issues.append(self._create_issue(
-                    title="High code complexity detected",
-                    description=f"Cyclomatic complexity of {complexity} exceeds recommended threshold of 10.",
-                    severity=IssueSeverity.HIGH if complexity > 20 else IssueSeverity.MEDIUM,
-                    category="complexity",
-                    recommendations=[
-                        "Break down complex functions into smaller units",
-                        "Extract conditional logic into separate functions",
-                        "Consider using strategy or state patterns"
-                    ],
-                    confidence=0.95
-                ))
+                issues.append(
+                    self._create_issue(
+                        title="High code complexity detected",
+                        description=f"Cyclomatic complexity of {complexity} exceeds recommended threshold of 10.",
+                        severity=IssueSeverity.HIGH if complexity > 20 else IssueSeverity.MEDIUM,
+                        category="complexity",
+                        recommendations=[
+                            "Break down complex functions into smaller units",
+                            "Extract conditional logic into separate functions",
+                            "Consider using strategy or state patterns",
+                        ],
+                        confidence=0.95,
+                    )
+                )
 
         # Check for duplicate code
         if "duplication" in metrics:
             duplication_pct = metrics["duplication"]
             if duplication_pct > 5:
-                issues.append(self._create_issue(
-                    title="Code duplication detected",
-                    description=f"{duplication_pct}% of code is duplicated.",
-                    severity=IssueSeverity.MEDIUM,
-                    category="duplication",
-                    recommendations=[
-                        "Extract common code into reusable functions",
-                        "Consider inheritance or composition patterns",
-                        "Create utility modules for shared functionality"
-                    ],
-                    confidence=0.90
-                ))
+                issues.append(
+                    self._create_issue(
+                        title="Code duplication detected",
+                        description=f"{duplication_pct}% of code is duplicated.",
+                        severity=IssueSeverity.MEDIUM,
+                        category="duplication",
+                        recommendations=[
+                            "Extract common code into reusable functions",
+                            "Consider inheritance or composition patterns",
+                            "Create utility modules for shared functionality",
+                        ],
+                        confidence=0.90,
+                    )
+                )
 
         return issues
 
-    async def _check_antipatterns(self, patterns: List[str]) -> List[Issue]:
+    async def _check_antipatterns(self, patterns: list[str]) -> list[Issue]:
         """Check for known anti-patterns."""
         issues = []
 
@@ -133,8 +141,8 @@ class AIAnalyzer(BaseAnalyzer):
                 "recommendations": [
                     "Apply Single Responsibility Principle",
                     "Extract cohesive groups of methods into new classes",
-                    "Use composition over inheritance"
-                ]
+                    "Use composition over inheritance",
+                ],
             },
             "magic_numbers": {
                 "title": "Magic numbers in code",
@@ -143,8 +151,8 @@ class AIAnalyzer(BaseAnalyzer):
                 "recommendations": [
                     "Define named constants",
                     "Use configuration files for values",
-                    "Add comments explaining numeric values"
-                ]
+                    "Add comments explaining numeric values",
+                ],
             },
             "deep_nesting": {
                 "title": "Deep nesting detected",
@@ -153,21 +161,23 @@ class AIAnalyzer(BaseAnalyzer):
                 "recommendations": [
                     "Use early returns to reduce nesting",
                     "Extract nested blocks into separate functions",
-                    "Apply guard clauses"
-                ]
-            }
+                    "Apply guard clauses",
+                ],
+            },
         }
 
         for pattern in patterns:
             if pattern in antipattern_checks:
                 check = antipattern_checks[pattern]
-                issues.append(self._create_issue(
-                    title=check["title"],
-                    description=check["description"],
-                    severity=check["severity"],
-                    category="antipattern",
-                    recommendations=check["recommendations"],
-                    confidence=0.80
-                ))
+                issues.append(
+                    self._create_issue(
+                        title=check["title"],
+                        description=check["description"],
+                        severity=check["severity"],
+                        category="antipattern",
+                        recommendations=check["recommendations"],
+                        confidence=0.80,
+                    )
+                )
 
         return issues

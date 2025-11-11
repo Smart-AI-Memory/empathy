@@ -10,14 +10,15 @@ Licensed under the Apache License, Version 2.0
 """
 
 import json
-from typing import Dict, Any, Optional, List
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
+from typing import Any
 
 
 class VitalSignType(Enum):
     """Types of vital signs"""
+
     HEART_RATE = "heart_rate"
     BLOOD_PRESSURE = "blood_pressure"
     RESPIRATORY_RATE = "respiratory_rate"
@@ -34,16 +35,17 @@ class VitalSignReading:
 
     This is the universal format - all parsers convert to this.
     """
+
     vital_type: VitalSignType
     value: Any
     unit: str
     timestamp: datetime
     source: str  # "bedside_monitor", "manual_entry", "wearable"
     patient_id: str
-    quality: Optional[str] = None  # "good", "poor", "artifact"
-    metadata: Optional[Dict[str, Any]] = None
+    quality: str | None = None  # "good", "poor", "artifact"
+    metadata: dict[str, Any] | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return {
             "vital_type": self.vital_type.value,
@@ -53,14 +55,14 @@ class VitalSignReading:
             "source": self.source,
             "patient_id": self.patient_id,
             "quality": self.quality,
-            "metadata": self.metadata or {}
+            "metadata": self.metadata or {},
         }
 
 
 class BaseSensorParser:
     """Base class for sensor data parsers"""
 
-    def parse(self, data: str) -> List[VitalSignReading]:
+    def parse(self, data: str) -> list[VitalSignReading]:
         """Parse sensor data into standardized readings"""
         raise NotImplementedError
 
@@ -80,10 +82,10 @@ class FHIRObservationParser(BaseSensorParser):
         "9279-1": VitalSignType.RESPIRATORY_RATE,
         "8310-5": VitalSignType.TEMPERATURE,
         "2708-6": VitalSignType.OXYGEN_SATURATION,
-        "38208-5": VitalSignType.PAIN_SCORE
+        "38208-5": VitalSignType.PAIN_SCORE,
     }
 
-    def parse(self, data: str) -> List[VitalSignReading]:
+    def parse(self, data: str) -> list[VitalSignReading]:
         """Parse FHIR Observation JSON"""
 
         try:
@@ -117,7 +119,11 @@ class FHIRObservationParser(BaseSensorParser):
 
         # Extract timestamp
         timestamp_str = observation.get("effectiveDateTime")
-        timestamp = datetime.fromisoformat(timestamp_str.replace("Z", "+00:00")) if timestamp_str else datetime.now()
+        timestamp = (
+            datetime.fromisoformat(timestamp_str.replace("Z", "+00:00"))
+            if timestamp_str
+            else datetime.now()
+        )
 
         # Extract patient ID
         subject = observation.get("subject", {})
@@ -130,7 +136,7 @@ class FHIRObservationParser(BaseSensorParser):
             timestamp=timestamp,
             source="fhir_observation",
             patient_id=patient_id,
-            metadata={"loinc_code": loinc_code}
+            metadata={"loinc_code": loinc_code},
         )
 
         readings.append(reading)
@@ -171,10 +177,10 @@ class SimpleJSONParser(BaseSensorParser):
         "o2_sat": (VitalSignType.OXYGEN_SATURATION, "%"),
         "spo2": (VitalSignType.OXYGEN_SATURATION, "%"),
         "mental_status": (VitalSignType.MENTAL_STATUS, "text"),
-        "pain": (VitalSignType.PAIN_SCORE, "0-10")
+        "pain": (VitalSignType.PAIN_SCORE, "0-10"),
     }
 
-    def parse(self, data: str) -> List[VitalSignReading]:
+    def parse(self, data: str) -> list[VitalSignReading]:
         """Parse simple JSON format"""
 
         try:
@@ -184,7 +190,11 @@ class SimpleJSONParser(BaseSensorParser):
 
         patient_id = parsed.get("patient_id", "unknown")
         timestamp_str = parsed.get("timestamp")
-        timestamp = datetime.fromisoformat(timestamp_str.replace("Z", "+00:00")) if timestamp_str else datetime.now()
+        timestamp = (
+            datetime.fromisoformat(timestamp_str.replace("Z", "+00:00"))
+            if timestamp_str
+            else datetime.now()
+        )
 
         vitals = parsed.get("vitals", {})
 
@@ -200,7 +210,7 @@ class SimpleJSONParser(BaseSensorParser):
                     unit=unit,
                     timestamp=timestamp,
                     source="manual_entry",
-                    patient_id=patient_id
+                    patient_id=patient_id,
                 )
 
                 readings.append(reading)
@@ -211,10 +221,7 @@ class SimpleJSONParser(BaseSensorParser):
 class SensorParserFactory:
     """Factory for creating appropriate sensor parser"""
 
-    _parsers = {
-        "fhir": FHIRObservationParser,
-        "simple_json": SimpleJSONParser
-    }
+    _parsers = {"fhir": FHIRObservationParser, "simple_json": SimpleJSONParser}
 
     @classmethod
     def create(cls, format_type: str) -> BaseSensorParser:
@@ -230,10 +237,7 @@ class SensorParserFactory:
         return parser_class()
 
 
-def parse_sensor_data(
-    data: str,
-    format_type: str = "simple_json"
-) -> List[VitalSignReading]:
+def parse_sensor_data(data: str, format_type: str = "simple_json") -> list[VitalSignReading]:
     """
     Convenience function to parse sensor data.
 
@@ -253,7 +257,7 @@ def parse_sensor_data(
     return parser.parse(data)
 
 
-def normalize_vitals(readings: List[VitalSignReading]) -> Dict[str, Any]:
+def normalize_vitals(readings: list[VitalSignReading]) -> dict[str, Any]:
     """
     Normalize vital sign readings into protocol-checkable format.
 

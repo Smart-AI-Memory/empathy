@@ -2,10 +2,12 @@
 Users API endpoints.
 Handles user profile management and settings.
 """
-from fastapi import APIRouter, HTTPException, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
+from typing import Any
+
+from fastapi import APIRouter, Depends
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, EmailStr
-from typing import Optional, Dict, Any
 
 router = APIRouter(prefix="/api/users", tags=["users"])
 security = HTTPBearer()
@@ -13,9 +15,10 @@ security = HTTPBearer()
 
 class UpdateProfileRequest(BaseModel):
     """Update profile request model."""
-    name: Optional[str] = None
-    email: Optional[EmailStr] = None
-    preferences: Optional[Dict[str, Any]] = None
+
+    name: str | None = None
+    email: EmailStr | None = None
+    preferences: dict[str, Any] | None = None
 
 
 @router.get("/profile")
@@ -34,22 +37,14 @@ async def get_profile(credentials: HTTPAuthorizationCredentials = Depends(securi
         "email": "user@example.com",
         "name": "Demo User",
         "created_at": "2025-01-01T00:00:00Z",
-        "license": {
-            "type": "developer",
-            "plugins": ["software", "healthcare"],
-            "status": "active"
-        },
-        "preferences": {
-            "theme": "dark",
-            "notifications": True
-        }
+        "license": {"type": "developer", "plugins": ["software", "healthcare"], "status": "active"},
+        "preferences": {"theme": "dark", "notifications": True},
     }
 
 
 @router.put("/profile")
 async def update_profile(
-    request: UpdateProfileRequest,
-    credentials: HTTPAuthorizationCredentials = Depends(security)
+    request: UpdateProfileRequest, credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     """
     Update user profile.
@@ -67,8 +62,8 @@ async def update_profile(
         "profile": {
             "name": request.name or "Demo User",
             "email": request.email or "user@example.com",
-            "preferences": request.preferences or {}
-        }
+            "preferences": request.preferences or {},
+        },
     }
 
 
@@ -87,7 +82,7 @@ async def get_usage_stats(credentials: HTTPAuthorizationCredentials = Depends(se
         "analyses_count": 42,
         "wizards_used": ["Enhanced Testing", "Performance Profiling", "Security Analysis"],
         "total_issues_found": 156,
-        "period": "last_30_days"
+        "period": "last_30_days",
     }
 
 
@@ -104,5 +99,5 @@ async def delete_account(credentials: HTTPAuthorizationCredentials = Depends(sec
     """
     return {
         "success": True,
-        "message": "Account deletion initiated. You will receive a confirmation email."
+        "message": "Account deletion initiated. You will receive a confirmation email.",
     }

@@ -9,16 +9,17 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
+from typing import Any
 
 from .protocol_loader import ClinicalProtocol, ProtocolCriterion, ProtocolIntervention
 
 
 class ComplianceStatus(Enum):
     """Status of protocol compliance"""
+
     COMPLIANT = "compliant"
     DEVIATION = "deviation"
     OVERDUE = "overdue"
@@ -29,6 +30,7 @@ class ComplianceStatus(Enum):
 @dataclass
 class CriterionResult:
     """Result of evaluating a single criterion"""
+
     criterion: ProtocolCriterion
     met: bool
     actual_value: Any
@@ -39,12 +41,13 @@ class CriterionResult:
 @dataclass
 class ProtocolDeviation:
     """A deviation from protocol (like a linting violation)"""
+
     intervention: ProtocolIntervention
     status: ComplianceStatus
-    time_activated: Optional[datetime] = None
-    time_due: Optional[datetime] = None
-    time_completed: Optional[datetime] = None
-    overdue_by: Optional[str] = None
+    time_activated: datetime | None = None
+    time_due: datetime | None = None
+    time_completed: datetime | None = None
+    overdue_by: str | None = None
     reasoning: str = ""
 
 
@@ -55,12 +58,13 @@ class ProtocolCheckResult:
 
     This is like the output of running a linter.
     """
+
     protocol_activated: bool
     activation_score: int
     threshold: int
-    criteria_results: List[CriterionResult]
-    deviations: List[ProtocolDeviation]
-    compliant_items: List[str]
+    criteria_results: list[CriterionResult]
+    deviations: list[ProtocolDeviation]
+    compliant_items: list[str]
     alert_level: str  # "NONE", "WARNING", "CRITICAL"
     recommendation: str
 
@@ -78,8 +82,8 @@ class ProtocolChecker:
     def check_compliance(
         self,
         protocol: ClinicalProtocol,
-        patient_data: Dict[str, Any],
-        intervention_status: Optional[Dict[str, Any]] = None
+        patient_data: dict[str, Any],
+        intervention_status: dict[str, Any] | None = None,
     ) -> ProtocolCheckResult:
         """
         Check if patient data meets protocol criteria.
@@ -119,10 +123,7 @@ class ProtocolChecker:
         if protocol_activated and intervention_status:
             for intervention in protocol.interventions:
                 status = intervention_status.get(intervention.action, {})
-                deviation = self._check_intervention_status(
-                    intervention,
-                    status
-                )
+                deviation = self._check_intervention_status(intervention, status)
 
                 if deviation:
                     deviations.append(deviation)
@@ -131,18 +132,12 @@ class ProtocolChecker:
 
         # Step 4: Determine alert level
         alert_level = self._determine_alert_level(
-            protocol_activated,
-            deviations,
-            total_points,
-            protocol.screening_threshold
+            protocol_activated, deviations, total_points, protocol.screening_threshold
         )
 
         # Step 5: Generate recommendation
         recommendation = self._generate_recommendation(
-            protocol,
-            protocol_activated,
-            deviations,
-            criteria_results
+            protocol, protocol_activated, deviations, criteria_results
         )
 
         return ProtocolCheckResult(
@@ -153,13 +148,11 @@ class ProtocolChecker:
             deviations=deviations,
             compliant_items=compliant_items,
             alert_level=alert_level,
-            recommendation=recommendation
+            recommendation=recommendation,
         )
 
     def _evaluate_criterion(
-        self,
-        criterion: ProtocolCriterion,
-        patient_data: Dict[str, Any]
+        self, criterion: ProtocolCriterion, patient_data: dict[str, Any]
     ) -> CriterionResult:
         """Evaluate a single criterion"""
 
@@ -171,30 +164,21 @@ class ProtocolChecker:
                 met=False,
                 actual_value=None,
                 points_awarded=0,
-                reasoning=f"{criterion.parameter} not available"
+                reasoning=f"{criterion.parameter} not available",
             )
 
         # Evaluate condition
-        met = self._evaluate_condition(
-            actual_value,
-            criterion.condition,
-            criterion.value
-        )
+        met = self._evaluate_condition(actual_value, criterion.condition, criterion.value)
 
         return CriterionResult(
             criterion=criterion,
             met=met,
             actual_value=actual_value,
             points_awarded=criterion.points if met else 0,
-            reasoning=f"{criterion.parameter}={actual_value} {criterion.condition} {criterion.value}"
+            reasoning=f"{criterion.parameter}={actual_value} {criterion.condition} {criterion.value}",
         )
 
-    def _evaluate_condition(
-        self,
-        actual: Any,
-        condition: str,
-        expected: Any
-    ) -> bool:
+    def _evaluate_condition(self, actual: Any, condition: str, expected: Any) -> bool:
         """Evaluate a condition (like <=, >=, ==, etc.)"""
 
         if condition == "<=":
@@ -216,10 +200,8 @@ class ProtocolChecker:
             return False
 
     def _check_intervention_status(
-        self,
-        intervention: ProtocolIntervention,
-        status: Dict[str, Any]
-    ) -> Optional[ProtocolDeviation]:
+        self, intervention: ProtocolIntervention, status: dict[str, Any]
+    ) -> ProtocolDeviation | None:
         """Check if intervention has been completed"""
 
         completed = status.get("completed", False)
@@ -237,22 +219,22 @@ class ProtocolChecker:
                     status=ComplianceStatus.OVERDUE,
                     time_due=time_due,
                     overdue_by=str(datetime.now() - time_due),
-                    reasoning=f"{intervention.action} overdue (due: {intervention.timing})"
+                    reasoning=f"{intervention.action} overdue (due: {intervention.timing})",
                 )
 
         # Pending but not yet overdue
         return ProtocolDeviation(
             intervention=intervention,
             status=ComplianceStatus.PENDING,
-            reasoning=f"{intervention.action} pending (due: {intervention.timing})"
+            reasoning=f"{intervention.action} pending (due: {intervention.timing})",
         )
 
     def _determine_alert_level(
         self,
         protocol_activated: bool,
-        deviations: List[ProtocolDeviation],
+        deviations: list[ProtocolDeviation],
         score: int,
-        threshold: int
+        threshold: int,
     ) -> str:
         """Determine alert level"""
 
@@ -260,19 +242,13 @@ class ProtocolChecker:
             return "NONE"
 
         # Check for overdue critical interventions
-        overdue_count = sum(
-            1 for d in deviations
-            if d.status == ComplianceStatus.OVERDUE
-        )
+        overdue_count = sum(1 for d in deviations if d.status == ComplianceStatus.OVERDUE)
 
         if overdue_count > 0:
             return "CRITICAL"
 
         # Check for pending interventions
-        pending_count = sum(
-            1 for d in deviations
-            if d.status == ComplianceStatus.PENDING
-        )
+        pending_count = sum(1 for d in deviations if d.status == ComplianceStatus.PENDING)
 
         if pending_count > 0:
             return "WARNING"
@@ -283,8 +259,8 @@ class ProtocolChecker:
         self,
         protocol: ClinicalProtocol,
         activated: bool,
-        deviations: List[ProtocolDeviation],
-        criteria_results: List[CriterionResult]
+        deviations: list[ProtocolDeviation],
+        criteria_results: list[CriterionResult],
     ) -> str:
         """Generate actionable recommendation"""
 

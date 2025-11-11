@@ -11,7 +11,6 @@ Licensed under the Apache License, Version 2.0
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Dict, List, Optional
 
 from .emergence import EmergenceDetector
 from .exceptions import ValidationError
@@ -33,7 +32,7 @@ class CollaborationState:
 
     # Stocks (accumulate over time)
     trust_level: float = 0.5  # 0.0 to 1.0, start neutral
-    shared_context: Dict = field(default_factory=dict)
+    shared_context: dict = field(default_factory=dict)
     successful_interventions: int = 0
     failed_interventions: int = 0
 
@@ -45,7 +44,7 @@ class CollaborationState:
     # Metadata
     session_start: datetime = field(default_factory=datetime.now)
     total_interactions: int = 0
-    trust_trajectory: List[float] = field(default_factory=list)  # Historical trust levels
+    trust_trajectory: list[float] = field(default_factory=list)  # Historical trust levels
 
     def update_trust(self, outcome: str):
         """Update trust stock based on interaction outcome"""
@@ -88,7 +87,7 @@ class EmpathyOS:
         user_id: str,
         target_level: int = 3,
         confidence_threshold: float = 0.75,
-        logger: Optional[logging.Logger] = None,
+        logger: logging.Logger | None = None,
     ):
         """
         Initialize EmpathyOS
@@ -113,8 +112,8 @@ class EmpathyOS:
         self.leverage_analyzer = LeveragePointAnalyzer()
 
         # Pattern storage for Level 3+
-        self.user_patterns: List[Dict] = []
-        self.system_trajectory: List[Dict] = []
+        self.user_patterns: list[dict] = []
+        self.system_trajectory: list[dict] = []
 
         # Current empathy level
         self.current_empathy_level = 1
@@ -167,7 +166,7 @@ class EmpathyOS:
     # LEVEL 1: REACTIVE EMPATHY
     # =========================================================================
 
-    async def level_1_reactive(self, user_request: str) -> Dict:
+    async def level_1_reactive(self, user_request: str) -> dict:
         """
         Level 1: Reactive Empathy
 
@@ -225,7 +224,7 @@ class EmpathyOS:
     # LEVEL 2: GUIDED EMPATHY
     # =========================================================================
 
-    async def level_2_guided(self, user_request: str) -> Dict:
+    async def level_2_guided(self, user_request: str) -> dict:
         """
         Level 2: Guided Empathy
 
@@ -307,7 +306,7 @@ class EmpathyOS:
     # LEVEL 3: PROACTIVE EMPATHY
     # =========================================================================
 
-    async def level_3_proactive(self, context: Dict) -> Dict:
+    async def level_3_proactive(self, context: dict) -> dict:
         """
         Level 3: Proactive Empathy
 
@@ -389,7 +388,7 @@ class EmpathyOS:
     # LEVEL 4: ANTICIPATORY EMPATHY
     # =========================================================================
 
-    async def level_4_anticipatory(self, system_trajectory: Dict) -> Dict:
+    async def level_4_anticipatory(self, system_trajectory: dict) -> dict:
         """
         Level 4: Anticipatory Empathy (THE INNOVATION)
 
@@ -479,7 +478,7 @@ class EmpathyOS:
     # LEVEL 5: SYSTEMS EMPATHY
     # =========================================================================
 
-    async def level_5_systems(self, domain_context: Dict) -> Dict:
+    async def level_5_systems(self, domain_context: dict) -> dict:
         """
         Level 5: Systems Empathy
 
@@ -564,7 +563,7 @@ class EmpathyOS:
     # HELPER METHODS (implement based on your domain)
     # =========================================================================
 
-    async def _process_request(self, request: str) -> Dict:
+    async def _process_request(self, request: str) -> dict:
         """
         Process user request (implement domain logic)
 
@@ -580,7 +579,7 @@ class EmpathyOS:
         # Placeholder - implement your actual request processing
         return {"processed": request, "status": "success"}
 
-    async def _ask_calibrated_questions(self, request: str) -> Dict:
+    async def _ask_calibrated_questions(self, request: str) -> dict:
         """
         Voss's tactical empathy: Ask calibrated questions
 
@@ -609,7 +608,7 @@ class EmpathyOS:
             }
         return {"needs_clarification": False}
 
-    def _refine_request(self, original: str, clarification: Dict) -> str:
+    def _refine_request(self, original: str, clarification: dict) -> str:
         """
         Refine request based on clarification responses
 
@@ -639,7 +638,7 @@ class EmpathyOS:
         # Default: return original
         return original
 
-    def _detect_active_patterns(self, context: Dict) -> List[Dict]:
+    def _detect_active_patterns(self, context: dict) -> list[dict]:
         """Detect patterns in user behavior"""
         patterns = []
 
@@ -655,7 +654,7 @@ class EmpathyOS:
 
         return patterns
 
-    def _design_proactive_action(self, pattern: Dict) -> Dict:
+    def _design_proactive_action(self, pattern: dict) -> dict:
         """Design proactive action based on pattern"""
         return {
             "action": "prefetch_data",
@@ -663,11 +662,11 @@ class EmpathyOS:
             "confidence": pattern["confidence"],
         }
 
-    def _is_safe_to_execute(self, action: Dict) -> bool:
+    def _is_safe_to_execute(self, action: dict) -> bool:
         """Safety check for proactive actions"""
         return action.get("confidence", 0) > 0.8
 
-    async def _execute_proactive_actions(self, actions: List[Dict]) -> List[Dict]:
+    async def _execute_proactive_actions(self, actions: list[dict]) -> list[dict]:
         """
         Execute proactive actions
 
@@ -709,7 +708,7 @@ class EmpathyOS:
 
         return results
 
-    def _predict_future_bottlenecks(self, trajectory: Dict) -> List[Dict]:
+    def _predict_future_bottlenecks(self, trajectory: dict) -> list[dict]:
         """
         Predict where system will hit friction/overload
 
@@ -739,7 +738,7 @@ class EmpathyOS:
 
         return bottlenecks
 
-    def _should_anticipate(self, bottleneck: Dict) -> bool:
+    def _should_anticipate(self, bottleneck: dict) -> bool:
         """
         Safety checks for Level 4 anticipatory actions
 
@@ -767,7 +766,7 @@ class EmpathyOS:
 
         return True
 
-    def _parse_timeframe_to_days(self, timeframe: str) -> Optional[int]:
+    def _parse_timeframe_to_days(self, timeframe: str) -> int | None:
         """
         Parse timeframe string to days
 
@@ -807,7 +806,7 @@ class EmpathyOS:
         # Couldn't parse - return None (will skip time validation)
         return None
 
-    def _design_anticipatory_intervention(self, bottleneck: Dict) -> Dict:
+    def _design_anticipatory_intervention(self, bottleneck: dict) -> dict:
         """Design structural relief for predicted bottleneck"""
         return {
             "type": "framework_design",
@@ -816,7 +815,7 @@ class EmpathyOS:
             "timeline": "Implement before threshold",
         }
 
-    async def _execute_anticipatory_interventions(self, interventions: List[Dict]) -> List[Dict]:
+    async def _execute_anticipatory_interventions(self, interventions: list[dict]) -> list[dict]:
         """
         Execute anticipatory interventions
 
@@ -869,7 +868,7 @@ class EmpathyOS:
 
         return results
 
-    def _identify_problem_classes(self, domain_context: Dict) -> List[Dict]:
+    def _identify_problem_classes(self, domain_context: dict) -> list[dict]:
         """
         Identify recurring problem classes (not individual instances)
 
@@ -892,7 +891,7 @@ class EmpathyOS:
 
         return problem_classes
 
-    def _design_framework(self, leverage_point: LeveragePoint) -> Dict:
+    def _design_framework(self, leverage_point: LeveragePoint) -> dict:
         """Design framework at leverage point"""
         return {
             "name": f"{leverage_point.problem_domain}_framework",
@@ -902,7 +901,7 @@ class EmpathyOS:
             "impact": "Scales to all current + future instances",
         }
 
-    async def _implement_frameworks(self, frameworks: List[Dict]) -> List[Dict]:
+    async def _implement_frameworks(self, frameworks: list[dict]) -> list[dict]:
         """
         Implement designed frameworks
 
@@ -956,7 +955,7 @@ class EmpathyOS:
     # FEEDBACK LOOP MANAGEMENT
     # =========================================================================
 
-    def monitor_feedback_loops(self, session_history: List) -> Dict:
+    def monitor_feedback_loops(self, session_history: list) -> dict:
         """
         Detect and manage feedback loops in collaboration
         """
@@ -973,7 +972,7 @@ class EmpathyOS:
 
         return active_loops
 
-    def _break_trust_erosion_loop(self) -> Dict:
+    def _break_trust_erosion_loop(self) -> dict:
         """Intervention to break vicious cycle of trust erosion"""
         return {
             "action": "transparency_intervention",
@@ -985,7 +984,7 @@ class EmpathyOS:
             ],
         }
 
-    def _maintain_trust_building_loop(self) -> Dict:
+    def _maintain_trust_building_loop(self) -> dict:
         """Maintain virtuous cycle of trust building"""
         return {
             "action": "maintain_momentum",
@@ -1000,7 +999,7 @@ class EmpathyOS:
     # STATE MANAGEMENT
     # =========================================================================
 
-    def get_collaboration_state(self) -> Dict:
+    def get_collaboration_state(self) -> dict:
         """Get current collaboration state"""
         return {
             "trust_level": self.collaboration_state.trust_level,

@@ -5,15 +5,13 @@ Structured logging with multiple outputs
 
 import logging
 import sys
-from pathlib import Path
-from logging.handlers import RotatingFileHandler
 from datetime import datetime
+from logging.handlers import RotatingFileHandler
+from pathlib import Path
 
 
 def setup_logging(
-    level: str = "INFO",
-    log_file: str = None,
-    enable_file_logging: bool = True
+    level: str = "INFO", log_file: str = None, enable_file_logging: bool = True
 ) -> logging.Logger:
     """
     Set up comprehensive logging for LSP server
@@ -36,7 +34,7 @@ def setup_logging(
     # Format
     formatter = logging.Formatter(
         fmt="%(asctime)s [%(levelname)8s] %(name)s:%(lineno)d - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S"
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
 
     # Console handler (always enabled)
@@ -54,9 +52,7 @@ def setup_logging(
             log_file = log_dir / f"lsp_{datetime.now().strftime('%Y%m%d')}.log"
 
         file_handler = RotatingFileHandler(
-            log_file,
-            maxBytes=10 * 1024 * 1024,  # 10 MB
-            backupCount=5
+            log_file, maxBytes=10 * 1024 * 1024, backupCount=5  # 10 MB
         )
         file_handler.setLevel(logging.DEBUG)  # File gets all logs
         file_handler.setFormatter(formatter)
@@ -73,7 +69,7 @@ def log_wizard_execution(
     task: str,
     duration: float,
     confidence: float,
-    success: bool = True
+    success: bool = True,
 ):
     """Log wizard execution metrics"""
     logger.info(
@@ -85,12 +81,7 @@ def log_wizard_execution(
     )
 
 
-def log_lsp_request(
-    logger: logging.Logger,
-    method: str,
-    params: dict,
-    duration: float = None
-):
+def log_lsp_request(logger: logging.Logger, method: str, params: dict, duration: float = None):
     """Log LSP request"""
     log_msg = f"LSP Request: {method}"
     if duration:
@@ -109,10 +100,7 @@ def log_cache_stats(logger: logging.Logger, cache):
 
 
 def log_error_with_context(
-    logger: logging.Logger,
-    error: Exception,
-    context: str = "",
-    wizard_name: str = None
+    logger: logging.Logger, error: Exception, context: str = "", wizard_name: str = None
 ):
     """Log error with full context"""
     import traceback
@@ -142,5 +130,5 @@ if __name__ == "__main__":
         wizard_name="SecurityWizard",
         task="Analyze SQL queries",
         duration=1.23,
-        confidence=0.95
+        confidence=0.95,
     )
