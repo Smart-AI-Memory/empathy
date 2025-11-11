@@ -206,6 +206,59 @@ pre code {
   opacity: 0.8;
 }
 
+/* Accent background utility - purple needs white text for contrast */
+.bg-accent,
+.bg-accent p,
+.bg-accent span,
+.bg-accent div,
+.bg-accent li {
+  color: white;
+}
+
+.bg-accent a {
+  color: white;
+  text-decoration: underline;
+}
+
+.bg-accent a:hover {
+  opacity: 0.9;
+}
+
+/* Primary background utility - blue needs white text for contrast */
+.bg-primary,
+.bg-primary p,
+.bg-primary span,
+.bg-primary div,
+.bg-primary li {
+  color: white;
+}
+
+.bg-primary a {
+  color: white;
+  text-decoration: underline;
+}
+
+.bg-primary a:hover {
+  opacity: 0.9;
+}
+
+/* Gradient backgrounds - ensure all text is white */
+.gradient-primary,
+.gradient-primary p,
+.gradient-primary span,
+.gradient-primary div,
+.gradient-primary li {
+  color: white;
+}
+
+.gradient-accent,
+.gradient-accent p,
+.gradient-accent span,
+.gradient-accent div,
+.gradient-accent li {
+  color: white;
+}
+
 /* Container */
 .container {
   max-width: 1280px;
