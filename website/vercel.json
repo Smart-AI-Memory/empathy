@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "env": {
+    "NEXT_PUBLIC_PLAUSIBLE_DOMAIN": "@plausible_domain",
+    "NEXT_PUBLIC_SITE_URL": "@site_url"
+  }
+}

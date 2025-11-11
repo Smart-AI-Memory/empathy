@@ -1,11 +1,17 @@
 import Link from 'next/link';
+import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
+import GitHubStats from '@/components/GitHubStats';
+import NewsletterSignup from '@/components/NewsletterSignup';
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
+    <>
+      <Navigation />
+      <main className="min-h-screen pt-16">
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 sm:py-32">
-        <div className="absolute inset-0 gradient-primary opacity-5"></div>
+      <section className="relative overflow-hidden py-20 sm:py-32" aria-label="Hero">
+        <div className="absolute inset-0 gradient-primary opacity-5" aria-hidden="true"></div>
         <div className="container relative">
           <div className="max-w-4xl mx-auto text-center animate-fade-in">
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6">
@@ -17,10 +23,10 @@ export default function Home() {
               AI systems to anticipate needs, predict problems, and transform workflows.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link href="#products" className="btn btn-primary text-lg px-8 py-4">
+              <Link href="#products" className="btn btn-primary text-lg px-8 py-4" aria-label="Explore our products">
                 Explore Our Products
               </Link>
-              <Link href="#examples" className="btn btn-outline text-lg px-8 py-4">
+              <Link href="#examples" className="btn btn-outline text-lg px-8 py-4" aria-label="See example projects">
                 See Examples
               </Link>
             </div>
@@ -29,7 +35,7 @@ export default function Home() {
       </section>
 
       {/* Mission Section */}
-      <section className="py-20 bg-[var(--border)] bg-opacity-30">
+      <section className="py-20 bg-[var(--border)] bg-opacity-30" aria-label="Our mission">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-4xl font-bold mb-6">
@@ -46,7 +52,7 @@ export default function Home() {
       </section>
 
       {/* Products Section */}
-      <section id="products" className="py-20">
+      <section id="products" className="py-20" aria-label="Our products">
         <div className="container">
           <h2 className="text-4xl font-bold text-center mb-4">
             Our Products
@@ -453,8 +459,32 @@ export default function Home() {
         </div>
       </section>
 
+      {/* GitHub Stats Section */}
+      <section className="py-20" aria-label="GitHub statistics">
+        <div className="container">
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">
+              Open Source & Community-Driven
+            </h2>
+            <p className="text-xl text-[var(--text-secondary)]">
+              Join the growing community building the future of AI-human collaboration
+            </p>
+          </div>
+          <div className="max-w-5xl mx-auto">
+            <GitHubStats />
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="py-20 bg-[var(--border)] bg-opacity-30" aria-label="Newsletter signup">
+        <div className="container">
+          <NewsletterSignup />
+        </div>
+      </section>
+
       {/* CTA Section */}
-      <section className="py-20 gradient-primary text-white">
+      <section className="py-20 gradient-primary text-white" aria-label="Call to action">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-4xl font-bold mb-6">
@@ -483,39 +513,8 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="py-12 border-t border-[var(--border)]">
-        <div className="container">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="text-sm text-[var(--muted)]">
-              © 2025 Deep Study AI, LLC. All rights reserved.
-            </div>
-            <div className="flex gap-6">
-              <Link href="/framework" className="text-sm text-[var(--muted)] hover:text-[var(--primary)]">
-                Framework
-              </Link>
-              <Link href="/docs" className="text-sm text-[var(--muted)] hover:text-[var(--primary)]">
-                Docs
-              </Link>
-              <Link href="/plugins" className="text-sm text-[var(--muted)] hover:text-[var(--primary)]">
-                Plugins
-              </Link>
-              <Link href="/contact" className="text-sm text-[var(--muted)] hover:text-[var(--primary)]">
-                Contact
-              </Link>
-              <a
-                href="https://github.com/Smart-AI-Memory"
-                className="text-sm text-[var(--muted)] hover:text-[var(--primary)]"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                GitHub
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
+      </main>
+      <Footer />
+    </>
   );
 }

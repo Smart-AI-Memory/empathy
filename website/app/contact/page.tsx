@@ -88,24 +88,46 @@ export default function ContactPage() {
     e.preventDefault();
     setSubmitStatus('sending');
 
-    // TODO: Implement actual form submission
-    // For now, just simulate success after 1 second
-    setTimeout(() => {
-      console.log('Form submitted:', formData);
-      setSubmitStatus('success');
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-      // Reset form after 2 seconds
+      const data = await response.json();
+
+      if (response.ok) {
+        setSubmitStatus('success');
+        // Reset form after 3 seconds
+        setTimeout(() => {
+          setFormData({
+            name: '',
+            email: '',
+            company: '',
+            topic: 'general',
+            message: ''
+          });
+          setSubmitStatus('idle');
+        }, 3000);
+      } else {
+        setSubmitStatus('error');
+        console.error('Form submission error:', data.error);
+        // Reset error state after 3 seconds
+        setTimeout(() => {
+          setSubmitStatus('idle');
+        }, 3000);
+      }
+    } catch (error) {
+      setSubmitStatus('error');
+      console.error('Network error:', error);
+      // Reset error state after 3 seconds
       setTimeout(() => {
-        setFormData({
-          name: '',
-          email: '',
-          company: '',
-          topic: 'general',
-          message: ''
-        });
         setSubmitStatus('idle');
-      }, 2000);
-    }, 1000);
+      }, 3000);
+    }
   };
 
   return (
