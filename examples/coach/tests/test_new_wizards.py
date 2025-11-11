@@ -260,8 +260,7 @@ class TestCollaborationPatterns:
         result = await coach.process(task, multi_wizard=True)
 
         # Should route to APIWizard (primary) + SecurityWizard + TestingWizard + DocumentationWizard
-        expected_wizards = {"APIWizard", "SecurityWizard", "TestingWizard", "DocumentationWizard"}
-        actual_wizards = set(result.routing)
+        set(result.routing)
 
         # At least 2 wizards should be activated (APIWizard + SecurityWizard minimum)
         assert len(result.routing) >= 2, f"Expected multi-wizard, got: {result.routing}"

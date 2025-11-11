@@ -67,11 +67,11 @@ class TrustBuildingBehaviors:
                         if item.get("severity") == "high"
                     ],
                     "patient_ids_affected": list(
-                        set(
+                        {
                             pid
                             for gap in data.get("compliance_gaps", [])
                             for pid in gap.get("patient_ids", [])
-                        )
+                        }
                     ),
                     "estimated_total_time": sum(
                         int(item.get("estimated_time", "0 minutes").split()[0])

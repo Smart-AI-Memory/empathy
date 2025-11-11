@@ -254,7 +254,7 @@ class Coach:
         total_confidence = 0.0
         total_weight = 0.0
 
-        for i, (wizard, confidence) in enumerate(routing):
+        for i, (_wizard, confidence) in enumerate(routing):
             weight = weights[i] if i < len(weights) else 0.1
             total_confidence += confidence * weight
             total_weight += weight

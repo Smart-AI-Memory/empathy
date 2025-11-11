@@ -75,7 +75,7 @@ class DevOpsWizard(BaseWizard):
         emotional_state = self._assess_emotional_state(task)
 
         # Step 2: Extract constraints
-        constraints = self._extract_constraints(task)
+        self._extract_constraints(task)
 
         # Step 3: Analyze DevOps requirements
         diagnosis = self._analyze_devops_requirements(task)
@@ -264,7 +264,7 @@ class DevOpsWizard(BaseWizard):
             "scaling": {},
         }
 
-        task_lower = (task.task + " " + task.context).lower()
+        (task.task + " " + task.context).lower()
 
         # Determine components
         infrastructure["components"] = [

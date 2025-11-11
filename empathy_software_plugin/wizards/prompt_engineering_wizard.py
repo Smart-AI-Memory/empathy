@@ -60,7 +60,7 @@ class PromptEngineeringWizard(BaseWizard):
         self.validate_context(context)
 
         prompt_files = context["prompt_files"]
-        project_path = context["project_path"]
+        _project_path = context["project_path"]
         version_history = context.get("version_history", [])
 
         # Current issues (Levels 1-3)

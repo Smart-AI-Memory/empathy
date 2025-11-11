@@ -56,7 +56,7 @@ class RetrospectiveWizard(BaseWizard):
         """Execute retrospective workflow"""
 
         # Step 1: Assess team context
-        constraints = self._extract_constraints(task)
+        self._extract_constraints(task)
         team_context = self._assess_team_context(task)
 
         # Step 2: Choose retrospective format

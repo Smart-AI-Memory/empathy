@@ -115,10 +115,10 @@ async def example_switching_providers():
     )
 
     # Use GPT-4 for fast responses
-    openai_llm = EmpathyLLM(provider="openai", target_level=3, api_key=os.getenv("OPENAI_API_KEY"))
+    _openai_llm = EmpathyLLM(provider="openai", target_level=3, api_key=os.getenv("OPENAI_API_KEY"))
 
     # Use local model for sensitive data
-    local_llm = EmpathyLLM(provider="local", target_level=2, model="llama2")
+    _local_llm = EmpathyLLM(provider="local", target_level=2, model="llama2")
 
     print("\nProviders initialized:")
     print("  ✓ Claude - for complex Level 4 anticipatory tasks")

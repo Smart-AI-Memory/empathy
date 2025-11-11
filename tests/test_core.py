@@ -289,7 +289,7 @@ class TestEmpathyOSCore:
         assert empathy.collaboration_state.trust_level == 0.5
 
         # Series of successful interactions
-        for i in range(8):
+        for _i in range(8):
             empathy.collaboration_state.update_trust("success")
 
         # Trust should have built up
@@ -547,8 +547,6 @@ class TestEmpathyOSAsyncMethods:
         """Test trust increases with successful interventions"""
         empathy = EmpathyOS(user_id="test_user", target_level=1)
 
-        initial_trust = empathy.collaboration_state.trust_level
-
         # Successful interaction
         await empathy.level_1_reactive("Simple request")
 
@@ -773,7 +771,6 @@ class TestEmpathyOSAsyncMethods:
         # Modify state
         empathy.collaboration_state.update_trust("success")
         empathy.collaboration_state.total_interactions = 10
-        old_trust = empathy.collaboration_state.trust_level
 
         # Reset
         empathy.reset_collaboration_state()

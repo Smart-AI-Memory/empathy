@@ -84,8 +84,8 @@ class SecurityWizard(BaseWizard):
         """Execute security review workflow"""
 
         # Step 1: Assess context
-        constraints = self._extract_constraints(task)
-        emotional_state = self._assess_emotional_state(task)
+        self._extract_constraints(task)
+        self._assess_emotional_state(task)
 
         # Step 2: Identify security scope
         security_scope = self._identify_security_scope(task)
@@ -237,14 +237,6 @@ class SecurityWizard(BaseWizard):
         threats = []
 
         # STRIDE methodology
-        stride_threats = {
-            "Spoofing": "Attacker impersonates legitimate user",
-            "Tampering": "Attacker modifies data in transit or at rest",
-            "Repudiation": "User denies performing an action",
-            "Information Disclosure": "Unauthorized access to sensitive data",
-            "Denial of Service": "System availability disrupted",
-            "Elevation of Privilege": "Attacker gains unauthorized permissions",
-        }
 
         # Map threats to attack surface
         for attack_surface_item in scope["attack_surface"]:

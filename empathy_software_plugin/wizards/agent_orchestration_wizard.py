@@ -382,7 +382,7 @@ class AgentOrchestrationWizard(BaseWizard):
         """Detect circular dependencies between agents"""
         # Simplified detection - would need actual dependency analysis
         # For now, just check if agents reference each other
-        agent_names = [a.get("name", "") for a in agents]
+        _agent_names = [a.get("name", "") for a in agents]
 
         for agent in agents:
             deps = agent.get("dependencies", [])

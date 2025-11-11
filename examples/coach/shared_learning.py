@@ -101,7 +101,7 @@ class SharedLearningSystem:
         # Manual filtering since PatternLibrary.query_patterns has different signature
         results = []
 
-        for pattern_id, pattern in self.pattern_library.patterns.items():
+        for _pattern_id, pattern in self.pattern_library.patterns.items():
             # Filter by confidence
             if pattern.confidence < min_confidence:
                 continue
@@ -186,7 +186,7 @@ class SharedLearningSystem:
         """
         all_patterns = []
 
-        for pattern_id, pattern in self.pattern_library.patterns.items():
+        for _pattern_id, pattern in self.pattern_library.patterns.items():
             all_patterns.append(pattern)
 
         # Sort by success rate and usage

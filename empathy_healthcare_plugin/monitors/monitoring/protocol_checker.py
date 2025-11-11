@@ -205,7 +205,7 @@ class ProtocolChecker:
         """Check if intervention has been completed"""
 
         completed = status.get("completed", False)
-        time_completed = status.get("time_completed")
+        _time_completed = status.get("time_completed")
         time_due = status.get("time_due")
 
         if completed:

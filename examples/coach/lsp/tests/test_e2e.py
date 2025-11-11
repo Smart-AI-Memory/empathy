@@ -296,7 +296,7 @@ class TestPerformance:
         import time
 
         start = time.time()
-        server = CoachLanguageServer()
+        CoachLanguageServer()
         duration = time.time() - start
 
         assert duration < 2.0, f"Startup took {duration}s (>2s threshold)"
@@ -307,7 +307,7 @@ class TestPerformance:
         import time
 
         start = time.time()
-        result = await server.command_handlers["coach/runWizard"](
+        await server.command_handlers["coach/runWizard"](
             server,
             [
                 "PerformanceWizard",
@@ -330,7 +330,7 @@ class TestPerformance:
 
         # Measure cache hit
         start = time.time()
-        result = await server.command_handlers["coach/runWizard"](
+        await server.command_handlers["coach/runWizard"](
             server, ["PerformanceWizard", {"role": "developer", "task": "Cache test"}]
         )
         duration = time.time() - start

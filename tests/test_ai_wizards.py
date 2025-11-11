@@ -596,7 +596,7 @@ class TestWizardIntegration:
                 assert isinstance(result["predictions"], list)
                 assert isinstance(result["recommendations"], list)
                 assert isinstance(result["patterns"], list)
-                assert isinstance(result["confidence"], (int, float))
+                assert isinstance(result["confidence"], int | float)
                 assert isinstance(result["metadata"], dict)
 
         finally:

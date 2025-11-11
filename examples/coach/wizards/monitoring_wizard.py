@@ -66,8 +66,8 @@ class MonitoringWizard(BaseWizard):
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute monitoring setup workflow"""
 
-        emotional_state = self._assess_emotional_state(task)
-        constraints = self._extract_constraints(task)
+        self._assess_emotional_state(task)
+        self._extract_constraints(task)
 
         diagnosis = self._analyze_monitoring_requirements(task)
         slo_definitions = self._define_slos(task)

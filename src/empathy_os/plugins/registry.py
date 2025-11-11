@@ -86,7 +86,7 @@ class PluginRegistry:
             if not metadata.domain:
                 raise PluginValidationError("Plugin metadata missing 'domain'")
         except Exception as e:
-            raise PluginValidationError(f"Invalid plugin metadata: {e}")
+            raise PluginValidationError(f"Invalid plugin metadata: {e}") from e
 
         # Register
         self._plugins[name] = plugin

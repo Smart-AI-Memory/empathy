@@ -63,8 +63,8 @@ class APIWizard(BaseWizard):
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute API design workflow"""
 
-        emotional_state = self._assess_emotional_state(task)
-        constraints = self._extract_constraints(task)
+        self._assess_emotional_state(task)
+        self._extract_constraints(task)
 
         diagnosis = self._analyze_api_requirements(task)
         design = self._design_api_endpoints(task)

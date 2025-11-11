@@ -195,7 +195,7 @@ class TestErrorHandling:
     @pytest.mark.asyncio
     async def test_wizard_not_found_error(self, server):
         """Test handling of wizard not found error"""
-        with pytest.raises(Exception):  # Will be caught and converted to LSP error
+        with pytest.raises((KeyError, ValueError)):  # Will be caught and converted to LSP error
             await server.command_handlers["coach/runWizard"](
                 server, ["NonExistentWizard", {"role": "developer", "task": "Test"}]
             )
@@ -203,7 +203,7 @@ class TestErrorHandling:
     @pytest.mark.asyncio
     async def test_invalid_params_error(self, server):
         """Test handling of invalid parameters"""
-        with pytest.raises(Exception):
+        with pytest.raises((IndexError, TypeError, ValueError)):
             await server.command_handlers["coach/runWizard"](
                 server, ["PerformanceWizard"]  # Missing task dict
             )
@@ -213,7 +213,7 @@ class TestErrorHandling:
         """Test handling of context collection failures"""
         with patch.object(server.context_collector, "collect", side_effect=Exception("Test error")):
             # Should not crash, should handle gracefully
-            result = await server._analyze_document("file:///test.py")
+            await server._analyze_document("file:///test.py")
             # Server should handle error and continue
 
 

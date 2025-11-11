@@ -58,8 +58,8 @@ class TestingWizard(BaseWizard):  # noqa: pytest - Not a test class
         """Execute testing workflow"""
 
         # Step 1: Assess context
-        constraints = self._extract_constraints(task)
-        emotional_state = self._assess_emotional_state(task)
+        self._extract_constraints(task)
+        self._assess_emotional_state(task)
 
         # Step 2: Analyze testing needs
         test_analysis = self._analyze_testing_needs(task)

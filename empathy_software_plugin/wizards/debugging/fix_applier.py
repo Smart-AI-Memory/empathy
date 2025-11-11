@@ -115,7 +115,7 @@ class ESLintFixApplier(BaseFixApplier):
 
         if not self.can_autofix(issue):
             # Provide manual suggestion
-            suggestion = self.suggest_manual_fix(issue)
+            _suggestion = self.suggest_manual_fix(issue)
             return FixResult(
                 issue=issue,
                 success=False,

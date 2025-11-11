@@ -288,7 +288,7 @@ class TestLLMErrorHandling:
     @pytest.mark.asyncio
     async def test_invalid_api_key(self):
         """Test handling of invalid API key"""
-        with pytest.raises(Exception):
+        with pytest.raises((ValueError, RuntimeError)):
             provider = AnthropicProvider(api_key="invalid-key-12345")
             await provider.generate(messages=[{"role": "user", "content": "Hello"}], max_tokens=50)
 
@@ -297,7 +297,7 @@ class TestLLMErrorHandling:
     async def test_empty_message(self, anthropic_provider):
         """Test handling of empty message"""
         # Should handle gracefully or raise clear error
-        with pytest.raises(Exception):
+        with pytest.raises((ValueError, RuntimeError)):
             await anthropic_provider.generate(messages=[], max_tokens=50)
 
     @pytest.mark.llm

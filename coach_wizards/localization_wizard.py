@@ -49,7 +49,7 @@ class LocalizationWizard(BaseCoachWizard):
 
         # Example heuristic detection
         lines = code.split("\n")
-        for i, line in enumerate(lines, 1):
+        for _i, _line in enumerate(lines, 1):
             # Add detection logic based on localization
             pass
 

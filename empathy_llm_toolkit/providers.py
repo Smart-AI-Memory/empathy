@@ -108,8 +108,8 @@ class AnthropicProvider(BaseLLMProvider):
             import anthropic
 
             self.client = anthropic.Anthropic(api_key=api_key)
-        except ImportError:
-            raise ImportError("anthropic package required. Install with: pip install anthropic")
+        except ImportError as e:
+            raise ImportError("anthropic package required. Install with: pip install anthropic") from e
 
     async def generate(
         self,
@@ -307,8 +307,8 @@ class OpenAIProvider(BaseLLMProvider):
             import openai
 
             self.client = openai.AsyncOpenAI(api_key=api_key)
-        except ImportError:
-            raise ImportError("openai package required. Install with: pip install openai")
+        except ImportError as e:
+            raise ImportError("openai package required. Install with: pip install openai") from e
 
     async def generate(
         self,

@@ -170,7 +170,7 @@ class ESLintConfigLoader(BaseConfigLoader):
                     raw_config={"note": "JS config - limited parsing"},
                 )
 
-        raise ValueError(f"Could not parse JS config: {path}")
+        raise ValueError(f"Could not parse JS config: {path}") from None
 
     def _parse_config(self, config_data: dict, config_file: str) -> LintConfig:
         """Parse ESLint config data"""
@@ -248,8 +248,8 @@ class PylintConfigLoader(BaseConfigLoader):
             # Fallback for Python 3.11+
             try:
                 import tomllib as tomli
-            except ImportError:
-                raise ImportError("tomli or tomllib required for pyproject.toml")
+            except ImportError as e:
+                raise ImportError("tomli or tomllib required for pyproject.toml") from e
 
         with open(path, "rb") as f:
             data = tomli.load(f)

@@ -56,7 +56,7 @@ class TestFeedbackLoopDetector:
         ]
 
         is_virtuous = detector.detect_virtuous_cycle(history)
-        assert is_virtuous == True
+        assert is_virtuous
 
     def test_detect_virtuous_cycle_insufficient_data(self):
         """Test virtuous cycle detection with insufficient data"""
@@ -64,7 +64,7 @@ class TestFeedbackLoopDetector:
 
         history = [{"trust": 0.5, "success": True}]
         is_virtuous = detector.detect_virtuous_cycle(history)
-        assert is_virtuous == False
+        assert not is_virtuous
 
     def test_detect_virtuous_cycle_declining_trust(self):
         """Test virtuous cycle detection with declining trust"""
@@ -77,7 +77,7 @@ class TestFeedbackLoopDetector:
         ]
 
         is_virtuous = detector.detect_virtuous_cycle(history)
-        assert is_virtuous == False
+        assert not is_virtuous
 
     def test_detect_vicious_cycle(self):
         """Test detecting vicious cycle (trust erosion)"""
@@ -92,7 +92,7 @@ class TestFeedbackLoopDetector:
         ]
 
         is_vicious = detector.detect_vicious_cycle(history)
-        assert is_vicious == True
+        assert is_vicious
 
     def test_detect_vicious_cycle_insufficient_data(self):
         """Test vicious cycle detection with insufficient data"""
@@ -100,7 +100,7 @@ class TestFeedbackLoopDetector:
 
         history = [{"trust": 0.5, "success": False}]
         is_vicious = detector.detect_vicious_cycle(history)
-        assert is_vicious == False
+        assert not is_vicious
 
     def test_detect_vicious_cycle_improving(self):
         """Test vicious cycle detection when things are improving"""
@@ -113,7 +113,7 @@ class TestFeedbackLoopDetector:
         ]
 
         is_vicious = detector.detect_vicious_cycle(history)
-        assert is_vicious == False
+        assert not is_vicious
 
     def test_detect_active_loop_insufficient_data(self):
         """Test active loop detection with insufficient data"""

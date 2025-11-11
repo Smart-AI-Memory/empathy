@@ -73,8 +73,8 @@ class LocalizationWizard(BaseWizard):
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute localization workflow"""
 
-        emotional_state = self._assess_emotional_state(task)
-        constraints = self._extract_constraints(task)
+        self._assess_emotional_state(task)
+        self._extract_constraints(task)
 
         diagnosis = self._analyze_localization_requirements(task)
         string_extraction = self._extract_strings(task)

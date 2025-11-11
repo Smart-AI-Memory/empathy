@@ -439,7 +439,7 @@ class TrustBuildingBehaviors:
         """Extract key metrics from data"""
         metrics = []
         for key, value in data.items():
-            if isinstance(value, (int, float)):
+            if isinstance(value, int | float):
                 metrics.append(f"{key}: {value}")
         return metrics[:5]  # Top 5 metrics
 

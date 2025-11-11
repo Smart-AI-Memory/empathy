@@ -60,8 +60,8 @@ class DesignReviewWizard(BaseWizard):
         """Execute design review workflow"""
 
         # Step 1: Assess context
-        constraints = self._extract_constraints(task)
-        emotional_state = self._assess_emotional_state(task)
+        self._extract_constraints(task)
+        self._assess_emotional_state(task)
 
         # Step 2: Identify design goals
         goals = self._identify_design_goals(task)

@@ -73,10 +73,10 @@ class OnboardingWizard(BaseWizard):
         """Execute onboarding workflow"""
 
         # Step 1: Assess emotional context
-        emotional_state = self._assess_emotional_state(task)
+        self._assess_emotional_state(task)
 
         # Step 2: Extract constraints
-        constraints = self._extract_constraints(task)
+        self._extract_constraints(task)
 
         # Step 3: Analyze onboarding requirements
         diagnosis = self._analyze_onboarding_requirements(task)

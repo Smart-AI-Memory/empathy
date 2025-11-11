@@ -67,7 +67,7 @@ class ComplianceWizard(BaseWizard):
         """Execute compliance audit workflow"""
 
         emotional_state = self._assess_emotional_state(task)
-        constraints = self._extract_constraints(task)
+        self._extract_constraints(task)
 
         diagnosis = self._analyze_compliance_requirements(task)
         gap_analysis = self._perform_gap_analysis(task)

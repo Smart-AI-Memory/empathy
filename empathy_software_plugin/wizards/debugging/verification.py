@@ -93,8 +93,8 @@ class ESLintRunner(BaseLinterRunner):
 
         except subprocess.TimeoutExpired:
             return []
-        except FileNotFoundError:
-            raise RuntimeError("ESLint not found. Run: npm install eslint")
+        except FileNotFoundError as e:
+            raise RuntimeError("ESLint not found. Run: npm install eslint") from e
 
 
 class PylintRunner(BaseLinterRunner):
@@ -126,8 +126,8 @@ class PylintRunner(BaseLinterRunner):
 
         except subprocess.TimeoutExpired:
             return []
-        except FileNotFoundError:
-            raise RuntimeError("Pylint not found. Run: pip install pylint")
+        except FileNotFoundError as e:
+            raise RuntimeError("Pylint not found. Run: pip install pylint") from e
 
 
 class MyPyRunner(BaseLinterRunner):
@@ -150,8 +150,8 @@ class MyPyRunner(BaseLinterRunner):
 
         except subprocess.TimeoutExpired:
             return []
-        except FileNotFoundError:
-            raise RuntimeError("mypy not found. Run: pip install mypy")
+        except FileNotFoundError as e:
+            raise RuntimeError("mypy not found. Run: pip install mypy") from e
 
 
 class TypeScriptRunner(BaseLinterRunner):
@@ -180,8 +180,8 @@ class TypeScriptRunner(BaseLinterRunner):
 
         except subprocess.TimeoutExpired:
             return []
-        except FileNotFoundError:
-            raise RuntimeError("TypeScript not found. Run: npm install typescript")
+        except FileNotFoundError as e:
+            raise RuntimeError("TypeScript not found. Run: npm install typescript") from e
 
 
 class LinterRunnerFactory:

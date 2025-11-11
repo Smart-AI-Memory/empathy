@@ -197,7 +197,7 @@ class EnhancedTestingWizard(BaseWizard):
         total_branches = 0
         covered_branches = 0
 
-        for file_path, metrics in coverage_data.items():
+        for _file_path, metrics in coverage_data.items():
             total_lines += metrics.get("lines_total", 0)
             covered_lines += metrics.get("lines_covered", 0)
             total_branches += metrics.get("branches_total", 0)

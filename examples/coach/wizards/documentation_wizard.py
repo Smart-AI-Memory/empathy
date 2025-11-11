@@ -61,7 +61,7 @@ class DocumentationWizard(BaseWizard):
         doc_type = self._determine_doc_type(task, pain_points)
 
         # Step 3: Extract constraints
-        constraints = self._extract_constraints(task)
+        self._extract_constraints(task)
 
         # Step 4: Generate diagnosis
         diagnosis = self._create_diagnosis(audience, pain_points, doc_type)

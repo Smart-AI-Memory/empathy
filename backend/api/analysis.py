@@ -92,7 +92,7 @@ async def create_session(
             "message": "Analysis session created successfully",
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to create session: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to create session: {str(e)}") from e
 
 
 @router.get("/session/{session_id}")
@@ -141,7 +141,7 @@ async def analyze_project(
         )
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Project analysis failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Project analysis failed: {str(e)}") from e
 
 
 @router.post("/file")
@@ -214,12 +214,12 @@ async def analyze_file(
     except UnicodeDecodeError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="File must be valid UTF-8 text"
-        )
+        ) from None
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"File analysis failed: {str(e)}",
-        )
+        ) from e
 
 
 @router.get("/history")

@@ -52,7 +52,7 @@ class PatternPersistence:
         }
 
         # Serialize each pattern
-        for pattern_id, pattern in library.patterns.items():
+        for _pattern_id, pattern in library.patterns.items():
             data["patterns"].append(
                 {
                     "id": pattern.id,
