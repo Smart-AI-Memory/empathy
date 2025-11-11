@@ -19,7 +19,7 @@ import json
 import os
 import sys
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -81,7 +81,7 @@ def print_info(text: str):
 
 async def analyze_project(
     project_path: str,
-    wizard_names: List[str] = None,
+    wizard_names: list[str] = None,
     output_format: str = "text",
     verbose: bool = False,
 ):
@@ -178,7 +178,7 @@ async def analyze_project(
     return 0
 
 
-async def gather_project_context(project_path: str) -> Dict[str, Any]:
+async def gather_project_context(project_path: str) -> dict[str, Any]:
     """
     Gather context about the project.
 
@@ -205,7 +205,7 @@ async def gather_project_context(project_path: str) -> Dict[str, Any]:
             if file_path.is_file():
                 # Check if file has AI integration
                 try:
-                    with open(file_path, "r") as f:
+                    with open(file_path) as f:
                         content = f.read()
                         if any(
                             ai_lib in content
@@ -264,7 +264,7 @@ async def gather_project_context(project_path: str) -> Dict[str, Any]:
     return context
 
 
-def parse_ai_calls(file_path: str, content: str) -> List[Dict[str, Any]]:
+def parse_ai_calls(file_path: str, content: str) -> list[dict[str, Any]]:
     """Parse AI API calls from file content"""
     # Simplified parser - in production, use AST
     calls = []
@@ -284,7 +284,7 @@ def parse_ai_calls(file_path: str, content: str) -> List[Dict[str, Any]]:
     return calls
 
 
-def parse_git_history(git_output: str) -> List[Dict[str, Any]]:
+def parse_git_history(git_output: str) -> list[dict[str, Any]]:
     """Parse git log output into structured history"""
     commits = []
     current_commit = None
@@ -305,7 +305,7 @@ def parse_git_history(git_output: str) -> List[Dict[str, Any]]:
     return commits
 
 
-def prepare_wizard_context(wizard_name: str, full_context: Dict[str, Any]) -> Dict[str, Any]:
+def prepare_wizard_context(wizard_name: str, full_context: dict[str, Any]) -> dict[str, Any]:
     """Prepare context specific to a wizard's requirements"""
 
     base_context = {
@@ -345,7 +345,7 @@ def prepare_wizard_context(wizard_name: str, full_context: Dict[str, Any]) -> Di
     return base_context
 
 
-def display_wizard_results(wizard, result: Dict[str, Any], verbose: bool):
+def display_wizard_results(wizard, result: dict[str, Any], verbose: bool):
     """Display wizard results in human-readable format"""
 
     # Issues
@@ -394,7 +394,7 @@ def display_wizard_results(wizard, result: Dict[str, Any], verbose: bool):
     print(f"\n{Colors.BOLD}Analysis Confidence:{Colors.END} {confidence:.0%}")
 
 
-def print_summary(all_results: Dict[str, Dict[str, Any]]):
+def print_summary(all_results: dict[str, dict[str, Any]]):
     """Print overall summary of analysis"""
     print_header("Analysis Summary")
 
@@ -623,7 +623,7 @@ def scan_command():
     # Scan each file
     for file_path in files_to_scan:
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 code = f.read()
         except Exception as e:
             print(f"⚠️  Could not read {file_path}: {e}")

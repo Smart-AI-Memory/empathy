@@ -5,13 +5,12 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import pytest
-import asyncio
-from unittest.mock import Mock, patch, AsyncMock
+from unittest.mock import AsyncMock, Mock, patch
 
-from ..server import CoachLanguageServer
-from ..error_handler import WizardNotFoundError, WizardExecutionError
+import pytest
+
 from ..cache import ResultCache
+from ..server import CoachLanguageServer
 
 
 class TestCoachLanguageServer:
@@ -32,11 +31,11 @@ class TestCoachLanguageServer:
                 wizard_name="PerformanceWizard",
                 diagnosis="Test diagnosis",
                 artifacts=[],
-                confidence=0.85
+                confidence=0.85,
             ),
             secondary_outputs=[],
             synthesis="",
-            overall_confidence=0.85
+            overall_confidence=0.85,
         )
         return mock
 
@@ -72,12 +71,8 @@ class TestCoachLanguageServer:
             server,
             [
                 "PerformanceWizard",
-                {
-                    "role": "developer",
-                    "task": "Analyze performance",
-                    "context": "Test context"
-                }
-            ]
+                {"role": "developer", "task": "Analyze performance", "context": "Test context"},
+            ],
         )
 
         assert result["routing"] == ["PerformanceWizard"]
@@ -90,8 +85,7 @@ class TestCoachLanguageServer:
         server.coach = mock_coach
 
         result = await server.command_handlers["coach/predict"](
-            server,
-            ["database_connection_pool", 10]
+            server, ["database_connection_pool", 10]
         )
 
         assert isinstance(result, str)
@@ -104,14 +98,12 @@ class TestCoachLanguageServer:
 
         # First call
         result1 = await server.command_handlers["coach/runWizard"](
-            server,
-            ["PerformanceWizard", {"role": "developer", "task": "Test"}]
+            server, ["PerformanceWizard", {"role": "developer", "task": "Test"}]
         )
 
         # Second call (should use cache)
         result2 = await server.command_handlers["coach/runWizard"](
-            server,
-            ["PerformanceWizard", {"role": "developer", "task": "Test"}]
+            server, ["PerformanceWizard", {"role": "developer", "task": "Test"}]
         )
 
         # Coach should only be called once (second call uses cache)
@@ -129,14 +121,14 @@ class TestCoachLanguageServer:
                     Mock(
                         name="security_issue",
                         content="SQL injection vulnerability in user input",
-                        format="markdown"
+                        format="markdown",
                     )
                 ],
-                confidence=0.95
+                confidence=0.95,
             ),
             secondary_outputs=[],
             synthesis="",
-            overall_confidence=0.95
+            overall_confidence=0.95,
         )
 
         diagnostics = server._convert_to_diagnostics(mock_output)
@@ -205,8 +197,7 @@ class TestErrorHandling:
         """Test handling of wizard not found error"""
         with pytest.raises(Exception):  # Will be caught and converted to LSP error
             await server.command_handlers["coach/runWizard"](
-                server,
-                ["NonExistentWizard", {"role": "developer", "task": "Test"}]
+                server, ["NonExistentWizard", {"role": "developer", "task": "Test"}]
             )
 
     @pytest.mark.asyncio
@@ -214,14 +205,13 @@ class TestErrorHandling:
         """Test handling of invalid parameters"""
         with pytest.raises(Exception):
             await server.command_handlers["coach/runWizard"](
-                server,
-                ["PerformanceWizard"]  # Missing task dict
+                server, ["PerformanceWizard"]  # Missing task dict
             )
 
     @pytest.mark.asyncio
     async def test_context_collection_error(self, server):
         """Test handling of context collection failures"""
-        with patch.object(server.context_collector, 'collect', side_effect=Exception("Test error")):
+        with patch.object(server.context_collector, "collect", side_effect=Exception("Test error")):
             # Should not crash, should handle gracefully
             result = await server._analyze_document("file:///test.py")
             # Server should handle error and continue
@@ -239,7 +229,8 @@ class TestContextCollector:
 
         # Create a test file
         import tempfile
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write("# Test file\nprint('hello')")
             temp_path = f.name
 
@@ -251,12 +242,14 @@ class TestContextCollector:
             assert "Language:" in context
         finally:
             import os
+
             os.unlink(temp_path)
 
     def test_detect_language(self):
         """Test language detection from file extension"""
-        from ..context_collector import ContextCollector
         from pathlib import Path
+
+        from ..context_collector import ContextCollector
 
         collector = ContextCollector()
 

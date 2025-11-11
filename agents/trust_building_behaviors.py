@@ -19,7 +19,6 @@ Licensed under the Apache License, Version 2.0
 
 import logging
 from datetime import datetime
-from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +32,7 @@ class TrustBuildingBehaviors:
     """
 
     @staticmethod
-    def pre_format_for_handoff(data: Dict, next_person_role: str, context: str) -> Dict:
+    def pre_format_for_handoff(data: dict, next_person_role: str, context: str) -> dict:
         """
         Scenario: Handoff Risk
         Anticipatory Response: Pre-format the data so next person doesn't waste time
@@ -180,16 +179,14 @@ class TrustBuildingBehaviors:
             "trust_building_behavior": "pre_format_for_handoff",
         }
 
-        logger.info(
-            f"Data formatted in {formatted['format']} style for {next_person_role}"
-        )
+        logger.info(f"Data formatted in {formatted['format']} style for {next_person_role}")
 
         return formatted
 
     @staticmethod
     def clarify_before_execution(
-        instruction: str, context: Dict, confidence_threshold: float = 0.8
-    ) -> Dict:
+        instruction: str, context: dict, confidence_threshold: float = 0.8
+    ) -> dict:
         """
         Scenario: Confusing Instructions
         Anticipatory Response: Clarify and summarize before execution
@@ -234,16 +231,12 @@ class TrustBuildingBehaviors:
                     f"(threshold: {confidence_threshold:.0%}). "
                     "Clarifying before execution to prevent wasted effort."
                 ),
-                "message_to_user": compose_clarification_request(
-                    instruction, ambiguity_signals
-                ),
+                "message_to_user": compose_clarification_request(instruction, ambiguity_signals),
                 "trust_building_behavior": "clarify_before_execution",
             }
 
     @staticmethod
-    def volunteer_structure_during_stress(
-        team_state: Dict, stress_indicators: Dict
-    ) -> Optional[Dict]:
+    def volunteer_structure_during_stress(team_state: dict, stress_indicators: dict) -> dict | None:
         """
         Scenario: Team Stress Rising
         Anticipatory Response: Volunteer structure, not pep talks
@@ -331,16 +324,14 @@ class TrustBuildingBehaviors:
                 f"Volunteering {len(structural_interventions)} structural interventions "
                 "(not emotional support - structure relieves stress more effectively)."
             ),
-            "message_to_team": compose_structure_offer(
-                stress_level, structural_interventions
-            ),
+            "message_to_team": compose_structure_offer(stress_level, structural_interventions),
             "trust_building_behavior": "volunteer_structure_during_stress",
         }
 
     @staticmethod
     def offer_help_to_struggling_teammate(
-        teammate_state: Dict, my_bandwidth: float = 0.7
-    ) -> Optional[Dict]:
+        teammate_state: dict, my_bandwidth: float = 0.7
+    ) -> dict | None:
         """
         Scenario: Silent Teammate Struggling
         Anticipatory Response: "I've got bandwidth—want me to take a slice of this?"
@@ -356,9 +347,7 @@ class TrustBuildingBehaviors:
         - "Respects my autonomy (asks, doesn't assume)"
         """
 
-        logger.info(
-            f"Checking if teammate needs help (my bandwidth: {my_bandwidth:.0%})"
-        )
+        logger.info(f"Checking if teammate needs help (my bandwidth: {my_bandwidth:.0%})")
 
         # Detect if teammate is struggling
         struggle_indicators = detect_struggle(teammate_state)
@@ -413,7 +402,7 @@ class TrustBuildingBehaviors:
 # =============================================================================
 
 
-def calculate_risk_level(data: Dict) -> str:
+def calculate_risk_level(data: dict) -> str:
     """Calculate overall risk level (low, medium, high, critical)"""
     compliance_pct = data.get("compliance_percentage", 100)
     critical_gaps = len(
@@ -429,7 +418,7 @@ def calculate_risk_level(data: Dict) -> str:
         return "low"
 
 
-def detect_ambiguity(instruction: str, context: Dict) -> Dict:
+def detect_ambiguity(instruction: str, context: dict) -> dict:
     """
     Detect ambiguity in instruction
 
@@ -460,9 +449,7 @@ def detect_ambiguity(instruction: str, context: Dict) -> Dict:
     if "all" in instruction.lower() and "items" in instruction.lower():
         if not context.get("items_defined"):
             ambiguities.append("Scope unclear: 'all items' - which items?")
-            questions.append(
-                "Which items specifically? (compliance gaps, action items, patients?)"
-            )
+            questions.append("Which items specifically? (compliance gaps, action items, patients?)")
 
     # Check for missing context
     if "update" in instruction.lower() or "fix" in instruction.lower():
@@ -481,13 +468,11 @@ def detect_ambiguity(instruction: str, context: Dict) -> Dict:
     }
 
 
-def compose_clarification_request(instruction: str, ambiguity_signals: Dict) -> str:
+def compose_clarification_request(instruction: str, ambiguity_signals: dict) -> str:
     """Compose user-friendly clarification request"""
 
     ambiguities_text = "\n".join(f"• {amb}" for amb in ambiguity_signals["ambiguities"])
-    questions_text = "\n".join(
-        f"{i+1}. {q}" for i, q in enumerate(ambiguity_signals["questions"])
-    )
+    questions_text = "\n".join(f"{i+1}. {q}" for i, q in enumerate(ambiguity_signals["questions"]))
 
     return f"""
 🤔 **Clarification Needed (to prevent wasted effort)**
@@ -510,7 +495,7 @@ _(This AI clarifies before executing to build trust through accurate work)_
     """.strip()
 
 
-def calculate_stress_level(stress_indicators: Dict) -> float:
+def calculate_stress_level(stress_indicators: dict) -> float:
     """
     Calculate team stress level (0.0-1.0)
 
@@ -551,7 +536,7 @@ def calculate_stress_level(stress_indicators: Dict) -> float:
     return sum(stress_factors) / len(stress_factors) if stress_factors else 0.0
 
 
-def identify_stress_sources(team_state: Dict, stress_indicators: Dict) -> List[Dict]:
+def identify_stress_sources(team_state: dict, stress_indicators: dict) -> list[dict]:
     """Identify specific sources of stress"""
 
     sources = []
@@ -561,11 +546,7 @@ def identify_stress_sources(team_state: Dict, stress_indicators: Dict) -> List[D
             {
                 "type": "time_pressure",
                 "description": f"Only {stress_indicators['days_until_deadline']} days until deadline",
-                "severity": (
-                    "high"
-                    if stress_indicators["days_until_deadline"] < 14
-                    else "medium"
-                ),
+                "severity": ("high" if stress_indicators["days_until_deadline"] < 14 else "medium"),
             }
         )
 
@@ -574,9 +555,7 @@ def identify_stress_sources(team_state: Dict, stress_indicators: Dict) -> List[D
             {
                 "type": "task_overload",
                 "description": f"{stress_indicators['tasks_per_person']} tasks per person",
-                "severity": (
-                    "high" if stress_indicators["tasks_per_person"] > 10 else "medium"
-                ),
+                "severity": ("high" if stress_indicators["tasks_per_person"] > 10 else "medium"),
             }
         )
 
@@ -592,7 +571,7 @@ def identify_stress_sources(team_state: Dict, stress_indicators: Dict) -> List[D
     return sources
 
 
-def create_prioritized_timeline(team_state: Dict, stress_source: Dict) -> Dict:
+def create_prioritized_timeline(team_state: dict, stress_source: dict) -> dict:
     """Create structured timeline to relieve time pressure"""
 
     return {
@@ -602,27 +581,21 @@ def create_prioritized_timeline(team_state: Dict, stress_source: Dict) -> Dict:
                 "phase": "CRITICAL (Days 1-3)",
                 "focus": "Critical gaps only",
                 "tasks": [
-                    t
-                    for t in team_state.get("action_items", [])
-                    if t.get("severity") == "critical"
+                    t for t in team_state.get("action_items", []) if t.get("severity") == "critical"
                 ],
             },
             {
                 "phase": "HIGH PRIORITY (Days 4-7)",
                 "focus": "High-severity gaps",
                 "tasks": [
-                    t
-                    for t in team_state.get("action_items", [])
-                    if t.get("severity") == "high"
+                    t for t in team_state.get("action_items", []) if t.get("severity") == "high"
                 ],
             },
             {
                 "phase": "MEDIUM (Days 8-14)",
                 "focus": "Medium-severity gaps",
                 "tasks": [
-                    t
-                    for t in team_state.get("action_items", [])
-                    if t.get("severity") == "medium"
+                    t for t in team_state.get("action_items", []) if t.get("severity") == "medium"
                 ],
             },
         ],
@@ -630,7 +603,7 @@ def create_prioritized_timeline(team_state: Dict, stress_source: Dict) -> Dict:
     }
 
 
-def create_delegation_framework(team_state: Dict, stress_source: Dict) -> Dict:
+def create_delegation_framework(team_state: dict, stress_source: dict) -> dict:
     """Create task delegation structure"""
 
     return {
@@ -659,16 +632,14 @@ def create_delegation_framework(team_state: Dict, stress_source: Dict) -> Dict:
     }
 
 
-def create_decision_dashboard(team_state: Dict, stress_source: Dict) -> Dict:
+def create_decision_dashboard(team_state: dict, stress_source: dict) -> dict:
     """Create structured information dashboard"""
 
     return {
         "structure_type": "decision_dashboard",
         "critical_only_view": {
             "red_flags": [
-                g
-                for g in team_state.get("compliance_gaps", [])
-                if g.get("severity") == "critical"
+                g for g in team_state.get("compliance_gaps", []) if g.get("severity") == "critical"
             ],
             "blocking_issues": [],
             "requires_immediate_action": [],
@@ -677,7 +648,7 @@ def create_decision_dashboard(team_state: Dict, stress_source: Dict) -> Dict:
     }
 
 
-def create_priority_matrix(team_state: Dict, stress_source: Dict) -> Dict:
+def create_priority_matrix(team_state: dict, stress_source: dict) -> dict:
     """Create priority decision matrix"""
 
     return {
@@ -697,7 +668,7 @@ def create_priority_matrix(team_state: Dict, stress_source: Dict) -> Dict:
     }
 
 
-def compose_structure_offer(stress_level: float, interventions: List[Dict]) -> str:
+def compose_structure_offer(stress_level: float, interventions: list[dict]) -> str:
     """Compose offer of structural help"""
 
     intervention_text = "\n".join(
@@ -721,7 +692,7 @@ _(Level 4 Anticipatory Empathy: Structure relieves stress more than encouragemen
     """.strip()
 
 
-def detect_struggle(teammate_state: Dict) -> Dict:
+def detect_struggle(teammate_state: dict) -> dict:
     """Detect if teammate is struggling"""
 
     struggle_indicators = []
@@ -746,9 +717,7 @@ def detect_struggle(teammate_state: Dict) -> Dict:
         [t for t in teammate_state.get("tasks", []) if t.get("deadline_days", 999) < 3]
     )
     if urgent_deadlines > 0:
-        struggle_indicators.append(
-            f"Urgent deadlines: {urgent_deadlines} tasks due <3 days"
-        )
+        struggle_indicators.append(f"Urgent deadlines: {urgent_deadlines} tasks due <3 days")
         struggle_score += 0.3
 
     return {
@@ -757,7 +726,7 @@ def detect_struggle(teammate_state: Dict) -> Dict:
     }
 
 
-def can_i_help_with_task(task: Dict, my_bandwidth: float) -> bool:
+def can_i_help_with_task(task: dict, my_bandwidth: float) -> bool:
     """Determine if I can help with this task"""
 
     # I can help if:
@@ -778,13 +747,11 @@ def can_i_help_with_task(task: Dict, my_bandwidth: float) -> bool:
     return True
 
 
-def estimate_task_effort(task: Dict) -> float:
+def estimate_task_effort(task: dict) -> float:
     """Estimate effort required for task (0.0-1.0 of bandwidth)"""
 
     estimated_time = task.get("estimated_time", "0 minutes")
-    minutes = (
-        int(estimated_time.split()[0]) if estimated_time.split()[0].isdigit() else 0
-    )
+    minutes = int(estimated_time.split()[0]) if estimated_time.split()[0].isdigit() else 0
 
     # Map minutes to bandwidth fraction
     if minutes < 15:
@@ -797,7 +764,7 @@ def estimate_task_effort(task: Dict) -> float:
         return 0.5
 
 
-def determine_help_rationale(task: Dict) -> str:
+def determine_help_rationale(task: dict) -> str:
     """Explain why I can help with this task"""
 
     if task.get("type") == "documentation":
@@ -810,7 +777,7 @@ def determine_help_rationale(task: Dict) -> str:
         return "I can automate repetitive parts of this task"
 
 
-def estimate_relief(task: Dict, teammate_state: Dict) -> str:
+def estimate_relief(task: dict, teammate_state: dict) -> str:
     """Estimate impact on teammate if I take this task"""
 
     task_time = estimate_task_effort(task)
@@ -822,7 +789,7 @@ def estimate_relief(task: Dict, teammate_state: Dict) -> str:
         return "Modest relief but every bit helps"
 
 
-def compose_help_offer(tasks: List[Dict], bandwidth: float, struggle: Dict) -> str:
+def compose_help_offer(tasks: list[dict], bandwidth: float, struggle: dict) -> str:
     """Compose specific help offer to struggling teammate"""
 
     indicators_text = "\n".join(f"• {ind}" for ind in struggle["indicators"])

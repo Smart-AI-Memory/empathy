@@ -9,16 +9,16 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import List, Dict, Any
+from typing import Any
 
 from .base_wizard import (
     BaseWizard,
-    WizardTask,
-    WizardOutput,
-    WizardArtifact,
-    WizardRisk,
-    WizardHandoff,
     EmpathyChecks,
+    WizardArtifact,
+    WizardHandoff,
+    WizardOutput,
+    WizardRisk,
+    WizardTask,
 )
 
 
@@ -35,9 +35,20 @@ class DesignReviewWizard(BaseWizard):
     def can_handle(self, task: WizardTask) -> float:
         """Determine if this is a design review task"""
         design_keywords = [
-            "design", "architecture", "arch", "review", "refactor",
-            "scalability", "performance", "scale", "technical debt",
-            "trade-off", "tradeoff", "decision", "adr", "system design"
+            "design",
+            "architecture",
+            "arch",
+            "review",
+            "refactor",
+            "scalability",
+            "performance",
+            "scale",
+            "technical debt",
+            "trade-off",
+            "tradeoff",
+            "decision",
+            "adr",
+            "system design",
         ]
 
         task_lower = (task.task + " " + task.context).lower()
@@ -75,23 +86,21 @@ class DesignReviewWizard(BaseWizard):
             WizardArtifact(
                 type="doc",
                 title="Architecture Analysis",
-                content=architecture_analysis["detailed_analysis"]
+                content=architecture_analysis["detailed_analysis"],
             ),
             WizardArtifact(
-                type="doc",
-                title="Trade-off Analysis",
-                content=self._format_tradeoffs(tradeoffs)
+                type="doc", title="Trade-off Analysis", content=self._format_tradeoffs(tradeoffs)
             ),
             WizardArtifact(
                 type="adr",
                 title="Architecture Decision Record (Draft)",
-                content=self._generate_adr(task, architecture_analysis, tradeoffs)
+                content=self._generate_adr(task, architecture_analysis, tradeoffs),
             ),
             WizardArtifact(
                 type="checklist",
                 title="Design Review Checklist",
-                content=self._create_review_checklist(nfr_assessment)
-            )
+                content=self._create_review_checklist(nfr_assessment),
+            ),
         ]
 
         # Step 9: Create plan
@@ -101,7 +110,7 @@ class DesignReviewWizard(BaseWizard):
             "Assess non-functional requirements",
             "Document key design decisions",
             "Identify refactoring opportunities",
-            "Create migration plan if needed"
+            "Create migration plan if needed",
         ]
 
         # Step 10: Generate next actions
@@ -110,7 +119,7 @@ class DesignReviewWizard(BaseWizard):
             "Document design decisions in ADR",
             "Create proof-of-concept for risky areas",
             "Update architecture diagrams",
-            "Set up monitoring for identified risks"
+            "Set up monitoring for identified risks",
         ]
 
         # Add anticipatory actions
@@ -120,23 +129,25 @@ class DesignReviewWizard(BaseWizard):
         # Step 11: Create handoffs
         handoffs = []
         if task.role in ["developer", "architect"]:
-            handoffs.append(WizardHandoff(
-                owner="team",
-                what="Architecture review meeting",
-                when="Within 1 week"
-            ))
+            handoffs.append(
+                WizardHandoff(
+                    owner="team", what="Architecture review meeting", when="Within 1 week"
+                )
+            )
         if "refactor" in task.task.lower():
-            handoffs.append(WizardHandoff(
-                owner="pm",
-                what="Refactoring timeline and resource allocation",
-                when="Before starting work"
-            ))
+            handoffs.append(
+                WizardHandoff(
+                    owner="pm",
+                    what="Refactoring timeline and resource allocation",
+                    when="Before starting work",
+                )
+            )
 
         # Step 12: Empathy checks
         empathy_checks = EmpathyChecks(
             cognitive=f"Considered {task.role} perspective with focus on {', '.join(goals[:2])}",
             emotional=f"Acknowledged {'high' if 'refactor' in task.task.lower() else 'normal'} complexity and technical debt concerns",
-            anticipatory=f"Identified {len(risks)} future risks and provided {len(anticipatory_actions)} proactive recommendations"
+            anticipatory=f"Identified {len(risks)} future risks and provided {len(anticipatory_actions)} proactive recommendations",
         )
 
         return WizardOutput(
@@ -148,10 +159,10 @@ class DesignReviewWizard(BaseWizard):
             handoffs=handoffs,
             next_actions=next_actions,
             empathy_checks=empathy_checks,
-            confidence=self.can_handle(task)
+            confidence=self.can_handle(task),
         )
 
-    def _identify_design_goals(self, task: WizardTask) -> List[str]:
+    def _identify_design_goals(self, task: WizardTask) -> list[str]:
         """Identify design goals from task"""
         goals = []
 
@@ -168,7 +179,7 @@ class DesignReviewWizard(BaseWizard):
             "availability": "Availability",
             "cost": "Cost efficiency",
             "developer experience": "Developer experience",
-            "testing": "Testability"
+            "testing": "Testability",
         }
 
         for keyword, goal in goal_keywords.items():
@@ -180,7 +191,7 @@ class DesignReviewWizard(BaseWizard):
 
         return goals
 
-    def _analyze_architecture(self, task: WizardTask, goals: List[str]) -> Dict[str, Any]:
+    def _analyze_architecture(self, task: WizardTask, goals: list[str]) -> dict[str, Any]:
         """Analyze architecture (Level 3: Proactive pattern detection)"""
 
         context_lower = task.context.lower()
@@ -237,11 +248,11 @@ Based on the context, this appears to be a {''.join(patterns[:1]) if patterns el
         return {
             "patterns": patterns,
             "concerns": concerns,
-            "goals_alignment": {g: "partial" for g in goals},
-            "detailed_analysis": detailed_analysis
+            "goals_alignment": dict.fromkeys(goals, "partial"),
+            "detailed_analysis": detailed_analysis,
         }
 
-    def _identify_tradeoffs(self, task: WizardTask, analysis: Dict) -> List[Dict[str, str]]:
+    def _identify_tradeoffs(self, task: WizardTask, analysis: dict) -> list[dict[str, str]]:
         """Identify architecture trade-offs"""
         tradeoffs = []
 
@@ -249,97 +260,120 @@ Based on the context, this appears to be a {''.join(patterns[:1]) if patterns el
 
         # Common trade-offs based on patterns
         if "Microservices" in patterns:
-            tradeoffs.append({
-                "decision": "Microservices Architecture",
-                "benefit": "Independent scalability, team autonomy, technology flexibility",
-                "cost": "Increased operational complexity, distributed system challenges, network latency",
-                "recommendation": "Consider: service mesh, centralized logging, distributed tracing"
-            })
+            tradeoffs.append(
+                {
+                    "decision": "Microservices Architecture",
+                    "benefit": "Independent scalability, team autonomy, technology flexibility",
+                    "cost": "Increased operational complexity, distributed system challenges, network latency",
+                    "recommendation": "Consider: service mesh, centralized logging, distributed tracing",
+                }
+            )
 
         if "Monolithic" in patterns:
-            tradeoffs.append({
-                "decision": "Monolithic Architecture",
-                "benefit": "Simpler deployment, easier debugging, lower operational overhead",
-                "cost": "Limited scalability, tighter coupling, slower development velocity at scale",
-                "recommendation": "Consider: modular monolith pattern, domain boundaries, migration path"
-            })
+            tradeoffs.append(
+                {
+                    "decision": "Monolithic Architecture",
+                    "benefit": "Simpler deployment, easier debugging, lower operational overhead",
+                    "cost": "Limited scalability, tighter coupling, slower development velocity at scale",
+                    "recommendation": "Consider: modular monolith pattern, domain boundaries, migration path",
+                }
+            )
 
         if "Serverless" in patterns:
-            tradeoffs.append({
-                "decision": "Serverless Architecture",
-                "benefit": "Zero server management, auto-scaling, pay-per-use",
-                "cost": "Cold starts, vendor lock-in, limited execution time, debugging complexity",
-                "recommendation": "Consider: function warmers, local development tools, multi-cloud strategy"
-            })
+            tradeoffs.append(
+                {
+                    "decision": "Serverless Architecture",
+                    "benefit": "Zero server management, auto-scaling, pay-per-use",
+                    "cost": "Cold starts, vendor lock-in, limited execution time, debugging complexity",
+                    "recommendation": "Consider: function warmers, local development tools, multi-cloud strategy",
+                }
+            )
 
         if "Event-driven" in patterns:
-            tradeoffs.append({
-                "decision": "Event-Driven Architecture",
-                "benefit": "Loose coupling, scalability, resilience",
-                "cost": "Eventual consistency, debugging complexity, message ordering challenges",
-                "recommendation": "Consider: event schema registry, dead letter queues, idempotency"
-            })
+            tradeoffs.append(
+                {
+                    "decision": "Event-Driven Architecture",
+                    "benefit": "Loose coupling, scalability, resilience",
+                    "cost": "Eventual consistency, debugging complexity, message ordering challenges",
+                    "recommendation": "Consider: event schema registry, dead letter queues, idempotency",
+                }
+            )
 
         # Generic trade-off if none detected
         if not tradeoffs:
-            tradeoffs.append({
-                "decision": "Current Architecture Approach",
-                "benefit": "Meets immediate functional requirements",
-                "cost": "May have hidden technical debt or scalability limitations",
-                "recommendation": "Conduct thorough architecture review to identify specific trade-offs"
-            })
+            tradeoffs.append(
+                {
+                    "decision": "Current Architecture Approach",
+                    "benefit": "Meets immediate functional requirements",
+                    "cost": "May have hidden technical debt or scalability limitations",
+                    "recommendation": "Conduct thorough architecture review to identify specific trade-offs",
+                }
+            )
 
         return tradeoffs
 
-    def _assess_design_risks(self, task: WizardTask, analysis: Dict,
-                            tradeoffs: List[Dict]) -> List[WizardRisk]:
+    def _assess_design_risks(
+        self, task: WizardTask, analysis: dict, tradeoffs: list[dict]
+    ) -> list[WizardRisk]:
         """Assess design risks (Level 4: Anticipatory)"""
         risks = []
 
         # Risk based on complexity
         if len(analysis.get("patterns", [])) > 2:
-            risks.append(WizardRisk(
-                risk="Architecture complexity may overwhelm team",
-                mitigation="Start with simpler approach, add complexity incrementally as team gains experience",
-                severity="high"
-            ))
+            risks.append(
+                WizardRisk(
+                    risk="Architecture complexity may overwhelm team",
+                    mitigation="Start with simpler approach, add complexity incrementally as team gains experience",
+                    severity="high",
+                )
+            )
 
         # Risk based on patterns
         if "Microservices" in analysis.get("patterns", []):
-            risks.append(WizardRisk(
-                risk="Distributed system failures and cascading issues",
-                mitigation="Implement circuit breakers, timeouts, and comprehensive monitoring",
-                severity="high"
-            ))
-            risks.append(WizardRisk(
-                risk="Data consistency across services",
-                mitigation="Use saga pattern or event sourcing for distributed transactions",
-                severity="medium"
-            ))
+            risks.append(
+                WizardRisk(
+                    risk="Distributed system failures and cascading issues",
+                    mitigation="Implement circuit breakers, timeouts, and comprehensive monitoring",
+                    severity="high",
+                )
+            )
+            risks.append(
+                WizardRisk(
+                    risk="Data consistency across services",
+                    mitigation="Use saga pattern or event sourcing for distributed transactions",
+                    severity="medium",
+                )
+            )
 
         if "Monolithic" in analysis.get("patterns", []):
-            risks.append(WizardRisk(
-                risk="Future scalability bottlenecks",
-                mitigation="Design with clear module boundaries, plan migration path to distributed architecture",
-                severity="medium"
-            ))
+            risks.append(
+                WizardRisk(
+                    risk="Future scalability bottlenecks",
+                    mitigation="Design with clear module boundaries, plan migration path to distributed architecture",
+                    severity="medium",
+                )
+            )
 
         # General risks
-        risks.append(WizardRisk(
-            risk="Technical debt accumulation",
-            mitigation="Regular architecture reviews, refactoring time in sprints, ADR documentation",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Technical debt accumulation",
+                mitigation="Regular architecture reviews, refactoring time in sprints, ADR documentation",
+                severity="medium",
+            )
+        )
 
-        risks.append(WizardRisk(
-            risk="Knowledge silos in complex architecture",
-            mitigation="Architecture documentation, team knowledge sharing sessions, pair programming",
-            severity="low"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Knowledge silos in complex architecture",
+                mitigation="Architecture documentation, team knowledge sharing sessions, pair programming",
+                severity="low",
+            )
+        )
 
         return risks[:5]  # Top 5 risks
 
-    def _evaluate_nfrs(self, task: WizardTask, analysis: Dict) -> Dict[str, str]:
+    def _evaluate_nfrs(self, task: WizardTask, analysis: dict) -> dict[str, str]:
         """Evaluate non-functional requirements"""
         return {
             "Scalability": "Review service boundaries and data partitioning strategy",
@@ -347,17 +381,17 @@ Based on the context, this appears to be a {''.join(patterns[:1]) if patterns el
             "Security": "Conduct security review and threat modeling",
             "Reliability": "Define SLOs and implement health checks",
             "Maintainability": "Ensure code quality standards and documentation",
-            "Observability": "Implement logging, metrics, and tracing"
+            "Observability": "Implement logging, metrics, and tracing",
         }
 
-    def _create_diagnosis(self, analysis: Dict, tradeoffs: List[Dict]) -> str:
+    def _create_diagnosis(self, analysis: dict, tradeoffs: list[dict]) -> str:
         """Create diagnosis of architecture"""
         patterns = analysis.get("patterns", [])
         pattern_str = ", ".join(patterns) if patterns else "standard"
 
         return f"{pattern_str} architecture with {len(tradeoffs)} key trade-offs requiring evaluation and {len(analysis.get('concerns', []))} primary concerns"
 
-    def _format_tradeoffs(self, tradeoffs: List[Dict]) -> str:
+    def _format_tradeoffs(self, tradeoffs: list[dict]) -> str:
         """Format trade-offs as documentation"""
         content = "# Architecture Trade-off Analysis\n\n"
 
@@ -370,7 +404,7 @@ Based on the context, this appears to be a {''.join(patterns[:1]) if patterns el
 
         return content
 
-    def _generate_adr(self, task: WizardTask, analysis: Dict, tradeoffs: List[Dict]) -> str:
+    def _generate_adr(self, task: WizardTask, analysis: dict, tradeoffs: list[dict]) -> str:
         """Generate Architecture Decision Record"""
         patterns = analysis.get("patterns", ["Current approach"])
         main_pattern = patterns[0] if patterns else "Architecture"
@@ -422,7 +456,7 @@ Adopt {main_pattern} architecture to address requirements.
 *Status*: Draft - Requires review
 """
 
-    def _create_review_checklist(self, nfr_assessment: Dict) -> str:
+    def _create_review_checklist(self, nfr_assessment: dict) -> str:
         """Create design review checklist"""
         return f"""# Design Review Checklist
 

@@ -16,7 +16,6 @@ import os
 
 # Import from core framework
 import sys
-from typing import Dict, Type
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
@@ -59,7 +58,7 @@ class SoftwarePlugin(BasePlugin):
             dependencies=[],  # Add any domain-specific deps
         )
 
-    def register_wizards(self) -> Dict[str, Type[BaseWizard]]:
+    def register_wizards(self) -> dict[str, type[BaseWizard]]:
         """
         Register all software development wizards.
 
@@ -157,7 +156,7 @@ class SoftwarePlugin(BasePlugin):
 
         return wizards
 
-    def register_patterns(self) -> Dict:
+    def register_patterns(self) -> dict:
         """
         Register software development patterns.
 

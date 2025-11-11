@@ -9,17 +9,16 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import re
-from typing import List, Dict, Any
+from typing import Any
 
 from .base_wizard import (
     BaseWizard,
-    WizardTask,
-    WizardOutput,
-    WizardArtifact,
-    WizardRisk,
-    WizardHandoff,
     EmpathyChecks,
+    WizardArtifact,
+    WizardHandoff,
+    WizardOutput,
+    WizardRisk,
+    WizardTask,
 )
 
 
@@ -36,15 +35,23 @@ class ComplianceWizard(BaseWizard):
     def can_handle(self, task: WizardTask) -> float:
         """Determine if this is a compliance task"""
         # High-priority compliance phrases (worth 2 points each)
-        compliance_phrases = [
-            "compliance", "audit", "soc 2", "hipaa", "gdpr", "iso 27001"
-        ]
+        compliance_phrases = ["compliance", "audit", "soc 2", "hipaa", "gdpr", "iso 27001"]
 
         # Secondary indicators (worth 1 point each)
         secondary_keywords = [
-            "pentest", "penetration test", "security audit", "pci dss",
-            "pii", "phi", "data protection", "privacy", "certification",
-            "regulatory", "sox", "ccpa", "regulation"
+            "pentest",
+            "penetration test",
+            "security audit",
+            "pci dss",
+            "pii",
+            "phi",
+            "data protection",
+            "privacy",
+            "certification",
+            "regulatory",
+            "sox",
+            "ccpa",
+            "regulation",
         ]
 
         task_lower = (task.task + " " + task.context).lower()
@@ -73,41 +80,33 @@ class ComplianceWizard(BaseWizard):
             WizardArtifact(
                 type="doc",
                 title="Compliance Gap Analysis",
-                content=self._generate_gap_analysis_report(diagnosis, gap_analysis)
+                content=self._generate_gap_analysis_report(diagnosis, gap_analysis),
             ),
             WizardArtifact(
-                type="doc",
-                title="Remediation Plan",
-                content="\n".join(remediation_plan)
+                type="doc", title="Remediation Plan", content="\n".join(remediation_plan)
             ),
-            WizardArtifact(
-                type="doc",
-                title="Policy Documents",
-                content=policy_documents
-            ),
-            WizardArtifact(
-                type="doc",
-                title="Audit Evidence Collection",
-                content=audit_evidence
-            ),
+            WizardArtifact(type="doc", title="Policy Documents", content=policy_documents),
+            WizardArtifact(type="doc", title="Audit Evidence Collection", content=audit_evidence),
             WizardArtifact(
                 type="checklist",
                 title="Pre-Audit Checklist",
-                content=self._create_pre_audit_checklist(task)
+                content=self._create_pre_audit_checklist(task),
             ),
             WizardArtifact(
-                type="doc",
-                title="Compliance Risk Forecast",
-                content=compliance_forecast
-            )
+                type="doc", title="Compliance Risk Forecast", content=compliance_forecast
+            ),
         ]
 
         plan = remediation_plan[:7]
 
         empathy_checks = EmpathyChecks(
-            cognitive=f"Considered stakeholders: legal, security, auditors, customers, executives",
+            cognitive="Considered stakeholders: legal, security, auditors, customers, executives",
             emotional=f"Acknowledged: Audits are stressful and high-stakes, {emotional_state['urgency']} urgency",
-            anticipatory=compliance_forecast[:200] + "..." if len(compliance_forecast) > 200 else compliance_forecast
+            anticipatory=(
+                compliance_forecast[:200] + "..."
+                if len(compliance_forecast) > 200
+                else compliance_forecast
+            ),
         )
 
         return WizardOutput(
@@ -119,7 +118,7 @@ class ComplianceWizard(BaseWizard):
             handoffs=self._create_handoffs(task),
             next_actions=plan[:5] + self._generate_anticipatory_actions(task),
             empathy_checks=empathy_checks,
-            confidence=self.can_handle(task)
+            confidence=self.can_handle(task),
         )
 
     def _analyze_compliance_requirements(self, task: WizardTask) -> str:
@@ -146,103 +145,119 @@ class ComplianceWizard(BaseWizard):
             frameworks.append("SOC 2 Type II (assumed)")
 
         analysis += f"**Target Compliance**: {', '.join(frameworks)}\n"
-        analysis += f"**Timeline**: Pre-audit preparation\n"
-        analysis += f"**Context**: {task.context[:300]}...\n" if len(task.context) > 300 else f"**Context**: {task.context}\n"
+        analysis += "**Timeline**: Pre-audit preparation\n"
+        analysis += (
+            f"**Context**: {task.context[:300]}...\n"
+            if len(task.context) > 300
+            else f"**Context**: {task.context}\n"
+        )
 
         return analysis
 
-    def _perform_gap_analysis(self, task: WizardTask) -> List[Dict[str, Any]]:
+    def _perform_gap_analysis(self, task: WizardTask) -> list[dict[str, Any]]:
         """Perform compliance gap analysis"""
         gaps = []
 
         # SOC 2 Trust Service Criteria
-        gaps.append({
-            "framework": "SOC 2",
-            "criterion": "CC6.1 - Logical and Physical Access Controls",
-            "requirement": "Implement MFA for all system access",
-            "current_state": "Password-only authentication",
-            "gap": "Missing multi-factor authentication",
-            "severity": "critical",
-            "remediation": [
-                "Implement MFA for all users (Google Authenticator, Duo, etc.)",
-                "Enforce MFA for privileged accounts (admins, developers)",
-                "Document MFA policy and user onboarding process"
-            ]
-        })
+        gaps.append(
+            {
+                "framework": "SOC 2",
+                "criterion": "CC6.1 - Logical and Physical Access Controls",
+                "requirement": "Implement MFA for all system access",
+                "current_state": "Password-only authentication",
+                "gap": "Missing multi-factor authentication",
+                "severity": "critical",
+                "remediation": [
+                    "Implement MFA for all users (Google Authenticator, Duo, etc.)",
+                    "Enforce MFA for privileged accounts (admins, developers)",
+                    "Document MFA policy and user onboarding process",
+                ],
+            }
+        )
 
-        gaps.append({
-            "framework": "SOC 2",
-            "criterion": "CC7.2 - System Monitoring",
-            "requirement": "Monitor system components and detect anomalies",
-            "current_state": "Basic logging, no alerting",
-            "gap": "Insufficient monitoring and alerting",
-            "severity": "high",
-            "remediation": [
-                "Implement centralized logging (ELK, Splunk, Datadog)",
-                "Set up alerts for security events (failed logins, privilege escalation)",
-                "Create incident response runbooks"
-            ]
-        })
+        gaps.append(
+            {
+                "framework": "SOC 2",
+                "criterion": "CC7.2 - System Monitoring",
+                "requirement": "Monitor system components and detect anomalies",
+                "current_state": "Basic logging, no alerting",
+                "gap": "Insufficient monitoring and alerting",
+                "severity": "high",
+                "remediation": [
+                    "Implement centralized logging (ELK, Splunk, Datadog)",
+                    "Set up alerts for security events (failed logins, privilege escalation)",
+                    "Create incident response runbooks",
+                ],
+            }
+        )
 
-        gaps.append({
-            "framework": "SOC 2 / GDPR",
-            "criterion": "Data Encryption",
-            "requirement": "Encrypt data at rest and in transit",
-            "current_state": "HTTPS only, database not encrypted",
-            "gap": "Data at rest not encrypted",
-            "severity": "critical",
-            "remediation": [
-                "Enable database encryption (PostgreSQL: pgcrypto, MySQL: TDE)",
-                "Encrypt backups",
-                "Implement key management (AWS KMS, HashiCorp Vault)"
-            ]
-        })
+        gaps.append(
+            {
+                "framework": "SOC 2 / GDPR",
+                "criterion": "Data Encryption",
+                "requirement": "Encrypt data at rest and in transit",
+                "current_state": "HTTPS only, database not encrypted",
+                "gap": "Data at rest not encrypted",
+                "severity": "critical",
+                "remediation": [
+                    "Enable database encryption (PostgreSQL: pgcrypto, MySQL: TDE)",
+                    "Encrypt backups",
+                    "Implement key management (AWS KMS, HashiCorp Vault)",
+                ],
+            }
+        )
 
-        gaps.append({
-            "framework": "GDPR",
-            "criterion": "Article 17 - Right to Erasure",
-            "requirement": "Users can request data deletion",
-            "current_state": "Manual process, no automation",
-            "gap": "No automated data deletion workflow",
-            "severity": "high",
-            "remediation": [
-                "Implement data deletion API endpoint",
-                "Create user-facing data export/deletion UI",
-                "Document data retention policy (30-day deletion SLA)"
-            ]
-        })
+        gaps.append(
+            {
+                "framework": "GDPR",
+                "criterion": "Article 17 - Right to Erasure",
+                "requirement": "Users can request data deletion",
+                "current_state": "Manual process, no automation",
+                "gap": "No automated data deletion workflow",
+                "severity": "high",
+                "remediation": [
+                    "Implement data deletion API endpoint",
+                    "Create user-facing data export/deletion UI",
+                    "Document data retention policy (30-day deletion SLA)",
+                ],
+            }
+        )
 
-        gaps.append({
-            "framework": "SOC 2 / ISO 27001",
-            "criterion": "Vendor Risk Management",
-            "requirement": "Assess third-party vendor security",
-            "current_state": "No vendor security reviews",
-            "gap": "Missing vendor risk assessment process",
-            "severity": "medium",
-            "remediation": [
-                "Create vendor security questionnaire",
-                "Review SOC 2 reports for critical vendors",
-                "Maintain vendor risk register"
-            ]
-        })
+        gaps.append(
+            {
+                "framework": "SOC 2 / ISO 27001",
+                "criterion": "Vendor Risk Management",
+                "requirement": "Assess third-party vendor security",
+                "current_state": "No vendor security reviews",
+                "gap": "Missing vendor risk assessment process",
+                "severity": "medium",
+                "remediation": [
+                    "Create vendor security questionnaire",
+                    "Review SOC 2 reports for critical vendors",
+                    "Maintain vendor risk register",
+                ],
+            }
+        )
 
-        gaps.append({
-            "framework": "SOC 2",
-            "criterion": "CC2.1 - Risk Assessment",
-            "requirement": "Annual risk assessment process",
-            "current_state": "No formal risk assessment",
-            "gap": "Missing risk assessment documentation",
-            "severity": "high",
-            "remediation": [
-                "Conduct annual risk assessment",
-                "Document threats, vulnerabilities, mitigations",
-                "Executive sign-off on risk acceptance"
-            ]
-        })
+        gaps.append(
+            {
+                "framework": "SOC 2",
+                "criterion": "CC2.1 - Risk Assessment",
+                "requirement": "Annual risk assessment process",
+                "current_state": "No formal risk assessment",
+                "gap": "Missing risk assessment documentation",
+                "severity": "high",
+                "remediation": [
+                    "Conduct annual risk assessment",
+                    "Document threats, vulnerabilities, mitigations",
+                    "Executive sign-off on risk acceptance",
+                ],
+            }
+        )
 
         return gaps
 
-    def _create_remediation_plan(self, task: WizardTask, gaps: List[Dict]) -> List[str]:
+    def _create_remediation_plan(self, task: WizardTask, gaps: list[dict]) -> list[str]:
         """Create compliance remediation plan"""
         plan = ["## Compliance Remediation Plan (Priority Ordered)\n"]
 
@@ -256,7 +271,7 @@ class ComplianceWizard(BaseWizard):
             plan.append(f"**Gap**: {gap['gap']}")
             plan.append(f"**Current**: {gap['current_state']}")
             plan.append("\n**Remediation**:")
-            for j, step in enumerate(gap['remediation'], 1):
+            for j, step in enumerate(gap["remediation"], 1):
                 plan.append(f"  {j}. {step}")
 
         plan.append(f"\n### Step {len(sorted_gaps)+1}: Pre-Audit Validation")
@@ -467,11 +482,11 @@ class ComplianceWizard(BaseWizard):
 
         return checklist
 
-    def _predict_compliance_risks(self, task: WizardTask, gaps: List[Dict]) -> str:
+    def _predict_compliance_risks(self, task: WizardTask, gaps: list[dict]) -> str:
         """Level 4: Predict compliance risks"""
         forecast = "# Compliance Risk Forecast (Level 4: Anticipatory)\n\n"
 
-        critical_gaps = [g for g in gaps if g['severity'] == 'critical']
+        critical_gaps = [g for g in gaps if g["severity"] == "critical"]
 
         forecast += "## Current State\n"
         forecast += f"- Critical gaps: {len(critical_gaps)}\n"
@@ -533,15 +548,15 @@ class ComplianceWizard(BaseWizard):
 
         return forecast
 
-    def _generate_gap_analysis_report(self, diagnosis: str, gaps: List[Dict]) -> str:
+    def _generate_gap_analysis_report(self, diagnosis: str, gaps: list[dict]) -> str:
         """Generate gap analysis report"""
         report = f"{diagnosis}\n\n"
 
         report += "## Gap Analysis Summary\n\n"
 
-        critical = len([g for g in gaps if g['severity'] == 'critical'])
-        high = len([g for g in gaps if g['severity'] == 'high'])
-        medium = len([g for g in gaps if g['severity'] == 'medium'])
+        critical = len([g for g in gaps if g["severity"] == "critical"])
+        high = len([g for g in gaps if g["severity"] == "high"])
+        medium = len([g for g in gaps if g["severity"] == "medium"])
 
         report += f"- **Critical**: {critical} gaps (MUST fix before audit)\n"
         report += f"- **High**: {high} gaps (Should fix before audit)\n"
@@ -558,55 +573,67 @@ class ComplianceWizard(BaseWizard):
             report += f"**Current State**: {gap['current_state']}\n"
             report += f"**Gap**: {gap['gap']}\n\n"
             report += "**Remediation**:\n"
-            for step in gap['remediation']:
+            for step in gap["remediation"]:
                 report += f"- {step}\n"
             report += "\n"
 
         return report
 
-    def _identify_risks(self, task: WizardTask, gaps: List[Dict]) -> List[WizardRisk]:
+    def _identify_risks(self, task: WizardTask, gaps: list[dict]) -> list[WizardRisk]:
         """Identify compliance risks"""
         risks = []
 
-        risks.append(WizardRisk(
-            risk="Audit failure blocks enterprise customer deals",
-            mitigation="Fix all critical gaps before audit. Conduct mock audit to validate readiness.",
-            severity="high"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Audit failure blocks enterprise customer deals",
+                mitigation="Fix all critical gaps before audit. Conduct mock audit to validate readiness.",
+                severity="high",
+            )
+        )
 
-        risks.append(WizardRisk(
-            risk="Data breach leads to GDPR/HIPAA fines and lawsuits",
-            mitigation="Implement MFA, encryption, monitoring NOW. Conduct penetration test.",
-            severity="critical"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Data breach leads to GDPR/HIPAA fines and lawsuits",
+                mitigation="Implement MFA, encryption, monitoring NOW. Conduct penetration test.",
+                severity="critical",
+            )
+        )
 
-        risks.append(WizardRisk(
-            risk="Compliance gaps grow faster than team can remediate",
-            mitigation="Prioritize critical gaps. Consider hiring compliance consultant. Automate where possible.",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Compliance gaps grow faster than team can remediate",
+                mitigation="Prioritize critical gaps. Consider hiring compliance consultant. Automate where possible.",
+                severity="medium",
+            )
+        )
 
         return risks
 
-    def _create_handoffs(self, task: WizardTask) -> List[WizardHandoff]:
+    def _create_handoffs(self, task: WizardTask) -> list[WizardHandoff]:
         """Create handoffs for compliance work"""
         handoffs = []
 
         if task.role == "developer":
-            handoffs.append(WizardHandoff(
-                owner="Security Team / CISO",
-                what="Implement technical controls (MFA, encryption, monitoring), conduct penetration test",
-                when="Before audit"
-            ))
-            handoffs.append(WizardHandoff(
-                owner="Legal / Compliance Officer",
-                what="Review policies, ensure regulatory compliance, manage auditor relationship",
-                when="Throughout audit process"
-            ))
-            handoffs.append(WizardHandoff(
-                owner="External Auditor",
-                what="Conduct SOC 2 / ISO 27001 audit, issue certification report",
-                when="After remediation complete"
-            ))
+            handoffs.append(
+                WizardHandoff(
+                    owner="Security Team / CISO",
+                    what="Implement technical controls (MFA, encryption, monitoring), conduct penetration test",
+                    when="Before audit",
+                )
+            )
+            handoffs.append(
+                WizardHandoff(
+                    owner="Legal / Compliance Officer",
+                    what="Review policies, ensure regulatory compliance, manage auditor relationship",
+                    when="Throughout audit process",
+                )
+            )
+            handoffs.append(
+                WizardHandoff(
+                    owner="External Auditor",
+                    what="Conduct SOC 2 / ISO 27001 audit, issue certification report",
+                    when="After remediation complete",
+                )
+            )
 
         return handoffs

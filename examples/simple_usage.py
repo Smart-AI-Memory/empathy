@@ -8,6 +8,7 @@ and the framework automatically handles empathy levels.
 
 import asyncio
 import os
+
 from empathy_llm_toolkit.core import EmpathyLLM
 
 
@@ -25,24 +26,18 @@ async def simple_example():
     # Create an instance (uses Claude by default)
     llm = EmpathyLLM(
         provider="anthropic",  # or "openai", "local"
-        target_level=4,        # How smart you want it to be
-        api_key=os.getenv("ANTHROPIC_API_KEY")
+        target_level=4,  # How smart you want it to be
+        api_key=os.getenv("ANTHROPIC_API_KEY"),
     )
 
     # Just interact - it handles the rest!
-    response = await llm.interact(
-        user_id="me",
-        user_input="Help me build a web API"
-    )
+    response = await llm.interact(user_id="me", user_input="Help me build a web API")
 
     print(f"Assistant: {response['content']}")
     print(f"\nUsed Level {response['level_used']}: {response['level_description']}")
 
     # Continue the conversation - it remembers context
-    response2 = await llm.interact(
-        user_id="me",
-        user_input="What about authentication?"
-    )
+    response2 = await llm.interact(user_id="me", user_input="What about authentication?")
 
     print(f"\nAssistant: {response2['content']}")
 

@@ -12,7 +12,7 @@ Licensed under the Apache License, Version 2.0
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 @dataclass
@@ -29,8 +29,8 @@ class EmergentProperty:
     description: str
     first_observed: datetime = field(default_factory=datetime.now)
     confidence: float = 0.0  # 0.0-1.0
-    evidence: List[Dict[str, Any]] = field(default_factory=list)
-    components_involved: List[str] = field(default_factory=list)
+    evidence: list[dict[str, Any]] = field(default_factory=list)
+    components_involved: list[str] = field(default_factory=list)
 
 
 class EmergenceDetector:
@@ -61,12 +61,12 @@ class EmergenceDetector:
 
     def __init__(self):
         """Initialize EmergenceDetector with tracking structures"""
-        self.detected_properties: List[EmergentProperty] = []
-        self.baseline_metrics: Dict[str, Any] = {}
+        self.detected_properties: list[EmergentProperty] = []
+        self.baseline_metrics: dict[str, Any] = {}
 
     def detect_emergent_norms(
-        self, team_interactions: List[Dict[str, Any]]
-    ) -> List[EmergentProperty]:
+        self, team_interactions: list[dict[str, Any]]
+    ) -> list[EmergentProperty]:
         """
         Detect team norms that emerged organically
 
@@ -89,7 +89,7 @@ class EmergenceDetector:
             ... ]
             >>> norms = detector.detect_emergent_norms(interactions)
         """
-        norms: List[EmergentProperty] = []
+        norms: list[EmergentProperty] = []
 
         if not team_interactions:
             return norms
@@ -130,7 +130,7 @@ class EmergenceDetector:
         self.detected_properties.extend(norms)
         return norms
 
-    def measure_emergence(self, baseline: Dict[str, Any], current: Dict[str, Any]) -> float:
+    def measure_emergence(self, baseline: dict[str, Any], current: dict[str, Any]) -> float:
         """
         Quantify emergence by comparing baseline to current state
 
@@ -191,8 +191,8 @@ class EmergenceDetector:
         return 0.0
 
     def detect_emergent_capabilities(
-        self, historical_states: List[Dict[str, Any]]
-    ) -> List[EmergentProperty]:
+        self, historical_states: list[dict[str, Any]]
+    ) -> list[EmergentProperty]:
         """
         Detect new capabilities that emerged over time
 
@@ -210,7 +210,7 @@ class EmergenceDetector:
         if len(historical_states) < 2:
             return []
 
-        capabilities: List[EmergentProperty] = []
+        capabilities: list[EmergentProperty] = []
         initial_state = historical_states[0]
 
         # Track capability development
@@ -230,7 +230,7 @@ class EmergenceDetector:
         self.detected_properties.extend(capabilities)
         return capabilities
 
-    def _calculate_consistency(self, values: List[float]) -> float:
+    def _calculate_consistency(self, values: list[float]) -> float:
         """
         Calculate consistency of a set of values (0.0-1.0)
 
@@ -252,14 +252,14 @@ class EmergenceDetector:
         return consistency
 
     def _analyze_communication_patterns(
-        self, interactions: List[Dict[str, Any]]
-    ) -> Dict[str, Dict[str, Any]]:
+        self, interactions: list[dict[str, Any]]
+    ) -> dict[str, dict[str, Any]]:
         """
         Analyze communication patterns in interactions
 
         Returns dict of pattern_name -> {frequency, examples}
         """
-        patterns: Dict[str, Dict[str, Any]] = {}
+        patterns: dict[str, dict[str, Any]] = {}
         total_interactions = len(interactions)
 
         if total_interactions == 0:
@@ -287,9 +287,7 @@ class EmergenceDetector:
 
         return patterns
 
-    def get_detected_properties(
-        self, property_type: Optional[str] = None
-    ) -> List[EmergentProperty]:
+    def get_detected_properties(self, property_type: str | None = None) -> list[EmergentProperty]:
         """
         Get all detected emergent properties, optionally filtered by type
 

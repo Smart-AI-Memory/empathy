@@ -12,17 +12,17 @@ Licensed under the Apache License, Version 2.0
 """
 
 from empathy_os import (
+    EmpathyFrameworkError,
     EmpathyOS,
+    FeedbackLoopDetector,
     Level1Reactive,
     Level2Guided,
     Level3Proactive,
     Level4Anticipatory,
     Level5Systems,
-    PatternLibrary,
     Pattern,
-    FeedbackLoopDetector,
+    PatternLibrary,
     ValidationError,
-    EmpathyFrameworkError,
 )
 
 
@@ -40,13 +40,9 @@ def main():
         print("\n[Part 1] Initializing EmpathyOS")
         print("-" * 60)
 
-        empathy = EmpathyOS(
-            user_id="quickstart_user",
-            target_level=4,
-            confidence_threshold=0.75
-        )
+        empathy = EmpathyOS(user_id="quickstart_user", target_level=4, confidence_threshold=0.75)
 
-        print(f"✓ Created EmpathyOS instance")
+        print("✓ Created EmpathyOS instance")
         print(f"  - User ID: {empathy.user_id}")
         print(f"  - Target Level: {empathy.target_level}")
         print(f"  - Initial Trust: {empathy.collaboration_state.trust_level:.2f}")
@@ -84,25 +80,29 @@ def main():
         # Level 4: Anticipatory
         print("\nLevel 4: Anticipatory Empathy (Predict future needs)")
         level4 = Level4Anticipatory()
-        response4 = level4.respond({
-            "current_state": {"compliance": 0.7},
-            "trajectory": "declining",
-            "prediction_horizon": "30_days"
-        })
+        response4 = level4.respond(
+            {
+                "current_state": {"compliance": 0.7},
+                "trajectory": "declining",
+                "prediction_horizon": "30_days",
+            }
+        )
         print(f"  Action: {response4['action']}")
         print(f"  Initiative: {response4['initiative']}")
         print(f"  Predicted Needs: {len(response4['predicted_needs'])}")
-        for i, need in enumerate(response4['predicted_needs'], 1):
+        for i, need in enumerate(response4["predicted_needs"], 1):
             print(f"    {i}. {need}")
 
         # Level 5: Systems
         print("\nLevel 5: Systems Empathy (Build structures at scale)")
         level5 = Level5Systems()
-        response5 = level5.respond({
-            "problem_class": "documentation_burden",
-            "instances": 18,
-            "pattern": "repetitive_structure"
-        })
+        response5 = level5.respond(
+            {
+                "problem_class": "documentation_burden",
+                "instances": 18,
+                "pattern": "repetitive_structure",
+            }
+        )
         print(f"  Action: {response5['action']}")
         print(f"  Initiative: {response5['initiative']}")
         print(f"  System Created: {response5['system_created']['name']}")
@@ -125,7 +125,7 @@ def main():
             name="Post-deployment documentation",
             description="After deployments, users need help finding changed features",
             confidence=0.85,
-            tags=["deployment", "documentation"]
+            tags=["deployment", "documentation"],
         )
         library.contribute_pattern("agent_1", pattern1)
         print(f"  ✓ Pattern '{pattern1.name}' contributed")
@@ -133,11 +133,7 @@ def main():
 
         # Agent 2 queries for relevant patterns
         print("\nAgent 2: Querying library for deployment-related patterns")
-        context = {
-            "recent_event": "deployment",
-            "user_confusion": True,
-            "tags": ["deployment"]
-        }
+        context = {"recent_event": "deployment", "user_confusion": True, "tags": ["deployment"]}
         matches = library.query_patterns("agent_2", context, min_confidence=0.7)
         print(f"  ✓ Found {len(matches)} relevant patterns")
 
@@ -151,7 +147,7 @@ def main():
         print("\nAgent 2: Using pattern and recording outcome")
         library.record_pattern_outcome("pat_001", success=True)
         pattern1_updated = library.get_pattern("pat_001")
-        print(f"  ✓ Pattern usage recorded")
+        print("  ✓ Pattern usage recorded")
         print(f"  Usage count: {pattern1_updated.usage_count}")
         print(f"  Success rate: {pattern1_updated.success_rate:.2f}")
 
@@ -176,7 +172,7 @@ def main():
             {"trust": 0.5, "success": True},
             {"trust": 0.6, "success": True},
             {"trust": 0.7, "success": True},
-            {"trust": 0.8, "success": True}
+            {"trust": 0.8, "success": True},
         ]
 
         result = detector.detect_active_loop(history)

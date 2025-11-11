@@ -10,13 +10,14 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 
 class PatternCategory(Enum):
     """Categories of universal patterns"""
+
     UNDEFINED_REFERENCE = "undefined_reference"
     TYPE_MISMATCH = "type_mismatch"
     NULL_SAFETY = "null_safety"
@@ -35,13 +36,14 @@ class UniversalPattern:
     Example: "Undefined variable" exists in JavaScript, Python, Rust, Go, etc.
     The fix strategy is similar across all languages.
     """
+
     name: str
     category: PatternCategory
     description: str
     why_it_matters: str
-    language_manifestations: Dict[str, str]  # language -> rule name
+    language_manifestations: dict[str, str]  # language -> rule name
     universal_fix_strategy: str
-    language_specific_fixes: Dict[str, List[str]]
+    language_specific_fixes: dict[str, list[str]]
 
 
 class CrossLanguagePatternLibrary:
@@ -55,7 +57,7 @@ class CrossLanguagePatternLibrary:
     def __init__(self):
         self.patterns = self._build_pattern_library()
 
-    def _build_pattern_library(self) -> Dict[str, UniversalPattern]:
+    def _build_pattern_library(self) -> dict[str, UniversalPattern]:
         """Build the universal pattern library"""
         return {
             "undefined_reference": UniversalPattern(
@@ -69,7 +71,7 @@ class CrossLanguagePatternLibrary:
                     "typescript": "TS2304",
                     "rust": "cannot_find_value",
                     "go": "undefined",
-                    "java": "cannot_find_symbol"
+                    "java": "cannot_find_symbol",
                 },
                 universal_fix_strategy=(
                     "1. Import/require the missing identifier\n"
@@ -80,21 +82,20 @@ class CrossLanguagePatternLibrary:
                     "javascript": [
                         "Add: import { foo } from './module'",
                         "Add: const foo = require('./module')",
-                        "Define: const foo = ..."
+                        "Define: const foo = ...",
                     ],
                     "python": [
                         "Add: from module import foo",
                         "Add: import module",
-                        "Define: foo = ..."
+                        "Define: foo = ...",
                     ],
                     "typescript": [
                         "Add: import { Foo } from './types'",
                         "Define: type Foo = ...",
-                        "Define: const foo = ..."
-                    ]
-                }
+                        "Define: const foo = ...",
+                    ],
+                },
             ),
-
             "type_mismatch": UniversalPattern(
                 name="Type Mismatch",
                 category=PatternCategory.TYPE_MISMATCH,
@@ -105,7 +106,7 @@ class CrossLanguagePatternLibrary:
                     "python": "mypy: Incompatible types",
                     "rust": "mismatched_types",
                     "go": "cannot_use",
-                    "java": "incompatible_types"
+                    "java": "incompatible_types",
                 },
                 universal_fix_strategy=(
                     "1. Convert value to expected type\n"
@@ -116,16 +117,15 @@ class CrossLanguagePatternLibrary:
                     "typescript": [
                         "Add type conversion: String(value)",
                         "Fix type annotation: foo: ExpectedType",
-                        "Use type assertion: value as ExpectedType"
+                        "Use type assertion: value as ExpectedType",
                     ],
                     "python": [
                         "Convert: str(value), int(value)",
                         "Fix type hint: foo: ExpectedType",
-                        "Use cast: cast(ExpectedType, value)"
-                    ]
-                }
+                        "Use cast: cast(ExpectedType, value)",
+                    ],
+                },
             ),
-
             "null_safety": UniversalPattern(
                 name="Null/Undefined Safety",
                 category=PatternCategory.NULL_SAFETY,
@@ -137,7 +137,7 @@ class CrossLanguagePatternLibrary:
                     "python": "none-check",
                     "rust": "Option handling",
                     "java": "NullPointerException warnings",
-                    "kotlin": "nullable type"
+                    "kotlin": "nullable type",
                 },
                 universal_fix_strategy=(
                     "1. Check for null/undefined before use\n"
@@ -148,26 +148,25 @@ class CrossLanguagePatternLibrary:
                     "javascript": [
                         "Use optional chaining: obj?.property",
                         "Nullish coalescing: value ?? default",
-                        "Explicit check: if (value !== null)"
+                        "Explicit check: if (value !== null)",
                     ],
                     "typescript": [
                         "Non-null assertion: value!",
                         "Optional chaining: obj?.property",
-                        "Type guard: if (value !== undefined)"
+                        "Type guard: if (value !== undefined)",
                     ],
                     "python": [
                         "Check: if value is not None",
                         "Default: value or default_value",
-                        "Optional type: Optional[Type]"
+                        "Optional type: Optional[Type]",
                     ],
                     "rust": [
                         "Pattern match: match opt { Some(v) => ..., None => ... }",
                         "Unwrap with default: opt.unwrap_or(default)",
-                        "Safe access: opt.as_ref()"
-                    ]
-                }
+                        "Safe access: opt.as_ref()",
+                    ],
+                },
             ),
-
             "unused_code": UniversalPattern(
                 name="Unused Code",
                 category=PatternCategory.UNUSED_CODE,
@@ -179,7 +178,7 @@ class CrossLanguagePatternLibrary:
                     "typescript": "TS6133",
                     "rust": "unused_variables",
                     "go": "unused",
-                    "java": "unused"
+                    "java": "unused",
                 },
                 universal_fix_strategy=(
                     "1. Remove if truly unused\n"
@@ -190,21 +189,20 @@ class CrossLanguagePatternLibrary:
                     "javascript": [
                         "Remove: Delete unused variable",
                         "Intentional: Prefix with _unused",
-                        "Destructure: Use _ for unused items"
+                        "Destructure: Use _ for unused items",
                     ],
                     "python": [
                         "Remove: Delete unused variable",
                         "Intentional: _unused = value",
-                        "Noqa comment: # noqa: F841"
+                        "Noqa comment: # noqa: F841",
                     ],
                     "rust": [
                         "Remove: Delete binding",
                         "Intentional: let _unused = value",
-                        "Attribute: #[allow(unused_variables)]"
-                    ]
-                }
+                        "Attribute: #[allow(unused_variables)]",
+                    ],
+                },
             ),
-
             "naming_convention": UniversalPattern(
                 name="Naming Convention Violation",
                 category=PatternCategory.NAMING_CONVENTION,
@@ -215,7 +213,7 @@ class CrossLanguagePatternLibrary:
                     "python": "invalid-name",
                     "rust": "non_snake_case",
                     "go": "golint naming",
-                    "java": "naming-convention"
+                    "java": "naming-convention",
                 },
                 universal_fix_strategy=(
                     "1. Rename to follow convention\n"
@@ -226,21 +224,20 @@ class CrossLanguagePatternLibrary:
                     "javascript": [
                         "camelCase for variables/functions",
                         "PascalCase for classes",
-                        "UPPER_CASE for constants"
+                        "UPPER_CASE for constants",
                     ],
                     "python": [
                         "snake_case for variables/functions",
                         "PascalCase for classes",
-                        "UPPER_CASE for constants"
+                        "UPPER_CASE for constants",
                     ],
                     "rust": [
                         "snake_case for variables/functions",
                         "PascalCase for types/traits",
-                        "SCREAMING_SNAKE_CASE for constants"
-                    ]
-                }
+                        "SCREAMING_SNAKE_CASE for constants",
+                    ],
+                },
             ),
-
             "code_complexity": UniversalPattern(
                 name="Excessive Complexity",
                 category=PatternCategory.CODE_COMPLEXITY,
@@ -250,7 +247,7 @@ class CrossLanguagePatternLibrary:
                     "javascript": "complexity",
                     "python": "too-many-branches",
                     "java": "CyclomaticComplexity",
-                    "go": "gocyclo"
+                    "go": "gocyclo",
                 },
                 universal_fix_strategy=(
                     "1. Extract helper functions\n"
@@ -262,22 +259,18 @@ class CrossLanguagePatternLibrary:
                     "javascript": [
                         "Extract function: function helper() { ... }",
                         "Use guard clauses: if (!valid) return",
-                        "Strategy pattern for complex conditionals"
+                        "Strategy pattern for complex conditionals",
                     ],
                     "python": [
                         "Extract method: def _helper(self):",
                         "Use guard clauses: if not valid: return",
-                        "Lookup tables instead of if-else chains"
-                    ]
-                }
-            )
+                        "Lookup tables instead of if-else chains",
+                    ],
+                },
+            ),
         }
 
-    def find_pattern_for_rule(
-        self,
-        linter: str,
-        rule: str
-    ) -> Optional[UniversalPattern]:
+    def find_pattern_for_rule(self, linter: str, rule: str) -> UniversalPattern | None:
         """
         Find universal pattern that matches this linter rule.
 
@@ -294,11 +287,7 @@ class CrossLanguagePatternLibrary:
                     return pattern
         return None
 
-    def get_fix_strategy(
-        self,
-        pattern_name: str,
-        language: str
-    ) -> Optional[List[str]]:
+    def get_fix_strategy(self, pattern_name: str, language: str) -> list[str] | None:
         """
         Get language-specific fix strategy for pattern.
 
@@ -316,11 +305,8 @@ class CrossLanguagePatternLibrary:
         return pattern.language_specific_fixes.get(language)
 
     def suggest_cross_language_insight(
-        self,
-        from_language: str,
-        to_language: str,
-        pattern_name: str
-    ) -> Optional[str]:
+        self, from_language: str, to_language: str, pattern_name: str
+    ) -> str | None:
         """
         Generate insight from one language to another.
 
@@ -345,25 +331,21 @@ class CrossLanguagePatternLibrary:
             f"Pattern: {pattern.name}\n"
             f"{pattern.description}\n\n"
             f"Universal strategy:\n{pattern.universal_fix_strategy}\n\n"
-            f"Specific to {to_language}:\n" +
-            "\n".join(f"  - {step}" for step in pattern.language_specific_fixes.get(to_language, []))
+            f"Specific to {to_language}:\n"
+            + "\n".join(
+                f"  - {step}" for step in pattern.language_specific_fixes.get(to_language, [])
+            )
         )
 
-    def get_all_patterns(self) -> List[UniversalPattern]:
+    def get_all_patterns(self) -> list[UniversalPattern]:
         """Get all universal patterns"""
         return list(self.patterns.values())
 
-    def get_patterns_by_category(
-        self,
-        category: PatternCategory
-    ) -> List[UniversalPattern]:
+    def get_patterns_by_category(self, category: PatternCategory) -> list[UniversalPattern]:
         """Get patterns in specific category"""
-        return [
-            p for p in self.patterns.values()
-            if p.category == category
-        ]
+        return [p for p in self.patterns.values() if p.category == category]
 
-    def generate_pattern_summary(self) -> Dict[str, Any]:
+    def generate_pattern_summary(self) -> dict[str, Any]:
         """
         Generate summary of pattern library.
 
@@ -372,8 +354,7 @@ class CrossLanguagePatternLibrary:
         return {
             "total_patterns": len(self.patterns),
             "categories": {
-                cat.value: len(self.get_patterns_by_category(cat))
-                for cat in PatternCategory
+                cat.value: len(self.get_patterns_by_category(cat)) for cat in PatternCategory
             },
             "languages_covered": self._count_languages(),
             "patterns": [
@@ -381,10 +362,10 @@ class CrossLanguagePatternLibrary:
                     "name": p.name,
                     "category": p.category.value,
                     "languages": list(p.language_manifestations.keys()),
-                    "why_it_matters": p.why_it_matters
+                    "why_it_matters": p.why_it_matters,
                 }
                 for p in self.patterns.values()
-            ]
+            ],
         }
 
     def _count_languages(self) -> int:

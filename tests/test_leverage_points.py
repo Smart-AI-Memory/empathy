@@ -5,12 +5,7 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import pytest
-from empathy_os.leverage_points import (
-    LeveragePointAnalyzer,
-    LeveragePoint,
-    LeverageLevel
-)
+from empathy_os.leverage_points import LeverageLevel, LeveragePoint, LeveragePointAnalyzer
 
 
 class TestLeverageLevel:
@@ -39,7 +34,7 @@ class TestLeveragePoint:
             description="Shift paradigm",
             problem_domain="trust",
             impact_potential=0.9,
-            implementation_difficulty=0.8
+            implementation_difficulty=0.8,
         )
 
         assert point.level == LeverageLevel.PARADIGM
@@ -51,9 +46,7 @@ class TestLeveragePoint:
     def test_leverage_point_defaults(self):
         """Test default values"""
         point = LeveragePoint(
-            level=LeverageLevel.PARAMETERS,
-            description="Test",
-            problem_domain="test"
+            level=LeverageLevel.PARAMETERS, description="Test", problem_domain="test"
         )
 
         assert point.impact_potential == 0.5
@@ -70,7 +63,7 @@ class TestLeveragePoint:
             description="Change system goals",
             problem_domain="efficiency",
             expected_outcomes=["Better quality", "Sustainable pace"],
-            risks=["Initial resistance", "Learning curve"]
+            risks=["Initial resistance", "Learning curve"],
         )
 
         assert len(point.expected_outcomes) == 2
@@ -93,7 +86,7 @@ class TestLeveragePointAnalyzer:
         problem = {
             "class": "documentation_burden",
             "description": "Developers spend 40% time on repetitive docs",
-            "instances": 18
+            "instances": 18,
         }
 
         points = analyzer.find_leverage_points(problem)
@@ -112,7 +105,7 @@ class TestLeveragePointAnalyzer:
         problem = {
             "class": "trust_deficit",
             "description": "Users don't trust AI recommendations",
-            "instances": 50
+            "instances": 50,
         }
 
         points = analyzer.find_leverage_points(problem)
@@ -132,7 +125,7 @@ class TestLeveragePointAnalyzer:
         problem = {
             "class": "efficiency_issue",
             "description": "Team moving too slow",
-            "context": "burnout risk"
+            "context": "burnout risk",
         }
 
         points = analyzer.find_leverage_points(problem)
@@ -164,20 +157,14 @@ class TestLeveragePointAnalyzer:
 
         points = [
             LeveragePoint(
-                level=LeverageLevel.PARAMETERS,
-                description="Low leverage",
-                problem_domain="test"
+                level=LeverageLevel.PARAMETERS, description="Low leverage", problem_domain="test"
             ),
             LeveragePoint(
-                level=LeverageLevel.PARADIGM,
-                description="High leverage",
-                problem_domain="test"
+                level=LeverageLevel.PARADIGM, description="High leverage", problem_domain="test"
             ),
             LeveragePoint(
-                level=LeverageLevel.GOALS,
-                description="Medium-high leverage",
-                problem_domain="test"
-            )
+                level=LeverageLevel.GOALS, description="Medium-high leverage", problem_domain="test"
+            ),
         ]
 
         ranked = analyzer.rank_by_effectiveness(points)
@@ -192,10 +179,7 @@ class TestLeveragePointAnalyzer:
         analyzer = LeveragePointAnalyzer()
 
         # Add some points
-        problem = {
-            "class": "documentation_burden",
-            "description": "Too much documentation work"
-        }
+        problem = {"class": "documentation_burden", "description": "Too much documentation work"}
         analyzer.find_leverage_points(problem)
 
         top_3 = analyzer.get_top_leverage_points(n=3)
@@ -209,17 +193,11 @@ class TestLeveragePointAnalyzer:
         """Test getting top points with minimum level filter"""
         analyzer = LeveragePointAnalyzer()
 
-        problem = {
-            "class": "documentation_burden",
-            "description": "Too much documentation"
-        }
+        problem = {"class": "documentation_burden", "description": "Too much documentation"}
         analyzer.find_leverage_points(problem)
 
         # Only get high-level points (10+)
-        high_level = analyzer.get_top_leverage_points(
-            n=5,
-            min_level=LeverageLevel.GOALS
-        )
+        high_level = analyzer.get_top_leverage_points(n=5, min_level=LeverageLevel.GOALS)
 
         # All should be level 10 or higher
         assert all(p.level.value >= 10 for p in high_level)
@@ -235,7 +213,7 @@ class TestLeveragePointAnalyzer:
             impact_potential=0.9,
             implementation_difficulty=0.3,
             expected_outcomes=["Better trust", "Clear decisions"],
-            risks=["Info overload"]
+            risks=["Info overload"],
         )
 
         feasibility = analyzer.analyze_intervention_feasibility(point)
@@ -257,7 +235,7 @@ class TestLeveragePointAnalyzer:
             problem_domain="test",
             impact_potential=0.3,
             implementation_difficulty=0.9,
-            expected_outcomes=["Minor improvement"]
+            expected_outcomes=["Minor improvement"],
         )
 
         feasibility = analyzer.analyze_intervention_feasibility(point)
@@ -274,13 +252,16 @@ class TestLeveragePointAnalyzer:
             description="Update rules",
             problem_domain="test",
             impact_potential=0.7,
-            implementation_difficulty=0.6
+            implementation_difficulty=0.6,
         )
 
         feasibility = analyzer.analyze_intervention_feasibility(point)
 
         assert 0.7 < feasibility["feasibility_score"] <= 1.5
-        assert "RECOMMENDED" in feasibility["recommendation"] or "CONSIDER" in feasibility["recommendation"]
+        assert (
+            "RECOMMENDED" in feasibility["recommendation"]
+            or "CONSIDER" in feasibility["recommendation"]
+        )
 
     def test_reset(self):
         """Test resetting analyzer"""
@@ -304,7 +285,7 @@ class TestLeveragePointAnalyzer:
         problem = {
             "class": "documentation_burden",
             "description": "Developers spend 40% time on docs",
-            "instances": 20
+            "instances": 20,
         }
 
         points = analyzer.find_leverage_points(problem)
@@ -337,7 +318,7 @@ class TestLeveragePointAnalyzer:
         problem = {
             "class": "trust_deficit",
             "description": "Users don't trust AI",
-            "instances": 100
+            "instances": 100,
         }
 
         points = analyzer.find_leverage_points(problem)
@@ -364,7 +345,7 @@ class TestLeveragePointAnalyzer:
         problem = {
             "class": "efficiency_issue",
             "description": "Team burnout from speed pressure",
-            "context": "unsustainable"
+            "context": "unsustainable",
         }
 
         points = analyzer.find_leverage_points(problem)
@@ -381,10 +362,7 @@ class TestLeveragePointAnalyzer:
             assert "feasibility_score" in feasibility
 
         # Step 4: Filter for high-leverage only
-        high_leverage = analyzer.get_top_leverage_points(
-            n=5,
-            min_level=LeverageLevel.GOALS
-        )
+        high_leverage = analyzer.get_top_leverage_points(n=5, min_level=LeverageLevel.GOALS)
         assert all(p.level.value >= 10 for p in high_leverage)
 
     def test_multiple_problems_tracking(self):
@@ -395,7 +373,7 @@ class TestLeveragePointAnalyzer:
         problems = [
             {"class": "documentation_burden", "description": "Too much docs"},
             {"class": "trust_deficit", "description": "Low trust"},
-            {"class": "efficiency_issue", "description": "Too slow"}
+            {"class": "efficiency_issue", "description": "Too slow"},
         ]
 
         for problem in problems:
@@ -418,7 +396,7 @@ class TestLeveragePointAnalyzer:
             description="Test",
             problem_domain="test",
             impact_potential=0.5,
-            implementation_difficulty=0.0
+            implementation_difficulty=0.0,
         )
 
         feasibility = analyzer.analyze_intervention_feasibility(point_zero_diff)
@@ -429,10 +407,7 @@ class TestLeveragePointAnalyzer:
         """Test that leverage points have expected outcomes"""
         analyzer = LeveragePointAnalyzer()
 
-        problem = {
-            "class": "documentation_burden",
-            "description": "Too much documentation"
-        }
+        problem = {"class": "documentation_burden", "description": "Too much documentation"}
 
         points = analyzer.find_leverage_points(problem)
 
@@ -452,7 +427,7 @@ class TestLeveragePointAnalyzer:
             description="Medium difficulty leverage point",
             problem_domain="test",
             impact_potential=0.7,
-            implementation_difficulty=0.9
+            implementation_difficulty=0.9,
         )
 
         feasibility = analyzer.analyze_intervention_feasibility(point_medium)

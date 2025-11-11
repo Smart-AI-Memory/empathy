@@ -8,14 +8,14 @@ Licensed under the Apache License, Version 2.0
 """
 
 import asyncio
-import sys
 import os
+import sys
 from datetime import datetime
 
 # Add parent directory to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from empathy_llm_toolkit import EmpathyLLM, UserPattern, PatternType
+from empathy_llm_toolkit import EmpathyLLM, PatternType, UserPattern
 
 
 async def demo_level_progression():
@@ -33,7 +33,7 @@ async def demo_level_progression():
         provider="anthropic",
         target_level=4,  # Target: Anticipatory
         api_key=os.getenv("ANTHROPIC_API_KEY"),
-        model="claude-3-5-sonnet-20241022"
+        model="claude-3-5-sonnet-20241022",
     )
 
     user_id = "demo_developer"
@@ -43,10 +43,7 @@ async def demo_level_progression():
     print("INTERACTION 1: Level 1 (Reactive)")
     print("─" * 80)
 
-    response = await llm.interact(
-        user_id=user_id,
-        user_input="What is a REST API?"
-    )
+    response = await llm.interact(user_id=user_id, user_input="What is a REST API?")
 
     print(f"Level Used: {response['level_used']} - {response['level_description']}")
     print(f"Proactive: {response['proactive']}")
@@ -61,8 +58,7 @@ async def demo_level_progression():
     print("─" * 80)
 
     response = await llm.interact(
-        user_id=user_id,
-        user_input="Help me build a user authentication system"
+        user_id=user_id, user_input="Help me build a user authentication system"
     )
 
     print(f"Level Used: {response['level_used']} - {response['level_description']}")
@@ -84,8 +80,8 @@ async def demo_level_progression():
             action="requests tests",
             confidence=0.85,
             occurrences=5,
-            last_seen=datetime.now()
-        )
+            last_seen=datetime.now(),
+        ),
     )
 
     # Build trust to enable Level 3
@@ -97,14 +93,11 @@ async def demo_level_progression():
     print("INTERACTION 3: Level 3 (Proactive)")
     print("─" * 80)
 
-    response = await llm.interact(
-        user_id=user_id,
-        user_input="I just wrote the login function"
-    )
+    response = await llm.interact(user_id=user_id, user_input="I just wrote the login function")
 
     print(f"Level Used: {response['level_used']} - {response['level_description']}")
     print(f"Proactive: {response['proactive']}")
-    if response['metadata'].get('pattern'):
+    if response["metadata"].get("pattern"):
         print(f"Pattern Detected: {response['metadata']['pattern']}")
     print(f"\nResponse:\n{response['content'][:500]}...")
 
@@ -122,8 +115,7 @@ async def demo_level_progression():
     print("─" * 80)
 
     response = await llm.interact(
-        user_id=user_id,
-        user_input="I'm adding my 15th API endpoint to this service"
+        user_id=user_id, user_input="I'm adding my 15th API endpoint to this service"
     )
 
     print(f"Level Used: {response['level_used']} - {response['level_description']}")
@@ -137,7 +129,8 @@ async def demo_level_progression():
     print("=" * 80)
 
     stats = llm.get_statistics(user_id)
-    print(f"""
+    print(
+        f"""
 User: {stats['user_id']}
 Session Duration: {stats['session_duration']:.0f}s
 Total Interactions: {stats['total_interactions']}
@@ -146,7 +139,8 @@ Success Rate: {stats['success_rate']:.0%}
 Patterns Detected: {stats['patterns_detected']}
 Current Level: {stats['current_level']}
 Average Level: {stats['average_level']:.1f}
-    """)
+    """
+    )
 
 
 async def demo_forced_levels():
@@ -159,11 +153,7 @@ async def demo_forced_levels():
     print("Empathy LLM Toolkit - Forced Level Comparison Demo")
     print("=" * 80)
 
-    llm = EmpathyLLM(
-        provider="anthropic",
-        target_level=4,
-        api_key=os.getenv("ANTHROPIC_API_KEY")
-    )
+    llm = EmpathyLLM(provider="anthropic", target_level=4, api_key=os.getenv("ANTHROPIC_API_KEY"))
 
     user_input = "How should I structure my Python project?"
 
@@ -173,9 +163,7 @@ async def demo_forced_levels():
         print("─" * 80)
 
         response = await llm.interact(
-            user_id="comparison_user",
-            user_input=user_input,
-            force_level=level
+            user_id="comparison_user", user_input=user_input, force_level=level
         )
 
         print(f"\nResponse:\n{response['content'][:400]}...")
@@ -192,11 +180,7 @@ async def demo_healthcare_use_case():
     print("Healthcare Use Case - Clinical Documentation")
     print("=" * 80)
 
-    llm = EmpathyLLM(
-        provider="anthropic",
-        target_level=4,
-        api_key=os.getenv("ANTHROPIC_API_KEY")
-    )
+    llm = EmpathyLLM(provider="anthropic", target_level=4, api_key=os.getenv("ANTHROPIC_API_KEY"))
 
     clinician_id = "clinician_dr_smith"
 
@@ -208,7 +192,7 @@ async def demo_healthcare_use_case():
         await llm.interact(
             clinician_id,
             f"Document patient visit {i}",
-            context={"patient_id": f"patient_{i}", "chief_complaint": "routine checkup"}
+            context={"patient_id": f"patient_{i}", "chief_complaint": "routine checkup"},
         )
         llm.update_trust(clinician_id, "success")
 
@@ -222,8 +206,8 @@ async def demo_healthcare_use_case():
             confidence=0.90,
             occurrences=10,
             last_seen=datetime.now(),
-            context={"domain": "clinical_documentation"}
-        )
+            context={"domain": "clinical_documentation"},
+        ),
     )
 
     # Level 3: Proactive pre-population
@@ -231,10 +215,7 @@ async def demo_healthcare_use_case():
     print("LEVEL 3: Proactive Pre-population")
     print("─" * 80)
 
-    response = await llm.interact(
-        clinician_id,
-        "Seeing patient John Doe for follow-up"
-    )
+    response = await llm.interact(clinician_id, "Seeing patient John Doe for follow-up")
 
     print(f"Response:\n{response['content'][:500]}...")
 
@@ -253,8 +234,8 @@ async def demo_healthcare_use_case():
         context={
             "total_notes": 50,
             "last_audit": "2024-01-15",
-            "next_audit_expected": "approximately 90 days"
-        }
+            "next_audit_expected": "approximately 90 days",
+        },
     )
 
     print(f"Response:\n{response['content'][:800]}...")
@@ -283,6 +264,7 @@ async def main():
     except Exception as e:
         print(f"\nError: {e}")
         import traceback
+
         traceback.print_exc()
 
 

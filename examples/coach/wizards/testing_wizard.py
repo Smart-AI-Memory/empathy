@@ -9,16 +9,16 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import List, Dict, Any
+from typing import Any
 
 from .base_wizard import (
     BaseWizard,
-    WizardTask,
-    WizardOutput,
-    WizardArtifact,
-    WizardRisk,
-    WizardHandoff,
     EmpathyChecks,
+    WizardArtifact,
+    WizardHandoff,
+    WizardOutput,
+    WizardRisk,
+    WizardTask,
 )
 
 
@@ -35,9 +35,18 @@ class TestingWizard(BaseWizard):  # noqa: pytest - Not a test class
     def can_handle(self, task: WizardTask) -> float:
         """Determine if this is a testing task"""
         test_keywords = [
-            "test", "testing", "coverage", "quality", "qa",
-            "unit test", "integration", "e2e", "end-to-end",
-            "regression", "test plan", "test case"
+            "test",
+            "testing",
+            "coverage",
+            "quality",
+            "qa",
+            "unit test",
+            "integration",
+            "e2e",
+            "end-to-end",
+            "regression",
+            "test plan",
+            "test case",
         ]
 
         task_lower = (task.task + " " + task.context).lower()
@@ -72,26 +81,18 @@ class TestingWizard(BaseWizard):  # noqa: pytest - Not a test class
 
         # Step 8: Create artifacts
         artifacts = [
-            WizardArtifact(
-                type="doc",
-                title="Test Plan",
-                content=test_plan
-            ),
-            WizardArtifact(
-                type="code",
-                title="Test Examples",
-                content=test_examples
-            ),
+            WizardArtifact(type="doc", title="Test Plan", content=test_plan),
+            WizardArtifact(type="code", title="Test Examples", content=test_examples),
             WizardArtifact(
                 type="checklist",
                 title="Testing Checklist",
-                content=self._create_testing_checklist(test_analysis)
+                content=self._create_testing_checklist(test_analysis),
             ),
             WizardArtifact(
                 type="doc",
                 title="Coverage Analysis",
-                content=self._generate_coverage_report(test_analysis, missing_tests)
-            )
+                content=self._generate_coverage_report(test_analysis, missing_tests),
+            ),
         ]
 
         # Step 9: Create plan
@@ -101,7 +102,7 @@ class TestingWizard(BaseWizard):  # noqa: pytest - Not a test class
             "Write unit tests for critical paths",
             "Add integration tests for key flows",
             "Set up CI/CD test automation",
-            "Establish coverage thresholds"
+            "Establish coverage thresholds",
         ]
 
         # Step 10: Generate next actions
@@ -110,7 +111,7 @@ class TestingWizard(BaseWizard):  # noqa: pytest - Not a test class
             "Write tests for identified gaps",
             "Configure coverage reporting",
             "Add tests to CI/CD pipeline",
-            "Set minimum coverage threshold (e.g., 80%)"
+            "Set minimum coverage threshold (e.g., 80%)",
         ]
 
         # Add anticipatory actions
@@ -120,17 +121,19 @@ class TestingWizard(BaseWizard):  # noqa: pytest - Not a test class
         # Step 11: Create handoffs
         handoffs = []
         if test_analysis["coverage_status"] == "low":
-            handoffs.append(WizardHandoff(
-                owner="team",
-                what="Code review for testability improvements",
-                when="Before adding tests"
-            ))
+            handoffs.append(
+                WizardHandoff(
+                    owner="team",
+                    what="Code review for testability improvements",
+                    when="Before adding tests",
+                )
+            )
 
         # Step 12: Empathy checks
         empathy_checks = EmpathyChecks(
             cognitive=f"Considered {task.role} testing needs with {test_analysis['test_types']} focus",
             emotional=f"Acknowledged {'testing fatigue' if 'low' in test_analysis.get('coverage_status', '') else 'quality concerns'}",
-            anticipatory=f"Identified {len(missing_tests)} proactive test scenarios to prevent future issues"
+            anticipatory=f"Identified {len(missing_tests)} proactive test scenarios to prevent future issues",
         )
 
         return WizardOutput(
@@ -142,10 +145,10 @@ class TestingWizard(BaseWizard):  # noqa: pytest - Not a test class
             handoffs=handoffs,
             next_actions=next_actions,
             empathy_checks=empathy_checks,
-            confidence=self.can_handle(task)
+            confidence=self.can_handle(task),
         )
 
-    def _analyze_testing_needs(self, task: WizardTask) -> Dict[str, Any]:
+    def _analyze_testing_needs(self, task: WizardTask) -> dict[str, Any]:
         """Analyze what types of tests are needed"""
         context_lower = task.context.lower() + " " + task.task.lower()
 
@@ -174,10 +177,10 @@ class TestingWizard(BaseWizard):  # noqa: pytest - Not a test class
         return {
             "test_types": ", ".join(test_types),
             "coverage_status": coverage_status,
-            "focus_areas": self._identify_focus_areas(context_lower)
+            "focus_areas": self._identify_focus_areas(context_lower),
         }
 
-    def _identify_focus_areas(self, context_lower: str) -> List[str]:
+    def _identify_focus_areas(self, context_lower: str) -> list[str]:
         """Identify areas needing test focus"""
         areas = []
 
@@ -189,7 +192,7 @@ class TestingWizard(BaseWizard):  # noqa: pytest - Not a test class
             "edge_cases": ["edge", "boundary", "limit"],
             "business_logic": ["business", "logic", "rule"],
             "api_endpoints": ["api", "endpoint", "route"],
-            "database": ["database", "db", "query", "sql"]
+            "database": ["database", "db", "query", "sql"],
         }
 
         for area, keywords in area_keywords.items():
@@ -198,7 +201,7 @@ class TestingWizard(BaseWizard):  # noqa: pytest - Not a test class
 
         return areas[:5]  # Top 5
 
-    def _identify_missing_tests(self, task: WizardTask, analysis: Dict) -> List[Dict[str, str]]:
+    def _identify_missing_tests(self, task: WizardTask, analysis: dict) -> list[dict[str, str]]:
         """Identify missing test scenarios (Level 3: Proactive)"""
         missing = []
 
@@ -206,87 +209,88 @@ class TestingWizard(BaseWizard):  # noqa: pytest - Not a test class
 
         # Generate test scenarios based on focus areas
         if "authentication" in focus_areas:
-            missing.append({
-                "scenario": "Valid credentials login",
-                "type": "unit",
-                "priority": "high"
-            })
-            missing.append({
-                "scenario": "Invalid credentials login",
-                "type": "unit",
-                "priority": "high"
-            })
-            missing.append({
-                "scenario": "Account lockout after failed attempts",
-                "type": "integration",
-                "priority": "medium"
-            })
+            missing.append(
+                {"scenario": "Valid credentials login", "type": "unit", "priority": "high"}
+            )
+            missing.append(
+                {"scenario": "Invalid credentials login", "type": "unit", "priority": "high"}
+            )
+            missing.append(
+                {
+                    "scenario": "Account lockout after failed attempts",
+                    "type": "integration",
+                    "priority": "medium",
+                }
+            )
 
         if "authorization" in focus_areas:
-            missing.append({
-                "scenario": "User with correct permissions can access resource",
-                "type": "integration",
-                "priority": "high"
-            })
-            missing.append({
-                "scenario": "User without permissions gets 403",
-                "type": "integration",
-                "priority": "high"
-            })
+            missing.append(
+                {
+                    "scenario": "User with correct permissions can access resource",
+                    "type": "integration",
+                    "priority": "high",
+                }
+            )
+            missing.append(
+                {
+                    "scenario": "User without permissions gets 403",
+                    "type": "integration",
+                    "priority": "high",
+                }
+            )
 
         if "data_validation" in focus_areas:
-            missing.append({
-                "scenario": "Valid input accepted",
-                "type": "unit",
-                "priority": "high"
-            })
-            missing.append({
-                "scenario": "Invalid input rejected with clear error",
-                "type": "unit",
-                "priority": "high"
-            })
-            missing.append({
-                "scenario": "SQL injection attempts blocked",
-                "type": "security",
-                "priority": "high"
-            })
+            missing.append({"scenario": "Valid input accepted", "type": "unit", "priority": "high"})
+            missing.append(
+                {
+                    "scenario": "Invalid input rejected with clear error",
+                    "type": "unit",
+                    "priority": "high",
+                }
+            )
+            missing.append(
+                {
+                    "scenario": "SQL injection attempts blocked",
+                    "type": "security",
+                    "priority": "high",
+                }
+            )
 
         if "error_handling" in focus_areas:
-            missing.append({
-                "scenario": "Graceful handling of network failures",
-                "type": "integration",
-                "priority": "medium"
-            })
-            missing.append({
-                "scenario": "Proper error messages for user",
-                "type": "integration",
-                "priority": "medium"
-            })
+            missing.append(
+                {
+                    "scenario": "Graceful handling of network failures",
+                    "type": "integration",
+                    "priority": "medium",
+                }
+            )
+            missing.append(
+                {
+                    "scenario": "Proper error messages for user",
+                    "type": "integration",
+                    "priority": "medium",
+                }
+            )
 
         if "edge_cases" in focus_areas:
-            missing.append({
-                "scenario": "Empty input handling",
-                "type": "unit",
-                "priority": "medium"
-            })
-            missing.append({
-                "scenario": "Maximum input size handling",
-                "type": "unit",
-                "priority": "medium"
-            })
+            missing.append(
+                {"scenario": "Empty input handling", "type": "unit", "priority": "medium"}
+            )
+            missing.append(
+                {"scenario": "Maximum input size handling", "type": "unit", "priority": "medium"}
+            )
 
         # Generic missing tests
         if not missing:
             missing = [
                 {"scenario": "Happy path test", "type": "unit", "priority": "high"},
                 {"scenario": "Error case handling", "type": "unit", "priority": "high"},
-                {"scenario": "Edge case validation", "type": "unit", "priority": "medium"}
+                {"scenario": "Edge case validation", "type": "unit", "priority": "medium"},
             ]
 
         return missing[:10]  # Top 10 missing tests
 
-    def _generate_test_plan(self, task: WizardTask, analysis: Dict,
-                           missing: List[Dict]) -> str:
+    def _generate_test_plan(self, task: WizardTask, analysis: dict, missing: list[dict]) -> str:
         """Generate comprehensive test plan"""
         return f"""# Test Plan
 
@@ -334,7 +338,7 @@ Focus Areas: {', '.join(analysis['focus_areas'])}
 - [ ] No critical paths untested
 """
 
-    def _generate_test_examples(self, task: WizardTask, missing: List[Dict]) -> str:
+    def _generate_test_examples(self, task: WizardTask, missing: list[dict]) -> str:
         """Generate example test code"""
         if not missing:
             return "# No specific test examples generated"
@@ -438,42 +442,50 @@ def db_session():
 ```
 """
 
-    def _assess_testing_risks(self, task: WizardTask, analysis: Dict) -> List[WizardRisk]:
+    def _assess_testing_risks(self, task: WizardTask, analysis: dict) -> list[WizardRisk]:
         """Assess testing risks"""
         risks = []
 
         if analysis["coverage_status"] == "low":
-            risks.append(WizardRisk(
-                risk="Low test coverage leaves bugs undetected",
-                mitigation="Prioritize tests for critical paths, gradually increase coverage",
-                severity="high"
-            ))
+            risks.append(
+                WizardRisk(
+                    risk="Low test coverage leaves bugs undetected",
+                    mitigation="Prioritize tests for critical paths, gradually increase coverage",
+                    severity="high",
+                )
+            )
 
-        risks.append(WizardRisk(
-            risk="Flaky tests reduce CI/CD reliability",
-            mitigation="Use stable test data, avoid time-dependent tests, retry failed tests",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Flaky tests reduce CI/CD reliability",
+                mitigation="Use stable test data, avoid time-dependent tests, retry failed tests",
+                severity="medium",
+            )
+        )
 
-        risks.append(WizardRisk(
-            risk="Slow test suite impacts developer productivity",
-            mitigation="Parallelize tests, use test doubles for external services, optimize database tests",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Slow test suite impacts developer productivity",
+                mitigation="Parallelize tests, use test doubles for external services, optimize database tests",
+                severity="medium",
+            )
+        )
 
-        risks.append(WizardRisk(
-            risk="Tests become maintenance burden",
-            mitigation="Follow DRY principles, use fixtures, refactor tests regularly",
-            severity="low"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Tests become maintenance burden",
+                mitigation="Follow DRY principles, use fixtures, refactor tests regularly",
+                severity="low",
+            )
+        )
 
         return risks
 
-    def _create_diagnosis(self, analysis: Dict, missing: List[Dict]) -> str:
+    def _create_diagnosis(self, analysis: dict, missing: list[dict]) -> str:
         """Create diagnosis"""
         return f"{analysis['test_types']} testing needed with {analysis['coverage_status']} coverage; {len(missing)} critical test scenarios identified"
 
-    def _create_testing_checklist(self, analysis: Dict) -> str:
+    def _create_testing_checklist(self, analysis: dict) -> str:
         """Create testing checklist"""
         return f"""# Testing Checklist
 
@@ -516,7 +528,7 @@ def db_session():
 *Last Updated*: [Date]
 """
 
-    def _generate_coverage_report(self, analysis: Dict, missing: List[Dict]) -> str:
+    def _generate_coverage_report(self, analysis: dict, missing: list[dict]) -> str:
         """Generate coverage analysis"""
         return f"""# Coverage Analysis
 

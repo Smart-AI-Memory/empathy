@@ -22,7 +22,7 @@ def print_output(result):
     print(f"🎯 Routing: {' → '.join(result.routing)}")
     print(f"📊 Confidence: {result.overall_confidence:.1%}\n")
 
-    print(f"📋 Diagnosis:")
+    print("📋 Diagnosis:")
     print(f"   {result.primary_output.diagnosis}\n")
 
     print(f"📝 Plan ({len(result.primary_output.plan)} steps):")
@@ -43,12 +43,12 @@ def print_output(result):
         print(f"     → Mitigation: {risk.mitigation}")
     print()
 
-    print(f"🎬 Next Actions:")
+    print("🎬 Next Actions:")
     for action in result.primary_output.next_actions[:5]:
         print(f"   ✓ {action}")
     print()
 
-    print(f"💙 Empathy Checks:")
+    print("💙 Empathy Checks:")
     print(f"   🧠 Cognitive: {result.primary_output.empathy_checks.cognitive}")
     print(f"   💚 Emotional: {result.primary_output.empathy_checks.emotional}")
     print(f"   🎯 Anticipatory: {result.primary_output.empathy_checks.anticipatory}")
@@ -63,7 +63,7 @@ def demo_1_critical_bug():
         task="Critical bug blocks release; users reporting 500 errors",
         context="Service X returns 500 after deployment to production. Logs show NullPointerException in user authentication. README doesn't document hotfix process. PM asking for ETA.",
         preferences="Urgent; need patch and hotfix deployment guide",
-        risk_tolerance="low"
+        risk_tolerance="low",
     )
 
     print("👤 Role: Developer")
@@ -91,7 +91,7 @@ def demo_2_onboarding_docs():
         task="New developers struggling with setup; onboarding taking 3 days instead of 1",
         context="README missing environment configuration steps. No setup guide for local development. Junior devs confused about dependencies and database setup.",
         preferences="Quick start guide for beginners",
-        risk_tolerance="medium"
+        risk_tolerance="medium",
     )
 
     print("👤 Role: Team Lead")
@@ -114,7 +114,7 @@ def demo_3_performance_issue():
         task="Database queries timing out under load",
         context="Users experiencing 30+ second page loads. Database shows N+1 query problem in user dashboard. Needs investigation and optimization.",
         preferences="Root cause analysis and optimization plan",
-        risk_tolerance="medium"
+        risk_tolerance="medium",
     )
 
     print("👤 Role: Architect")
@@ -137,7 +137,7 @@ def demo_4_handoff_scenario():
         task="Emergency handoff - going on leave, feature half-done",
         context="Authentication refactor 60% complete. PR open but not reviewed. Database migration pending. Documentation exists but may be out of date.",
         preferences="Comprehensive handoff documentation",
-        risk_tolerance="low"
+        risk_tolerance="low",
     )
 
     print("👤 Role: Developer")
@@ -160,7 +160,7 @@ def demo_5_fallback():
         task="Need to schedule team retrospective",
         context="Team has been working on project for 3 months. Want to gather feedback and identify improvements.",
         preferences="Structured retrospective format",
-        risk_tolerance="low"
+        risk_tolerance="low",
     )
 
     print("👤 Role: PM")

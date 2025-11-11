@@ -8,7 +8,7 @@ Licensed under the Apache License, Version 2.0
 """
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 from .levels import EmpathyLevel
 from .providers import AnthropicProvider, BaseLLMProvider, LocalProvider, OpenAIProvider
@@ -38,9 +38,9 @@ class EmpathyLLM:
         self,
         provider: str = "anthropic",
         target_level: int = 3,
-        api_key: Optional[str] = None,
-        model: Optional[str] = None,
-        pattern_library: Optional[Dict] = None,
+        api_key: str | None = None,
+        model: str | None = None,
+        pattern_library: dict | None = None,
         **kwargs,
     ):
         """
@@ -61,12 +61,12 @@ class EmpathyLLM:
         self.provider = self._create_provider(provider, api_key, model, **kwargs)
 
         # Track collaboration states for different users
-        self.states: Dict[str, CollaborationState] = {}
+        self.states: dict[str, CollaborationState] = {}
 
         logger.info(f"EmpathyLLM initialized: provider={provider}, target_level={target_level}")
 
     def _create_provider(
-        self, provider: str, api_key: Optional[str], model: Optional[str], **kwargs
+        self, provider: str, api_key: str | None, model: str | None, **kwargs
     ) -> BaseLLMProvider:
         """Create appropriate provider instance"""
 
@@ -113,9 +113,9 @@ class EmpathyLLM:
         self,
         user_id: str,
         user_input: str,
-        context: Optional[Dict[str, Any]] = None,
-        force_level: Optional[int] = None,
-    ) -> Dict[str, Any]:
+        context: dict[str, Any] | None = None,
+        force_level: int | None = None,
+    ) -> dict[str, Any]:
         """
         Main interaction method.
 
@@ -169,8 +169,8 @@ class EmpathyLLM:
         return result
 
     async def _level_1_reactive(
-        self, user_input: str, state: CollaborationState, context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, user_input: str, state: CollaborationState, context: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Level 1: Reactive - Simple Q&A
 
@@ -190,8 +190,8 @@ class EmpathyLLM:
         }
 
     async def _level_2_guided(
-        self, user_input: str, state: CollaborationState, context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, user_input: str, state: CollaborationState, context: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Level 2: Guided - Ask clarifying questions
 
@@ -219,8 +219,8 @@ class EmpathyLLM:
         }
 
     async def _level_3_proactive(
-        self, user_input: str, state: CollaborationState, context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, user_input: str, state: CollaborationState, context: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Level 3: Proactive - Act on detected patterns
 
@@ -279,8 +279,8 @@ Was this helpful? If not, I can adjust my pattern detection.
         }
 
     async def _level_4_anticipatory(
-        self, user_input: str, state: CollaborationState, context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, user_input: str, state: CollaborationState, context: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Level 4: Anticipatory - Predict future needs
 
@@ -332,8 +332,8 @@ Use anticipatory format:
         }
 
     async def _level_5_systems(
-        self, user_input: str, state: CollaborationState, context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, user_input: str, state: CollaborationState, context: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Level 5: Systems - Cross-domain pattern learning
 
@@ -404,7 +404,7 @@ TASK:
 
         logger.info(f"Pattern added for {user_id}: {pattern.pattern_type.value}")
 
-    def get_statistics(self, user_id: str) -> Dict[str, Any]:
+    def get_statistics(self, user_id: str) -> dict[str, Any]:
         """
         Get collaboration statistics for user.
 

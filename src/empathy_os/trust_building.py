@@ -22,7 +22,7 @@ Licensed under the Apache License, Version 2.0
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ class TrustSignal:
     signal_type: str  # "building" or "eroding"
     behavior: str
     timestamp: datetime = field(default_factory=datetime.now)
-    evidence: Optional[str] = None
+    evidence: str | None = None
     impact: float = 0.5  # 0.0-1.0, magnitude of impact
 
 
@@ -80,11 +80,11 @@ class TrustBuildingBehaviors:
 
     def __init__(self):
         """Initialize TrustBuildingBehaviors"""
-        self.trust_signals: List[TrustSignal] = []
+        self.trust_signals: list[TrustSignal] = []
 
     def pre_format_for_handoff(
-        self, data: Dict[str, Any], recipient_role: str, context: str
-    ) -> Dict[str, Any]:
+        self, data: dict[str, Any], recipient_role: str, context: str
+    ) -> dict[str, Any]:
         """
         Pre-format data for handoff to reduce recipient's cognitive load
 
@@ -145,9 +145,9 @@ class TrustBuildingBehaviors:
     def clarify_before_acting(
         self,
         instruction: str,
-        detected_ambiguities: List[str],
-        context: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        detected_ambiguities: list[str],
+        context: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         Clarify ambiguous instructions before execution to prevent wasted effort
 
@@ -201,8 +201,8 @@ class TrustBuildingBehaviors:
         return clarification
 
     def volunteer_structure_during_stress(
-        self, stress_indicators: Dict[str, Any], available_scaffolding: List[str]
-    ) -> Dict[str, Any]:
+        self, stress_indicators: dict[str, Any], available_scaffolding: list[str]
+    ) -> dict[str, Any]:
         """
         Volunteer structure/scaffolding during stressful situations
 
@@ -285,8 +285,8 @@ class TrustBuildingBehaviors:
         return support
 
     def offer_proactive_help(
-        self, struggle_indicators: Dict[str, Any], available_help: List[str]
-    ) -> Dict[str, Any]:
+        self, struggle_indicators: dict[str, Any], available_help: list[str]
+    ) -> dict[str, Any]:
         """
         Proactively offer help when collaborator is struggling
 
@@ -355,7 +355,7 @@ class TrustBuildingBehaviors:
 
         return offer
 
-    def get_trust_trajectory(self) -> Dict[str, Any]:
+    def get_trust_trajectory(self) -> dict[str, Any]:
         """
         Get trust trajectory based on recorded signals
 
@@ -403,7 +403,7 @@ class TrustBuildingBehaviors:
         else:
             return "general"
 
-    def _create_executive_summary(self, data: Dict, context: str) -> Dict:
+    def _create_executive_summary(self, data: dict, context: str) -> dict:
         """Create executive summary format"""
         return {
             "type": "executive_summary",
@@ -413,7 +413,7 @@ class TrustBuildingBehaviors:
             "context": context,
         }
 
-    def _create_technical_summary(self, data: Dict, context: str) -> Dict:
+    def _create_technical_summary(self, data: dict, context: str) -> dict:
         """Create technical summary format"""
         return {
             "type": "technical_detail",
@@ -422,7 +422,7 @@ class TrustBuildingBehaviors:
             "context": context,
         }
 
-    def _create_action_oriented_summary(self, data: Dict, context: str) -> Dict:
+    def _create_action_oriented_summary(self, data: dict, context: str) -> dict:
         """Create action-oriented summary format"""
         return {
             "type": "action_oriented",
@@ -431,11 +431,11 @@ class TrustBuildingBehaviors:
             "context": context,
         }
 
-    def _create_generic_summary(self, data: Dict, context: str) -> Dict:
+    def _create_generic_summary(self, data: dict, context: str) -> dict:
         """Create generic summary format"""
         return {"type": "general", "summary": str(data), "context": context}
 
-    def _extract_key_metrics(self, data: Dict) -> List[str]:
+    def _extract_key_metrics(self, data: dict) -> list[str]:
         """Extract key metrics from data"""
         metrics = []
         for key, value in data.items():
@@ -443,33 +443,33 @@ class TrustBuildingBehaviors:
                 metrics.append(f"{key}: {value}")
         return metrics[:5]  # Top 5 metrics
 
-    def _extract_highlights(self, data: Dict) -> List[str]:
+    def _extract_highlights(self, data: dict) -> list[str]:
         """Extract highlights from data"""
         return [f"Data contains {len(data)} fields"]
 
-    def _extract_recommendations(self, data: Dict) -> List[str]:
+    def _extract_recommendations(self, data: dict) -> list[str]:
         """Extract recommendations from data"""
         return ["Review detailed data for full context"]
 
-    def _extract_technical_notes(self, data: Dict) -> List[str]:
+    def _extract_technical_notes(self, data: dict) -> list[str]:
         """Extract technical notes"""
         return [f"Data structure: {type(data).__name__}"]
 
-    def _extract_immediate_actions(self, data: Dict) -> List[str]:
+    def _extract_immediate_actions(self, data: dict) -> list[str]:
         """Extract immediate actions"""
         if "actions" in data:
             return data["actions"][:5]
         return ["Review data and determine next steps"]
 
-    def _extract_priorities(self, data: Dict) -> List[str]:
+    def _extract_priorities(self, data: dict) -> list[str]:
         """Extract priorities"""
         if "priorities" in data:
             return data["priorities"]
         return []
 
     def _generate_clarifying_question(
-        self, instruction: str, ambiguity: str, context: Optional[Dict]
-    ) -> Dict[str, str]:
+        self, instruction: str, ambiguity: str, context: dict | None
+    ) -> dict[str, str]:
         """Generate a specific clarifying question"""
         return {
             "ambiguity": ambiguity,
@@ -477,7 +477,7 @@ class TrustBuildingBehaviors:
             "context": str(context) if context else "none",
         }
 
-    def _assess_stress_level(self, indicators: Dict) -> str:
+    def _assess_stress_level(self, indicators: dict) -> str:
         """Assess stress level from indicators"""
         # Simple heuristic: count stress indicators
         stress_score = len(indicators)
@@ -491,7 +491,7 @@ class TrustBuildingBehaviors:
         else:
             return "low"
 
-    def _classify_struggle(self, indicators: Dict) -> str:
+    def _classify_struggle(self, indicators: dict) -> str:
         """Classify type of struggle"""
         if "repeated_errors" in indicators:
             return "execution"
@@ -500,7 +500,7 @@ class TrustBuildingBehaviors:
         else:
             return "general"
 
-    def _record_trust_signal(self, signal_type: str, behavior: str, evidence: Optional[str] = None):
+    def _record_trust_signal(self, signal_type: str, behavior: str, evidence: str | None = None):
         """Record a trust signal"""
         signal = TrustSignal(signal_type=signal_type, behavior=behavior, evidence=evidence)
         self.trust_signals.append(signal)

@@ -12,7 +12,7 @@ Licensed under the Apache License, Version 2.0
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 @dataclass
@@ -34,15 +34,15 @@ class Pattern:
     pattern_type: str  # "sequential", "temporal", "conditional", "behavioral"
     name: str
     description: str
-    context: Dict[str, Any] = field(default_factory=dict)
-    code: Optional[str] = None  # Optional code implementation
+    context: dict[str, Any] = field(default_factory=dict)
+    code: str | None = None  # Optional code implementation
     confidence: float = 0.5  # 0.0-1.0, how confident in pattern
     usage_count: int = 0
     success_count: int = 0
     failure_count: int = 0
     discovered_at: datetime = field(default_factory=datetime.now)
-    last_used: Optional[datetime] = None
-    tags: List[str] = field(default_factory=list)
+    last_used: datetime | None = None
+    tags: list[str] = field(default_factory=list)
 
     @property
     def success_rate(self) -> float:
@@ -72,7 +72,7 @@ class PatternMatch:
 
     pattern: Pattern
     relevance_score: float  # 0.0-1.0, how relevant to current context
-    matching_factors: List[str]  # What made this pattern match
+    matching_factors: list[str]  # What made this pattern match
 
 
 class PatternLibrary:
@@ -116,9 +116,9 @@ class PatternLibrary:
 
     def __init__(self):
         """Initialize PatternLibrary"""
-        self.patterns: Dict[str, Pattern] = {}  # pattern_id -> Pattern
-        self.agent_contributions: Dict[str, List[str]] = {}  # agent_id -> pattern_ids
-        self.pattern_graph: Dict[str, List[str]] = {}  # pattern_id -> related_pattern_ids
+        self.patterns: dict[str, Pattern] = {}  # pattern_id -> Pattern
+        self.agent_contributions: dict[str, list[str]] = {}  # agent_id -> pattern_ids
+        self.pattern_graph: dict[str, list[str]] = {}  # pattern_id -> related_pattern_ids
 
     def contribute_pattern(self, agent_id: str, pattern: Pattern) -> None:
         """
@@ -154,11 +154,11 @@ class PatternLibrary:
     def query_patterns(
         self,
         agent_id: str,
-        context: Dict[str, Any],
-        pattern_type: Optional[str] = None,
+        context: dict[str, Any],
+        pattern_type: str | None = None,
         min_confidence: float = 0.5,
         limit: int = 10,
-    ) -> List[PatternMatch]:
+    ) -> list[PatternMatch]:
         """
         Query relevant patterns for current context
 
@@ -180,7 +180,7 @@ class PatternLibrary:
             ... }
             >>> matches = library.query_patterns("debug_agent", context, min_confidence=0.7)
         """
-        matches: List[PatternMatch] = []
+        matches: list[PatternMatch] = []
 
         for pattern in self.patterns.values():
             # Apply filters
@@ -206,7 +206,7 @@ class PatternLibrary:
         matches.sort(key=lambda m: m.relevance_score, reverse=True)
         return matches[:limit]
 
-    def get_pattern(self, pattern_id: str) -> Optional[Pattern]:
+    def get_pattern(self, pattern_id: str) -> Pattern | None:
         """
         Get a specific pattern by ID
 
@@ -250,7 +250,7 @@ class PatternLibrary:
             if pattern_id_1 not in self.pattern_graph[pattern_id_2]:
                 self.pattern_graph[pattern_id_2].append(pattern_id_1)
 
-    def get_related_patterns(self, pattern_id: str, depth: int = 1) -> List[Pattern]:
+    def get_related_patterns(self, pattern_id: str, depth: int = 1) -> list[Pattern]:
         """
         Get patterns related to a given pattern
 
@@ -277,7 +277,7 @@ class PatternLibrary:
 
         return [self.patterns[pid] for pid in related_ids if pid in self.patterns]
 
-    def get_agent_patterns(self, agent_id: str) -> List[Pattern]:
+    def get_agent_patterns(self, agent_id: str) -> list[Pattern]:
         """
         Get all patterns contributed by a specific agent
 
@@ -290,7 +290,7 @@ class PatternLibrary:
         pattern_ids = self.agent_contributions.get(agent_id, [])
         return [self.patterns[pid] for pid in pattern_ids if pid in self.patterns]
 
-    def get_top_patterns(self, n: int = 10, sort_by: str = "success_rate") -> List[Pattern]:
+    def get_top_patterns(self, n: int = 10, sort_by: str = "success_rate") -> list[Pattern]:
         """
         Get top N patterns by specified metric
 
@@ -312,7 +312,7 @@ class PatternLibrary:
 
         return patterns[:n]
 
-    def get_library_stats(self) -> Dict[str, Any]:
+    def get_library_stats(self) -> dict[str, Any]:
         """
         Get statistics about the pattern library
 
@@ -350,8 +350,8 @@ class PatternLibrary:
         }
 
     def _calculate_relevance(
-        self, pattern: Pattern, context: Dict[str, Any]
-    ) -> tuple[float, List[str]]:
+        self, pattern: Pattern, context: dict[str, Any]
+    ) -> tuple[float, list[str]]:
         """
         Calculate how relevant a pattern is to current context
 
@@ -391,9 +391,9 @@ class PatternLibrary:
 
         return min(relevance, 1.0), matching_factors
 
-    def _count_by_type(self) -> Dict[str, int]:
+    def _count_by_type(self) -> dict[str, int]:
         """Count patterns by type"""
-        counts: Dict[str, int] = {}
+        counts: dict[str, int] = {}
         for pattern in self.patterns.values():
             counts[pattern.pattern_type] = counts.get(pattern.pattern_type, 0) + 1
         return counts

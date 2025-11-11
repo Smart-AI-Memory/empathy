@@ -2,13 +2,16 @@
 Wizards API endpoints.
 Handles wizard-related requests including listing, info, and invocation.
 """
-from fastapi import APIRouter, HTTPException, Depends
+
+from typing import Any
+
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from typing import Dict, Any, Optional, List
 
 from services.empathy_service import EmpathyService
 
 router = APIRouter(prefix="/api/wizards", tags=["wizards"])
+
 
 # Dependency to get service instance
 def get_empathy_service() -> EmpathyService:
@@ -18,15 +21,17 @@ def get_empathy_service() -> EmpathyService:
 
 class AnalyzeRequest(BaseModel):
     """Request model for code analysis."""
+
     code: str
     language: str = "python"
     include_metrics: bool = True
-    additional_context: Optional[Dict[str, Any]] = None
+    additional_context: dict[str, Any] | None = None
 
 
 class WizardInfoRequest(BaseModel):
     """Request model for wizard info."""
-    wizard_name: Optional[str] = None
+
+    wizard_name: str | None = None
 
 
 @router.get("/")
@@ -42,10 +47,7 @@ async def list_wizards(service: EmpathyService = Depends(get_empathy_service)):
 
 
 @router.get("/{wizard_name}")
-async def get_wizard(
-    wizard_name: str,
-    service: EmpathyService = Depends(get_empathy_service)
-):
+async def get_wizard(wizard_name: str, service: EmpathyService = Depends(get_empathy_service)):
     """
     Get information about a specific wizard.
 
@@ -63,8 +65,7 @@ async def get_wizard(
 
 @router.post("/analyze")
 async def analyze_code(
-    request: AnalyzeRequest,
-    service: EmpathyService = Depends(get_empathy_service)
+    request: AnalyzeRequest, service: EmpathyService = Depends(get_empathy_service)
 ):
     """
     Analyze code using the Empathy Framework.
@@ -81,7 +82,7 @@ async def analyze_code(
             code=request.code,
             language=request.language,
             include_metrics=request.include_metrics,
-            **kwargs
+            **kwargs,
         )
         return result
     except Exception as e:
@@ -91,8 +92,4 @@ async def analyze_code(
 @router.get("/health")
 async def health_check():
     """Health check endpoint for wizards service."""
-    return {
-        "status": "healthy",
-        "service": "wizards",
-        "version": "1.0.0"
-    }
+    return {"status": "healthy", "service": "wizards", "version": "1.0.0"}

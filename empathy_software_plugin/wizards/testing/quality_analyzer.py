@@ -415,9 +415,7 @@ class TestQualityAnalyzer:
         no_assertions = []
         isolated_count = 0
 
-        issues_by_type: dict[TestQualityIssue, int] = {
-            issue_type: 0 for issue_type in TestQualityIssue
-        }
+        issues_by_type: dict[TestQualityIssue, int] = dict.fromkeys(TestQualityIssue, 0)
 
         test_functions_dict = {}
 

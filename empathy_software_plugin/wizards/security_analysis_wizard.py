@@ -9,13 +9,13 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import Dict, Any, List, Optional
-from pathlib import Path
 import logging
+from pathlib import Path
+from typing import Any
 
 from .base_wizard import BaseWizard
-from .security.owasp_patterns import OWASPPatternDetector, OWASPCategory
-from .security.exploit_analyzer import ExploitAnalyzer, ExploitabilityAssessment
+from .security.exploit_analyzer import ExploitabilityAssessment, ExploitAnalyzer
+from .security.owasp_patterns import OWASPPatternDetector
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +45,7 @@ class SecurityAnalysisWizard(BaseWizard):
         self.pattern_detector = OWASPPatternDetector()
         self.exploit_analyzer = ExploitAnalyzer()
 
-    async def analyze(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
         """
         Analyze code for security vulnerabilities.
 
@@ -58,10 +58,10 @@ class SecurityAnalysisWizard(BaseWizard):
         Returns:
             Analysis with vulnerabilities, exploitability, predictions
         """
-        source_files = context.get('source_files', [])
-        project_path = context.get('project_path', '.')
-        endpoint_config = context.get('endpoint_config', {})
-        exclude_patterns = context.get('exclude_patterns', [])
+        source_files = context.get("source_files", [])
+        project_path = context.get("project_path", ".")
+        endpoint_config = context.get("endpoint_config", {})
+        exclude_patterns = context.get("exclude_patterns", [])
 
         if not source_files:
             source_files = self._discover_source_files(project_path, exclude_patterns)
@@ -71,13 +71,10 @@ class SecurityAnalysisWizard(BaseWizard):
 
         for source_file in source_files[:100]:  # Limit for performance
             try:
-                with open(source_file, 'r') as f:
+                with open(source_file) as f:
                     code = f.read()
 
-                vulns = self.pattern_detector.detect_vulnerabilities(
-                    code,
-                    source_file
-                )
+                vulns = self.pattern_detector.detect_vulnerabilities(code, source_file)
 
                 all_vulnerabilities.extend(vulns)
 
@@ -89,13 +86,10 @@ class SecurityAnalysisWizard(BaseWizard):
 
         for vuln in all_vulnerabilities:
             # Get endpoint context if available
-            file_path = vuln.get('file_path', '')
+            file_path = vuln.get("file_path", "")
             endpoint_context = endpoint_config.get(file_path, {})
 
-            assessment = self.exploit_analyzer.assess_exploitability(
-                vuln,
-                endpoint_context
-            )
+            assessment = self.exploit_analyzer.assess_exploitability(vuln, endpoint_context)
 
             exploitability_assessments.append(assessment)
 
@@ -103,35 +97,23 @@ class SecurityAnalysisWizard(BaseWizard):
         exploitability_assessments.sort(
             key=lambda a: (
                 {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3}.get(a.exploitability, 4),
-                -a.exploit_likelihood
+                -a.exploit_likelihood,
             )
         )
 
         # Phase 3: Generate insights
-        insights = self._generate_insights(
-            all_vulnerabilities,
-            exploitability_assessments
-        )
+        insights = self._generate_insights(all_vulnerabilities, exploitability_assessments)
 
         # Phase 4: Predictions (Level 4)
-        predictions = self._generate_predictions(
-            exploitability_assessments,
-            insights
-        )
+        predictions = self._generate_predictions(exploitability_assessments, insights)
 
         # Phase 5: Recommendations
-        recommendations = self._generate_recommendations(
-            exploitability_assessments,
-            insights
-        )
+        recommendations = self._generate_recommendations(exploitability_assessments, insights)
 
         return {
             "vulnerabilities_found": len(all_vulnerabilities),
-
             "by_severity": self._group_by_severity(all_vulnerabilities),
-
             "by_category": self._group_by_category(all_vulnerabilities),
-
             "exploitability_assessments": [
                 {
                     "vulnerability": a.vulnerability,
@@ -140,24 +122,18 @@ class SecurityAnalysisWizard(BaseWizard):
                     "attack_complexity": a.attack_complexity,
                     "exploit_likelihood": a.exploit_likelihood,
                     "reasoning": a.reasoning,
-                    "mitigation_urgency": a.mitigation_urgency
+                    "mitigation_urgency": a.mitigation_urgency,
                 }
                 for a in exploitability_assessments
             ],
-
             "insights": insights,
-
             # Standard wizard outputs
             "predictions": predictions,
             "recommendations": recommendations,
-            "confidence": 0.85
+            "confidence": 0.85,
         }
 
-    def _discover_source_files(
-        self,
-        project_path: str,
-        exclude_patterns: List[str]
-    ) -> List[str]:
+    def _discover_source_files(self, project_path: str, exclude_patterns: list[str]) -> list[str]:
         """Discover source files to scan"""
         source_files = []
         project = Path(project_path)
@@ -172,24 +148,18 @@ class SecurityAnalysisWizard(BaseWizard):
                     continue
 
                 # Skip test files and dependencies
-                if any(p in str(file) for p in ["/test/", "/tests/", "node_modules", "venv", ".git"]):
+                if any(
+                    p in str(file) for p in ["/test/", "/tests/", "node_modules", "venv", ".git"]
+                ):
                     continue
 
                 source_files.append(str(file))
 
         return source_files[:200]  # Limit for performance
 
-    def _group_by_severity(
-        self,
-        vulnerabilities: List[Dict[str, Any]]
-    ) -> Dict[str, int]:
+    def _group_by_severity(self, vulnerabilities: list[dict[str, Any]]) -> dict[str, int]:
         """Group vulnerabilities by severity"""
-        by_severity = {
-            "CRITICAL": 0,
-            "HIGH": 0,
-            "MEDIUM": 0,
-            "LOW": 0
-        }
+        by_severity = {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0}
 
         for vuln in vulnerabilities:
             severity = vuln.get("severity", "MEDIUM")
@@ -198,10 +168,7 @@ class SecurityAnalysisWizard(BaseWizard):
 
         return by_severity
 
-    def _group_by_category(
-        self,
-        vulnerabilities: List[Dict[str, Any]]
-    ) -> Dict[str, int]:
+    def _group_by_category(self, vulnerabilities: list[dict[str, Any]]) -> dict[str, int]:
         """Group vulnerabilities by OWASP category"""
         by_category = {}
 
@@ -212,10 +179,8 @@ class SecurityAnalysisWizard(BaseWizard):
         return by_category
 
     def _generate_insights(
-        self,
-        vulnerabilities: List[Dict[str, Any]],
-        assessments: List[ExploitabilityAssessment]
-    ) -> Dict[str, Any]:
+        self, vulnerabilities: list[dict[str, Any]], assessments: list[ExploitabilityAssessment]
+    ) -> dict[str, Any]:
         """Generate security insights"""
 
         # Most common vulnerability type
@@ -227,7 +192,9 @@ class SecurityAnalysisWizard(BaseWizard):
         high_exploitable = sum(1 for a in assessments if a.exploitability == "HIGH")
 
         total = len(assessments)
-        exploitable_percent = ((critical_exploitable + high_exploitable) / total * 100) if total > 0 else 0
+        exploitable_percent = (
+            ((critical_exploitable + high_exploitable) / total * 100) if total > 0 else 0
+        )
 
         return {
             "most_common_category": most_common,
@@ -236,16 +203,13 @@ class SecurityAnalysisWizard(BaseWizard):
             "exploitable_percent": exploitable_percent,
             "public_exposure": sum(1 for a in assessments if a.accessibility == "public"),
             "immediate_action_required": sum(
-                1 for a in assessments
-                if "IMMEDIATE" in a.mitigation_urgency
-            )
+                1 for a in assessments if "IMMEDIATE" in a.mitigation_urgency
+            ),
         }
 
     def _generate_predictions(
-        self,
-        assessments: List[ExploitabilityAssessment],
-        insights: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+        self, assessments: list[ExploitabilityAssessment], insights: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """Generate Level 4 predictions"""
 
         predictions = []
@@ -253,64 +217,69 @@ class SecurityAnalysisWizard(BaseWizard):
         # Prediction 1: Imminent exploitation risk
         immediate_risks = [a for a in assessments if "IMMEDIATE" in a.mitigation_urgency]
         if immediate_risks:
-            predictions.append({
-                "type": "imminent_exploitation_risk",
-                "severity": "critical",
-                "description": (
-                    f"{len(immediate_risks)} vulnerabilities have IMMEDIATE exploitation risk. "
-                    f"In our experience, {immediate_risks[0].vulnerability['name']} "
-                    f"is actively scanned by automated tools."
-                ),
-                "affected_files": [a.vulnerability['file_path'] for a in immediate_risks[:3]],
-                "prevention_steps": [
-                    a.vulnerability.get('example_safe', 'Fix vulnerability')
-                    for a in immediate_risks[:3]
-                ]
-            })
+            predictions.append(
+                {
+                    "type": "imminent_exploitation_risk",
+                    "severity": "critical",
+                    "description": (
+                        f"{len(immediate_risks)} vulnerabilities have IMMEDIATE exploitation risk. "
+                        f"In our experience, {immediate_risks[0].vulnerability['name']} "
+                        f"is actively scanned by automated tools."
+                    ),
+                    "affected_files": [a.vulnerability["file_path"] for a in immediate_risks[:3]],
+                    "prevention_steps": [
+                        a.vulnerability.get("example_safe", "Fix vulnerability")
+                        for a in immediate_risks[:3]
+                    ],
+                }
+            )
 
         # Prediction 2: Public exposure risk
         public_critical = [
-            a for a in assessments
+            a
+            for a in assessments
             if a.accessibility == "public" and a.exploitability in ["CRITICAL", "HIGH"]
         ]
         if public_critical:
-            predictions.append({
-                "type": "public_exposure_risk",
-                "severity": "high",
-                "description": (
-                    f"{len(public_critical)} publicly accessible vulnerabilities detected. "
-                    "In our experience, public endpoints are scanned within hours of deployment."
-                ),
-                "prevention_steps": [
-                    "Add authentication to sensitive endpoints",
-                    "Implement rate limiting",
-                    "Add input validation"
-                ]
-            })
+            predictions.append(
+                {
+                    "type": "public_exposure_risk",
+                    "severity": "high",
+                    "description": (
+                        f"{len(public_critical)} publicly accessible vulnerabilities detected. "
+                        "In our experience, public endpoints are scanned within hours of deployment."
+                    ),
+                    "prevention_steps": [
+                        "Add authentication to sensitive endpoints",
+                        "Implement rate limiting",
+                        "Add input validation",
+                    ],
+                }
+            )
 
         # Prediction 3: Attack pattern concentration
         if insights["most_common_category"] in ["injection", "broken_authentication"]:
-            predictions.append({
-                "type": "attack_pattern_concentration",
-                "severity": "high",
-                "description": (
-                    f"Multiple {insights['most_common_category']} vulnerabilities detected. "
-                    "In our experience, clustered vulnerabilities indicate systematic issues."
-                ),
-                "prevention_steps": [
-                    "Review coding standards",
-                    "Add automated security scanning to CI/CD",
-                    "Conduct security training"
-                ]
-            })
+            predictions.append(
+                {
+                    "type": "attack_pattern_concentration",
+                    "severity": "high",
+                    "description": (
+                        f"Multiple {insights['most_common_category']} vulnerabilities detected. "
+                        "In our experience, clustered vulnerabilities indicate systematic issues."
+                    ),
+                    "prevention_steps": [
+                        "Review coding standards",
+                        "Add automated security scanning to CI/CD",
+                        "Conduct security training",
+                    ],
+                }
+            )
 
         return predictions
 
     def _generate_recommendations(
-        self,
-        assessments: List[ExploitabilityAssessment],
-        insights: Dict[str, Any]
-    ) -> List[str]:
+        self, assessments: list[ExploitabilityAssessment], insights: dict[str, Any]
+    ) -> list[str]:
         """Generate actionable recommendations"""
 
         recommendations = []
@@ -324,20 +293,12 @@ class SecurityAnalysisWizard(BaseWizard):
 
         # Category-specific recommendations
         if insights["most_common_category"] == "injection":
-            recommendations.append(
-                "Use parameterized queries for ALL database operations"
-            )
-            recommendations.append(
-                "Add input validation library (e.g., validator.js, bleach)"
-            )
+            recommendations.append("Use parameterized queries for ALL database operations")
+            recommendations.append("Add input validation library (e.g., validator.js, bleach)")
 
         if insights["most_common_category"] == "cross_site_scripting":
-            recommendations.append(
-                "Use textContent instead of innerHTML"
-            )
-            recommendations.append(
-                "Implement Content Security Policy (CSP) headers"
-            )
+            recommendations.append("Use textContent instead of innerHTML")
+            recommendations.append("Implement Content Security Policy (CSP) headers")
 
         # Public exposure recommendations
         if insights["public_exposure"] > 0:
@@ -355,8 +316,6 @@ class SecurityAnalysisWizard(BaseWizard):
                 )
 
         # General best practices
-        recommendations.append(
-            "Add pre-commit security scanning (e.g., bandit, safety, npm audit)"
-        )
+        recommendations.append("Add pre-commit security scanning (e.g., bandit, safety, npm audit)")
 
         return recommendations

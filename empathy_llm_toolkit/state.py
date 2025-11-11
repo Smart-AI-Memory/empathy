@@ -10,7 +10,7 @@ Licensed under the Apache License, Version 2.0
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class PatternType(Enum):
@@ -36,7 +36,7 @@ class UserPattern:
     confidence: float  # 0.0 to 1.0
     occurrences: int  # How many times observed
     last_seen: datetime
-    context: Dict[str, Any] = field(default_factory=dict)
+    context: dict[str, Any] = field(default_factory=dict)
 
     def should_act(self, trust_level: float) -> bool:
         """
@@ -55,7 +55,7 @@ class Interaction:
     role: str  # "user" or "assistant"
     content: str
     empathy_level: int  # Which level was used
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -74,29 +74,29 @@ class CollaborationState:
     session_start: datetime = field(default_factory=datetime.now)
 
     # Conversation tracking
-    interactions: List[Interaction] = field(default_factory=list)
+    interactions: list[Interaction] = field(default_factory=list)
 
     # Pattern detection (Level 3)
-    detected_patterns: List[UserPattern] = field(default_factory=list)
+    detected_patterns: list[UserPattern] = field(default_factory=list)
 
     # Trust building
     trust_level: float = 0.5  # 0.0 to 1.0, starts neutral
     successful_actions: int = 0
     failed_actions: int = 0
-    trust_trajectory: List[float] = field(default_factory=list)
+    trust_trajectory: list[float] = field(default_factory=list)
 
     # Empathy level progression
     current_level: int = 1  # Start at Level 1
-    level_history: List[int] = field(default_factory=list)
+    level_history: list[int] = field(default_factory=list)
 
     # User preferences learned over time
-    preferences: Dict[str, Any] = field(default_factory=dict)
+    preferences: dict[str, Any] = field(default_factory=dict)
 
     # Context that persists across interactions
-    shared_context: Dict[str, Any] = field(default_factory=dict)
+    shared_context: dict[str, Any] = field(default_factory=dict)
 
     def add_interaction(
-        self, role: str, content: str, empathy_level: int, metadata: Optional[Dict] = None
+        self, role: str, content: str, empathy_level: int, metadata: dict | None = None
     ):
         """Add interaction to history"""
         self.interactions.append(
@@ -150,7 +150,7 @@ class CollaborationState:
         # Add new pattern
         self.detected_patterns.append(pattern)
 
-    def find_matching_pattern(self, trigger_text: str) -> Optional[UserPattern]:
+    def find_matching_pattern(self, trigger_text: str) -> UserPattern | None:
         """
         Find pattern that matches current input.
 
@@ -170,7 +170,7 @@ class CollaborationState:
 
     def get_conversation_history(
         self, max_turns: int = 10, include_metadata: bool = False
-    ) -> List[Dict[str, str]]:
+    ) -> list[dict[str, str]]:
         """
         Get recent conversation history in LLM format.
 
@@ -216,7 +216,7 @@ class CollaborationState:
 
         return False
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get collaboration statistics"""
         total_interactions = len(self.interactions)
         success_rate = (

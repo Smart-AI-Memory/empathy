@@ -5,7 +5,7 @@ Handles code analysis, project scanning, and result retrieval.
 Input validation and error handling included for security.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -26,9 +26,9 @@ class ProjectAnalysisRequest(BaseModel):
     """Request model for project analysis."""
 
     project_path: str
-    file_patterns: Optional[List[str]] = None
-    exclude_patterns: Optional[List[str]] = None
-    wizards: Optional[List[str]] = None
+    file_patterns: list[str] | None = None
+    exclude_patterns: list[str] | None = None
+    wizards: list[str] | None = None
 
     @validator("project_path")
     def validate_project_path(cls, v):
@@ -44,9 +44,9 @@ class SessionConfig(BaseModel):
     """Configuration for analysis session."""
 
     name: str
-    description: Optional[str] = None
-    wizards: List[str]
-    config: Dict[str, Any] = {}
+    description: str | None = None
+    wizards: list[str]
+    config: dict[str, Any] = {}
 
     @validator("name")
     def validate_name(cls, v):

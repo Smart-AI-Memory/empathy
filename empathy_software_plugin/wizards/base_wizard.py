@@ -7,9 +7,9 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from abc import ABC, abstractmethod
-from typing import Dict, Any, List
 import logging
+from abc import ABC, abstractmethod
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,7 @@ class BaseWizard(ABC):
         pass
 
     @abstractmethod
-    async def analyze(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
         """
         Analyze the given context and return results.
 

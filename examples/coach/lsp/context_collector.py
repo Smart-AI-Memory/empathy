@@ -6,12 +6,11 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
+import logging
 import os
 import subprocess
 from pathlib import Path
-from typing import Dict, Any, List, Optional
 from urllib.parse import urlparse
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -19,11 +18,7 @@ logger = logging.getLogger(__name__)
 class ContextCollector:
     """Collects context from IDE environment"""
 
-    async def collect(
-        self,
-        document_uri: str,
-        position: Optional[Dict[str, int]] = None
-    ) -> str:
+    async def collect(self, document_uri: str, position: dict[str, int] | None = None) -> str:
         """
         Collect context for a single file
 
@@ -67,7 +62,7 @@ Recent commits: {git_info['recent_commits']}
 
         return context
 
-    async def collect_multi_file(self, document_uris: List[str]) -> str:
+    async def collect_multi_file(self, document_uris: list[str]) -> str:
         """Collect context for multiple files"""
         contexts = []
         for uri in document_uris:
@@ -82,7 +77,7 @@ Recent commits: {git_info['recent_commits']}
             parsed = urlparse(uri)
             path = parsed.path
             # Handle Windows paths
-            if os.name == 'nt' and path.startswith('/'):
+            if os.name == "nt" and path.startswith("/"):
                 path = path[1:]
             return Path(path)
         return Path(uri)
@@ -90,7 +85,7 @@ Recent commits: {git_info['recent_commits']}
     def _read_file(self, path: Path) -> str:
         """Read file contents"""
         try:
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(path, encoding="utf-8") as f:
                 content = f.read()
             # Limit to first 10000 characters to avoid huge context
             if len(content) > 10000:
@@ -100,7 +95,7 @@ Recent commits: {git_info['recent_commits']}
             logger.error(f"Error reading file {path}: {e}")
             return f"[Error reading file: {e}]"
 
-    def _get_git_info(self, file_path: Path) -> Dict[str, str]:
+    def _get_git_info(self, file_path: Path) -> dict[str, str]:
         """Get git information for file"""
         try:
             repo_root = self._find_git_root(file_path)
@@ -111,33 +106,26 @@ Recent commits: {git_info['recent_commits']}
                 ["git", "rev-parse", "--abbrev-ref", "HEAD"],
                 cwd=repo_root,
                 text=True,
-                stderr=subprocess.DEVNULL
+                stderr=subprocess.DEVNULL,
             ).strip()
 
             status = subprocess.check_output(
-                ["git", "status", "--short"],
-                cwd=repo_root,
-                text=True,
-                stderr=subprocess.DEVNULL
+                ["git", "status", "--short"], cwd=repo_root, text=True, stderr=subprocess.DEVNULL
             ).strip()
 
             commits = subprocess.check_output(
                 ["git", "log", "-5", "--oneline"],
                 cwd=repo_root,
                 text=True,
-                stderr=subprocess.DEVNULL
+                stderr=subprocess.DEVNULL,
             ).strip()
 
-            return {
-                "branch": branch,
-                "status": status or "Clean",
-                "recent_commits": commits
-            }
+            return {"branch": branch, "status": status or "Clean", "recent_commits": commits}
         except Exception as e:
             logger.debug(f"Error getting git info: {e}")
             return {"branch": "N/A", "status": "Error", "recent_commits": ""}
 
-    def _find_git_root(self, path: Path) -> Optional[Path]:
+    def _find_git_root(self, path: Path) -> Path | None:
         """Find git repository root"""
         current = path.parent if path.is_file() else path
         while current != current.parent:
@@ -160,7 +148,7 @@ Recent commits: {git_info['recent_commits']}
                 cwd=project_root,
                 text=True,
                 stderr=subprocess.DEVNULL,
-                timeout=5
+                timeout=5,
             )
             return tree
         except (FileNotFoundError, subprocess.TimeoutExpired):
@@ -168,14 +156,14 @@ Recent commits: {git_info['recent_commits']}
             try:
                 files = []
                 for item in project_root.iterdir():
-                    if item.name not in ['.git', 'node_modules', '__pycache__', 'venv', '.venv']:
+                    if item.name not in [".git", "node_modules", "__pycache__", "venv", ".venv"]:
                         files.append(f"- {item.name}")
                 return f"Project root: {project_root}\n" + "\n".join(files[:20])
             except Exception as e:
                 logger.debug(f"Error listing project structure: {e}")
                 return f"Project root: {project_root}"
 
-    def _find_project_root(self, path: Path) -> Optional[Path]:
+    def _find_project_root(self, path: Path) -> Path | None:
         """Find project root (git root, or parent with package.json/pyproject.toml)"""
         git_root = self._find_git_root(path)
         if git_root:
@@ -184,7 +172,10 @@ Recent commits: {git_info['recent_commits']}
         # Look for package.json, pyproject.toml, etc.
         current = path.parent if path.is_file() else path
         while current != current.parent:
-            if any((current / marker).exists() for marker in ["package.json", "pyproject.toml", "setup.py", "Cargo.toml", "go.mod"]):
+            if any(
+                (current / marker).exists()
+                for marker in ["package.json", "pyproject.toml", "setup.py", "Cargo.toml", "go.mod"]
+            ):
                 return current
             current = current.parent
 
@@ -199,8 +190,9 @@ Recent commits: {git_info['recent_commits']}
         # Check for various dependency files
         if (project_root / "package.json").exists():
             try:
-                with open(project_root / "package.json", 'r') as f:
+                with open(project_root / "package.json") as f:
                     import json
+
                     pkg = json.load(f)
                     deps = list(pkg.get("dependencies", {}).keys())
                     return f"Node.js project: {', '.join(deps[:10])}"
@@ -210,8 +202,8 @@ Recent commits: {git_info['recent_commits']}
         elif (project_root / "requirements.txt").exists():
             try:
                 deps = (project_root / "requirements.txt").read_text()
-                lines = [l.strip() for l in deps.split('\n') if l.strip() and not l.startswith('#')]
-                return f"Python requirements:\n" + "\n".join(lines[:15])
+                lines = [l.strip() for l in deps.split("\n") if l.strip() and not l.startswith("#")]
+                return "Python requirements:\n" + "\n".join(lines[:15])
             except Exception:
                 return "Python project (requirements.txt found)"
 
@@ -255,6 +247,6 @@ Recent commits: {git_info['recent_commits']}
             ".css": "CSS",
             ".scss": "SCSS",
             ".vue": "Vue",
-            ".svelte": "Svelte"
+            ".svelte": "Svelte",
         }
         return ext_map.get(path.suffix, "Unknown")

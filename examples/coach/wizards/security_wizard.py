@@ -9,16 +9,16 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import List, Dict, Any
+from typing import Any
 
 from .base_wizard import (
     BaseWizard,
-    WizardTask,
-    WizardOutput,
-    WizardArtifact,
-    WizardRisk,
-    WizardHandoff,
     EmpathyChecks,
+    WizardArtifact,
+    WizardHandoff,
+    WizardOutput,
+    WizardRisk,
+    WizardTask,
 )
 
 
@@ -36,15 +36,33 @@ class SecurityWizard(BaseWizard):
         """Determine if this is a security task"""
         # High-priority security phrases (should match strongly)
         security_phrases = [
-            "penetration test", "penetration testing", "pentest", "security audit",
-            "security review", "vulnerability scan", "threat model", "sql injection",
-            "xss", "csrf", "owasp"
+            "penetration test",
+            "penetration testing",
+            "pentest",
+            "security audit",
+            "security review",
+            "vulnerability scan",
+            "threat model",
+            "sql injection",
+            "xss",
+            "csrf",
+            "owasp",
         ]
 
         security_keywords = [
-            "security", "vulnerability", "vuln", "exploit", "attack",
-            "breach", "penetration", "threat", "risk assessment",
-            "compliance", "authentication", "authorization", "encryption"
+            "security",
+            "vulnerability",
+            "vuln",
+            "exploit",
+            "attack",
+            "breach",
+            "penetration",
+            "threat",
+            "risk assessment",
+            "compliance",
+            "authentication",
+            "authorization",
+            "encryption",
         ]
 
         task_lower = (task.task + " " + task.context).lower()
@@ -82,7 +100,9 @@ class SecurityWizard(BaseWizard):
         compliance = self._assess_compliance(task, security_scope)
 
         # Step 6: Generate security checklist
-        security_checklist = self._generate_security_checklist(security_scope, vulnerabilities, compliance)
+        security_checklist = self._generate_security_checklist(
+            security_scope, vulnerabilities, compliance
+        )
 
         # Step 7: Create diagnosis
         diagnosis = self._create_diagnosis(security_scope, vulnerabilities, threat_model)
@@ -90,25 +110,21 @@ class SecurityWizard(BaseWizard):
         # Step 8: Create artifacts
         artifacts = [
             WizardArtifact(
-                type="doc",
-                title="Threat Model",
-                content=self._format_threat_model(threat_model)
+                type="doc", title="Threat Model", content=self._format_threat_model(threat_model)
             ),
             WizardArtifact(
                 type="doc",
                 title="Vulnerability Assessment",
-                content=self._format_vulnerabilities(vulnerabilities)
+                content=self._format_vulnerabilities(vulnerabilities),
             ),
             WizardArtifact(
-                type="checklist",
-                title="Security Checklist",
-                content=security_checklist
+                type="checklist", title="Security Checklist", content=security_checklist
             ),
             WizardArtifact(
                 type="doc",
                 title="Security Recommendations",
-                content=self._generate_recommendations(vulnerabilities, threat_model)
-            )
+                content=self._generate_recommendations(vulnerabilities, threat_model),
+            ),
         ]
 
         # Step 9: Create plan
@@ -118,7 +134,7 @@ class SecurityWizard(BaseWizard):
             "Implement security controls",
             "Set up security monitoring",
             "Document security procedures",
-            "Schedule regular security reviews"
+            "Schedule regular security reviews",
         ]
 
         # Step 10: Generate next actions
@@ -127,7 +143,7 @@ class SecurityWizard(BaseWizard):
             "Implement automated security scanning",
             "Add security tests to CI/CD",
             "Update security documentation",
-            "Train team on secure coding practices"
+            "Train team on secure coding practices",
         ]
 
         # Add anticipatory actions
@@ -137,17 +153,21 @@ class SecurityWizard(BaseWizard):
         # Step 11: Create handoffs
         handoffs = []
         if vulnerabilities:
-            handoffs.append(WizardHandoff(
-                owner="security_team",
-                what="Review and validate security fixes",
-                when="Before deployment"
-            ))
+            handoffs.append(
+                WizardHandoff(
+                    owner="security_team",
+                    what="Review and validate security fixes",
+                    when="Before deployment",
+                )
+            )
         if compliance:
-            handoffs.append(WizardHandoff(
-                owner="compliance_officer",
-                what="Verify compliance requirements met",
-                when="Before go-live"
-            ))
+            handoffs.append(
+                WizardHandoff(
+                    owner="compliance_officer",
+                    what="Verify compliance requirements met",
+                    when="Before go-live",
+                )
+            )
 
         # Step 12: Assess risks
         risks = self._assess_security_risks(task, vulnerabilities, threat_model)
@@ -156,7 +176,7 @@ class SecurityWizard(BaseWizard):
         empathy_checks = EmpathyChecks(
             cognitive=f"Considered {task.role} security knowledge level and {security_scope['system_type']} system constraints",
             emotional=f"Acknowledged {'high stress' if len(vulnerabilities) > 3 else 'normal concern'} around security issues",
-            anticipatory=f"Identified {len(threat_model['threats'])} potential threats and {len(anticipatory_actions)} preventive measures"
+            anticipatory=f"Identified {len(threat_model['threats'])} potential threats and {len(anticipatory_actions)} preventive measures",
         )
 
         return WizardOutput(
@@ -168,10 +188,10 @@ class SecurityWizard(BaseWizard):
             handoffs=handoffs,
             next_actions=next_actions,
             empathy_checks=empathy_checks,
-            confidence=self.can_handle(task)
+            confidence=self.can_handle(task),
         )
 
-    def _identify_security_scope(self, task: WizardTask) -> Dict[str, Any]:
+    def _identify_security_scope(self, task: WizardTask) -> dict[str, Any]:
         """Identify security review scope"""
         context_lower = task.context.lower()
 
@@ -209,10 +229,10 @@ class SecurityWizard(BaseWizard):
         return {
             "system_type": system_type,
             "assets": assets if assets else ["Application data"],
-            "attack_surface": attack_surface if attack_surface else ["Web interface"]
+            "attack_surface": attack_surface if attack_surface else ["Web interface"],
         }
 
-    def _conduct_threat_modeling(self, task: WizardTask, scope: Dict) -> Dict[str, Any]:
+    def _conduct_threat_modeling(self, task: WizardTask, scope: dict) -> dict[str, Any]:
         """Conduct threat modeling using STRIDE"""
         threats = []
 
@@ -223,61 +243,77 @@ class SecurityWizard(BaseWizard):
             "Repudiation": "User denies performing an action",
             "Information Disclosure": "Unauthorized access to sensitive data",
             "Denial of Service": "System availability disrupted",
-            "Elevation of Privilege": "Attacker gains unauthorized permissions"
+            "Elevation of Privilege": "Attacker gains unauthorized permissions",
         }
 
         # Map threats to attack surface
         for attack_surface_item in scope["attack_surface"]:
             if "Authentication" in attack_surface_item:
-                threats.append({
-                    "category": "Spoofing",
-                    "threat": "Credential theft or session hijacking",
-                    "likelihood": "medium",
-                    "impact": "high"
-                })
-                threats.append({
-                    "category": "Elevation of Privilege",
-                    "threat": "Authentication bypass",
-                    "likelihood": "low",
-                    "impact": "critical"
-                })
+                threats.append(
+                    {
+                        "category": "Spoofing",
+                        "threat": "Credential theft or session hijacking",
+                        "likelihood": "medium",
+                        "impact": "high",
+                    }
+                )
+                threats.append(
+                    {
+                        "category": "Elevation of Privilege",
+                        "threat": "Authentication bypass",
+                        "likelihood": "low",
+                        "impact": "critical",
+                    }
+                )
 
             if "API" in attack_surface_item:
-                threats.append({
-                    "category": "Information Disclosure",
-                    "threat": "API exposes sensitive data without authorization",
-                    "likelihood": "medium",
-                    "impact": "high"
-                })
-                threats.append({
-                    "category": "Denial of Service",
-                    "threat": "API rate limiting bypass or resource exhaustion",
-                    "likelihood": "medium",
-                    "impact": "medium"
-                })
+                threats.append(
+                    {
+                        "category": "Information Disclosure",
+                        "threat": "API exposes sensitive data without authorization",
+                        "likelihood": "medium",
+                        "impact": "high",
+                    }
+                )
+                threats.append(
+                    {
+                        "category": "Denial of Service",
+                        "threat": "API rate limiting bypass or resource exhaustion",
+                        "likelihood": "medium",
+                        "impact": "medium",
+                    }
+                )
 
             if "File upload" in attack_surface_item:
-                threats.append({
-                    "category": "Tampering",
-                    "threat": "Malicious file upload (malware, scripts)",
-                    "likelihood": "high",
-                    "impact": "high"
-                })
+                threats.append(
+                    {
+                        "category": "Tampering",
+                        "threat": "Malicious file upload (malware, scripts)",
+                        "likelihood": "high",
+                        "impact": "high",
+                    }
+                )
 
         # Generic threats
         if not threats:
             threats = [
-                {"category": "Information Disclosure", "threat": "Unauthorized data access", "likelihood": "medium", "impact": "high"},
-                {"category": "Spoofing", "threat": "Identity theft", "likelihood": "medium", "impact": "high"}
+                {
+                    "category": "Information Disclosure",
+                    "threat": "Unauthorized data access",
+                    "likelihood": "medium",
+                    "impact": "high",
+                },
+                {
+                    "category": "Spoofing",
+                    "threat": "Identity theft",
+                    "likelihood": "medium",
+                    "impact": "high",
+                },
             ]
 
-        return {
-            "methodology": "STRIDE",
-            "threats": threats,
-            "assets_at_risk": scope["assets"]
-        }
+        return {"methodology": "STRIDE", "threats": threats, "assets_at_risk": scope["assets"]}
 
-    def _identify_vulnerabilities(self, task: WizardTask, scope: Dict) -> List[Dict[str, str]]:
+    def _identify_vulnerabilities(self, task: WizardTask, scope: dict) -> list[dict[str, str]]:
         """Identify potential vulnerabilities (OWASP Top 10 based)"""
         vulns = []
 
@@ -285,52 +321,66 @@ class SecurityWizard(BaseWizard):
 
         # Check for common vulnerabilities
         if "sql" in context_lower or "database" in context_lower:
-            vulns.append({
-                "name": "SQL Injection",
-                "severity": "critical",
-                "description": "User input may not be properly sanitized before database queries",
-                "remediation": "Use parameterized queries/prepared statements, ORM, input validation"
-            })
+            vulns.append(
+                {
+                    "name": "SQL Injection",
+                    "severity": "critical",
+                    "description": "User input may not be properly sanitized before database queries",
+                    "remediation": "Use parameterized queries/prepared statements, ORM, input validation",
+                }
+            )
 
         if "auth" in context_lower:
-            vulns.append({
-                "name": "Broken Authentication",
-                "severity": "critical",
-                "description": "Weak password policies, session management issues, or missing MFA",
-                "remediation": "Implement strong password policies, secure session management, MFA"
-            })
+            vulns.append(
+                {
+                    "name": "Broken Authentication",
+                    "severity": "critical",
+                    "description": "Weak password policies, session management issues, or missing MFA",
+                    "remediation": "Implement strong password policies, secure session management, MFA",
+                }
+            )
 
         if "api" in context_lower:
-            vulns.append({
-                "name": "Broken Access Control",
-                "severity": "high",
-                "description": "Users may access resources they shouldn't have permission for",
-                "remediation": "Implement proper authorization checks, principle of least privilege"
-            })
+            vulns.append(
+                {
+                    "name": "Broken Access Control",
+                    "severity": "high",
+                    "description": "Users may access resources they shouldn't have permission for",
+                    "remediation": "Implement proper authorization checks, principle of least privilege",
+                }
+            )
 
-        if "encrypt" not in context_lower and ("data" in context_lower or "password" in context_lower):
-            vulns.append({
-                "name": "Sensitive Data Exposure",
-                "severity": "high",
-                "description": "Sensitive data may be transmitted or stored without encryption",
-                "remediation": "Use TLS for transport, encrypt data at rest, proper key management"
-            })
+        if "encrypt" not in context_lower and (
+            "data" in context_lower or "password" in context_lower
+        ):
+            vulns.append(
+                {
+                    "name": "Sensitive Data Exposure",
+                    "severity": "high",
+                    "description": "Sensitive data may be transmitted or stored without encryption",
+                    "remediation": "Use TLS for transport, encrypt data at rest, proper key management",
+                }
+            )
 
         if "xml" in context_lower or "deserialize" in context_lower:
-            vulns.append({
-                "name": "XXE / Insecure Deserialization",
-                "severity": "high",
-                "description": "Unsafe parsing of XML or deserialization of untrusted data",
-                "remediation": "Disable XML external entities, validate deserialization input"
-            })
+            vulns.append(
+                {
+                    "name": "XXE / Insecure Deserialization",
+                    "severity": "high",
+                    "description": "Unsafe parsing of XML or deserialization of untrusted data",
+                    "remediation": "Disable XML external entities, validate deserialization input",
+                }
+            )
 
         if "log" in context_lower:
-            vulns.append({
-                "name": "Insufficient Logging & Monitoring",
-                "severity": "medium",
-                "description": "Security events may not be logged or monitored",
-                "remediation": "Implement comprehensive logging, set up alerts, log retention"
-            })
+            vulns.append(
+                {
+                    "name": "Insufficient Logging & Monitoring",
+                    "severity": "medium",
+                    "description": "Security events may not be logged or monitored",
+                    "remediation": "Implement comprehensive logging, set up alerts, log retention",
+                }
+            )
 
         # Generic vulnerabilities if none found
         if not vulns:
@@ -339,13 +389,13 @@ class SecurityWizard(BaseWizard):
                     "name": "Security Best Practices",
                     "severity": "medium",
                     "description": "General security hardening needed",
-                    "remediation": "Follow OWASP guidelines, security code review, penetration testing"
+                    "remediation": "Follow OWASP guidelines, security code review, penetration testing",
                 }
             ]
 
         return vulns[:6]  # Top 6 vulnerabilities
 
-    def _assess_compliance(self, task: WizardTask, scope: Dict) -> List[str]:
+    def _assess_compliance(self, task: WizardTask, scope: dict) -> list[str]:
         """Assess compliance requirements"""
         compliance_reqs = []
 
@@ -363,49 +413,62 @@ class SecurityWizard(BaseWizard):
 
         return compliance_reqs
 
-    def _assess_security_risks(self, task: WizardTask, vulnerabilities: List[Dict],
-                              threat_model: Dict) -> List[WizardRisk]:
+    def _assess_security_risks(
+        self, task: WizardTask, vulnerabilities: list[dict], threat_model: dict
+    ) -> list[WizardRisk]:
         """Assess security risks"""
         risks = []
 
         # Critical vulnerabilities = high risk
         critical_vulns = [v for v in vulnerabilities if v["severity"] == "critical"]
         if critical_vulns:
-            risks.append(WizardRisk(
-                risk=f"{len(critical_vulns)} critical vulnerabilities could lead to data breach",
-                mitigation="Immediate remediation of critical issues, security code review, penetration testing",
-                severity="critical"
-            ))
+            risks.append(
+                WizardRisk(
+                    risk=f"{len(critical_vulns)} critical vulnerabilities could lead to data breach",
+                    mitigation="Immediate remediation of critical issues, security code review, penetration testing",
+                    severity="critical",
+                )
+            )
 
         # Check for high-impact threats
-        high_impact_threats = [t for t in threat_model["threats"] if t["impact"] in ["high", "critical"]]
+        high_impact_threats = [
+            t for t in threat_model["threats"] if t["impact"] in ["high", "critical"]
+        ]
         if high_impact_threats:
-            risks.append(WizardRisk(
-                risk=f"{len(high_impact_threats)} high-impact threats identified",
-                mitigation="Implement security controls, monitoring, and incident response plan",
-                severity="high"
-            ))
+            risks.append(
+                WizardRisk(
+                    risk=f"{len(high_impact_threats)} high-impact threats identified",
+                    mitigation="Implement security controls, monitoring, and incident response plan",
+                    severity="high",
+                )
+            )
 
-        risks.append(WizardRisk(
-            risk="Security debt accumulation over time",
-            mitigation="Regular security reviews, automated scanning, security training",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Security debt accumulation over time",
+                mitigation="Regular security reviews, automated scanning, security training",
+                severity="medium",
+            )
+        )
 
-        risks.append(WizardRisk(
-            risk="Insider threats or compromised credentials",
-            mitigation="Principle of least privilege, audit logging, MFA, background checks",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Insider threats or compromised credentials",
+                mitigation="Principle of least privilege, audit logging, MFA, background checks",
+                severity="medium",
+            )
+        )
 
         return risks[:5]
 
-    def _create_diagnosis(self, scope: Dict, vulnerabilities: List[Dict], threat_model: Dict) -> str:
+    def _create_diagnosis(
+        self, scope: dict, vulnerabilities: list[dict], threat_model: dict
+    ) -> str:
         """Create security diagnosis"""
         critical_count = len([v for v in vulnerabilities if v["severity"] == "critical"])
         return f"{scope['system_type']} security review: {len(vulnerabilities)} vulnerabilities ({critical_count} critical), {len(threat_model['threats'])} threats identified"
 
-    def _format_threat_model(self, threat_model: Dict) -> str:
+    def _format_threat_model(self, threat_model: dict) -> str:
         """Format threat model as documentation"""
         content = f"# Threat Model ({threat_model['methodology']})\n\n"
 
@@ -439,7 +502,7 @@ class SecurityWizard(BaseWizard):
         else:
             return "LOW"
 
-    def _format_vulnerabilities(self, vulnerabilities: List[Dict]) -> str:
+    def _format_vulnerabilities(self, vulnerabilities: list[dict]) -> str:
         """Format vulnerabilities as documentation"""
         content = "# Vulnerability Assessment\n\n"
 
@@ -456,9 +519,11 @@ class SecurityWizard(BaseWizard):
 
         return content
 
-    def _generate_security_checklist(self, scope: Dict, vulnerabilities: List[Dict], compliance: List[str]) -> str:
+    def _generate_security_checklist(
+        self, scope: dict, vulnerabilities: list[dict], compliance: list[str]
+    ) -> str:
         """Generate security checklist"""
-        compliance_str = ', '.join(compliance) if compliance else 'N/A'
+        compliance_str = ", ".join(compliance) if compliance else "N/A"
         return f"""# Security Review Checklist
 
 ## Authentication & Authorization
@@ -524,7 +589,7 @@ class SecurityWizard(BaseWizard):
 *Next Review*: [Date + 3 months]
 """
 
-    def _generate_recommendations(self, vulnerabilities: List[Dict], threat_model: Dict) -> str:
+    def _generate_recommendations(self, vulnerabilities: list[dict], threat_model: dict) -> str:
         """Generate security recommendations"""
         return f"""# Security Recommendations
 

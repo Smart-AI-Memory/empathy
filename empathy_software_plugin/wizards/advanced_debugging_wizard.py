@@ -20,7 +20,7 @@ Licensed under the Apache License, Version 2.0
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 from .base_wizard import BaseWizard
 from .debugging.bug_risk_analyzer import BugRiskAnalyzer
@@ -62,7 +62,7 @@ class AdvancedDebuggingWizard(BaseWizard):
         """Empathy level"""
         return self._level
 
-    async def analyze(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
         """
         Analyze code using linting protocols.
 
@@ -97,7 +97,7 @@ class AdvancedDebuggingWizard(BaseWizard):
 
             # Check if output_source is a file or string
             if Path(output_source).exists():
-                with open(output_source, "r") as f:
+                with open(output_source) as f:
                     output = f.read()
             else:
                 output = output_source
@@ -193,7 +193,7 @@ class AdvancedDebuggingWizard(BaseWizard):
             "confidence": 0.9,
         }
 
-    def _generate_cross_language_insights(self, issues: List[LintIssue]) -> List[Dict[str, Any]]:
+    def _generate_cross_language_insights(self, issues: list[LintIssue]) -> list[dict[str, Any]]:
         """
         Generate Level 5 cross-language insights.
 
@@ -232,8 +232,8 @@ class AdvancedDebuggingWizard(BaseWizard):
         return insights[:3]  # Top 3 insights
 
     def _analyze_trajectory(
-        self, issues: List[LintIssue], risk_summary: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, issues: list[LintIssue], risk_summary: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Analyze issue trajectory (Level 4).
 
@@ -288,8 +288,8 @@ class AdvancedDebuggingWizard(BaseWizard):
         return recommendations.get(state, "")
 
     def _generate_predictions(
-        self, trajectory: Dict[str, Any], risk_summary: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+        self, trajectory: dict[str, Any], risk_summary: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """Generate Level 4 predictions"""
         predictions = []
 
@@ -348,8 +348,8 @@ class AdvancedDebuggingWizard(BaseWizard):
         return predictions
 
     def _generate_recommendations(
-        self, risk_summary: Dict[str, Any], fixability: Dict[str, Dict], trajectory: Dict[str, Any]
-    ) -> List[str]:
+        self, risk_summary: dict[str, Any], fixability: dict[str, dict], trajectory: dict[str, Any]
+    ) -> list[str]:
         """Generate actionable recommendations"""
         recommendations = []
 

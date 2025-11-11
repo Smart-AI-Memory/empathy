@@ -6,26 +6,22 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import asyncio
 import logging
-from typing import Optional, List, Dict, Any
-from pathlib import Path
+from typing import Any
 
-from pygls.server import LanguageServer
 from pygls.lsp import types as lsp_types
 from pygls.lsp.methods import (
-    TEXT_DOCUMENT_DID_OPEN,
-    TEXT_DOCUMENT_DID_CHANGE,
-    TEXT_DOCUMENT_DID_SAVE,
     CODE_ACTION,
     HOVER,
-    COMPLETION
+    TEXT_DOCUMENT_DID_CHANGE,
+    TEXT_DOCUMENT_DID_OPEN,
+    TEXT_DOCUMENT_DID_SAVE,
 )
+from pygls.server import LanguageServer
 
-from ..coach import Coach, WizardTask, CoachOutput
-from .context_collector import ContextCollector
+from ..coach import Coach, CoachOutput, WizardTask
 from .cache import ResultCache
-
+from .context_collector import ContextCollector
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -71,9 +67,8 @@ class CoachLanguageServer(LanguageServer):
 
         @self.feature(CODE_ACTION)
         async def code_action(
-            ls: LanguageServer,
-            params: lsp_types.CodeActionParams
-        ) -> List[lsp_types.CodeAction]:
+            ls: LanguageServer, params: lsp_types.CodeActionParams
+        ) -> list[lsp_types.CodeAction]:
             """Provide quick fixes from wizards"""
             diagnostics = params.context.diagnostics
             actions = []
@@ -100,9 +95,8 @@ class CoachLanguageServer(LanguageServer):
 
         @self.feature(HOVER)
         async def hover(
-            ls: LanguageServer,
-            params: lsp_types.HoverParams
-        ) -> Optional[lsp_types.Hover]:
+            ls: LanguageServer, params: lsp_types.HoverParams
+        ) -> lsp_types.Hover | None:
             """Provide Level 4 predictions on hover"""
             document_uri = params.text_document.uri
             position = params.position
@@ -119,15 +113,14 @@ class CoachLanguageServer(LanguageServer):
                 logger.info(f"Providing Level 4 prediction: {prediction[:50]}...")
                 return lsp_types.Hover(
                     contents=lsp_types.MarkupContent(
-                        kind=lsp_types.MarkupKind.Markdown,
-                        value=prediction
+                        kind=lsp_types.MarkupKind.Markdown, value=prediction
                     )
                 )
             return None
 
         # Custom commands
         @self.command("coach/runWizard")
-        async def run_wizard(ls: LanguageServer, args: List[Any]) -> Dict[str, Any]:
+        async def run_wizard(ls: LanguageServer, args: list[Any]) -> dict[str, Any]:
             """Execute specific wizard"""
             wizard_name = args[0]
             task_data = args[1]
@@ -154,7 +147,7 @@ class CoachLanguageServer(LanguageServer):
             return result_dict
 
         @self.command("coach/multiWizardReview")
-        async def multi_wizard_review(ls: LanguageServer, args: List[Any]) -> Dict[str, Any]:
+        async def multi_wizard_review(ls: LanguageServer, args: list[Any]) -> dict[str, Any]:
             """Run multi-wizard collaboration"""
             scenario = args[0]  # e.g., "new_api_endpoint"
             files = args[1] if len(args) > 1 else []
@@ -168,9 +161,7 @@ class CoachLanguageServer(LanguageServer):
                 context = f"Scenario: {scenario}"
 
             task = WizardTask(
-                role="developer",
-                task=f"Multi-wizard review: {scenario}",
-                context=context
+                role="developer", task=f"Multi-wizard review: {scenario}", context=context
             )
 
             # Run multi-wizard
@@ -180,7 +171,7 @@ class CoachLanguageServer(LanguageServer):
             return self._serialize_coach_output(result)
 
         @self.command("coach/predict")
-        async def predict(ls: LanguageServer, args: List[Any]) -> str:
+        async def predict(ls: LanguageServer, args: list[Any]) -> str:
             """Get Level 4 prediction for specific context"""
             context_type = args[0]  # e.g., "database_connection_pool"
             current_value = args[1] if len(args) > 1 else None
@@ -191,7 +182,7 @@ class CoachLanguageServer(LanguageServer):
             task = WizardTask(
                 role="developer",
                 task=f"Predict scaling issues for {context_type}",
-                context=f"Current value: {current_value}" if current_value else context_type
+                context=f"Current value: {current_value}" if current_value else context_type,
             )
 
             result = await self.coach.process(task, multi_wizard=False)
@@ -201,13 +192,13 @@ class CoachLanguageServer(LanguageServer):
             return prediction
 
         @self.command("coach/healthCheck")
-        async def health_check(ls: LanguageServer, args: List[Any]) -> Dict[str, Any]:
+        async def health_check(ls: LanguageServer, args: list[Any]) -> dict[str, Any]:
             """Health check endpoint for IDE to verify server is running"""
             return {
                 "status": "healthy",
                 "version": "1.0.0",
                 "wizards": len(self.coach.wizards),
-                "wizard_names": [w.__class__.__name__ for w in self.coach.wizards]
+                "wizard_names": [w.__class__.__name__ for w in self.coach.wizards],
             }
 
     async def _analyze_document(self, document_uri: str):
@@ -220,7 +211,7 @@ class CoachLanguageServer(LanguageServer):
             task = WizardTask(
                 role="developer",
                 task="Analyze for security and performance issues",
-                context=context
+                context=context,
             )
 
             result = await self.coach.process(task, multi_wizard=True)
@@ -235,7 +226,7 @@ class CoachLanguageServer(LanguageServer):
         except Exception as e:
             logger.error(f"Error analyzing document {document_uri}: {e}")
 
-    def _convert_to_diagnostics(self, result: CoachOutput) -> List[lsp_types.Diagnostic]:
+    def _convert_to_diagnostics(self, result: CoachOutput) -> list[lsp_types.Diagnostic]:
         """Convert wizard output to LSP diagnostics"""
         diagnostics = []
 
@@ -245,7 +236,10 @@ class CoachLanguageServer(LanguageServer):
             # Extract issues from artifacts
             for artifact in output.artifacts:
                 content_lower = artifact.content.lower()
-                if any(keyword in content_lower for keyword in ["issue", "warning", "vulnerability", "problem"]):
+                if any(
+                    keyword in content_lower
+                    for keyword in ["issue", "warning", "vulnerability", "problem"]
+                ):
                     # Determine severity
                     if "critical" in content_lower or "security" in wizard_name:
                         severity = lsp_types.DiagnosticSeverity.Error
@@ -257,57 +251,51 @@ class CoachLanguageServer(LanguageServer):
                     diagnostic = lsp_types.Diagnostic(
                         range=lsp_types.Range(
                             start=lsp_types.Position(line=0, character=0),
-                            end=lsp_types.Position(line=0, character=100)
+                            end=lsp_types.Position(line=0, character=100),
                         ),
                         message=artifact.content[:200],  # Truncate long messages
                         severity=severity,
-                        source=f"coach.{wizard_name}"
+                        source=f"coach.{wizard_name}",
                     )
                     diagnostics.append(diagnostic)
 
         return diagnostics
 
     def _create_security_fix(
-        self,
-        diagnostic: lsp_types.Diagnostic,
-        params: lsp_types.CodeActionParams
-    ) -> Optional[lsp_types.CodeAction]:
+        self, diagnostic: lsp_types.Diagnostic, params: lsp_types.CodeActionParams
+    ) -> lsp_types.CodeAction | None:
         """Create quick fix for security issue"""
         action = lsp_types.CodeAction(
             title=f"🛡️ SecurityWizard: Fix {diagnostic.message[:50]}",
-            kind=lsp_types.CodeActionKind.QuickFix
+            kind=lsp_types.CodeActionKind.QuickFix,
         )
         action.diagnostics = [diagnostic]
         # TODO: Add actual edit to fix the issue
         return action
 
     def _create_performance_fix(
-        self,
-        diagnostic: lsp_types.Diagnostic,
-        params: lsp_types.CodeActionParams
-    ) -> Optional[lsp_types.CodeAction]:
+        self, diagnostic: lsp_types.Diagnostic, params: lsp_types.CodeActionParams
+    ) -> lsp_types.CodeAction | None:
         """Create quick fix for performance issue"""
         action = lsp_types.CodeAction(
             title=f"⚡ PerformanceWizard: Optimize {diagnostic.message[:50]}",
-            kind=lsp_types.CodeActionKind.QuickFix
+            kind=lsp_types.CodeActionKind.QuickFix,
         )
         action.diagnostics = [diagnostic]
         return action
 
     def _create_accessibility_fix(
-        self,
-        diagnostic: lsp_types.Diagnostic,
-        params: lsp_types.CodeActionParams
-    ) -> Optional[lsp_types.CodeAction]:
+        self, diagnostic: lsp_types.Diagnostic, params: lsp_types.CodeActionParams
+    ) -> lsp_types.CodeAction | None:
         """Create quick fix for accessibility issue"""
         action = lsp_types.CodeAction(
             title=f"♿ AccessibilityWizard: Fix {diagnostic.message[:50]}",
-            kind=lsp_types.CodeActionKind.QuickFix
+            kind=lsp_types.CodeActionKind.QuickFix,
         )
         action.diagnostics = [diagnostic]
         return action
 
-    async def _get_prediction(self, context: str) -> Optional[str]:
+    async def _get_prediction(self, context: str) -> str | None:
         """Get Level 4 anticipatory prediction"""
         # Look for predictable patterns in context
         context_lower = context.lower()
@@ -333,7 +321,10 @@ class CoachLanguageServer(LanguageServer):
             )
 
         # Pattern 3: Security issues (SQL, XSS, etc.)
-        if any(keyword in context_lower for keyword in ["sql", "query", "execute", "f'select", 'f"select']):
+        if any(
+            keyword in context_lower
+            for keyword in ["sql", "query", "execute", "f'select", 'f"select']
+        ):
             return (
                 "🛡️ **SecurityWizard Alert**\n\n"
                 "Potential SQL injection vulnerability detected.\n\n"
@@ -344,7 +335,7 @@ class CoachLanguageServer(LanguageServer):
 
         return None
 
-    def _serialize_coach_output(self, result: CoachOutput) -> Dict[str, Any]:
+    def _serialize_coach_output(self, result: CoachOutput) -> dict[str, Any]:
         """Convert CoachOutput to JSON-serializable dict"""
         return {
             "routing": result.routing,
@@ -355,7 +346,7 @@ class CoachLanguageServer(LanguageServer):
                     {"name": a.name, "content": a.content, "format": a.format}
                     for a in result.primary_output.artifacts
                 ],
-                "confidence": result.primary_output.confidence
+                "confidence": result.primary_output.confidence,
             },
             "secondary_outputs": [
                 {
@@ -365,12 +356,12 @@ class CoachLanguageServer(LanguageServer):
                         {"name": a.name, "content": a.content, "format": a.format}
                         for a in o.artifacts
                     ],
-                    "confidence": o.confidence
+                    "confidence": o.confidence,
                 }
                 for o in result.secondary_outputs
             ],
             "synthesis": result.synthesis,
-            "overall_confidence": result.overall_confidence
+            "overall_confidence": result.overall_confidence,
         }
 
 

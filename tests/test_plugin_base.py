@@ -9,13 +9,13 @@ Tests cover:
 """
 
 import pytest
-from datetime import datetime
+
 from src.empathy_os.plugins.base import (
-    PluginMetadata,
-    BaseWizard,
     BasePlugin,
+    BaseWizard,
     PluginError,
     PluginLoadError,
+    PluginMetadata,
     PluginValidationError,
 )
 
@@ -68,12 +68,20 @@ class TestBaseWizard:
 
         class ConcreteWizard(BaseWizard):
             async def analyze(self, context):
-                return {"issues": [], "predictions": [], "recommendations": [], "patterns": [], "confidence": 1.0}
+                return {
+                    "issues": [],
+                    "predictions": [],
+                    "recommendations": [],
+                    "patterns": [],
+                    "confidence": 1.0,
+                }
 
             def get_required_context(self):
                 return ["input_data"]
 
-        wizard = ConcreteWizard(name="Test Wizard", domain="test", empathy_level=3, category="testing")
+        wizard = ConcreteWizard(
+            name="Test Wizard", domain="test", empathy_level=3, category="testing"
+        )
 
         assert wizard.name == "Test Wizard"
         assert wizard.domain == "test"
@@ -124,7 +132,9 @@ class TestBaseWizard:
 
         context = {"code": "test"}
 
-        with pytest.raises(ValueError, match="missing required context: \\['file_path', 'language'\\]"):
+        with pytest.raises(
+            ValueError, match="missing required context: \\['file_path', 'language'\\]"
+        ):
             wizard.validate_context(context)
 
     def test_wizard_get_empathy_level(self):
@@ -250,7 +260,13 @@ class TestBasePlugin:
 
             def get_metadata(self):
                 return PluginMetadata(
-                    name="Test", version="1.0.0", domain="test", description="Test", author="Test", license="MIT", requires_core_version="1.0.0"
+                    name="Test",
+                    version="1.0.0",
+                    domain="test",
+                    description="Test",
+                    author="Test",
+                    license="MIT",
+                    requires_core_version="1.0.0",
                 )
 
             def register_wizards(self):
@@ -281,7 +297,13 @@ class TestBasePlugin:
         class ConcretePlugin(BasePlugin):
             def get_metadata(self):
                 return PluginMetadata(
-                    name="Test", version="1.0.0", domain="test", description="Test", author="Test", license="MIT", requires_core_version="1.0.0"
+                    name="Test",
+                    version="1.0.0",
+                    domain="test",
+                    description="Test",
+                    author="Test",
+                    license="MIT",
+                    requires_core_version="1.0.0",
                 )
 
             def register_wizards(self):
@@ -298,7 +320,13 @@ class TestBasePlugin:
         class ConcretePlugin(BasePlugin):
             def get_metadata(self):
                 return PluginMetadata(
-                    name="Test", version="1.0.0", domain="test", description="Test", author="Test", license="MIT", requires_core_version="1.0.0"
+                    name="Test",
+                    version="1.0.0",
+                    domain="test",
+                    description="Test",
+                    author="Test",
+                    license="MIT",
+                    requires_core_version="1.0.0",
                 )
 
             def register_wizards(self):
@@ -335,7 +363,13 @@ class TestBasePlugin:
         class ConcretePlugin(BasePlugin):
             def get_metadata(self):
                 return PluginMetadata(
-                    name="Test", version="1.0.0", domain="test", description="Test", author="Test", license="MIT", requires_core_version="1.0.0"
+                    name="Test",
+                    version="1.0.0",
+                    domain="test",
+                    description="Test",
+                    author="Test",
+                    license="MIT",
+                    requires_core_version="1.0.0",
                 )
 
             def register_wizards(self):
@@ -353,7 +387,9 @@ class TestBasePlugin:
 
         class TestWizard(BaseWizard):
             def __init__(self):
-                super().__init__(name="Info Wizard", domain="test", empathy_level=3, category="info")
+                super().__init__(
+                    name="Info Wizard", domain="test", empathy_level=3, category="info"
+                )
 
             async def analyze(self, context):
                 return {}
@@ -364,7 +400,13 @@ class TestBasePlugin:
         class ConcretePlugin(BasePlugin):
             def get_metadata(self):
                 return PluginMetadata(
-                    name="Test", version="1.0.0", domain="test", description="Test", author="Test", license="MIT", requires_core_version="1.0.0"
+                    name="Test",
+                    version="1.0.0",
+                    domain="test",
+                    description="Test",
+                    author="Test",
+                    license="MIT",
+                    requires_core_version="1.0.0",
                 )
 
             def register_wizards(self):
@@ -387,7 +429,13 @@ class TestBasePlugin:
         class ConcretePlugin(BasePlugin):
             def get_metadata(self):
                 return PluginMetadata(
-                    name="Test", version="1.0.0", domain="test", description="Test", author="Test", license="MIT", requires_core_version="1.0.0"
+                    name="Test",
+                    version="1.0.0",
+                    domain="test",
+                    description="Test",
+                    author="Test",
+                    license="MIT",
+                    requires_core_version="1.0.0",
                 )
 
             def register_wizards(self):
@@ -404,7 +452,13 @@ class TestBasePlugin:
         class ConcretePlugin(BasePlugin):
             def get_metadata(self):
                 return PluginMetadata(
-                    name="Test", version="1.0.0", domain="test", description="Test", author="Test", license="MIT", requires_core_version="1.0.0"
+                    name="Test",
+                    version="1.0.0",
+                    domain="test",
+                    description="Test",
+                    author="Test",
+                    license="MIT",
+                    requires_core_version="1.0.0",
                 )
 
             def register_wizards(self):

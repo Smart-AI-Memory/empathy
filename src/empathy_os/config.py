@@ -15,7 +15,7 @@ import json
 import os
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 try:
     import yaml
@@ -61,7 +61,7 @@ class EmpathyConfig:
 
     # Logging settings
     log_level: str = "INFO"
-    log_file: Optional[str] = None
+    log_file: str | None = None
     structured_logging: bool = True
 
     # Pattern library settings
@@ -75,7 +75,7 @@ class EmpathyConfig:
     leverage_point_analysis: bool = True
 
     # Custom metadata
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def from_yaml(cls, filepath: str) -> "EmpathyConfig":
@@ -101,7 +101,7 @@ class EmpathyConfig:
                 "PyYAML is required for YAML configuration. " "Install with: pip install pyyaml"
             )
 
-        with open(filepath, "r") as f:
+        with open(filepath) as f:
             data = yaml.safe_load(f)
 
         return cls(**data)
@@ -121,7 +121,7 @@ class EmpathyConfig:
             >>> config = EmpathyConfig.from_json("empathy.config.json")
             >>> empathy = EmpathyOS(config=config)
         """
-        with open(filepath, "r") as f:
+        with open(filepath) as f:
             data = json.load(f)
 
         return cls(**data)
@@ -186,7 +186,7 @@ class EmpathyConfig:
         return cls(**data)
 
     @classmethod
-    def from_file(cls, filepath: Optional[str] = None) -> "EmpathyConfig":
+    def from_file(cls, filepath: str | None = None) -> "EmpathyConfig":
         """
         Automatically detect and load configuration from file
 
@@ -267,7 +267,7 @@ class EmpathyConfig:
         with open(filepath, "w") as f:
             json.dump(data, f, indent=indent)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert configuration to dictionary"""
         return asdict(self)
 
@@ -354,7 +354,7 @@ class EmpathyConfig:
 
 
 def load_config(
-    filepath: Optional[str] = None, use_env: bool = True, defaults: Optional[Dict[str, Any]] = None
+    filepath: str | None = None, use_env: bool = True, defaults: dict[str, Any] | None = None
 ) -> EmpathyConfig:
     """
     Load configuration with flexible precedence

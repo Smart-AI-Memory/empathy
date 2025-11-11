@@ -9,17 +9,16 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import re
-from typing import List, Dict, Any
+from typing import Any
 
 from .base_wizard import (
     BaseWizard,
-    WizardTask,
-    WizardOutput,
-    WizardArtifact,
-    WizardRisk,
-    WizardHandoff,
     EmpathyChecks,
+    WizardArtifact,
+    WizardHandoff,
+    WizardOutput,
+    WizardRisk,
+    WizardTask,
 )
 
 
@@ -36,15 +35,25 @@ class DevOpsWizard(BaseWizard):
     def can_handle(self, task: WizardTask) -> float:
         """Determine if this is a DevOps task"""
         # High-priority DevOps phrases (worth 2 points each)
-        devops_phrases = [
-            "ci/cd", "pipeline", "deploy", "deployment", "docker", "kubernetes"
-        ]
+        devops_phrases = ["ci/cd", "pipeline", "deploy", "deployment", "docker", "kubernetes"]
 
         # Secondary indicators (worth 1 point each)
         secondary_keywords = [
-            "terraform", "github actions", "jenkins", "gitlab", "k8s", "helm",
-            "container", "orchestration", "infrastructure", "iac", "ansible",
-            "build", "release", "continuous integration", "continuous deployment"
+            "terraform",
+            "github actions",
+            "jenkins",
+            "gitlab",
+            "k8s",
+            "helm",
+            "container",
+            "orchestration",
+            "infrastructure",
+            "iac",
+            "ansible",
+            "build",
+            "release",
+            "continuous integration",
+            "continuous deployment",
         ]
 
         task_lower = (task.task + " " + task.context).lower()
@@ -97,33 +106,25 @@ class DevOpsWizard(BaseWizard):
             WizardArtifact(
                 type="doc",
                 title="DevOps Strategy Document",
-                content=self._generate_strategy_document(diagnosis, deployment_strategy)
+                content=self._generate_strategy_document(diagnosis, deployment_strategy),
             ),
             WizardArtifact(
-                type="code",
-                title="CI/CD Pipeline (GitHub Actions)",
-                content=pipeline_config
+                type="code", title="CI/CD Pipeline (GitHub Actions)", content=pipeline_config
             ),
             WizardArtifact(
-                type="code",
-                title="Infrastructure as Code (Terraform)",
-                content=infrastructure_code
+                type="code", title="Infrastructure as Code (Terraform)", content=infrastructure_code
             ),
             WizardArtifact(
                 type="code",
                 title="Kubernetes Manifests",
-                content=self._generate_kubernetes_manifests(task, infrastructure)
+                content=self._generate_kubernetes_manifests(task, infrastructure),
             ),
             WizardArtifact(
                 type="doc",
                 title="Deployment Guide",
-                content=self._create_deployment_guide(task, deployment_strategy)
+                content=self._create_deployment_guide(task, deployment_strategy),
             ),
-            WizardArtifact(
-                type="doc",
-                title="Deployment Forecast",
-                content=deployment_forecast
-            )
+            WizardArtifact(type="doc", title="Deployment Forecast", content=deployment_forecast),
         ]
 
         # Step 12: Generate next actions
@@ -132,14 +133,18 @@ class DevOpsWizard(BaseWizard):
             "Test pipeline with feature branch",
             "Deploy to staging environment",
             "Run smoke tests and validation",
-            "Create production deployment runbook"
+            "Create production deployment runbook",
         ] + self._generate_anticipatory_actions(task)
 
         # Step 13: Create empathy checks
         empathy_checks = EmpathyChecks(
             cognitive=f"Considered {task.role}'s constraints: deployment safety, rollback capabilities, zero-downtime",
             emotional=f"Acknowledged: Deployments are stressful, {emotional_state['urgency']} urgency detected",
-            anticipatory=deployment_forecast[:200] + "..." if len(deployment_forecast) > 200 else deployment_forecast
+            anticipatory=(
+                deployment_forecast[:200] + "..."
+                if len(deployment_forecast) > 200
+                else deployment_forecast
+            ),
         )
 
         return WizardOutput(
@@ -152,14 +157,14 @@ class DevOpsWizard(BaseWizard):
                 "4. Implement deployment automation",
                 "5. Configure monitoring and alerting",
                 "6. Create rollback procedures",
-                "7. Document deployment process"
+                "7. Document deployment process",
             ],
             artifacts=artifacts,
             risks=risks,
             handoffs=self._create_handoffs(task),
             next_actions=next_actions,
             empathy_checks=empathy_checks,
-            confidence=self.can_handle(task)
+            confidence=self.can_handle(task),
         )
 
     def _analyze_devops_requirements(self, task: WizardTask) -> str:
@@ -186,17 +191,17 @@ class DevOpsWizard(BaseWizard):
             categories.append("General DevOps")
 
         analysis += f"**Category**: {', '.join(categories)}\n\n"
-        analysis += f"**Context**: {task.context[:300]}...\n" if len(task.context) > 300 else f"**Context**: {task.context}\n"
+        analysis += (
+            f"**Context**: {task.context[:300]}...\n"
+            if len(task.context) > 300
+            else f"**Context**: {task.context}\n"
+        )
 
         return analysis
 
-    def _design_pipeline(self, task: WizardTask) -> Dict[str, Any]:
+    def _design_pipeline(self, task: WizardTask) -> dict[str, Any]:
         """Design CI/CD pipeline"""
-        pipeline = {
-            "stages": [],
-            "triggers": [],
-            "environments": []
-        }
+        pipeline = {"stages": [], "triggers": [], "environments": []}
 
         # Standard pipeline stages
         pipeline["stages"] = [
@@ -206,8 +211,8 @@ class DevOpsWizard(BaseWizard):
                     "Checkout code",
                     "Install dependencies",
                     "Build application",
-                    "Build Docker image"
-                ]
+                    "Build Docker image",
+                ],
             },
             {
                 "name": "Test",
@@ -215,24 +220,20 @@ class DevOpsWizard(BaseWizard):
                     "Run unit tests",
                     "Run integration tests",
                     "Run security scans (SAST)",
-                    "Check code coverage (target: 80%+)"
-                ]
+                    "Check code coverage (target: 80%+)",
+                ],
             },
             {
                 "name": "Package",
                 "steps": [
                     "Tag Docker image",
                     "Push to container registry",
-                    "Generate SBOM (Software Bill of Materials)"
-                ]
+                    "Generate SBOM (Software Bill of Materials)",
+                ],
             },
             {
                 "name": "Deploy to Staging",
-                "steps": [
-                    "Deploy to staging environment",
-                    "Run smoke tests",
-                    "Run E2E tests"
-                ]
+                "steps": ["Deploy to staging environment", "Run smoke tests", "Run E2E tests"],
             },
             {
                 "name": "Deploy to Production",
@@ -240,27 +241,27 @@ class DevOpsWizard(BaseWizard):
                     "Manual approval (for production)",
                     "Deploy with blue-green strategy",
                     "Run health checks",
-                    "Monitor error rates"
-                ]
-            }
+                    "Monitor error rates",
+                ],
+            },
         ]
 
         pipeline["triggers"] = [
             "Push to main branch → Deploy to staging",
             "Create release tag → Deploy to production",
-            "Pull request → Run tests only"
+            "Pull request → Run tests only",
         ]
 
         pipeline["environments"] = ["development", "staging", "production"]
 
         return pipeline
 
-    def _design_infrastructure(self, task: WizardTask) -> Dict[str, Any]:
+    def _design_infrastructure(self, task: WizardTask) -> dict[str, Any]:
         """Design infrastructure architecture"""
         infrastructure = {
             "cloud_provider": "AWS",  # Default, can be GCP, Azure
             "components": [],
-            "scaling": {}
+            "scaling": {},
         }
 
         task_lower = (task.task + " " + task.context).lower()
@@ -270,30 +271,30 @@ class DevOpsWizard(BaseWizard):
             {
                 "name": "Container Registry",
                 "service": "ECR (Elastic Container Registry)",
-                "purpose": "Store Docker images"
+                "purpose": "Store Docker images",
             },
             {
                 "name": "Kubernetes Cluster",
                 "service": "EKS (Elastic Kubernetes Service)",
-                "purpose": "Orchestrate containers"
+                "purpose": "Orchestrate containers",
             },
             {
                 "name": "Load Balancer",
                 "service": "ALB (Application Load Balancer)",
-                "purpose": "Distribute traffic"
+                "purpose": "Distribute traffic",
             },
             {
                 "name": "Database",
                 "service": "RDS (Managed PostgreSQL)",
-                "purpose": "Data persistence"
-            }
+                "purpose": "Data persistence",
+            },
         ]
 
         infrastructure["scaling"] = {
             "horizontal": "Kubernetes HPA (Horizontal Pod Autoscaler)",
             "min_replicas": 2,
             "max_replicas": 10,
-            "target_cpu": "70%"
+            "target_cpu": "70%",
         }
 
         return infrastructure
@@ -330,7 +331,7 @@ class DevOpsWizard(BaseWizard):
 
         return strategy
 
-    def _generate_pipeline_config(self, task: WizardTask, pipeline: Dict) -> str:
+    def _generate_pipeline_config(self, task: WizardTask, pipeline: dict) -> str:
         """Generate CI/CD pipeline configuration"""
         config = "# GitHub Actions CI/CD Pipeline\n\n"
 
@@ -405,7 +406,7 @@ class DevOpsWizard(BaseWizard):
 
         config += "      - name: Switch traffic to green\n"
         config += "        run: |\n"
-        config += "          kubectl patch service app -n production -p '{\"spec\":{\"selector\":{\"version\":\"green\"}}}'\n\n"
+        config += '          kubectl patch service app -n production -p \'{"spec":{"selector":{"version":"green"}}}\'\n\n'
 
         config += "      - name: Monitor for 5 minutes\n"
         config += "        run: |\n"
@@ -415,52 +416,52 @@ class DevOpsWizard(BaseWizard):
         config += "      - name: Rollback on failure\n"
         config += "        if: failure()\n"
         config += "        run: |\n"
-        config += "          kubectl patch service app -n production -p '{\"spec\":{\"selector\":{\"version\":\"blue\"}}}'\n"
+        config += '          kubectl patch service app -n production -p \'{"spec":{"selector":{"version":"blue"}}}\'\n'
         config += "```\n"
 
         return config
 
-    def _generate_infrastructure_code(self, task: WizardTask, infrastructure: Dict) -> str:
+    def _generate_infrastructure_code(self, task: WizardTask, infrastructure: dict) -> str:
         """Generate Terraform infrastructure code"""
         terraform = "# Terraform Infrastructure Configuration\n\n"
 
         terraform += "```hcl\n"
         terraform += "# main.tf\n\n"
         terraform += "terraform {\n"
-        terraform += "  required_version = \">= 1.0\"\n"
+        terraform += '  required_version = ">= 1.0"\n'
         terraform += "  required_providers {\n"
         terraform += "    aws = {\n"
-        terraform += "      source  = \"hashicorp/aws\"\n"
-        terraform += "      version = \"~> 5.0\"\n"
+        terraform += '      source  = "hashicorp/aws"\n'
+        terraform += '      version = "~> 5.0"\n'
         terraform += "    }\n"
         terraform += "  }\n"
-        terraform += "  backend \"s3\" {\n"
-        terraform += "    bucket = \"terraform-state-bucket\"\n"
-        terraform += "    key    = \"app/terraform.tfstate\"\n"
-        terraform += "    region = \"us-east-1\"\n"
+        terraform += '  backend "s3" {\n'
+        terraform += '    bucket = "terraform-state-bucket"\n'
+        terraform += '    key    = "app/terraform.tfstate"\n'
+        terraform += '    region = "us-east-1"\n'
         terraform += "  }\n"
         terraform += "}\n\n"
 
-        terraform += "provider \"aws\" {\n"
+        terraform += 'provider "aws" {\n'
         terraform += "  region = var.aws_region\n"
         terraform += "}\n\n"
 
         terraform += "# VPC and Networking\n"
-        terraform += "module \"vpc\" {\n"
-        terraform += "  source = \"terraform-aws-modules/vpc/aws\"\n"
-        terraform += "  name = \"app-vpc\"\n"
-        terraform += "  cidr = \"10.0.0.0/16\"\n"
-        terraform += "  azs  = [\"us-east-1a\", \"us-east-1b\", \"us-east-1c\"]\n"
-        terraform += "  private_subnets = [\"10.0.1.0/24\", \"10.0.2.0/24\", \"10.0.3.0/24\"]\n"
-        terraform += "  public_subnets  = [\"10.0.101.0/24\", \"10.0.102.0/24\", \"10.0.103.0/24\"]\n"
+        terraform += 'module "vpc" {\n'
+        terraform += '  source = "terraform-aws-modules/vpc/aws"\n'
+        terraform += '  name = "app-vpc"\n'
+        terraform += '  cidr = "10.0.0.0/16"\n'
+        terraform += '  azs  = ["us-east-1a", "us-east-1b", "us-east-1c"]\n'
+        terraform += '  private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]\n'
+        terraform += '  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]\n'
         terraform += "  enable_nat_gateway = true\n"
         terraform += "}\n\n"
 
         terraform += "# EKS Cluster\n"
-        terraform += "module \"eks\" {\n"
-        terraform += "  source  = \"terraform-aws-modules/eks/aws\"\n"
-        terraform += "  cluster_name    = \"app-cluster\"\n"
-        terraform += "  cluster_version = \"1.28\"\n"
+        terraform += 'module "eks" {\n'
+        terraform += '  source  = "terraform-aws-modules/eks/aws"\n'
+        terraform += '  cluster_name    = "app-cluster"\n'
+        terraform += '  cluster_version = "1.28"\n'
         terraform += "  vpc_id          = module.vpc.vpc_id\n"
         terraform += "  subnet_ids      = module.vpc.private_subnets\n\n"
 
@@ -469,18 +470,18 @@ class DevOpsWizard(BaseWizard):
         terraform += "      desired_size = 2\n"
         terraform += "      min_size     = 2\n"
         terraform += "      max_size     = 10\n"
-        terraform += "      instance_types = [\"t3.medium\"]\n"
+        terraform += '      instance_types = ["t3.medium"]\n'
         terraform += "    }\n"
         terraform += "  }\n"
         terraform += "}\n\n"
 
         terraform += "# RDS Database\n"
-        terraform += "module \"db\" {\n"
-        terraform += "  source  = \"terraform-aws-modules/rds/aws\"\n"
-        terraform += "  identifier = \"app-db\"\n"
-        terraform += "  engine     = \"postgres\"\n"
-        terraform += "  engine_version = \"15.4\"\n"
-        terraform += "  instance_class = \"db.t3.medium\"\n"
+        terraform += 'module "db" {\n'
+        terraform += '  source  = "terraform-aws-modules/rds/aws"\n'
+        terraform += '  identifier = "app-db"\n'
+        terraform += '  engine     = "postgres"\n'
+        terraform += '  engine_version = "15.4"\n'
+        terraform += '  instance_class = "db.t3.medium"\n'
         terraform += "  allocated_storage = 100\n"
         terraform += "  storage_encrypted = true\n"
         terraform += "  multi_az = true\n"
@@ -488,19 +489,19 @@ class DevOpsWizard(BaseWizard):
         terraform += "}\n\n"
 
         terraform += "# Application Load Balancer\n"
-        terraform += "module \"alb\" {\n"
-        terraform += "  source  = \"terraform-aws-modules/alb/aws\"\n"
-        terraform += "  name    = \"app-alb\"\n"
+        terraform += 'module "alb" {\n'
+        terraform += '  source  = "terraform-aws-modules/alb/aws"\n'
+        terraform += '  name    = "app-alb"\n'
         terraform += "  vpc_id  = module.vpc.vpc_id\n"
         terraform += "  subnets = module.vpc.public_subnets\n"
         terraform += "  security_groups = [aws_security_group.alb.id]\n\n"
 
         terraform += "  target_groups = [\n"
         terraform += "    {\n"
-        terraform += "      name_prefix      = \"app-\"\n"
-        terraform += "      backend_protocol = \"HTTP\"\n"
+        terraform += '      name_prefix      = "app-"\n'
+        terraform += '      backend_protocol = "HTTP"\n'
         terraform += "      backend_port     = 80\n"
-        terraform += "      target_type      = \"ip\"\n"
+        terraform += '      target_type      = "ip"\n'
         terraform += "    }\n"
         terraform += "  ]\n"
         terraform += "}\n"
@@ -508,22 +509,22 @@ class DevOpsWizard(BaseWizard):
 
         terraform += "```hcl\n"
         terraform += "# variables.tf\n\n"
-        terraform += "variable \"aws_region\" {\n"
-        terraform += "  description = \"AWS region\"\n"
+        terraform += 'variable "aws_region" {\n'
+        terraform += '  description = "AWS region"\n'
         terraform += "  type        = string\n"
-        terraform += "  default     = \"us-east-1\"\n"
+        terraform += '  default     = "us-east-1"\n'
         terraform += "}\n\n"
 
-        terraform += "variable \"environment\" {\n"
-        terraform += "  description = \"Environment name\"\n"
+        terraform += 'variable "environment" {\n'
+        terraform += '  description = "Environment name"\n'
         terraform += "  type        = string\n"
-        terraform += "  default     = \"production\"\n"
+        terraform += '  default     = "production"\n'
         terraform += "}\n"
         terraform += "```\n"
 
         return terraform
 
-    def _generate_kubernetes_manifests(self, task: WizardTask, infrastructure: Dict) -> str:
+    def _generate_kubernetes_manifests(self, task: WizardTask, infrastructure: dict) -> str:
         """Generate Kubernetes deployment manifests"""
         manifests = "# Kubernetes Deployment Manifests\n\n"
 
@@ -558,11 +559,11 @@ class DevOpsWizard(BaseWizard):
         manifests += "              key: database-url\n"
         manifests += "        resources:\n"
         manifests += "          requests:\n"
-        manifests += "            memory: \"256Mi\"\n"
-        manifests += "            cpu: \"250m\"\n"
+        manifests += '            memory: "256Mi"\n'
+        manifests += '            cpu: "250m"\n'
         manifests += "          limits:\n"
-        manifests += "            memory: \"512Mi\"\n"
-        manifests += "            cpu: \"500m\"\n"
+        manifests += '            memory: "512Mi"\n'
+        manifests += '            cpu: "500m"\n'
         manifests += "        livenessProbe:\n"
         manifests += "          httpGet:\n"
         manifests += "            path: /health\n"
@@ -640,7 +641,7 @@ class DevOpsWizard(BaseWizard):
         guide += "### 1. Pre-deployment\n"
         guide += "```bash\n"
         guide += "# Tag release\n"
-        guide += "git tag -a v1.0.0 -m \"Release v1.0.0\"\n"
+        guide += 'git tag -a v1.0.0 -m "Release v1.0.0"\n'
         guide += "git push origin v1.0.0\n\n"
         guide += "# This triggers the production deployment pipeline\n"
         guide += "```\n\n"
@@ -668,7 +669,7 @@ class DevOpsWizard(BaseWizard):
         guide += "## Rollback Procedure\n\n"
         guide += "```bash\n"
         guide += "# Option 1: Rollback to previous version (blue-green)\n"
-        guide += "kubectl patch service app -n production -p '{\"spec\":{\"selector\":{\"version\":\"blue\"}}}'\n\n"
+        guide += 'kubectl patch service app -n production -p \'{"spec":{"selector":{"version":"blue"}}}\'\n\n'
         guide += "# Option 2: Rollback Kubernetes deployment\n"
         guide += "kubectl rollout undo deployment/app -n production\n\n"
         guide += "# Verify rollback\n"
@@ -684,7 +685,7 @@ class DevOpsWizard(BaseWizard):
 
         return guide
 
-    def _predict_deployment_issues(self, task: WizardTask, pipeline: Dict) -> str:
+    def _predict_deployment_issues(self, task: WizardTask, pipeline: dict) -> str:
         """Level 4: Predict deployment and infrastructure issues"""
         forecast = "# Deployment Forecast (Level 4: Anticipatory)\n\n"
 
@@ -724,7 +725,7 @@ class DevOpsWizard(BaseWizard):
 
         forecast += "### ⚠️ Configuration Management Chaos (90 days)\n"
         forecast += "**Prediction**: Config differences between environments cause bugs\n"
-        forecast += "**Impact**: \"Works on my machine\" syndrome, production incidents\n"
+        forecast += '**Impact**: "Works on my machine" syndrome, production incidents\n'
         forecast += "**Preventive Action**:\n"
         forecast += "- Centralize config management (AWS Secrets Manager, Vault)\n"
         forecast += "- Use environment variables (12-factor app)\n"
@@ -753,54 +754,66 @@ class DevOpsWizard(BaseWizard):
 
         return doc
 
-    def _identify_risks(self, task: WizardTask, strategy: str) -> List[WizardRisk]:
+    def _identify_risks(self, task: WizardTask, strategy: str) -> list[WizardRisk]:
         """Identify deployment and infrastructure risks"""
         risks = []
 
         # Deployment failure risk
-        risks.append(WizardRisk(
-            risk="Deployment may fail and cause downtime",
-            mitigation="Use blue-green deployment for zero-downtime. Keep previous version running for fast rollback.",
-            severity="high"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Deployment may fail and cause downtime",
+                mitigation="Use blue-green deployment for zero-downtime. Keep previous version running for fast rollback.",
+                severity="high",
+            )
+        )
 
         # Configuration drift risk
-        risks.append(WizardRisk(
-            risk="Manual infrastructure changes cause configuration drift",
-            mitigation="Use Terraform for ALL infrastructure changes. Enable drift detection in CI/CD.",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Manual infrastructure changes cause configuration drift",
+                mitigation="Use Terraform for ALL infrastructure changes. Enable drift detection in CI/CD.",
+                severity="medium",
+            )
+        )
 
         # Security vulnerability risk
-        risks.append(WizardRisk(
-            risk="Docker images may contain security vulnerabilities",
-            mitigation="Add container scanning to CI/CD (Trivy, Snyk). Fail builds on high/critical vulnerabilities.",
-            severity="high"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Docker images may contain security vulnerabilities",
+                mitigation="Add container scanning to CI/CD (Trivy, Snyk). Fail builds on high/critical vulnerabilities.",
+                severity="high",
+            )
+        )
 
         # Cost overrun risk
-        risks.append(WizardRisk(
-            risk="Auto-scaling may cause unexpected cloud costs",
-            mitigation="Set up cost monitoring alerts. Configure maximum scaling limits. Review costs weekly.",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Auto-scaling may cause unexpected cloud costs",
+                mitigation="Set up cost monitoring alerts. Configure maximum scaling limits. Review costs weekly.",
+                severity="medium",
+            )
+        )
 
         return risks
 
-    def _create_handoffs(self, task: WizardTask) -> List[WizardHandoff]:
+    def _create_handoffs(self, task: WizardTask) -> list[WizardHandoff]:
         """Create handoffs for DevOps work"""
         handoffs = []
 
         if task.role == "developer":
-            handoffs.append(WizardHandoff(
-                owner="DevOps / Platform Team",
-                what="Review infrastructure code, set up monitoring, configure secrets management",
-                when="Before production deployment"
-            ))
-            handoffs.append(WizardHandoff(
-                owner="Security Team",
-                what="Review security configurations, approve container images, validate network policies",
-                when="Before production deployment"
-            ))
+            handoffs.append(
+                WizardHandoff(
+                    owner="DevOps / Platform Team",
+                    what="Review infrastructure code, set up monitoring, configure secrets management",
+                    when="Before production deployment",
+                )
+            )
+            handoffs.append(
+                WizardHandoff(
+                    owner="Security Team",
+                    what="Review security configurations, approve container images, validate network policies",
+                    when="Before production deployment",
+                )
+            )
 
         return handoffs

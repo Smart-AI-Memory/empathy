@@ -5,11 +5,7 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import pytest
-from empathy_os.emergence import (
-    EmergenceDetector,
-    EmergentProperty
-)
+from empathy_os.emergence import EmergenceDetector, EmergentProperty
 
 
 class TestEmergentProperty:
@@ -21,7 +17,7 @@ class TestEmergentProperty:
             property_type="norm",
             description="Quick response time norm",
             confidence=0.8,
-            components_involved=["ai", "human"]
+            components_involved=["ai", "human"],
         )
 
         assert prop.property_type == "norm"
@@ -37,7 +33,7 @@ class TestEmergentProperty:
             property_type="pattern",
             description="Collaboration pattern",
             confidence=0.9,
-            evidence=evidence
+            evidence=evidence,
         )
 
         assert len(prop.evidence) == 2
@@ -67,9 +63,7 @@ class TestEmergenceDetector:
         """Test norm detection with insufficient data"""
         detector = EmergenceDetector()
 
-        interactions = [
-            {"response_time": 5}
-        ]
+        interactions = [{"response_time": 5}]
 
         norms = detector.detect_emergent_norms(interactions)
 
@@ -85,7 +79,7 @@ class TestEmergenceDetector:
             {"response_time": 5.0},
             {"response_time": 5.2},
             {"response_time": 4.8},
-            {"response_time": 5.1}
+            {"response_time": 5.1},
         ]
 
         norms = detector.detect_emergent_norms(interactions)
@@ -106,7 +100,7 @@ class TestEmergenceDetector:
             {"response_time": 1.0},
             {"response_time": 10.0},
             {"response_time": 2.0},
-            {"response_time": 15.0}
+            {"response_time": 15.0},
         ]
 
         norms = detector.detect_emergent_norms(interactions)
@@ -166,7 +160,7 @@ class TestEmergenceDetector:
             "trust": 0.6,
             "interactions": 20,
             "shared_patterns": 3,  # New capability
-            "collaboration_norms": 2  # New capability
+            "collaboration_norms": 2,  # New capability
         }
 
         score = detector.measure_emergence(baseline, current)
@@ -184,7 +178,7 @@ class TestEmergenceDetector:
             "interactions": 100,  # Many more interactions
             "shared_patterns": 8,  # Multiple patterns
             "custom_workflows": 3,  # New capabilities
-            "team_norms": 5
+            "team_norms": 5,
         }
 
         score = detector.measure_emergence(baseline, current)
@@ -210,7 +204,7 @@ class TestEmergenceDetector:
         history = [
             {"trust": 0.3, "interactions": 5},
             {"trust": 0.5, "interactions": 15, "patterns": 2},
-            {"trust": 0.7, "interactions": 30, "patterns": 5, "workflows": 3}
+            {"trust": 0.7, "interactions": 30, "patterns": 5, "workflows": 3},
         ]
 
         capabilities = detector.detect_emergent_capabilities(history)
@@ -301,14 +295,8 @@ class TestEmergenceDetector:
         detector = EmergenceDetector()
 
         # Add some properties
-        prop1 = EmergentProperty(
-            property_type="norm",
-            description="Test norm"
-        )
-        prop2 = EmergentProperty(
-            property_type="capability",
-            description="Test capability"
-        )
+        prop1 = EmergentProperty(property_type="norm", description="Test norm")
+        prop2 = EmergentProperty(property_type="capability", description="Test capability")
 
         detector.detected_properties = [prop1, prop2]
 
@@ -358,7 +346,7 @@ class TestEmergenceDetector:
             {"response_time": 5.0, "type": "clarifying_question"},
             {"response_time": 5.1, "type": "clarifying_question"},
             {"response_time": 4.9, "type": "response"},
-            {"response_time": 5.0, "type": "clarifying_question"}
+            {"response_time": 5.0, "type": "clarifying_question"},
         ]
 
         norms = detector.detect_emergent_norms(interactions)
@@ -375,7 +363,7 @@ class TestEmergenceDetector:
         history = [
             {"trust": 0.3},
             {"trust": 0.5, "workflows": 2},
-            {"trust": 0.7, "workflows": 5, "patterns": 3}
+            {"trust": 0.7, "workflows": 5, "patterns": 3},
         ]
 
         capabilities = detector.detect_emergent_capabilities(history)

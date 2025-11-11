@@ -2,10 +2,10 @@
 Subscriptions API endpoints.
 Handles license purchases, subscriptions, and team management.
 """
-from fastapi import APIRouter, HTTPException, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
+from fastapi import APIRouter, Depends
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, EmailStr
-from typing import List, Optional
 
 router = APIRouter(prefix="/api/subscriptions", tags=["subscriptions"])
 security = HTTPBearer()
@@ -13,6 +13,7 @@ security = HTTPBearer()
 
 class PurchaseRequest(BaseModel):
     """Purchase request model."""
+
     product: str  # "book", "team_license"
     quantity: int = 1
     payment_method: str
@@ -20,6 +21,7 @@ class PurchaseRequest(BaseModel):
 
 class TeamMemberRequest(BaseModel):
     """Add team member request model."""
+
     email: EmailStr
     role: str = "developer"
 
@@ -44,17 +46,16 @@ async def get_subscriptions(credentials: HTTPAuthorizationCredentials = Depends(
                 "licenses": 1,
                 "plugins": ["software", "healthcare"],
                 "purchased_at": "2025-01-15T10:00:00Z",
-                "type": "perpetual"
+                "type": "perpetual",
             }
         ],
-        "total": 1
+        "total": 1,
     }
 
 
 @router.post("/purchase")
 async def purchase_subscription(
-    request: PurchaseRequest,
-    credentials: HTTPAuthorizationCredentials = Depends(security)
+    request: PurchaseRequest, credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     """
     Purchase a new subscription or additional licenses.
@@ -75,7 +76,7 @@ async def purchase_subscription(
         "quantity": request.quantity,
         "total_amount": 49.00 * request.quantity,
         "license_keys": [f"LICENSE-KEY-{i+1}" for i in range(request.quantity)],
-        "message": "Purchase successful! Check your email for license keys."
+        "message": "Purchase successful! Check your email for license keys.",
     }
 
 
@@ -98,18 +99,17 @@ async def get_team_members(credentials: HTTPAuthorizationCredentials = Depends(s
                 "name": "Demo User",
                 "role": "admin",
                 "status": "active",
-                "license_assigned": True
+                "license_assigned": True,
             }
         ],
         "available_licenses": 4,
-        "total_licenses": 5
+        "total_licenses": 5,
     }
 
 
 @router.post("/team/members")
 async def add_team_member(
-    request: TeamMemberRequest,
-    credentials: HTTPAuthorizationCredentials = Depends(security)
+    request: TeamMemberRequest, credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     """
     Add a new team member.
@@ -124,18 +124,13 @@ async def add_team_member(
     return {
         "success": True,
         "message": f"Invitation sent to {request.email}",
-        "member": {
-            "email": request.email,
-            "role": request.role,
-            "status": "invited"
-        }
+        "member": {"email": request.email, "role": request.role, "status": "invited"},
     }
 
 
 @router.delete("/team/members/{user_id}")
 async def remove_team_member(
-    user_id: str,
-    credentials: HTTPAuthorizationCredentials = Depends(security)
+    user_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     """
     Remove a team member.
@@ -147,11 +142,7 @@ async def remove_team_member(
     Returns:
         Removal confirmation
     """
-    return {
-        "success": True,
-        "message": f"User {user_id} removed from team",
-        "license_freed": True
-    }
+    return {"success": True, "message": f"User {user_id} removed from team", "license_freed": True}
 
 
 @router.get("/licenses")
@@ -174,18 +165,17 @@ async def get_licenses(credentials: HTTPAuthorizationCredentials = Depends(secur
                 "status": "active",
                 "machine_id": "machine_abc123",
                 "activated_at": "2025-01-15T10:30:00Z",
-                "version": "1.0.0"
+                "version": "1.0.0",
             }
         ],
         "total_available": 1,
-        "total_used": 1
+        "total_used": 1,
     }
 
 
 @router.post("/licenses/{license_id}/deactivate")
 async def deactivate_license(
-    license_id: str,
-    credentials: HTTPAuthorizationCredentials = Depends(security)
+    license_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     """
     Deactivate a license from a machine.
@@ -200,5 +190,5 @@ async def deactivate_license(
     return {
         "success": True,
         "message": "License deactivated. You can now activate it on another machine.",
-        "license_id": license_id
+        "license_id": license_id,
     }

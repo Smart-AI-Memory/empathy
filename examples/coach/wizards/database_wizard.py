@@ -9,17 +9,16 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import re
-from typing import List, Dict, Any
+from typing import Any
 
 from .base_wizard import (
     BaseWizard,
-    WizardTask,
-    WizardOutput,
-    WizardArtifact,
-    WizardRisk,
-    WizardHandoff,
     EmpathyChecks,
+    WizardArtifact,
+    WizardHandoff,
+    WizardOutput,
+    WizardRisk,
+    WizardTask,
 )
 
 
@@ -36,14 +35,21 @@ class DatabaseWizard(BaseWizard):
     def can_handle(self, task: WizardTask) -> float:
         """Determine if this is a database task"""
         # High-priority database phrases (worth 2 points each)
-        database_phrases = [
-            "database", "schema", "migration", "sql", "query", "index"
-        ]
+        database_phrases = ["database", "schema", "migration", "sql", "query", "index"]
 
         # Secondary indicators (worth 1 point each)
         secondary_keywords = [
-            "alembic", "postgres", "mysql", "mongodb", "table", "column",
-            "constraint", "foreign key", "join", "transaction", "orm"
+            "alembic",
+            "postgres",
+            "mysql",
+            "mongodb",
+            "table",
+            "column",
+            "constraint",
+            "foreign key",
+            "join",
+            "transaction",
+            "orm",
         ]
 
         task_lower = (task.task + " " + task.context).lower()
@@ -96,33 +102,23 @@ class DatabaseWizard(BaseWizard):
             WizardArtifact(
                 type="doc",
                 title="Database Design Document",
-                content=self._generate_design_document(diagnosis, schema_design)
+                content=self._generate_design_document(diagnosis, schema_design),
             ),
-            WizardArtifact(
-                type="code",
-                title="Migration Scripts",
-                content=migration_scripts
-            ),
+            WizardArtifact(type="code", title="Migration Scripts", content=migration_scripts),
             WizardArtifact(
                 type="doc",
                 title="Schema Diagram (Mermaid ERD)",
-                content=self._generate_schema_diagram(schema_design)
+                content=self._generate_schema_diagram(schema_design),
             ),
             WizardArtifact(
-                type="code",
-                title="Index Recommendations",
-                content=index_recommendations
+                type="code", title="Index Recommendations", content=index_recommendations
             ),
             WizardArtifact(
                 type="doc",
                 title="Rollback Plan",
-                content=self._create_rollback_plan(task, migration_plan)
+                content=self._create_rollback_plan(task, migration_plan),
             ),
-            WizardArtifact(
-                type="doc",
-                title="Data Growth Forecast",
-                content=growth_forecast
-            )
+            WizardArtifact(type="doc", title="Data Growth Forecast", content=growth_forecast),
         ]
 
         # Step 12: Generate next actions
@@ -132,7 +128,9 @@ class DatabaseWizard(BaseWizard):
         empathy_checks = EmpathyChecks(
             cognitive=f"Considered {task.role}'s constraints: data integrity, zero-downtime migrations, rollback safety",
             emotional=f"Acknowledged: Database changes are high-risk, {emotional_state['urgency']} urgency detected",
-            anticipatory=growth_forecast[:200] + "..." if len(growth_forecast) > 200 else growth_forecast
+            anticipatory=(
+                growth_forecast[:200] + "..." if len(growth_forecast) > 200 else growth_forecast
+            ),
         )
 
         return WizardOutput(
@@ -144,7 +142,7 @@ class DatabaseWizard(BaseWizard):
             handoffs=self._create_handoffs(task),
             next_actions=next_actions,
             empathy_checks=empathy_checks,
-            confidence=self.can_handle(task)
+            confidence=self.can_handle(task),
         )
 
     def _analyze_database_requirements(self, task: WizardTask) -> str:
@@ -171,75 +169,105 @@ class DatabaseWizard(BaseWizard):
             categories.append("General Database Task")
 
         analysis += f"**Category**: {', '.join(categories)}\n\n"
-        analysis += f"**Context**: {task.context[:300]}...\n" if len(task.context) > 300 else f"**Context**: {task.context}\n"
+        analysis += (
+            f"**Context**: {task.context[:300]}...\n"
+            if len(task.context) > 300
+            else f"**Context**: {task.context}\n"
+        )
 
         return analysis
 
-    def _design_schema(self, task: WizardTask) -> Dict[str, Any]:
+    def _design_schema(self, task: WizardTask) -> dict[str, Any]:
         """Design database schema"""
         task_lower = (task.task + " " + task.context).lower()
 
         # Example schema design based on common patterns
-        schema = {
-            "tables": [],
-            "relationships": [],
-            "constraints": []
-        }
+        schema = {"tables": [], "relationships": [], "constraints": []}
 
         # Infer table structure from context
         if "user" in task_lower:
-            schema["tables"].append({
-                "name": "users",
-                "columns": [
-                    {"name": "id", "type": "UUID", "constraints": ["PRIMARY KEY"]},
-                    {"name": "email", "type": "VARCHAR(255)", "constraints": ["UNIQUE", "NOT NULL"]},
-                    {"name": "name", "type": "VARCHAR(255)", "constraints": ["NOT NULL"]},
-                    {"name": "created_at", "type": "TIMESTAMP", "constraints": ["DEFAULT NOW()"]},
-                    {"name": "updated_at", "type": "TIMESTAMP", "constraints": ["DEFAULT NOW()"]}
-                ],
-                "indexes": [
-                    {"name": "idx_users_email", "columns": ["email"], "type": "BTREE"}
-                ]
-            })
+            schema["tables"].append(
+                {
+                    "name": "users",
+                    "columns": [
+                        {"name": "id", "type": "UUID", "constraints": ["PRIMARY KEY"]},
+                        {
+                            "name": "email",
+                            "type": "VARCHAR(255)",
+                            "constraints": ["UNIQUE", "NOT NULL"],
+                        },
+                        {"name": "name", "type": "VARCHAR(255)", "constraints": ["NOT NULL"]},
+                        {
+                            "name": "created_at",
+                            "type": "TIMESTAMP",
+                            "constraints": ["DEFAULT NOW()"],
+                        },
+                        {
+                            "name": "updated_at",
+                            "type": "TIMESTAMP",
+                            "constraints": ["DEFAULT NOW()"],
+                        },
+                    ],
+                    "indexes": [{"name": "idx_users_email", "columns": ["email"], "type": "BTREE"}],
+                }
+            )
 
         if "order" in task_lower or "product" in task_lower:
-            schema["tables"].append({
-                "name": "orders",
-                "columns": [
-                    {"name": "id", "type": "UUID", "constraints": ["PRIMARY KEY"]},
-                    {"name": "user_id", "type": "UUID", "constraints": ["NOT NULL"]},
-                    {"name": "status", "type": "VARCHAR(50)", "constraints": ["NOT NULL"]},
-                    {"name": "total", "type": "DECIMAL(10,2)", "constraints": ["NOT NULL"]},
-                    {"name": "created_at", "type": "TIMESTAMP", "constraints": ["DEFAULT NOW()"]}
-                ],
-                "indexes": [
-                    {"name": "idx_orders_user_id", "columns": ["user_id"], "type": "BTREE"},
-                    {"name": "idx_orders_status", "columns": ["status"], "type": "BTREE"},
-                    {"name": "idx_orders_created_at", "columns": ["created_at"], "type": "BTREE"}
-                ]
-            })
+            schema["tables"].append(
+                {
+                    "name": "orders",
+                    "columns": [
+                        {"name": "id", "type": "UUID", "constraints": ["PRIMARY KEY"]},
+                        {"name": "user_id", "type": "UUID", "constraints": ["NOT NULL"]},
+                        {"name": "status", "type": "VARCHAR(50)", "constraints": ["NOT NULL"]},
+                        {"name": "total", "type": "DECIMAL(10,2)", "constraints": ["NOT NULL"]},
+                        {
+                            "name": "created_at",
+                            "type": "TIMESTAMP",
+                            "constraints": ["DEFAULT NOW()"],
+                        },
+                    ],
+                    "indexes": [
+                        {"name": "idx_orders_user_id", "columns": ["user_id"], "type": "BTREE"},
+                        {"name": "idx_orders_status", "columns": ["status"], "type": "BTREE"},
+                        {
+                            "name": "idx_orders_created_at",
+                            "columns": ["created_at"],
+                            "type": "BTREE",
+                        },
+                    ],
+                }
+            )
 
-            schema["relationships"].append({
-                "from_table": "orders",
-                "to_table": "users",
-                "type": "many-to-one",
-                "foreign_key": "user_id"
-            })
+            schema["relationships"].append(
+                {
+                    "from_table": "orders",
+                    "to_table": "users",
+                    "type": "many-to-one",
+                    "foreign_key": "user_id",
+                }
+            )
 
         # Default table if none detected
         if not schema["tables"]:
-            schema["tables"].append({
-                "name": "example_table",
-                "columns": [
-                    {"name": "id", "type": "SERIAL", "constraints": ["PRIMARY KEY"]},
-                    {"name": "name", "type": "VARCHAR(255)", "constraints": ["NOT NULL"]},
-                    {"name": "created_at", "type": "TIMESTAMP", "constraints": ["DEFAULT NOW()"]}
-                ]
-            })
+            schema["tables"].append(
+                {
+                    "name": "example_table",
+                    "columns": [
+                        {"name": "id", "type": "SERIAL", "constraints": ["PRIMARY KEY"]},
+                        {"name": "name", "type": "VARCHAR(255)", "constraints": ["NOT NULL"]},
+                        {
+                            "name": "created_at",
+                            "type": "TIMESTAMP",
+                            "constraints": ["DEFAULT NOW()"],
+                        },
+                    ],
+                }
+            )
 
         return schema
 
-    def _analyze_query_patterns(self, task: WizardTask) -> List[Dict[str, Any]]:
+    def _analyze_query_patterns(self, task: WizardTask) -> list[dict[str, Any]]:
         """Analyze common query patterns"""
         task_lower = (task.task + " " + task.context).lower()
 
@@ -247,37 +275,45 @@ class DatabaseWizard(BaseWizard):
 
         # Detect query patterns
         if "search" in task_lower or "filter" in task_lower:
-            patterns.append({
-                "pattern": "Filtering/Search",
-                "example": "SELECT * FROM users WHERE email LIKE '%@example.com'",
-                "recommendation": "Add GIN index for text search or BTREE for exact matches"
-            })
+            patterns.append(
+                {
+                    "pattern": "Filtering/Search",
+                    "example": "SELECT * FROM users WHERE email LIKE '%@example.com'",
+                    "recommendation": "Add GIN index for text search or BTREE for exact matches",
+                }
+            )
 
         if "join" in task_lower or "relationship" in task_lower:
-            patterns.append({
-                "pattern": "Join Queries",
-                "example": "SELECT * FROM orders o JOIN users u ON o.user_id = u.id",
-                "recommendation": "Ensure foreign key columns are indexed"
-            })
+            patterns.append(
+                {
+                    "pattern": "Join Queries",
+                    "example": "SELECT * FROM orders o JOIN users u ON o.user_id = u.id",
+                    "recommendation": "Ensure foreign key columns are indexed",
+                }
+            )
 
         if "aggregate" in task_lower or "count" in task_lower or "sum" in task_lower:
-            patterns.append({
-                "pattern": "Aggregation",
-                "example": "SELECT user_id, COUNT(*) FROM orders GROUP BY user_id",
-                "recommendation": "Consider materialized views for frequently computed aggregates"
-            })
+            patterns.append(
+                {
+                    "pattern": "Aggregation",
+                    "example": "SELECT user_id, COUNT(*) FROM orders GROUP BY user_id",
+                    "recommendation": "Consider materialized views for frequently computed aggregates",
+                }
+            )
 
         # Default pattern
         if not patterns:
-            patterns.append({
-                "pattern": "Standard CRUD",
-                "example": "SELECT, INSERT, UPDATE, DELETE operations",
-                "recommendation": "Ensure primary keys and commonly filtered columns are indexed"
-            })
+            patterns.append(
+                {
+                    "pattern": "Standard CRUD",
+                    "example": "SELECT, INSERT, UPDATE, DELETE operations",
+                    "recommendation": "Ensure primary keys and commonly filtered columns are indexed",
+                }
+            )
 
         return patterns
 
-    def _create_migration_plan(self, task: WizardTask, schema: Dict) -> List[str]:
+    def _create_migration_plan(self, task: WizardTask, schema: dict) -> list[str]:
         """Create step-by-step migration plan"""
         plan = ["## Database Migration Plan\n"]
 
@@ -314,16 +350,16 @@ class DatabaseWizard(BaseWizard):
 
         return plan
 
-    def _generate_migration_scripts(self, task: WizardTask, schema: Dict) -> str:
+    def _generate_migration_scripts(self, task: WizardTask, schema: dict) -> str:
         """Generate database migration scripts"""
         scripts = "# Database Migration Scripts\n\n"
 
         scripts += "## Alembic Migration (Python/SQLAlchemy)\n\n"
         scripts += "```python\n"
         scripts += '"""Add users and orders tables\n\n'
-        scripts += 'Revision ID: 001\n'
-        scripts += 'Revises: \n'
-        scripts += 'Create Date: 2025-01-15 10:00:00\n'
+        scripts += "Revision ID: 001\n"
+        scripts += "Revises: \n"
+        scripts += "Create Date: 2025-01-15 10:00:00\n"
         scripts += '"""\n\n'
         scripts += "from alembic import op\n"
         scripts += "import sqlalchemy as sa\n"
@@ -334,7 +370,7 @@ class DatabaseWizard(BaseWizard):
 
         for table in schema.get("tables", []):
             scripts += f"    # Create {table['name']} table\n"
-            scripts += f"    op.create_table(\n"
+            scripts += "    op.create_table(\n"
             scripts += f"        '{table['name']}',\n"
             for col in table.get("columns", []):
                 col_type = col["type"]
@@ -346,7 +382,9 @@ class DatabaseWizard(BaseWizard):
             for idx in table.get("indexes", []):
                 scripts += f"    # Create index on {table['name']}\n"
                 columns = ", ".join([f"'{c}'" for c in idx["columns"]])
-                scripts += f"    op.create_index('{idx['name']}', '{table['name']}', [{columns}])\n\n"
+                scripts += (
+                    f"    op.create_index('{idx['name']}', '{table['name']}', [{columns}])\n\n"
+                )
 
         scripts += "\ndef downgrade():\n"
         for table in reversed(schema.get("tables", [])):
@@ -389,7 +427,7 @@ class DatabaseWizard(BaseWizard):
 
         return scripts
 
-    def _recommend_indexes(self, task: WizardTask, query_patterns: List[Dict]) -> str:
+    def _recommend_indexes(self, task: WizardTask, query_patterns: list[dict]) -> str:
         """Recommend database indexes"""
         recommendations = "# Index Recommendations\n\n"
 
@@ -403,7 +441,9 @@ class DatabaseWizard(BaseWizard):
         recommendations += "### Composite Indexes\n"
         recommendations += "- **Order matters**: Most selective column first\n"
         recommendations += "- **Covers multiple queries**: INDEX(user_id, created_at)\n"
-        recommendations += "- **Leftmost prefix rule**: Can use INDEX(a,b) for queries on 'a' alone\n\n"
+        recommendations += (
+            "- **Leftmost prefix rule**: Can use INDEX(a,b) for queries on 'a' alone\n\n"
+        )
 
         recommendations += "## Query-Specific Recommendations\n\n"
 
@@ -417,7 +457,9 @@ class DatabaseWizard(BaseWizard):
         recommendations += "-- Create indexes concurrently (PostgreSQL - no table lock)\n"
         recommendations += "CREATE INDEX CONCURRENTLY idx_users_email ON users(email);\n"
         recommendations += "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);\n"
-        recommendations += "CREATE INDEX CONCURRENTLY idx_orders_created_at ON orders(created_at);\n\n"
+        recommendations += (
+            "CREATE INDEX CONCURRENTLY idx_orders_created_at ON orders(created_at);\n\n"
+        )
         recommendations += "-- Composite index for common query pattern\n"
         recommendations += "CREATE INDEX CONCURRENTLY idx_orders_user_created ON orders(user_id, created_at DESC);\n\n"
         recommendations += "-- Partial index for frequently filtered subset\n"
@@ -427,7 +469,9 @@ class DatabaseWizard(BaseWizard):
         recommendations += "## Index Monitoring\n\n"
         recommendations += "```sql\n"
         recommendations += "-- Check index usage (PostgreSQL)\n"
-        recommendations += "SELECT schemaname, tablename, indexname, idx_scan, idx_tup_read, idx_tup_fetch\n"
+        recommendations += (
+            "SELECT schemaname, tablename, indexname, idx_scan, idx_tup_read, idx_tup_fetch\n"
+        )
         recommendations += "FROM pg_stat_user_indexes\n"
         recommendations += "ORDER BY idx_scan ASC;\n\n"
         recommendations += "-- Find unused indexes (idx_scan = 0)\n"
@@ -441,7 +485,7 @@ class DatabaseWizard(BaseWizard):
 
         return recommendations
 
-    def _predict_data_growth(self, task: WizardTask, schema: Dict) -> str:
+    def _predict_data_growth(self, task: WizardTask, schema: dict) -> str:
         """Level 4: Predict data growth and scaling issues"""
         forecast = "# Data Growth Forecast (Level 4: Anticipatory)\n\n"
 
@@ -492,7 +536,7 @@ class DatabaseWizard(BaseWizard):
 
         return forecast
 
-    def _generate_design_document(self, diagnosis: str, schema: Dict) -> str:
+    def _generate_design_document(self, diagnosis: str, schema: dict) -> str:
         """Generate comprehensive database design document"""
         doc = f"{diagnosis}\n\n"
 
@@ -522,7 +566,7 @@ class DatabaseWizard(BaseWizard):
 
         return doc
 
-    def _generate_schema_diagram(self, schema: Dict) -> str:
+    def _generate_schema_diagram(self, schema: dict) -> str:
         """Generate Mermaid ERD diagram"""
         diagram = "# Entity Relationship Diagram\n\n"
         diagram += "```mermaid\n"
@@ -530,30 +574,32 @@ class DatabaseWizard(BaseWizard):
 
         # Define entities
         for table in schema.get("tables", []):
-            table_name = table['name'].upper()
+            table_name = table["name"].upper()
             diagram += f"    {table_name} {{\n"
             for col in table.get("columns", []):
-                col_type = col['type'].split('(')[0]  # Remove size
+                col_type = col["type"].split("(")[0]  # Remove size
                 diagram += f"        {col_type} {col['name']}\n"
             diagram += "    }\n"
 
         # Define relationships
         for rel in schema.get("relationships", []):
-            from_table = rel['from_table'].upper()
-            to_table = rel['to_table'].upper()
-            if rel['type'] == 'many-to-one':
+            from_table = rel["from_table"].upper()
+            to_table = rel["to_table"].upper()
+            if rel["type"] == "many-to-one":
                 diagram += f"    {from_table} }}o--|| {to_table} : \"{rel['foreign_key']}\"\n"
-            elif rel['type'] == 'one-to-many':
-                diagram += f"    {from_table} ||--o{{ {to_table} : \"has\"\n"
-            elif rel['type'] == 'many-to-many':
-                diagram += f"    {from_table} }}o--o{{ {to_table} : \"relates\"\n"
+            elif rel["type"] == "one-to-many":
+                diagram += f'    {from_table} ||--o{{ {to_table} : "has"\n'
+            elif rel["type"] == "many-to-many":
+                diagram += f'    {from_table} }}o--o{{ {to_table} : "relates"\n'
 
         diagram += "```\n\n"
-        diagram += "**Note**: View this diagram in a Mermaid-compatible viewer (GitHub, VSCode, etc.)\n"
+        diagram += (
+            "**Note**: View this diagram in a Mermaid-compatible viewer (GitHub, VSCode, etc.)\n"
+        )
 
         return diagram
 
-    def _create_rollback_plan(self, task: WizardTask, migration_plan: List[str]) -> str:
+    def _create_rollback_plan(self, task: WizardTask, migration_plan: list[str]) -> str:
         """Create rollback plan for migrations"""
         rollback = "# Database Rollback Plan\n\n"
 
@@ -605,54 +651,66 @@ class DatabaseWizard(BaseWizard):
 
         return rollback
 
-    def _identify_risks(self, task: WizardTask, migration_plan: List[str]) -> List[WizardRisk]:
+    def _identify_risks(self, task: WizardTask, migration_plan: list[str]) -> list[WizardRisk]:
         """Identify database migration risks"""
         risks = []
 
         # Data loss risk
-        risks.append(WizardRisk(
-            risk="Migration may cause data loss or corruption",
-            mitigation="Create full database backup before migration. Test migration on copy of production data in staging.",
-            severity="high"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Migration may cause data loss or corruption",
+                mitigation="Create full database backup before migration. Test migration on copy of production data in staging.",
+                severity="high",
+            )
+        )
 
         # Downtime risk
-        risks.append(WizardRisk(
-            risk="Migration may require downtime (table locks during ALTER)",
-            mitigation="Use online DDL operations: CREATE INDEX CONCURRENTLY (PostgreSQL) or pt-online-schema-change (MySQL)",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Migration may require downtime (table locks during ALTER)",
+                mitigation="Use online DDL operations: CREATE INDEX CONCURRENTLY (PostgreSQL) or pt-online-schema-change (MySQL)",
+                severity="medium",
+            )
+        )
 
         # Performance impact
-        risks.append(WizardRisk(
-            risk="New indexes may slow down write operations",
-            mitigation="Monitor write throughput after migration. Consider adding indexes during low-traffic periods.",
-            severity="low"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="New indexes may slow down write operations",
+                mitigation="Monitor write throughput after migration. Consider adding indexes during low-traffic periods.",
+                severity="low",
+            )
+        )
 
         # Rollback complexity
-        risks.append(WizardRisk(
-            risk="Some migrations are difficult or impossible to rollback (data type changes)",
-            mitigation="Test rollback procedure in staging. Keep detailed rollback plan ready.",
-            severity="high"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Some migrations are difficult or impossible to rollback (data type changes)",
+                mitigation="Test rollback procedure in staging. Keep detailed rollback plan ready.",
+                severity="high",
+            )
+        )
 
         return risks
 
-    def _create_handoffs(self, task: WizardTask) -> List[WizardHandoff]:
+    def _create_handoffs(self, task: WizardTask) -> list[WizardHandoff]:
         """Create handoffs for database work"""
         handoffs = []
 
         if task.role == "developer":
-            handoffs.append(WizardHandoff(
-                owner="DBA / Database Administrator",
-                what="Review migration scripts, approve index strategy, verify backup procedures",
-                when="Before production migration"
-            ))
-            handoffs.append(WizardHandoff(
-                owner="DevOps / SRE",
-                what="Set up database monitoring, configure backup automation, prepare rollback plan",
-                when="Before production deployment"
-            ))
+            handoffs.append(
+                WizardHandoff(
+                    owner="DBA / Database Administrator",
+                    what="Review migration scripts, approve index strategy, verify backup procedures",
+                    when="Before production migration",
+                )
+            )
+            handoffs.append(
+                WizardHandoff(
+                    owner="DevOps / SRE",
+                    what="Set up database monitoring, configure backup automation, prepare rollback plan",
+                    when="Before production deployment",
+                )
+            )
 
         return handoffs

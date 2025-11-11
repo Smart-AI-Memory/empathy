@@ -3,8 +3,6 @@ Authentication API endpoints.
 Handles user authentication, tokens, and license validation.
 """
 
-from typing import Optional
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, EmailStr
@@ -26,7 +24,7 @@ class RegisterRequest(BaseModel):
     email: EmailStr
     password: str
     name: str
-    license_key: Optional[str] = None
+    license_key: str | None = None
 
 
 class TokenResponse(BaseModel):

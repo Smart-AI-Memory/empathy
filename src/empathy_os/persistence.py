@@ -14,7 +14,6 @@ import json
 import sqlite3
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
 
 from .core import CollaborationState
 from .pattern_library import Pattern, PatternLibrary
@@ -95,7 +94,7 @@ class PatternPersistence:
         Example:
             >>> library = PatternPersistence.load_from_json("patterns.json")
         """
-        with open(filepath, "r") as f:
+        with open(filepath) as f:
             data = json.load(f)
 
         library = PatternLibrary()
@@ -306,7 +305,7 @@ class StateManager:
         with open(filepath, "w") as f:
             json.dump(data, f, indent=2)
 
-    def load_state(self, user_id: str) -> Optional[CollaborationState]:
+    def load_state(self, user_id: str) -> CollaborationState | None:
         """
         Load user's previous state
 
@@ -329,7 +328,7 @@ class StateManager:
             return None
 
         try:
-            with open(filepath, "r") as f:
+            with open(filepath) as f:
                 data = json.load(f)
 
             state = CollaborationState()
@@ -347,7 +346,7 @@ class StateManager:
             # Corrupted file - return None
             return None
 
-    def list_users(self) -> List[str]:
+    def list_users(self) -> list[str]:
         """
         List all users with saved state
 
@@ -440,7 +439,7 @@ class MetricsCollector:
         empathy_level: int,
         success: bool,
         response_time_ms: float,
-        metadata: Optional[Dict] = None,
+        metadata: dict | None = None,
     ):
         """
         Record a single metric event
@@ -483,7 +482,7 @@ class MetricsCollector:
         conn.commit()
         conn.close()
 
-    def get_user_stats(self, user_id: str) -> Dict:
+    def get_user_stats(self, user_id: str) -> dict:
         """
         Get aggregated statistics for a user
 

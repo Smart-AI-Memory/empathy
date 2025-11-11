@@ -18,7 +18,7 @@ Licensed under the Apache License, Version 2.0
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 @dataclass
@@ -32,8 +32,8 @@ class EmpathyAction:
     level: int  # 1-5
     action_type: str
     description: str
-    context: Dict[str, Any] = field(default_factory=dict)
-    outcome: Optional[str] = None
+    context: dict[str, Any] = field(default_factory=dict)
+    outcome: str | None = None
     timestamp: datetime = field(default_factory=datetime.now)
 
 
@@ -49,10 +49,10 @@ class EmpathyLevel(ABC):
     level_name: str
 
     def __init__(self):
-        self.actions_taken: List[EmpathyAction] = []
+        self.actions_taken: list[EmpathyAction] = []
 
     @abstractmethod
-    def respond(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    def respond(self, context: dict[str, Any]) -> dict[str, Any]:
         """
         Respond to a situation at this empathy level
 
@@ -68,8 +68,8 @@ class EmpathyLevel(ABC):
         self,
         action_type: str,
         description: str,
-        context: Dict[str, Any],
-        outcome: Optional[str] = None,
+        context: dict[str, Any],
+        outcome: str | None = None,
     ):
         """Record an action taken at this level"""
         action = EmpathyAction(
@@ -81,7 +81,7 @@ class EmpathyLevel(ABC):
         )
         self.actions_taken.append(action)
 
-    def get_action_history(self) -> List[EmpathyAction]:
+    def get_action_history(self) -> list[EmpathyAction]:
         """Get history of actions at this level"""
         return self.actions_taken
 
@@ -119,7 +119,7 @@ class Level1Reactive(EmpathyLevel):
     level_number = 1
     level_name = "Reactive Empathy"
 
-    def respond(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    def respond(self, context: dict[str, Any]) -> dict[str, Any]:
         """
         Respond reactively to explicit request
 
@@ -184,7 +184,7 @@ class Level2Guided(EmpathyLevel):
     level_number = 2
     level_name = "Guided Empathy"
 
-    def respond(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    def respond(self, context: dict[str, Any]) -> dict[str, Any]:
         """
         Respond with guided exploration
 
@@ -214,7 +214,7 @@ class Level2Guided(EmpathyLevel):
 
         return response
 
-    def _generate_clarifying_questions(self, request: str, ambiguity: str) -> List[str]:
+    def _generate_clarifying_questions(self, request: str, ambiguity: str) -> list[str]:
         """Generate clarifying questions based on ambiguity"""
         questions = [
             "What specific aspects are most important to you?",
@@ -227,7 +227,7 @@ class Level2Guided(EmpathyLevel):
 
         return questions
 
-    def _suggest_exploration_paths(self, request: str) -> List[str]:
+    def _suggest_exploration_paths(self, request: str) -> list[str]:
         """Suggest paths for collaborative exploration"""
         return [
             "We could explore technical approaches",
@@ -272,7 +272,7 @@ class Level3Proactive(EmpathyLevel):
     level_number = 3
     level_name = "Proactive Empathy"
 
-    def respond(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    def respond(self, context: dict[str, Any]) -> dict[str, Any]:
         """
         Respond proactively to observed needs
 
@@ -303,7 +303,7 @@ class Level3Proactive(EmpathyLevel):
 
         return response
 
-    def _identify_proactive_actions(self, need: str, confidence: float) -> Dict[str, Any]:
+    def _identify_proactive_actions(self, need: str, confidence: float) -> dict[str, Any]:
         """Identify appropriate proactive actions"""
         if confidence >= 0.8:
             permission_needed = False
@@ -363,7 +363,7 @@ class Level4Anticipatory(EmpathyLevel):
     level_number = 4
     level_name = "Anticipatory Empathy"
 
-    def respond(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    def respond(self, context: dict[str, Any]) -> dict[str, Any]:
         """
         Respond anticipatorily to predicted future needs
 
@@ -398,8 +398,8 @@ class Level4Anticipatory(EmpathyLevel):
         return response
 
     def _predict_future_needs(
-        self, current_state: Dict[str, Any], trajectory: str, horizon: str
-    ) -> Dict[str, Any]:
+        self, current_state: dict[str, Any], trajectory: str, horizon: str
+    ) -> dict[str, Any]:
         """Predict future needs based on current trajectory"""
         # Simulate prediction logic
         predicted_needs = [
@@ -465,7 +465,7 @@ class Level5Systems(EmpathyLevel):
     level_number = 5
     level_name = "Systems Empathy"
 
-    def respond(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    def respond(self, context: dict[str, Any]) -> dict[str, Any]:
         """
         Respond with systems-level solution
 
@@ -501,8 +501,8 @@ class Level5Systems(EmpathyLevel):
         return response
 
     def _design_system_solution(
-        self, problem_class: str, instances: int, pattern: Optional[str]
-    ) -> Dict[str, Any]:
+        self, problem_class: str, instances: int, pattern: str | None
+    ) -> dict[str, Any]:
         """Design a system-level solution"""
         return {
             "system": {

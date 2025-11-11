@@ -11,7 +11,7 @@ import json
 import re
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class Severity(Enum):
@@ -39,10 +39,10 @@ class LintIssue:
     severity: Severity
     linter: str
     has_autofix: bool = False
-    fix_suggestion: Optional[str] = None
-    context: Optional[Dict[str, Any]] = None
+    fix_suggestion: str | None = None
+    context: dict[str, Any] | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return {
             "file_path": self.file_path,
@@ -64,7 +64,7 @@ class BaseLinterParser:
     def __init__(self, linter_name: str):
         self.linter_name = linter_name
 
-    def parse(self, output: str, format: str = "auto") -> List[LintIssue]:
+    def parse(self, output: str, format: str = "auto") -> list[LintIssue]:
         """
         Parse linter output into standardized issues.
 
@@ -77,9 +77,9 @@ class BaseLinterParser:
         """
         raise NotImplementedError
 
-    def parse_file(self, file_path: str, format: str = "auto") -> List[LintIssue]:
+    def parse_file(self, file_path: str, format: str = "auto") -> list[LintIssue]:
         """Parse linter output from file"""
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             return self.parse(f.read(), format)
 
 
@@ -93,7 +93,7 @@ class ESLintParser(BaseLinterParser):
     def __init__(self):
         super().__init__("eslint")
 
-    def parse(self, output: str, format: str = "auto") -> List[LintIssue]:
+    def parse(self, output: str, format: str = "auto") -> list[LintIssue]:
         """Parse ESLint output"""
 
         # Auto-detect format
@@ -105,7 +105,7 @@ class ESLintParser(BaseLinterParser):
         else:
             return self._parse_text(output)
 
-    def _parse_json(self, output: str) -> List[LintIssue]:
+    def _parse_json(self, output: str) -> list[LintIssue]:
         """Parse ESLint JSON format"""
         issues = []
 
@@ -141,7 +141,7 @@ class ESLintParser(BaseLinterParser):
 
         return issues
 
-    def _parse_text(self, output: str) -> List[LintIssue]:
+    def _parse_text(self, output: str) -> list[LintIssue]:
         """Parse ESLint text format"""
         issues = []
 
@@ -192,7 +192,7 @@ class PylintParser(BaseLinterParser):
     def __init__(self):
         super().__init__("pylint")
 
-    def parse(self, output: str, format: str = "auto") -> List[LintIssue]:
+    def parse(self, output: str, format: str = "auto") -> list[LintIssue]:
         """Parse Pylint output"""
 
         # Auto-detect format
@@ -204,7 +204,7 @@ class PylintParser(BaseLinterParser):
         else:
             return self._parse_text(output)
 
-    def _parse_json(self, output: str) -> List[LintIssue]:
+    def _parse_json(self, output: str) -> list[LintIssue]:
         """Parse Pylint JSON format"""
         issues = []
 
@@ -235,7 +235,7 @@ class PylintParser(BaseLinterParser):
 
         return issues
 
-    def _parse_text(self, output: str) -> List[LintIssue]:
+    def _parse_text(self, output: str) -> list[LintIssue]:
         """Parse Pylint text format"""
         issues = []
 
@@ -290,7 +290,7 @@ class MyPyParser(BaseLinterParser):
     def __init__(self):
         super().__init__("mypy")
 
-    def parse(self, output: str, format: str = "auto") -> List[LintIssue]:
+    def parse(self, output: str, format: str = "auto") -> list[LintIssue]:
         """Parse mypy output (text only)"""
         issues = []
 
@@ -327,7 +327,7 @@ class TypeScriptParser(BaseLinterParser):
     def __init__(self):
         super().__init__("typescript")
 
-    def parse(self, output: str, format: str = "auto") -> List[LintIssue]:
+    def parse(self, output: str, format: str = "auto") -> list[LintIssue]:
         """Parse tsc output"""
         issues = []
 
@@ -364,7 +364,7 @@ class ClippyParser(BaseLinterParser):
     def __init__(self):
         super().__init__("clippy")
 
-    def parse(self, output: str, format: str = "auto") -> List[LintIssue]:
+    def parse(self, output: str, format: str = "auto") -> list[LintIssue]:
         """Parse clippy output"""
         issues = []
 
@@ -403,7 +403,7 @@ class ClippyParser(BaseLinterParser):
 
         return issues
 
-    def _create_issue(self, issue_dict: Dict) -> LintIssue:
+    def _create_issue(self, issue_dict: dict) -> LintIssue:
         """Create LintIssue from dict"""
         return LintIssue(
             file_path=issue_dict.get("file_path", ""),
@@ -457,12 +457,12 @@ class LinterParserFactory:
         return parser_class()
 
     @classmethod
-    def get_supported_linters(cls) -> List[str]:
+    def get_supported_linters(cls) -> list[str]:
         """Get list of supported linters"""
         return list(cls._parsers.keys())
 
 
-def parse_linter_output(linter_name: str, output: str, format: str = "auto") -> List[LintIssue]:
+def parse_linter_output(linter_name: str, output: str, format: str = "auto") -> list[LintIssue]:
     """
     Convenience function to parse linter output.
 

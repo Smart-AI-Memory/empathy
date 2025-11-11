@@ -9,17 +9,16 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-import re
-from typing import List, Dict, Any
+from typing import Any
 
 from .base_wizard import (
     BaseWizard,
-    WizardTask,
-    WizardOutput,
-    WizardArtifact,
-    WizardRisk,
-    WizardHandoff,
     EmpathyChecks,
+    WizardArtifact,
+    WizardHandoff,
+    WizardOutput,
+    WizardRisk,
+    WizardTask,
 )
 
 
@@ -37,14 +36,27 @@ class RefactoringWizard(BaseWizard):
         """Determine if this is a refactoring task"""
         # High-priority refactoring phrases (worth 2 points each)
         refactoring_phrases = [
-            "refactor", "refactoring", "code quality", "technical debt",
-            "clean code", "code smell", "maintainability"
+            "refactor",
+            "refactoring",
+            "code quality",
+            "technical debt",
+            "clean code",
+            "code smell",
+            "maintainability",
         ]
 
         # Secondary indicators (worth 1 point each)
         secondary_keywords = [
-            "complexity", "duplicate", "duplication", "extract", "split",
-            "simplify", "improve", "cleanup", "reorganize", "restructure"
+            "complexity",
+            "duplicate",
+            "duplication",
+            "extract",
+            "split",
+            "simplify",
+            "improve",
+            "cleanup",
+            "reorganize",
+            "restructure",
         ]
 
         task_lower = (task.task + " " + task.context).lower()
@@ -94,28 +106,20 @@ class RefactoringWizard(BaseWizard):
             WizardArtifact(
                 type="doc",
                 title="Code Quality Report",
-                content=self._generate_quality_report(diagnosis, smells, complexity)
+                content=self._generate_quality_report(diagnosis, smells, complexity),
             ),
             WizardArtifact(
-                type="doc",
-                title="Refactoring Plan",
-                content="\n".join(refactoring_plan)
+                type="doc", title="Refactoring Plan", content="\n".join(refactoring_plan)
             ),
+            WizardArtifact(type="code", title="Refactored Code Examples", content=refactored_code),
             WizardArtifact(
-                type="code",
-                title="Refactored Code Examples",
-                content=refactored_code
-            ),
-            WizardArtifact(
-                type="doc",
-                title="Maintainability Forecast",
-                content=maintainability_forecast
+                type="doc", title="Maintainability Forecast", content=maintainability_forecast
             ),
             WizardArtifact(
                 type="checklist",
                 title="Refactoring Safety Checklist",
-                content=self._create_safety_checklist(task)
-            )
+                content=self._create_safety_checklist(task),
+            ),
         ]
 
         # Step 11: Generate next actions
@@ -124,14 +128,14 @@ class RefactoringWizard(BaseWizard):
             "Create feature branch for refactoring work",
             "Refactor in small, atomic commits (one smell at a time)",
             "Run tests after each refactoring step",
-            "Request code review before merging"
+            "Request code review before merging",
         ] + self._generate_anticipatory_actions(task)
 
         # Step 12: Create empathy checks
         empathy_checks = EmpathyChecks(
             cognitive=f"Considered {task.role}'s constraints: test coverage, deployment risk, time pressure",
-            emotional=f"Acknowledged: Refactoring can feel like 'non-productive' work, but prevents future crisis",
-            anticipatory=f"Identified {len(smells)} issues that will become critical in 30-60 days without intervention"
+            emotional="Acknowledged: Refactoring can feel like 'non-productive' work, but prevents future crisis",
+            anticipatory=f"Identified {len(smells)} issues that will become critical in 30-60 days without intervention",
         )
 
         return WizardOutput(
@@ -143,7 +147,7 @@ class RefactoringWizard(BaseWizard):
             handoffs=self._create_handoffs(task),
             next_actions=next_actions,
             empathy_checks=empathy_checks,
-            confidence=self.can_handle(task)
+            confidence=self.can_handle(task),
         )
 
     def _analyze_code_quality(self, task: WizardTask) -> str:
@@ -187,111 +191,128 @@ class RefactoringWizard(BaseWizard):
 
         return analysis
 
-    def _detect_code_smells(self, task: WizardTask) -> List[Dict[str, Any]]:
+    def _detect_code_smells(self, task: WizardTask) -> list[dict[str, Any]]:
         """Detect code smells (Level 3: Proactive)"""
         smells = []
         task_lower = (task.task + " " + task.context).lower()
 
         # Long method/class
         if any(kw in task_lower for kw in ["long", "large", "400 lines", "500 lines"]):
-            smells.append({
-                "smell": "Long Method / God Class",
-                "severity": "high",
-                "description": "Method or class exceeds reasonable length (100+ lines for methods, 300+ for classes)",
-                "impact": "Difficult to understand, test, and maintain",
-                "refactorings": [
-                    "Extract Method: Break into smaller, focused methods",
-                    "Extract Class: Split responsibilities into separate classes",
-                    "Replace Method with Method Object: For complex algorithms"
-                ]
-            })
+            smells.append(
+                {
+                    "smell": "Long Method / God Class",
+                    "severity": "high",
+                    "description": "Method or class exceeds reasonable length (100+ lines for methods, 300+ for classes)",
+                    "impact": "Difficult to understand, test, and maintain",
+                    "refactorings": [
+                        "Extract Method: Break into smaller, focused methods",
+                        "Extract Class: Split responsibilities into separate classes",
+                        "Replace Method with Method Object: For complex algorithms",
+                    ],
+                }
+            )
 
         # Code duplication
         if any(kw in task_lower for kw in ["duplicate", "copy", "repeated", "similar"]):
-            smells.append({
-                "smell": "Duplicate Code",
-                "severity": "high",
-                "description": "Same or very similar code exists in multiple places",
-                "impact": "Bug fixes must be applied in multiple places, increasing error risk",
-                "refactorings": [
-                    "Extract Method: Create shared method for duplicated logic",
-                    "Pull Up Method: Move common code to parent class",
-                    "Form Template Method: Extract common algorithm structure"
-                ]
-            })
+            smells.append(
+                {
+                    "smell": "Duplicate Code",
+                    "severity": "high",
+                    "description": "Same or very similar code exists in multiple places",
+                    "impact": "Bug fixes must be applied in multiple places, increasing error risk",
+                    "refactorings": [
+                        "Extract Method: Create shared method for duplicated logic",
+                        "Pull Up Method: Move common code to parent class",
+                        "Form Template Method: Extract common algorithm structure",
+                    ],
+                }
+            )
 
         # High complexity
         if any(kw in task_lower for kw in ["complex", "nested", "cyclomatic", "cognitive"]):
-            smells.append({
-                "smell": "High Complexity",
-                "severity": "high",
-                "description": "Cyclomatic complexity > 10 or cognitive complexity > 15",
-                "impact": "Difficult to test all code paths, high bug risk",
-                "refactorings": [
-                    "Decompose Conditional: Extract complex conditions into well-named methods",
-                    "Replace Nested Conditional with Guard Clauses",
-                    "Replace Conditional with Polymorphism: For type-based branching"
-                ]
-            })
+            smells.append(
+                {
+                    "smell": "High Complexity",
+                    "severity": "high",
+                    "description": "Cyclomatic complexity > 10 or cognitive complexity > 15",
+                    "impact": "Difficult to test all code paths, high bug risk",
+                    "refactorings": [
+                        "Decompose Conditional: Extract complex conditions into well-named methods",
+                        "Replace Nested Conditional with Guard Clauses",
+                        "Replace Conditional with Polymorphism: For type-based branching",
+                    ],
+                }
+            )
 
         # God class / SRP violation
-        if any(kw in task_lower for kw in ["god class", "too many", "does everything", "multiple responsibilities"]):
-            smells.append({
-                "smell": "God Class / SRP Violation",
-                "severity": "critical",
-                "description": "Class has too many responsibilities (violates Single Responsibility Principle)",
-                "impact": "Changes to one feature break unrelated features, difficult to reuse",
-                "refactorings": [
-                    "Extract Class: Split into multiple focused classes",
-                    "Extract Subclass: Separate specialized behavior",
-                    "Replace Data Value with Object: Extract complex data structures"
-                ]
-            })
+        if any(
+            kw in task_lower
+            for kw in ["god class", "too many", "does everything", "multiple responsibilities"]
+        ):
+            smells.append(
+                {
+                    "smell": "God Class / SRP Violation",
+                    "severity": "critical",
+                    "description": "Class has too many responsibilities (violates Single Responsibility Principle)",
+                    "impact": "Changes to one feature break unrelated features, difficult to reuse",
+                    "refactorings": [
+                        "Extract Class: Split into multiple focused classes",
+                        "Extract Subclass: Separate specialized behavior",
+                        "Replace Data Value with Object: Extract complex data structures",
+                    ],
+                }
+            )
 
         # Feature envy
         if any(kw in task_lower for kw in ["feature envy", "accessing", "calls methods"]):
-            smells.append({
-                "smell": "Feature Envy",
-                "severity": "medium",
-                "description": "Method uses data/methods from another class more than its own",
-                "impact": "Responsibilities misplaced, tight coupling",
-                "refactorings": [
-                    "Move Method: Move to the class it's most interested in",
-                    "Extract Method then Move Method: For partial feature envy"
-                ]
-            })
+            smells.append(
+                {
+                    "smell": "Feature Envy",
+                    "severity": "medium",
+                    "description": "Method uses data/methods from another class more than its own",
+                    "impact": "Responsibilities misplaced, tight coupling",
+                    "refactorings": [
+                        "Move Method: Move to the class it's most interested in",
+                        "Extract Method then Move Method: For partial feature envy",
+                    ],
+                }
+            )
 
         # Primitive obsession
         if any(kw in task_lower for kw in ["primitive", "string", "dict", "tuple", "type hints"]):
-            smells.append({
-                "smell": "Primitive Obsession",
-                "severity": "medium",
-                "description": "Using primitives (strings, dicts) instead of domain objects",
-                "impact": "Validation scattered, lack of type safety",
-                "refactorings": [
-                    "Replace Data Value with Object: Create domain objects",
-                    "Introduce Parameter Object: For method parameter groups",
-                    "Replace Type Code with Class: For status/type fields"
-                ]
-            })
+            smells.append(
+                {
+                    "smell": "Primitive Obsession",
+                    "severity": "medium",
+                    "description": "Using primitives (strings, dicts) instead of domain objects",
+                    "impact": "Validation scattered, lack of type safety",
+                    "refactorings": [
+                        "Replace Data Value with Object: Create domain objects",
+                        "Introduce Parameter Object: For method parameter groups",
+                        "Replace Type Code with Class: For status/type fields",
+                    ],
+                }
+            )
 
         # If no specific smells detected, provide general analysis
         if not smells:
-            smells.append({
-                "smell": "General Code Improvement",
-                "severity": "low",
-                "description": "Code could benefit from standard refactoring practices",
-                "impact": "Minor maintainability impact",
-                "refactorings": [
-                    "Rename Method/Variable: Improve clarity",
-                    "Extract Method: Break down long methods",
-                    "Add Type Hints: Improve IDE support and type safety"
-                ]
-            })
+            smells.append(
+                {
+                    "smell": "General Code Improvement",
+                    "severity": "low",
+                    "description": "Code could benefit from standard refactoring practices",
+                    "impact": "Minor maintainability impact",
+                    "refactorings": [
+                        "Rename Method/Variable: Improve clarity",
+                        "Extract Method: Break down long methods",
+                        "Add Type Hints: Improve IDE support and type safety",
+                    ],
+                }
+            )
 
         return smells
 
-    def _assess_complexity(self, task: WizardTask) -> Dict[str, Any]:
+    def _assess_complexity(self, task: WizardTask) -> dict[str, Any]:
         """Assess complexity metrics"""
         task_lower = (task.task + " " + task.context).lower()
 
@@ -309,10 +330,16 @@ class RefactoringWizard(BaseWizard):
             "cyclomatic_complexity": cyclomatic,
             "cognitive_complexity": cognitive,
             "nesting_depth": nesting,
-            "assessment": "High complexity - refactoring recommended" if cyclomatic > 10 else "Acceptable complexity"
+            "assessment": (
+                "High complexity - refactoring recommended"
+                if cyclomatic > 10
+                else "Acceptable complexity"
+            ),
         }
 
-    def _create_refactoring_plan(self, task: WizardTask, smells: List[Dict], complexity: Dict) -> List[str]:
+    def _create_refactoring_plan(
+        self, task: WizardTask, smells: list[dict], complexity: dict
+    ) -> list[str]:
         """Create step-by-step refactoring plan"""
         plan = ["## Refactoring Plan (Risk-Ordered: Lowest Risk First)\n"]
 
@@ -325,7 +352,7 @@ class RefactoringWizard(BaseWizard):
             plan.append(f"**Issue**: {smell['description']}")
             plan.append(f"**Impact**: {smell['impact']}")
             plan.append("\n**Recommended Refactorings**:")
-            for j, refactoring in enumerate(smell['refactorings'], 1):
+            for j, refactoring in enumerate(smell["refactorings"], 1):
                 plan.append(f"  {chr(96+j)}. {refactoring}")
 
             # Add safety steps
@@ -344,14 +371,14 @@ class RefactoringWizard(BaseWizard):
 
         return plan
 
-    def _generate_refactored_code(self, task: WizardTask, smells: List[Dict]) -> str:
+    def _generate_refactored_code(self, task: WizardTask, smells: list[dict]) -> str:
         """Generate refactored code examples"""
         code = "# Refactoring Examples\n\n"
 
         for smell in smells[:2]:  # Show top 2 smells
             code += f"## {smell['smell']}\n\n"
 
-            if smell['smell'] == "Long Method / God Class":
+            if smell["smell"] == "Long Method / God Class":
                 code += """# Before (Long Method):
 def process_order(order_data):
     # Validate order (20 lines)
@@ -403,7 +430,7 @@ def calculate_order_totals(order_data):
 
 """
 
-            elif smell['smell'] == "Duplicate Code":
+            elif smell["smell"] == "Duplicate Code":
                 code += """# Before (Duplicate Code):
 def get_active_users():
     users = db.query("SELECT * FROM users")
@@ -443,7 +470,7 @@ def get_active_admins():
 
 """
 
-            elif smell['smell'] == "High Complexity":
+            elif smell["smell"] == "High Complexity":
                 code += """# Before (High Complexity - Cyclomatic: 15):
 def calculate_discount(user, order, promo_code):
     discount = 0
@@ -510,12 +537,14 @@ def apply_promo_code(promo_code, total, membership):
 
         return code
 
-    def _predict_maintainability_issues(self, task: WizardTask, smells: List[Dict], complexity: Dict) -> str:
+    def _predict_maintainability_issues(
+        self, task: WizardTask, smells: list[dict], complexity: dict
+    ) -> str:
         """Level 4: Predict future maintainability crisis"""
         forecast = "# Maintainability Forecast (Level 4: Anticipatory)\n\n"
 
         # Count critical issues
-        critical_smells = [s for s in smells if s['severity'] in ['critical', 'high']]
+        critical_smells = [s for s in smells if s["severity"] in ["critical", "high"]]
 
         forecast += "## Current State\n"
         forecast += f"- Code smells detected: {len(smells)} ({len(critical_smells)} critical/high severity)\n"
@@ -556,13 +585,15 @@ def apply_promo_code(promo_code, total, membership):
 
         forecast += "## Recommended Timeline\n"
         forecast += "- **Now (Week 1-2)**: Fix critical smells (god classes, high duplication)\n"
-        forecast += "- **Week 3-4**: Simplify high-complexity methods (reduce cyclomatic complexity)\n"
+        forecast += (
+            "- **Week 3-4**: Simplify high-complexity methods (reduce cyclomatic complexity)\n"
+        )
         forecast += "- **Week 5-6**: Add tests for newly refactored code\n"
         forecast += "- **Ongoing**: Establish 'no new code smells' policy in code reviews\n"
 
         return forecast
 
-    def _generate_quality_report(self, diagnosis: str, smells: List[Dict], complexity: Dict) -> str:
+    def _generate_quality_report(self, diagnosis: str, smells: list[dict], complexity: dict) -> str:
         """Generate comprehensive quality report"""
         report = f"{diagnosis}\n\n"
 
@@ -622,42 +653,50 @@ def apply_promo_code(promo_code, total, membership):
 """
         return checklist
 
-    def _identify_risks(self, task: WizardTask, refactoring_plan: List[str]) -> List[WizardRisk]:
+    def _identify_risks(self, task: WizardTask, refactoring_plan: list[str]) -> list[WizardRisk]:
         """Identify refactoring risks"""
         risks = []
 
         # Behavior change risk
-        risks.append(WizardRisk(
-            risk="Refactoring may accidentally change behavior",
-            mitigation="Run full test suite after each atomic refactoring step. If tests fail, revert immediately.",
-            severity="high"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Refactoring may accidentally change behavior",
+                mitigation="Run full test suite after each atomic refactoring step. If tests fail, revert immediately.",
+                severity="high",
+            )
+        )
 
         # Scope creep risk
-        risks.append(WizardRisk(
-            risk="Refactoring scope may grow ('while we're here, let's also...')",
-            mitigation="Stick to original plan. Create separate tickets for additional improvements.",
-            severity="medium"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Refactoring scope may grow ('while we're here, let's also...')",
+                mitigation="Stick to original plan. Create separate tickets for additional improvements.",
+                severity="medium",
+            )
+        )
 
         # Test coverage gap risk
-        risks.append(WizardRisk(
-            risk="Low test coverage may hide behavioral changes",
-            mitigation="Add tests BEFORE refactoring complex code. Target: 80%+ coverage.",
-            severity="high"
-        ))
+        risks.append(
+            WizardRisk(
+                risk="Low test coverage may hide behavioral changes",
+                mitigation="Add tests BEFORE refactoring complex code. Target: 80%+ coverage.",
+                severity="high",
+            )
+        )
 
         return risks
 
-    def _create_handoffs(self, task: WizardTask) -> List[WizardHandoff]:
+    def _create_handoffs(self, task: WizardTask) -> list[WizardHandoff]:
         """Create handoffs for refactoring work"""
         handoffs = []
 
         if task.role == "developer":
-            handoffs.append(WizardHandoff(
-                owner="Team Lead / Senior Dev",
-                what="Code review of refactored code (focus on behavior preservation)",
-                when="After refactoring complete, before merge"
-            ))
+            handoffs.append(
+                WizardHandoff(
+                    owner="Team Lead / Senior Dev",
+                    what="Code review of refactored code (focus on behavior preservation)",
+                    when="After refactoring complete, before merge",
+                )
+            )
 
         return handoffs

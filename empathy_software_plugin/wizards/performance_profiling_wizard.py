@@ -9,17 +9,16 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import Dict, Any, List, Optional
-from pathlib import Path
 import logging
+from typing import Any
 
 from .base_wizard import BaseWizard
+from .performance.bottleneck_detector import Bottleneck, BottleneckDetector
 from .performance.profiler_parsers import (
-    parse_profiler_output,
     FunctionProfile,
-    SimpleJSONProfilerParser
+    SimpleJSONProfilerParser,
+    parse_profiler_output,
 )
-from .performance.bottleneck_detector import BottleneckDetector, Bottleneck
 from .performance.trajectory_analyzer import PerformanceTrajectoryAnalyzer, TrajectoryPrediction
 
 logger = logging.getLogger(__name__)
@@ -51,7 +50,7 @@ class PerformanceProfilingWizard(BaseWizard):
         self.bottleneck_detector = BottleneckDetector()
         self.trajectory_analyzer = PerformanceTrajectoryAnalyzer()
 
-    async def analyze(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
         """
         Analyze performance and predict bottlenecks.
 
@@ -65,26 +64,23 @@ class PerformanceProfilingWizard(BaseWizard):
         Returns:
             Analysis with bottlenecks, trajectory, predictions, recommendations
         """
-        profiler_data = context.get('profiler_data')
-        profiler_type = context.get('profiler_type', 'simple_json')
-        current_metrics = context.get('current_metrics', {})
-        historical_metrics = context.get('historical_metrics', [])
-        threshold_percent = context.get('threshold_percent', 5.0)
+        profiler_data = context.get("profiler_data")
+        profiler_type = context.get("profiler_type", "simple_json")
+        current_metrics = context.get("current_metrics", {})
+        historical_metrics = context.get("historical_metrics", [])
+        threshold_percent = context.get("threshold_percent", 5.0)
 
         if not profiler_data:
             return {
                 "error": "profiler_data required",
-                "help": "Provide profiling output from cProfile, Chrome DevTools, etc."
+                "help": "Provide profiling output from cProfile, Chrome DevTools, etc.",
             }
 
         # Phase 1: Parse profiler output
         profiles = parse_profiler_output(profiler_type, profiler_data)
 
         # Phase 2: Detect bottlenecks
-        bottlenecks = self.bottleneck_detector.detect_bottlenecks(
-            profiles,
-            threshold_percent
-        )
+        bottlenecks = self.bottleneck_detector.detect_bottlenecks(profiles, threshold_percent)
 
         # Phase 3: Analyze trajectory (Level 4)
         trajectory_prediction = None
@@ -92,29 +88,27 @@ class PerformanceProfilingWizard(BaseWizard):
             # If no current_metrics provided, analyzer will extract from last historical entry
             trajectory_prediction = self.trajectory_analyzer.analyze_trajectory(
                 current_metrics if current_metrics else historical_metrics,
-                historical_metrics if current_metrics else None
+                historical_metrics if current_metrics else None,
             )
 
         # Phase 4: Generate insights
         insights = self._generate_insights(profiles, bottlenecks)
 
         # Phase 5: Predictions (Level 4)
-        predictions = self._generate_predictions(
-            bottlenecks,
-            trajectory_prediction,
-            profiles
-        )
+        predictions = self._generate_predictions(bottlenecks, trajectory_prediction, profiles)
 
         # Phase 6: Recommendations
         recommendations = self._generate_recommendations(
-            bottlenecks,
-            trajectory_prediction,
-            insights
+            bottlenecks, trajectory_prediction, insights
         )
 
         # Get top function
         top_func = profiles[0] if profiles else None
-        top_function_str = f"{top_func.function_name} ({top_func.percent_total:.1f}% of time)" if top_func else "None"
+        top_function_str = (
+            f"{top_func.function_name} ({top_func.percent_total:.1f}% of time)"
+            if top_func
+            else "None"
+        )
 
         return {
             "profiling_summary": {
@@ -122,33 +116,27 @@ class PerformanceProfilingWizard(BaseWizard):
                 "total_time": sum(p.total_time for p in profiles),
                 "top_function": top_function_str,
                 "top_5_slowest": [
-                    {
-                        "function": p.function_name,
-                        "time": p.total_time,
-                        "percent": p.percent_total
-                    }
+                    {"function": p.function_name, "time": p.total_time, "percent": p.percent_total}
                     for p in profiles[:5]
-                ]
+                ],
             },
-
             "bottlenecks": [b.to_dict() for b in bottlenecks],
-
             "trajectory": trajectory_prediction.to_dict() if trajectory_prediction else None,
-            "trajectory_analysis": trajectory_prediction.to_dict() if trajectory_prediction else {"state": "unknown", "trends": []},
-
+            "trajectory_analysis": (
+                trajectory_prediction.to_dict()
+                if trajectory_prediction
+                else {"state": "unknown", "trends": []}
+            ),
             "insights": insights,
-
             # Standard wizard outputs
             "predictions": predictions,
             "recommendations": recommendations,
-            "confidence": 0.85
+            "confidence": 0.85,
         }
 
     def _generate_insights(
-        self,
-        profiles: List[FunctionProfile],
-        bottlenecks: List[Bottleneck]
-    ) -> Dict[str, Any]:
+        self, profiles: list[FunctionProfile], bottlenecks: list[Bottleneck]
+    ) -> dict[str, Any]:
         """Generate performance insights"""
 
         # Identify patterns
@@ -161,17 +149,12 @@ class PerformanceProfilingWizard(BaseWizard):
             "io_bound_operations": io_heavy,
             "cpu_bound_operations": cpu_heavy,
             "n_plus_one_queries": n_plus_one,
-            "optimization_potential": self._estimate_optimization_potential(bottlenecks)
+            "optimization_potential": self._estimate_optimization_potential(bottlenecks),
         }
 
         return insights
 
-    def _identify_dominant_pattern(
-        self,
-        io_heavy: int,
-        cpu_heavy: int,
-        n_plus_one: int
-    ) -> str:
+    def _identify_dominant_pattern(self, io_heavy: int, cpu_heavy: int, n_plus_one: int) -> str:
         """Identify dominant performance pattern"""
 
         if n_plus_one > 0:
@@ -183,18 +166,11 @@ class PerformanceProfilingWizard(BaseWizard):
         else:
             return "balanced"
 
-    def _estimate_optimization_potential(
-        self,
-        bottlenecks: List[Bottleneck]
-    ) -> Dict[str, Any]:
+    def _estimate_optimization_potential(self, bottlenecks: list[Bottleneck]) -> dict[str, Any]:
         """Estimate potential time savings from optimizations"""
 
         if not bottlenecks:
-            return {
-                "potential_savings": 0.0,
-                "percentage": 0.0,
-                "assessment": "LOW"
-            }
+            return {"potential_savings": 0.0, "percentage": 0.0, "assessment": "LOW"}
 
         # Sum time from all bottlenecks
         total_bottleneck_time = sum(b.time_cost for b in bottlenecks)
@@ -203,13 +179,15 @@ class PerformanceProfilingWizard(BaseWizard):
         potential_savings = total_bottleneck_time * 0.5
 
         # Calculate percentage of total
-        total_time = bottlenecks[0].time_cost / (bottlenecks[0].percent_total / 100) if bottlenecks else 1
+        total_time = (
+            bottlenecks[0].time_cost / (bottlenecks[0].percent_total / 100) if bottlenecks else 1
+        )
         percentage = (potential_savings / total_time * 100) if total_time > 0 else 0
 
         return {
             "potential_savings": potential_savings,
             "percentage": percentage,
-            "assessment": self._assess_optimization_potential(percentage)
+            "assessment": self._assess_optimization_potential(percentage),
         }
 
     def _assess_optimization_potential(self, percentage: float) -> str:
@@ -226,10 +204,10 @@ class PerformanceProfilingWizard(BaseWizard):
 
     def _generate_predictions(
         self,
-        bottlenecks: List[Bottleneck],
-        trajectory: Optional[TrajectoryPrediction],
-        profiles: List[FunctionProfile]
-    ) -> List[Dict[str, Any]]:
+        bottlenecks: list[Bottleneck],
+        trajectory: TrajectoryPrediction | None,
+        profiles: list[FunctionProfile],
+    ) -> list[dict[str, Any]]:
         """Generate Level 4 predictions"""
 
         predictions = []
@@ -237,54 +215,60 @@ class PerformanceProfilingWizard(BaseWizard):
         # Prediction 1: Critical bottlenecks
         critical_bottlenecks = [b for b in bottlenecks if b.severity == "CRITICAL"]
         if critical_bottlenecks:
-            predictions.append({
-                "type": "performance_degradation_risk",
-                "severity": "critical",
-                "description": (
-                    f"{len(critical_bottlenecks)} critical bottlenecks detected. "
-                    f"In our experience, functions consuming >30% of execution time "
-                    "cause timeout errors under load."
-                ),
-                "affected_functions": [b.function_name for b in critical_bottlenecks[:3]],
-                "prevention_steps": [b.fix_suggestion for b in critical_bottlenecks[:3]]
-            })
+            predictions.append(
+                {
+                    "type": "performance_degradation_risk",
+                    "severity": "critical",
+                    "description": (
+                        f"{len(critical_bottlenecks)} critical bottlenecks detected. "
+                        f"In our experience, functions consuming >30% of execution time "
+                        "cause timeout errors under load."
+                    ),
+                    "affected_functions": [b.function_name for b in critical_bottlenecks[:3]],
+                    "prevention_steps": [b.fix_suggestion for b in critical_bottlenecks[:3]],
+                }
+            )
 
         # Prediction 2: N+1 query pattern
         n_plus_one = [b for b in bottlenecks if b.type.value == "n_plus_one"]
         if n_plus_one:
-            predictions.append({
-                "type": "scalability_risk",
-                "severity": "high",
-                "description": (
-                    f"{len(n_plus_one)} potential N+1 query patterns detected. "
-                    "In our experience, these cause exponential slowdown as data grows."
-                ),
-                "prevention_steps": [
-                    "Implement eager loading or query batching",
-                    "Add database query monitoring",
-                    "Review ORM usage patterns"
-                ]
-            })
+            predictions.append(
+                {
+                    "type": "scalability_risk",
+                    "severity": "high",
+                    "description": (
+                        f"{len(n_plus_one)} potential N+1 query patterns detected. "
+                        "In our experience, these cause exponential slowdown as data grows."
+                    ),
+                    "prevention_steps": [
+                        "Implement eager loading or query batching",
+                        "Add database query monitoring",
+                        "Review ORM usage patterns",
+                    ],
+                }
+            )
 
         # Prediction 3: Trajectory-based prediction
         if trajectory and trajectory.trajectory_state in ["degrading", "critical"]:
-            predictions.append({
-                "type": "performance_trajectory",
-                "severity": "high" if trajectory.trajectory_state == "critical" else "medium",
-                "description": trajectory.overall_assessment,
-                "time_horizon": trajectory.estimated_time_to_critical,
-                "confidence": trajectory.confidence,
-                "prevention_steps": trajectory.recommendations
-            })
+            predictions.append(
+                {
+                    "type": "performance_trajectory",
+                    "severity": "high" if trajectory.trajectory_state == "critical" else "medium",
+                    "description": trajectory.overall_assessment,
+                    "time_horizon": trajectory.estimated_time_to_critical,
+                    "confidence": trajectory.confidence,
+                    "prevention_steps": trajectory.recommendations,
+                }
+            )
 
         return predictions
 
     def _generate_recommendations(
         self,
-        bottlenecks: List[Bottleneck],
-        trajectory: Optional[TrajectoryPrediction],
-        insights: Dict[str, Any]
-    ) -> List[str]:
+        bottlenecks: list[Bottleneck],
+        trajectory: TrajectoryPrediction | None,
+        insights: dict[str, Any],
+    ) -> list[str]:
         """Generate actionable recommendations"""
 
         recommendations = []

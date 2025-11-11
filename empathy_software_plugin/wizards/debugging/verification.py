@@ -8,9 +8,9 @@ Licensed under the Apache License, Version 2.0
 """
 
 import subprocess
-from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 from .linter_parsers import LintIssue, parse_linter_output
 
@@ -18,6 +18,7 @@ from .linter_parsers import LintIssue, parse_linter_output
 @dataclass
 class VerificationResult:
     """Result of verification check"""
+
     linter: str
     success: bool
     issues_before: int
@@ -25,10 +26,10 @@ class VerificationResult:
     issues_fixed: int
     issues_remaining: int
     new_issues: int
-    remaining_issues: List[LintIssue]
-    error: Optional[str] = None
+    remaining_issues: list[LintIssue]
+    error: str | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary"""
         return {
             "linter": self.linter,
@@ -39,7 +40,7 @@ class VerificationResult:
             "issues_remaining": self.issues_remaining,
             "new_issues": self.new_issues,
             "remaining_issues": [i.to_dict() for i in self.remaining_issues],
-            "error": self.error
+            "error": self.error,
         }
 
 
@@ -49,11 +50,7 @@ class BaseLinterRunner:
     def __init__(self, linter_name: str):
         self.linter_name = linter_name
 
-    def run(
-        self,
-        target: str,
-        output_format: str = "json"
-    ) -> List[LintIssue]:
+    def run(self, target: str, output_format: str = "json") -> list[LintIssue]:
         """
         Run linter on target.
 
@@ -73,11 +70,7 @@ class ESLintRunner(BaseLinterRunner):
     def __init__(self):
         super().__init__("eslint")
 
-    def run(
-        self,
-        target: str,
-        output_format: str = "json"
-    ) -> List[LintIssue]:
+    def run(self, target: str, output_format: str = "json") -> list[LintIssue]:
         """Run ESLint"""
 
         cmd = ["npx", "eslint"]
@@ -88,12 +81,7 @@ class ESLintRunner(BaseLinterRunner):
         cmd.append(target)
 
         try:
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=60
-            )
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
 
             # ESLint exits with 1 if there are violations (expected)
             output = result.stdout
@@ -106,9 +94,7 @@ class ESLintRunner(BaseLinterRunner):
         except subprocess.TimeoutExpired:
             return []
         except FileNotFoundError:
-            raise RuntimeError(
-                "ESLint not found. Run: npm install eslint"
-            )
+            raise RuntimeError("ESLint not found. Run: npm install eslint")
 
 
 class PylintRunner(BaseLinterRunner):
@@ -117,11 +103,7 @@ class PylintRunner(BaseLinterRunner):
     def __init__(self):
         super().__init__("pylint")
 
-    def run(
-        self,
-        target: str,
-        output_format: str = "json"
-    ) -> List[LintIssue]:
+    def run(self, target: str, output_format: str = "json") -> list[LintIssue]:
         """Run Pylint"""
 
         cmd = ["pylint"]
@@ -132,12 +114,7 @@ class PylintRunner(BaseLinterRunner):
         cmd.append(target)
 
         try:
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=60
-            )
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
 
             # Pylint exits with non-zero if violations (expected)
             output = result.stdout
@@ -150,9 +127,7 @@ class PylintRunner(BaseLinterRunner):
         except subprocess.TimeoutExpired:
             return []
         except FileNotFoundError:
-            raise RuntimeError(
-                "Pylint not found. Run: pip install pylint"
-            )
+            raise RuntimeError("Pylint not found. Run: pip install pylint")
 
 
 class MyPyRunner(BaseLinterRunner):
@@ -161,22 +136,13 @@ class MyPyRunner(BaseLinterRunner):
     def __init__(self):
         super().__init__("mypy")
 
-    def run(
-        self,
-        target: str,
-        output_format: str = "json"
-    ) -> List[LintIssue]:
+    def run(self, target: str, output_format: str = "json") -> list[LintIssue]:
         """Run mypy"""
 
         cmd = ["mypy", target]
 
         try:
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=60
-            )
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
 
             output = result.stdout
 
@@ -185,9 +151,7 @@ class MyPyRunner(BaseLinterRunner):
         except subprocess.TimeoutExpired:
             return []
         except FileNotFoundError:
-            raise RuntimeError(
-                "mypy not found. Run: pip install mypy"
-            )
+            raise RuntimeError("mypy not found. Run: pip install mypy")
 
 
 class TypeScriptRunner(BaseLinterRunner):
@@ -196,11 +160,7 @@ class TypeScriptRunner(BaseLinterRunner):
     def __init__(self):
         super().__init__("typescript")
 
-    def run(
-        self,
-        target: str,
-        output_format: str = "json"
-    ) -> List[LintIssue]:
+    def run(self, target: str, output_format: str = "json") -> list[LintIssue]:
         """Run tsc"""
 
         cmd = ["npx", "tsc", "--noEmit"]
@@ -212,12 +172,7 @@ class TypeScriptRunner(BaseLinterRunner):
             cmd.append(target)
 
         try:
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=60
-            )
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
 
             output = result.stdout
 
@@ -226,9 +181,7 @@ class TypeScriptRunner(BaseLinterRunner):
         except subprocess.TimeoutExpired:
             return []
         except FileNotFoundError:
-            raise RuntimeError(
-                "TypeScript not found. Run: npm install typescript"
-            )
+            raise RuntimeError("TypeScript not found. Run: npm install typescript")
 
 
 class LinterRunnerFactory:
@@ -239,7 +192,7 @@ class LinterRunnerFactory:
         "pylint": PylintRunner,
         "mypy": MyPyRunner,
         "typescript": TypeScriptRunner,
-        "tsc": TypeScriptRunner
+        "tsc": TypeScriptRunner,
     }
 
     @classmethod
@@ -256,11 +209,7 @@ class LinterRunnerFactory:
         return runner_class()
 
 
-def run_linter(
-    linter_name: str,
-    target: str,
-    output_format: str = "json"
-) -> List[LintIssue]:
+def run_linter(linter_name: str, target: str, output_format: str = "json") -> list[LintIssue]:
     """
     Run linter on target.
 
@@ -281,9 +230,7 @@ def run_linter(
 
 
 def verify_fixes(
-    linter_name: str,
-    target: str,
-    issues_before: List[LintIssue]
+    linter_name: str, target: str, issues_before: list[LintIssue]
 ) -> VerificationResult:
     """
     Verify that fixes were successful by re-running linter.
@@ -314,12 +261,8 @@ def verify_fixes(
         issues_remaining = issues_after_count
 
         # Check for new issues (regressions)
-        before_keys = {
-            (i.file_path, i.line, i.rule) for i in issues_before
-        }
-        after_keys = {
-            (i.file_path, i.line, i.rule) for i in issues_after
-        }
+        before_keys = {(i.file_path, i.line, i.rule) for i in issues_before}
+        after_keys = {(i.file_path, i.line, i.rule) for i in issues_after}
 
         new_issue_keys = after_keys - before_keys
         new_issues = len(new_issue_keys)
@@ -332,7 +275,7 @@ def verify_fixes(
             issues_fixed=issues_fixed,
             issues_remaining=issues_remaining,
             new_issues=new_issues,
-            remaining_issues=issues_after
+            remaining_issues=issues_after,
         )
 
     except Exception as e:
@@ -345,14 +288,11 @@ def verify_fixes(
             issues_remaining=0,
             new_issues=0,
             remaining_issues=[],
-            error=str(e)
+            error=str(e),
         )
 
 
-def compare_issue_lists(
-    before: List[LintIssue],
-    after: List[LintIssue]
-) -> Dict[str, Any]:
+def compare_issue_lists(before: list[LintIssue], after: list[LintIssue]) -> dict[str, Any]:
     """
     Detailed comparison of issue lists.
 
@@ -364,12 +304,8 @@ def compare_issue_lists(
         Dictionary with detailed comparison
     """
 
-    before_set = {
-        (i.file_path, i.line, i.column, i.rule) for i in before
-    }
-    after_set = {
-        (i.file_path, i.line, i.column, i.rule) for i in after
-    }
+    before_set = {(i.file_path, i.line, i.column, i.rule) for i in before}
+    after_set = {(i.file_path, i.line, i.column, i.rule) for i in after}
 
     fixed = before_set - after_set
     remaining = before_set & after_set
@@ -397,5 +333,5 @@ def compare_issue_lists(
         "new_count": len(new),
         "files_improved": list(files_improved),
         "files_regressed": list(files_regressed),
-        "net_improvement": len(fixed) - len(new)
+        "net_improvement": len(fixed) - len(new),
     }

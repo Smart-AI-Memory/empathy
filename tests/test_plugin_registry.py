@@ -8,7 +8,7 @@ Licensed under the Apache License, Version 2.0
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Any
 from unittest.mock import Mock, patch
 
 import pytest
@@ -43,11 +43,11 @@ class MockWizard(BaseWizard):
     def level(self) -> int:
         return self._level
 
-    def get_required_context(self) -> List[str]:
+    def get_required_context(self) -> list[str]:
         """Return empty list for mock wizard"""
         return []
 
-    async def analyze(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
         return {"predictions": [], "recommendations": [], "confidence": 0.9}
 
 
@@ -56,13 +56,13 @@ class MockPlugin(BasePlugin):
 
     def __init__(self, name: str = "test", domain: str = "testing", version: str = "1.0.0"):
         self._metadata = MockPluginMetadata(name=name, domain=domain, version=version)
-        self._custom_wizards: Dict[str, BaseWizard] = {}
+        self._custom_wizards: dict[str, BaseWizard] = {}
         super().__init__()
 
     def get_metadata(self) -> MockPluginMetadata:
         return self._metadata
 
-    def register_wizards(self) -> Dict[str, BaseWizard]:
+    def register_wizards(self) -> dict[str, BaseWizard]:
         """Return custom wizards added via add_wizard"""
         return self._custom_wizards
 
@@ -79,13 +79,13 @@ class MockPlugin(BasePlugin):
         if self._initialized:
             self._wizards[wizard_id] = wizard
 
-    def list_wizards(self) -> List[str]:
+    def list_wizards(self) -> list[str]:
         return list(self._custom_wizards.keys())
 
     def get_wizard(self, wizard_id: str):
         return self._custom_wizards.get(wizard_id)
 
-    def get_wizard_info(self, wizard_id: str) -> Dict[str, Any]:
+    def get_wizard_info(self, wizard_id: str) -> dict[str, Any]:
         wizard = self._custom_wizards.get(wizard_id)
         if wizard:
             return {

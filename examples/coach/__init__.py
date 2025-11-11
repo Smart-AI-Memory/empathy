@@ -9,12 +9,7 @@ Licensed under the Apache License, Version 2.0
 """
 
 from .coach import Coach, CoachOutput
-from .wizards import (
-    WizardTask,
-    WizardOutput,
-    DebuggingWizard,
-    DocumentationWizard,
-)
+from .wizards import DebuggingWizard, DocumentationWizard, WizardOutput, WizardTask
 
 __all__ = [
     "Coach",
