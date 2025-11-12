@@ -429,7 +429,7 @@ export default function DevDashboard() {
                 View Framework
               </Link>
               <a
-                href="https://github.com/Smart-AI-Memory/empathy"
+                href="https://github.com/Smart-AI-Memory/empathy-framework"
                 className="btn btn-outline"
                 target="_blank"
                 rel="noopener noreferrer"

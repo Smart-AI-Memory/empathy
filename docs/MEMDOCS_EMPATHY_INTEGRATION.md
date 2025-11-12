@@ -53,7 +53,7 @@ This document showcases how **MemDocs** (intelligent document memory) and the **
 - Decision history tracking
 
 ### Empathy Framework
-The **[Empathy Framework](https://github.com/Smart-AI-Memory/empathy)** is a 5-level maturity model for AI-human collaboration:
+The **[Empathy Framework](https://github.com/Smart-AI-Memory/empathy-framework)** is a 5-level maturity model for AI-human collaboration:
 - **Level 1 (Reactive)**: Help after being asked
 - **Level 2 (Guided)**: Collaborative exploration with clarifying questions
 - **Level 3 (Proactive)**: Act before being asked based on patterns
@@ -802,7 +802,7 @@ The **Claude Code + MemDocs + Empathy Framework** stack represents a fundamental
 
 ## Resources
 
-- **Empathy Framework**: [https://github.com/Smart-AI-Memory/empathy](https://github.com/Smart-AI-Memory/empathy)
+- **Empathy Framework**: [https://github.com/Smart-AI-Memory/empathy-framework](https://github.com/Smart-AI-Memory/empathy-framework)
 - **MemDocs**: [https://github.com/Smart-AI-Memory/memdocs](https://github.com/Smart-AI-Memory/memdocs)
 - **Claude Code**: [https://claude.ai/claude-code](https://claude.ai/claude-code)
 - **Book Chapter**: [The Empathy Framework for AI-Human Collaboration](CHAPTER_EMPATHY_FRAMEWORK.md)

@@ -85,7 +85,7 @@ const faqData = [
       },
       {
         question: 'How do I report bugs?',
-        answer: 'Report bugs via GitHub Issues at https://github.com/Smart-AI-Memory/empathy/issues. Include your environment details, steps to reproduce, and expected vs actual behavior.',
+        answer: 'Report bugs via GitHub Issues at https://github.com/Smart-AI-Memory/empathy-framework/issues. Include your environment details, steps to reproduce, and expected vs actual behavior.',
       },
       {
         question: 'Can I contribute to the project?',
@@ -189,7 +189,7 @@ export default function FAQPage() {
                   Contact Us
                 </a>
                 <a
-                  href="https://github.com/Smart-AI-Memory/empathy/discussions"
+                  href="https://github.com/Smart-AI-Memory/empathy-framework/discussions"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-outline text-lg px-8 py-4"

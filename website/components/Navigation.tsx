@@ -137,7 +137,7 @@ export default function Navigation() {
 
             {/* GitHub Link */}
             <a
-              href="https://github.com/Smart-AI-Memory/empathy"
+              href="https://github.com/Smart-AI-Memory/empathy-framework"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 rounded-lg hover:bg-[var(--border)] transition-colors"

@@ -52,14 +52,14 @@ export default function TermsPage() {
                 <li><strong>Redistribution:</strong> Subject to license terms</li>
               </ul>
               <p>
-                Full license terms available at: <a href="https://github.com/Smart-AI-Memory/empathy/blob/main/LICENSE-FAIR-SOURCE.md">LICENSE-FAIR-SOURCE.md</a>
+                Full license terms available at: <a href="https://github.com/Smart-AI-Memory/empathy-framework/blob/main/LICENSE-FAIR-SOURCE.md">LICENSE-FAIR-SOURCE.md</a>
               </p>
 
               <h3>2.2 Commercial License</h3>
               <p>
                 Commercial licenses are required for organizations with 6 or more employees.
                 One license covers all developer environments (workstation, staging, production, CI/CD).
-                See <a href="https://github.com/Smart-AI-Memory/empathy/blob/main/LICENSE-COMMERCIAL.md">LICENSE-COMMERCIAL.md</a> for full terms.
+                See <a href="https://github.com/Smart-AI-Memory/empathy-framework/blob/main/LICENSE-COMMERCIAL.md">LICENSE-COMMERCIAL.md</a> for full terms.
               </p>
 
               <h2>3. Acceptable Use</h2>

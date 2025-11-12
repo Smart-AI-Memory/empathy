@@ -106,7 +106,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="https://github.com/Smart-AI-Memory/empathy/discussions"
+                  href="https://github.com/Smart-AI-Memory/empathy-framework/discussions"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
@@ -116,7 +116,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="https://github.com/Smart-AI-Memory/empathy/issues"
+                  href="https://github.com/Smart-AI-Memory/empathy-framework/issues"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
@@ -149,7 +149,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="https://github.com/Smart-AI-Memory/empathy/blob/main/LICENSE-FAIR-SOURCE.md"
+                  href="https://github.com/Smart-AI-Memory/empathy-framework/blob/main/LICENSE-FAIR-SOURCE.md"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
@@ -159,7 +159,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="https://github.com/Smart-AI-Memory/empathy/blob/main/LICENSE-COMMERCIAL.md"
+                  href="https://github.com/Smart-AI-Memory/empathy-framework/blob/main/LICENSE-COMMERCIAL.md"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"

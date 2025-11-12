@@ -165,11 +165,11 @@ empathy-scan = "empathy_software_plugin.cli:scan_command"
 
 [project.urls]
 Homepage = "https://smartaimemory.com"
-Documentation = "https://github.com/Smart-AI-Memory/empathy/tree/main/docs"
-Repository = "https://github.com/Smart-AI-Memory/empathy"
-Issues = "https://github.com/Smart-AI-Memory/empathy/issues"
-Discussions = "https://github.com/Smart-AI-Memory/empathy/discussions"
-Changelog = "https://github.com/Smart-AI-Memory/empathy/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/Smart-AI-Memory/empathy-framework/tree/main/docs"
+Repository = "https://github.com/Smart-AI-Memory/empathy-framework"
+Issues = "https://github.com/Smart-AI-Memory/empathy-framework/issues"
+Discussions = "https://github.com/Smart-AI-Memory/empathy-framework/discussions"
+Changelog = "https://github.com/Smart-AI-Memory/empathy-framework/blob/main/CHANGELOG.md"
 Funding = "https://smartaimemory.com"
 
 [tool.setuptools]

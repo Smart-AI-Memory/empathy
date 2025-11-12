@@ -149,7 +149,7 @@ The GitHub Actions workflow ([`.github/workflows/release.yml`](.github/workflows
 
 ### Setting up PyPI Token in GitHub
 
-1. Go to: `https://github.com/Smart-AI-Memory/empathy/settings/secrets/actions`
+1. Go to: `https://github.com/Smart-AI-Memory/empathy-framework/settings/secrets/actions`
 2. Click "New repository secret"
 3. Name: `PYPI_API_TOKEN`
 4. Value: Your PyPI API token
@@ -189,7 +189,7 @@ pip install empathy[agents]    # LangChain agents
 pip install empathy[all]       # Everything + dev tools
 
 # Development
-git clone https://github.com/Smart-AI-Memory/empathy.git
+git clone https://github.com/Smart-AI-Memory/empathy-framework.git
 cd empathy
 pip install -e .[dev]
 ```

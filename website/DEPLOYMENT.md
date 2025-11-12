@@ -40,7 +40,7 @@ NODE_ENV=production
 
 ### One-Click Deploy
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Smart-AI-Memory/empathy/tree/main/website)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Smart-AI-Memory/empathy-framework/tree/main/website)
 
 ### Manual Deployment
 
@@ -149,7 +149,7 @@ The repository includes a GitHub Actions workflow (`.github/workflows/deploy.yml
 
 1. Clone repository:
 ```bash
-git clone https://github.com/Smart-AI-Memory/empathy.git
+git clone https://github.com/Smart-AI-Memory/empathy-framework.git
 cd empathy/website
 ```
 
@@ -343,6 +343,6 @@ pm2 logs
 ## Support
 
 For deployment issues:
-- GitHub Issues: https://github.com/Smart-AI-Memory/empathy/issues
+- GitHub Issues: https://github.com/Smart-AI-Memory/empathy-framework/issues
 - Email: patrick.roebuck@pm.me
 - Documentation: smartaimemory.com/docs

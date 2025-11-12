@@ -435,7 +435,7 @@ If you need help with any of these features:
 - Check `DEPLOYMENT.md` for deployment help
 - Check `.env.example` for configuration
 - Contact: patrick.roebuck@pm.me
-- GitHub: https://github.com/Smart-AI-Memory/empathy
+- GitHub: https://github.com/Smart-AI-Memory/empathy-framework
 
 ---
 

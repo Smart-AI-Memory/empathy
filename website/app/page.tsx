@@ -93,7 +93,7 @@ export default function Home() {
                   Learn More
                 </Link>
                 <a
-                  href="https://github.com/Smart-AI-Memory/empathy"
+                  href="https://github.com/Smart-AI-Memory/empathy-framework"
                   className="btn btn-outline flex-1"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -326,7 +326,7 @@ export default function Home() {
                 Explore the Framework
               </Link>
               <a
-                href="https://github.com/Smart-AI-Memory/empathy"
+                href="https://github.com/Smart-AI-Memory/empathy-framework"
                 className="btn bg-transparent border-2 border-white text-white hover:bg-white hover:text-[var(--primary)] text-lg px-8 py-4"
                 target="_blank"
                 rel="noopener noreferrer"

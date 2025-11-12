@@ -5,9 +5,9 @@
 [![License](https://img.shields.io/badge/License-Fair%20Source%200.9-blue.svg)](LICENSE)
 [![PyPI version](https://img.shields.io/pypi/v/empathy-framework.svg)](https://pypi.org/project/empathy-framework/)
 [![Python 3.10+](https://img.shields.io/pypi/pyversions/empathy-framework.svg)](https://www.python.org/downloads/)
-[![Tests](https://github.com/Smart-AI-Memory/empathy/actions/workflows/tests.yml/badge.svg)](https://github.com/Smart-AI-Memory/empathy/actions/workflows/tests.yml)
-[![codecov](https://codecov.io/gh/Smart-AI-Memory/empathy/branch/main/graph/badge.svg)](https://codecov.io/gh/Smart-AI-Memory/empathy)
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Smart-AI-Memory/empathy/badge)](https://securityscorecards.dev/viewer/?uri=github.com/Smart-AI-Memory/empathy)
+[![Tests](https://github.com/Smart-AI-Memory/empathy-framework/actions/workflows/tests.yml/badge.svg)](https://github.com/Smart-AI-Memory/empathy-framework/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/gh/Smart-AI-Memory/empathy-framework/branch/main/graph/badge.svg)](https://codecov.io/gh/Smart-AI-Memory/empathy-framework)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Smart-AI-Memory/empathy-framework/badge)](https://securityscorecards.dev/viewer/?uri=github.com/Smart-AI-Memory/empathy-framework)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Downloads](https://img.shields.io/pypi/dm/empathy-framework.svg)](https://pypi.org/project/empathy-framework/)
@@ -31,8 +31,8 @@ pip install empathy-framework[all]      # Everything including dev tools
 
 **Development installation:**
 ```bash
-git clone https://github.com/Smart-AI-Memory/empathy.git
-cd empathy
+git clone https://github.com/Smart-AI-Memory/empathy-framework.git
+cd empathy-framework
 pip install -e .[dev]
 ```
 
@@ -171,8 +171,8 @@ The Empathy provides:
 
 ```bash
 # Clone and install
-git clone https://github.com/Smart-AI-Memory/empathy.git
-cd empathy
+git clone https://github.com/Smart-AI-Memory/empathy-framework.git
+cd empathy-framework
 pip install -r requirements.txt
 
 # Set up API key
@@ -186,7 +186,7 @@ pytest -m "not llm"
 pytest
 ```
 
-Share your experience in [GitHub Discussions](https://github.com/Smart-AI-Memory/empathy/discussions).
+Share your experience in [GitHub Discussions](https://github.com/Smart-AI-Memory/empathy-framework/discussions).
 
 ---
 
@@ -262,8 +262,8 @@ pre-commit install
 
 ```bash
 # Clone the repository
-git clone https://github.com/Smart-AI-Memory/empathy.git
-cd Empathy
+git clone https://github.com/Smart-AI-Memory/empathy-framework.git
+cd empathy-framework
 
 # Install dependencies
 pip install -r requirements.txt
@@ -583,7 +583,7 @@ The Empathy is **source available** (Fair Source 0.9) - free for students, educa
 - ✅ **Guaranteed response times**
 - ✅ **Upgrade assistance** and migration help
 
-[Get Support →](https://github.com/Smart-AI-Memory/empathy/blob/main/SPONSORSHIP.md)
+[Get Support →](https://github.com/Smart-AI-Memory/empathy-framework/blob/main/SPONSORSHIP.md)
 
 ### Professional Services
 
@@ -633,7 +633,7 @@ If you use the Empathy in your research or product, please cite:
   title = {Empathy: A Five-Level Maturity Model for AI-Human Collaboration},
   year = {2025},
   publisher = {Deep Study AI, LLC},
-  url = {https://github.com/Smart-AI-Memory/empathy},
+  url = {https://github.com/Smart-AI-Memory/empathy-framework},
   license = {Fair-Source-0.9}
 }
 ```
@@ -650,8 +650,8 @@ If you use the Empathy in your research or product, please cite:
 **Resources:**
 - Documentation: [docs/](docs/)
 - Examples: [examples/](examples/)
-- Issues: https://github.com/Smart-AI-Memory/empathy/issues
-- Discussions: https://github.com/Smart-AI-Memory/empathy/discussions
+- Issues: https://github.com/Smart-AI-Memory/empathy-framework/issues
+- Discussions: https://github.com/Smart-AI-Memory/empathy-framework/discussions
 
 ---
 

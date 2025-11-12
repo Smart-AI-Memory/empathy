@@ -412,7 +412,7 @@ Commercial license required for companies with 6+ employees.
 ## Support
 
 - Documentation: https://smartaimemory.com/empathy-framework
-- Issues: https://github.com/Smart-AI-Memory/empathy/issues
+- Issues: https://github.com/Smart-AI-Memory/empathy-framework/issues
 - Email: contact@smartaimemory.com
 
 ---

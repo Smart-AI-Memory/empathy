@@ -8,8 +8,8 @@ The **Empathy Framework** is an open-source project providing a five-level matur
 
 - **License**: Fair Source 0.9 (dual licensing: free for individuals/education/small teams, commercial for larger organizations)
 - **Organization**: Deep Study AI, LLC
-- **Repository**: https://github.com/Smart-AI-Memory/empathy
-- **Documentation**: https://github.com/Smart-AI-Memory/empathy/tree/main/docs
+- **Repository**: https://github.com/Smart-AI-Memory/empathy-framework
+- **Documentation**: https://github.com/Smart-AI-Memory/empathy-framework/tree/main/docs
 
 ## Decision-Making Structure
 
