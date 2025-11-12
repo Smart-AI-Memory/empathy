@@ -16,14 +16,15 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import Dict, List, Any
+from typing import Any, Dict, List
+
 from empathy_os import (
     EmpathyOS,
+    FeedbackLoopDetector,
     Level4Anticipatory,
     LeveragePointAnalyzer,
-    PatternLibrary,
     Pattern,
-    FeedbackLoopDetector
+    PatternLibrary,
 )
 
 
@@ -413,19 +414,19 @@ def main():
         print("Bug Prediction - Level 4 Anticipatory Empathy")
         print("=" * 70)
 
-    # Initialize predictor
-    predictor = BugPredictor(team_id="team_backend")
+        # Initialize predictor
+        predictor = BugPredictor(team_id="team_backend")
 
-    print(f"\n✓ Bug predictor initialized for team: team_backend")
-    print(f"  Empathy Level: {predictor.empathy.target_level} (Anticipatory)")
-    print(f"  Anti-patterns loaded: {len(predictor.pattern_library.patterns)}")
+        print(f"\n✓ Bug predictor initialized for team: team_backend")
+        print(f"  Empathy Level: {predictor.empathy.target_level} (Anticipatory)")
+        print(f"  Anti-patterns loaded: {len(predictor.pattern_library.patterns)}")
 
-    # ========================================
-    # Scenario: Analyze codebase trajectory
-    # ========================================
-    print("\n" + "=" * 70)
-    print("Analyzing Codebase Trajectory")
-    print("=" * 70)
+        # ========================================
+        # Scenario: Analyze codebase trajectory
+        # ========================================
+        print("\n" + "=" * 70)
+        print("Analyzing Codebase Trajectory")
+        print("=" * 70)
 
     # Current state
     current_metrics = {

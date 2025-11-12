@@ -9,11 +9,10 @@ interprofessional communication and continuity of care.
 
 import logging
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any
 from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException, status
-
 from src.services import get_service
 from src.utils.api_responses import create_success_response
 from src.utils.config import get_settings
@@ -58,7 +57,7 @@ try:
 except ImportError:
     _has_redis = False
 
-_wizard_sessions: Dict[str, Dict[str, Any]] = {}
+_wizard_sessions: dict[str, dict[str, Any]] = {}
 
 
 # SOAP note wizard steps
@@ -131,16 +130,14 @@ Never rely solely on automated tools for clinical decision-making or documentati
 """
 
 
-async def _store_wizard_session(wizard_id: str, session_data: Dict[str, Any]) -> bool:
+async def _store_wizard_session(wizard_id: str, session_data: dict[str, Any]) -> bool:
     """Store wizard session in Redis (preferred) or memory (fallback)"""
     try:
         if _has_redis:
             redis_client = await get_redis_client()
             if redis_client:
                 cache_key = f"wizard:soap_note:{wizard_id}"
-                await redis_client.setex(
-                    cache_key, 7200, str(session_data)  # 2 hour TTL
-                )
+                await redis_client.setex(cache_key, 7200, str(session_data))  # 2 hour TTL
                 logger.info(f"Stored SOAP note wizard session {wizard_id} in Redis")
                 return True
     except Exception as e:
@@ -152,7 +149,7 @@ async def _store_wizard_session(wizard_id: str, session_data: Dict[str, Any]) ->
     return True
 
 
-async def _get_wizard_session(wizard_id: str) -> Optional[Dict[str, Any]]:
+async def _get_wizard_session(wizard_id: str) -> dict[str, Any] | None:
     """Retrieve wizard session from Redis (preferred) or memory (fallback)"""
     try:
         if _has_redis:
@@ -171,7 +168,7 @@ async def _get_wizard_session(wizard_id: str) -> Optional[Dict[str, Any]]:
     return _wizard_sessions.get(wizard_id)
 
 
-def _get_step_data(step: int) -> Dict[str, Any]:
+def _get_step_data(step: int) -> dict[str, Any]:
     """Get step configuration data"""
     if step not in SOAP_NOTE_STEPS:
         raise HTTPException(
@@ -189,15 +186,13 @@ def _get_step_data(step: int) -> Dict[str, Any]:
     }
 
 
-def _generate_soap_note_report(collected_data: Dict[str, Any]) -> Dict[str, Any]:
+def _generate_soap_note_report(collected_data: dict[str, Any]) -> dict[str, Any]:
     """Generate final SOAP note report from collected data"""
 
     # Extract data by section
     subjective = {
         "chief_complaint": collected_data.get("chief_complaint", "Not documented"),
-        "history_present_illness": collected_data.get(
-            "history_present_illness", "Not documented"
-        ),
+        "history_present_illness": collected_data.get("history_present_illness", "Not documented"),
         "patient_reported_symptoms": collected_data.get(
             "patient_reported_symptoms", "Not documented"
         ),
@@ -208,36 +203,22 @@ def _generate_soap_note_report(collected_data: Dict[str, Any]) -> Dict[str, Any]
 
     objective = {
         "vital_signs": collected_data.get("vital_signs", "Not documented"),
-        "physical_exam_findings": collected_data.get(
-            "physical_exam_findings", "Not documented"
-        ),
+        "physical_exam_findings": collected_data.get("physical_exam_findings", "Not documented"),
         "lab_results": collected_data.get("lab_results", "Pending or not available"),
-        "imaging_results": collected_data.get(
-            "imaging_results", "Pending or not available"
-        ),
+        "imaging_results": collected_data.get("imaging_results", "Pending or not available"),
         "medication_administration": collected_data.get(
             "medication_administration", "None documented"
         ),
-        "procedures_performed": collected_data.get(
-            "procedures_performed", "None documented"
-        ),
+        "procedures_performed": collected_data.get("procedures_performed", "None documented"),
     }
 
     assessment = {
         "primary_diagnosis": collected_data.get("primary_diagnosis", "Not documented"),
-        "differential_diagnoses": collected_data.get(
-            "differential_diagnoses", "Not documented"
-        ),
+        "differential_diagnoses": collected_data.get("differential_diagnoses", "Not documented"),
         "problem_list": collected_data.get("problem_list", "Not documented"),
-        "progress_evaluation": collected_data.get(
-            "progress_evaluation", "Not documented"
-        ),
-        "response_to_treatment": collected_data.get(
-            "response_to_treatment", "Not documented"
-        ),
-        "complications_concerns": collected_data.get(
-            "complications_concerns", "None identified"
-        ),
+        "progress_evaluation": collected_data.get("progress_evaluation", "Not documented"),
+        "response_to_treatment": collected_data.get("response_to_treatment", "Not documented"),
+        "complications_concerns": collected_data.get("complications_concerns", "None identified"),
     }
 
     plan = {
@@ -246,9 +227,7 @@ def _generate_soap_note_report(collected_data: Dict[str, Any]) -> Dict[str, Any]
         "patient_education": collected_data.get("patient_education", "Not documented"),
         "monitoring_plan": collected_data.get("monitoring_plan", "Not documented"),
         "follow_up": collected_data.get("follow_up", "Not documented"),
-        "consultations_needed": collected_data.get(
-            "consultations_needed", "None at this time"
-        ),
+        "consultations_needed": collected_data.get("consultations_needed", "None at this time"),
     }
 
     # Generate formatted narrative
@@ -322,9 +301,7 @@ Consultations Needed: {plan['consultations_needed']}
         "narrative": narrative.strip(),
         "metadata": {
             "generated_at": datetime.now().isoformat(),
-            "note_date": collected_data.get(
-                "note_date", datetime.now().strftime("%Y-%m-%d %H:%M")
-            ),
+            "note_date": collected_data.get("note_date", datetime.now().strftime("%Y-%m-%d %H:%M")),
             "wizard_type": "soap_note",
         },
         "banner": EDU_BANNER,
@@ -380,7 +357,7 @@ async def start_soap_note_wizard():
 
 
 @router.post("/{wizard_id}/step", summary="Submit SOAP note wizard step")
-async def submit_soap_note_step(wizard_id: str, step_data: Dict[str, Any]):
+async def submit_soap_note_step(wizard_id: str, step_data: dict[str, Any]):
     """
     Submit data for current step and advance to next step.
 
@@ -471,7 +448,7 @@ async def submit_soap_note_step(wizard_id: str, step_data: Dict[str, Any]):
 
 
 @router.post("/{wizard_id}/enhance", summary="Enhance SOAP note text with AI")
-async def enhance_soap_note_text(wizard_id: str, text_data: Dict[str, Any]):
+async def enhance_soap_note_text(wizard_id: str, text_data: dict[str, Any]):
     """
     Enhance user-provided text with AI to improve clinical documentation quality.
 
@@ -531,9 +508,7 @@ Enhanced text:"""
             "field": field_name,
         }
 
-        return create_success_response(
-            data=response_data, message="Text enhanced successfully"
-        )
+        return create_success_response(data=response_data, message="Text enhanced successfully")
 
     except HTTPException:
         raise

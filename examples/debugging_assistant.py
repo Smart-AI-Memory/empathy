@@ -14,15 +14,15 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under the Apache License, Version 2.0
 """
 
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 from empathy_os import (
     EmpathyOS,
+    FeedbackLoopDetector,
     Level3Proactive,
-    PatternLibrary,
     Pattern,
+    PatternLibrary,
     TrustBuildingBehaviors,
-    FeedbackLoopDetector
 )
 
 
@@ -357,8 +357,8 @@ def main():
         print("Debugging Assistant - Level 3 Proactive Empathy")
         print("=" * 70)
 
-    # Initialize assistant
-    assistant = DebuggingAssistant(developer_id="dev_alice")
+        # Initialize assistant
+        assistant = DebuggingAssistant(developer_id="dev_alice")
 
     print(f"\n✓ Debugging assistant initialized for developer: dev_alice")
     print(f"  Empathy Level: {assistant.empathy.target_level} (Proactive)")

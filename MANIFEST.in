@@ -39,3 +39,7 @@ global-exclude .git*
 global-exclude .env
 global-exclude .vscode
 global-exclude .idea
+
+# Temporarily exclude examples with syntax errors (to be fixed)
+exclude examples/bug_prediction.py
+exclude examples/debugging_assistant.py

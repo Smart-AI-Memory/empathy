@@ -4,15 +4,16 @@ Following Wizard Pattern Implementation from coding instructions
 Comprehensive patient assessment workflows with AI-powered clinical analysis
 """
 
+import logging
+from datetime import datetime
+from typing import Any
+from uuid import uuid4
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import Dict, Any, List, Optional
-from uuid import uuid4
-from datetime import datetime
-import logging
 
+from ...services.openai_client import clinical_decision_support
 from ...utils.config import get_educational_banner
-from ...services.openai_client import create_openai_service, clinical_decision_support
 
 logger = logging.getLogger(__name__)
 
@@ -21,16 +22,19 @@ router = APIRouter(
     tags=["wizards", "clinical-assessment"],
     responses={
         404: {"description": "Wizard session not found"},
-        422: {"description": "Invalid step data"}
-    }
+        422: {"description": "Invalid step data"},
+    },
 )
 
 # Wizard session storage (Redis in production)
-_wizard_sessions: Dict[str, Dict[str, Any]] = {}
+_wizard_sessions: dict[str, dict[str, Any]] = {}
+
 
 class AssessmentStepData(BaseModel):
     """Data model for assessment step submission."""
-    step_data: Dict[str, Any]
+
+    step_data: dict[str, Any]
+
 
 @router.post("/start")
 async def start_clinical_assessment():
@@ -49,8 +53,8 @@ async def start_clinical_assessment():
             "physical_assessment": {},
             "systems_review": {},
             "pain_assessment": {},
-            "functional_assessment": {}
-        }
+            "functional_assessment": {},
+        },
     }
 
     _wizard_sessions[wizard_id] = session_data
@@ -68,12 +72,18 @@ async def start_clinical_assessment():
             {"name": "pulse", "type": "number", "unit": "bpm", "required": True},
             {"name": "respirations", "type": "number", "unit": "/min", "required": True},
             {"name": "blood_pressure_systolic", "type": "number", "unit": "mmHg", "required": True},
-            {"name": "blood_pressure_diastolic", "type": "number", "unit": "mmHg", "required": True},
+            {
+                "name": "blood_pressure_diastolic",
+                "type": "number",
+                "unit": "mmHg",
+                "required": True,
+            },
             {"name": "oxygen_saturation", "type": "number", "unit": "%", "required": True},
-            {"name": "pain_scale", "type": "number", "min": 0, "max": 10, "required": True}
+            {"name": "pain_scale", "type": "number", "min": 0, "max": 10, "required": True},
         ],
-        "educational_note": "Vital signs should be compared to patient's baseline and age-appropriate norms."
+        "educational_note": "Vital signs should be compared to patient's baseline and age-appropriate norms.",
     }
+
 
 @router.get("/{wizard_id}/status")
 async def get_clinical_assessment_status(wizard_id: str):
@@ -92,15 +102,18 @@ async def get_clinical_assessment_status(wizard_id: str):
         "total_steps": session["total_steps"],
         "completed_steps": session["completed_steps"],
         "progress": len(session["completed_steps"]) / session["total_steps"] * 100,
-        "status": "completed" if len(session["completed_steps"]) == session["total_steps"] else "in_progress",
-        "data": session["data"]
+        "status": (
+            "completed"
+            if len(session["completed_steps"]) == session["total_steps"]
+            else "in_progress"
+        ),
+        "data": session["data"],
     }
+
 
 @router.post("/{wizard_id}/step/{step_number}")
 async def submit_clinical_assessment_step(
-    wizard_id: str,
-    step_number: int,
-    step_data: AssessmentStepData
+    wizard_id: str, step_number: int, step_data: AssessmentStepData
 ):
     """Submit clinical assessment step data following Wizard Pattern Implementation."""
 
@@ -112,7 +125,7 @@ async def submit_clinical_assessment_step(
     if step_number != session["current_step"]:
         raise HTTPException(
             status_code=422,
-            detail=f"Invalid step. Expected step {session['current_step']}, got step {step_number}"
+            detail=f"Invalid step. Expected step {session['current_step']}, got step {step_number}",
         )
 
     # Store step data based on step number
@@ -121,7 +134,7 @@ async def submit_clinical_assessment_step(
         2: "physical_assessment",
         3: "systems_review",
         4: "pain_assessment",
-        5: "functional_assessment"
+        5: "functional_assessment",
     }
 
     if step_number in step_mapping:
@@ -148,10 +161,15 @@ async def submit_clinical_assessment_step(
         "current_step": session["current_step"],
         "total_steps": session["total_steps"],
         "progress": len(session["completed_steps"]) / session["total_steps"] * 100,
-        "status": "completed" if len(session["completed_steps"]) == session["total_steps"] else "in_progress",
+        "status": (
+            "completed"
+            if len(session["completed_steps"]) == session["total_steps"]
+            else "in_progress"
+        ),
         "ai_analysis": ai_analysis,
-        "next_step": next_step_info
+        "next_step": next_step_info,
     }
+
 
 @router.get("/{wizard_id}/step/{step_number}")
 async def get_clinical_assessment_step(wizard_id: str, step_number: int):
@@ -173,7 +191,7 @@ async def get_clinical_assessment_step(wizard_id: str, step_number: int):
         2: "physical_assessment",
         3: "systems_review",
         4: "pain_assessment",
-        5: "functional_assessment"
+        5: "functional_assessment",
     }
 
     existing_data = session["data"].get(step_mapping.get(step_number, ""), {})
@@ -183,8 +201,9 @@ async def get_clinical_assessment_step(wizard_id: str, step_number: int):
         "wizard_id": wizard_id,
         "step_number": step_number,
         "existing_data": existing_data,
-        **step_info
+        **step_info,
     }
+
 
 @router.delete("/{wizard_id}")
 async def cancel_clinical_assessment(wizard_id: str):
@@ -198,10 +217,11 @@ async def cancel_clinical_assessment(wizard_id: str):
     return {
         "banner": get_educational_banner(),
         "message": "Clinical assessment wizard session cancelled",
-        "wizard_id": wizard_id
+        "wizard_id": wizard_id,
     }
 
-def _get_step_info(step_number: int) -> Dict[str, Any]:
+
+def _get_step_info(step_number: int) -> dict[str, Any]:
     """Get step configuration information."""
 
     steps = {
@@ -212,12 +232,22 @@ def _get_step_info(step_number: int) -> Dict[str, Any]:
                 {"name": "temperature", "type": "number", "unit": "°F", "required": True},
                 {"name": "pulse", "type": "number", "unit": "bpm", "required": True},
                 {"name": "respirations", "type": "number", "unit": "/min", "required": True},
-                {"name": "blood_pressure_systolic", "type": "number", "unit": "mmHg", "required": True},
-                {"name": "blood_pressure_diastolic", "type": "number", "unit": "mmHg", "required": True},
+                {
+                    "name": "blood_pressure_systolic",
+                    "type": "number",
+                    "unit": "mmHg",
+                    "required": True,
+                },
+                {
+                    "name": "blood_pressure_diastolic",
+                    "type": "number",
+                    "unit": "mmHg",
+                    "required": True,
+                },
                 {"name": "oxygen_saturation", "type": "number", "unit": "%", "required": True},
-                {"name": "pain_scale", "type": "number", "min": 0, "max": 10, "required": True}
+                {"name": "pain_scale", "type": "number", "min": 0, "max": 10, "required": True},
             ],
-            "educational_note": "Vital signs should be compared to patient's baseline and age-appropriate norms."
+            "educational_note": "Vital signs should be compared to patient's baseline and age-appropriate norms.",
         },
         2: {
             "step_title": "Physical Assessment",
@@ -225,14 +255,19 @@ def _get_step_info(step_number: int) -> Dict[str, Any]:
             "fields": [
                 {"name": "general_appearance", "type": "text", "required": True},
                 {"name": "skin_assessment", "type": "text", "required": True},
-                {"name": "heent", "type": "text", "label": "HEENT (Head, Eyes, Ears, Nose, Throat)", "required": True},
+                {
+                    "name": "heent",
+                    "type": "text",
+                    "label": "HEENT (Head, Eyes, Ears, Nose, Throat)",
+                    "required": True,
+                },
                 {"name": "cardiovascular", "type": "text", "required": True},
                 {"name": "respiratory", "type": "text", "required": True},
                 {"name": "gastrointestinal", "type": "text", "required": True},
                 {"name": "musculoskeletal", "type": "text", "required": True},
-                {"name": "neurological", "type": "text", "required": True}
+                {"name": "neurological", "type": "text", "required": True},
             ],
-            "educational_note": "Use systematic head-to-toe approach. Document normal and abnormal findings."
+            "educational_note": "Use systematic head-to-toe approach. Document normal and abnormal findings.",
         },
         3: {
             "step_title": "Systems Review",
@@ -245,9 +280,9 @@ def _get_step_info(step_number: int) -> Dict[str, Any]:
                 {"name": "musculoskeletal_review", "type": "textarea", "required": True},
                 {"name": "neurological_review", "type": "textarea", "required": True},
                 {"name": "integumentary_review", "type": "textarea", "required": True},
-                {"name": "endocrine_review", "type": "textarea", "required": False}
+                {"name": "endocrine_review", "type": "textarea", "required": False},
             ],
-            "educational_note": "Document both positive and negative findings for comprehensive assessment."
+            "educational_note": "Document both positive and negative findings for comprehensive assessment.",
         },
         4: {
             "step_title": "Pain Assessment",
@@ -255,34 +290,79 @@ def _get_step_info(step_number: int) -> Dict[str, Any]:
             "fields": [
                 {"name": "pain_location", "type": "text", "required": True},
                 {"name": "pain_intensity", "type": "number", "min": 0, "max": 10, "required": True},
-                {"name": "pain_character", "type": "select", "options": ["Sharp", "Dull", "Aching", "Burning", "Stabbing", "Throbbing"], "required": True},
+                {
+                    "name": "pain_character",
+                    "type": "select",
+                    "options": ["Sharp", "Dull", "Aching", "Burning", "Stabbing", "Throbbing"],
+                    "required": True,
+                },
                 {"name": "pain_onset", "type": "text", "required": True},
                 {"name": "pain_duration", "type": "text", "required": True},
                 {"name": "aggravating_factors", "type": "textarea", "required": True},
                 {"name": "relieving_factors", "type": "textarea", "required": True},
-                {"name": "pain_impact", "type": "textarea", "label": "Impact on daily activities", "required": True}
+                {
+                    "name": "pain_impact",
+                    "type": "textarea",
+                    "label": "Impact on daily activities",
+                    "required": True,
+                },
             ],
-            "educational_note": "Use PQRST or OLDCARTS mnemonic for comprehensive pain assessment."
+            "educational_note": "Use PQRST or OLDCARTS mnemonic for comprehensive pain assessment.",
         },
         5: {
             "step_title": "Functional Assessment",
             "step_description": "Evaluate patient's functional status and activities of daily living",
             "fields": [
-                {"name": "mobility", "type": "select", "options": ["Independent", "Assisted", "Limited", "Bedbound"], "required": True},
-                {"name": "adl_independence", "type": "select", "label": "ADL Independence", "options": ["Fully independent", "Needs minimal assistance", "Needs moderate assistance", "Fully dependent"], "required": True},
-                {"name": "fall_risk", "type": "select", "options": ["Low", "Moderate", "High"], "required": True},
-                {"name": "cognitive_status", "type": "select", "options": ["Alert and oriented x4", "Alert and oriented x3", "Confused", "Lethargic", "Unresponsive"], "required": True},
+                {
+                    "name": "mobility",
+                    "type": "select",
+                    "options": ["Independent", "Assisted", "Limited", "Bedbound"],
+                    "required": True,
+                },
+                {
+                    "name": "adl_independence",
+                    "type": "select",
+                    "label": "ADL Independence",
+                    "options": [
+                        "Fully independent",
+                        "Needs minimal assistance",
+                        "Needs moderate assistance",
+                        "Fully dependent",
+                    ],
+                    "required": True,
+                },
+                {
+                    "name": "fall_risk",
+                    "type": "select",
+                    "options": ["Low", "Moderate", "High"],
+                    "required": True,
+                },
+                {
+                    "name": "cognitive_status",
+                    "type": "select",
+                    "options": [
+                        "Alert and oriented x4",
+                        "Alert and oriented x3",
+                        "Confused",
+                        "Lethargic",
+                        "Unresponsive",
+                    ],
+                    "required": True,
+                },
                 {"name": "communication_ability", "type": "text", "required": True},
                 {"name": "nutritional_status", "type": "textarea", "required": True},
-                {"name": "elimination_patterns", "type": "textarea", "required": True}
+                {"name": "elimination_patterns", "type": "textarea", "required": True},
             ],
-            "educational_note": "Functional assessment helps determine care needs and discharge planning."
-        }
+            "educational_note": "Functional assessment helps determine care needs and discharge planning.",
+        },
     }
 
     return steps.get(step_number, {})
 
-async def _generate_ai_analysis(step_number: int, step_data: Dict[str, Any], all_data: Dict[str, Any]) -> Dict[str, Any]:
+
+async def _generate_ai_analysis(
+    step_number: int, step_data: dict[str, Any], all_data: dict[str, Any]
+) -> dict[str, Any]:
     """
     Generate AI-powered clinical analysis for assessment step.
     Uses OpenAI to provide evidence-based clinical insights and recommendations.
@@ -293,7 +373,7 @@ async def _generate_ai_analysis(step_number: int, step_data: Dict[str, Any], all
         2: "Physical Assessment",
         3: "Systems Review",
         4: "Pain Assessment",
-        5: "Functional Assessment"
+        5: "Functional Assessment",
     }
 
     step_name = step_names.get(step_number, "Unknown Step")
@@ -390,7 +470,7 @@ Provide:
         ai_response = await clinical_decision_support(
             patient_data=step_data,
             clinical_question=clinical_question,
-            context="clinical_assessment"
+            context="clinical_assessment",
         )
 
         return {
@@ -400,7 +480,7 @@ Provide:
             "recommendations": _extract_recommendations(ai_response),
             "disclaimer": "AI-generated clinical insights for educational support. All clinical decisions require professional nursing judgment.",
             "ai_model": ai_response.get("model", "gpt-4"),
-            "service_status": ai_response.get("service_status", "available")
+            "service_status": ai_response.get("service_status", "available"),
         }
 
     except Exception as e:
@@ -410,23 +490,24 @@ Provide:
             "analysis_available": False,
             "message": "AI analysis temporarily unavailable",
             "fallback_note": "Continue with clinical assessment using professional judgment and clinical protocols",
-            "error": str(e)
+            "error": str(e),
         }
 
-def _extract_recommendations(ai_response: Dict[str, Any]) -> List[str]:
+
+def _extract_recommendations(ai_response: dict[str, Any]) -> list[str]:
     """Extract actionable recommendations from AI response."""
     response_text = ai_response.get("response", "")
 
     # Simple extraction - look for numbered or bulleted lists
     recommendations = []
-    lines = response_text.split('\n')
+    lines = response_text.split("\n")
 
     for line in lines:
         line = line.strip()
         # Match numbered lists (1., 2., etc.) or bullet points (-, *, •)
-        if line and (line[0].isdigit() or line.startswith(('-', '*', '•'))):
+        if line and (line[0].isdigit() or line.startswith(("-", "*", "•"))):
             # Clean up the line
-            cleaned = line.lstrip('0123456789.-*• ')
+            cleaned = line.lstrip("0123456789.-*• ")
             if cleaned and len(cleaned) > 10:  # Only include substantial recommendations
                 recommendations.append(cleaned)
 

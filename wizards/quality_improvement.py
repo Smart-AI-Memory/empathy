@@ -4,15 +4,16 @@ Following Wizard Pattern Implementation from coding instructions
 Quality metrics tracking and improvement initiative workflows with AI-powered pattern analysis
 """
 
+import logging
+from datetime import datetime
+from typing import Any
+from uuid import uuid4
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import Dict, Any, List, Optional
-from uuid import uuid4
-from datetime import datetime
-import logging
 
-from ...utils.config import get_educational_banner
 from ...services.openai_client import create_openai_service
+from ...utils.config import get_educational_banner
 
 logger = logging.getLogger(__name__)
 
@@ -21,22 +22,24 @@ router = APIRouter(
     tags=["wizards", "quality-improvement"],
     responses={
         404: {"description": "Wizard session not found"},
-        422: {"description": "Invalid step data"}
-    }
+        422: {"description": "Invalid step data"},
+    },
 )
 
 # Wizard session storage (Redis in production)
-_wizard_sessions: Dict[str, Dict[str, Any]] = {}
+_wizard_sessions: dict[str, dict[str, Any]] = {}
+
 
 class QualityImprovementStepData(BaseModel):
     """Data model for quality improvement step submission."""
-    step_data: Dict[str, Any]
-    metrics: Optional[List[Dict[str, Any]]] = None
+
+    step_data: dict[str, Any]
+    metrics: list[dict[str, Any]] | None = None
+
 
 @router.post("/start")
 async def start_quality_improvement(
-    initiative_type: str = "general",
-    department: Optional[str] = None
+    initiative_type: str = "general", department: str | None = None
 ):
     """Start quality improvement wizard following Wizard Pattern Implementation."""
     wizard_id = str(uuid4())
@@ -55,8 +58,8 @@ async def start_quality_improvement(
             "baseline_metrics": {},
             "improvement_plan": {},
             "implementation": {},
-            "evaluation": {}
-        }
+            "evaluation": {},
+        },
     }
 
     _wizard_sessions[wizard_id] = session_data
@@ -71,14 +74,35 @@ async def start_quality_improvement(
         "step_description": "Define the quality issue or opportunity for improvement",
         "fields": [
             {"name": "problem_statement", "type": "textarea", "required": True},
-            {"name": "affected_population", "type": "text", "label": "Patient/staff population affected", "required": True},
-            {"name": "scope", "type": "select", "options": ["Unit-level", "Department-level", "Hospital-wide", "System-wide"], "required": True},
-            {"name": "current_impact", "type": "textarea", "label": "Current impact on care/outcomes", "required": True},
-            {"name": "root_causes", "type": "textarea", "label": "Suspected root causes", "required": True},
-            {"name": "stakeholders", "type": "textarea", "required": True}
+            {
+                "name": "affected_population",
+                "type": "text",
+                "label": "Patient/staff population affected",
+                "required": True,
+            },
+            {
+                "name": "scope",
+                "type": "select",
+                "options": ["Unit-level", "Department-level", "Hospital-wide", "System-wide"],
+                "required": True,
+            },
+            {
+                "name": "current_impact",
+                "type": "textarea",
+                "label": "Current impact on care/outcomes",
+                "required": True,
+            },
+            {
+                "name": "root_causes",
+                "type": "textarea",
+                "label": "Suspected root causes",
+                "required": True,
+            },
+            {"name": "stakeholders", "type": "textarea", "required": True},
         ],
-        "educational_note": "Use SMART criteria when defining the problem. Consider using root cause analysis tools like fishbone diagrams."
+        "educational_note": "Use SMART criteria when defining the problem. Consider using root cause analysis tools like fishbone diagrams.",
     }
+
 
 @router.get("/{wizard_id}/status")
 async def get_quality_improvement_status(wizard_id: str):
@@ -97,15 +121,18 @@ async def get_quality_improvement_status(wizard_id: str):
         "total_steps": session["total_steps"],
         "completed_steps": session["completed_steps"],
         "progress": len(session["completed_steps"]) / session["total_steps"] * 100,
-        "status": "completed" if len(session["completed_steps"]) == session["total_steps"] else "in_progress",
-        "data": session["data"]
+        "status": (
+            "completed"
+            if len(session["completed_steps"]) == session["total_steps"]
+            else "in_progress"
+        ),
+        "data": session["data"],
     }
+
 
 @router.post("/{wizard_id}/step/{step_number}")
 async def submit_quality_improvement_step(
-    wizard_id: str,
-    step_number: int,
-    step_data: QualityImprovementStepData
+    wizard_id: str, step_number: int, step_data: QualityImprovementStepData
 ):
     """Submit quality improvement step data following Wizard Pattern Implementation."""
 
@@ -117,7 +144,7 @@ async def submit_quality_improvement_step(
     if step_number != session["current_step"]:
         raise HTTPException(
             status_code=422,
-            detail=f"Invalid step. Expected step {session['current_step']}, got step {step_number}"
+            detail=f"Invalid step. Expected step {session['current_step']}, got step {step_number}",
         )
 
     # Store step data based on step number
@@ -126,7 +153,7 @@ async def submit_quality_improvement_step(
         2: "baseline_metrics",
         3: "improvement_plan",
         4: "implementation",
-        5: "evaluation"
+        5: "evaluation",
     }
 
     if step_number in step_mapping:
@@ -159,10 +186,15 @@ async def submit_quality_improvement_step(
         "current_step": session["current_step"],
         "total_steps": session["total_steps"],
         "progress": len(session["completed_steps"]) / session["total_steps"] * 100,
-        "status": "completed" if len(session["completed_steps"]) == session["total_steps"] else "in_progress",
+        "status": (
+            "completed"
+            if len(session["completed_steps"]) == session["total_steps"]
+            else "in_progress"
+        ),
         "ai_analysis": ai_analysis,
-        "next_step": next_step_info
+        "next_step": next_step_info,
     }
+
 
 @router.get("/{wizard_id}/step/{step_number}")
 async def get_quality_improvement_step(wizard_id: str, step_number: int):
@@ -184,7 +216,7 @@ async def get_quality_improvement_step(wizard_id: str, step_number: int):
         2: "baseline_metrics",
         3: "improvement_plan",
         4: "implementation",
-        5: "evaluation"
+        5: "evaluation",
     }
 
     existing_data = session["data"].get(step_mapping.get(step_number, ""), {})
@@ -194,8 +226,9 @@ async def get_quality_improvement_step(wizard_id: str, step_number: int):
         "wizard_id": wizard_id,
         "step_number": step_number,
         "existing_data": existing_data,
-        **step_info
+        **step_info,
     }
+
 
 @router.get("/{wizard_id}/metrics")
 async def get_quality_metrics(wizard_id: str):
@@ -212,8 +245,9 @@ async def get_quality_metrics(wizard_id: str):
         "wizard_id": wizard_id,
         "metrics": metrics,
         "baseline_data": session["data"].get("baseline_metrics", {}),
-        "evaluation_data": session["data"].get("evaluation", {})
+        "evaluation_data": session["data"].get("evaluation", {}),
     }
+
 
 @router.delete("/{wizard_id}")
 async def cancel_quality_improvement(wizard_id: str):
@@ -227,10 +261,11 @@ async def cancel_quality_improvement(wizard_id: str):
     return {
         "banner": get_educational_banner(),
         "message": "Quality improvement wizard session cancelled",
-        "wizard_id": wizard_id
+        "wizard_id": wizard_id,
     }
 
-def _get_step_info(step_number: int) -> Dict[str, Any]:
+
+def _get_step_info(step_number: int) -> dict[str, Any]:
     """Get step configuration information."""
 
     steps = {
@@ -239,42 +274,107 @@ def _get_step_info(step_number: int) -> Dict[str, Any]:
             "step_description": "Define the quality issue or opportunity for improvement",
             "fields": [
                 {"name": "problem_statement", "type": "textarea", "required": True},
-                {"name": "affected_population", "type": "text", "label": "Patient/staff population affected", "required": True},
-                {"name": "scope", "type": "select", "options": ["Unit-level", "Department-level", "Hospital-wide", "System-wide"], "required": True},
-                {"name": "current_impact", "type": "textarea", "label": "Current impact on care/outcomes", "required": True},
-                {"name": "root_causes", "type": "textarea", "label": "Suspected root causes", "required": True},
-                {"name": "stakeholders", "type": "textarea", "required": True}
+                {
+                    "name": "affected_population",
+                    "type": "text",
+                    "label": "Patient/staff population affected",
+                    "required": True,
+                },
+                {
+                    "name": "scope",
+                    "type": "select",
+                    "options": ["Unit-level", "Department-level", "Hospital-wide", "System-wide"],
+                    "required": True,
+                },
+                {
+                    "name": "current_impact",
+                    "type": "textarea",
+                    "label": "Current impact on care/outcomes",
+                    "required": True,
+                },
+                {
+                    "name": "root_causes",
+                    "type": "textarea",
+                    "label": "Suspected root causes",
+                    "required": True,
+                },
+                {"name": "stakeholders", "type": "textarea", "required": True},
             ],
-            "educational_note": "Use SMART criteria when defining the problem. Consider using root cause analysis tools like fishbone diagrams."
+            "educational_note": "Use SMART criteria when defining the problem. Consider using root cause analysis tools like fishbone diagrams.",
         },
         2: {
             "step_title": "Baseline Metrics",
             "step_description": "Establish current performance and measurement criteria",
             "fields": [
                 {"name": "primary_metric", "type": "text", "required": True},
-                {"name": "primary_metric_value", "type": "number", "label": "Current value", "required": True},
+                {
+                    "name": "primary_metric_value",
+                    "type": "number",
+                    "label": "Current value",
+                    "required": True,
+                },
                 {"name": "secondary_metrics", "type": "textarea", "required": False},
-                {"name": "data_source", "type": "text", "label": "How metrics are collected", "required": True},
-                {"name": "measurement_frequency", "type": "select", "options": ["Daily", "Weekly", "Monthly", "Quarterly"], "required": True},
+                {
+                    "name": "data_source",
+                    "type": "text",
+                    "label": "How metrics are collected",
+                    "required": True,
+                },
+                {
+                    "name": "measurement_frequency",
+                    "type": "select",
+                    "options": ["Daily", "Weekly", "Monthly", "Quarterly"],
+                    "required": True,
+                },
                 {"name": "target_value", "type": "number", "required": True},
-                {"name": "target_timeline", "type": "text", "label": "Timeline to reach target", "required": True}
+                {
+                    "name": "target_timeline",
+                    "type": "text",
+                    "label": "Timeline to reach target",
+                    "required": True,
+                },
             ],
-            "educational_note": "Ensure metrics are measurable, relevant, and align with organizational quality goals."
+            "educational_note": "Ensure metrics are measurable, relevant, and align with organizational quality goals.",
         },
         3: {
             "step_title": "Improvement Plan",
             "step_description": "Develop PDSA (Plan-Do-Study-Act) improvement strategy",
             "fields": [
-                {"name": "aim_statement", "type": "textarea", "label": "SMART aim statement", "required": True},
-                {"name": "interventions", "type": "textarea", "label": "Planned interventions/changes", "required": True},
-                {"name": "evidence_base", "type": "textarea", "label": "Evidence supporting interventions", "required": True},
+                {
+                    "name": "aim_statement",
+                    "type": "textarea",
+                    "label": "SMART aim statement",
+                    "required": True,
+                },
+                {
+                    "name": "interventions",
+                    "type": "textarea",
+                    "label": "Planned interventions/changes",
+                    "required": True,
+                },
+                {
+                    "name": "evidence_base",
+                    "type": "textarea",
+                    "label": "Evidence supporting interventions",
+                    "required": True,
+                },
                 {"name": "resources_needed", "type": "textarea", "required": True},
-                {"name": "team_members", "type": "textarea", "label": "QI team members and roles", "required": True},
-                {"name": "timeline", "type": "textarea", "label": "Implementation timeline", "required": True},
+                {
+                    "name": "team_members",
+                    "type": "textarea",
+                    "label": "QI team members and roles",
+                    "required": True,
+                },
+                {
+                    "name": "timeline",
+                    "type": "textarea",
+                    "label": "Implementation timeline",
+                    "required": True,
+                },
                 {"name": "barriers_anticipated", "type": "textarea", "required": True},
-                {"name": "mitigation_strategies", "type": "textarea", "required": True}
+                {"name": "mitigation_strategies", "type": "textarea", "required": True},
             ],
-            "educational_note": "Use evidence-based practices. Plan for small tests of change (PDSA cycles) before full implementation."
+            "educational_note": "Use evidence-based practices. Plan for small tests of change (PDSA cycles) before full implementation.",
         },
         4: {
             "step_title": "Implementation",
@@ -285,31 +385,58 @@ def _get_step_info(step_number: int) -> Dict[str, Any]:
                 {"name": "staff_training_completed", "type": "boolean", "required": True},
                 {"name": "process_changes_made", "type": "textarea", "required": True},
                 {"name": "challenges_encountered", "type": "textarea", "required": True},
-                {"name": "adjustments_made", "type": "textarea", "label": "PDSA adjustments", "required": True},
+                {
+                    "name": "adjustments_made",
+                    "type": "textarea",
+                    "label": "PDSA adjustments",
+                    "required": True,
+                },
                 {"name": "stakeholder_feedback", "type": "textarea", "required": False},
-                {"name": "current_adoption_rate", "type": "number", "unit": "%", "required": True}
+                {"name": "current_adoption_rate", "type": "number", "unit": "%", "required": True},
             ],
-            "educational_note": "Document all PDSA cycles. Be prepared to adapt the plan based on real-world feedback."
+            "educational_note": "Document all PDSA cycles. Be prepared to adapt the plan based on real-world feedback.",
         },
         5: {
             "step_title": "Evaluation & Sustainability",
             "step_description": "Assess outcomes and plan for sustained improvement",
             "fields": [
                 {"name": "end_date", "type": "date", "required": True},
-                {"name": "final_metric_value", "type": "number", "label": "Final primary metric value", "required": True},
+                {
+                    "name": "final_metric_value",
+                    "type": "number",
+                    "label": "Final primary metric value",
+                    "required": True,
+                },
                 {"name": "target_achieved", "type": "boolean", "required": True},
                 {"name": "outcome_summary", "type": "textarea", "required": True},
                 {"name": "lessons_learned", "type": "textarea", "required": True},
-                {"name": "sustainability_plan", "type": "textarea", "label": "How improvements will be sustained", "required": True},
-                {"name": "monitoring_frequency", "type": "select", "label": "Ongoing monitoring plan", "options": ["Daily", "Weekly", "Monthly", "Quarterly"], "required": True},
-                {"name": "spread_potential", "type": "textarea", "label": "Potential to spread to other units", "required": False},
-                {"name": "next_steps", "type": "textarea", "required": True}
+                {
+                    "name": "sustainability_plan",
+                    "type": "textarea",
+                    "label": "How improvements will be sustained",
+                    "required": True,
+                },
+                {
+                    "name": "monitoring_frequency",
+                    "type": "select",
+                    "label": "Ongoing monitoring plan",
+                    "options": ["Daily", "Weekly", "Monthly", "Quarterly"],
+                    "required": True,
+                },
+                {
+                    "name": "spread_potential",
+                    "type": "textarea",
+                    "label": "Potential to spread to other units",
+                    "required": False,
+                },
+                {"name": "next_steps", "type": "textarea", "required": True},
             ],
-            "educational_note": "Celebrate successes! Share results with stakeholders. Plan for ongoing monitoring to prevent backsliding."
-        }
+            "educational_note": "Celebrate successes! Share results with stakeholders. Plan for ongoing monitoring to prevent backsliding.",
+        },
     }
 
     return steps.get(step_number, {})
+
 
 @router.get("/templates")
 async def get_quality_improvement_templates():
@@ -321,79 +448,106 @@ async def get_quality_improvement_templates():
             {
                 "name": "Fall Prevention",
                 "description": "Reduce patient falls and fall-related injuries",
-                "common_metrics": ["Falls per 1000 patient days", "Fall-related injury rate", "Post-fall huddle completion rate"],
+                "common_metrics": [
+                    "Falls per 1000 patient days",
+                    "Fall-related injury rate",
+                    "Post-fall huddle completion rate",
+                ],
                 "evidence_based_interventions": [
                     "Hourly rounding",
                     "Fall risk assessment on admission",
                     "Yellow socks/wristbands for high-risk patients",
                     "Bed alarms for appropriate patients",
-                    "Environmental safety checks"
-                ]
+                    "Environmental safety checks",
+                ],
             },
             {
                 "name": "Pressure Injury Prevention",
                 "description": "Prevent hospital-acquired pressure injuries",
-                "common_metrics": ["Hospital-acquired pressure injury rate", "Skin assessment completion rate", "Turn compliance rate"],
+                "common_metrics": [
+                    "Hospital-acquired pressure injury rate",
+                    "Skin assessment completion rate",
+                    "Turn compliance rate",
+                ],
                 "evidence_based_interventions": [
                     "Braden scale assessment on admission",
                     "Turn schedule implementation",
                     "Specialty mattress utilization",
                     "Nutritional support",
-                    "Heel offloading protocols"
-                ]
+                    "Heel offloading protocols",
+                ],
             },
             {
                 "name": "CAUTI Prevention",
                 "description": "Reduce catheter-associated urinary tract infections",
-                "common_metrics": ["CAUTI rate per 1000 catheter days", "Catheter utilization ratio", "Appropriate indication documentation"],
+                "common_metrics": [
+                    "CAUTI rate per 1000 catheter days",
+                    "Catheter utilization ratio",
+                    "Appropriate indication documentation",
+                ],
                 "evidence_based_interventions": [
                     "Daily catheter necessity assessment",
                     "Aseptic insertion technique",
                     "Proper catheter maintenance",
                     "Early removal protocols",
-                    "Nurse-driven removal protocols"
-                ]
+                    "Nurse-driven removal protocols",
+                ],
             },
             {
                 "name": "Medication Safety",
                 "description": "Reduce medication errors and adverse drug events",
-                "common_metrics": ["Medication error rate", "Adverse drug event rate", "High-alert medication compliance"],
+                "common_metrics": [
+                    "Medication error rate",
+                    "Adverse drug event rate",
+                    "High-alert medication compliance",
+                ],
                 "evidence_based_interventions": [
                     "Double-check protocols for high-alert meds",
                     "Barcode scanning compliance",
                     "Medication reconciliation",
                     "Smart pump utilization",
-                    "Pharmacist involvement in rounds"
-                ]
+                    "Pharmacist involvement in rounds",
+                ],
             },
             {
                 "name": "Hand Hygiene Compliance",
                 "description": "Improve hand hygiene compliance rates",
-                "common_metrics": ["Hand hygiene compliance rate", "Healthcare-associated infection rates", "Audit completion rate"],
+                "common_metrics": [
+                    "Hand hygiene compliance rate",
+                    "Healthcare-associated infection rates",
+                    "Audit completion rate",
+                ],
                 "evidence_based_interventions": [
                     "Alcohol-based hand sanitizer placement",
                     "Visual reminders at point of care",
                     "Direct observation audits",
                     "Peer accountability",
-                    "Leadership rounding with feedback"
-                ]
+                    "Leadership rounding with feedback",
+                ],
             },
             {
                 "name": "Patient Satisfaction",
                 "description": "Improve patient experience and satisfaction scores",
-                "common_metrics": ["HCAHPS scores", "Response rate to call lights", "Hourly rounding completion"],
+                "common_metrics": [
+                    "HCAHPS scores",
+                    "Response rate to call lights",
+                    "Hourly rounding completion",
+                ],
                 "evidence_based_interventions": [
                     "Bedside shift report",
                     "Hourly rounding with 4 Ps (Pain, Potty, Position, Possessions)",
                     "Leader rounding",
                     "Discharge phone calls",
-                    "White board communication"
-                ]
-            }
-        ]
+                    "White board communication",
+                ],
+            },
+        ],
     }
 
-async def _generate_qi_analysis(step_number: int, step_data: Dict[str, Any], all_data: Dict[str, Any]) -> Dict[str, Any]:
+
+async def _generate_qi_analysis(
+    step_number: int, step_data: dict[str, Any], all_data: dict[str, Any]
+) -> dict[str, Any]:
     """
     Generate AI-powered quality improvement analysis for each step.
     Provides pattern analysis, root cause identification, evidence-based interventions, and outcome predictions.
@@ -404,7 +558,7 @@ async def _generate_qi_analysis(step_number: int, step_data: Dict[str, Any], all
         2: "Baseline Metrics",
         3: "Improvement Plan",
         4: "Implementation",
-        5: "Evaluation & Sustainability"
+        5: "Evaluation & Sustainability",
     }
 
     step_name = step_names.get(step_number, "Unknown Step")
@@ -517,8 +671,7 @@ Provide:
 
         # Generate AI analysis
         ai_response = await service.generate_response(
-            prompt=prompt,
-            context="quality_improvement_analysis"
+            prompt=prompt, context="quality_improvement_analysis"
         )
 
         return {
@@ -528,14 +681,15 @@ Provide:
             "evidence_level": "AI-generated recommendations based on nursing literature and best practices",
             "disclaimer": "AI-generated quality improvement insights for professional use. Validate recommendations with organizational policies and evidence-based guidelines.",
             "ai_model": ai_response.get("model", "gpt-4"),
-            "service_status": ai_response.get("service_status", "available")
+            "service_status": ai_response.get("service_status", "available"),
         }
 
     except Exception as e:
         logger.error(f"QI AI analysis failed for step {step_number}: {e}")
         return _fallback_qi_analysis(step_name)
 
-def _fallback_qi_analysis(step_name: str) -> Dict[str, Any]:
+
+def _fallback_qi_analysis(step_name: str) -> dict[str, Any]:
     """Fallback QI analysis when AI is unavailable."""
     return {
         "step_name": step_name,
@@ -546,6 +700,6 @@ def _fallback_qi_analysis(step_name: str) -> Dict[str, Any]:
             "Institute for Healthcare Improvement (IHI) resources",
             "Agency for Healthcare Research and Quality (AHRQ) toolkit",
             "Organizational quality improvement department",
-            "Professional QI literature and evidence-based guidelines"
-        ]
+            "Professional QI literature and evidence-based guidelines",
+        ],
     }

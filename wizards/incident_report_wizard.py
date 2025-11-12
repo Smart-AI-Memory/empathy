@@ -1,5 +1,5 @@
 """
-Incident Report Wizard Router - AI Nurse Florence  
+Incident Report Wizard Router - AI Nurse Florence
 Following Wizard Pattern Implementation
 
 Structured safety event documentation for incident/variance reporting.
@@ -8,11 +8,10 @@ HIPAA-compliant, objective language, based on patient safety best practices.
 
 import logging
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any
 from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException, status
-
 from src.services import get_service
 from src.utils.api_responses import create_success_response
 from src.utils.config import get_settings
@@ -54,7 +53,7 @@ try:
 except ImportError:
     _has_redis = False
 
-_wizard_sessions: Dict[str, Dict[str, Any]] = {}
+_wizard_sessions: dict[str, dict[str, Any]] = {}
 
 INCIDENT_REPORT_STEPS = {
     1: {
@@ -118,12 +117,12 @@ INCIDENT_REPORT_STEPS = {
 EDU_BANNER = """
 ⚠️ INCIDENT REPORTING NOTICE ⚠️
 This incident report wizard is for educational and quality improvement purposes.
-Incident reports are confidential peer review documents. Use objective,  
+Incident reports are confidential peer review documents. Use objective,
 non-judgmental language. Focus on facts and system improvement, not individual blame.
 """
 
 
-async def _store_wizard_session(wizard_id: str, session_data: Dict[str, Any]) -> bool:
+async def _store_wizard_session(wizard_id: str, session_data: dict[str, Any]) -> bool:
     try:
         if _has_redis:
             redis_client = await get_redis_client()
@@ -138,14 +137,12 @@ async def _store_wizard_session(wizard_id: str, session_data: Dict[str, Any]) ->
     return True
 
 
-async def _get_wizard_session(wizard_id: str) -> Optional[Dict[str, Any]]:
+async def _get_wizard_session(wizard_id: str) -> dict[str, Any] | None:
     try:
         if _has_redis:
             redis_client = await get_redis_client()
             if redis_client:
-                session_str = await redis_client.get(
-                    f"wizard:incident_report:{wizard_id}"
-                )
+                session_str = await redis_client.get(f"wizard:incident_report:{wizard_id}")
                 if session_str:
                     import ast
 
@@ -155,11 +152,9 @@ async def _get_wizard_session(wizard_id: str) -> Optional[Dict[str, Any]]:
     return _wizard_sessions.get(wizard_id)
 
 
-def _get_step_data(step: int) -> Dict[str, Any]:
+def _get_step_data(step: int) -> dict[str, Any]:
     if step not in INCIDENT_REPORT_STEPS:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=f"Invalid step: {step}"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Invalid step: {step}")
     step_config = INCIDENT_REPORT_STEPS[step]
     return {
         "step": step,
@@ -170,7 +165,7 @@ def _get_step_data(step: int) -> Dict[str, Any]:
     }
 
 
-def _generate_incident_report(collected_data: Dict[str, Any]) -> Dict[str, Any]:
+def _generate_incident_report(collected_data: dict[str, Any]) -> dict[str, Any]:
     narrative = f"""
 INCIDENT REPORT - CONFIDENTIAL QUALITY IMPROVEMENT DOCUMENT
 
@@ -253,19 +248,15 @@ async def start_incident_report_wizard():
             data=response_data, message="Incident report wizard started successfully"
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @router.post("/{wizard_id}/step", summary="Submit incident report step")
-async def submit_incident_report_step(wizard_id: str, step_data: Dict[str, Any]):
+async def submit_incident_report_step(wizard_id: str, step_data: dict[str, Any]):
     try:
         session = await _get_wizard_session(wizard_id)
         if not session:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Session not found"
-            )
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
         current_step = session["current_step"]
         session["collected_data"].update(step_data.get("data", {}))
         session["updated_at"] = datetime.now().isoformat()
@@ -302,19 +293,15 @@ async def submit_incident_report_step(wizard_id: str, step_data: Dict[str, Any])
             message=f"Step {current_step} completed",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @router.post("/{wizard_id}/enhance", summary="Enhance incident report text")
-async def enhance_incident_report_text(wizard_id: str, text_data: Dict[str, Any]):
+async def enhance_incident_report_text(wizard_id: str, text_data: dict[str, Any]):
     try:
         session = await _get_wizard_session(wizard_id)
         if not session:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Session not found"
-            )
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
         original_text = text_data.get("text", "")
         field_name = text_data.get("field", "text")
         if not original_text:
@@ -339,9 +326,7 @@ async def enhance_incident_report_text(wizard_id: str, text_data: Dict[str, Any]
             message="Text enhanced successfully",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @router.get("/{wizard_id}/report", summary="Get incident report")
@@ -349,9 +334,7 @@ async def get_incident_report(wizard_id: str):
     try:
         session = await _get_wizard_session(wizard_id)
         if not session:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Session not found"
-            )
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
         if not session.get("completed", False):
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -363,9 +346,7 @@ async def get_incident_report(wizard_id: str):
             message="Report retrieved successfully",
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 __all__ = ["router"]

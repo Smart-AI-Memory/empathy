@@ -6,20 +6,19 @@ which is a standard communication tool in healthcare settings.
 """
 
 from datetime import datetime
-from typing import Dict
 
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
-
-from services.openai_client import get_client
 from utils.api_responses import create_error_response, create_success_response
 from utils.logging import get_logger
+
+from services.openai_client import get_client
 
 router = APIRouter(prefix="/wizards/sbar-report", tags=["wizards"])
 logger = get_logger(__name__)
 
 # In-memory storage for wizard state. In production, use Redis or a database.
-wizard_sessions: Dict[str, Dict[str, str]] = {}
+wizard_sessions: dict[str, dict[str, str]] = {}
 
 # --- Pydantic Models for Wizard Steps ---
 
@@ -68,9 +67,7 @@ class DirectSbarResponse(BaseModel):
 # --- Wizard Endpoints ---
 
 
-@router.post(
-    "/start", response_model=StartSbarResponse, summary="Step 1: Start the SBAR wizard"
-)
+@router.post("/start", response_model=StartSbarResponse, summary="Step 1: Start the SBAR wizard")
 async def start_sbar_wizard():
     """
     Initializes a new SBAR report wizard session and returns a unique `wizard_id`.
@@ -109,34 +106,22 @@ def _update_step(wizard_id: str, step_name: str, text: str, next_step_name: str)
     )
 
 
-@router.post(
-    "/situation", response_model=SbarStepResponse, summary="Step 2: Add Situation"
-)
+@router.post("/situation", response_model=SbarStepResponse, summary="Step 2: Add Situation")
 async def add_situation(step_input: SbarStepInput):
     """Adds the **Situation** component to the SBAR report."""
-    return _update_step(
-        step_input.wizard_id, "situation", step_input.text, "background"
-    )
+    return _update_step(step_input.wizard_id, "situation", step_input.text, "background")
 
 
-@router.post(
-    "/background", response_model=SbarStepResponse, summary="Step 3: Add Background"
-)
+@router.post("/background", response_model=SbarStepResponse, summary="Step 3: Add Background")
 async def add_background(step_input: SbarStepInput):
     """Adds the **Background** component to the SBAR report."""
-    return _update_step(
-        step_input.wizard_id, "background", step_input.text, "assessment"
-    )
+    return _update_step(step_input.wizard_id, "background", step_input.text, "assessment")
 
 
-@router.post(
-    "/assessment", response_model=SbarStepResponse, summary="Step 4: Add Assessment"
-)
+@router.post("/assessment", response_model=SbarStepResponse, summary="Step 4: Add Assessment")
 async def add_assessment(step_input: SbarStepInput):
     """Adds the **Assessment** component to the SBAR report."""
-    return _update_step(
-        step_input.wizard_id, "assessment", step_input.text, "recommendation"
-    )
+    return _update_step(step_input.wizard_id, "assessment", step_input.text, "recommendation")
 
 
 @router.post(
@@ -332,9 +317,7 @@ Note: This report was generated without AI enhancement. Configure OPENAI_API_KEY
 
         return {"wizard_id": wizard_id, "sbar_report": sbar_report}
     except Exception as e:
-        logger.error(
-            f"SBAR report generation failed for session {wizard_id}: {e}", exc_info=True
-        )
+        logger.error(f"SBAR report generation failed for session {wizard_id}: {e}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to generate SBAR report: {str(e)}",

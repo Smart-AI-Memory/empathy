@@ -8,11 +8,10 @@ Based on evidence-based nursing admission assessment standards.
 
 import logging
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any
 from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException, status
-
 from src.services import get_service
 from src.utils.api_responses import create_success_response
 from src.utils.config import get_settings
@@ -57,7 +56,7 @@ try:
 except ImportError:
     _has_redis = False
 
-_wizard_sessions: Dict[str, Dict[str, Any]] = {}
+_wizard_sessions: dict[str, dict[str, Any]] = {}
 
 
 # Admission assessment wizard steps
@@ -160,19 +159,15 @@ Never rely solely on automated tools for clinical decision-making or documentati
 """
 
 
-async def _store_wizard_session(wizard_id: str, session_data: Dict[str, Any]) -> bool:
+async def _store_wizard_session(wizard_id: str, session_data: dict[str, Any]) -> bool:
     """Store wizard session in Redis (preferred) or memory (fallback)"""
     try:
         if _has_redis:
             redis_client = await get_redis_client()
             if redis_client:
                 cache_key = f"wizard:admission_assessment:{wizard_id}"
-                await redis_client.setex(
-                    cache_key, 7200, str(session_data)  # 2 hour TTL
-                )
-                logger.info(
-                    f"Stored admission assessment wizard session {wizard_id} in Redis"
-                )
+                await redis_client.setex(cache_key, 7200, str(session_data))  # 2 hour TTL
+                logger.info(f"Stored admission assessment wizard session {wizard_id} in Redis")
                 return True
     except Exception as e:
         logger.warning(f"Failed to store session in Redis: {e}, using memory fallback")
@@ -183,7 +178,7 @@ async def _store_wizard_session(wizard_id: str, session_data: Dict[str, Any]) ->
     return True
 
 
-async def _get_wizard_session(wizard_id: str) -> Optional[Dict[str, Any]]:
+async def _get_wizard_session(wizard_id: str) -> dict[str, Any] | None:
     """Retrieve wizard session from Redis (preferred) or memory (fallback)"""
     try:
         if _has_redis:
@@ -202,7 +197,7 @@ async def _get_wizard_session(wizard_id: str) -> Optional[Dict[str, Any]]:
     return _wizard_sessions.get(wizard_id)
 
 
-def _get_step_data(step: int) -> Dict[str, Any]:
+def _get_step_data(step: int) -> dict[str, Any]:
     """Get step configuration data"""
     if step not in ADMISSION_ASSESSMENT_STEPS:
         raise HTTPException(
@@ -220,9 +215,7 @@ def _get_step_data(step: int) -> Dict[str, Any]:
     }
 
 
-def _generate_admission_assessment_report(
-    collected_data: Dict[str, Any]
-) -> Dict[str, Any]:
+def _generate_admission_assessment_report(collected_data: dict[str, Any]) -> dict[str, Any]:
     """Generate final admission assessment report from collected data"""
 
     # Generate formatted narrative
@@ -347,7 +340,7 @@ async def start_admission_assessment_wizard():
 
 
 @router.post("/{wizard_id}/step", summary="Submit admission assessment wizard step")
-async def submit_admission_assessment_step(wizard_id: str, step_data: Dict[str, Any]):
+async def submit_admission_assessment_step(wizard_id: str, step_data: dict[str, Any]):
     """
     Submit data for current step and advance to next step.
 
@@ -438,10 +431,8 @@ async def submit_admission_assessment_step(wizard_id: str, step_data: Dict[str, 
         )
 
 
-@router.post(
-    "/{wizard_id}/enhance", summary="Enhance admission assessment text with AI"
-)
-async def enhance_admission_assessment_text(wizard_id: str, text_data: Dict[str, Any]):
+@router.post("/{wizard_id}/enhance", summary="Enhance admission assessment text with AI")
+async def enhance_admission_assessment_text(wizard_id: str, text_data: dict[str, Any]):
     """
     Enhance user-provided text with AI to improve clinical documentation quality.
 
@@ -501,9 +492,7 @@ Enhanced text:"""
             "field": field_name,
         }
 
-        return create_success_response(
-            data=response_data, message="Text enhanced successfully"
-        )
+        return create_success_response(data=response_data, message="Text enhanced successfully")
 
     except HTTPException:
         raise

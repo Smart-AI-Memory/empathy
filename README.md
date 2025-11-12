@@ -3,14 +3,14 @@
 **A five-level maturity model for AI-human collaboration**
 
 [![License](https://img.shields.io/badge/License-Fair%20Source%200.9-blue.svg)](LICENSE)
-[![PyPI version](https://img.shields.io/pypi/v/empathy.svg)](https://pypi.org/project/empathy/)
-[![Python 3.10+](https://img.shields.io/pypi/pyversions/empathy.svg)](https://www.python.org/downloads/)
+[![PyPI version](https://img.shields.io/pypi/v/empathy-framework.svg)](https://pypi.org/project/empathy-framework/)
+[![Python 3.10+](https://img.shields.io/pypi/pyversions/empathy-framework.svg)](https://www.python.org/downloads/)
 [![Tests](https://github.com/Smart-AI-Memory/empathy/actions/workflows/tests.yml/badge.svg)](https://github.com/Smart-AI-Memory/empathy/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/Smart-AI-Memory/empathy/branch/main/graph/badge.svg)](https://codecov.io/gh/Smart-AI-Memory/empathy)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Smart-AI-Memory/empathy/badge)](https://securityscorecards.dev/viewer/?uri=github.com/Smart-AI-Memory/empathy)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![Downloads](https://img.shields.io/pypi/dm/empathy.svg)](https://pypi.org/project/empathy/)
+[![Downloads](https://img.shields.io/pypi/dm/empathy-framework.svg)](https://pypi.org/project/empathy-framework/)
 
 ---
 
@@ -18,15 +18,15 @@
 
 ```bash
 # Install core framework
-pip install empathy
+pip install empathy-framework
 
 # Install with Claude Code + MemDocs transformative stack (recommended)
-pip install empathy[full]
+pip install empathy-framework[full]
 
 # Or install specific components:
-pip install empathy[llm]      # LLM providers (Anthropic, OpenAI)
-pip install empathy[memdocs]  # MemDocs integration
-pip install empathy[all]      # Everything including dev tools
+pip install empathy-framework[llm]      # LLM providers (Anthropic, OpenAI)
+pip install empathy-framework[memdocs]  # MemDocs integration
+pip install empathy-framework[all]      # Everything including dev tools
 ```
 
 **Development installation:**
