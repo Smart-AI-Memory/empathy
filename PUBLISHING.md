@@ -122,7 +122,7 @@ python -m venv verify_env
 source verify_env/bin/activate
 
 # Install from PyPI
-pip install empathy[full]
+pip install empathy-framework[full]
 
 # Verify
 python -c "from empathy_os import EmpathyOS; print('Production package works!')"
@@ -177,16 +177,16 @@ After publishing, users can install with:
 
 ```bash
 # Minimal installation
-pip install empathy
+pip install empathy-framework
 
 # Transformative stack (recommended)
-pip install empathy[full]
+pip install empathy-framework[full]
 
 # Specific components
-pip install empathy[llm]       # LLM providers
-pip install empathy[memdocs]   # MemDocs integration
-pip install empathy[agents]    # LangChain agents
-pip install empathy[all]       # Everything + dev tools
+pip install empathy-framework[llm]       # LLM providers
+pip install empathy-framework[memdocs]   # MemDocs integration
+pip install empathy-framework[agents]    # LangChain agents
+pip install empathy-framework[all]       # Everything + dev tools
 
 # Development
 git clone https://github.com/Smart-AI-Memory/empathy-framework.git

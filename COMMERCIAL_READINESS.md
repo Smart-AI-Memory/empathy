@@ -167,19 +167,19 @@ Successfully built empathy-1.5.0-py3-none-any.whl
 
 ```bash
 # Core framework only
-pip install empathy
+pip install empathy-framework
 
 # With LLM providers
-pip install empathy[llm]
+pip install empathy-framework[llm]
 
 # Full stack (recommended)
-pip install empathy[full]
+pip install empathy-framework[full]
 
 # Development installation
-pip install empathy[dev]
+pip install empathy-framework[dev]
 
 # Everything
-pip install empathy[all]
+pip install empathy-framework[all]
 ```
 
 ---
@@ -392,7 +392,7 @@ Commercial license required for:
 With MemDocs publishing complete, all production-readiness blockers have been resolved:
 
 ✅ **MemDocs Integration**: Published and validated
-- `pip install empathy[full]` now succeeds completely
+- `pip install empathy-framework[full]` now succeeds completely
 - MemDocs long-term memory integration tested and working
 - Transformative Claude Code + VS Code + MemDocs stack fully operational
 

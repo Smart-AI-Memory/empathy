@@ -352,14 +352,14 @@ Shall I proceed with GOVERNANCE.md?"
 
 ```bash
 # Install Empathy Framework with MemDocs integration
-pip install empathy[memdocs]
+pip install empathy-framework[memdocs]
 
 # Or install separately
-pip install empathy
+pip install empathy-framework
 pip install memdocs
 
 # Development setup
-pip install empathy[dev]  # Includes testing, linting, docs
+pip install empathy-framework[dev]  # Includes testing, linting, docs
 ```
 
 ### Configuration
@@ -454,7 +454,7 @@ npm install -g @anthropic-ai/claude-code
 # Install from VS Code marketplace: "Claude Code"
 
 # Empathy Framework + MemDocs
-pip install empathy[memdocs,dev]
+pip install empathy-framework[memdocs,dev]
 
 # Verify installations
 claude-code --version

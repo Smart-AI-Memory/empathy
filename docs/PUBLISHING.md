@@ -79,7 +79,7 @@ After publishing, verify the package:
 1. **Check PyPI page**: https://pypi.org/project/empathy/
 2. **Install and test**:
    ```bash
-   pip install empathy
+   pip install empathy-framework
    python -c "from empathy_os import EmpathyOS; print('Success!')"
    ```
 

@@ -469,7 +469,7 @@ Five production-ready wizards for Level 4 anticipatory development.
 
 ## Installation
 ```bash
-pip install empathy[software]
+pip install empathy-framework[software]
 ```
 
 ## Wizards
@@ -703,7 +703,7 @@ git push origin v1.5.0
 
 ## 📦 Installation
 ```bash
-pip install empathy[full]
+pip install empathy-framework[full]
 ```
 
 ## 🔧 What's Included
