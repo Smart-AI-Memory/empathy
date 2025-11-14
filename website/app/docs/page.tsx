@@ -93,14 +93,14 @@ export default function DocsPage() {
                   Install the Empathy Framework using pip:
                 </p>
                 <pre className="bg-[var(--foreground)] text-[var(--background)] p-4 rounded-lg mb-4">
-                  <code>pip install empathy</code>
+                  <code>pip install empathy-framework</code>
                 </pre>
                 <p className="text-[var(--text-secondary)]">
                   Or install from source:
                 </p>
                 <pre className="bg-[var(--foreground)] text-[var(--background)] p-4 rounded-lg">
 {`git clone https://github.com/Smart-AI-Memory/empathy-framework.git
-cd empathy
+cd empathy-framework
 pip install -e .`}
                 </pre>
               </section>
