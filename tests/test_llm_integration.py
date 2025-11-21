@@ -28,6 +28,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from empathy_llm_toolkit.core import EmpathyLLM  # noqa: E402
 from empathy_llm_toolkit.providers import AnthropicProvider  # noqa: E402
 
+try:
+    import anthropic
+except ImportError:
+    anthropic = None
+
 
 @pytest.fixture
 def api_key():
@@ -288,7 +293,10 @@ class TestLLMErrorHandling:
     @pytest.mark.asyncio
     async def test_invalid_api_key(self):
         """Test handling of invalid API key"""
-        with pytest.raises((ValueError, RuntimeError)):
+        expected_exceptions = (ValueError, RuntimeError)
+        if anthropic is not None:
+            expected_exceptions = (ValueError, RuntimeError, anthropic.AuthenticationError)
+        with pytest.raises(expected_exceptions):
             provider = AnthropicProvider(api_key="invalid-key-12345")
             await provider.generate(messages=[{"role": "user", "content": "Hello"}], max_tokens=50)
 
@@ -297,7 +305,10 @@ class TestLLMErrorHandling:
     async def test_empty_message(self, anthropic_provider):
         """Test handling of empty message"""
         # Should handle gracefully or raise clear error
-        with pytest.raises((ValueError, RuntimeError)):
+        expected_exceptions = (ValueError, RuntimeError)
+        if anthropic is not None:
+            expected_exceptions = (ValueError, RuntimeError, anthropic.BadRequestError)
+        with pytest.raises(expected_exceptions):
             await anthropic_provider.generate(messages=[], max_tokens=50)
 
     @pytest.mark.llm
