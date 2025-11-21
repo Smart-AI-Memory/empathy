@@ -5,6 +5,28 @@ All notable changes to the Empathy Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.3] - 2025-11-21
+
+### Added
+- **Automated Release Pipeline**: Enhanced GitHub Actions workflow for fully automated releases
+  - Automatic package validation with twine check
+  - Smart changelog extraction from CHANGELOG.md
+  - Automatic PyPI publishing on tag push
+  - Version auto-detection from git tags
+  - Comprehensive release notes generation
+
+### Changed
+- **Developer Experience**: Streamlined release process
+  - Configured ~/.pypirc for easy manual uploads
+  - Added PYPI_API_TOKEN to GitHub secrets
+  - Future releases: just push a tag, everything automated
+
+### Infrastructure
+- **Repository Cleanup**: Excluded working files and build artifacts
+  - Added website build exclusions to .gitignore
+  - Removed working .md files from git tracking
+  - Cleaner repository for end users
+
 ## [1.6.2] - 2025-11-21
 
 ### Fixed
