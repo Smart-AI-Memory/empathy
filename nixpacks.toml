@@ -1,11 +1,17 @@
 [phases.setup]
-nixPkgs = ["nodejs_20"]
+nixPkgs = ["nodejs_20", "npm-9_x"]
 
 [phases.install]
-cmds = ["cd website && npm ci"]
+cmds = [
+  "cd website",
+  "npm ci --legacy-peer-deps"
+]
 
 [phases.build]
-cmds = ["cd website && npm run build"]
+cmds = [
+  "cd website",
+  "npm run build"
+]
 
 [start]
 cmd = "cd website && npm run start"
