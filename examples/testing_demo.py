@@ -8,6 +8,8 @@ Licensed under the Apache License, Version 2.0
 """
 
 import asyncio
+import os
+import tempfile
 
 # Mock coverage data for demonstration
 MOCK_COVERAGE_DATA = {
@@ -119,9 +121,6 @@ async def demo_risk_analysis():
     wizard = EnhancedTestingWizard()
 
     # Create temporary files for analysis
-    import os
-    import tempfile
-
     with tempfile.TemporaryDirectory() as tmpdir:
         # Write mock files
         auth_file = os.path.join(tmpdir, "auth.py")
