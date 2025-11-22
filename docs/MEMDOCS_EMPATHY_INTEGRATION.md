@@ -368,7 +368,7 @@ pip install empathy-framework[dev]  # Includes testing, linting, docs
 ```toml
 [project]
 name = "empathy"
-version = "1.6.1"
+version = "1.7.0"
 
 [project.optional-dependencies]
 memdocs = [

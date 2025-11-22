@@ -72,7 +72,7 @@ https://github.com/Deep-Study-AI/Empathy
 **Q: How do users/developers get the version they want?**
 ```
 Met: Via git tags and PyPI releases with semantic versioning (MAJOR.MINOR.PATCH).
-Current version: 1.6.1
+Current version: 1.7.0
 ```
 
 **Q: Is version control publicly available?**
@@ -344,7 +344,7 @@ URL: https://github.com/Deep-Study-AI/Empathy/blob/main/docs/GOVERNANCE.md
 **Q: Do you have a documented supported versions policy?**
 ```
 Met: Yes. SECURITY.md documents:
-- Current version: 1.6.1 (supported)
+- Current version: 1.7.0 (supported)
 - Previous minor versions: Supported for 6 months after new minor release
 - Major versions: Supported for 12 months after new major release
 - Security patches: Backported to supported versions only
