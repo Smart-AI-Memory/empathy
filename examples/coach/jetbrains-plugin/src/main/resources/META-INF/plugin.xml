@@ -1,18 +1,14 @@
-<<<<<<< HEAD
 <!-- Coach IDE Plugin for JetBrains IDEs
      Copyright 2025 Deep Study AI, LLC
      Licensed under the Apache License, Version 2.0
 -->
 
-=======
->>>>>>> 0ead1a9 (  Please enter the commit message for your changes. Lines starting)
 <idea-plugin>
     <id>com.deepstudyai.coach</id>
     <name>Coach - AI with Level 4 Anticipatory Empathy</name>
     <vendor email="support@deepstudyai.com" url="https://deepstudyai.com">Deep Study AI, LLC</vendor>
 
     <description><![CDATA[
-<<<<<<< HEAD
     <h1>Coach - AI with Level 4 Anticipatory Empathy</h1>
 
     <p><strong>Built on LangChain with 16 Specialized AI Wizards</strong></p>
@@ -61,14 +57,16 @@
     ]]></description>
 
     <change-notes><![CDATA[
-    <h2>0.1.0-alpha - Alpha Release</h2>
+    <h2>1.7.0 - Production/Stable Release</h2>
     <ul>
-        <li>Initial alpha release for testing</li>
+        <li>Production-ready stable release</li>
         <li>Core LSP client with 16 wizard support</li>
         <li>Security, Performance, and Accessibility inspections</li>
         <li>Real-time code analysis</li>
         <li>Quick fixes for common issues</li>
         <li>Multi-wizard collaboration</li>
+        <li>Level 4 Anticipatory predictions (30-90 days)</li>
+        <li>90.71% test coverage</li>
     </ul>
     ]]></change-notes>
 
@@ -242,141 +240,6 @@
                     class="com.deepstudyai.coach.actions.OpenDocumentationAction"
                     text="Documentation"
                     description="Open Coach documentation"/>
-=======
-    <h2>AI development assistant with 16 specialized wizards</h2>
-
-    <p>Coach brings Level 4 Anticipatory Empathy to your development workflow, predicting issues 30-90 days before they occur.</p>
-
-    <h3>Features</h3>
-    <ul>
-        <li><strong>16 Specialized Wizards</strong>: Security, Performance, Debugging, Testing, Refactoring, API Design, Database, DevOps, Monitoring, Documentation, Accessibility, Localization, Compliance, Onboarding, Design Review, Retrospective</li>
-        <li><strong>Level 4 Predictions</strong>: See future bottlenecks before they happen</li>
-        <li><strong>Multi-Wizard Collaboration</strong>: Orchestrate complex workflows</li>
-        <li><strong>Code Inspections</strong>: Real-time issue detection with quick fixes</li>
-        <li><strong>Tool Window</strong>: Full wizard interface in IDE</li>
-    </ul>
-
-    <h3>Requirements</h3>
-    <ul>
-        <li>Python 3.12+ (with python3 in PATH)</li>
-        <li>IntelliJ Platform 2024.1+</li>
-    </ul>
-    ]]></description>
-
-    <change-notes><![CDATA[
-    <h3>1.0.0</h3>
-    <ul>
-        <li>Initial release</li>
-        <li>16 specialized wizards</li>
-        <li>Level 4 Anticipatory predictions</li>
-        <li>Multi-wizard collaboration</li>
-        <li>Full IntelliJ Platform integration</li>
-    </ul>
-    ]]></change-notes>
-
-    <!-- Product and plugin compatibility requirements -->
-    <depends>com.intellij.modules.platform</depends>
-    <depends>com.intellij.modules.lang</depends>
-
-    <extensions defaultExtensionNs="com.intellij">
-        <!-- Tool Window -->
-        <toolWindow
-            id="Coach"
-            anchor="right"
-            icon="/icons/coach-13.svg"
-            factoryClass="com.deepstudyai.coach.ui.CoachToolWindowFactory"/>
-
-        <!-- Inspections -->
-        <localInspection
-            language=""
-            groupName="Coach"
-            displayName="Security Issues"
-            enabledByDefault="true"
-            level="WARNING"
-            implementationClass="com.deepstudyai.coach.inspections.SecurityInspection"/>
-
-        <localInspection
-            language=""
-            groupName="Coach"
-            displayName="Performance Issues"
-            enabledByDefault="true"
-            level="WARNING"
-            implementationClass="com.deepstudyai.coach.inspections.PerformanceInspection"/>
-
-        <localInspection
-            language=""
-            groupName="Coach"
-            displayName="Accessibility Issues"
-            enabledByDefault="true"
-            level="WARNING"
-            implementationClass="com.deepstudyai.coach.inspections.AccessibilityInspection"/>
-
-        <!-- Project Service -->
-        <projectService
-            serviceImplementation="com.deepstudyai.coach.lsp.CoachLSPClient"/>
-
-        <!-- Settings -->
-        <projectConfigurable
-            parentId="tools"
-            instance="com.deepstudyai.coach.settings.CoachConfigurable"
-            id="com.deepstudyai.coach.settings.CoachConfigurable"
-            displayName="Coach"/>
-
-        <!-- Notification Group -->
-        <notificationGroup
-            id="Coach Notifications"
-            displayType="BALLOON"/>
-    </extensions>
-
-    <actions>
-        <group id="CoachActionGroup" text="Coach" popup="true" icon="/icons/coach-13.svg">
-            <action
-                id="Coach.AnalyzeFile"
-                class="com.deepstudyai.coach.actions.AnalyzeFileAction"
-                text="Analyze Current File"
-                description="Run Coach analysis on current file"
-                icon="AllIcons.Actions.Find"/>
-
-            <action
-                id="Coach.SecurityAudit"
-                class="com.deepstudyai.coach.actions.SecurityAuditAction"
-                text="Run Security Audit"
-                description="STRIDE threat modeling and vulnerability scan"
-                icon="AllIcons.Actions.Shield"/>
-
-            <action
-                id="Coach.GenerateTests"
-                class="com.deepstudyai.coach.actions.GenerateTestsAction"
-                text="Generate Test Suite"
-                description="Create comprehensive test suite"
-                icon="AllIcons.RunConfigurations.TestState.Run"/>
-
-            <action
-                id="Coach.PerformanceProfile"
-                class="com.deepstudyai.coach.actions.PerformanceProfileAction"
-                text="Profile Performance"
-                description="Identify performance bottlenecks"
-                icon="AllIcons.Actions.ProfileCPU"/>
-
-            <action
-                id="Coach.Refactor"
-                class="com.deepstudyai.coach.actions.RefactorAction"
-                text="Suggest Refactorings"
-                description="Code quality and technical debt analysis"
-                icon="AllIcons.Actions.RefactoringBulb"/>
-
-            <separator/>
-
-            <action
-                id="Coach.MultiWizardReview"
-                class="com.deepstudyai.coach.actions.MultiWizardAction"
-                text="Multi-Wizard Review"
-                description="Orchestrate multiple wizards"
-                icon="AllIcons.Actions.GroupBy"/>
-
-            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            <add-to-group group-id="MainMenu" anchor="after" relative-to-action="ToolsMenu"/>
->>>>>>> 0ead1a9 (  Please enter the commit message for your changes. Lines starting)
         </group>
     </actions>
 </idea-plugin>

@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.deepstudyai.coach"
-version = "0.1.0-alpha"
+version = "1.7.0"
 
 repositories {
     mavenCentral()
