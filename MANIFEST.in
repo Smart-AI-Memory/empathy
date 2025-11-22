@@ -27,6 +27,26 @@ recursive-include docs *.md *.rst *.txt
 # Include examples
 recursive-include examples *.py *.md *.yml *.yaml
 
+# Exclude website and non-framework content
+prune website
+prune backend
+exclude nixpacks.toml
+exclude org-ruleset-*.json
+exclude render.yaml
+exclude vercel.json
+
+# Exclude working/planning files
+exclude BADGES_REMINDER.md
+exclude POST_HACKERNEWS_REMINDER.md
+exclude SEND_LANGCHAIN_EMAIL.md
+exclude HN_ARTICLE_EMPATHY_MEMDOCS.md
+exclude OUTREACH_EMAILS.md
+exclude TODO_BADGES.md
+exclude COMPREHENSIVE_COMPLETION_PLAN.md
+exclude COMMERCIAL_READINESS.md
+exclude QUALITY_REVIEW.md
+exclude COMMERCIAL_ROADMAP.md
+
 # Exclude unnecessary files
 global-exclude *.pyc
 global-exclude *.pyo
