@@ -4,7 +4,7 @@ Linting Configuration Loaders
 Reads linting configuration files to understand project standards.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 import json

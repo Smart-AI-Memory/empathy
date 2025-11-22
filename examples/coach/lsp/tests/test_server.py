@@ -2,7 +2,7 @@
 Unit Tests for Coach Language Server
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 from unittest.mock import AsyncMock, Mock, patch

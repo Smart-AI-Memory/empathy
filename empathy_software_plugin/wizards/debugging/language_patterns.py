@@ -7,7 +7,7 @@ This is Level 5 Systems Empathy - recognizing that the same fundamental
 patterns appear across different domains (languages).
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 from dataclasses import dataclass

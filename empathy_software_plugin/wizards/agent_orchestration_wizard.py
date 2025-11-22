@@ -8,7 +8,7 @@ we learned that agent coordination complexity grows non-linearly. This wizard
 detects when simple orchestration patterns will fail at scale.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 import os

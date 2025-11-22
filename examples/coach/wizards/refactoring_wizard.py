@@ -6,7 +6,7 @@ Uses Empathy Framework Level 3 (Proactive) for smell detection and Level 4
 (Anticipatory) for predicting maintainability issues.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 from typing import Any

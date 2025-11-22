@@ -133,7 +133,7 @@ All new code must include tests. We aim for **70%+ coverage**.
 Tests for Module Name
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 import pytest
@@ -361,7 +361,7 @@ Demonstrates Level 4 Anticipatory Empathy by predicting
 user needs before they arise.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 from empathy_os import EmpathyOS

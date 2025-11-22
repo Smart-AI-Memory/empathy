@@ -4,7 +4,7 @@ Integration Tests for Software Development Plugin
 Tests all three wizards working together on realistic projects.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 import json

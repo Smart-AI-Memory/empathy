@@ -8,7 +8,7 @@ This wizard learned to predict when documentation gaps will cause AI
 to give poor recommendations, before developers waste time debugging why.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 import os

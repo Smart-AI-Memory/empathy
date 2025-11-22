@@ -30,7 +30,7 @@ A five-level maturity model for AI-human collaboration that progresses from reac
 
 **Current Status:**
 - 46+ specialized wizards (software + healthcare + AI development)
-- Apache 2.0 open source core
+- Fair Source 0.9 open source core
 - Production-ready with one-click deployment
 - Commercial IDE extensions (JetBrains, VS Code)
 
@@ -87,7 +87,7 @@ The framework itself demonstrates transformative productivity using Claude:
 | Multi-turn conversations | Iterative code refinement | "Collaborative debugging sessions" |
 
 ### 4. Open Source Halo Effect
-**Framework is Apache 2.0 with commercial extensions:**
+**Framework is Fair Source 0.9 with commercial extensions:**
 - Developers adopt free tier (builds Claude mindshare)
 - Upgrade to Pro tier (ongoing Claude API usage)
 - Enterprises buy Business tier (high-value accounts)
@@ -166,7 +166,7 @@ We seek a **technical partnership with promotional benefits**, NOT exclusivity:
 ### Tier Structure:
 
 **Free Tier** (Open Source):
-- Complete framework (Apache 2.0)
+- Complete framework (Fair Source 0.9)
 - All 46 wizards
 - Supports all LLM providers
 - Community support

@@ -6,7 +6,7 @@ Checks patient sensor data against clinical protocol criteria.
 This is the "linter" for healthcare - runs the protocol rules against current state.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 from dataclasses import dataclass

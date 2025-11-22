@@ -4,7 +4,7 @@ Coach Wizards - 16 Specialized Software Development Wizards
 Level 4 Anticipatory Empathy for software development using the Empathy Framework.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 from .accessibility_wizard import AccessibilityWizard

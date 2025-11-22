@@ -58,7 +58,7 @@ llm = [
 
 # MemDocs integration for long-term memory
 memdocs = [
-    "memdocs>=1.0.0",  # Will be available when memdocs is published
+    "memdocs>=1.0.0",  # Published on PyPI
 ]
 
 # LangChain ecosystem for agents/workflows

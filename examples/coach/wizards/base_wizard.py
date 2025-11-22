@@ -5,7 +5,7 @@ All wizards inherit from this base class and leverage the Empathy Framework
 to provide empathetic, context-aware assistance.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 from abc import ABC, abstractmethod

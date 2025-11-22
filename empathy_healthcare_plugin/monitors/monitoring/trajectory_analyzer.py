@@ -6,7 +6,7 @@ Analyzes vital sign trends to predict patient deterioration BEFORE critical.
 This is Level 4 Anticipatory Empathy - alerting before the patient meets full crisis criteria.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 from dataclasses import dataclass

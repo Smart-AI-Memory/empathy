@@ -14,7 +14,7 @@ These behaviors demonstrate Level 4 Anticipatory Empathy by:
 4. Building trust through consistent, helpful actions
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 import logging

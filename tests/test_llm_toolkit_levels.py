@@ -4,7 +4,7 @@ Unit tests for empathy_llm_toolkit.levels module
 Tests EmpathyLevel enum and class methods to achieve 95%+ coverage.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 from empathy_llm_toolkit.levels import EmpathyLevel

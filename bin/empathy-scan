@@ -5,8 +5,8 @@ Usage: empathy-scan [security|performance|all] <file-or-directory>
 """
 
 import sys
-import os
 from pathlib import Path
+
 
 def main():
     if len(sys.argv) < 3:
@@ -22,7 +22,7 @@ def main():
 
     # Import wizards
     try:
-        from coach_wizards import SecurityWizard, PerformanceWizard
+        from coach_wizards import PerformanceWizard, SecurityWizard
     except ImportError:
         print("Error: Empathy Framework not installed.")
         print("Run: pip install empathy-framework")
@@ -67,7 +67,7 @@ def main():
     # Scan each file
     for file_path in files_to_scan:
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, encoding="utf-8") as f:
                 code = f.read()
         except Exception as e:
             print(f"⚠️  Could not read {file_path}: {e}")
@@ -77,15 +77,17 @@ def main():
 
         for wizard_name, wizard in wizards:
             result = wizard.run_full_analysis(
-                code=code,
-                file_path=str(file_path),
-                language="python"
+                code=code, file_path=str(file_path), language="python"
             )
 
             if result.issues:
                 print(f"  {wizard_name}: {len(result.issues)} issue(s) found")
                 for issue in result.issues[:3]:  # Show first 3
-                    severity_icon = "🔴" if issue.severity == "high" else "🟡" if issue.severity == "medium" else "🔵"
+                    severity_icon = (
+                        "🔴"
+                        if issue.severity == "high"
+                        else "🟡" if issue.severity == "medium" else "🔵"
+                    )
                     print(f"    {severity_icon} Line {issue.line_number}: {issue.message}")
                 if len(result.issues) > 3:
                     print(f"    ... and {len(result.issues) - 3} more")
@@ -101,7 +103,7 @@ def main():
 
     # Summary
     print("=" * 50)
-    print(f"📊 SUMMARY")
+    print("📊 SUMMARY")
     print(f"  Files scanned: {len(files_to_scan)}")
     print(f"  Current issues: {total_issues}")
     print(f"  Future predictions: {total_predictions}")
@@ -112,6 +114,7 @@ def main():
     else:
         print("\n✅ All checks passed!")
         sys.exit(0)
+
 
 if __name__ == "__main__":
     main()

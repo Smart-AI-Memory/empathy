@@ -3,7 +3,7 @@ End-to-End Tests for Coach LSP
 Tests full workflow: IDE → LSP → Coach → Results
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 import os

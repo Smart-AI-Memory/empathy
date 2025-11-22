@@ -7,7 +7,7 @@ that arise from component interactions but aren't properties of components.
 Based on systems thinking principles from Donella Meadows and Peter Senge.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 from dataclasses import dataclass, field

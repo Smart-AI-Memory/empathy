@@ -4,7 +4,7 @@ Empathy LLM Toolkit - Demonstration
 Shows progression from Level 1 to Level 4 empathy with an LLM.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 import asyncio

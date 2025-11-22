@@ -4,7 +4,7 @@ Advanced Debugging Wizard - Sub-package
 Protocol-based debugging using linting configuration pattern.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 from .bug_risk_analyzer import BugRisk, BugRiskAnalyzer, RiskAssessment

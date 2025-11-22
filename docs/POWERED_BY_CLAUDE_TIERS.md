@@ -27,7 +27,7 @@ The Empathy Framework supports multiple LLM providers while showcasing Claude's 
 **LLM Choice:** User brings their own API key for any provider
 
 **Features:**
-- Complete Empathy Framework (Apache 2.0)
+- Complete Empathy Framework (Fair Source 0.9)
 - All 46 wizards
 - Multi-LLM support (Claude, GPT-4, Gemini, local)
 - One-click deployment tools

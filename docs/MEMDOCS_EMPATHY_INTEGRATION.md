@@ -814,4 +814,4 @@ The **Claude Code + MemDocs + Empathy Framework** stack represents a fundamental
 **Generated**: January 2025
 **Version**: 1.0
 **Maintained By**: Deep Study AI, LLC
-**License**: Apache 2.0 (Documentation: CC BY 4.0)
+**License**: Fair Source 0.9 (Documentation: CC BY 4.0)

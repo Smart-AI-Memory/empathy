@@ -270,7 +270,7 @@ A: The preview chapter is free. The full book (Q1 2026) will be a paid product, 
 A: Yes! Print + digital formats planned for Q1 2026.
 
 **Q: Can I use the code examples in my commercial projects?**
-A: Yes—all code examples are Apache 2.0 licensed.
+A: Yes—all code examples are Fair Source 0.9 licensed.
 
 **Q: Why publish a preview instead of waiting for the full book?**
 A: To get feedback, build community, and validate the concepts before finalizing the full manuscript. Your input shapes the book!

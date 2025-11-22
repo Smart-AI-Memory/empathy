@@ -6,6 +6,7 @@ We release patches for security vulnerabilities in the following versions:
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 1.6.8   | :white_check_mark: |
 | 1.x.x   | :white_check_mark: |
 | < 1.0   | :x:                |
 
@@ -18,7 +19,7 @@ The Empathy Framework team takes security vulnerabilities seriously. We apprecia
 **Please DO NOT report security vulnerabilities through public GitHub issues.**
 
 Instead, please report security vulnerabilities to:
-- **Email**: patrick.roebuck@deepstudyai.com
+- **Email**: security@smartaimemory.com
 - **Subject Line**: `[SECURITY] Empathy Framework Vulnerability Report`
 
 ### What to Include
@@ -33,8 +34,9 @@ Please include the following information in your report:
 
 ### Response Timeline
 
-- **Acknowledgment**: Within 48 hours of your report
+- **Acknowledgment**: Within 24-48 hours of your report
 - **Initial Assessment**: Within 5 business days
+- **Security Fix**: Within 7 days for critical vulnerabilities
 - **Detailed Response**: Within 10 business days with our evaluation and timeline
 - **Fix & Disclosure**: Coordinated disclosure after patch is released
 

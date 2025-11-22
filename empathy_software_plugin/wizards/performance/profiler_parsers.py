@@ -4,7 +4,7 @@ Profiler Output Parsers
 Parses output from various profilers (cProfile, perf, Chrome DevTools, etc.)
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 import json

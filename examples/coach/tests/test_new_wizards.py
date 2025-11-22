@@ -4,7 +4,7 @@ Comprehensive QA Tests for New Wizards (10 wizards)
 Tests all 10 new wizards with various inputs, edge cases, and collaboration patterns.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 import pytest

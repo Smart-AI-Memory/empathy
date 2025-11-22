@@ -2,7 +2,7 @@
 Tests for Emergence Detection
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 from empathy_os.emergence import EmergenceDetector, EmergentProperty

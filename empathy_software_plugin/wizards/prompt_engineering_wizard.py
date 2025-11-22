@@ -9,7 +9,7 @@ you to drift patterns, context inefficiencies, and structural issues before
 they compound into major problems.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 import os

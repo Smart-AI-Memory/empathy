@@ -3,7 +3,7 @@
 Production-ready Level 4 Anticipatory wizards for software development.
 
 **Copyright 2025 Deep Study AI, LLC**
-**Licensed under the Apache License, Version 2.0**
+**Licensed under Fair Source 0.9**
 
 ## Overview
 
@@ -722,7 +722,7 @@ This approach:
 
 Copyright 2025 Deep Study AI, LLC
 
-Licensed under the Apache License, Version 2.0 (the "License");
+Licensed under Fair Source 0.9 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 

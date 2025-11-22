@@ -3,7 +3,7 @@
 **Transform your development workflow with Level 4 Anticipatory AI collaboration**
 
 **Version:** 1.0.0
-**License:** Apache 2.0
+**License:** Fair Source 0.9
 **Copyright:** 2025 Deep Study AI, LLC
 
 ---
@@ -65,7 +65,7 @@ In this context, empathy is not about feelings - it's about:
 | Static rules: Same analysis for everyone | **Adaptive**: Learns your patterns and context |
 | Single-domain: Security OR performance | **Multi-domain**: 16+ wizards working together |
 | Level 1: Simple Q&A | **Level 4**: Trajectory prediction and prevention |
-| Proprietary, expensive | **Open source, free forever** (Apache 2.0) |
+| Proprietary, expensive | **Open source, free forever** (Fair Source 0.9) |
 
 ---
 
@@ -2062,11 +2062,11 @@ The Empathy Framework transforms AI from a simple tool into a collaborative part
 - **Build trust through consistent collaboration**
 - **Scale development velocity 4-6x**
 
-All at zero cost (Apache 2.0 open source) with infinite ROI.
+All at zero cost (Fair Source 0.9 open source) with infinite ROI.
 
 **Welcome to the future of AI-human collaboration!**
 
 ---
 
 **Copyright 2025 Deep Study AI, LLC**
-**Licensed under the Apache License, Version 2.0**
+**Licensed under Fair Source 0.9**

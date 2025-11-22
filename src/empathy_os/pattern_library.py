@@ -7,7 +7,7 @@ learning across the agent collective (Level 5: Systems Empathy).
 One agent's discovery benefits all agents through pattern sharing.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 from dataclasses import dataclass, field

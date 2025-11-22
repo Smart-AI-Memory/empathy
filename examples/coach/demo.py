@@ -4,7 +4,7 @@ Coach Demo - Comprehensive Examples
 Demonstrates Coach orchestration agent with various software development tasks.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 from examples.coach import Coach, WizardTask

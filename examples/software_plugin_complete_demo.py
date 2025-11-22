@@ -4,7 +4,7 @@ Software Development Plugin - Complete Integration Demo
 Shows all wizards working together on a realistic project analysis.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 import asyncio

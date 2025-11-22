@@ -9,7 +9,7 @@ But we learned: embedding quality, chunk strategy, and retrieval relevance
 degrade as data grows. This wizard alerts before those issues surface.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 import os

@@ -8,7 +8,7 @@ that the WAY you collaborate with AI matters as much as WHAT you ask it to do.
 This wizard learned to recognize when reactive patterns will limit effectiveness.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 import os

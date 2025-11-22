@@ -1,17 +1,17 @@
 {
   "errors": [],
-  "generated_at": "2025-11-22T01:44:08Z",
+  "generated_at": "2025-11-22T04:30:53Z",
   "metrics": {
     "_totals": {
-      "CONFIDENCE.HIGH": 44,
+      "CONFIDENCE.HIGH": 21,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 1,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
-      "SEVERITY.LOW": 45,
+      "SEVERITY.LOW": 22,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 18234,
+      "loc": 18332,
       "nosec": 0,
       "skipped_tests": 1
     },
@@ -510,12 +510,12 @@
       "skipped_tests": 0
     },
     "empathy_software_plugin/wizards/agent_orchestration_wizard.py": {
-      "CONFIDENCE.HIGH": 4,
+      "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 0,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
-      "SEVERITY.LOW": 4,
+      "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
       "loc": 379,
@@ -523,12 +523,12 @@
       "skipped_tests": 0
     },
     "empathy_software_plugin/wizards/ai_collaboration_wizard.py": {
-      "CONFIDENCE.HIGH": 2,
+      "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 0,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
-      "SEVERITY.LOW": 2,
+      "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
       "loc": 425,
@@ -549,12 +549,12 @@
       "skipped_tests": 0
     },
     "empathy_software_plugin/wizards/ai_documentation_wizard.py": {
-      "CONFIDENCE.HIGH": 4,
+      "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 0,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
-      "SEVERITY.LOW": 4,
+      "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
       "loc": 425,
@@ -679,12 +679,12 @@
       "skipped_tests": 0
     },
     "empathy_software_plugin/wizards/multi_model_wizard.py": {
-      "CONFIDENCE.HIGH": 8,
+      "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 0,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
-      "SEVERITY.LOW": 8,
+      "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
       "loc": 434,
@@ -770,12 +770,12 @@
       "skipped_tests": 0
     },
     "empathy_software_plugin/wizards/rag_pattern_wizard.py": {
-      "CONFIDENCE.HIGH": 5,
+      "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
       "CONFIDENCE.MEDIUM": 0,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
-      "SEVERITY.LOW": 5,
+      "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
       "loc": 390,
@@ -1012,7 +1012,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 445,
+      "loc": 470,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -1090,7 +1090,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 213,
+      "loc": 290,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -1103,7 +1103,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 210,
+      "loc": 206,
       "nosec": 0,
       "skipped_tests": 0
     },

@@ -6,7 +6,7 @@ Predicts performance bottlenecks BEFORE they become critical.
 Level 4: Anticipatory - alerts to performance degradation trajectory.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 import logging

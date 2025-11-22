@@ -5,7 +5,7 @@ Enables wizards to learn from each other's patterns and improve over time.
 Implements multi-agent learning using the Empathy Framework's PatternLibrary.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 from dataclasses import dataclass, field

@@ -4,7 +4,7 @@ Base Wizard for Software Development Plugin
 Foundation for all software development wizards.
 
 Copyright 2025 Deep Study AI, LLC
-Licensed under the Apache License, Version 2.0
+Licensed under Fair Source 0.9
 """
 
 import logging
