@@ -2,7 +2,7 @@
   "name": "coach-ai",
   "displayName": "Coach - AI with Level 4 Anticipatory Empathy",
   "description": "AI development assistant with 16 specialized wizards for comprehensive software development support",
-  "version": "1.0.0",
+  "version": "1.7.0",
   "publisher": "deepstudyai",
   "icon": "media/icons/coach-icon.png",
   "repository": {

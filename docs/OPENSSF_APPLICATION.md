@@ -107,7 +107,7 @@ Users can obtain specific versions through:
 3. GitHub Releases:
    https://github.com/Smart-AI-Memory/empathy-framework/releases
 
-Current version: 1.6.8
+Current version: 1.7.0
 Versioning follows SemVer 2.0.0 specification.
 ```
 
@@ -1019,7 +1019,7 @@ Met: Yes
 SECURITY.md documents version support policy:
 
 Supported versions:
-- Current version (1.6.8): Full support
+- Current version (1.7.0): Full support
 - Previous minor versions: 6 months after new minor release
 - Major versions: 12 months after new major release
 
