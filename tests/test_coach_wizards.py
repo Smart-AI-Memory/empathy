@@ -7,8 +7,10 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under Fair Source 0.9
 """
 
-import pytest
 from datetime import datetime
+
+import pytest
+
 from coach_wizards import (
     AccessibilityWizard,
     APIWizard,
@@ -28,7 +30,6 @@ from coach_wizards import (
     TestingWizard,
 )
 from coach_wizards.base_wizard import BaseCoachWizard, WizardIssue, WizardPrediction
-
 
 # All 16 Coach Wizards for parametrized testing
 ALL_WIZARDS = [
@@ -52,22 +53,92 @@ ALL_WIZARDS = [
 
 # Wizard specifications: (WizardClass, name, category, supported_languages)
 WIZARD_SPECS = [
-    (AccessibilityWizard, "AccessibilityWizard", "Accessibility", ["html", "jsx", "tsx", "vue", "svelte"]),
+    (
+        AccessibilityWizard,
+        "AccessibilityWizard",
+        "Accessibility",
+        ["html", "jsx", "tsx", "vue", "svelte"],
+    ),
     (APIWizard, "APIWizard", "API", ["python", "javascript", "typescript", "java", "go", "rust"]),
     (CICDWizard, "CICDWizard", "DevOps", ["yaml", "groovy", "python", "bash"]),
-    (ComplianceWizard, "ComplianceWizard", "Compliance", ["python", "javascript", "typescript", "java", "go"]),
-    (DatabaseWizard, "DatabaseWizard", "Database", ["sql", "python", "javascript", "typescript", "java", "go"]),
-    (DebuggingWizard, "DebuggingWizard", "Debugging", ["python", "javascript", "typescript", "java", "go", "rust", "cpp"]),
-    (DocumentationWizard, "DocumentationWizard", "Documentation", ["python", "javascript", "typescript", "java", "go", "rust", "markdown"]),
-    (LocalizationWizard, "LocalizationWizard", "Localization", ["python", "javascript", "typescript", "java", "go", "html", "jsx", "tsx"]),
-    (MigrationWizard, "MigrationWizard", "Migration", ["python", "javascript", "typescript", "java", "go", "rust"]),
-    (MonitoringWizard, "MonitoringWizard", "Monitoring", ["python", "javascript", "typescript", "java", "go", "yaml"]),
-    (ObservabilityWizard, "ObservabilityWizard", "Observability", ["python", "javascript", "typescript", "java", "go", "rust"]),
-    (PerformanceWizard, "PerformanceWizard", "Performance", ["python", "javascript", "typescript", "java", "go", "rust", "cpp"]),
-    (RefactoringWizard, "RefactoringWizard", "Code Quality", ["python", "javascript", "typescript", "java", "go", "rust", "cpp"]),
-    (ScalingWizard, "ScalingWizard", "Scalability", ["python", "javascript", "typescript", "java", "go", "rust"]),
-    (SecurityWizard, "SecurityWizard", "Security", ["python", "javascript", "typescript", "java", "go", "rust"]),
-    (TestingWizard, "TestingWizard", "Testing", ["python", "javascript", "typescript", "java", "go", "rust"]),
+    (
+        ComplianceWizard,
+        "ComplianceWizard",
+        "Compliance",
+        ["python", "javascript", "typescript", "java", "go"],
+    ),
+    (
+        DatabaseWizard,
+        "DatabaseWizard",
+        "Database",
+        ["sql", "python", "javascript", "typescript", "java", "go"],
+    ),
+    (
+        DebuggingWizard,
+        "DebuggingWizard",
+        "Debugging",
+        ["python", "javascript", "typescript", "java", "go", "rust", "cpp"],
+    ),
+    (
+        DocumentationWizard,
+        "DocumentationWizard",
+        "Documentation",
+        ["python", "javascript", "typescript", "java", "go", "rust", "markdown"],
+    ),
+    (
+        LocalizationWizard,
+        "LocalizationWizard",
+        "Localization",
+        ["python", "javascript", "typescript", "java", "go", "html", "jsx", "tsx"],
+    ),
+    (
+        MigrationWizard,
+        "MigrationWizard",
+        "Migration",
+        ["python", "javascript", "typescript", "java", "go", "rust"],
+    ),
+    (
+        MonitoringWizard,
+        "MonitoringWizard",
+        "Monitoring",
+        ["python", "javascript", "typescript", "java", "go", "yaml"],
+    ),
+    (
+        ObservabilityWizard,
+        "ObservabilityWizard",
+        "Observability",
+        ["python", "javascript", "typescript", "java", "go", "rust"],
+    ),
+    (
+        PerformanceWizard,
+        "PerformanceWizard",
+        "Performance",
+        ["python", "javascript", "typescript", "java", "go", "rust", "cpp"],
+    ),
+    (
+        RefactoringWizard,
+        "RefactoringWizard",
+        "Code Quality",
+        ["python", "javascript", "typescript", "java", "go", "rust", "cpp"],
+    ),
+    (
+        ScalingWizard,
+        "ScalingWizard",
+        "Scalability",
+        ["python", "javascript", "typescript", "java", "go", "rust"],
+    ),
+    (
+        SecurityWizard,
+        "SecurityWizard",
+        "Security",
+        ["python", "javascript", "typescript", "java", "go", "rust"],
+    ),
+    (
+        TestingWizard,
+        "TestingWizard",
+        "Testing",
+        ["python", "javascript", "typescript", "java", "go", "rust"],
+    ),
 ]
 
 
@@ -289,7 +360,15 @@ class TestDebuggingWizard:
         wizard = DebuggingWizard()
         assert wizard.name == "DebuggingWizard"
         assert wizard.category == "Debugging"
-        assert wizard.languages == ["python", "javascript", "typescript", "java", "go", "rust", "cpp"]
+        assert wizard.languages == [
+            "python",
+            "javascript",
+            "typescript",
+            "java",
+            "go",
+            "rust",
+            "cpp",
+        ]
 
     def test_analyze_code(self):
         """Test DebuggingWizard analyze_code method"""
@@ -331,7 +410,15 @@ class TestDocumentationWizard:
         wizard = DocumentationWizard()
         assert wizard.name == "DocumentationWizard"
         assert wizard.category == "Documentation"
-        assert wizard.languages == ["python", "javascript", "typescript", "java", "go", "rust", "markdown"]
+        assert wizard.languages == [
+            "python",
+            "javascript",
+            "typescript",
+            "java",
+            "go",
+            "rust",
+            "markdown",
+        ]
 
     def test_analyze_code(self):
         """Test DocumentationWizard analyze_code method"""
@@ -373,7 +460,16 @@ class TestLocalizationWizard:
         wizard = LocalizationWizard()
         assert wizard.name == "LocalizationWizard"
         assert wizard.category == "Localization"
-        assert wizard.languages == ["python", "javascript", "typescript", "java", "go", "html", "jsx", "tsx"]
+        assert wizard.languages == [
+            "python",
+            "javascript",
+            "typescript",
+            "java",
+            "go",
+            "html",
+            "jsx",
+            "tsx",
+        ]
 
     def test_analyze_code(self):
         """Test LocalizationWizard analyze_code method"""
@@ -541,7 +637,15 @@ class TestPerformanceWizard:
         wizard = PerformanceWizard()
         assert wizard.name == "PerformanceWizard"
         assert wizard.category == "Performance"
-        assert wizard.languages == ["python", "javascript", "typescript", "java", "go", "rust", "cpp"]
+        assert wizard.languages == [
+            "python",
+            "javascript",
+            "typescript",
+            "java",
+            "go",
+            "rust",
+            "cpp",
+        ]
 
     def test_analyze_code(self):
         """Test PerformanceWizard analyze_code method"""
@@ -583,7 +687,15 @@ class TestRefactoringWizard:
         wizard = RefactoringWizard()
         assert wizard.name == "RefactoringWizard"
         assert wizard.category == "Code Quality"
-        assert wizard.languages == ["python", "javascript", "typescript", "java", "go", "rust", "cpp"]
+        assert wizard.languages == [
+            "python",
+            "javascript",
+            "typescript",
+            "java",
+            "go",
+            "rust",
+            "cpp",
+        ]
 
     def test_analyze_code(self):
         """Test RefactoringWizard analyze_code method"""
@@ -910,19 +1022,21 @@ class TestWizardIntegration:
             message="Critical vulnerability found",
             file_path="/src/auth.py",
             line_number=42,
-            code_snippet='password = user_input  # unsafe',
+            code_snippet="password = user_input  # unsafe",
             fix_suggestion="Use bcrypt for hashing",
             category="Security",
             confidence=0.99,
         )
 
-        assert all([
-            issue.severity == "error",
-            issue.message == "Critical vulnerability found",
-            issue.file_path == "/src/auth.py",
-            issue.line_number == 42,
-            issue.code_snippet == 'password = user_input  # unsafe',
-            issue.fix_suggestion == "Use bcrypt for hashing",
-            issue.category == "Security",
-            issue.confidence == 0.99,
-        ])
+        assert all(
+            [
+                issue.severity == "error",
+                issue.message == "Critical vulnerability found",
+                issue.file_path == "/src/auth.py",
+                issue.line_number == 42,
+                issue.code_snippet == "password = user_input  # unsafe",
+                issue.fix_suggestion == "Use bcrypt for hashing",
+                issue.category == "Security",
+                issue.confidence == 0.99,
+            ]
+        )

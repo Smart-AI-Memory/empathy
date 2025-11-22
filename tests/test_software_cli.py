@@ -4,10 +4,6 @@ Tests for empathy_software_plugin CLI
 Focused tests for helper functions and core CLI components.
 """
 
-import pytest
-from io import StringIO
-import sys
-from unittest.mock import patch
 
 # Import the CLI module
 from empathy_software_plugin import cli
@@ -54,15 +50,15 @@ class TestColors:
 
     def test_colors_class_attributes(self):
         """Test Colors class has expected attributes"""
-        assert hasattr(cli.Colors, 'HEADER')
-        assert hasattr(cli.Colors, 'BLUE')
-        assert hasattr(cli.Colors, 'CYAN')
-        assert hasattr(cli.Colors, 'GREEN')
-        assert hasattr(cli.Colors, 'YELLOW')
-        assert hasattr(cli.Colors, 'RED')
-        assert hasattr(cli.Colors, 'BOLD')
-        assert hasattr(cli.Colors, 'UNDERLINE')
-        assert hasattr(cli.Colors, 'END')
+        assert hasattr(cli.Colors, "HEADER")
+        assert hasattr(cli.Colors, "BLUE")
+        assert hasattr(cli.Colors, "CYAN")
+        assert hasattr(cli.Colors, "GREEN")
+        assert hasattr(cli.Colors, "YELLOW")
+        assert hasattr(cli.Colors, "RED")
+        assert hasattr(cli.Colors, "BOLD")
+        assert hasattr(cli.Colors, "UNDERLINE")
+        assert hasattr(cli.Colors, "END")
 
     def test_colors_are_strings(self):
         """Test that all color codes are strings"""
@@ -77,16 +73,16 @@ class TestCLIImports:
 
     def test_module_has_logger(self):
         """Test CLI module has logger"""
-        assert hasattr(cli, 'logger')
+        assert hasattr(cli, "logger")
         assert cli.logger is not None
 
     def test_module_has_required_functions(self):
         """Test CLI module has required functions"""
-        assert hasattr(cli, 'print_header')
-        assert hasattr(cli, 'print_success')
-        assert hasattr(cli, 'print_error')
-        assert hasattr(cli, 'print_info')
-        assert hasattr(cli, 'print_alert')
+        assert hasattr(cli, "print_header")
+        assert hasattr(cli, "print_success")
+        assert hasattr(cli, "print_error")
+        assert hasattr(cli, "print_info")
+        assert hasattr(cli, "print_alert")
         assert callable(cli.print_header)
         assert callable(cli.print_success)
 
@@ -145,7 +141,7 @@ class TestCLIModuleStructure:
         """Test sys.path manipulation for imports"""
         # The CLI adds parent directory to path for imports
         # Just verify the module loaded correctly
-        assert 'empathy_os' in dir(cli) or hasattr(cli, 'get_logger')
+        assert "empathy_os" in dir(cli) or hasattr(cli, "get_logger")
 
 
 class TestCLIHelperEdgeCases:
@@ -188,9 +184,9 @@ class TestCLIIntegration:
     def test_logger_configured(self):
         """Test that logger is configured"""
         assert cli.logger is not None
-        assert hasattr(cli.logger, 'info')
-        assert hasattr(cli.logger, 'error')
-        assert hasattr(cli.logger, 'warning')
+        assert hasattr(cli.logger, "info")
+        assert hasattr(cli.logger, "error")
+        assert hasattr(cli.logger, "warning")
 
 
 class TestParseAICalls:

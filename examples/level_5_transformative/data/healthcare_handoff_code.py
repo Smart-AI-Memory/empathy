@@ -33,6 +33,7 @@ class PatientHandoff:
         CRITICAL GAP #3: No checklist to ensure all critical info transferred
         """
         import time
+
         self.handoff_time = time.time()
 
         # Verbal handoff (information loss likely!)
@@ -43,12 +44,12 @@ class PatientHandoff:
         # PROBLEM: No verification of medication changes!
         # PROBLEM: No explicit sign-off that handoff is complete!
 
-        if patient_data.get('allergies'):
+        if patient_data.get("allergies"):
             print(f"Allergies: {patient_data['allergies']}")
         # But what if the receiving nurse wasn't listening?
         # What if they assumed no allergies because it wasn't mentioned clearly?
 
-        if patient_data.get('medications'):
+        if patient_data.get("medications"):
             print(f"Medications: {patient_data['medications']}")
         # Again, no verification!
 
@@ -67,9 +68,7 @@ def shift_change_handoff(outgoing_patients: list, incoming_nurse: str):
     for patient in outgoing_patients:
         # Quick verbal handoff under time pressure
         handoff = PatientHandoff(
-            patient_id=patient['id'],
-            from_nurse=patient['current_nurse'],
-            to_nurse=incoming_nurse
+            patient_id=patient["id"], from_nurse=patient["current_nurse"], to_nurse=incoming_nurse
         )
 
         # CRITICAL VULNERABILITY: No verification loop
@@ -113,21 +112,21 @@ if __name__ == "__main__":
     # Shift change scenario
     patients_to_handoff = [
         {
-            'id': 'P12345',
-            'diagnosis': 'Pneumonia',
-            'current_nurse': 'Alice',
-            'allergies': ['Penicillin', 'Latex'],  # CRITICAL!
-            'medications': ['Azithromycin 500mg'],
-            'vitals': {'bp': '120/80', 'hr': 72}
+            "id": "P12345",
+            "diagnosis": "Pneumonia",
+            "current_nurse": "Alice",
+            "allergies": ["Penicillin", "Latex"],  # CRITICAL!
+            "medications": ["Azithromycin 500mg"],
+            "vitals": {"bp": "120/80", "hr": 72},
         },
         {
-            'id': 'P67890',
-            'diagnosis': 'Post-surgical recovery',
-            'current_nurse': 'Alice',
-            'allergies': None,  # But was this communicated clearly?
-            'medications': ['Morphine 2mg PRN', 'Heparin'],
-            'vitals': {'bp': '110/70', 'hr': 68}
-        }
+            "id": "P67890",
+            "diagnosis": "Post-surgical recovery",
+            "current_nurse": "Alice",
+            "allergies": None,  # But was this communicated clearly?
+            "medications": ["Morphine 2mg PRN", "Heparin"],
+            "vitals": {"bp": "110/70", "hr": 68},
+        },
     ]
 
     print("=== SHIFT CHANGE HANDOFF ===")
