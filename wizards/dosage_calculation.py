@@ -9,7 +9,6 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
-
 from src.utils.api_responses import create_success_response
 
 router = APIRouter(prefix="/wizards/dosage-calculation", tags=["wizards", "dosage-calculation"])

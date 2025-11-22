@@ -9,7 +9,6 @@ from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
-
 from src.utils.config import get_educational_banner
 
 router = APIRouter(

@@ -15,7 +15,6 @@ Copyright 2025 Deep Study AI, LLC
 Licensed under Fair Source 0.9 (converts to Apache 2.0 on January 1, 2029)
 """
 
-import os
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -26,7 +25,7 @@ sys.path.insert(0, str(project_root))
 
 # Import Coach Wizards
 try:
-    from coach_wizards import ComplianceWizard, CICDWizard
+    from coach_wizards import CICDWizard, ComplianceWizard
     from coach_wizards.base_wizard import WizardIssue, WizardPrediction
 except ImportError:
     print("ERROR: Could not import coach_wizards")
@@ -54,7 +53,7 @@ class PatternMemory:
             "pattern_type": pattern_type,
             "details": details,
             "stored_at": datetime.now(),
-            "confidence": details.get("confidence", 0.9)
+            "confidence": details.get("confidence", 0.9),
         }
         self.patterns.append(pattern)
         return pattern
@@ -106,7 +105,7 @@ def analyze_healthcare_handoff(memory: PatternMemory):
     with open(healthcare_file) as f:
         healthcare_code = f.read()
 
-    print_info(f"Analyzing healthcare handoff protocol...")
+    print_info("Analyzing healthcare handoff protocol...")
     print_info(f"File: {healthcare_file.name}")
     print()
 
@@ -123,7 +122,7 @@ def analyze_healthcare_handoff(memory: PatternMemory):
             code_snippet="handoff.perform_handoff(patient)",
             fix_suggestion="Implement standardized checklist with read-back verification",
             category="Compliance",
-            confidence=0.95
+            confidence=0.95,
         ),
         WizardIssue(
             severity="warning",
@@ -133,7 +132,7 @@ def analyze_healthcare_handoff(memory: PatternMemory):
             code_snippet="print(f'Patient {self.patient_id}')",
             fix_suggestion="Add written verification step",
             category="Compliance",
-            confidence=0.88
+            confidence=0.88,
         ),
     ]
 
@@ -154,23 +153,23 @@ def analyze_healthcare_handoff(memory: PatternMemory):
             "no_verification_checklist",
             "verbal_only_communication",
             "time_pressure",
-            "assumptions_about_receiving_party"
+            "assumptions_about_receiving_party",
         ],
         "failure_rate": 0.23,  # 23% without verification steps
         "solution": "Explicit verification steps with read-back confirmation",
         "confidence": 0.95,
-        "evidence": "Healthcare studies show 23% of handoffs fail without checklists"
+        "evidence": "Healthcare studies show 23% of handoffs fail without checklists",
     }
 
     # Store in memory (simulating MemDocs)
     memory.store_pattern(
-        domain="healthcare",
-        pattern_type="handoff_failure",
-        details=handoff_pattern
+        domain="healthcare", pattern_type="handoff_failure", details=handoff_pattern
     )
 
     print_success("Pattern 'critical_handoff_failure' stored in memory")
-    print_info(f"Key finding: Handoffs without verification fail {handoff_pattern['failure_rate']:.0%} of the time")
+    print_info(
+        f"Key finding: Handoffs without verification fail {handoff_pattern['failure_rate']:.0%} of the time"
+    )
     print()
 
     print("Pattern Details:")
@@ -208,16 +207,13 @@ def analyze_deployment_pipeline(memory: PatternMemory, healthcare_pattern: dict)
     print_header("CROSS-DOMAIN PATTERN DETECTION", "-")
 
     # Retrieve healthcare pattern
-    patterns = memory.retrieve_cross_domain(
-        current_domain="software",
-        looking_for="handoff"
-    )
+    patterns = memory.retrieve_cross_domain(current_domain="software", looking_for="handoff")
 
     if patterns:
         healthcare_match = patterns[0]
-        print_success(f"Pattern match found from healthcare domain!")
+        print_success("Pattern match found from healthcare domain!")
         print()
-        print(f"  Source Domain: healthcare")
+        print("  Source Domain: healthcare")
         print(f"  Pattern: {healthcare_match['details']['pattern_name']}")
         print(f"  Description: {healthcare_match['details']['description']}")
         print(f"  Healthcare failure rate: {healthcare_match['details']['failure_rate']:.0%}")
@@ -232,7 +228,7 @@ def analyze_deployment_pipeline(memory: PatternMemory, healthcare_pattern: dict)
             "✗ Staging→Production handoff lacks explicit sign-off",
             "✗ Assumptions about production team's knowledge",
             "✗ Verbal/Slack-only communication",
-            "✗ Time pressure during deployments"
+            "✗ Time pressure during deployments",
         ]
 
         print("Deployment Handoff Gaps:")
@@ -256,7 +252,7 @@ def analyze_deployment_pipeline(memory: PatternMemory, healthcare_pattern: dict)
                 "2. Require explicit sign-off between staging and production",
                 "3. Implement automated handoff verification",
                 "4. Add read-back confirmation for critical environment variables",
-                "5. Document rollback procedure as part of handoff"
+                "5. Document rollback procedure as part of handoff",
             ],
             reasoning=(
                 "Cross-domain pattern match: Healthcare analysis found that handoffs "
@@ -267,7 +263,7 @@ def analyze_deployment_pipeline(memory: PatternMemory, healthcare_pattern: dict)
                 "  • Time pressure leading to shortcuts\n"
                 "  • Verbal-only communication\n\n"
                 "Based on healthcare pattern, predicted failure in 30-45 days."
-            )
+            ),
         )
 
         print_alert("DEPLOYMENT HANDOFF FAILURE PREDICTED")
@@ -358,5 +354,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n\nERROR: {e}")
         import traceback
+
         traceback.print_exc()
         sys.exit(1)

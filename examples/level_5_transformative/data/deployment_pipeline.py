@@ -36,11 +36,9 @@ class DeploymentPipeline:
         print(f"Build artifacts: {list(build_artifacts.keys())}")
 
         # Deploy to staging
-        self.deployment_log.append({
-            'environment': 'staging',
-            'version': self.version,
-            'status': 'deployed'
-        })
+        self.deployment_log.append(
+            {"environment": "staging", "version": self.version, "status": "deployed"}
+        )
 
         # PROBLEM: No verification that:
         # - All environment variables are set correctly
@@ -48,7 +46,7 @@ class DeploymentPipeline:
         # - Feature flags are configured
         # - Monitoring is in place
 
-        print(f"✓ Deployed to staging (but was everything verified?)")
+        print("✓ Deployed to staging (but was everything verified?)")
         return True
 
     def promote_to_production(self, staging_checks: dict = None):
@@ -78,13 +76,11 @@ class DeploymentPipeline:
         # Missing: Confirmation of monitoring/alerting setup
         # Missing: Explicit acknowledgment from on-call team
 
-        self.deployment_log.append({
-            'environment': 'production',
-            'version': self.version,
-            'status': 'deployed'
-        })
+        self.deployment_log.append(
+            {"environment": "production", "version": self.version, "status": "deployed"}
+        )
 
-        print(f"✓ Deployed to production")
+        print("✓ Deployed to production")
         return True  # But is it SAFE?
 
 
@@ -94,16 +90,13 @@ def deploy_feature_release(app_config: dict):
 
     PATTERN: Same information loss during handoffs as healthcare!
     """
-    pipeline = DeploymentPipeline(
-        app_name=app_config['name'],
-        version=app_config['version']
-    )
+    pipeline = DeploymentPipeline(app_name=app_config["name"], version=app_config["version"])
 
     # Dev → Staging handoff
     build_artifacts = {
-        'docker_image': f"{app_config['name']}:{app_config['version']}",
-        'config_files': ['app.yml', 'secrets.yml'],
-        'migrations': ['20250101_add_user_table.sql']
+        "docker_image": f"{app_config['name']}:{app_config['version']}",
+        "config_files": ["app.yml", "secrets.yml"],
+        "migrations": ["20250101_add_user_table.sql"],
     }
 
     # HANDOFF #1: Dev team → Staging team
@@ -119,8 +112,8 @@ def deploy_feature_release(app_config: dict):
 
     # Quick "checks" (not comprehensive!)
     staging_checks = {
-        'passed': True,  # But what was actually checked?
-        'smoke_tests': 'passed',
+        "passed": True,  # But what was actually checked?
+        "smoke_tests": "passed",
         # Missing: Environment variable verification
         # Missing: Database migration verification
         # Missing: Rollback plan review
@@ -149,17 +142,14 @@ def emergency_hotfix_deployment(issue_description: str):
     EXACTLY like emergency patient handoffs!
     Time pressure = shortcuts = information loss
     """
-    print(f"\n=== EMERGENCY HOTFIX ===")
+    print("\n=== EMERGENCY HOTFIX ===")
     print(f"Issue: {issue_description}")
     print()
 
     # Under pressure, skip verification steps
     # Sound familiar from healthcare handoffs?
 
-    pipeline = DeploymentPipeline(
-        app_name="critical-service",
-        version="1.2.1-hotfix"
-    )
+    pipeline = DeploymentPipeline(app_name="critical-service", version="1.2.1-hotfix")
 
     # PROBLEM: Time pressure leads to skipping checklist
     # PROBLEM: Verbal-only communication with on-call team
@@ -187,16 +177,16 @@ if __name__ == "__main__":
 
     # Normal deployment with handoff gaps
     app_config = {
-        'name': 'user-service',
-        'version': '2.5.0',
-        'features': ['new-authentication', 'password-reset'],
-        'dependencies': ['postgres-14', 'redis-7'],
-        'environment_vars': {
-            'DATABASE_URL': 'postgres://prod-db:5432/users',
-            'REDIS_URL': 'redis://prod-cache:6379',
-            'JWT_SECRET': '[REDACTED]',  # Critical! Was this communicated?
-            'FEATURE_FLAG_NEW_AUTH': 'true'  # Critical! Verified?
-        }
+        "name": "user-service",
+        "version": "2.5.0",
+        "features": ["new-authentication", "password-reset"],
+        "dependencies": ["postgres-14", "redis-7"],
+        "environment_vars": {
+            "DATABASE_URL": "postgres://prod-db:5432/users",
+            "REDIS_URL": "redis://prod-cache:6379",
+            "JWT_SECRET": "[REDACTED]",  # Critical! Was this communicated?
+            "FEATURE_FLAG_NEW_AUTH": "true",  # Critical! Verified?
+        },
     }
 
     deploy_feature_release(app_config)
