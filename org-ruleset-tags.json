@@ -24,6 +24,11 @@
       "actor_id": 5,
       "actor_type": "RepositoryRole",
       "bypass_mode": "always"
+    },
+    {
+      "actor_id": 223968481,
+      "actor_type": "User",
+      "bypass_mode": "always"
     }
   ]
 }
