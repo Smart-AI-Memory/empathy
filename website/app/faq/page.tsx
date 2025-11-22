@@ -72,7 +72,7 @@ const faqData = [
       },
       {
         question: 'Is the framework production-ready?',
-        answer: 'Yes! The framework is v1.6.0 Production/Stable with 553 tests, comprehensive documentation, and is being used in production applications including medical wizards dashboards and software development tools.',
+        answer: 'Yes! The framework is v1.7.0 Production/Stable with 1,489 tests (90.71% coverage), comprehensive documentation, and is being used in production applications including medical wizards dashboards and software development tools.',
       },
     ],
   },

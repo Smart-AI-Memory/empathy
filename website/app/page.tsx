@@ -68,7 +68,7 @@ export default function Home() {
                 <div className="text-4xl">🧠</div>
                 <h3 className="text-2xl font-bold">Empathy Framework</h3>
               </div>
-              <p className="text-sm text-[var(--muted)] mb-4">v1.6.0 Production/Stable</p>
+              <p className="text-sm text-[var(--muted)] mb-4">v1.7.0 Production/Stable</p>
               <p className="text-[var(--text-secondary)] mb-6">
                 A 5-level maturity model for AI-human collaboration, progressing from reactive
                 responses to Level 4 Anticipatory Intelligence. Includes 30+ production wizards
@@ -77,7 +77,7 @@ export default function Home() {
               <div className="space-y-3 mb-6">
                 <div className="flex items-start gap-2">
                   <span className="text-[var(--success)] mt-1">✓</span>
-                  <span className="text-sm"><strong>553 tests</strong>, 63.87% coverage, 95%+ on core modules</span>
+                  <span className="text-sm"><strong>1,489 tests</strong>, 90.71% coverage</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <span className="text-[var(--success)] mt-1">✓</span>
