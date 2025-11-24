@@ -8,7 +8,7 @@
     <id>com.deepstudyai.coach</id>
     <name>Coach - AI with Level 4 Anticipatory Empathy</name>
     <vendor email="patrick.roebuck@deepstudyai.com" url="https://github.com/Deep-Study-AI/coach">Patrick Roebuck</vendor>
-    <version>1.7.1</version>
+    <version>1.8.0-alpha</version>
 
     <description><![CDATA[
     <h1>Coach - AI with Level 4 Anticipatory Empathy</h1>
@@ -58,19 +58,18 @@
     ]]></description>
 
     <change-notes><![CDATA[
-    <h2>1.7.1 - Maintenance Release</h2>
+    <h2>1.8.0-alpha - Claude Memory Integration</h2>
     <ul>
-        <li>Version synchronization with core framework</li>
-        <li>Updated metadata and documentation</li>
-        <li>Production-ready stable release</li>
-        <li>Complete framework + IDE integration</li>
-        <li>16 specialized AI wizards</li>
-        <li>Real-time code analysis</li>
+        <li><strong>NEW:</strong> Claude Memory Integration - CLAUDE.md file support</li>
+        <li><strong>NEW:</strong> Hierarchical memory loading (Enterprise → User → Project)</li>
+        <li><strong>NEW:</strong> @import directive for modular memory organization</li>
+        <li><strong>NEW:</strong> Memory affects all LLM interactions across 5 empathy levels</li>
+        <li>Foundation for enterprise privacy features</li>
+        <li>Comprehensive test coverage for memory integration</li>
+        <li>Example CLAUDE.md files included</li>
+        <li>All existing features from 1.7.1 included</li>
+        <li>16 specialized AI wizards with enhanced memory context</li>
         <li>Level 4 Anticipatory predictions (30-90 days)</li>
-        <li>Multi-wizard collaboration</li>
-        <li>Project templates for custom wizards</li>
-        <li>Quick fixes and intentions</li>
-        <li>90.71% test coverage</li>
     </ul>
     ]]></change-notes>
 

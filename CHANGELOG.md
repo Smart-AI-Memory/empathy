@@ -5,6 +5,127 @@ All notable changes to the Empathy Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0-alpha] - 2025-11-24
+
+### Added - Claude Memory Integration
+
+**Core Memory System**
+- **ClaudeMemoryLoader**: Complete CLAUDE.md file reader with hierarchical memory loading
+  - Enterprise-level memory: `/etc/claude/CLAUDE.md` or `CLAUDE_ENTERPRISE_MEMORY` env var
+  - User-level memory: `~/.claude/CLAUDE.md` (personal preferences)
+  - Project-level memory: `./.claude/CLAUDE.md` (team/project specific)
+  - Loads in hierarchical order (Enterprise → User → Project) with clear precedence
+  - Caching system for performance optimization
+  - File size limits (1MB default) and validation
+
+**@import Directive Support**
+- Modular memory organization with `@path/to/file.md` syntax
+- Circular import detection (prevents infinite loops)
+- Import depth limiting (5 levels default, configurable)
+- Relative path resolution from base directory
+- Recursive import processing with proper error handling
+
+**EmpathyLLM Integration**
+- `ClaudeMemoryConfig`: Comprehensive configuration for memory integration
+  - Enable/disable memory loading per level (enterprise/user/project)
+  - Configurable depth limits and file size restrictions
+  - Optional file validation
+- Memory prepended to all LLM system prompts across all 5 empathy levels
+- `reload_memory()` method for runtime memory updates without restart
+- `_build_system_prompt()`: Combines memory with level-specific instructions
+- Memory affects behavior of all interactions (Reactive → Systems levels)
+
+**Documentation & Examples**
+- **examples/claude_memory/user-CLAUDE.md**: Example user-level memory file
+  - Communication preferences, coding standards, work context
+  - Demonstrates personal preference storage
+- **examples/claude_memory/project-CLAUDE.md**: Example project-level memory file
+  - Project context, architecture patterns, security requirements
+  - Empathy Framework-specific guidelines and standards
+- **examples/claude_memory/example-with-imports.md**: Import directive demo
+  - Shows modular memory organization patterns
+
+**Comprehensive Testing**
+- **tests/test_claude_memory.py**: 15+ test cases covering all features
+  - Config defaults and customization tests
+  - Hierarchical memory loading (enterprise/user/project)
+  - @import directive processing and recursion
+  - Circular import detection
+  - Depth limit enforcement
+  - File size validation
+  - Cache management (clear/reload)
+  - Integration with EmpathyLLM
+  - Memory reloading after file changes
+- All tests passing with proper fixtures and mocking
+
+### Changed
+
+**Core Architecture**
+- **empathy_llm_toolkit/core.py**: Enhanced EmpathyLLM with memory support
+  - Added `claude_memory_config` and `project_root` parameters
+  - Added `_cached_memory` for performance optimization
+  - All 5 empathy level handlers now use `_build_system_prompt()` for consistent memory integration
+  - Memory loaded once at initialization, cached for all subsequent interactions
+
+**Dependencies**
+- Added structlog for structured logging in memory module
+- No new external dependencies required (uses existing framework libs)
+
+### Technical Details
+
+**Memory Loading Flow**
+1. Initialize `EmpathyLLM` with `claude_memory_config` and `project_root`
+2. `ClaudeMemoryLoader` loads files in hierarchical order
+3. Each file processed for @import directives (recursive, depth-limited)
+4. Combined memory cached in `_cached_memory` attribute
+5. Every LLM call prepends memory to system prompt
+6. Memory affects all 5 empathy levels uniformly
+
+**File Locations**
+- Enterprise: `/etc/claude/CLAUDE.md` or env var `CLAUDE_ENTERPRISE_MEMORY`
+- User: `~/.claude/CLAUDE.md`
+- Project: `./.claude/CLAUDE.md` (preferred) or `./CLAUDE.md` (fallback)
+
+**Safety Features**
+- Circular import detection (prevents infinite loops)
+- Depth limiting (default 5 levels, prevents excessive nesting)
+- File size limits (default 1MB, prevents memory issues)
+- Import stack tracking for cycle detection
+- Graceful degradation (returns empty string on errors if validation disabled)
+
+### Enterprise Privacy Foundation
+
+This release is Phase 1 of the enterprise privacy integration roadmap:
+- ✅ **Phase 1 (v1.8.0-alpha)**: Claude Memory Integration - COMPLETE
+- ⏳ **Phase 2 (v1.8.0-beta)**: PII scrubbing, audit logging, EnterprisePrivacyConfig
+- ⏳ **Phase 3 (v1.8.0)**: VSCode privacy UI, documentation
+- ⏳ **Future**: Full MemDocs integration with 3-tier privacy system
+
+**Privacy Goals**
+- Give enterprise developers control over memory scope (enterprise/user/project)
+- Enable local-only memory (no cloud storage of sensitive instructions)
+- Foundation for air-gapped/hybrid/full-integration deployment models
+- Compliance-ready architecture (GDPR, HIPAA, SOC2)
+
+### Quality Metrics
+- **New Module**: empathy_llm_toolkit/claude_memory.py (483 lines)
+- **Modified Core**: empathy_llm_toolkit/core.py (memory integration)
+- **Tests Added**: 15+ comprehensive test cases
+- **Test Coverage**: All memory features covered
+- **Example Files**: 3 sample CLAUDE.md files
+- **Documentation**: Inline docstrings with Google style
+
+### Breaking Changes
+None - this is an additive feature. Memory integration is opt-in via `claude_memory_config`.
+
+### Upgrade Notes
+- To use Claude memory: Pass `ClaudeMemoryConfig(enabled=True)` to `EmpathyLLM.__init__()`
+- Create `.claude/CLAUDE.md` in your project root with instructions
+- See examples/claude_memory/ for sample memory files
+- Memory is disabled by default (backward compatible)
+
+---
+
 ## [1.7.1] - 2025-11-22
 
 ### Changed

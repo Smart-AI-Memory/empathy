@@ -2,7 +2,7 @@
   "name": "coach-vscode",
   "displayName": "Coach - AI Code Analysis",
   "description": "AI-powered code analysis with 16 specialized wizards and Level 4 Anticipatory Empathy",
-  "version": "1.7.1",
+  "version": "1.8.0-alpha",
   "publisher": "deepstudyai",
   "author": {
     "name": "Patrick Roebuck",

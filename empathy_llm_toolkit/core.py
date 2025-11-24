@@ -10,6 +10,7 @@ Licensed under Fair Source 0.9
 import logging
 from typing import Any
 
+from .claude_memory import ClaudeMemoryConfig, ClaudeMemoryLoader
 from .levels import EmpathyLevel
 from .providers import AnthropicProvider, BaseLLMProvider, LocalProvider, OpenAIProvider
 from .state import CollaborationState, UserPattern
@@ -41,6 +42,8 @@ class EmpathyLLM:
         api_key: str | None = None,
         model: str | None = None,
         pattern_library: dict | None = None,
+        claude_memory_config: ClaudeMemoryConfig | None = None,
+        project_root: str | None = None,
         **kwargs,
     ):
         """
@@ -52,16 +55,33 @@ class EmpathyLLM:
             api_key: API key for provider (if needed)
             model: Specific model to use
             pattern_library: Shared pattern library (Level 5)
+            claude_memory_config: Configuration for Claude memory integration (v1.8.0+)
+            project_root: Project root directory for loading .claude/CLAUDE.md
             **kwargs: Provider-specific options
         """
         self.target_level = target_level
         self.pattern_library = pattern_library or {}
+        self.project_root = project_root
 
         # Initialize provider
         self.provider = self._create_provider(provider, api_key, model, **kwargs)
 
         # Track collaboration states for different users
         self.states: dict[str, CollaborationState] = {}
+
+        # Initialize Claude memory integration (v1.8.0+)
+        self.claude_memory_config = claude_memory_config
+        self.claude_memory_loader = None
+        self._cached_memory = None
+
+        if claude_memory_config and claude_memory_config.enabled:
+            self.claude_memory_loader = ClaudeMemoryLoader(claude_memory_config)
+            # Load memory once at initialization
+            self._cached_memory = self.claude_memory_loader.load_all_memory(project_root)
+            logger.info(
+                f"EmpathyLLM initialized with Claude memory: "
+                f"{len(self._cached_memory)} chars loaded"
+            )
 
         logger.info(f"EmpathyLLM initialized: provider={provider}, target_level={target_level}")
 
@@ -108,6 +128,49 @@ class EmpathyLLM:
                 break
 
         return level
+
+    def _build_system_prompt(self, level: int) -> str:
+        """
+        Build system prompt including Claude memory (if enabled).
+
+        Claude memory is prepended to the level-specific prompt,
+        so instructions from CLAUDE.md files affect all interactions.
+
+        Args:
+            level: Empathy level (1-5)
+
+        Returns:
+            Complete system prompt
+        """
+        level_prompt = EmpathyLevel.get_system_prompt(level)
+
+        # If Claude memory is enabled and loaded, prepend it
+        if self._cached_memory:
+            return f"""{self._cached_memory}
+
+---
+# Empathy Framework Instructions
+{level_prompt}
+
+Follow the instructions from CLAUDE.md files above, then apply the Empathy Framework guidelines below.
+"""
+        else:
+            return level_prompt
+
+    def reload_memory(self):
+        """
+        Reload Claude memory files.
+
+        Useful if CLAUDE.md files have been updated during runtime.
+        Call this to pick up changes without restarting.
+        """
+        if self.claude_memory_loader:
+            # Clear cache before reloading to pick up file changes
+            self.claude_memory_loader.clear_cache()
+            self._cached_memory = self.claude_memory_loader.load_all_memory(self.project_root)
+            logger.info(f"Claude memory reloaded: {len(self._cached_memory)} chars")
+        else:
+            logger.warning("Claude memory not enabled, cannot reload")
 
     async def interact(
         self,
@@ -178,7 +241,7 @@ class EmpathyLLM:
         """
         response = await self.provider.generate(
             messages=[{"role": "user", "content": user_input}],
-            system_prompt=EmpathyLevel.get_system_prompt(1),
+            system_prompt=self._build_system_prompt(1),
             temperature=EmpathyLevel.get_temperature_recommendation(1),
             max_tokens=EmpathyLevel.get_max_tokens_recommendation(1),
         )
@@ -203,7 +266,7 @@ class EmpathyLLM:
 
         response = await self.provider.generate(
             messages=messages,
-            system_prompt=EmpathyLevel.get_system_prompt(2),
+            system_prompt=self._build_system_prompt(2),
             temperature=EmpathyLevel.get_temperature_recommendation(2),
             max_tokens=EmpathyLevel.get_max_tokens_recommendation(2),
         )
@@ -263,7 +326,7 @@ Was this helpful? If not, I can adjust my pattern detection.
 
         response = await self.provider.generate(
             messages=messages,
-            system_prompt=EmpathyLevel.get_system_prompt(3),
+            system_prompt=self._build_system_prompt(3),
             temperature=EmpathyLevel.get_temperature_recommendation(3),
             max_tokens=EmpathyLevel.get_max_tokens_recommendation(3),
         )
@@ -315,7 +378,7 @@ Use anticipatory format:
 
         response = await self.provider.generate(
             messages=messages,
-            system_prompt=EmpathyLevel.get_system_prompt(4),
+            system_prompt=self._build_system_prompt(4),
             temperature=EmpathyLevel.get_temperature_recommendation(4),
             max_tokens=EmpathyLevel.get_max_tokens_recommendation(4),
         )
@@ -361,7 +424,7 @@ TASK:
 
         response = await self.provider.generate(
             messages=messages,
-            system_prompt=EmpathyLevel.get_system_prompt(5),
+            system_prompt=self._build_system_prompt(5),
             temperature=EmpathyLevel.get_temperature_recommendation(5),
             max_tokens=EmpathyLevel.get_max_tokens_recommendation(5),
         )
