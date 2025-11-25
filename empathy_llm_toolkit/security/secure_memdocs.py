@@ -17,7 +17,7 @@ Key Features:
 - Retention policy management
 
 Architecture:
-    User Input → PII Scrubbing → Secrets Detection → Classification
+    User Input → [PII Scrubbing + Secrets Detection (PARALLEL)] → Classification
     → Encryption (if SENSITIVE) → MemDocs Storage → Audit Logging
 
 Reference:
@@ -29,6 +29,7 @@ Licensed under Fair Source 0.9
 """
 
 import base64
+import concurrent.futures
 import hashlib
 import json
 import os
@@ -568,8 +569,18 @@ class SecureMemDocsIntegration:
             if not content or not content.strip():
                 raise ValueError("Content cannot be empty")
 
-            # Step 1: PII Scrubbing (GDPR, HIPAA)
-            sanitized_content, pii_detections = self.pii_scrubber.scrub(content)
+            # Step 1 & 2: PII Scrubbing + Secrets Detection (PARALLEL for performance)
+            # Run both operations in parallel since they're independent
+            # Secrets detection runs on original content to catch secrets before PII scrubbing
+            with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+                # Submit both tasks in parallel
+                pii_future = executor.submit(self.pii_scrubber.scrub, content)
+                secrets_future = executor.submit(self.secrets_detector.detect, content)
+
+                # Wait for both to complete
+                sanitized_content, pii_detections = pii_future.result()
+                secrets_found = secrets_future.result()
+
             pii_count = len(pii_detections)
 
             if pii_count > 0:
@@ -579,9 +590,6 @@ class SecureMemDocsIntegration:
                     pii_count=pii_count,
                     types=[d.pii_type for d in pii_detections],
                 )
-
-            # Step 2: Secrets Detection (OWASP)
-            secrets_found = self.secrets_detector.detect(sanitized_content)
 
             if secrets_found:
                 # CRITICAL: Block storage if secrets detected
