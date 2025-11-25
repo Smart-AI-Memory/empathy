@@ -75,10 +75,10 @@ config = load_config(use_env=True)
 
 ## Class Reference
 
-::: empathy_os.EmpathyConfig
+::: empathy_os.config.EmpathyConfig
     options:
-      show_root_heading: true
-      show_source: true
+      show_root_heading: false
+      show_source: false
       heading_level: 3
 
 ## Configuration Options

@@ -56,8 +56,8 @@ When one agent discovers a useful pattern, all agents learn from it.
 
 ::: empathy_os.pattern_library.PatternLibrary
     options:
-      show_root_heading: true
-      show_source: true
+      show_root_heading: false
+      show_source: false
       heading_level: 4
 
 Central repository for discovered patterns.
@@ -99,8 +99,8 @@ for match in matches:
 
 ::: empathy_os.pattern_library.Pattern
     options:
-      show_root_heading: true
-      show_source: true
+      show_root_heading: false
+      show_source: false
       heading_level: 4
 
 Individual pattern with metadata and confidence tracking.
@@ -159,8 +159,8 @@ print(f"Confidence: {new_confidence:.0%}")
 
 ::: empathy_os.pattern_library.PatternMatch
     options:
-      show_root_heading: true
-      show_source: true
+      show_root_heading: false
+      show_source: false
       heading_level: 4
 
 Result of pattern matching with relevance score.

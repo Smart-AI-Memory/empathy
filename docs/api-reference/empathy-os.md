@@ -39,20 +39,11 @@ print(response.confidence)  # Confidence score
 
 ## Class Reference
 
-::: empathy_os.EmpathyOS
+::: empathy_os.core.EmpathyOS
     options:
-      show_root_heading: true
-      show_source: true
+      show_root_heading: false
+      show_source: false
       heading_level: 3
-      members:
-        - __init__
-        - interact
-        - record_success
-        - record_failure
-        - get_current_level
-        - get_trust_level
-        - save_state
-        - load_state
 
 ## Key Methods
 

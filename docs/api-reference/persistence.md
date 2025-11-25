@@ -27,8 +27,8 @@ The persistence layer provides storage and retrieval for:
 
 ::: empathy_os.persistence.PatternPersistence
     options:
-      show_root_heading: true
-      show_source: true
+      show_root_heading: false
+      show_source: false
       heading_level: 4
 
 Save and load pattern libraries.
@@ -66,8 +66,8 @@ print(f"Loaded {len(sqlite_library.patterns)} patterns from SQLite")
 
 ::: empathy_os.persistence.StateManager
     options:
-      show_root_heading: true
-      show_source: true
+      show_root_heading: false
+      show_source: false
       heading_level: 4
 
 Manage user collaboration states.
@@ -108,8 +108,8 @@ print(f"Users with saved states: {users}")
 
 ::: empathy_os.persistence.MetricsCollector
     options:
-      show_root_heading: true
-      show_source: true
+      show_root_heading: false
+      show_source: false
       heading_level: 4
 
 Track usage metrics and performance.

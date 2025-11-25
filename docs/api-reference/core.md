@@ -15,13 +15,13 @@ The core module provides fundamental data structures used throughout the framewo
 
 ### CollaborationState
 
+Tracks the state of collaboration between the AI and user.
+
 ::: empathy_os.core.CollaborationState
     options:
-      show_root_heading: true
+      show_root_heading: false
       show_source: true
       heading_level: 4
-
-Tracks the state of collaboration between the AI and user.
 
 **Attributes:**
 - `trust_level` (float): Current trust level (0.0-1.0)
@@ -62,13 +62,9 @@ print(f"New level: {state.current_level}")    # Advanced
 
 ### EmpathyResponse
 
-::: empathy_os.core.EmpathyResponse
-    options:
-      show_root_heading: true
-      show_source: true
-      heading_level: 4
-
 Container for AI responses with empathy metadata.
+
+**Note**: EmpathyOS methods currently return dictionaries. A dedicated `EmpathyResponse` class will be added in a future version.
 
 **Attributes:**
 - `response` (str): The actual response text
@@ -172,13 +168,13 @@ EmpathyResponse(
 
 ### EmpathyLevel
 
-::: empathy_os.core.EmpathyLevel
+Enumeration of empathy levels.
+
+::: empathy_os.levels.EmpathyLevel
     options:
-      show_root_heading: true
+      show_root_heading: false
       show_source: true
       heading_level: 4
-
-Enumeration of empathy levels.
 
 **Values:**
 - `REACTIVE = 1` - Basic Q&A
@@ -204,13 +200,9 @@ print(f"Current level: {level_name}")
 
 ### InteractionHistory
 
-::: empathy_os.core.InteractionHistory
-    options:
-      show_root_heading: true
-      show_source: true
-      heading_level: 4
-
 Tracks interaction history for pattern learning.
+
+**Note**: Interaction history is currently tracked within `CollaborationState`. A dedicated `InteractionHistory` class may be added in a future version.
 
 **Attributes:**
 - `interactions` (List[dict]): List of past interactions

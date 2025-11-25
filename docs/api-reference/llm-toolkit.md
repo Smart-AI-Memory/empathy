@@ -50,10 +50,10 @@ local = EmpathyLLM(
 
 ### EmpathyLLM
 
-::: empathy_llm_toolkit.EmpathyLLM
+::: empathy_llm_toolkit.core.EmpathyLLM
     options:
-      show_root_heading: true
-      show_source: true
+      show_root_heading: false
+      show_source: false
       heading_level: 4
 
 Main LLM interface with empathy integration.
@@ -89,11 +89,7 @@ response = empathy.interact(
 
 ### PIIScrubber
 
-::: empathy_llm_toolkit.security.PIIScrubber
-    options:
-      show_root_heading: true
-      show_source: true
-      heading_level: 4
+**Note**: Security features are being implemented. Full documentation coming soon.
 
 Detect and scrub personally identifiable information.
 
@@ -135,11 +131,7 @@ for item in items:
 
 ### SecretsDetector
 
-::: empathy_llm_toolkit.security.SecretsDetector
-    options:
-      show_root_heading: true
-      show_source: true
-      heading_level: 4
+**Note**: Security features are being implemented. Full documentation coming soon.
 
 Detect API keys, tokens, and credentials.
 
@@ -177,11 +169,7 @@ else:
 
 ### AuditLogger
 
-::: empathy_llm_toolkit.security.AuditLogger
-    options:
-      show_root_heading: true
-      show_source: true
-      heading_level: 4
+**Note**: Security features are being implemented. Full documentation coming soon.
 
 Compliance audit logging (HIPAA, GDPR, SOC2).
 
