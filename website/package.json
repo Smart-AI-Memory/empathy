@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run build:docs && next build",
+    "build:docs": "cd .. && mkdocs build --clean && rm -rf website/public/framework-docs && cp -r site website/public/framework-docs",
     "start": "next start",
     "lint": "eslint"
   },
