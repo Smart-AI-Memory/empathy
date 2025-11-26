@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "npm run build:docs && next build",
+    "build:railway": "next build",
     "build:docs": "cd .. && mkdocs build --clean && rm -rf website/public/framework-docs && cp -r site website/public/framework-docs",
     "start": "next start",
     "lint": "eslint"
