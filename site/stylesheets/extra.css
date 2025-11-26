@@ -1,0 +1,44 @@
+/* Make headings with anchors more interactive and clickable */
+
+/* Show the link icon on hover and make it bigger */
+.md-content h2:hover .headerlink,
+.md-content h3:hover .headerlink,
+.md-content h4:hover .headerlink {
+    opacity: 1;
+    font-size: 1.2em;
+    margin-left: 0.5rem;
+}
+
+/* Make the entire heading area clickable and change color on hover */
+.md-content h2,
+.md-content h3,
+.md-content h4 {
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+}
+
+.md-content h2:hover,
+.md-content h3:hover,
+.md-content h4:hover {
+    color: var(--md-accent-fg-color);
+}
+
+/* Make the permalink icon always visible but subtle, more visible on hover */
+.md-content .headerlink {
+    opacity: 0.3;
+    transition: opacity 0.2s ease-in-out, color 0.2s ease-in-out;
+    text-decoration: none;
+    margin-left: 0.3rem;
+}
+
+.md-content .headerlink:hover {
+    opacity: 1;
+    color: var(--md-accent-fg-color);
+}
+
+/* Ensure the heading itself is also a link target */
+.md-content h2[id],
+.md-content h3[id],
+.md-content h4[id] {
+    scroll-margin-top: 4rem;
+}

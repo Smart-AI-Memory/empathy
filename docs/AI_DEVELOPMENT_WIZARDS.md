@@ -37,7 +37,7 @@ These wizards help developers avoid the problems we encountered, alerting them *
 - **Context Window Inefficiency**: "Average prompt size >2000 tokens often contains redundancy that could be refactored."
 
 **Personal Experience Quote**:
-> "We've reduced costs 40-60% by refactoring bloated prompts. Token costs scale linearly with prompt size, so early optimization compounds."
+> "Refactoring bloated prompts can significantly reduce costs. Token costs scale linearly with prompt size, so early optimization compounds."
 
 **Example Alert**:
 ```
@@ -172,7 +172,7 @@ Growth Path:
 - **Missing AI Collaboration Guide**: "No guidance for AI collaboration. Explicit guidance improves quality dramatically."
 
 **Personal Experience Quote**:
-> "We created AI collaboration guides for Empathy Framework development. Result: AI suggestions became 3x more relevant because we taught it our patterns explicitly. Before documenting WHY we chose 5 empathy levels, AI suggested generic improvements that didn't align."
+> "Creating AI collaboration guides for framework development can make AI suggestions significantly more relevant. Before documenting WHY specific design choices were made, AI may suggest generic improvements that don't align with the architecture."
 
 **Example Alert**:
 ```
@@ -282,10 +282,10 @@ These wizards don't promise:
 - ❌ "Reduce costs by 75%"
 
 They honestly share:
-- ✅ "In our experience, transformed productivity"
+- ✅ "In our experience, can transform productivity"
 - ✅ "Alerts you to bottlenecks before they're critical"
-- ✅ "We've seen quality improve 2-3x with proper patterns"
-- ✅ "Impact was more profound than we anticipated"
+- ✅ "Proper patterns can significantly improve quality"
+- ✅ "Impact can be more profound than anticipated"
 
 ---
 
@@ -303,14 +303,18 @@ They prove the framework works by **using it on itself** - helping developers bu
 
 ---
 
-## Files Created
+## Implementation Status
 
-1. [`prompt_engineering_wizard.py`](../empathy_software_plugin/wizards/prompt_engineering_wizard.py) - Prompt quality analysis
-2. [`ai_context_wizard.py`](../empathy_software_plugin/wizards/ai_context_wizard.py) - Context window management
-3. [`ai_collaboration_wizard.py`](../empathy_software_plugin/wizards/ai_collaboration_wizard.py) - Collaboration pattern analysis
-4. [`ai_documentation_wizard.py`](../empathy_software_plugin/wizards/ai_documentation_wizard.py) - AI-first documentation
+These wizards are currently in planning/development phase as part of the Software Plugin:
 
-All four implement `BaseWizard` interface and operate at **Level 4 (Anticipatory) Empathy**.
+1. **Prompt Engineering Wizard** (`prompt_engineering_wizard.py`) - Prompt quality analysis
+2. **AI Context Window Wizard** (`ai_context_wizard.py`) - Context window management
+3. **AI Collaboration Pattern Wizard** (`ai_collaboration_wizard.py`) - Collaboration pattern analysis
+4. **AI-First Documentation Wizard** (`ai_documentation_wizard.py`) - AI-first documentation
+
+All four will implement `BaseWizard` interface and operate at **Level 4 (Anticipatory) Empathy**.
+
+**Want to contribute?** These wizards are excellent candidates for community contribution. See [Contributing](contributing.md) to get started.
 
 ---
 

@@ -1,0 +1,3028 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-ready Level 4 Anticipatory Intelligence for AI-human collaboration">
+      
+      
+        <meta name="author" content="Patrick Roebuck">
+      
+      
+        <link rel="canonical" href="https://smartaimemory.com/framework-docs/guides/hipaa-compliance.html">
+      
+      
+        <link rel="prev" href="security-architecture.html">
+      
+      
+        <link rel="next" href="healthcare-wizards.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>HIPAA Compliance - Empathy Framework</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#hipaa-compliance-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Empathy Framework" class="md-header__button md-logo" aria-label="Empathy Framework" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.33 12.91c.09 1.55-.62 3.04-1.89 3.95l.77 1.49c.23.45.26.98.06 1.45-.19.47-.58.84-1.06 1l-.79.25a1.687 1.687 0 0 1-1.86-.55L14.44 18c-.89-.15-1.73-.53-2.44-1.1-.5.15-1 .23-1.5.23-.88 0-1.76-.27-2.5-.79-.53.16-1.07.23-1.62.22-.79.01-1.57-.15-2.3-.45a4.1 4.1 0 0 1-2.43-3.61c-.08-.72.04-1.45.35-2.11-.29-.75-.32-1.57-.07-2.33C2.3 7.11 3 6.32 3.87 5.82c.58-1.69 2.21-2.82 4-2.7 1.6-1.5 4.05-1.66 5.83-.37.42-.11.86-.17 1.3-.17 1.36-.03 2.65.57 3.5 1.64 2.04.53 3.5 2.35 3.58 4.47.05 1.11-.25 2.2-.86 3.13.07.36.11.72.11 1.09m-5-1.41c.57.07 1.02.5 1.02 1.07a1 1 0 0 1-1 1h-.63c-.32.9-.88 1.69-1.62 2.29.25.09.51.14.77.21 5.13-.07 4.53-3.2 4.53-3.25a2.59 2.59 0 0 0-2.69-2.49 1 1 0 0 1-1-1 1 1 0 0 1 1-1c1.23.03 2.41.49 3.33 1.3.05-.29.08-.59.08-.89-.06-1.24-.62-2.32-2.87-2.53-1.25-2.96-4.4-1.32-4.4-.4-.03.23.21.72.25.75a1 1 0 0 1 1 1c0 .55-.45 1-1 1-.53-.02-1.03-.22-1.43-.56-.48.31-1.03.5-1.6.56-.57.05-1.04-.35-1.07-.9a.97.97 0 0 1 .88-1.1c.16-.02.94-.14.94-.77 0-.66.25-1.29.68-1.79-.92-.25-1.91.08-2.91 1.29C6.75 5 6 5.25 5.45 7.2 4.5 7.67 4 8 3.78 9c1.08-.22 2.19-.13 3.22.25.5.19.78.75.59 1.29-.19.52-.77.78-1.29.59-.73-.32-1.55-.34-2.3-.06-.32.27-.32.83-.32 1.27 0 .74.37 1.43 1 1.83.53.27 1.12.41 1.71.4q-.225-.39-.39-.81a1.038 1.038 0 0 1 1.96-.68c.4 1.14 1.42 1.92 2.62 2.05 1.37-.07 2.59-.88 3.19-2.13.23-1.38 1.34-1.5 2.56-1.5m2 7.47-.62-1.3-.71.16 1 1.25zm-4.65-8.61a1 1 0 0 0-.91-1.03c-.71-.04-1.4.2-1.93.67-.57.58-.87 1.38-.84 2.19a1 1 0 0 0 1 1c.57 0 1-.45 1-1 0-.27.07-.54.23-.76.12-.1.27-.15.43-.15.55.03 1.02-.38 1.02-.92"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Empathy Framework
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              HIPAA Compliance
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Smart-AI-Memory/empathy-framework" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Smart-AI-Memory/empathy-framework
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../getting-started/installation.html" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../examples/simple-chatbot.html" class="md-tabs__link">
+          
+  
+  
+  Examples
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="security-architecture.html" class="md-tabs__link">
+          
+  
+  
+  Guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../api-reference/index.html" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../contributing.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Contributing
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Empathy Framework" class="md-nav__button md-logo" aria-label="Empathy Framework" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.33 12.91c.09 1.55-.62 3.04-1.89 3.95l.77 1.49c.23.45.26.98.06 1.45-.19.47-.58.84-1.06 1l-.79.25a1.687 1.687 0 0 1-1.86-.55L14.44 18c-.89-.15-1.73-.53-2.44-1.1-.5.15-1 .23-1.5.23-.88 0-1.76-.27-2.5-.79-.53.16-1.07.23-1.62.22-.79.01-1.57-.15-2.3-.45a4.1 4.1 0 0 1-2.43-3.61c-.08-.72.04-1.45.35-2.11-.29-.75-.32-1.57-.07-2.33C2.3 7.11 3 6.32 3.87 5.82c.58-1.69 2.21-2.82 4-2.7 1.6-1.5 4.05-1.66 5.83-.37.42-.11.86-.17 1.3-.17 1.36-.03 2.65.57 3.5 1.64 2.04.53 3.5 2.35 3.58 4.47.05 1.11-.25 2.2-.86 3.13.07.36.11.72.11 1.09m-5-1.41c.57.07 1.02.5 1.02 1.07a1 1 0 0 1-1 1h-.63c-.32.9-.88 1.69-1.62 2.29.25.09.51.14.77.21 5.13-.07 4.53-3.2 4.53-3.25a2.59 2.59 0 0 0-2.69-2.49 1 1 0 0 1-1-1 1 1 0 0 1 1-1c1.23.03 2.41.49 3.33 1.3.05-.29.08-.59.08-.89-.06-1.24-.62-2.32-2.87-2.53-1.25-2.96-4.4-1.32-4.4-.4-.03.23.21.72.25.75a1 1 0 0 1 1 1c0 .55-.45 1-1 1-.53-.02-1.03-.22-1.43-.56-.48.31-1.03.5-1.6.56-.57.05-1.04-.35-1.07-.9a.97.97 0 0 1 .88-1.1c.16-.02.94-.14.94-.77 0-.66.25-1.29.68-1.79-.92-.25-1.91.08-2.91 1.29C6.75 5 6 5.25 5.45 7.2 4.5 7.67 4 8 3.78 9c1.08-.22 2.19-.13 3.22.25.5.19.78.75.59 1.29-.19.52-.77.78-1.29.59-.73-.32-1.55-.34-2.3-.06-.32.27-.32.83-.32 1.27 0 .74.37 1.43 1 1.83.53.27 1.12.41 1.71.4q-.225-.39-.39-.81a1.038 1.038 0 0 1 1.96-.68c.4 1.14 1.42 1.92 2.62 2.05 1.37-.07 2.59-.88 3.19-2.13.23-1.38 1.34-1.5 2.56-1.5m2 7.47-.62-1.3-.71.16 1 1.25zm-4.65-8.61a1 1 0 0 0-.91-1.03c-.71-.04-1.4.2-1.93.67-.57.58-.87 1.38-.84 2.19a1 1 0 0 0 1 1c.57 0 1-.45 1-1 0-.27.07-.54.23-.76.12-.1.27-.15.43-.15.55.03 1.02-.38 1.02-.92"/></svg>
+
+    </a>
+    Empathy Framework
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Smart-AI-Memory/empathy-framework" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Smart-AI-Memory/empathy-framework
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/installation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/configuration.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/simple-chatbot.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Simple Chatbot
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/sbar-clinical-handoff.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SBAR Clinical Handoff
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/multi-agent-team-coordination.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Agent Coordination
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/adaptive-learning-system.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Adaptive Learning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/webhook-event-integration.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Webhook Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="security-architecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HIPAA Compliance
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="hipaa-compliance.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HIPAA Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hipaa-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HIPAA Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="HIPAA Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#privacy-rule-45-cfr-part-160-part-164-subparts-a-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Privacy Rule (45 CFR Part 160, Part 164 Subparts A &amp; E)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security-rule-45-cfr-part-164-subparts-a-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Rule (45 CFR Part 164 Subparts A &amp; C)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breach-notification-rule-45-cfr-part-164-subpart-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breach Notification Rule (45 CFR Part 164 Subpart D)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phi-vs-pii" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PHI vs PII
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PHI vs PII">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#protected-health-information-phi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Protected Health Information (PHI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-for-hipaa-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration for HIPAA Compliance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration for HIPAA Compliance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-enable-healthcare-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Enable Healthcare Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-enhanced-phi-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Enhanced PHI Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-mandatory-encryption" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Mandatory Encryption
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#business-associate-agreement-baa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Business Associate Agreement (BAA)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Business Associate Agreement (BAA)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#llm-provider-baas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LLM Provider BAAs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#baa-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BAA Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#audit-logging-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Audit Logging Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Audit Logging Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hipaa-164312b-audit-controls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HIPAA §164.312(b) - Audit Controls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#audit-log-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Audit Log Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#audit-log-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Audit Log Review
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#minimum-necessary-standard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Minimum Necessary Standard
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Minimum Necessary Standard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hipaa-164502b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HIPAA §164.502(b)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#patient-rights" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Patient Rights
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Patient Rights">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#right-to-access-hipaa-164524" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Right to Access (HIPAA §164.524)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#right-to-amend-hipaa-164526" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Right to Amend (HIPAA §164.526)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#right-to-accounting-of-disclosures-hipaa-164528" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Right to Accounting of Disclosures (HIPAA §164.528)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#breach-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breach Notification
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breach Notification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-constitutes-a-breach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Constitutes a Breach?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Response Plan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-hipaa-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing HIPAA Compliance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing HIPAA Compliance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phi-scrubbing-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PHI Scrubbing Test
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encryption-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Encryption Test
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compliance-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compliance Checklist
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Compliance Checklist">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#before-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before Production
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ongoing-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ongoing Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-violations-how-to-avoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Violations &amp; How to Avoid
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#roi-of-hipaa-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ROI of HIPAA Compliance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See Also
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#external-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        External Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="healthcare-wizards.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Healthcare Wizards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="software-development-wizards.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Software Development Wizards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="adaptive-learning.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Adaptive Learning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="multi-agent-coordination.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Agent Coordination
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="webhook-integration.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Webhook Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AI_DEVELOPMENT_WIZARDS.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Development Wizards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/empathy-os.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EmpathyOS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/config.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/core.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/pattern-library.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pattern Library
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/persistence.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/llm-toolkit.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Toolkit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/wizards.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Industry Wizards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hipaa-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HIPAA Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="HIPAA Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#privacy-rule-45-cfr-part-160-part-164-subparts-a-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Privacy Rule (45 CFR Part 160, Part 164 Subparts A &amp; E)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security-rule-45-cfr-part-164-subparts-a-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Rule (45 CFR Part 164 Subparts A &amp; C)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breach-notification-rule-45-cfr-part-164-subpart-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breach Notification Rule (45 CFR Part 164 Subpart D)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phi-vs-pii" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PHI vs PII
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PHI vs PII">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#protected-health-information-phi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Protected Health Information (PHI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-for-hipaa-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration for HIPAA Compliance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration for HIPAA Compliance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-enable-healthcare-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Enable Healthcare Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-enhanced-phi-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Enhanced PHI Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-mandatory-encryption" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Mandatory Encryption
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#business-associate-agreement-baa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Business Associate Agreement (BAA)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Business Associate Agreement (BAA)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#llm-provider-baas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LLM Provider BAAs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#baa-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BAA Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#audit-logging-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Audit Logging Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Audit Logging Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hipaa-164312b-audit-controls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HIPAA §164.312(b) - Audit Controls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#audit-log-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Audit Log Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#audit-log-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Audit Log Review
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#minimum-necessary-standard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Minimum Necessary Standard
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Minimum Necessary Standard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hipaa-164502b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HIPAA §164.502(b)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#patient-rights" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Patient Rights
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Patient Rights">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#right-to-access-hipaa-164524" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Right to Access (HIPAA §164.524)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#right-to-amend-hipaa-164526" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Right to Amend (HIPAA §164.526)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#right-to-accounting-of-disclosures-hipaa-164528" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Right to Accounting of Disclosures (HIPAA §164.528)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#breach-notification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breach Notification
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breach Notification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-constitutes-a-breach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Constitutes a Breach?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Response Plan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-hipaa-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing HIPAA Compliance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing HIPAA Compliance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phi-scrubbing-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PHI Scrubbing Test
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encryption-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Encryption Test
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compliance-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compliance Checklist
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Compliance Checklist">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#before-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before Production
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ongoing-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ongoing Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-violations-how-to-avoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Violations &amp; How to Avoid
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#roi-of-hipaa-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ROI of HIPAA Compliance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See Also
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#external-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        External Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="hipaa-compliance-guide">HIPAA Compliance Guide<a class="headerlink" href="#hipaa-compliance-guide" title="Permanent link to this section">🔗</a></h1>
+<p>Complete guide to achieving HIPAA compliance when using Empathy Framework for healthcare applications.</p>
+<hr />
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link to this section">🔗</a></h2>
+<p>The <strong>Health Insurance Portability and Accountability Act (HIPAA)</strong> requires specific protections for Protected Health Information (PHI). This guide covers how to configure Empathy Framework for HIPAA compliance.</p>
+<div class="admonition warning">
+<p class="admonition-title">Legal Disclaimer</p>
+<p>This guide provides technical implementation guidance. Consult with legal counsel and HIPAA compliance experts for your specific use case. Empathy Framework provides tools to help achieve compliance but does not guarantee compliance on its own.</p>
+</div>
+<hr />
+<h2 id="hipaa-requirements">HIPAA Requirements<a class="headerlink" href="#hipaa-requirements" title="Permanent link to this section">🔗</a></h2>
+<h3 id="privacy-rule-45-cfr-part-160-part-164-subparts-a-e">Privacy Rule (45 CFR Part 160, Part 164 Subparts A &amp; E)<a class="headerlink" href="#privacy-rule-45-cfr-part-160-part-164-subparts-a-e" title="Permanent link to this section">🔗</a></h3>
+<p>Protects individually identifiable health information:</p>
+<ul>
+<li><strong>Who</strong>: Covered entities (healthcare providers, health plans, clearinghouses)</li>
+<li><strong>What</strong>: PHI in any form (electronic, paper, oral)</li>
+<li><strong>How</strong>: Minimum necessary access, patient consent</li>
+</ul>
+<h3 id="security-rule-45-cfr-part-164-subparts-a-c">Security Rule (45 CFR Part 164 Subparts A &amp; C)<a class="headerlink" href="#security-rule-45-cfr-part-164-subparts-a-c" title="Permanent link to this section">🔗</a></h3>
+<p>Requires safeguards for electronic PHI (ePHI):</p>
+<ol>
+<li><strong>Administrative Safeguards</strong> - Policies, procedures, training</li>
+<li><strong>Physical Safeguards</strong> - Facility access controls, workstation security</li>
+<li><strong>Technical Safeguards</strong> - Access controls, audit logs, encryption</li>
+</ol>
+<h3 id="breach-notification-rule-45-cfr-part-164-subpart-d">Breach Notification Rule (45 CFR Part 164 Subpart D)<a class="headerlink" href="#breach-notification-rule-45-cfr-part-164-subpart-d" title="Permanent link to this section">🔗</a></h3>
+<p>Requires notification within <strong>60 days</strong> of discovering a breach affecting 500+ individuals.</p>
+<hr />
+<h2 id="phi-vs-pii">PHI vs PII<a class="headerlink" href="#phi-vs-pii" title="Permanent link to this section">🔗</a></h2>
+<h3 id="protected-health-information-phi">Protected Health Information (PHI)<a class="headerlink" href="#protected-health-information-phi" title="Permanent link to this section">🔗</a></h3>
+<p>Any of the 18 HIPAA identifiers when combined with health information:</p>
+<table>
+<thead>
+<tr>
+<th>Identifier</th>
+<th>Example</th>
+<th>Empathy Detection</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Names</td>
+<td><code>John Doe</code></td>
+<td>✅ Name pattern</td>
+</tr>
+<tr>
+<td>SSN</td>
+<td><code>123-45-6789</code></td>
+<td>✅ SSN pattern</td>
+</tr>
+<tr>
+<td>Medical Record Number</td>
+<td><code>MRN: 987654</code></td>
+<td>✅ MRN pattern</td>
+</tr>
+<tr>
+<td>Health Plan Number</td>
+<td><code>INS12345678</code></td>
+<td>✅ Insurance ID pattern</td>
+</tr>
+<tr>
+<td>Account Numbers</td>
+<td><code>ACCT-999888</code></td>
+<td>✅ Account pattern</td>
+</tr>
+<tr>
+<td>Certificate/License Numbers</td>
+<td><code>RN-123456</code></td>
+<td>✅ License pattern</td>
+</tr>
+<tr>
+<td>Device Identifiers</td>
+<td><code>DEVICE-XYZ</code></td>
+<td>⚠️ Custom pattern</td>
+</tr>
+<tr>
+<td>URLs/IPs</td>
+<td><code>192.168.1.1</code></td>
+<td>✅ IP address pattern</td>
+</tr>
+<tr>
+<td>Biometric Identifiers</td>
+<td>Fingerprint, retina</td>
+<td>⚠️ Custom handling</td>
+</tr>
+<tr>
+<td>Photos/Images</td>
+<td>Patient photos</td>
+<td>⚠️ Custom handling</td>
+</tr>
+<tr>
+<td>Dates (except year)</td>
+<td><code>01/15/2024</code></td>
+<td>✅ DOB pattern</td>
+</tr>
+<tr>
+<td>Phone Numbers</td>
+<td><code>555-123-4567</code></td>
+<td>✅ Phone pattern</td>
+</tr>
+<tr>
+<td>Fax Numbers</td>
+<td><code>555-987-6543</code></td>
+<td>✅ Phone pattern</td>
+</tr>
+<tr>
+<td>Email Addresses</td>
+<td><code>patient@email.com</code></td>
+<td>✅ Email pattern</td>
+</tr>
+<tr>
+<td>Geographic Subdivisions</td>
+<td>Street address</td>
+<td>✅ Address pattern</td>
+</tr>
+<tr>
+<td>Provider NPI</td>
+<td><code>1234567890</code></td>
+<td>✅ NPI validation</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="configuration-for-hipaa-compliance">Configuration for HIPAA Compliance<a class="headerlink" href="#configuration-for-hipaa-compliance" title="Permanent link to this section">🔗</a></h2>
+<h3 id="1-enable-healthcare-mode">1. Enable Healthcare Mode<a class="headerlink" href="#1-enable-healthcare-mode" title="Permanent link to this section">🔗</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">empathy_llm_toolkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmpathyLLM</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">empathy_llm_toolkit.wizards</span><span class="w"> </span><span class="kn">import</span> <span class="n">HealthcareWizard</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># HIPAA-compliant configuration</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">llm</span> <span class="o">=</span> <span class="n">EmpathyLLM</span><span class="p">(</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">provider</span><span class="o">=</span><span class="s2">&quot;anthropic&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;ANTHROPIC_API_KEY&quot;</span><span class="p">),</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">enable_security</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Required: Enable PII/PHI scrubbing</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">classification</span><span class="o">=</span><span class="s2">&quot;SENSITIVE&quot;</span><span class="p">,</span>  <span class="c1"># Required: PHI is sensitive data</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">encryption_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;ENCRYPTION_KEY&quot;</span><span class="p">),</span>  <span class="c1"># Required: AES-256-GCM</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">audit_logging</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Required: HIPAA §164.312(b)</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">retention_days</span><span class="o">=</span><span class="mi">90</span>  <span class="c1"># Minimum: HIPAA §164.528</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">)</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="c1"># Use Healthcare Wizard for enhanced PHI protection</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="n">wizard</span> <span class="o">=</span> <span class="n">HealthcareWizard</span><span class="p">(</span><span class="n">llm</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="2-enhanced-phi-patterns">2. Enhanced PHI Patterns<a class="headerlink" href="#2-enhanced-phi-patterns" title="Permanent link to this section">🔗</a></h3>
+<p>Healthcare Wizards include 10+ additional PHI patterns:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">HEALTHCARE_PII_PATTERNS</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="s2">&quot;mrn&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\bMRN:?\s*\d{6,10}\b&#39;</span><span class="p">,</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="s2">&quot;patient_id&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\bPT\d{6,10}\b&#39;</span><span class="p">,</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="s2">&quot;dob&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\b\d{1,2}/\d{1,2}/\d</span><span class="si">{4}</span><span class="s1">\b&#39;</span><span class="p">,</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="s2">&quot;insurance_id&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\bINS\d{8,12}\b&#39;</span><span class="p">,</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="s2">&quot;provider_npi&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\b\d</span><span class="si">{10}</span><span class="s1">\b&#39;</span><span class="p">,</span>  <span class="c1"># Validated against checksum</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="s2">&quot;cpt_code&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\b\d</span><span class="si">{5}</span><span class="s1">\b&#39;</span><span class="p">,</span>  <span class="c1"># Medical procedure codes</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="s2">&quot;icd_code&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\b[A-Z]\d</span><span class="si">{2}</span><span class="s1">(\.\d{1,2})?\b&#39;</span><span class="p">,</span>  <span class="c1"># Diagnosis codes</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="s2">&quot;prescription&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\bRX\d{6,10}\b&#39;</span><span class="p">,</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="s2">&quot;lab_result&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;\bLAB\d{6,10}\b&#39;</span><span class="p">,</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="s2">&quot;medication&quot;</span><span class="p">:</span> <span class="n">MEDICATION_LIST</span>  <span class="c1"># Optional: configurable</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="p">}</span>
+</code></pre></div>
+<h3 id="3-mandatory-encryption">3. Mandatory Encryption<a class="headerlink" href="#3-mandatory-encryption" title="Permanent link to this section">🔗</a></h3>
+<p>All PHI must be encrypted at rest:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">empathy_llm_toolkit.security</span><span class="w"> </span><span class="kn">import</span> <span class="n">encrypt_phi</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># Encrypt before storing</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">encrypted_record</span> <span class="o">=</span> <span class="n">encrypt_phi</span><span class="p">(</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="s2">&quot;patient_id&quot;</span><span class="p">:</span> <span class="s2">&quot;PT123456&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        <span class="s2">&quot;diagnosis&quot;</span><span class="p">:</span> <span class="s2">&quot;Diabetes Type 2&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="s2">&quot;mrn&quot;</span><span class="p">:</span> <span class="s2">&quot;MRN-987654&quot;</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="p">},</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">encryption_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;ENCRYPTION_KEY&quot;</span><span class="p">),</span>  <span class="c1"># 32-byte AES key</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;AES-256-GCM&quot;</span>  <span class="c1"># NIST-approved</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="p">)</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="c1"># Store encrypted data</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="n">database</span><span class="o">.</span><span class="n">store_encrypted</span><span class="p">(</span><span class="n">encrypted_record</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="business-associate-agreement-baa">Business Associate Agreement (BAA)<a class="headerlink" href="#business-associate-agreement-baa" title="Permanent link to this section">🔗</a></h2>
+<h3 id="llm-provider-baas">LLM Provider BAAs<a class="headerlink" href="#llm-provider-baas" title="Permanent link to this section">🔗</a></h3>
+<p>You <strong>must</strong> sign a Business Associate Agreement with your LLM provider:</p>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>BAA Available</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Anthropic</strong></td>
+<td>✅ Yes</td>
+<td>Enterprise plan required</td>
+</tr>
+<tr>
+<td><strong>OpenAI</strong></td>
+<td>✅ Yes</td>
+<td>Contact sales team</td>
+</tr>
+<tr>
+<td><strong>Google</strong></td>
+<td>✅ Yes</td>
+<td>Vertex AI for Healthcare</td>
+</tr>
+<tr>
+<td><strong>Azure OpenAI</strong></td>
+<td>✅ Yes</td>
+<td>Azure compliance tools</td>
+</tr>
+<tr>
+<td><strong>AWS Bedrock</strong></td>
+<td>✅ Yes</td>
+<td>HIPAA-eligible services</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition danger">
+<p class="admonition-title">Critical Requirement</p>
+<p><strong>DO NOT</strong> send PHI to LLM providers without a signed BAA. Doing so violates HIPAA and can result in fines up to <strong>$1.5 million per year</strong> per violation category.</p>
+</div>
+<h3 id="baa-checklist">BAA Checklist<a class="headerlink" href="#baa-checklist" title="Permanent link to this section">🔗</a></h3>
+<p>Before using Empathy Framework in production:</p>
+<ul>
+<li>[ ] Sign BAA with LLM provider</li>
+<li>[ ] Enable PHI scrubbing (<code>enable_security=True</code>)</li>
+<li>[ ] Configure encryption at rest</li>
+<li>[ ] Enable audit logging with 90-day retention</li>
+<li>[ ] Implement access controls</li>
+<li>[ ] Train staff on PHI handling procedures</li>
+<li>[ ] Document security policies</li>
+<li>[ ] Conduct risk assessment</li>
+<li>[ ] Test PHI scrubbing before go-live</li>
+</ul>
+<hr />
+<h2 id="audit-logging-requirements">Audit Logging Requirements<a class="headerlink" href="#audit-logging-requirements" title="Permanent link to this section">🔗</a></h2>
+<h3 id="hipaa-164312b-audit-controls">HIPAA §164.312(b) - Audit Controls<a class="headerlink" href="#hipaa-164312b-audit-controls" title="Permanent link to this section">🔗</a></h3>
+<p>All access to ePHI must be logged:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">empathy_llm_toolkit.security</span><span class="w"> </span><span class="kn">import</span> <span class="n">AuditLogger</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">logger</span> <span class="o">=</span> <span class="n">AuditLogger</span><span class="p">(</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">log_file</span><span class="o">=</span><span class="s2">&quot;/var/log/empathy/hipaa_audit.jsonl&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">retention_days</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span>  <span class="c1"># Minimum retention</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">encryption</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Encrypt audit logs</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="n">tamper_proof</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># Prevent log deletion</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="p">)</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># Automatically logs:</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="c1"># - User ID (who accessed)</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># - Timestamp (when)</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="c1"># - Action (what was done)</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="c1"># - PHI elements (which identifiers)</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="c1"># - Success/failure</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="c1"># - Source IP address</span>
+</code></pre></div>
+<h3 id="audit-log-format">Audit Log Format<a class="headerlink" href="#audit-log-format" title="Permanent link to this section">🔗</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-11-25T14:30:00Z&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">&quot;event_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;evt_hipaa_123&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="nt">&quot;event_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;phi_access&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="nt">&quot;user_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;doctor@hospital.com&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="nt">&quot;user_role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;physician&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="nt">&quot;patient_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PT123456&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1">// Encrypted</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;view_patient_record&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">  </span><span class="nt">&quot;phi_elements&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;dob&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;mrn&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;diagnosis&quot;</span><span class="p">],</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">  </span><span class="nt">&quot;authorization&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;patient_consent_2025-11-20&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">  </span><span class="nt">&quot;source_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.0.1.50&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">  </span><span class="nt">&quot;success&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">  </span><span class="nt">&quot;classification&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PHI&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">  </span><span class="nt">&quot;encryption&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">    </span><span class="nt">&quot;algorithm&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AES-256-GCM&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">    </span><span class="nt">&quot;key_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;key_2025_11&quot;</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">  </span><span class="p">},</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">  </span><span class="nt">&quot;hipaa_compliance&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">    </span><span class="nt">&quot;minimum_necessary&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="w">    </span><span class="nt">&quot;patient_consent&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="w">    </span><span class="nt">&quot;baa_signed&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="p">}</span>
+</code></pre></div>
+<h3 id="audit-log-review">Audit Log Review<a class="headerlink" href="#audit-log-review" title="Permanent link to this section">🔗</a></h3>
+<p>Review logs <strong>at least weekly</strong> for:</p>
+<ul>
+<li>❌ Unauthorized access attempts</li>
+<li>❌ After-hours access without justification</li>
+<li>❌ Bulk PHI downloads</li>
+<li>❌ Access to records of VIP patients</li>
+<li>❌ Multiple failed login attempts</li>
+<li>✅ Successful access for patient care</li>
+<li>✅ Authorized research access</li>
+</ul>
+<hr />
+<h2 id="minimum-necessary-standard">Minimum Necessary Standard<a class="headerlink" href="#minimum-necessary-standard" title="Permanent link to this section">🔗</a></h2>
+<h3 id="hipaa-164502b">HIPAA §164.502(b)<a class="headerlink" href="#hipaa-164502b" title="Permanent link to this section">🔗</a></h3>
+<p>Only access the <strong>minimum necessary</strong> PHI to accomplish the task:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">empathy_llm_toolkit.wizards</span><span class="w"> </span><span class="kn">import</span> <span class="n">HealthcareWizard</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">wizard</span> <span class="o">=</span> <span class="n">HealthcareWizard</span><span class="p">(</span><span class="n">llm</span><span class="p">)</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># Good: Request only what&#39;s needed</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">wizard</span><span class="o">.</span><span class="n">generate_handoff</span><span class="p">(</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="n">patient_id</span><span class="o">=</span><span class="s2">&quot;PT123456&quot;</span><span class="p">,</span>  <span class="c1"># System looks up only handoff-relevant data</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">protocol</span><span class="o">=</span><span class="s2">&quot;SBAR&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;situation&quot;</span><span class="p">,</span> <span class="s2">&quot;background&quot;</span><span class="p">,</span> <span class="s2">&quot;assessment&quot;</span><span class="p">,</span> <span class="s2">&quot;recommendation&quot;</span><span class="p">]</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="p">)</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="c1"># Bad: Requesting entire medical record</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="c1"># result = await wizard.get_full_patient_record(&quot;PT123456&quot;)  # ❌ Not minimum necessary</span>
+</code></pre></div>
+<hr />
+<h2 id="patient-rights">Patient Rights<a class="headerlink" href="#patient-rights" title="Permanent link to this section">🔗</a></h2>
+<h3 id="right-to-access-hipaa-164524">Right to Access (HIPAA §164.524)<a class="headerlink" href="#right-to-access-hipaa-164524" title="Permanent link to this section">🔗</a></h3>
+<p>Patients can request access to their records within <strong>30 days</strong>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Generate patient-accessible summary (de-identified clinician notes)</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">summary</span> <span class="o">=</span> <span class="k">await</span> <span class="n">wizard</span><span class="o">.</span><span class="n">generate_patient_summary</span><span class="p">(</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="n">patient_id</span><span class="o">=</span><span class="s2">&quot;PT123456&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;patient_friendly&quot;</span><span class="p">,</span>  <span class="c1"># Plain language, no medical jargon</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="n">include_phi</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># Patient has right to their own PHI</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="p">)</span>
+</code></pre></div>
+<h3 id="right-to-amend-hipaa-164526">Right to Amend (HIPAA §164.526)<a class="headerlink" href="#right-to-amend-hipaa-164526" title="Permanent link to this section">🔗</a></h3>
+<p>Patients can request amendments:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Log amendment request</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">logger</span><span class="o">.</span><span class="n">log_amendment</span><span class="p">(</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="n">patient_id</span><span class="o">=</span><span class="s2">&quot;PT123456&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">requested_by</span><span class="o">=</span><span class="s2">&quot;patient@email.com&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="n">field_to_amend</span><span class="o">=</span><span class="s2">&quot;diagnosis&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="n">current_value</span><span class="o">=</span><span class="s2">&quot;Type 1 Diabetes&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="n">requested_value</span><span class="o">=</span><span class="s2">&quot;Type 2 Diabetes&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="n">status</span><span class="o">=</span><span class="s2">&quot;pending_physician_review&quot;</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="p">)</span>
+</code></pre></div>
+<h3 id="right-to-accounting-of-disclosures-hipaa-164528">Right to Accounting of Disclosures (HIPAA §164.528)<a class="headerlink" href="#right-to-accounting-of-disclosures-hipaa-164528" title="Permanent link to this section">🔗</a></h3>
+<p>Patients can request 6-year history of PHI disclosures:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Query all PHI disclosures</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">disclosures</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">query_disclosures</span><span class="p">(</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="n">patient_id</span><span class="o">=</span><span class="s2">&quot;PT123456&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;2019-11-25&quot;</span><span class="p">,</span>  <span class="c1"># 6 years back</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;2025-11-25&quot;</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="p">)</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="c1"># Generate accounting report</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="n">report</span> <span class="o">=</span> <span class="n">generate_disclosure_report</span><span class="p">(</span><span class="n">disclosures</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="breach-notification">Breach Notification<a class="headerlink" href="#breach-notification" title="Permanent link to this section">🔗</a></h2>
+<h3 id="what-constitutes-a-breach">What Constitutes a Breach?<a class="headerlink" href="#what-constitutes-a-breach" title="Permanent link to this section">🔗</a></h3>
+<p>Unauthorized acquisition, access, use, or disclosure of PHI that compromises security or privacy.</p>
+<h3 id="response-plan">Response Plan<a class="headerlink" href="#response-plan" title="Permanent link to this section">🔗</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">empathy_llm_toolkit.security</span><span class="w"> </span><span class="kn">import</span> <span class="n">BreachDetector</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">detector</span> <span class="o">=</span> <span class="n">BreachDetector</span><span class="p">()</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="c1"># Detect potential breaches</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="k">if</span> <span class="n">detector</span><span class="o">.</span><span class="n">detect_breach</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="c1"># 1. Contain the breach</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="n">detector</span><span class="o">.</span><span class="n">contain_breach</span><span class="p">()</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>    <span class="c1"># 2. Assess risk</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>    <span class="n">risk</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">assess_risk</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>    <span class="k">if</span> <span class="n">risk</span><span class="o">.</span><span class="n">affected_individuals</span> <span class="o">&gt;=</span> <span class="mi">500</span><span class="p">:</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>        <span class="c1"># 3. Notify HHS immediately</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>        <span class="n">notify_hhs</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>    <span class="k">if</span> <span class="n">risk</span><span class="o">.</span><span class="n">severity</span> <span class="o">==</span> <span class="s2">&quot;high&quot;</span><span class="p">:</span>
+<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>        <span class="c1"># 4. Notify affected individuals within 60 days</span>
+<a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>        <span class="n">notify_patients</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+<a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>
+<a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>    <span class="c1"># 5. Notify media if 500+ individuals in same state</span>
+<a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a>    <span class="k">if</span> <span class="n">risk</span><span class="o">.</span><span class="n">affected_individuals</span> <span class="o">&gt;=</span> <span class="mi">500</span> <span class="ow">and</span> <span class="n">risk</span><span class="o">.</span><span class="n">same_state</span><span class="p">:</span>
+<a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a>        <span class="n">notify_media</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+<a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a>
+<a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>    <span class="c1"># 6. Document breach and response</span>
+<a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a>    <span class="n">logger</span><span class="o">.</span><span class="n">log_breach</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="testing-hipaa-compliance">Testing HIPAA Compliance<a class="headerlink" href="#testing-hipaa-compliance" title="Permanent link to this section">🔗</a></h2>
+<h3 id="phi-scrubbing-test">PHI Scrubbing Test<a class="headerlink" href="#phi-scrubbing-test" title="Permanent link to this section">🔗</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_phi_scrubbing_comprehensive</span><span class="p">():</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">empathy_llm_toolkit.wizards</span><span class="w"> </span><span class="kn">import</span> <span class="n">HealthcareWizard</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="n">wizard</span> <span class="o">=</span> <span class="n">HealthcareWizard</span><span class="p">(</span><span class="n">llm</span><span class="p">)</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    <span class="c1"># Test input with multiple PHI elements</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>    <span class="n">input_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="s2">    Patient: John Doe</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="s2">    DOB: 01/15/1980</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="s2">    SSN: 123-45-6789</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="s2">    MRN: 987654</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="s2">    Phone: 555-123-4567</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="s2">    Insurance: INS12345678</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="s2">    Provider NPI: 1234567890</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="s2">    Diagnosis: ICD-10 E11.9 (Type 2 Diabetes)</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="s2">    &quot;&quot;&quot;</span>
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>
+<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">wizard</span><span class="o">.</span><span class="n">process</span><span class="p">(</span>
+<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a>        <span class="n">user_input</span><span class="o">=</span><span class="n">input_text</span><span class="p">,</span>
+<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a>        <span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;test@hospital.com&quot;</span>
+<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a>    <span class="p">)</span>
+<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>
+<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a>    <span class="c1"># Verify ALL PHI was scrubbed</span>
+<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a>    <span class="k">assert</span> <span class="s2">&quot;John Doe&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;llm_input&#39;</span><span class="p">]</span>
+<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a>    <span class="k">assert</span> <span class="s2">&quot;123-45-6789&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;llm_input&#39;</span><span class="p">]</span>
+<a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a>    <span class="k">assert</span> <span class="s2">&quot;987654&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;llm_input&#39;</span><span class="p">]</span>
+<a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a>    <span class="k">assert</span> <span class="s2">&quot;555-123-4567&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;llm_input&#39;</span><span class="p">]</span>
+<a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a>    <span class="k">assert</span> <span class="s2">&quot;INS12345678&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;llm_input&#39;</span><span class="p">]</span>
+<a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a>
+<a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a>    <span class="c1"># Verify audit log</span>
+<a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a>    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;security_report&#39;</span><span class="p">][</span><span class="s1">&#39;phi_removed&#39;</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">8</span>
+</code></pre></div>
+<h3 id="encryption-test">Encryption Test<a class="headerlink" href="#encryption-test" title="Permanent link to this section">🔗</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_encryption_aes_256_gcm</span><span class="p">():</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">empathy_llm_toolkit.security</span><span class="w"> </span><span class="kn">import</span> <span class="n">encrypt_phi</span><span class="p">,</span> <span class="n">decrypt_phi</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    <span class="n">phi_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;patient_id&quot;</span><span class="p">:</span> <span class="s2">&quot;PT123456&quot;</span><span class="p">,</span> <span class="s2">&quot;diagnosis&quot;</span><span class="p">:</span> <span class="s2">&quot;Diabetes&quot;</span><span class="p">}</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>    <span class="c1"># Encrypt</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>    <span class="n">encrypted</span> <span class="o">=</span> <span class="n">encrypt_phi</span><span class="p">(</span><span class="n">phi_data</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;ENCRYPTION_KEY&quot;</span><span class="p">))</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>    <span class="c1"># Verify encryption</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>    <span class="k">assert</span> <span class="n">encrypted</span><span class="p">[</span><span class="s1">&#39;algorithm&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;AES-256-GCM&quot;</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>    <span class="k">assert</span> <span class="n">encrypted</span><span class="p">[</span><span class="s1">&#39;encrypted_data&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">(</span><span class="n">phi_data</span><span class="p">)</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>    <span class="c1"># Decrypt</span>
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>    <span class="n">decrypted</span> <span class="o">=</span> <span class="n">decrypt_phi</span><span class="p">(</span><span class="n">encrypted</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;ENCRYPTION_KEY&quot;</span><span class="p">))</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>    <span class="k">assert</span> <span class="n">decrypted</span> <span class="o">==</span> <span class="n">phi_data</span>
+</code></pre></div>
+<hr />
+<h2 id="compliance-checklist">Compliance Checklist<a class="headerlink" href="#compliance-checklist" title="Permanent link to this section">🔗</a></h2>
+<h3 id="before-production">Before Production<a class="headerlink" href="#before-production" title="Permanent link to this section">🔗</a></h3>
+<ul>
+<li>[ ] <strong>BAA signed</strong> with LLM provider</li>
+<li>[ ] <strong>Security enabled</strong>: <code>enable_security=True</code></li>
+<li>[ ] <strong>Encryption configured</strong>: AES-256-GCM at rest</li>
+<li>[ ] <strong>Audit logging enabled</strong>: 90-day retention minimum</li>
+<li>[ ] <strong>Access controls</strong>: Role-based access (RBAC)</li>
+<li>[ ] <strong>PHI testing</strong>: 100% scrubbing accuracy verified</li>
+<li>[ ] <strong>Staff training</strong>: HIPAA awareness, PHI handling</li>
+<li>[ ] <strong>Policies documented</strong>: Security, privacy, breach response</li>
+<li>[ ] <strong>Risk assessment</strong>: Completed and documented</li>
+<li>[ ] <strong>Incident response plan</strong>: Tested and ready</li>
+</ul>
+<h3 id="ongoing-compliance">Ongoing Compliance<a class="headerlink" href="#ongoing-compliance" title="Permanent link to this section">🔗</a></h3>
+<ul>
+<li>[ ] <strong>Weekly audit log review</strong></li>
+<li>[ ] <strong>Quarterly security assessments</strong></li>
+<li>[ ] <strong>Annual HIPAA training</strong> for all staff</li>
+<li>[ ] <strong>Annual risk assessment</strong> update</li>
+<li>[ ] <strong>Breach response drills</strong> (semi-annual)</li>
+<li>[ ] <strong>Vendor BAA renewals</strong> (as needed)</li>
+<li>[ ] <strong>Software updates</strong> for security patches</li>
+</ul>
+<hr />
+<h2 id="common-violations-how-to-avoid">Common Violations &amp; How to Avoid<a class="headerlink" href="#common-violations-how-to-avoid" title="Permanent link to this section">🔗</a></h2>
+<table>
+<thead>
+<tr>
+<th>Violation</th>
+<th>Fine Range</th>
+<th>How to Avoid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sending PHI without BAA</td>
+<td>$100 - $50,000 per violation</td>
+<td>Sign BAA with LLM provider before production</td>
+</tr>
+<tr>
+<td>No encryption at rest</td>
+<td>$1,000 - $50,000 per violation</td>
+<td>Configure <code>encryption_key</code> in EmpathyLLM</td>
+</tr>
+<tr>
+<td>Inadequate audit logs</td>
+<td>$1,000 - $50,000 per violation</td>
+<td>Enable <code>audit_logging=True</code> with 90-day retention</td>
+</tr>
+<tr>
+<td>Unauthorized access</td>
+<td>$50,000 per violation</td>
+<td>Implement RBAC, review access logs</td>
+</tr>
+<tr>
+<td>Breach notification delay</td>
+<td>$100 - $50,000 per violation</td>
+<td>Test incident response plan</td>
+</tr>
+<tr>
+<td>No patient consent</td>
+<td>$100 - $50,000 per violation</td>
+<td>Implement consent workflow</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Maximum penalty</strong>: $1.5 million per year per violation category</p>
+<hr />
+<h2 id="roi-of-hipaa-compliance">ROI of HIPAA Compliance<a class="headerlink" href="#roi-of-hipaa-compliance" title="Permanent link to this section">🔗</a></h2>
+<p>For a <strong>100-bed hospital</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Cost Item</th>
+<th>Annual Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HIPAA violation (average)</td>
+<td>-$2.5M</td>
+</tr>
+<tr>
+<td>Empathy Framework (compliance)</td>
+<td>$10K</td>
+</tr>
+<tr>
+<td><strong>Net Savings</strong></td>
+<td><strong>$2.49M</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Additional benefits</strong>:
+- ✅ Avoid breach notification costs ($200+ per patient)
+- ✅ Maintain patient trust and reputation
+- ✅ Enable AI innovation with confidence
+- ✅ Reduce documentation time by 60%</p>
+<hr />
+<h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Permanent link to this section">🔗</a></h2>
+<ul>
+<li><a href="security-architecture.html">Security Architecture</a> - Technical implementation details</li>
+<li><a href="../api-reference/wizards.html">Healthcare Wizards</a> - PHI-aware AI assistants</li>
+<li><a href="../examples/sbar-clinical-handoff.html">SBAR Example</a> - HIPAA-compliant handoff protocol</li>
+<li><a href="../api-reference/llm-toolkit.html">LLM Toolkit</a> - Security API reference</li>
+</ul>
+<hr />
+<h2 id="external-resources">External Resources<a class="headerlink" href="#external-resources" title="Permanent link to this section">🔗</a></h2>
+<ul>
+<li><a href="https://www.hhs.gov/hipaa/index.html">HHS HIPAA Portal</a></li>
+<li><a href="https://www.hhs.gov/hipaa/for-professionals/security/index.html">HIPAA Security Rule</a></li>
+<li><a href="https://www.hhs.gov/hipaa/for-professionals/breach-notification/index.html">Breach Notification Rule</a></li>
+<li><a href="https://www.hhs.gov/hipaa/for-professionals/compliance-enforcement/audit/protocol/index.html">OCR Audit Protocol</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 Smart-AI-Memory
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/Smart-AI-Memory/empathy-framework" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://pypi.org/project/empathy-framework/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 444.7a20.4 20.4 0 1 1 0-40.7 20.4 20.4 0 1 1 0 40.7M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.6-183.4a20.4 20.4 0 1 1 0 40.8 20.4 20.4 0 1 1 0-40.8"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

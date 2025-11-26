@@ -1,6 +1,6 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "npm run build"
+buildCommand = "npm run build:railway"
 
 [deploy]
 startCommand = "npm run start"

@@ -1,0 +1,139 @@
+# Empathy Framework Documentation
+# MkDocs configuration file
+
+# Site Information
+site_name: Empathy Framework
+site_description: Production-ready Level 4 Anticipatory Intelligence for AI-human collaboration
+site_author: Patrick Roebuck
+site_url: https://smartaimemory.com/framework-docs/
+
+# Repository
+repo_name: Smart-AI-Memory/empathy-framework
+repo_url: https://github.com/Smart-AI-Memory/empathy-framework
+edit_uri: edit/main/docs/
+
+# Copyright
+copyright: Copyright &copy; 2025 Smart-AI-Memory
+
+# Navigation Structure
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quickstart.md
+      - Configuration: getting-started/configuration.md
+  - Examples:
+      - Simple Chatbot: examples/simple-chatbot.md
+      - SBAR Clinical Handoff: examples/sbar-clinical-handoff.md
+      - Multi-Agent Coordination: examples/multi-agent-team-coordination.md
+      - Adaptive Learning: examples/adaptive-learning-system.md
+      - Webhook Integration: examples/webhook-event-integration.md
+  - Guides:
+      - Security Architecture: guides/security-architecture.md
+      - HIPAA Compliance: guides/hipaa-compliance.md
+      - Healthcare Wizards: guides/healthcare-wizards.md
+      - Software Development Wizards: guides/software-development-wizards.md
+      - Adaptive Learning: guides/adaptive-learning.md
+      - Multi-Agent Coordination: guides/multi-agent-coordination.md
+      - Webhook Integration: guides/webhook-integration.md
+      - AI Development Wizards: AI_DEVELOPMENT_WIZARDS.md
+  - API Reference:
+      - Overview: api-reference/index.md
+      - EmpathyOS: api-reference/empathy-os.md
+      - Configuration: api-reference/config.md
+      - Core: api-reference/core.md
+      - Pattern Library: api-reference/pattern-library.md
+      - Persistence: api-reference/persistence.md
+      - LLM Toolkit: api-reference/llm-toolkit.md
+      - Industry Wizards: api-reference/wizards.md
+  - Contributing: contributing.md
+
+# Build configuration
+use_directory_urls: false
+
+# Theme Configuration (Material)
+theme:
+  name: material
+
+  # Color scheme
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+  # Features
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+  # Logo
+  icon:
+    logo: material/brain
+
+  # Font
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+# Plugins
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+
+# Markdown Extensions
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+  - admonition
+  - tables
+  - toc:
+      permalink: "🔗"
+      permalink_title: "Permanent link to this section"
+  - attr_list
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+# Extra CSS for custom styling
+extra_css:
+  - stylesheets/extra.css
+
+# Extra
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Smart-AI-Memory/empathy-framework
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/empathy-framework/

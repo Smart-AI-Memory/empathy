@@ -68,16 +68,16 @@ export default function Home() {
                 <div className="text-4xl">🧠</div>
                 <h3 className="text-2xl font-bold">Empathy Framework</h3>
               </div>
-              <p className="text-sm text-[var(--muted)] mb-4">v1.7.0 Production/Stable</p>
+              <p className="text-sm text-[var(--muted)] mb-4">v1.8.0-beta with Claude Memory Integration</p>
               <p className="text-[var(--text-secondary)] mb-6">
                 A 5-level maturity model for AI-human collaboration, progressing from reactive
-                responses to Level 4 Anticipatory Intelligence. Includes 30+ production wizards
-                for software development and healthcare.
+                responses to Level 4 Anticipatory Intelligence. Includes 45+ specialized wizards
+                with comprehensive guides for healthcare, software development, and AI collaboration.
               </p>
               <div className="space-y-3 mb-6">
                 <div className="flex items-start gap-2">
                   <span className="text-[var(--success)] mt-1">✓</span>
-                  <span className="text-sm"><strong>1,489 tests</strong>, 90.71% coverage</span>
+                  <span className="text-sm"><strong>1,247 tests</strong>, 83.13% coverage</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <span className="text-[var(--success)] mt-1">✓</span>
@@ -143,6 +143,55 @@ export default function Home() {
                   View on GitHub
                 </a>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Wizard Documentation Highlight */}
+      <section className="py-20">
+        <div className="container">
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">
+              Comprehensive Wizard Documentation
+            </h2>
+            <p className="text-xl text-[var(--text-secondary)]">
+              Production-ready AI assistants with detailed guides and examples
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <div className="bg-[var(--background)] p-6 rounded-lg border-2 border-[var(--primary)] border-opacity-20 hover:border-opacity-100 transition-all">
+              <div className="text-3xl mb-4">🏥</div>
+              <h3 className="text-xl font-bold mb-3">Healthcare Wizards</h3>
+              <p className="text-[var(--text-secondary)] mb-4 text-sm">
+                18 HIPAA-compliant wizards for clinical protocols, SBAR handoffs, medication safety, and patient monitoring.
+              </p>
+              <Link href="/docs#healthcare-wizards" className="text-[var(--primary)] text-sm font-medium hover:underline">
+                View Healthcare Guide →
+              </Link>
+            </div>
+
+            <div className="bg-[var(--background)] p-6 rounded-lg border-2 border-[var(--secondary)] border-opacity-20 hover:border-opacity-100 transition-all">
+              <div className="text-3xl mb-4">💻</div>
+              <h3 className="text-xl font-bold mb-3">Software Development</h3>
+              <p className="text-[var(--text-secondary)] mb-4 text-sm">
+                12 wizards for debugging, testing, performance, security, and AI development patterns.
+              </p>
+              <Link href="/docs#software-development-wizards" className="text-[var(--secondary)] text-sm font-medium hover:underline">
+                View Software Guide →
+              </Link>
+            </div>
+
+            <div className="bg-[var(--background)] p-6 rounded-lg border-2 border-[var(--accent)] border-opacity-20 hover:border-opacity-100 transition-all">
+              <div className="text-3xl mb-4">🤖</div>
+              <h3 className="text-xl font-bold mb-3">AI Collaboration</h3>
+              <p className="text-[var(--text-secondary)] mb-4 text-sm">
+                4 specialized wizards for prompt engineering, context management, and AI-first documentation.
+              </p>
+              <Link href="/docs#ai-development-wizards" className="text-[var(--accent)] text-sm font-medium hover:underline">
+                View AI Guide →
+              </Link>
             </div>
           </div>
         </div>
