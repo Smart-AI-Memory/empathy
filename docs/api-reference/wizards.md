@@ -406,21 +406,13 @@ Domain-specific AI assistants with built-in security, compliance, and industry b
 
 ## Base Wizard API
 
-All wizards extend the `BaseWizard` class with common functionality:
+All wizards extend the `BaseWizard` class with common functionality.
 
-::: empathy_llm_toolkit.wizards.BaseWizard
-    options:
-      show_root_heading: false
-      show_source: false
-      heading_level: 3
+**Note**: Full API documentation coming soon as wizards module is being finalized.
 
 ### WizardConfig
 
-::: empathy_llm_toolkit.wizards.WizardConfig
-    options:
-      show_root_heading: false
-      show_source: true
-      heading_level: 4
+Configuration class for customizing wizard behavior.
 
 **Configuration options:**
 
