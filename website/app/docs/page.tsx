@@ -11,7 +11,7 @@ export default function DocsRedirectPage() {
     // Redirect to the new documentation after a short delay
     const timer = setTimeout(() => {
       router.push('/framework-docs/');
-    }, 3000);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [router]);
@@ -26,7 +26,7 @@ export default function DocsRedirectPage() {
             Our documentation has been upgraded to a comprehensive MkDocs site with 45+ wizard guides.
           </p>
           <p className="text-[var(--text-secondary)] mb-8">
-            Redirecting you to the new documentation in 3 seconds...
+            Redirecting you to the new documentation...
           </p>
         </div>
 
