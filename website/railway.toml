@@ -1,8 +1,7 @@
 [build]
-builder = "NIXPACKS"
-buildCommand = "npm run build:railway"
+builder = "DOCKERFILE"
+dockerfilePath = "website/Dockerfile"
 
 [deploy]
-startCommand = "npm run start"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10

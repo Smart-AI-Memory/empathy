@@ -1,5 +1,0 @@
-[phases.build]
-cmd = "npm run build:railway"
-
-[phases.start]
-cmd = "npm run start"
