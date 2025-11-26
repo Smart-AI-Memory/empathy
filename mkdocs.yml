@@ -36,6 +36,7 @@ nav:
       - Pattern Library: api-reference/pattern-library.md
       - Persistence: api-reference/persistence.md
       - LLM Toolkit: api-reference/llm-toolkit.md
+      - Industry Wizards: api-reference/wizards.md
   - Contributing: contributing.md
 
 # Theme Configuration (Material)
