@@ -28,6 +28,12 @@ nav:
       - Multi-Agent Coordination: examples/multi-agent-team-coordination.md
       - Adaptive Learning: examples/adaptive-learning-system.md
       - Webhook Integration: examples/webhook-event-integration.md
+  - Guides:
+      - Security Architecture: guides/security-architecture.md
+      - HIPAA Compliance: guides/hipaa-compliance.md
+      - Adaptive Learning: guides/adaptive-learning.md
+      - Multi-Agent Coordination: guides/multi-agent-coordination.md
+      - Webhook Integration: guides/webhook-integration.md
   - API Reference:
       - Overview: api-reference/index.md
       - EmpathyOS: api-reference/empathy-os.md
