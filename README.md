@@ -2,10 +2,11 @@
 
 **A five-level maturity model for AI-human collaboration**
 
-![Coverage](https://img.shields.io/badge/coverage-90.66%25-brightgreen)
 [![License](https://img.shields.io/badge/License-Fair%20Source%200.9-blue.svg)](LICENSE)
-[![PyPI Package](https://img.shields.io/badge/PyPI-empathy--framework-blue)](https://pypi.org/project/empathy-framework/)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![PyPI version](https://img.shields.io/pypi/v/empathy-framework.svg)](https://pypi.org/project/empathy-framework/)
+[![Python 3.10+](https://img.shields.io/pypi/pyversions/empathy-framework.svg)](https://www.python.org/downloads/)
+[![Downloads](https://img.shields.io/pypi/dm/empathy-framework.svg)](https://pypi.org/project/empathy-framework/)
+[![Tests](https://github.com/Smart-AI-Memory/empathy-framework/actions/workflows/tests.yml/badge.svg)](https://github.com/Smart-AI-Memory/empathy-framework/actions/workflows/tests.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
