@@ -12,7 +12,7 @@
         <meta name="author" content="Patrick Roebuck">
       
       
-        <link rel="canonical" href="https://smartaimemory.com/framework-docs/marketing/index.html">
+        <link rel="canonical" href="https://smartaimemory.com/framework-docs/PUBLISHING.html">
       
       
       
@@ -20,19 +20,19 @@
         
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
     
     
       
-        <title>Empathy Framework - Launch Content Hub - Empathy Framework</title>
+        <title>Publishing to PyPI - Empathy Framework</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.618322db.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -51,9 +51,9 @@
       
     
     
-      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#empathy-framework-launch-content-hub" class="md-skip">
+        <a href="#publishing-to-pypi" class="md-skip">
           Skip to content
         </a>
       
@@ -92,7 +92,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="Empathy Framework" class="md-header__button md-logo" aria-label="Empathy Framework" data-md-component="logo">
+    <a href="index.html" title="Empathy Framework" class="md-header__button md-logo" aria-label="Empathy Framework" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.33 12.91c.09 1.55-.62 3.04-1.89 3.95l.77 1.49c.23.45.26.98.06 1.45-.19.47-.58.84-1.06 1l-.79.25a1.687 1.687 0 0 1-1.86-.55L14.44 18c-.89-.15-1.73-.53-2.44-1.1-.5.15-1 .23-1.5.23-.88 0-1.76-.27-2.5-.79-.53.16-1.07.23-1.62.22-.79.01-1.57-.15-2.3-.45a4.1 4.1 0 0 1-2.43-3.61c-.08-.72.04-1.45.35-2.11-.29-.75-.32-1.57-.07-2.33C2.3 7.11 3 6.32 3.87 5.82c.58-1.69 2.21-2.82 4-2.7 1.6-1.5 4.05-1.66 5.83-.37.42-.11.86-.17 1.3-.17 1.36-.03 2.65.57 3.5 1.64 2.04.53 3.5 2.35 3.58 4.47.05 1.11-.25 2.2-.86 3.13.07.36.11.72.11 1.09m-5-1.41c.57.07 1.02.5 1.02 1.07a1 1 0 0 1-1 1h-.63c-.32.9-.88 1.69-1.62 2.29.25.09.51.14.77.21 5.13-.07 4.53-3.2 4.53-3.25a2.59 2.59 0 0 0-2.69-2.49 1 1 0 0 1-1-1 1 1 0 0 1 1-1c1.23.03 2.41.49 3.33 1.3.05-.29.08-.59.08-.89-.06-1.24-.62-2.32-2.87-2.53-1.25-2.96-4.4-1.32-4.4-.4-.03.23.21.72.25.75a1 1 0 0 1 1 1c0 .55-.45 1-1 1-.53-.02-1.03-.22-1.43-.56-.48.31-1.03.5-1.6.56-.57.05-1.04-.35-1.07-.9a.97.97 0 0 1 .88-1.1c.16-.02.94-.14.94-.77 0-.66.25-1.29.68-1.79-.92-.25-1.91.08-2.91 1.29C6.75 5 6 5.25 5.45 7.2 4.5 7.67 4 8 3.78 9c1.08-.22 2.19-.13 3.22.25.5.19.78.75.59 1.29-.19.52-.77.78-1.29.59-.73-.32-1.55-.34-2.3-.06-.32.27-.32.83-.32 1.27 0 .74.37 1.43 1 1.83.53.27 1.12.41 1.71.4q-.225-.39-.39-.81a1.038 1.038 0 0 1 1.96-.68c.4 1.14 1.42 1.92 2.62 2.05 1.37-.07 2.59-.88 3.19-2.13.23-1.38 1.34-1.5 2.56-1.5m2 7.47-.62-1.3-.71.16 1 1.25zm-4.65-8.61a1 1 0 0 0-.91-1.03c-.71-.04-1.4.2-1.93.67-.57.58-.87 1.38-.84 2.19a1 1 0 0 0 1 1c.57 0 1-.45 1-1 0-.27.07-.54.23-.76.12-.1.27-.15.43-.15.55.03 1.02-.38 1.02-.92"/></svg>
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Empathy Framework - Launch Content Hub
+              Publishing to PyPI
             
           </span>
         </div>
@@ -225,7 +225,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../index.html" class="md-tabs__link">
+      <a href="index.html" class="md-tabs__link">
         
   
   
@@ -246,7 +246,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../getting-started/installation.html" class="md-tabs__link">
+        <a href="getting-started/installation.html" class="md-tabs__link">
           
   
   
@@ -266,7 +266,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../examples/simple-chatbot.html" class="md-tabs__link">
+        <a href="examples/simple-chatbot.html" class="md-tabs__link">
           
   
   
@@ -286,7 +286,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../api-reference/index.html" class="md-tabs__link">
+        <a href="api-reference/index.html" class="md-tabs__link">
           
   
   
@@ -304,7 +304,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../contributing.html" class="md-tabs__link">
+      <a href="contributing.html" class="md-tabs__link">
         
   
   
@@ -339,7 +339,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="Empathy Framework" class="md-nav__button md-logo" aria-label="Empathy Framework" data-md-component="logo">
+    <a href="index.html" title="Empathy Framework" class="md-nav__button md-logo" aria-label="Empathy Framework" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.33 12.91c.09 1.55-.62 3.04-1.89 3.95l.77 1.49c.23.45.26.98.06 1.45-.19.47-.58.84-1.06 1l-.79.25a1.687 1.687 0 0 1-1.86-.55L14.44 18c-.89-.15-1.73-.53-2.44-1.1-.5.15-1 .23-1.5.23-.88 0-1.76-.27-2.5-.79-.53.16-1.07.23-1.62.22-.79.01-1.57-.15-2.3-.45a4.1 4.1 0 0 1-2.43-3.61c-.08-.72.04-1.45.35-2.11-.29-.75-.32-1.57-.07-2.33C2.3 7.11 3 6.32 3.87 5.82c.58-1.69 2.21-2.82 4-2.7 1.6-1.5 4.05-1.66 5.83-.37.42-.11.86-.17 1.3-.17 1.36-.03 2.65.57 3.5 1.64 2.04.53 3.5 2.35 3.58 4.47.05 1.11-.25 2.2-.86 3.13.07.36.11.72.11 1.09m-5-1.41c.57.07 1.02.5 1.02 1.07a1 1 0 0 1-1 1h-.63c-.32.9-.88 1.69-1.62 2.29.25.09.51.14.77.21 5.13-.07 4.53-3.2 4.53-3.25a2.59 2.59 0 0 0-2.69-2.49 1 1 0 0 1-1-1 1 1 0 0 1 1-1c1.23.03 2.41.49 3.33 1.3.05-.29.08-.59.08-.89-.06-1.24-.62-2.32-2.87-2.53-1.25-2.96-4.4-1.32-4.4-.4-.03.23.21.72.25.75a1 1 0 0 1 1 1c0 .55-.45 1-1 1-.53-.02-1.03-.22-1.43-.56-.48.31-1.03.5-1.6.56-.57.05-1.04-.35-1.07-.9a.97.97 0 0 1 .88-1.1c.16-.02.94-.14.94-.77 0-.66.25-1.29.68-1.79-.92-.25-1.91.08-2.91 1.29C6.75 5 6 5.25 5.45 7.2 4.5 7.67 4 8 3.78 9c1.08-.22 2.19-.13 3.22.25.5.19.78.75.59 1.29-.19.52-.77.78-1.29.59-.73-.32-1.55-.34-2.3-.06-.32.27-.32.83-.32 1.27 0 .74.37 1.43 1 1.83.53.27 1.12.41 1.71.4q-.225-.39-.39-.81a1.038 1.038 0 0 1 1.96-.68c.4 1.14 1.42 1.92 2.62 2.05 1.37-.07 2.59-.88 3.19-2.13.23-1.38 1.34-1.5 2.56-1.5m2 7.47-.62-1.3-.71.16 1 1.25zm-4.65-8.61a1 1 0 0 0-.91-1.03c-.71-.04-1.4.2-1.93.67-.57.58-.87 1.38-.84 2.19a1 1 0 0 0 1 1c.57 0 1-.45 1-1 0-.27.07-.54.23-.76.12-.1.27-.15.43-.15.55.03 1.02-.38 1.02-.92"/></svg>
@@ -369,7 +369,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../index.html" class="md-nav__link">
+      <a href="index.html" class="md-nav__link">
         
   
   
@@ -450,7 +450,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/installation.html" class="md-nav__link">
+      <a href="getting-started/installation.html" class="md-nav__link">
         
   
   
@@ -478,7 +478,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/quickstart.html" class="md-nav__link">
+      <a href="getting-started/quickstart.html" class="md-nav__link">
         
   
   
@@ -506,7 +506,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/configuration.html" class="md-nav__link">
+      <a href="getting-started/configuration.html" class="md-nav__link">
         
   
   
@@ -595,7 +595,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../examples/simple-chatbot.html" class="md-nav__link">
+      <a href="examples/simple-chatbot.html" class="md-nav__link">
         
   
   
@@ -623,7 +623,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../examples/sbar-clinical-handoff.html" class="md-nav__link">
+      <a href="examples/sbar-clinical-handoff.html" class="md-nav__link">
         
   
   
@@ -651,7 +651,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../examples/multi-agent-team-coordination.html" class="md-nav__link">
+      <a href="examples/multi-agent-team-coordination.html" class="md-nav__link">
         
   
   
@@ -679,7 +679,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../examples/adaptive-learning-system.html" class="md-nav__link">
+      <a href="examples/adaptive-learning-system.html" class="md-nav__link">
         
   
   
@@ -707,7 +707,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../examples/webhook-event-integration.html" class="md-nav__link">
+      <a href="examples/webhook-event-integration.html" class="md-nav__link">
         
   
   
@@ -796,7 +796,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api-reference/index.html" class="md-nav__link">
+      <a href="api-reference/index.html" class="md-nav__link">
         
   
   
@@ -824,7 +824,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api-reference/empathy-os.html" class="md-nav__link">
+      <a href="api-reference/empathy-os.html" class="md-nav__link">
         
   
   
@@ -852,7 +852,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api-reference/config.html" class="md-nav__link">
+      <a href="api-reference/config.html" class="md-nav__link">
         
   
   
@@ -880,7 +880,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api-reference/core.html" class="md-nav__link">
+      <a href="api-reference/core.html" class="md-nav__link">
         
   
   
@@ -908,7 +908,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api-reference/pattern-library.html" class="md-nav__link">
+      <a href="api-reference/pattern-library.html" class="md-nav__link">
         
   
   
@@ -936,7 +936,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api-reference/persistence.html" class="md-nav__link">
+      <a href="api-reference/persistence.html" class="md-nav__link">
         
   
   
@@ -964,7 +964,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api-reference/llm-toolkit.html" class="md-nav__link">
+      <a href="api-reference/llm-toolkit.html" class="md-nav__link">
         
   
   
@@ -992,7 +992,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../api-reference/wizards.html" class="md-nav__link">
+      <a href="api-reference/wizards.html" class="md-nav__link">
         
   
   
@@ -1027,7 +1027,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../contributing.html" class="md-nav__link">
+      <a href="contributing.html" class="md-nav__link">
         
   
   
@@ -1074,10 +1074,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview
+        Prerequisites
       
     </span>
   </a>
@@ -1085,22 +1085,33 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#content-files" class="md-nav__link">
+  <a href="#automated-publishing-recommended" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Content Files
+        Automated Publishing (Recommended)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Content Files">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manual-publishing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manual Publishing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Manual Publishing">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-show-hn-post" class="md-nav__link">
+  <a href="#1-clean-previous-builds" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Show HN Post
+        1. Clean previous builds
       
     </span>
   </a>
@@ -1108,10 +1119,43 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-linkedin-announcement" class="md-nav__link">
+  <a href="#2-build-the-package" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. LinkedIn Announcement
+        2. Build the package
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-check-the-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Check the package
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-test-upload-to-testpypi-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Test upload to TestPyPI (optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-upload-to-pypi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Upload to PyPI
       
     </span>
   </a>
@@ -1120,6 +1164,100 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-numbering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version Numbering
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#package-already-exists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Package already exists"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#invalid-distribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Invalid distribution"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authentication-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Authentication failed"
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Best Practices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#package-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Package Contents
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1143,366 +1281,127 @@
   
 
 
-<h1 id="empathy-framework-launch-content-hub">Empathy Framework - Launch Content Hub<a class="headerlink" href="#empathy-framework-launch-content-hub" title="Permanent link">&para;</a></h1>
-<p><strong>Status:</strong> Ready for commercial launch
-<strong>Created:</strong> November 2025
-<strong>Target Audience:</strong> Developers, DevOps teams, tech leads, CTOs</p>
-<hr />
-<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>This directory contains all launch content for the Empathy Framework commercial release. All content emphasizes the unique selling point: <strong>Level 5 cross-domain pattern transfer</strong> - learning safety patterns from healthcare and applying them to predict software deployment failures with 87% confidence.</p>
-<p><strong>No other AI framework can do this.</strong></p>
-<hr />
-<h2 id="content-files">Content Files<a class="headerlink" href="#content-files" title="Permanent link">&para;</a></h2>
-<h3 id="1-show-hn-post">1. Show HN Post<a class="headerlink" href="#1-show-hn-post" title="Permanent link">&para;</a></h3>
-<p><strong>File:</strong> <a href="SHOW_HN_POST.html">SHOW_HN_POST.md</a>
-<strong>Platform:</strong> Hacker News (Show HN)
-<strong>Length:</strong> ~300 words
-<strong>Status:</strong> ✅ Ready to post</p>
-<p><strong>Summary:</strong> Concise technical announcement optimized for HN audience. Focuses on the healthcare→software cross-domain pattern transfer with concrete example (23% failure rate → 87% prediction confidence).</p>
-<p><strong>Key Elements:</strong>
-- Technical hook about cross-domain AI
-- "No other AI framework can do this" positioning
-- Healthcare handoff → deployment failure story
-- Working demo with installation instructions
-- Fair Source licensing explained</p>
-<p><strong>Recommended Post Time:</strong> Tuesday-Thursday, 9-11 AM PST</p>
-<hr />
-<h3 id="2-linkedin-announcement">2. LinkedIn Announcement<a class="headerlink" href="#2-linkedin-announcement" title="Permanent link">&para;</a></h3>
-<p><strong>File:</strong> <a href="LINKEDIN_POST.html">LINKEDIN_POST.md</a>
-<strong>Platform:</strong> LinkedIn
-<strong>Length:</strong> ~1,000 words
-<strong>Status:</strong> ✅ Ready to post</p>
-<p><strong>Summary:</strong> Professional announcement targeting business decision-makers and technical leaders. Emphasizes business value, healthcare research investment, and transformative capabilities.</p>
-<p><strong>Key Elements:</strong>
-- Executive summary of problem and solution
-- Level 5 Systems Empathy explained for business audience
-- ROI positioning (learn from decades of healthcare research)
-- Technical credibility (test coverage, production-ready)
-- Clear call-to-action (try demo, star on GitHub)</p>
-<p><strong>Hashtags Included:</strong></p>
-<h1 id="ai-devops-machinelearning-codequality-healthtech-softwareengineering-artificialintelligence-healthcareit-deploymentsafety-systemsthinking-patternrecognition-crossdomainai">AI #DevOps #MachineLearning #CodeQuality #HealthTech #SoftwareEngineering #ArtificialIntelligence #HealthcareIT #DeploymentSafety #SystemsThinking #PatternRecognition #CrossDomainAI<a class="headerlink" href="#ai-devops-machinelearning-codequality-healthtech-softwareengineering-artificialintelligence-healthcareit-deploymentsafety-systemsthinking-patternrecognition-crossdomainai" title="Permanent link">&para;</a></h1>
-<p><strong>Recommended Post Time:</strong> Tuesday-Wednesday, 8-10 AM PST</p>
-<hr />
-<h3 id="3-twitterx-thread">3. Twitter/X Thread<a class="headerlink" href="#3-twitterx-thread" title="Permanent link">&para;</a></h3>
-<p><strong>File:</strong> <a href="TWITTER_THREAD.html">TWITTER_THREAD.md</a>
-<strong>Platform:</strong> Twitter/X
-<strong>Length:</strong> 10 tweets (~280 characters each)
-<strong>Status:</strong> ✅ Ready to post</p>
-<p><strong>Summary:</strong> Engaging thread structure that tells the story from problem to solution with clear progression. Optimized for viral sharing and engagement.</p>
-<p><strong>Thread Structure:</strong>
-1. Hook - AI learns from hospital protocols
-2. Problem - deployment handoff failures
-3. Healthcare stat - 23% failure rate
-4. Root causes - same in both domains
-5. Solution - cross-domain pattern transfer
-6. Technical details - how it works
-7. Unique value - no other framework can do this
-8. Pricing - Fair Source model
-9. Demo link and broader vision
-10. Call to action + GitHub link</p>
-<p><strong>Additional Content:</strong>
-- Alternative formats (technical, visual, conversational)
-- Hashtag strategy
-- Posting schedule recommendations
-- Engagement plan</p>
-<p><strong>Recommended Post Time:</strong> Tuesday-Thursday, 9-11 AM or 1-3 PM PST</p>
-<hr />
-<h3 id="4-reddit-rprogramming-post">4. Reddit r/programming Post<a class="headerlink" href="#4-reddit-rprogramming-post" title="Permanent link">&para;</a></h3>
-<p><strong>File:</strong> <a href="REDDIT_POST.html">REDDIT_POST.md</a>
-<strong>Platform:</strong> Reddit (r/programming)
-<strong>Length:</strong> ~1,800 words
-<strong>Status:</strong> ✅ Ready to post</p>
-<p><strong>Summary:</strong> Technical deep-dive for developer audience. Includes code examples, architecture details, implementation specifics, and honest discussion of limitations.</p>
-<p><strong>Key Elements:</strong>
-- Technical problem statement
-- Code examples with actual implementation
-- Architecture explanation (3 main components)
-- Pattern extraction and matching details
-- Confidence scoring methodology
-- Current limitations and future work
-- Test coverage and quality metrics
-- Discussion questions for community</p>
-<p><strong>Code Samples Included:</strong>
-- Domain-specific analysis
-- Cross-domain pattern matching
-- Anticipatory prediction
-- Full demo output</p>
-<p><strong>Recommended Post Time:</strong> Tuesday-Thursday, 9-11 AM or 2-4 PM PST</p>
-<p><strong>Engagement Strategy:</strong>
-- Respond to technical questions with code references
-- Don't be defensive about criticism
-- Link to specific docs when relevant
-- Invite pattern contributions from community</p>
-<hr />
-<h3 id="5-product-hunt-submission">5. Product Hunt Submission<a class="headerlink" href="#5-product-hunt-submission" title="Permanent link">&para;</a></h3>
-<p><strong>File:</strong> <a href="PRODUCT_HUNT.html">PRODUCT_HUNT.md</a>
-<strong>Platform:</strong> Product Hunt
-<strong>Length:</strong> Comprehensive launch package
-<strong>Status:</strong> ✅ Ready to submit</p>
-<p><strong>Summary:</strong> Complete Product Hunt launch materials including submission content, gallery images, first comment, hunter outreach, and success metrics.</p>
-<p><strong>Includes:</strong></p>
-<p><strong>Submission Materials:</strong>
-- Product name and tagline (60 chars)
-- Short description (120 chars)
-- Full description (4 paragraphs)
-- Key features (7 bullets)
-- Topics/tags
-- Links (website, docs, demo)</p>
-<p><strong>Visual Assets:</strong>
-- 5 gallery image specifications
-- Demo video recommendations
-- Screenshot content descriptions</p>
-<p><strong>Engagement Materials:</strong>
-- First comment template (post immediately after launch)
-- Hunter outreach template (if using a hunter)
-- Response templates for common questions
-- Thank you post for end of launch day</p>
-<p><strong>Launch Planning:</strong>
-- 2-week pre-launch checklist
-- 1-week pre-launch checklist
-- 1-day pre-launch checklist
-- Launch day checklist
-- Post-launch follow-up checklist</p>
-<p><strong>Success Metrics:</strong>
-- Launch day targets (200+ upvotes, top 5 product)
-- First week targets (500+ upvotes, newsletter feature)</p>
-<p><strong>Recommended Launch Day:</strong> Tuesday-Thursday (avoid Monday and Friday)</p>
-<hr />
-<h2 id="core-messaging">Core Messaging<a class="headerlink" href="#core-messaging" title="Permanent link">&para;</a></h2>
-<p>All content emphasizes these key points:</p>
-<h3 id="1-unique-selling-proposition">1. Unique Selling Proposition<a class="headerlink" href="#1-unique-selling-proposition" title="Permanent link">&para;</a></h3>
-<p><strong>"No other AI framework can do this"</strong>
-- Level 5 cross-domain pattern transfer
-- First AI to learn from healthcare and apply to software
-- 87% confidence in deployment failure prediction</p>
-<h3 id="2-the-healthcaresoftware-story">2. The Healthcare→Software Story<a class="headerlink" href="#2-the-healthcaresoftware-story" title="Permanent link">&para;</a></h3>
-<ul>
-<li>80% of medical errors involve handoff miscommunication</li>
-<li>23% handoff failure rate without standardized checklists</li>
-<li>Same root causes as deployment failures</li>
-<li>Healthcare solution applies directly to software</li>
-</ul>
-<h3 id="3-technical-credibility">3. Technical Credibility<a class="headerlink" href="#3-technical-credibility" title="Permanent link">&para;</a></h3>
-<ul>
-<li>1,247 tests passing (83% coverage)</li>
-<li>100% coverage on core modules</li>
-<li>Production-ready framework</li>
-<li>16 software wizards + 18 healthcare wizards</li>
-<li>Built with Claude Code + MemDocs</li>
-</ul>
-<h3 id="4-fair-source-licensing">4. Fair Source Licensing<a class="headerlink" href="#4-fair-source-licensing" title="Permanent link">&para;</a></h3>
-<ul>
-<li>Free for teams ≤5 employees</li>
-<li>$99/dev/year commercial</li>
-<li>Full source code access</li>
-<li>Auto-converts to Apache 2.0 in 2029</li>
-</ul>
-<h3 id="5-clear-calls-to-action">5. Clear Calls-to-Action<a class="headerlink" href="#5-clear-calls-to-action" title="Permanent link">&para;</a></h3>
-<ul>
-<li>Try the demo: <code>pip install empathy-framework[full]</code></li>
-<li>Star on GitHub</li>
-<li>Read the docs</li>
-<li>Join the community</li>
-</ul>
-<hr />
-<h2 id="platform-specific-adaptations">Platform-Specific Adaptations<a class="headerlink" href="#platform-specific-adaptations" title="Permanent link">&para;</a></h2>
-<h3 id="hacker-news-show-hn">Hacker News (Show HN)<a class="headerlink" href="#hacker-news-show-hn" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Tone:</strong> Technical, concise, no hype</li>
-<li><strong>Length:</strong> 300 words max</li>
-<li><strong>Focus:</strong> Novel technical approach</li>
-<li><strong>CTA:</strong> Run the demo yourself</li>
-</ul>
-<h3 id="linkedin">LinkedIn<a class="headerlink" href="#linkedin" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Tone:</strong> Professional, business-value focused</li>
-<li><strong>Length:</strong> 800-1,000 words</li>
-<li><strong>Focus:</strong> ROI, decades of healthcare research</li>
-<li><strong>CTA:</strong> Try demo, explore business applications</li>
-</ul>
-<h3 id="twitter">Twitter<a class="headerlink" href="#twitter" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Tone:</strong> Engaging, shareable, progressive story</li>
-<li><strong>Length:</strong> 10 tweets, ~280 chars each</li>
-<li><strong>Focus:</strong> Visual progression from problem to solution</li>
-<li><strong>CTA:</strong> Star on GitHub, share the thread</li>
-</ul>
-<h3 id="reddit">Reddit<a class="headerlink" href="#reddit" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Tone:</strong> Technical depth, honest about limitations</li>
-<li><strong>Length:</strong> 1,500-2,000 words with code examples</li>
-<li><strong>Focus:</strong> Implementation details, invite discussion</li>
-<li><strong>CTA:</strong> Technical feedback, pattern contributions</li>
-</ul>
-<h3 id="product-hunt">Product Hunt<a class="headerlink" href="#product-hunt" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Tone:</strong> Excited but professional, accessible</li>
-<li><strong>Length:</strong> Comprehensive package</li>
-<li><strong>Focus:</strong> Visual appeal, easy to understand</li>
-<li><strong>CTA:</strong> Upvote, try demo, ask questions</li>
-</ul>
-<hr />
-<h2 id="launch-sequence">Launch Sequence<a class="headerlink" href="#launch-sequence" title="Permanent link">&para;</a></h2>
-<p><strong>Recommended order:</strong></p>
+<h1 id="publishing-to-pypi">Publishing to PyPI<a class="headerlink" href="#publishing-to-pypi" title="Permanent link">&para;</a></h1>
+<p>This guide explains how to publish the Empathy framework to PyPI.</p>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Day 1 (Tuesday):</strong> Product Hunt launch</li>
-<li>Submit early morning (12:01 AM PST)</li>
-<li>Post first comment immediately</li>
-<li>Engage all day</li>
-<li>Share on Twitter mid-morning</li>
-<li>
-<p>Share on LinkedIn afternoon</p>
-</li>
-<li>
-<p><strong>Day 1-2:</strong> Twitter thread</p>
-</li>
-<li>Post after Product Hunt gains traction</li>
-<li>Reference Product Hunt launch</li>
-<li>
-<p>Drive traffic back to PH</p>
-</li>
-<li>
-<p><strong>Day 2 (Wednesday):</strong> Hacker News (Show HN)</p>
-</li>
-<li>Post mid-morning</li>
-<li>Engage throughout the day</li>
-<li>
-<p>Don't mention Product Hunt (HN doesn't like cross-promotion)</p>
-</li>
-<li>
-<p><strong>Day 3 (Thursday):</strong> Reddit r/programming</p>
-</li>
-<li>Post after HN discussion winds down</li>
-<li>Reference any good technical discussions from HN</li>
-<li>
-<p>Deeper technical content</p>
-</li>
-<li>
-<p><strong>Day 3-7:</strong> LinkedIn</p>
-</li>
-<li>Post after initial wave</li>
-<li>Professional summary with business focus</li>
-<li>Include metrics from first 3 days</li>
+<li>PyPI account at https://pypi.org/</li>
+<li>PyPI API token (create at https://pypi.org/manage/account/token/)</li>
+<li>Add token to GitHub Secrets as <code>PYPI_API_TOKEN</code></li>
 </ol>
-<p><strong>Why this order:</strong>
-- Product Hunt has highest launch day importance
-- Twitter amplifies PH in real-time
-- HN needs separate day to avoid spread-too-thin
-- Reddit appreciates seeing community response
-- LinkedIn benefits from early traction metrics</p>
-<hr />
-<h2 id="content-coordination">Content Coordination<a class="headerlink" href="#content-coordination" title="Permanent link">&para;</a></h2>
-<h3 id="cross-platform-references">Cross-Platform References<a class="headerlink" href="#cross-platform-references" title="Permanent link">&para;</a></h3>
-<p><strong>Don't:</strong>
-- Cross-promote on Hacker News (against culture)
-- Spam same content across all platforms simultaneously
-- Reference other platform discussions on Reddit (feels promotional)</p>
-<p><strong>Do:</strong>
-- Share Twitter thread on LinkedIn
-- Reference LinkedIn discussion in Twitter replies
-- Link to GitHub from everywhere
-- Share demo results and feedback across platforms
-- Thank community on all platforms</p>
-<h3 id="engagement-strategy">Engagement Strategy<a class="headerlink" href="#engagement-strategy" title="Permanent link">&para;</a></h3>
-<p><strong>First 24 Hours:</strong>
-- Respond to ALL comments within 1 hour
-- Answer technical questions with code examples
-- Thank people for upvotes/stars/shares
-- Don't be defensive about criticism
-- Invite pattern contributions</p>
-<p><strong>First Week:</strong>
-- Daily check of all platforms
-- Compile feedback for roadmap
-- Share interesting discussions cross-platform
-- Update content based on common questions
-- Write follow-up posts addressing feedback</p>
-<p><strong>Ongoing:</strong>
-- Weekly updates on new patterns
-- Monthly metrics and progress
-- Quarterly major announcements
-- Community spotlight features</p>
-<hr />
-<h2 id="assets-needed">Assets Needed<a class="headerlink" href="#assets-needed" title="Permanent link">&para;</a></h2>
-<h3 id="visual-assets">Visual Assets<a class="headerlink" href="#visual-assets" title="Permanent link">&para;</a></h3>
-<p><strong>Required:</strong>
-- [ ] Product Hunt thumbnail (1270x760px)
-- [ ] Demo output screenshots (5 images)
-- [ ] Architecture diagram
-- [ ] Pattern flow visualization
-- [ ] Test coverage badge</p>
-<p><strong>Nice to Have:</strong>
-- [ ] Demo video (30-60 seconds)
-- [ ] Animated GIF of demo running
-- [ ] Infographic: Healthcare→Software pattern
-- [ ] Team photo / founder photo
-- [ ] Logo variations</p>
-<h3 id="code-assets">Code Assets<a class="headerlink" href="#code-assets" title="Permanent link">&para;</a></h3>
-<p><strong>Required:</strong>
-- [x] Level 5 demo working and tested
-- [x] Installation instructions verified
-- [x] Quick start guide updated
-- [x] Documentation complete</p>
-<p><strong>Nice to Have:</strong>
-- [ ] Interactive demo (web-based)
-- [ ] Video walkthrough
-- [ ] Code sandbox integration
-- [ ] GitHub Actions workflow example</p>
-<hr />
-<h2 id="metrics-tracking">Metrics Tracking<a class="headerlink" href="#metrics-tracking" title="Permanent link">&para;</a></h2>
-<h3 id="launch-day-kpis">Launch Day KPIs<a class="headerlink" href="#launch-day-kpis" title="Permanent link">&para;</a></h3>
-<p><strong>Product Hunt:</strong>
-- Upvotes: Target 200+
-- Comments: Target 50+
-- Rank: Top 5 product of day</p>
-<p><strong>Twitter:</strong>
-- Impressions: Target 10,000+
-- Engagements: Target 500+
-- Retweets: Target 50+</p>
-<p><strong>Hacker News:</strong>
-- Points: Target 100+
-- Comments: Target 30+
-- Front page: Yes</p>
-<p><strong>Reddit:</strong>
-- Upvotes: Target 100+
-- Comments: Target 50+
-- Upvote ratio: &gt;85%</p>
-<p><strong>GitHub:</strong>
-- Stars: Target 100+ (first day)
-- Forks: Target 10+
-- Issues/Discussions: Target 5+</p>
-<h3 id="first-week-kpis">First Week KPIs<a class="headerlink" href="#first-week-kpis" title="Permanent link">&para;</a></h3>
-<p><strong>Overall:</strong>
-- GitHub stars: 500+
-- Demo runs: 1,000+
-- PyPI downloads: 500+
-- Docs views: 2,000+</p>
-<p><strong>Conversions:</strong>
-- Commercial inquiries: 5+
-- Pattern contributions: 10+
-- Community members: 50+</p>
-<hr />
-<h2 id="contact-information">Contact Information<a class="headerlink" href="#contact-information" title="Permanent link">&para;</a></h2>
-<p><strong>Questions about launch content:</strong>
-Patrick Roebuck
-patrick.roebuck1955@gmail.com</p>
-<p><strong>Technical questions:</strong>
-GitHub Issues: https://github.com/Smart-AI-Memory/empathy-framework/issues</p>
-<p><strong>Business inquiries:</strong>
-support@smartaimemory.com</p>
-<hr />
-<h2 id="version-history">Version History<a class="headerlink" href="#version-history" title="Permanent link">&para;</a></h2>
+<h2 id="automated-publishing-recommended">Automated Publishing (Recommended)<a class="headerlink" href="#automated-publishing-recommended" title="Permanent link">&para;</a></h2>
+<p>The framework uses GitHub Actions for automated publishing:</p>
+<ol>
+<li>
+<p><strong>Update version</strong> in <code>pyproject.toml</code>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;1.7.0&quot;</span><span class="w">  </span><span class="c1"># Update this</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Update CHANGELOG.md</strong> with release notes</p>
+</li>
+<li>
+<p><strong>Create and push a git tag</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>tag<span class="w"> </span>v1.7.0
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v1.7.0
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>GitHub Actions will automatically</strong>:</p>
+</li>
+<li>Run all tests</li>
+<li>Build the package</li>
+<li>Create a GitHub release</li>
+<li>Publish to PyPI (if token is configured)</li>
+</ol>
+<h2 id="manual-publishing">Manual Publishing<a class="headerlink" href="#manual-publishing" title="Permanent link">&para;</a></h2>
+<p>If you need to publish manually:</p>
+<h3 id="1-clean-previous-builds">1. Clean previous builds<a class="headerlink" href="#1-clean-previous-builds" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>rm<span class="w"> </span>-rf<span class="w"> </span>dist/<span class="w"> </span>build/<span class="w"> </span>*.egg-info
+</code></pre></div>
+<h3 id="2-build-the-package">2. Build the package<a class="headerlink" href="#2-build-the-package" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>build<span class="w"> </span>twine
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>python<span class="w"> </span>-m<span class="w"> </span>build
+</code></pre></div>
+<p>This creates two files in <code>dist/</code>:
+- <code>empathy-1.6.0.tar.gz</code> (source distribution)
+- <code>empathy-1.6.0-py3-none-any.whl</code> (wheel distribution)</p>
+<h3 id="3-check-the-package">3. Check the package<a class="headerlink" href="#3-check-the-package" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>twine<span class="w"> </span>check<span class="w"> </span>dist/*
+</code></pre></div>
+<h3 id="4-test-upload-to-testpypi-optional">4. Test upload to TestPyPI (optional)<a class="headerlink" href="#4-test-upload-to-testpypi-optional" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>twine<span class="w"> </span>upload<span class="w"> </span>--repository<span class="w"> </span>testpypi<span class="w"> </span>dist/*
+</code></pre></div>
+<p>Install from TestPyPI to verify:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pip<span class="w"> </span>install<span class="w"> </span>--index-url<span class="w"> </span>https://test.pypi.org/simple/<span class="w"> </span>empathy
+</code></pre></div></p>
+<h3 id="5-upload-to-pypi">5. Upload to PyPI<a class="headerlink" href="#5-upload-to-pypi" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>twine<span class="w"> </span>upload<span class="w"> </span>dist/*
+</code></pre></div>
+<p>You'll be prompted for your PyPI username and password/token.</p>
+<h2 id="verification">Verification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
+<p>After publishing, verify the package:</p>
+<ol>
+<li><strong>Check PyPI page</strong>: https://pypi.org/project/empathy/</li>
+<li><strong>Install and test</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>pip<span class="w"> </span>install<span class="w"> </span>empathy-framework
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;from empathy_os import EmpathyOS; print(&#39;Success!&#39;)&quot;</span>
+</code></pre></div></li>
+</ol>
+<h2 id="version-numbering">Version Numbering<a class="headerlink" href="#version-numbering" title="Permanent link">&para;</a></h2>
+<p>Follow <a href="https://semver.org/">Semantic Versioning</a>:</p>
 <ul>
-<li><strong>v1.0 (Nov 2025):</strong> Initial launch content created</li>
-<li>Show HN post (318 words)</li>
-<li>LinkedIn post (1,013 words)</li>
-<li>Twitter thread (731 words, 10 tweets)</li>
-<li>Reddit post (1,778 words)</li>
-<li>Product Hunt package (2,296 words)</li>
+<li><strong>Major</strong> (1.x.x): Breaking changes</li>
+<li><strong>Minor</strong> (x.1.x): New features, backward compatible</li>
+<li><strong>Patch</strong> (x.x.1): Bug fixes, backward compatible</li>
 </ul>
-<p><strong>Total content created:</strong> ~6,136 words across 5 platforms</p>
-<hr />
-<p><strong>Status:</strong> ✅ All content ready for launch
-<strong>Next Steps:</strong> Review content, prepare visual assets, schedule launch dates</p>
+<p>Examples:
+- <code>1.6.0</code> → <code>1.6.1</code>: Bug fix
+- <code>1.6.0</code> → <code>1.7.0</code>: New features
+- <code>1.6.0</code> → <code>2.0.0</code>: Breaking changes</p>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<h3 id="package-already-exists">"Package already exists"<a class="headerlink" href="#package-already-exists" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Version already published to PyPI</li>
+<li>Update version in <code>pyproject.toml</code></li>
+<li>You cannot overwrite or delete PyPI versions</li>
+</ul>
+<h3 id="invalid-distribution">"Invalid distribution"<a class="headerlink" href="#invalid-distribution" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Run <code>twine check dist/*</code> to see errors</li>
+<li>Common issues:</li>
+<li>Missing README.md</li>
+<li>Invalid pyproject.toml</li>
+<li>Missing required files in MANIFEST.in</li>
+</ul>
+<h3 id="authentication-failed">"Authentication failed"<a class="headerlink" href="#authentication-failed" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Check your PyPI token/password</li>
+<li>Tokens must start with <code>pypi-</code></li>
+<li>Use username <code>__token__</code> with API tokens</li>
+</ul>
+<h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Always test locally</strong> before publishing</li>
+<li><strong>Run full test suite</strong>: <code>pytest</code></li>
+<li><strong>Check code quality</strong>: <code>black . &amp;&amp; ruff check .</code></li>
+<li><strong>Update documentation</strong> before release</li>
+<li><strong>Tag releases</strong> in git for traceability</li>
+<li><strong>Never publish</strong> with failing tests</li>
+</ol>
+<h2 id="package-contents">Package Contents<a class="headerlink" href="#package-contents" title="Permanent link">&para;</a></h2>
+<p>The published package includes:
+- Core framework code (<code>empathy_os/</code>, <code>empathy_llm_toolkit/</code>)
+- All wizards (<code>wizards/</code>, <code>coach_wizards/</code>)
+- Plugins (<code>empathy_healthcare_plugin/</code>, <code>empathy_software_plugin/</code>)
+- Documentation (<code>README.md</code>, <code>LICENSE</code>, etc.)
+- Configuration files</p>
+<p>Excluded from package (see MANIFEST.in):
+- Tests (<code>tests/</code>)
+- CI/CD configs (<code>.github/</code>)
+- Development files (<code>.gitignore</code>, <code>.pre-commit-config.yaml</code>)
+- Backend API (<code>backend/</code>)
+- Website (<code>website/</code>)</p>
 
 
 
@@ -1589,10 +1488,10 @@ support@smartaimemory.com</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="assets/javascripts/bundle.e71a0d61.min.js"></script>
       
     
   </body>

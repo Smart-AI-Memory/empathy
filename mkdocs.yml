@@ -39,6 +39,9 @@ nav:
       - Industry Wizards: api-reference/wizards.md
   - Contributing: contributing.md
 
+# Build configuration
+use_directory_urls: false
+
 # Theme Configuration (Material)
 theme:
   name: material
