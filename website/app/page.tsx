@@ -167,7 +167,7 @@ export default function Home() {
               <p className="text-[var(--text-secondary)] mb-4 text-sm">
                 18 HIPAA-compliant wizards for clinical protocols, SBAR handoffs, medication safety, and patient monitoring.
               </p>
-              <Link href="/docs#healthcare-wizards" className="text-[var(--primary)] text-sm font-medium hover:underline">
+              <Link href="/framework-docs/wizards/#healthcare" className="text-[var(--primary)] text-sm font-medium hover:underline">
                 View Healthcare Guide →
               </Link>
             </div>
@@ -178,7 +178,7 @@ export default function Home() {
               <p className="text-[var(--text-secondary)] mb-4 text-sm">
                 12 wizards for debugging, testing, performance, security, and AI development patterns.
               </p>
-              <Link href="/docs#software-development-wizards" className="text-[var(--secondary)] text-sm font-medium hover:underline">
+              <Link href="/framework-docs/wizards/#software-development" className="text-[var(--secondary)] text-sm font-medium hover:underline">
                 View Software Guide →
               </Link>
             </div>
@@ -189,7 +189,7 @@ export default function Home() {
               <p className="text-[var(--text-secondary)] mb-4 text-sm">
                 4 specialized wizards for prompt engineering, context management, and AI-first documentation.
               </p>
-              <Link href="/docs#ai-development-wizards" className="text-[var(--accent)] text-sm font-medium hover:underline">
+              <Link href="/framework-docs/wizards/#ai-collaboration" className="text-[var(--accent)] text-sm font-medium hover:underline">
                 View AI Guide →
               </Link>
             </div>

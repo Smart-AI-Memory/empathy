@@ -63,7 +63,7 @@ export default function Navigation() {
               Blog
             </Link>
             <Link
-              href="/docs"
+              href="/framework-docs/"
               className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
             >
               Docs
@@ -232,7 +232,7 @@ export default function Navigation() {
                 Blog
               </Link>
               <Link
-                href="/docs"
+                href="/framework-docs/"
                 className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
