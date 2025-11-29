@@ -5,7 +5,36 @@ All notable changes to the Empathy Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.9.2] - 2025-01-28
+## [1.9.3] - 2025-11-28
+
+### Changed
+
+**Healthcare Focus**
+- Archived 13 non-healthcare wizards to `archived_wizards/` directory
+  - Accounting, Customer Support, Education, Finance, Government, HR
+  - Insurance, Legal, Logistics, Manufacturing, Real Estate, Research
+  - Retail, Sales, Technology wizards moved to archive
+- Package now focuses on 8 healthcare clinical wizards:
+  - Admission Assessment, Care Plan, Clinical Assessment, Discharge Summary
+  - Incident Report, SBAR, Shift Handoff, SOAP Note
+- Archived wizards remain functional and tested (104 tests pass)
+
+**Website Updates**
+- Added SBAR wizard API routes (`/api/wizards/sbar/start`, `/api/wizards/sbar/generate`)
+- Added SBARWizard React component
+- Updated navigation and dashboard for healthcare focus
+
+**Code Quality**
+- Added B904 to ruff ignore list (exception chaining in HTTPException pattern)
+- Fixed 37 CLI tests (logger output capture using caplog)
+- Test coverage: 74.58% (1,328 tests pass)
+
+**Claude Code Positioning**
+- Updated documentation with "Created in consultation with Claude Sonnet 4.5 using Claude Code"
+- Added Claude Code badge to README
+- Updated pitch deck and partnership materials
+
+## [1.9.2] - 2025-11-28
 
 ### Fixed
 

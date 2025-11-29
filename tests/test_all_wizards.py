@@ -10,8 +10,8 @@ Licensed under Fair Source 0.9
 
 import pytest
 
-from empathy_llm_toolkit import EmpathyLLM
-from empathy_llm_toolkit.wizards import (
+# Import from archived wizards location
+from archived_wizards.empathy_llm_toolkit_wizards import (
     AccountingWizard,
     CustomerSupportWizard,
     EducationWizard,
@@ -29,6 +29,7 @@ from empathy_llm_toolkit.wizards import (
     SalesWizard,
     TechnologyWizard,
 )
+from empathy_llm_toolkit import EmpathyLLM
 
 
 # Test fixtures
@@ -302,7 +303,7 @@ class TestWizardSecurityWarnings:
         self, llm_without_security, wizard_class, caplog
     ):
         """Test SENSITIVE wizards warn when security is disabled"""
-        wizard = wizard_class(llm_without_security)
+        _ = wizard_class(llm_without_security)
 
         # Should log warning for SENSITIVE wizards
         assert any(
