@@ -68,18 +68,22 @@ export default function Navigation() {
             >
               Docs
             </Link>
-            <Link
-              href="/dashboard"
+            <a
+              href="https://healthcare.smartaimemory.com/static/dashboard.html"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
             >
               Healthcare Wizards
-            </Link>
-            <Link
-              href="/dev-dashboard"
+            </a>
+            <a
+              href="https://wizards.smartaimemory.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
             >
               Dev Wizards
-            </Link>
+            </a>
             <Link
               href="/plugins"
               className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
@@ -250,20 +254,24 @@ export default function Navigation() {
               >
                 Docs
               </Link>
-              <Link
-                href="/dashboard"
+              <a
+                href="https://healthcare.smartaimemory.com/static/dashboard.html"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Healthcare Wizards
-              </Link>
-              <Link
-                href="/dev-dashboard"
+              </a>
+              <a
+                href="https://wizards.smartaimemory.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Dev Wizards
-              </Link>
+              </a>
               <Link
                 href="/plugins"
                 className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
