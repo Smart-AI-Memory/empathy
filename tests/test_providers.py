@@ -795,6 +795,19 @@ class TestOpenAIProviderGenerate:
             assert result.content == "System-aware response"
 
 
+class AsyncContextManagerMock:
+    """Helper class for mocking async context managers"""
+
+    def __init__(self, return_value):
+        self._return_value = return_value
+
+    async def __aenter__(self):
+        return self._return_value
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        return None
+
+
 class TestLocalProviderGenerate:
     """Test Local provider generate method"""
 
@@ -814,23 +827,14 @@ class TestLocalProviderGenerate:
             "prompt_eval_count": 100,
         }
 
-        async def mock_post(*args, **kwargs):
-            mock_resp = MagicMock()
-
-            async def mock_json():
-                return mock_response_data
-
-            mock_resp.json = mock_json
-            mock_resp.__aenter__ = AsyncMock(return_value=mock_resp)
-            mock_resp.__aexit__ = AsyncMock(return_value=None)
-            return mock_resp
+        mock_resp = MagicMock()
+        mock_resp.json = AsyncMock(return_value=mock_response_data)
 
         mock_session = MagicMock()
-        mock_session.post = mock_post
-        mock_session.__aenter__ = AsyncMock(return_value=mock_session)
-        mock_session.__aexit__ = AsyncMock(return_value=None)
+        mock_session.post = MagicMock(return_value=AsyncContextManagerMock(mock_resp))
 
-        with patch("aiohttp.ClientSession", return_value=mock_session):
+        with patch("aiohttp.ClientSession") as mock_client:
+            mock_client.return_value = AsyncContextManagerMock(mock_session)
             result = await provider.generate(messages)
 
             assert result.content == "Local response"
@@ -854,27 +858,21 @@ class TestLocalProviderGenerate:
             "prompt_eval_count": 100,
         }
 
-        async def mock_post(*args, **kwargs):
+        mock_resp = MagicMock()
+        mock_resp.json = AsyncMock(return_value=mock_response_data)
+
+        mock_session = MagicMock()
+
+        def mock_post(*args, **kwargs):
             # Verify system prompt in payload
             assert "system" in kwargs["json"]
             assert kwargs["json"]["system"] == "You are helpful"
+            return AsyncContextManagerMock(mock_resp)
 
-            mock_resp = MagicMock()
-
-            async def mock_json():
-                return mock_response_data
-
-            mock_resp.json = mock_json
-            mock_resp.__aenter__ = AsyncMock(return_value=mock_resp)
-            mock_resp.__aexit__ = AsyncMock(return_value=None)
-            return mock_resp
-
-        mock_session = MagicMock()
         mock_session.post = mock_post
-        mock_session.__aenter__ = AsyncMock(return_value=mock_session)
-        mock_session.__aexit__ = AsyncMock(return_value=None)
 
-        with patch("aiohttp.ClientSession", return_value=mock_session):
+        with patch("aiohttp.ClientSession") as mock_client:
+            mock_client.return_value = AsyncContextManagerMock(mock_session)
             result = await provider.generate(messages, system_prompt="You are helpful")
 
             assert result.content == "System-aware local response"
