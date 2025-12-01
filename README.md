@@ -6,7 +6,7 @@
 [![PyPI downloads](https://img.shields.io/pypi/dm/empathy-framework.svg)](https://pypistats.org/packages/empathy-framework)
 [![Python 3.10+](https://img.shields.io/pypi/pyversions/empathy-framework.svg)](https://pypi.org/project/empathy-framework/)
 [![License](https://img.shields.io/badge/License-Fair%20Source%200.9-blue.svg)](https://github.com/Smart-AI-Memory/empathy-framework/blob/main/LICENSE)
-![Coverage](https://img.shields.io/badge/coverage-90.66%25-brightgreen)
+[![codecov](https://codecov.io/gh/Smart-AI-Memory/empathy-framework/graph/badge.svg)](https://codecov.io/gh/Smart-AI-Memory/empathy-framework)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Built with Claude Code](https://img.shields.io/badge/Built_with-Claude_Code-5865F2?logo=anthropic&logoColor=white)](https://claude.ai/claude-code)
