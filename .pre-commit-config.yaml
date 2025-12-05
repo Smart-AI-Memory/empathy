@@ -11,7 +11,8 @@ exclude: |
     \.venv/|
     build/|
     dist/|
-    .*\.egg-info/
+    .*\.egg-info/|
+    wizards/
   )
 
 repos:
@@ -65,9 +66,5 @@ repos:
       - id: mixed-line-ending
         args: ['--fix=lf']
 
-  # Python import sorting
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        args: ['--profile', 'black', '--line-length', '100']
+  # Note: Import sorting handled by ruff's "I" rules (isort plugin)
+  # Removed standalone isort to avoid conflicts with ruff

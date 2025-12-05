@@ -28,13 +28,11 @@ from empathy_llm_toolkit.security.secure_memdocs import (
     EncryptionManager,
     MemDocsStorage,
     PatternMetadata,
-)
-from empathy_llm_toolkit.security.secure_memdocs import PermissionError as CustomPermissionError
-from empathy_llm_toolkit.security.secure_memdocs import (
     SecureMemDocsIntegration,
     SecurePattern,
     SecurityError,
 )
+from empathy_llm_toolkit.security.secure_memdocs import PermissionError as CustomPermissionError
 
 
 class TestEncryptionManager:
