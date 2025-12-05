@@ -13,6 +13,7 @@ Version: 2.0 - Nov 2025 - 5-step wizard with auto-preview and dictation support
 
 import json
 import logging
+import os
 from datetime import datetime
 from typing import Any
 from uuid import uuid4
@@ -50,8 +51,6 @@ except ImportError:
 _wizard_sessions: dict[str, dict[str, Any]] = {}
 
 # Log Redis configuration at module load
-import os
-
 redis_url = os.getenv("REDIS_URL")
 if redis_url:
     logger.info(f"🔧 REDIS_URL environment variable detected (starts with: {redis_url[:15]}...)")
