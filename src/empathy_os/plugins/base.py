@@ -4,7 +4,7 @@ Empathy Framework - Plugin System Base Classes
 This module provides the core abstractions for creating domain-specific plugins
 that extend the Empathy Framework.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

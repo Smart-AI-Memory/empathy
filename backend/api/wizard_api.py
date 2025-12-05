@@ -12,67 +12,81 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-import logging
-from typing import Any
+import logging  # noqa: E402, I001
+from typing import Any  # noqa: E402
 
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException  # noqa: E402
+from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
+from pydantic import BaseModel  # noqa: E402
 
-from coach_wizards.accessibility_wizard import AccessibilityWizard
-from coach_wizards.api_wizard import APIWizard
-from coach_wizards.cicd_wizard import CICDWizard
-from coach_wizards.compliance_wizard import ComplianceWizard
-from coach_wizards.database_wizard import DatabaseWizard
+from coach_wizards.accessibility_wizard import AccessibilityWizard  # noqa: E402
+from coach_wizards.api_wizard import APIWizard  # noqa: E402
+from coach_wizards.cicd_wizard import CICDWizard  # noqa: E402
+from coach_wizards.compliance_wizard import ComplianceWizard  # noqa: E402
+from coach_wizards.database_wizard import DatabaseWizard  # noqa: E402
 
 # Coach/Software wizards (16 total)
-from coach_wizards.debugging_wizard import DebuggingWizard
-from coach_wizards.documentation_wizard import DocumentationWizard
-from coach_wizards.localization_wizard import LocalizationWizard
-from coach_wizards.migration_wizard import MigrationWizard
-from coach_wizards.monitoring_wizard import MonitoringWizard
-from coach_wizards.observability_wizard import ObservabilityWizard
-from coach_wizards.performance_wizard import PerformanceWizard
-from coach_wizards.refactoring_wizard import RefactoringWizard
-from coach_wizards.scaling_wizard import ScalingWizard
-from coach_wizards.security_wizard import SecurityWizard
-from coach_wizards.testing_wizard import TestingWizard
+from coach_wizards.debugging_wizard import DebuggingWizard  # noqa: E402
+from coach_wizards.documentation_wizard import DocumentationWizard  # noqa: E402
+from coach_wizards.localization_wizard import LocalizationWizard  # noqa: E402
+from coach_wizards.migration_wizard import MigrationWizard  # noqa: E402
+from coach_wizards.monitoring_wizard import MonitoringWizard  # noqa: E402
+from coach_wizards.observability_wizard import ObservabilityWizard  # noqa: E402
+from coach_wizards.performance_wizard import PerformanceWizard  # noqa: E402
+from coach_wizards.refactoring_wizard import RefactoringWizard  # noqa: E402
+from coach_wizards.scaling_wizard import ScalingWizard  # noqa: E402
+from coach_wizards.security_wizard import SecurityWizard  # noqa: E402
+from coach_wizards.testing_wizard import TestingWizard  # noqa: E402
 
 # Import wizard implementations
-from empathy_llm_toolkit import EmpathyLLM
-from empathy_llm_toolkit.wizards.accounting_wizard import AccountingWizard
-from empathy_llm_toolkit.wizards.customer_support_wizard import CustomerSupportWizard
-from empathy_llm_toolkit.wizards.education_wizard import EducationWizard
-from empathy_llm_toolkit.wizards.finance_wizard import FinanceWizard
-from empathy_llm_toolkit.wizards.government_wizard import GovernmentWizard
+from empathy_llm_toolkit import EmpathyLLM  # noqa: E402
+from empathy_llm_toolkit.wizards.accounting_wizard import AccountingWizard  # noqa: E402
+from empathy_llm_toolkit.wizards.customer_support_wizard import CustomerSupportWizard  # noqa: E402
+from empathy_llm_toolkit.wizards.education_wizard import EducationWizard  # noqa: E402
+from empathy_llm_toolkit.wizards.finance_wizard import FinanceWizard  # noqa: E402
+from empathy_llm_toolkit.wizards.government_wizard import GovernmentWizard  # noqa: E402
 
 # Domain wizards (16 total)
-from empathy_llm_toolkit.wizards.healthcare_wizard import HealthcareWizard
-from empathy_llm_toolkit.wizards.hr_wizard import HRWizard
-from empathy_llm_toolkit.wizards.insurance_wizard import InsuranceWizard
-from empathy_llm_toolkit.wizards.legal_wizard import LegalWizard
-from empathy_llm_toolkit.wizards.logistics_wizard import LogisticsWizard
-from empathy_llm_toolkit.wizards.manufacturing_wizard import ManufacturingWizard
-from empathy_llm_toolkit.wizards.real_estate_wizard import RealEstateWizard
-from empathy_llm_toolkit.wizards.research_wizard import ResearchWizard
-from empathy_llm_toolkit.wizards.retail_wizard import RetailWizard
-from empathy_llm_toolkit.wizards.sales_wizard import SalesWizard
-from empathy_llm_toolkit.wizards.technology_wizard import TechnologyWizard
-from empathy_software_plugin.wizards.advanced_debugging_wizard import AdvancedDebuggingWizard
-from empathy_software_plugin.wizards.agent_orchestration_wizard import AgentOrchestrationWizard
-from empathy_software_plugin.wizards.ai_collaboration_wizard import AICollaborationWizard
-from empathy_software_plugin.wizards.ai_context_wizard import AIContextWindowWizard
-from empathy_software_plugin.wizards.ai_documentation_wizard import AIDocumentationWizard
-from empathy_software_plugin.wizards.enhanced_testing_wizard import EnhancedTestingWizard
+from empathy_llm_toolkit.wizards.healthcare_wizard import HealthcareWizard  # noqa: E402
+from empathy_llm_toolkit.wizards.hr_wizard import HRWizard  # noqa: E402
+from empathy_llm_toolkit.wizards.insurance_wizard import InsuranceWizard  # noqa: E402
+from empathy_llm_toolkit.wizards.legal_wizard import LegalWizard  # noqa: E402
+from empathy_llm_toolkit.wizards.logistics_wizard import LogisticsWizard  # noqa: E402
+from empathy_llm_toolkit.wizards.manufacturing_wizard import ManufacturingWizard  # noqa: E402
+from empathy_llm_toolkit.wizards.real_estate_wizard import RealEstateWizard  # noqa: E402
+from empathy_llm_toolkit.wizards.research_wizard import ResearchWizard  # noqa: E402
+from empathy_llm_toolkit.wizards.retail_wizard import RetailWizard  # noqa: E402
+from empathy_llm_toolkit.wizards.sales_wizard import SalesWizard  # noqa: E402
+from empathy_llm_toolkit.wizards.technology_wizard import TechnologyWizard  # noqa: E402
+from empathy_software_plugin.wizards.advanced_debugging_wizard import (  # noqa: E402
+    AdvancedDebuggingWizard,
+)
+from empathy_software_plugin.wizards.agent_orchestration_wizard import (  # noqa: E402
+    AgentOrchestrationWizard,
+)
+from empathy_software_plugin.wizards.ai_collaboration_wizard import (  # noqa: E402
+    AICollaborationWizard,
+)
+from empathy_software_plugin.wizards.ai_context_wizard import AIContextWindowWizard  # noqa: E402
+from empathy_software_plugin.wizards.ai_documentation_wizard import (  # noqa: E402
+    AIDocumentationWizard,
+)
+from empathy_software_plugin.wizards.enhanced_testing_wizard import (  # noqa: E402
+    EnhancedTestingWizard,
+)
 
 # AI wizards (12 total)
-from empathy_software_plugin.wizards.multi_model_wizard import MultiModelWizard
-from empathy_software_plugin.wizards.performance_profiling_wizard import (
+from empathy_software_plugin.wizards.multi_model_wizard import MultiModelWizard  # noqa: E402
+from empathy_software_plugin.wizards.performance_profiling_wizard import (  # noqa: E402
     PerformanceProfilingWizard as AIPerformanceWizard,
 )
-from empathy_software_plugin.wizards.prompt_engineering_wizard import PromptEngineeringWizard
-from empathy_software_plugin.wizards.rag_pattern_wizard import RAGPatternWizard
-from empathy_software_plugin.wizards.security_analysis_wizard import SecurityAnalysisWizard
+from empathy_software_plugin.wizards.prompt_engineering_wizard import (  # noqa: E402
+    PromptEngineeringWizard,
+)
+from empathy_software_plugin.wizards.rag_pattern_wizard import RAGPatternWizard  # noqa: E402
+from empathy_software_plugin.wizards.security_analysis_wizard import (  # noqa: E402
+    SecurityAnalysisWizard,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

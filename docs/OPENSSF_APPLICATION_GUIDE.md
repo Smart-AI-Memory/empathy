@@ -469,7 +469,7 @@ See docs/COVERAGE_ANALYSIS.md for detailed plan.
 
 - **Primary Maintainer**: Patrick Roebuck
 - **Email**: patrick.roebuck@deepstudyai.com
-- **Organization**: Deep Study AI, LLC
+- **Organization**: Smart AI Memory, LLC
 - **Repository**: https://github.com/Deep-Study-AI/Empathy
 
 ---

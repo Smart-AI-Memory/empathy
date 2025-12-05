@@ -6,6 +6,7 @@ Nurse-to-nurse shift handoff documentation wizard for safe patient transitions.
 Based on best practices for bedside handoff communication.
 """
 
+import json
 import logging
 from datetime import datetime
 from typing import Any
@@ -39,7 +40,7 @@ except ImportError:
 settings = get_settings()
 
 router = APIRouter(
-    prefix="/api/v1/wizards/shift-handoff",
+    prefix="/wizards/shift-handoff",
     tags=["clinical-wizards"],
     responses={
         404: {"description": "Wizard session not found"},
@@ -120,6 +121,14 @@ SHIFT_HANDOFF_STEPS = {
         ],
         "help_text": "Falls risk, isolation, allergies, special equipment, or other safety concerns",
     },
+    6: {
+        "step": 6,
+        "title": "Review & Finalize",
+        "prompt": "Review your shift handoff and finalize the document",
+        "fields": ["review_complete", "user_approved"],
+        "help_text": "Review all sections of the shift handoff. Click 'Generate Preview' to see the formatted handoff report. You can go back to edit any section before finalizing.",
+        "is_review_step": True,
+    },
 }
 
 
@@ -129,10 +138,11 @@ async def _store_wizard_session(wizard_id: str, session_data: dict[str, Any]):
         try:
             redis_client = await get_redis_client()
             if redis_client:
+                # Use JSON for safe serialization
                 await redis_client.setex(
                     f"wizard_session:{wizard_id}",
                     3600,  # 1 hour expiry
-                    str(session_data),
+                    json.dumps(session_data),
                 )
                 return
         except Exception as e:
@@ -150,11 +160,10 @@ async def _get_wizard_session(wizard_id: str) -> dict[str, Any] | None:
             if redis_client:
                 data = await redis_client.get(f"wizard_session:{wizard_id}")
                 if data:
-                    import json
-
-                    return json.loads(data)  # Safely parse JSON string to dict
-        except Exception:
-            pass
+                    # SECURITY FIX: Use json.loads() instead of eval()
+                    return json.loads(data)
+        except Exception as e:
+            logger.warning(f"Failed to retrieve session from Redis: {e}")
 
     # Fallback to memory
     return _wizard_sessions.get(wizard_id)
@@ -182,7 +191,7 @@ async def start_shift_handoff_wizard():
             "wizard_id": wizard_id,
             "wizard_type": "shift_handoff",
             "current_step": 1,
-            "total_steps": 5,
+            "total_steps": 6,
             "collected_data": {},
             "created_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
@@ -239,41 +248,30 @@ async def submit_shift_handoff_step(wizard_id: str, step_data: dict[str, Any]):
         session["collected_data"][f"step_{current_step}"] = step_data.get("data", {})
         session["updated_at"] = datetime.now().isoformat()
 
-        # Advance to next step or complete
+        # Advance to next step (but don't auto-complete, even on final step)
         if current_step < session["total_steps"]:
-            session["current_step"] += 1
-            await _store_wizard_session(wizard_id, session)
-
-            next_step_data = _get_step_data(session["current_step"])
-
-            return create_success_response(
-                data={
-                    "wizard_session": session,
-                    "current_step": next_step_data,
-                    "progress": {
-                        "current": session["current_step"],
-                        "total": session["total_steps"],
-                        "percentage": (session["current_step"] / session["total_steps"]) * 100,
-                    },
-                },
-                message=f"Step {current_step} completed",
-            )
+            next_step = current_step + 1
+            session["current_step"] = next_step
         else:
-            # Wizard complete - generate final handoff report
-            handoff_report = await _generate_handoff_report(session["collected_data"])
+            # On review step - stay on same step, don't auto-complete
+            next_step = current_step
 
-            session["completed_at"] = datetime.now().isoformat()
-            session["final_report"] = handoff_report
-            await _store_wizard_session(wizard_id, session)
+        await _store_wizard_session(wizard_id, session)
 
-            return create_success_response(
-                data={
-                    "wizard_session": session,
-                    "handoff_report": handoff_report,
-                    "completed": True,
+        next_step_data = _get_step_data(next_step)
+
+        return create_success_response(
+            data={
+                "wizard_session": session,
+                "current_step": next_step_data,
+                "progress": {
+                    "current": next_step,
+                    "total": session["total_steps"],
+                    "percentage": (next_step / session["total_steps"]) * 100,
                 },
-                message="Shift handoff documentation completed",
-            )
+            },
+            message=f"Step {current_step} completed",
+        )
 
     except HTTPException:
         raise
@@ -282,6 +280,103 @@ async def submit_shift_handoff_step(wizard_id: str, step_data: dict[str, Any]):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to process wizard step: {str(e)}",
         )
+
+
+@router.post("/{wizard_id}/preview", summary="Preview shift handoff report")
+async def preview_shift_handoff_report(wizard_id: str):
+    """
+    Generate preview of shift handoff report without finalizing.
+
+    This endpoint allows users to see the formatted shift handoff before
+    finalizing it. The report is NOT marked as complete. Users can
+    still go back and edit data after previewing.
+    """
+    try:
+        session = await _get_wizard_session(wizard_id)
+        if not session:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+        # Verify user is on review step
+        if session["current_step"] != session["total_steps"]:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Not on review step. Complete steps 1-{session['total_steps']-1} first.",
+            )
+
+        # Generate preview report (does NOT mark as complete)
+        preview_report = await _generate_handoff_report(session["collected_data"])
+
+        # Store preview in session
+        session["preview_report"] = preview_report
+        session["preview_generated_at"] = datetime.now().isoformat()
+        await _store_wizard_session(wizard_id, session)
+
+        response_data = {
+            "preview": preview_report,
+            "wizard_session": session,
+            "message": "Review the shift handoff above. Click 'Finalize Report' to save, or go back to edit any section.",
+        }
+
+        return create_success_response(data=response_data, message="Preview generated successfully")
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.post("/{wizard_id}/save", summary="Finalize shift handoff report")
+async def save_shift_handoff_report(wizard_id: str, approval_data: dict[str, Any]):
+    """
+    Finalize and save the shift handoff report after user review and approval.
+
+    Requires that the user has:
+    1. Generated a preview first (/preview endpoint)
+    2. Explicitly approved the report (user_approved: true)
+
+    Only after calling this endpoint is the report marked as complete.
+    """
+    try:
+        session = await _get_wizard_session(wizard_id)
+        if not session:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+        # Verify preview was generated
+        if "preview_report" not in session:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Must generate preview before saving. Call /preview endpoint first.",
+            )
+
+        # Verify user explicitly approved
+        if not approval_data.get("user_approved", False):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User approval required. Set 'user_approved': true in request body.",
+            )
+
+        # NOW we mark as complete
+        session["completed"] = True
+        session["completed_at"] = datetime.now().isoformat()
+        session["final_report"] = session["preview_report"]
+        session["user_approved"] = True
+
+        await _store_wizard_session(wizard_id, session)
+
+        response_data = {
+            "wizard_session": session,
+            "report": session["final_report"],
+            "completed": True,
+        }
+
+        return create_success_response(
+            data=response_data, message="Shift handoff finalized successfully"
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @router.post(

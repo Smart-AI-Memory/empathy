@@ -34,7 +34,7 @@ def create_empathy_framework_doc():
     # Author info
     author_info = [
         "Author: Patrick Roebuck",
-        "Organization: Deep Study AI, LLC",
+        "Organization: Smart AI Memory, LLC",
         "Version: 1.0",
         "Date: October 2025",
     ]
@@ -368,7 +368,7 @@ def create_empathy_framework_doc():
         ("Purpose", "Explain the Empathy Framework to non-technical readers"),
         ("Target Audience", "College-educated professionals without programming background"),
         ("License", "Apache License 2.0"),
-        ("Copyright", "© 2025 Deep Study AI, LLC"),
+        ("Copyright", "© 2025 Smart AI Memory, LLC"),
     ]
 
     for label, value in about_items:

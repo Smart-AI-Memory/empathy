@@ -148,50 +148,83 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Wizard Documentation Highlight */}
-      <section className="py-20">
+      {/* Interactive Wizard Dashboards */}
+      <section className="py-20 bg-gradient-to-b from-transparent to-[var(--border)] bg-opacity-20">
         <div className="container">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">
-              Comprehensive Wizard Documentation
-            </h2>
-            <p className="text-xl text-[var(--text-secondary)]">
-              Production-ready AI assistants with detailed guides and examples
-            </p>
-          </div>
+          <h2 className="text-4xl font-bold text-center mb-6">
+            Try Interactive Wizard Dashboards
+          </h2>
+          <p className="text-xl text-center text-[var(--text-secondary)] mb-12 max-w-3xl mx-auto">
+            Experience Level 4 Anticipatory Intelligence in action with live, interactive demos
+          </p>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <div className="bg-[var(--background)] p-6 rounded-lg border-2 border-[var(--primary)] border-opacity-20 hover:border-opacity-100 transition-all">
-              <div className="text-3xl mb-4">🏥</div>
-              <h3 className="text-xl font-bold mb-3">Healthcare Wizards</h3>
-              <p className="text-[var(--text-secondary)] mb-4 text-sm">
-                18 HIPAA-compliant wizards for clinical protocols, SBAR handoffs, medication safety, and patient monitoring.
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="bg-[var(--background)] p-8 rounded-lg border-2 border-[var(--primary)] hover:border-opacity-100 transition-all shadow-lg">
+              <div className="text-6xl mb-4 text-center">🏥</div>
+              <h3 className="text-2xl font-bold mb-4 text-center">Healthcare Wizards</h3>
+              <p className="text-[var(--text-secondary)] mb-6 text-center">
+                14+ HIPAA-compliant clinical wizards with real-time patient monitoring, protocol compliance, and predictive risk assessment.
               </p>
-              <Link href="/framework-docs/wizards/#healthcare" className="text-[var(--primary)] text-sm font-medium hover:underline">
-                View Healthcare Guide →
-              </Link>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Patient Trajectory Analysis</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Medication Safety Monitoring</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Protocol Compliance Checking</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Predictive Risk Alerts</span>
+                </div>
+              </div>
+              <a
+                href="https://healthcare.smartaimemory.com/static/dashboard.html"
+                className="btn btn-primary w-full text-center block"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Launch Healthcare Dashboard →
+              </a>
             </div>
 
-            <div className="bg-[var(--background)] p-6 rounded-lg border-2 border-[var(--secondary)] border-opacity-20 hover:border-opacity-100 transition-all">
-              <div className="text-3xl mb-4">💻</div>
-              <h3 className="text-xl font-bold mb-3">Software Development</h3>
-              <p className="text-[var(--text-secondary)] mb-4 text-sm">
-                12 wizards for debugging, testing, performance, security, and AI development patterns.
+            <div className="bg-[var(--background)] p-8 rounded-lg border-2 border-[var(--secondary)] hover:border-opacity-100 transition-all shadow-lg">
+              <div className="text-6xl mb-4 text-center">💻</div>
+              <h3 className="text-2xl font-bold mb-4 text-center">Tech & AI Wizards</h3>
+              <p className="text-[var(--text-secondary)] mb-6 text-center">
+                16+ software development and AI collaboration wizards for debugging, testing, performance optimization, and security analysis.
               </p>
-              <Link href="/framework-docs/wizards/#software-development" className="text-[var(--secondary)] text-sm font-medium hover:underline">
-                View Software Guide →
-              </Link>
-            </div>
-
-            <div className="bg-[var(--background)] p-6 rounded-lg border-2 border-[var(--accent)] border-opacity-20 hover:border-opacity-100 transition-all">
-              <div className="text-3xl mb-4">🤖</div>
-              <h3 className="text-xl font-bold mb-3">AI Collaboration</h3>
-              <p className="text-[var(--text-secondary)] mb-4 text-sm">
-                4 specialized wizards for prompt engineering, context management, and AI-first documentation.
-              </p>
-              <Link href="/framework-docs/wizards/#ai-collaboration" className="text-[var(--accent)] text-sm font-medium hover:underline">
-                View AI Guide →
-              </Link>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Advanced Debugging & Root Cause Analysis</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Performance Profiling & Optimization</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Security Vulnerability Detection</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>AI Collaboration & Prompt Engineering</span>
+                </div>
+              </div>
+              <a
+                href="https://wizards.smartaimemory.com/"
+                className="btn btn-secondary w-full text-center block"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Launch Tech & AI Dashboard →
+              </a>
             </div>
           </div>
         </div>

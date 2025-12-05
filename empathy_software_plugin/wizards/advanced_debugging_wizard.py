@@ -14,7 +14,7 @@ This implements Level 4 Anticipatory Empathy by:
 - Alerting to trajectory concerns
 - Recommending prevention steps
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

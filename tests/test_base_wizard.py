@@ -226,7 +226,7 @@ class TestBaseCoachWizard:
         assert len(result.issues) == 3  # Our test implementation returns 3
         assert len(result.predictions) == 0  # No predictions without context
         assert result.analyzed_files == 1
-        assert result.analysis_time > 0
+        assert result.analysis_time >= 0  # May be 0.0 on fast systems
         assert isinstance(result.summary, str)
 
     def test_full_analysis_with_context(self):

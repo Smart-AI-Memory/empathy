@@ -24,7 +24,7 @@ Reference:
 - SECURE_MEMORY_ARCHITECTURE.md: MemDocs Integration Patterns
 - ENTERPRISE_PRIVACY_INTEGRATION.md: Phase 2 Implementation
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
@@ -41,7 +41,7 @@ from typing import Any
 
 import structlog
 
-from .audit_logger import AuditLogger
+from .audit_logger import AuditEvent, AuditLogger
 from .pii_scrubber import PIIScrubber
 from .secrets_detector import SecretsDetector
 
@@ -1133,7 +1133,7 @@ class SecureMemDocsIntegration:
         if deleted:
             # Log deletion
             self.audit_logger._write_event(
-                self.audit_logger.AuditEvent(
+                AuditEvent(
                     event_type="delete_pattern",
                     user_id=user_id,
                     session_id=session_id,

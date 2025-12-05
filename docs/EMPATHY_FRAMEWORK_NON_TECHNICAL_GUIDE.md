@@ -2,7 +2,7 @@
 ## A Guide for Non-Technical Readers
 
 **Author**: Patrick Roebuck
-**Organization**: Deep Study AI, LLC
+**Organization**: Smart AI Memory, LLC
 **Version**: 1.0
 **Date**: October 2025
 
@@ -585,7 +585,7 @@ That's what we're teaching AI to do.
 **Use Case**: Introduction to Level 4 Anticipatory AI concepts
 
 **License**: Apache License 2.0
-**Copyright**: © 2025 Deep Study AI, LLC
+**Copyright**: © 2025 Smart AI Memory, LLC
 
 **For More Information**:
 - Technical documentation: https://github.com/Deep-Study-AI/Empathy

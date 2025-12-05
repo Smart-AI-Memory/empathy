@@ -132,7 +132,7 @@ All new code must include tests. We aim for **70%+ coverage**.
 """
 Tests for Module Name
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
@@ -360,7 +360,7 @@ Example: Building Trust Through Anticipation
 Demonstrates Level 4 Anticipatory Empathy by predicting
 user needs before they arise.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

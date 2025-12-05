@@ -7,7 +7,7 @@ In our experience, documentation written for humans often confuses AI.
 This wizard learned to predict when documentation gaps will cause AI
 to give poor recommendations, before developers waste time debugging why.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

@@ -1182,4 +1182,4 @@ Invest time in high-quality screenshots. They pay dividends in stars, downloads,
 
 **Guide Version:** 1.0
 **Last Updated:** January 2025
-**Copyright:** 2025 Deep Study AI, LLC
+**Copyright:** 2025 Smart AI Memory, LLC

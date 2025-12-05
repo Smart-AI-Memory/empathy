@@ -7,7 +7,7 @@ import { useTheme } from '@/lib/theme-provider';
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,9 +37,9 @@ export default function Navigation() {
           <Link
             href="/"
             className="text-xl font-bold text-gradient hover:opacity-80 transition-opacity"
-            aria-label="Smart AI Memory Home"
+            aria-label="SmartAI Memory Home"
           >
-            Smart AI Memory
+            SmartAI Memory
           </Link>
 
           {/* Desktop Navigation */}
@@ -68,6 +68,22 @@ export default function Navigation() {
             >
               Docs
             </Link>
+            <a
+              href="https://healthcare.smartaimemory.com/static/dashboard.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
+            >
+              Healthcare Wizards
+            </a>
+            <a
+              href="https://wizards.smartaimemory.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
+            >
+              Dev Wizards
+            </a>
             <Link
               href="/plugins"
               className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
@@ -238,6 +254,24 @@ export default function Navigation() {
               >
                 Docs
               </Link>
+              <a
+                href="https://healthcare.smartaimemory.com/static/dashboard.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Healthcare Wizards
+              </a>
+              <a
+                href="https://wizards.smartaimemory.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Dev Wizards
+              </a>
               <Link
                 href="/plugins"
                 className="text-sm font-medium hover:text-[var(--primary)] transition-colors"

@@ -3,7 +3,7 @@ Empathy Framework - Plugin System
 
 Enables modular extension of the Empathy Framework with domain-specific plugins.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

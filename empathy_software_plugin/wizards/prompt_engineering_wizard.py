@@ -8,7 +8,7 @@ we learned that prompt quality degrades subtly over time. This wizard alerts
 you to drift patterns, context inefficiencies, and structural issues before
 they compound into major problems.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

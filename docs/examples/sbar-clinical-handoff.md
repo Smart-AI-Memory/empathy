@@ -5,6 +5,9 @@
 **Empathy Level**: 4 (Anticipatory)
 **Domain**: Healthcare - Nursing
 
+!!! tip "Try the Live SBAR Wizard"
+    Try the interactive SBAR wizard at **[healthcare.smartaimemory.com](https://healthcare.smartaimemory.com/static/dashboard.html)** - complete with quick-fill templates, vital signs input, and AI-generated reports.
+
 ---
 
 ## Overview

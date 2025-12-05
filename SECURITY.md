@@ -146,7 +146,7 @@ See our [Compliance Documentation](docs/) for detailed guidance.
 For security concerns, contact:
 - **Email**: patrick.roebuck@deepstudyai.com
 - **GitHub**: https://github.com/Deep-Study-AI/Empathy/security
-- **Organization**: Deep Study AI, LLC
+- **Organization**: Smart AI Memory, LLC
 
 ---
 

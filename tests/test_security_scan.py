@@ -3,7 +3,7 @@ Automated Security Scanning with Bandit
 
 Runs Bandit security scanner on the codebase to detect common vulnerabilities.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

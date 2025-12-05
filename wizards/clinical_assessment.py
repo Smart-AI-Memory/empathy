@@ -4,6 +4,7 @@ Following Wizard Pattern Implementation from coding instructions
 Comprehensive patient assessment workflows with AI-powered clinical analysis
 """
 
+import json
 import logging
 from datetime import datetime
 from typing import Any
@@ -17,6 +18,14 @@ from ...utils.config import get_educational_banner
 
 logger = logging.getLogger(__name__)
 
+# Redis import with fallback
+try:
+    from src.utils.redis_cache import get_redis_client
+
+    _has_redis = True
+except ImportError:
+    _has_redis = False
+
 router = APIRouter(
     prefix="/wizard/clinical-assessment",
     tags=["wizards", "clinical-assessment"],
@@ -26,8 +35,43 @@ router = APIRouter(
     },
 )
 
-# Wizard session storage (Redis in production)
+# Session storage (Redis in production, memory for development)
 _wizard_sessions: dict[str, dict[str, Any]] = {}
+
+
+async def _store_wizard_session(wizard_id: str, session_data: dict[str, Any]):
+    """Store wizard session in Redis or memory."""
+    if _has_redis:
+        try:
+            redis_client = await get_redis_client()
+            if redis_client:
+                await redis_client.setex(
+                    f"wizard_session:{wizard_id}",
+                    3600,  # 1 hour expiry
+                    json.dumps(session_data),
+                )
+                return
+        except Exception as e:
+            logger.warning(f"Failed to store session in Redis: {e}")
+
+    # Fallback to memory
+    _wizard_sessions[wizard_id] = session_data
+
+
+async def _get_wizard_session(wizard_id: str) -> dict[str, Any] | None:
+    """Retrieve wizard session from Redis or memory."""
+    if _has_redis:
+        try:
+            redis_client = await get_redis_client()
+            if redis_client:
+                data = await redis_client.get(f"wizard_session:{wizard_id}")
+                if data:
+                    return json.loads(data)
+        except Exception as e:
+            logger.warning(f"Failed to retrieve session from Redis: {e}")
+
+    # Fallback to memory
+    return _wizard_sessions.get(wizard_id)
 
 
 class AssessmentStepData(BaseModel):
@@ -46,7 +90,8 @@ async def start_clinical_assessment():
         "wizard_type": "clinical_assessment",
         "created_at": datetime.now().isoformat(),
         "current_step": 1,
-        "total_steps": 5,
+        "total_steps": 6,
+        "completed": False,
         "completed_steps": [],
         "data": {
             "vital_signs": {},
@@ -54,17 +99,18 @@ async def start_clinical_assessment():
             "systems_review": {},
             "pain_assessment": {},
             "functional_assessment": {},
+            "review_approval": {},
         },
     }
 
-    _wizard_sessions[wizard_id] = session_data
+    await _store_wizard_session(wizard_id, session_data)
 
     return {
         "banner": get_educational_banner(),
         "wizard_id": wizard_id,
         "wizard_type": "clinical_assessment",
         "current_step": 1,
-        "total_steps": 5,
+        "total_steps": 6,
         "step_title": "Vital Signs",
         "step_description": "Record patient vital signs and initial observations",
         "fields": [
@@ -89,10 +135,9 @@ async def start_clinical_assessment():
 async def get_clinical_assessment_status(wizard_id: str):
     """Get clinical assessment wizard status following Wizard Pattern Implementation."""
 
-    if wizard_id not in _wizard_sessions:
+    session = await _get_wizard_session(wizard_id)
+    if not session:
         raise HTTPException(status_code=404, detail="Wizard session not found")
-
-    session = _wizard_sessions[wizard_id]
 
     return {
         "banner": get_educational_banner(),
@@ -117,10 +162,9 @@ async def submit_clinical_assessment_step(
 ):
     """Submit clinical assessment step data following Wizard Pattern Implementation."""
 
-    if wizard_id not in _wizard_sessions:
+    session = await _get_wizard_session(wizard_id)
+    if not session:
         raise HTTPException(status_code=404, detail="Wizard session not found")
-
-    session = _wizard_sessions[wizard_id]
 
     if step_number != session["current_step"]:
         raise HTTPException(
@@ -135,6 +179,7 @@ async def submit_clinical_assessment_step(
         3: "systems_review",
         4: "pain_assessment",
         5: "functional_assessment",
+        6: "review_approval",
     }
 
     if step_number in step_mapping:
@@ -144,15 +189,25 @@ async def submit_clinical_assessment_step(
     if step_number not in session["completed_steps"]:
         session["completed_steps"].append(step_number)
 
-    # Generate AI analysis for the submitted step
-    ai_analysis = await _generate_ai_analysis(step_number, step_data.step_data, session["data"])
+    # Generate AI analysis for the submitted step (but not for review step)
+    if step_number < 6:
+        ai_analysis = await _generate_ai_analysis(step_number, step_data.step_data, session["data"])
+    else:
+        ai_analysis = {
+            "step_name": "Review & Finalize",
+            "message": "Use /preview to generate report, then /save to finalize with approval",
+        }
 
-    # Move to next step
+    # Move to next step (no auto-complete - requires explicit approval)
     if step_number < session["total_steps"]:
         session["current_step"] = step_number + 1
         next_step_info = _get_step_info(step_number + 1)
     else:
+        # At step 6 (review) - don't advance, wait for /save
         next_step_info = None
+
+    # Store updated session
+    await _store_wizard_session(wizard_id, session)
 
     return {
         "banner": get_educational_banner(),
@@ -175,10 +230,9 @@ async def submit_clinical_assessment_step(
 async def get_clinical_assessment_step(wizard_id: str, step_number: int):
     """Get clinical assessment step information."""
 
-    if wizard_id not in _wizard_sessions:
+    session = await _get_wizard_session(wizard_id)
+    if not session:
         raise HTTPException(status_code=404, detail="Wizard session not found")
-
-    session = _wizard_sessions[wizard_id]
 
     if step_number < 1 or step_number > session["total_steps"]:
         raise HTTPException(status_code=422, detail="Invalid step number")
@@ -192,6 +246,7 @@ async def get_clinical_assessment_step(wizard_id: str, step_number: int):
         3: "systems_review",
         4: "pain_assessment",
         5: "functional_assessment",
+        6: "review_approval",
     }
 
     existing_data = session["data"].get(step_mapping.get(step_number, ""), {})
@@ -209,15 +264,195 @@ async def get_clinical_assessment_step(wizard_id: str, step_number: int):
 async def cancel_clinical_assessment(wizard_id: str):
     """Cancel and delete clinical assessment wizard session."""
 
-    if wizard_id not in _wizard_sessions:
+    session = await _get_wizard_session(wizard_id)
+    if not session:
         raise HTTPException(status_code=404, detail="Wizard session not found")
 
-    del _wizard_sessions[wizard_id]
+    # Delete from both Redis and memory
+    if _has_redis:
+        try:
+            redis_client = await get_redis_client()
+            if redis_client:
+                await redis_client.delete(f"wizard_session:{wizard_id}")
+        except Exception as e:
+            logger.warning(f"Failed to delete session from Redis: {e}")
+
+    _wizard_sessions.pop(wizard_id, None)
 
     return {
         "banner": get_educational_banner(),
         "message": "Clinical assessment wizard session cancelled",
         "wizard_id": wizard_id,
+    }
+
+
+@router.post("/{wizard_id}/preview")
+async def preview_clinical_assessment(wizard_id: str):
+    """
+    Generate preview of clinical assessment report.
+    This does NOT mark the assessment as completed.
+    Requires user to call /save endpoint with approval to finalize.
+    """
+    session = await _get_wizard_session(wizard_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Wizard session not found")
+
+    if session.get("completed", False):
+        raise HTTPException(status_code=422, detail="Assessment already completed")
+
+    # Generate assessment report preview
+    collected_data = session["data"]
+    preview_report = _generate_clinical_assessment_report(collected_data)
+
+    # Store preview in session (does NOT mark as completed)
+    session["preview_report"] = preview_report
+    session["preview_generated_at"] = datetime.now().isoformat()
+
+    # Store updated session
+    await _store_wizard_session(wizard_id, session)
+
+    return {
+        "banner": get_educational_banner(),
+        "success": True,
+        "wizard_id": wizard_id,
+        "message": "Clinical assessment preview generated. Please review and use /save endpoint to finalize.",
+        "data": {"preview": preview_report, "generated_at": session["preview_generated_at"]},
+    }
+
+
+@router.post("/{wizard_id}/save")
+async def save_clinical_assessment(wizard_id: str, approval_data: dict[str, Any]):
+    """
+    Finalize and save clinical assessment with user approval.
+    Requires user_approved: true in request body.
+    This is the ONLY endpoint that marks the assessment as completed.
+    """
+    session = await _get_wizard_session(wizard_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Wizard session not found")
+
+    if session.get("completed", False):
+        raise HTTPException(status_code=422, detail="Assessment already completed")
+
+    # Require preview before save
+    if "preview_report" not in session:
+        raise HTTPException(
+            status_code=422,
+            detail="Must generate preview before saving. Call /preview endpoint first.",
+        )
+
+    # Require explicit user approval
+    if not approval_data.get("user_approved", False):
+        raise HTTPException(
+            status_code=422,
+            detail="User approval required. Set user_approved: true to finalize assessment.",
+        )
+
+    # Mark as completed with user approval
+    session["completed"] = True
+    session["completed_at"] = datetime.now().isoformat()
+    session["user_approved"] = True
+    session["approved_by"] = approval_data.get("approved_by", "Unknown user")
+
+    # Store updated session
+    await _store_wizard_session(wizard_id, session)
+
+    return {
+        "banner": get_educational_banner(),
+        "success": True,
+        "wizard_id": wizard_id,
+        "message": "Clinical assessment finalized and saved successfully.",
+        "data": {
+            "report": session["preview_report"],
+            "completed_at": session["completed_at"],
+            "user_approved": True,
+            "approved_by": session["approved_by"],
+        },
+    }
+
+
+def _generate_clinical_assessment_report(collected_data: dict[str, Any]) -> dict[str, Any]:
+    """
+    Generate formatted clinical assessment report from collected data.
+    Internal function used by /preview and /save endpoints.
+    """
+    vital_signs = collected_data.get("vital_signs", {})
+    physical = collected_data.get("physical_assessment", {})
+    systems = collected_data.get("systems_review", {})
+    pain = collected_data.get("pain_assessment", {})
+    functional = collected_data.get("functional_assessment", {})
+
+    # Format narrative
+    narrative = f"""
+COMPREHENSIVE CLINICAL ASSESSMENT REPORT
+{'=' * 80}
+
+ASSESSMENT DATE: {datetime.now().strftime('%Y-%m-%d %H:%M')}
+
+VITAL SIGNS
+Temperature: {vital_signs.get('temperature', 'Not documented')}°F
+Pulse: {vital_signs.get('pulse', 'Not documented')} bpm
+Respirations: {vital_signs.get('respirations', 'Not documented')}/min
+Blood Pressure: {vital_signs.get('blood_pressure_systolic', 'N/A')}/{vital_signs.get('blood_pressure_diastolic', 'N/A')} mmHg
+Oxygen Saturation: {vital_signs.get('oxygen_saturation', 'Not documented')}%
+Pain Scale: {vital_signs.get('pain_scale', 'Not assessed')}/10
+
+PHYSICAL ASSESSMENT
+General Appearance: {physical.get('general_appearance', 'Not documented')}
+Skin: {physical.get('skin_assessment', 'Not documented')}
+HEENT: {physical.get('heent', 'Not documented')}
+Cardiovascular: {physical.get('cardiovascular', 'Not documented')}
+Respiratory: {physical.get('respiratory', 'Not documented')}
+Gastrointestinal: {physical.get('gastrointestinal', 'Not documented')}
+Musculoskeletal: {physical.get('musculoskeletal', 'Not documented')}
+Neurological: {physical.get('neurological', 'Not documented')}
+
+SYSTEMS REVIEW
+Cardiovascular: {systems.get('cardiovascular_review', 'Not documented')}
+Respiratory: {systems.get('respiratory_review', 'Not documented')}
+Gastrointestinal: {systems.get('gastrointestinal_review', 'Not documented')}
+Genitourinary: {systems.get('genitourinary_review', 'Not documented')}
+Musculoskeletal: {systems.get('musculoskeletal_review', 'Not documented')}
+Neurological: {systems.get('neurological_review', 'Not documented')}
+Integumentary: {systems.get('integumentary_review', 'Not documented')}
+
+PAIN ASSESSMENT
+Location: {pain.get('pain_location', 'Not documented')}
+Intensity: {pain.get('pain_intensity', 'Not assessed')}/10
+Character: {pain.get('pain_character', 'Not documented')}
+Onset: {pain.get('pain_onset', 'Not documented')}
+Duration: {pain.get('pain_duration', 'Not documented')}
+Aggravating Factors: {pain.get('aggravating_factors', 'Not documented')}
+Relieving Factors: {pain.get('relieving_factors', 'Not documented')}
+Impact on Activities: {pain.get('pain_impact', 'Not documented')}
+
+FUNCTIONAL ASSESSMENT
+Mobility: {functional.get('mobility', 'Not documented')}
+ADL Independence: {functional.get('adl_independence', 'Not documented')}
+Fall Risk: {functional.get('fall_risk', 'Not documented')}
+Cognitive Status: {functional.get('cognitive_status', 'Not documented')}
+Communication: {functional.get('communication_ability', 'Not documented')}
+Nutrition: {functional.get('nutritional_status', 'Not documented')}
+Elimination: {functional.get('elimination_patterns', 'Not documented')}
+
+{'=' * 80}
+Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+"""
+
+    return {
+        "report_type": "clinical_assessment",
+        "narrative": narrative.strip(),
+        "structured_data": {
+            "vital_signs": vital_signs,
+            "physical_assessment": physical,
+            "systems_review": systems,
+            "pain_assessment": pain,
+            "functional_assessment": functional,
+        },
+        "metadata": {
+            "generated_at": datetime.now().isoformat(),
+            "wizard_type": "clinical_assessment",
+        },
     }
 
 
@@ -354,6 +589,26 @@ def _get_step_info(step_number: int) -> dict[str, Any]:
                 {"name": "elimination_patterns", "type": "textarea", "required": True},
             ],
             "educational_note": "Functional assessment helps determine care needs and discharge planning.",
+        },
+        6: {
+            "step_title": "Review & Finalize",
+            "step_description": "Review complete clinical assessment and finalize with approval",
+            "fields": [
+                {
+                    "name": "review_complete",
+                    "type": "boolean",
+                    "label": "I have reviewed the complete assessment",
+                    "required": True,
+                },
+                {
+                    "name": "user_approved",
+                    "type": "boolean",
+                    "label": "I approve this assessment for finalization",
+                    "required": True,
+                },
+            ],
+            "educational_note": "Review all collected data before finalizing. Use /preview to generate the report, then /save to complete.",
+            "is_review_step": True,
         },
     }
 

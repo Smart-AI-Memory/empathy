@@ -885,6 +885,6 @@ Keep these in reserve for Q&A or extended presentations:
 
 **Presentation Version:** 1.0
 **Last Updated:** January 2025
-**Copyright:** 2025 Deep Study AI, LLC
+**Copyright:** 2025 Smart AI Memory, LLC
 
 **Good luck! You've got this. The framework speaks for itself—just let it shine.**

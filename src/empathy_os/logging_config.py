@@ -7,7 +7,7 @@ Provides professional logging setup with:
 - Log rotation for production use
 - Configurable log levels
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

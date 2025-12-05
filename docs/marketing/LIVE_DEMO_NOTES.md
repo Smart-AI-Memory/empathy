@@ -719,7 +719,7 @@ python run_security_wizard_demo.py
 
 **Guide Version:** 1.0
 **Last Updated:** January 2025
-**Copyright:** 2025 Deep Study AI, LLC
+**Copyright:** 2025 Smart AI Memory, LLC
 
 ---
 

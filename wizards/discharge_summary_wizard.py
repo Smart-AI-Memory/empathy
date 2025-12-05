@@ -38,7 +38,7 @@ except ImportError:
 settings = get_settings()
 
 router = APIRouter(
-    prefix="/api/v1/wizards/discharge-summary",
+    prefix="/wizards/discharge-summary",
     tags=["clinical-wizards"],
     responses={
         404: {"description": "Wizard session not found"},
@@ -127,6 +127,14 @@ DISCHARGE_SUMMARY_STEPS = {
         ],
         "help_text": "Note follow-up appointments, warning signs to watch for, education provided, and patient/caregiver understanding",
     },
+    6: {
+        "step": 6,
+        "title": "Review & Finalize",
+        "prompt": "Review your discharge summary and finalize the document",
+        "fields": ["review_complete", "user_approved"],
+        "help_text": "Review all sections of the discharge summary. Click 'Generate Preview' to see the formatted document. You can go back to edit any section before finalizing.",
+        "is_review_step": True,
+    },
 }
 
 EDU_BANNER = """
@@ -139,10 +147,14 @@ All discharge documentation should be reviewed and validated by qualified provid
 async def _store_wizard_session(wizard_id: str, session_data: dict[str, Any]) -> bool:
     try:
         if _has_redis:
+            import json
+
             redis_client = await get_redis_client()
             if redis_client:
                 await redis_client.setex(
-                    f"wizard:discharge_summary:{wizard_id}", 7200, str(session_data)
+                    f"wizard:discharge_summary:{wizard_id}",
+                    7200,
+                    json.dumps(session_data),  # FIXED: use JSON
                 )
                 return True
     except Exception:
@@ -154,13 +166,14 @@ async def _store_wizard_session(wizard_id: str, session_data: dict[str, Any]) ->
 async def _get_wizard_session(wizard_id: str) -> dict[str, Any] | None:
     try:
         if _has_redis:
+            import json
+
             redis_client = await get_redis_client()
             if redis_client:
                 session_str = await redis_client.get(f"wizard:discharge_summary:{wizard_id}")
                 if session_str:
-                    import ast
-
-                    return ast.literal_eval(session_str)
+                    # SECURITY FIX: Use json.loads() instead of ast.literal_eval()
+                    return json.loads(session_str)
     except Exception:
         pass
     return _wizard_sessions.get(wizard_id)
@@ -245,7 +258,7 @@ async def start_discharge_summary_wizard():
             "wizard_id": wizard_id,
             "wizard_type": "discharge_summary",
             "current_step": 1,
-            "total_steps": 5,
+            "total_steps": 6,
             "collected_data": {},
             "created_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
@@ -274,25 +287,15 @@ async def submit_discharge_summary_step(wizard_id: str, step_data: dict[str, Any
         current_step = session["current_step"]
         session["collected_data"].update(step_data.get("data", {}))
         session["updated_at"] = datetime.now().isoformat()
-        if current_step >= session["total_steps"]:
-            report = _generate_discharge_summary_report(session["collected_data"])
-            session["completed"] = True
-            await _store_wizard_session(wizard_id, session)
-            return create_success_response(
-                data={
-                    "wizard_session": session,
-                    "report": report,
-                    "progress": {
-                        "current": current_step,
-                        "total": session["total_steps"],
-                        "percentage": 100,
-                    },
-                    "completed": True,
-                },
-                message="Discharge summary completed",
-            )
-        next_step = current_step + 1
-        session["current_step"] = next_step
+
+        # Advance to next step (but don't auto-complete, even on final step)
+        if current_step < session["total_steps"]:
+            next_step = current_step + 1
+            session["current_step"] = next_step
+        else:
+            # On review step - stay on same step, don't auto-complete
+            next_step = current_step
+
         await _store_wizard_session(wizard_id, session)
         return create_success_response(
             data={
@@ -339,6 +342,103 @@ async def enhance_discharge_summary_text(wizard_id: str, text_data: dict[str, An
             },
             message="Text enhanced successfully",
         )
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.post("/{wizard_id}/preview", summary="Preview discharge summary report")
+async def preview_discharge_summary_report(wizard_id: str):
+    """
+    Generate preview of discharge summary report without finalizing.
+
+    This endpoint allows users to see the formatted discharge summary before
+    finalizing it. The report is NOT marked as complete. Users can
+    still go back and edit data after previewing.
+    """
+    try:
+        session = await _get_wizard_session(wizard_id)
+        if not session:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+        # Verify user is on review step
+        if session["current_step"] != session["total_steps"]:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Not on review step. Complete steps 1-{session['total_steps']-1} first.",
+            )
+
+        # Generate preview report (does NOT mark as complete)
+        preview_report = _generate_discharge_summary_report(session["collected_data"])
+
+        # Store preview in session
+        session["preview_report"] = preview_report
+        session["preview_generated_at"] = datetime.now().isoformat()
+        await _store_wizard_session(wizard_id, session)
+
+        response_data = {
+            "preview": preview_report,
+            "wizard_session": session,
+            "message": "Review the discharge summary above. Click 'Finalize Report' to save, or go back to edit any section.",
+        }
+
+        return create_success_response(data=response_data, message="Preview generated successfully")
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.post("/{wizard_id}/save", summary="Finalize discharge summary report")
+async def save_discharge_summary_report(wizard_id: str, approval_data: dict[str, Any]):
+    """
+    Finalize and save the discharge summary report after user review and approval.
+
+    Requires that the user has:
+    1. Generated a preview first (/preview endpoint)
+    2. Explicitly approved the report (user_approved: true)
+
+    Only after calling this endpoint is the report marked as complete.
+    """
+    try:
+        session = await _get_wizard_session(wizard_id)
+        if not session:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+        # Verify preview was generated
+        if "preview_report" not in session:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Must generate preview before saving. Call /preview endpoint first.",
+            )
+
+        # Verify user explicitly approved
+        if not approval_data.get("user_approved", False):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User approval required. Set 'user_approved': true in request body.",
+            )
+
+        # NOW we mark as complete
+        session["completed"] = True
+        session["completed_at"] = datetime.now().isoformat()
+        session["final_report"] = session["preview_report"]
+        session["user_approved"] = True
+
+        await _store_wizard_session(wizard_id, session)
+
+        response_data = {
+            "wizard_session": session,
+            "report": session["final_report"],
+            "completed": True,
+        }
+
+        return create_success_response(
+            data=response_data, message="Discharge summary finalized successfully"
+        )
+
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 

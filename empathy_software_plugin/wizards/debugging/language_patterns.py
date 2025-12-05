@@ -6,7 +6,7 @@ Universal debugging patterns that apply across programming languages.
 This is Level 5 Systems Empathy - recognizing that the same fundamental
 patterns appear across different domains (languages).
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

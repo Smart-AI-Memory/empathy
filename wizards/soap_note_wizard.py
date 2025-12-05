@@ -5,6 +5,9 @@ Following Wizard Pattern Implementation from SBAR and Shift Handoff wizards
 SOAP (Subjective, Objective, Assessment, Plan) note documentation wizard
 for comprehensive clinical progress notes. Evidence-based format for
 interprofessional communication and continuity of care.
+
+Version: 2.0 - 5-step wizard with review/approval (Jan 2025)
+Users must preview and explicitly approve documents before finalization.
 """
 
 import logging
@@ -40,7 +43,7 @@ except ImportError:
 settings = get_settings()
 
 router = APIRouter(
-    prefix="/api/v1/wizards/soap-note",
+    prefix="/wizards/soap-note",
     tags=["clinical-wizards"],
     responses={
         404: {"description": "Wizard session not found"},
@@ -118,6 +121,14 @@ SOAP_NOTE_STEPS = {
         ],
         "help_text": "Detail the plan: further diagnostics needed, treatment changes, patient education, monitoring requirements, follow-up, consultations.",
     },
+    5: {
+        "step": 5,
+        "title": "Review & Finalize",
+        "prompt": "Review your SOAP note and finalize the document",
+        "fields": ["review_complete", "user_approved"],
+        "help_text": "Review all sections of your SOAP note. Click 'Generate Preview' to see the formatted note. You can go back to edit any section before finalizing.",
+        "is_review_step": True,
+    },
 }
 
 
@@ -136,8 +147,12 @@ async def _store_wizard_session(wizard_id: str, session_data: dict[str, Any]) ->
         if _has_redis:
             redis_client = await get_redis_client()
             if redis_client:
+                import json
+
                 cache_key = f"wizard:soap_note:{wizard_id}"
-                await redis_client.setex(cache_key, 7200, str(session_data))  # 2 hour TTL
+                await redis_client.setex(
+                    cache_key, 7200, json.dumps(session_data)  # 2 hour TTL - FIXED: use JSON
+                )
                 logger.info(f"Stored SOAP note wizard session {wizard_id} in Redis")
                 return True
     except Exception as e:
@@ -155,12 +170,13 @@ async def _get_wizard_session(wizard_id: str) -> dict[str, Any] | None:
         if _has_redis:
             redis_client = await get_redis_client()
             if redis_client:
+                import json
+
                 cache_key = f"wizard:soap_note:{wizard_id}"
                 session_str = await redis_client.get(cache_key)
                 if session_str:
-                    import ast
-
-                    return ast.literal_eval(session_str)
+                    # SECURITY FIX: Use json.loads() instead of ast.literal_eval()
+                    return json.loads(session_str)
     except Exception as e:
         logger.warning(f"Failed to retrieve session from Redis: {e}, checking memory")
 
@@ -325,7 +341,7 @@ async def start_soap_note_wizard():
             "wizard_id": wizard_id,
             "wizard_type": "soap_note",
             "current_step": 1,
-            "total_steps": 4,
+            "total_steps": 5,
             "collected_data": {},
             "created_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
@@ -389,34 +405,14 @@ async def submit_soap_note_step(wizard_id: str, step_data: dict[str, Any]):
         session["collected_data"].update(step_data.get("data", {}))
         session["updated_at"] = datetime.now().isoformat()
 
-        # Check if we're done
-        if current_step >= total_steps:
-            # Generate final report
-            report = _generate_soap_note_report(session["collected_data"])
+        # Advance to next step (but don't auto-complete, even on final step)
+        if current_step < total_steps:
+            next_step = current_step + 1
+            session["current_step"] = next_step
+        else:
+            # On review step - stay on same step, don't auto-complete
+            next_step = current_step
 
-            # Mark session as complete
-            session["completed"] = True
-            session["completed_at"] = datetime.now().isoformat()
-            await _store_wizard_session(wizard_id, session)
-
-            response_data = {
-                "wizard_session": session,
-                "report": report,
-                "progress": {
-                    "current": total_steps,
-                    "total": total_steps,
-                    "percentage": 100,
-                },
-                "completed": True,
-            }
-
-            return create_success_response(
-                data=response_data, message="SOAP note completed successfully"
-            )
-
-        # Move to next step
-        next_step = current_step + 1
-        session["current_step"] = next_step
         await _store_wizard_session(wizard_id, session)
 
         # Get next step configuration
@@ -517,6 +513,119 @@ Enhanced text:"""
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to enhance text: {str(e)}",
+        )
+
+
+@router.post("/{wizard_id}/preview", summary="Preview SOAP note report")
+async def preview_soap_note_report(wizard_id: str):
+    """
+    Generate preview of SOAP note report without finalizing.
+
+    This endpoint allows users to see the formatted SOAP note before
+    finalizing it. The report is NOT marked as complete. Users can
+    still go back and edit data after previewing.
+    """
+    try:
+        # Retrieve session
+        session = await _get_wizard_session(wizard_id)
+        if not session:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Wizard session {wizard_id} not found",
+            )
+
+        # Verify user is on review step
+        if session["current_step"] != session["total_steps"]:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Not on review step. Complete steps 1-{session['total_steps']-1} first.",
+            )
+
+        # Generate preview report (does NOT mark as complete)
+        preview_report = _generate_soap_note_report(session["collected_data"])
+
+        # Store preview in session
+        session["preview_report"] = preview_report
+        session["preview_generated_at"] = datetime.now().isoformat()
+        await _store_wizard_session(wizard_id, session)
+
+        response_data = {
+            "preview": preview_report,
+            "wizard_session": session,
+            "message": "Review the SOAP note above. Click 'Finalize Report' to save, or go back to edit any section.",
+        }
+
+        return create_success_response(data=response_data, message="Preview generated successfully")
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to generate SOAP note preview: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate preview: {str(e)}",
+        )
+
+
+@router.post("/{wizard_id}/save", summary="Finalize SOAP note report")
+async def save_soap_note_report(wizard_id: str, approval_data: dict[str, Any]):
+    """
+    Finalize and save the SOAP note report after user review and approval.
+
+    Requires that the user has:
+    1. Generated a preview first (/preview endpoint)
+    2. Explicitly approved the report (user_approved: true)
+
+    Only after calling this endpoint is the report marked as complete.
+    """
+    try:
+        # Retrieve session
+        session = await _get_wizard_session(wizard_id)
+        if not session:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Wizard session {wizard_id} not found",
+            )
+
+        # Verify preview was generated
+        if "preview_report" not in session:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Must generate preview before saving. Call /preview endpoint first.",
+            )
+
+        # Verify user explicitly approved
+        if not approval_data.get("user_approved", False):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User approval required. Set 'user_approved': true in request body.",
+            )
+
+        # NOW we mark as complete
+        session["completed"] = True
+        session["completed_at"] = datetime.now().isoformat()
+        session["final_report"] = session["preview_report"]
+        session["user_approved"] = True
+
+        await _store_wizard_session(wizard_id, session)
+
+        response_data = {
+            "wizard_session": session,
+            "report": session["final_report"],
+            "completed": True,
+        }
+
+        return create_success_response(
+            data=response_data, message="SOAP note finalized successfully"
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to save SOAP note: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to finalize SOAP note: {str(e)}",
         )
 
 

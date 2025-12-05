@@ -7,7 +7,7 @@ In our experience building AI Nurse Florence with LangGraph multi-agent systems,
 we learned that agent coordination complexity grows non-linearly. This wizard
 detects when simple orchestration patterns will fail at scale.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

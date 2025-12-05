@@ -417,4 +417,4 @@ Commercial license required for companies with 6+ employees.
 
 ---
 
-Built with ❤️ by Deep Study AI, LLC
+Built with ❤️ by Smart AI Memory, LLC

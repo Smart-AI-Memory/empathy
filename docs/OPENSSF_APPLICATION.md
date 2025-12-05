@@ -1280,7 +1280,7 @@ pre-commit run --all-files
 **Primary Maintainer**: Patrick Roebuck
 **Email**: patrick.roebuck1955@gmail.com
 **GitHub**: @patrickroebuck
-**Organization**: Smart-AI-Memory (Deep Study AI, LLC)
+**Organization**: Smart-AI-Memory (Smart AI Memory, LLC)
 
 **Security Contact**: patrick.roebuck1955@gmail.com (use [SECURITY] subject)
 **Code of Conduct Contact**: patrick.roebuck1955@gmail.com

@@ -2,7 +2,7 @@
 
 ---
 **License**: Apache License 2.0
-**Copyright**: © 2025 Deep Study AI, LLC
+**Copyright**: © 2025 Smart AI Memory, LLC
 **Project**: AI Nurse Florence
 **Repository**: https://github.com/silversurfer562/ai-nurse-florence
 ---
@@ -224,7 +224,7 @@ Whatever your role, welcome. This book is designed to meet you where you are and
 ---
 
 **Patrick Roebuck**
-*Founder, Deep Study AI, LLC*
+*Founder, Smart AI Memory, LLC*
 *January 2025*
 
 ---

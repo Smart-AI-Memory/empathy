@@ -4,7 +4,7 @@ EmpathyOS - Core Implementation
 The main entry point for the Empathy Framework, providing access to all
 5 empathy levels and system thinking integrations.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

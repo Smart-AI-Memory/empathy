@@ -4,7 +4,7 @@ Unit tests for EmpathyLLM Phase 3 Security Integration
 Tests the integration of Phase 2 security controls (PII scrubbing, secrets detection,
 audit logging) into the core EmpathyLLM.interact() method.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source License 0.9
 """
 

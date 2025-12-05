@@ -18,7 +18,7 @@ Reference:
 - ABA Model Rules of Professional Conduct 1.6
 - State bar confidentiality requirements
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

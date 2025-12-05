@@ -4,7 +4,7 @@
 
 **Version:** 1.0.0
 **License:** Fair Source 0.9
-**Copyright:** 2025 Deep Study AI, LLC
+**Copyright:** 2025 Smart AI Memory, LLC
 
 ---
 
@@ -2049,7 +2049,7 @@ print(llm.get_metrics_summary())
 
 **Developer:** Patrick Roebuck
 **Email:** patrick.roebuck@deepstudyai.com
-**Organization:** Deep Study AI, LLC
+**Organization:** Smart AI Memory, LLC
 
 ---
 
@@ -2068,5 +2068,5 @@ All at zero cost (Fair Source 0.9 open source) with infinite ROI.
 
 ---
 
-**Copyright 2025 Deep Study AI, LLC**
+**Copyright 2025 Smart AI Memory, LLC**
 **Licensed under Fair Source 0.9**

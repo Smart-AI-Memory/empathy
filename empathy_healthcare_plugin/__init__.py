@@ -3,7 +3,7 @@ Empathy Healthcare Plugin
 
 Clinical protocol monitoring using the empathy framework.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

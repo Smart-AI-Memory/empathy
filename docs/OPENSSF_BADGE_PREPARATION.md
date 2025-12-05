@@ -320,7 +320,7 @@ Gold badge requires:
 ## Key Contacts
 
 - **Primary Maintainer**: Patrick Roebuck (patrick.roebuck@deepstudyai.com)
-- **Organization**: Deep Study AI, LLC
+- **Organization**: Smart AI Memory, LLC
 - **Security Contact**: patrick.roebuck@deepstudyai.com
 - **Repository**: https://github.com/Deep-Study-AI/Empathy
 

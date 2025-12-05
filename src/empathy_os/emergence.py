@@ -6,7 +6,7 @@ that arise from component interactions but aren't properties of components.
 
 Based on systems thinking principles from Donella Meadows and Peter Senge.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

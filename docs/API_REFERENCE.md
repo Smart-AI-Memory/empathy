@@ -2,7 +2,7 @@
 
 **Version:** 1.0.0
 **License:** Fair Source 0.9
-**Copyright:** 2025 Deep Study AI, LLC
+**Copyright:** 2025 Smart AI Memory, LLC
 
 ---
 
@@ -1336,5 +1336,5 @@ Learn more: https://github.com/Deep-Study-AI/Empathy/blob/main/SPONSORSHIP.md
 
 ---
 
-**Copyright 2025 Deep Study AI, LLC**
+**Copyright 2025 Smart AI Memory, LLC**
 **Licensed under Fair Source 0.9**

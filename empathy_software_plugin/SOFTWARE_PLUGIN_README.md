@@ -2,7 +2,7 @@
 
 Production-ready Level 4 Anticipatory wizards for software development.
 
-**Copyright 2025 Deep Study AI, LLC**
+**Copyright 2025 Smart AI Memory, LLC**
 **Licensed under Fair Source 0.9**
 
 ## Overview
@@ -720,7 +720,7 @@ This approach:
 
 ## License
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 
 Licensed under Fair Source 0.9 (the "License");
 you may not use this file except in compliance with the License.

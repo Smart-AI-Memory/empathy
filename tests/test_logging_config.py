@@ -1,7 +1,7 @@
 """
 Tests for Logging Configuration Module
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
@@ -23,12 +23,24 @@ from empathy_os.logging_config import (
 )
 
 
+def _close_all_file_handlers():
+    """Close all file handlers to allow temp dir cleanup on Windows"""
+    for name in list(logging.Logger.manager.loggerDict.keys()):
+        logger = logging.getLogger(name)
+        for handler in logger.handlers[:]:
+            if isinstance(handler, logging.FileHandler):
+                handler.close()
+                logger.removeHandler(handler)
+
+
 @pytest.fixture
 def temp_dir():
     """Create temporary directory for test files"""
     tmp = tempfile.mkdtemp()
     yield tmp
-    shutil.rmtree(tmp)
+    # Close file handlers before cleanup (Windows compatibility)
+    _close_all_file_handlers()
+    shutil.rmtree(tmp, ignore_errors=True)
 
 
 @pytest.fixture(autouse=True)
@@ -37,6 +49,8 @@ def reset_logging_config():
     LoggingConfig._configured = False
     LoggingConfig._loggers = {}
     yield
+    # Close file handlers before cleanup
+    _close_all_file_handlers()
     LoggingConfig._configured = False
     LoggingConfig._loggers = {}
 

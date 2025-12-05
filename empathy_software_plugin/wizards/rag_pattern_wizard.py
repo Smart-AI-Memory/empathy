@@ -8,7 +8,7 @@ In our experience, RAG seems simple at first (vector DB + similarity search).
 But we learned: embedding quality, chunk strategy, and retrieval relevance
 degrade as data grows. This wizard alerts before those issues surface.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

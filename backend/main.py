@@ -74,7 +74,7 @@ async def health_check():
 async def api_info():
     """API information endpoint."""
     return {
-        "name": "Deep Study AI - Empathy Framework",
+        "name": "Smart AI Memory - Empathy Framework",
         "description": "Level 4 Anticipatory AI for Software Development",
         "version": "1.0.0",
         "plugins": {

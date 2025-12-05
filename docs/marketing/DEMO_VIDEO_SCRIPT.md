@@ -288,4 +288,4 @@ After watching this demo video, viewers should:
 
 **Script Version:** 1.0
 **Last Updated:** January 2025
-**Copyright:** 2025 Deep Study AI, LLC
+**Copyright:** 2025 Smart AI Memory, LLC

@@ -7,7 +7,7 @@ This document outlines the governance structure for the Empathy Framework projec
 The **Empathy Framework** is an open-source project providing a five-level maturity model for AI-human collaboration, progressing from reactive responses to anticipatory problem prevention.
 
 - **License**: Fair Source 0.9 (dual licensing: free for individuals/education/small teams, commercial for larger organizations)
-- **Organization**: Deep Study AI, LLC
+- **Organization**: Smart AI Memory, LLC
 - **Repository**: https://github.com/Smart-AI-Memory/empathy-framework
 - **Documentation**: https://github.com/Smart-AI-Memory/empathy-framework/tree/main/docs
 
@@ -17,7 +17,7 @@ The **Empathy Framework** is an open-source project providing a five-level matur
 
 The Empathy Framework currently operates under a **single maintainer model** for rapid development and clear decision-making authority:
 
-- **Maintainer**: Patrick Roebuck (Deep Study AI, LLC)
+- **Maintainer**: Patrick Roebuck (Smart AI Memory, LLC)
   - Email: patrick.roebuck@deepstudyai.com
   - GitHub: @silversurfer562
   - Role: Final decision authority, release management, security response
@@ -218,7 +218,7 @@ Documentation is licensed under **Creative Commons Attribution 4.0 International
 By contributing to this project, you agree that:
 1. Your contributions will be licensed under Fair Source 0.9
 2. You have the right to contribute the code/documentation
-3. Deep Study AI, LLC may relicense the project if needed for sustainability
+3. Smart AI Memory, LLC may relicense the project if needed for sustainability
 
 ## Roadmap and Planning
 

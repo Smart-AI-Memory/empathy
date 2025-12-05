@@ -9,7 +9,7 @@ Requirements:
 - Active internet connection
 - API credits available
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
@@ -291,11 +291,10 @@ class TestLLMErrorHandling:
 
     @pytest.mark.llm
     @pytest.mark.asyncio
+    @pytest.mark.skipif(anthropic is None, reason="anthropic package not installed")
     async def test_invalid_api_key(self):
         """Test handling of invalid API key"""
-        expected_exceptions = (ValueError, RuntimeError)
-        if anthropic is not None:
-            expected_exceptions = (ValueError, RuntimeError, anthropic.AuthenticationError)
+        expected_exceptions = (ValueError, RuntimeError, anthropic.AuthenticationError)
         with pytest.raises(expected_exceptions):
             provider = AnthropicProvider(api_key="invalid-key-12345")
             await provider.generate(messages=[{"role": "user", "content": "Hello"}], max_tokens=50)

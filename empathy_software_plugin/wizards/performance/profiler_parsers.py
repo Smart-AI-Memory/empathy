@@ -3,7 +3,7 @@ Profiler Output Parsers
 
 Parses output from various profilers (cProfile, perf, Chrome DevTools, etc.)
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
@@ -93,9 +93,16 @@ class CProfileParser(BaseProfilerParser):
         for line in data.split("\n"):
             match = re.match(pattern, line.strip())
             if match:
-                (ncalls, tottime, percall_tot, cumtime, percall_cum, filepath, lineno, funcname) = (
-                    match.groups()
-                )
+                (
+                    ncalls,
+                    tottime,
+                    percall_tot,
+                    cumtime,
+                    percall_cum,
+                    filepath,
+                    lineno,
+                    funcname,
+                ) = match.groups()
 
                 profiles.append(
                     FunctionProfile(

@@ -7,7 +7,7 @@ seminal work "Leverage Points: Places to Intervene in a System".
 Leverage points are places within a complex system where a small shift
 can produce big changes in system behavior.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

@@ -5,6 +5,78 @@ All notable changes to the Empathy Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.5] - 2025-12-01
+
+### Fixed
+
+**Test Suite**
+- Fixed LocalProvider async context manager mocking in tests
+- All 1,491 tests now pass
+
+## [1.9.4] - 2025-11-30
+
+### Changed
+
+**Website Updates**
+- Healthcare Wizards navigation now links to external dashboard at healthcare.smartaimemory.com
+- Added Dev Wizards link to wizards.smartaimemory.com
+- SBAR wizard demo page with 5-step guided workflow
+
+**Documentation**
+- Added live demo callouts to healthcare documentation pages
+- Updated docs/index.md, docs/guides/healthcare-wizards.md, docs/examples/sbar-clinical-handoff.md
+
+**Code Quality**
+- Added ESLint rules to suppress inline style warnings for Tailwind CSS use cases
+- Fixed unused variable warnings (`isGenerating`, `theme`)
+- Fixed unescaped apostrophe JSX warnings
+- Test coverage: 75.87% (1,489 tests pass)
+
+## [1.9.3] - 2025-11-28
+
+### Changed
+
+**Healthcare Focus**
+- Archived 13 non-healthcare wizards to `archived_wizards/` directory
+  - Accounting, Customer Support, Education, Finance, Government, HR
+  - Insurance, Legal, Logistics, Manufacturing, Real Estate, Research
+  - Retail, Sales, Technology wizards moved to archive
+- Package now focuses on 8 healthcare clinical wizards:
+  - Admission Assessment, Care Plan, Clinical Assessment, Discharge Summary
+  - Incident Report, SBAR, Shift Handoff, SOAP Note
+- Archived wizards remain functional and tested (104 tests pass)
+
+**Website Updates**
+- Added SBAR wizard API routes (`/api/wizards/sbar/start`, `/api/wizards/sbar/generate`)
+- Added SBARWizard React component
+- Updated navigation and dashboard for healthcare focus
+
+**Code Quality**
+- Added B904 to ruff ignore list (exception chaining in HTTPException pattern)
+- Fixed 37 CLI tests (logger output capture using caplog)
+- Test coverage: 74.58% (1,328 tests pass)
+
+**Claude Code Positioning**
+- Updated documentation with "Created in consultation with Claude Sonnet 4.5 using Claude Code"
+- Added Claude Code badge to README
+- Updated pitch deck and partnership materials
+
+## [1.9.2] - 2025-11-28
+
+### Fixed
+
+**Documentation Links**
+- Fixed all broken relative links in README.md for PyPI compatibility
+  - Updated Quick Start Guide, API Reference, and User Guide links (line 45)
+  - Fixed all framework documentation links (CHAPTER_EMPATHY_FRAMEWORK.md, etc.)
+  - Updated all source file links (agents, coach_wizards, empathy_llm_toolkit, services)
+  - Fixed examples and resources directory links
+  - Updated LICENSE and SPONSORSHIP.md links
+  - All relative paths now use full GitHub URLs (e.g., `https://github.com/Smart-AI-Memory/empathy-framework/blob/main/docs/...`)
+- All documentation links now work correctly when viewed on PyPI package page
+
+**Impact**: Users viewing the package on PyPI can now access all documentation links without encountering 404 errors.
+
 ## [1.8.0-alpha] - 2025-11-24
 
 ### Added - Claude Memory Integration

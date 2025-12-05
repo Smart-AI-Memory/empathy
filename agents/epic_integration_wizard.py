@@ -2,7 +2,7 @@
 Epic Integration Wizard - LangChain Agent
 Multi-step wizard for configuring and testing Epic FHIR integration
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 
 Licensed under Fair Source 0.9 (the "License");
 you may not use this file except in compliance with the License.

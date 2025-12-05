@@ -7,7 +7,7 @@ In our experience building AI Nurse Florence with complex multi-step agents,
 context window management became critical. This wizard learned to detect
 when context strategies that work today will fail tomorrow as complexity grows.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

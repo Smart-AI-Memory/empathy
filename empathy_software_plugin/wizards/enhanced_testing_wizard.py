@@ -5,7 +5,7 @@ Goes beyond test coverage to analyze test QUALITY and predict which untested cod
 
 Level 4: Anticipatory - predicts which missing tests will cause production issues.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

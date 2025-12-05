@@ -39,7 +39,7 @@ def test_get_metadata():
     assert metadata.name == "Empathy Framework - Software Development"
     assert metadata.version == "1.0.0"
     assert metadata.domain == "software"
-    assert metadata.author == "Deep Study AI, LLC"
+    assert metadata.author == "Smart AI Memory, LLC"
     assert metadata.license == "Apache-2.0"
     assert metadata.requires_core_version == "1.0.0"
 

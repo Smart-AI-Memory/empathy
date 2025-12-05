@@ -7,7 +7,7 @@ demonstrating Level 4 Anticipatory Empathy in software development.
 Based on real-world experience developing AI systems where the framework
 transformed productivity with higher quality code developed many times faster.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
@@ -52,7 +52,7 @@ class SoftwarePlugin(BasePlugin):
                 "vulnerabilities, and architectural issues before they "
                 "become critical."
             ),
-            author="Deep Study AI, LLC",
+            author="Smart AI Memory, LLC",
             license="Apache-2.0",
             requires_core_version="1.0.0",
             dependencies=[],  # Add any domain-specific deps

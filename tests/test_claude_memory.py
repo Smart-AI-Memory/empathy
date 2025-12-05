@@ -3,12 +3,13 @@ Tests for Claude Memory Integration (v1.8.0)
 
 Tests the ClaudeMemoryLoader and integration with EmpathyLLM.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
 import tempfile
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -17,6 +18,16 @@ from empathy_llm_toolkit.claude_memory import (
     ClaudeMemoryLoader,
     create_default_project_memory,
 )
+
+
+@pytest.fixture
+def mock_anthropic():
+    """Mock anthropic module so tests don't require actual package"""
+    mock_module = MagicMock()
+    mock_client = MagicMock()
+    mock_module.Anthropic.return_value = mock_client
+    with patch.dict("sys.modules", {"anthropic": mock_module}):
+        yield mock_module
 
 
 @pytest.fixture
@@ -252,7 +263,7 @@ def test_dont_overwrite_existing(sample_claude_memory):
 
 
 @pytest.mark.asyncio
-async def test_integration_with_empathy_llm(sample_claude_memory):
+async def test_integration_with_empathy_llm(sample_claude_memory, mock_anthropic):
     """Test integration of Claude memory with EmpathyLLM"""
     from empathy_llm_toolkit import EmpathyLLM
 
@@ -274,7 +285,7 @@ async def test_integration_with_empathy_llm(sample_claude_memory):
 
 
 @pytest.mark.asyncio
-async def test_reload_memory(sample_claude_memory):
+async def test_reload_memory(sample_claude_memory, mock_anthropic):
     """Test reloading memory after changes"""
     from empathy_llm_toolkit import EmpathyLLM
 

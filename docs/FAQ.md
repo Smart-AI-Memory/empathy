@@ -262,7 +262,7 @@ Yes! Fair Source 0.9 allows commercial use without restrictions.
 
 **You cannot:**
 - Claim the framework as your own work
-- Hold Deep Study AI liable for issues
+- Hold Smart AI Memory liable for issues
 
 ### Do I need to open source my code if I use this?
 
@@ -748,5 +748,5 @@ See [ROADMAP.md](../ROADMAP.md) for detailed roadmap.
 
 ---
 
-**Copyright 2025 Deep Study AI, LLC**
+**Copyright 2025 Smart AI Memory, LLC**
 **Licensed under Fair Source 0.9**

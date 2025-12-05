@@ -4,7 +4,7 @@ Empathy Framework - AI-Human Collaboration Library
 A five-level maturity model for building AI systems that progress from
 reactive responses to anticipatory problem prevention.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

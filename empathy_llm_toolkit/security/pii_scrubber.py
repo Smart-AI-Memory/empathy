@@ -4,7 +4,7 @@ PII Scrubbing Module for Enterprise Privacy Integration
 Comprehensive PII detection and scrubbing based on GDPR, HIPAA, and SOC2 requirements.
 Supports custom patterns and provides detailed audit information.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

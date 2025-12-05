@@ -3,7 +3,7 @@ DebuggingWizard - Error detection and debugging assistance
 
 Level 4 Anticipatory Empathy for Debugging using the Empathy Framework.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

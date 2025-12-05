@@ -3,7 +3,7 @@ Empathy LLM - Core Wrapper
 
 Main class that wraps any LLM provider with Empathy Framework levels.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

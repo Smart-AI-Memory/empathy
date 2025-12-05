@@ -7,7 +7,7 @@ In our experience developing the Empathy Framework itself, we discovered
 that the WAY you collaborate with AI matters as much as WHAT you ask it to do.
 This wizard learned to recognize when reactive patterns will limit effectiveness.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

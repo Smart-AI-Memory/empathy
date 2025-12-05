@@ -20,6 +20,14 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+  {
+    rules: {
+      // Allow inline styles for dynamic values and complex gradients
+      // that cannot be easily expressed with Tailwind utility classes
+      "react/style-prop-object": "off",
+      "@next/next/no-css-inline": "off",
+    },
+  },
 ];
 
 export default eslintConfig;

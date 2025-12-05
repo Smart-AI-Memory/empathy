@@ -17,7 +17,7 @@ Reference:
 - Family Educational Rights and Privacy Act (FERPA) 20 U.S.C. § 1232g
 - 34 CFR Part 99 - FERPA Regulations
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

@@ -4,7 +4,6 @@ Tests for empathy_software_plugin CLI
 Focused tests for helper functions and core CLI components.
 """
 
-
 # Import the CLI module
 from empathy_software_plugin import cli
 

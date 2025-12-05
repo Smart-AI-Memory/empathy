@@ -3,7 +3,7 @@ Example usage of the AuditLogger
 
 Demonstrates how to use the audit logging framework for compliance tracking.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

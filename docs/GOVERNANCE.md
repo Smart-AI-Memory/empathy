@@ -5,7 +5,7 @@ This document describes the governance structure and decision-making processes f
 ## Project Status
 
 **Current Phase**: Beta (Development Status :: 4)
-**Organization**: Deep Study AI, LLC
+**Organization**: Smart AI Memory, LLC
 **Primary Maintainer**: Patrick Roebuck
 
 ## Governance Model
@@ -153,7 +153,7 @@ The Empathy Framework follows a **Benevolent Dictator** governance model during 
 - Fair Source 0.9 (LICENSE): Free for ≤5 employees, students, educators
 - Commercial License (LICENSE-COMMERCIAL.md): $99/developer/year for 6+ employees
 
-**Commercial Decision Authority**: Deep Study AI, LLC
+**Commercial Decision Authority**: Smart AI Memory, LLC
 
 **License Changes**: Require community notice (30 days minimum) and only affect future versions
 

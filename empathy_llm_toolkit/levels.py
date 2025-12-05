@@ -3,7 +3,7 @@ Empathy Level Definitions
 
 Defines behavior for each of the 5 empathy levels.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

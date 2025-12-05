@@ -6,7 +6,7 @@ Predicts which linting violations are likely to cause production bugs.
 This is Level 4 Anticipatory Empathy - analyzing trajectory and alerting
 to future problems before they happen.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

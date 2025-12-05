@@ -102,7 +102,7 @@ Support development directly through GitHub Sponsors:
 > "We saved 40 hours in the first month by having direct access to the team. The $99/year per developer is a no-brainer."
 > — **Engineering Manager, Series B Startup**
 
-> "Custom wizard development for our compliance needs would have taken us months to build in-house. Deep Study AI delivered in 3 weeks."
+> "Custom compliance wizard suite (8 domain-specific wizards) would have taken weeks to build in-house. With established patterns, delivered in days."
 > — **CTO, Financial Services Company**
 
 > "The training workshop got our entire team productive in one day instead of weeks of trial and error."

@@ -3,7 +3,7 @@ Unit tests for AuditLogger
 
 Tests compliance requirements for SOC2, HIPAA, and GDPR.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

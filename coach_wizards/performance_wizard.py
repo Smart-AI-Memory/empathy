@@ -3,7 +3,7 @@ PerformanceWizard - Performance optimization and bottleneck detection
 
 Level 4 Anticipatory Empathy for Performance using the Empathy Framework.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

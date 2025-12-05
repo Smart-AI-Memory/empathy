@@ -1,68 +1,39 @@
 """
-Empathy LLM Wizards - Security-Aware AI Assistants
+Empathy LLM Wizards - Canonical Examples
 
-Specialized AI wizards built on EmpathyLLM with integrated security controls.
-Each wizard is optimized for specific domains with appropriate security policies.
+Core wizard base class and canonical domain examples demonstrating
+the Empathy Framework's capabilities across different use cases.
 
-Available Wizards (16 total):
+Included Wizards (3 canonical examples):
 1. HealthcareWizard - HIPAA-compliant medical assistant
-2. FinanceWizard - SOX/PCI-DSS banking and finance
-3. LegalWizard - Attorney-client privilege legal services
-4. EducationWizard - FERPA-compliant academic support
-5. CustomerSupportWizard - Customer service and help desk
-6. HRWizard - Employee privacy compliant HR
-7. SalesWizard - CRM privacy compliant sales and marketing
-8. RealEstateWizard - Property data privacy compliant
-9. InsuranceWizard - Policy data privacy compliant
-10. AccountingWizard - SOX/IRS compliant accounting and tax
-11. ResearchWizard - IRB-compliant academic research
-12. GovernmentWizard - FISMA-compliant government services
-13. RetailWizard - PCI-DSS compliant retail and e-commerce
-14. ManufacturingWizard - Production data privacy compliant
-15. LogisticsWizard - Shipment data privacy compliant
-16. TechnologyWizard - IT security compliant operations
+2. CustomerSupportWizard - Customer service and help desk
+3. TechnologyWizard - IT and software development operations
 
-Copyright 2025 Deep Study AI, LLC
+Additional Wizards Available:
+For specialized domain wizards, install separate packages:
+- Healthcare (23 wizards): pip install empathy-healthcare-wizards
+- Tech & AI (16 wizards): pip install empathy-software-wizards
+- Business (12+ wizards): pip install empathy-business-wizards
+
+Or try the live dashboards:
+- Healthcare: https://healthcare.smartaimemory.com/static/dashboard.html
+- Tech & AI: https://wizards.smartaimemory.com/
+
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
-from .accounting_wizard import AccountingWizard
 from .base_wizard import BaseWizard, WizardConfig
 from .customer_support_wizard import CustomerSupportWizard
-from .education_wizard import EducationWizard
-from .finance_wizard import FinanceWizard
-from .government_wizard import GovernmentWizard
 from .healthcare_wizard import HealthcareWizard
-from .hr_wizard import HRWizard
-from .insurance_wizard import InsuranceWizard
-from .legal_wizard import LegalWizard
-from .logistics_wizard import LogisticsWizard
-from .manufacturing_wizard import ManufacturingWizard
-from .real_estate_wizard import RealEstateWizard
-from .research_wizard import ResearchWizard
-from .retail_wizard import RetailWizard
-from .sales_wizard import SalesWizard
 from .technology_wizard import TechnologyWizard
 
 __all__ = [
     # Base classes
     "BaseWizard",
     "WizardConfig",
-    # Domain-specific wizards (alphabetical)
-    "AccountingWizard",
+    # Canonical domain examples
     "CustomerSupportWizard",
-    "EducationWizard",
-    "FinanceWizard",
-    "GovernmentWizard",
     "HealthcareWizard",
-    "HRWizard",
-    "InsuranceWizard",
-    "LegalWizard",
-    "LogisticsWizard",
-    "ManufacturingWizard",
-    "RealEstateWizard",
-    "ResearchWizard",
-    "RetailWizard",
-    "SalesWizard",
     "TechnologyWizard",
 ]

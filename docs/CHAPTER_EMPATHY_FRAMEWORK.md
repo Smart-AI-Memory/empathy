@@ -2,7 +2,7 @@
 
 ---
 **License**: Apache License 2.0
-**Copyright**: © 2025 Deep Study AI, LLC
+**Copyright**: © 2025 Smart AI Memory, LLC
 **Project**: AI Nurse Florence
 **Repository**: https://github.com/silversurfer562/ai-nurse-florence
 **Chapter Type**: 📚 Explanation + 🔧 How-To
@@ -3027,8 +3027,8 @@ class DomainEmpathyConfiguration:
 - Ravikant, Naval. *The Almanack of Naval Ravikant*. (2020)
 
 **AI & Collaboration**:
-- Deep Study AI, LLC. *Development Philosophy v2.0*. (2025)
-- Deep Study AI, LLC. *Autonomous Development Patterns*. (2025)
+- Smart AI Memory, LLC. *Development Philosophy v2.0*. (2025)
+- Smart AI Memory, LLC. *Autonomous Development Patterns*. (2025)
 
 ---
 

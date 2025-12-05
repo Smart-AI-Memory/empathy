@@ -224,27 +224,27 @@ result = await claude.generate(
 ### Proposed Model (If Partnership Includes Licensing):
 
 **Pro Tier ($99/year):**
-- Deep Study AI revenue: $99
+- Smart AI Memory revenue: $99
 - Includes $300/year Claude API credits
 - Net margin: ~$40/user/year (after Claude costs)
 - **Optional license fee to Anthropic:** $10-15/user/year for "Powered by Claude" branding
 
 **Business Tier ($249/year per 3 seats):**
-- Deep Study AI revenue: $249
+- Smart AI Memory revenue: $249
 - Includes $900/year Claude API credits (3 × $300)
 - Net margin: ~$100/year (after Claude costs, support)
 - **Optional license fee to Anthropic:** $25-35/bundle/year
 
 **Why this works:**
 - Anthropic gets: Brand exposure + API revenue + license fee
-- Deep Study AI gets: Partnership credibility + technical support
+- Smart AI Memory gets: Partnership credibility + technical support
 - Users get: Transparent pricing, best-in-class tools
 
 **Alternative (Simpler):**
 - No license fee
 - Partnership based on API revenue sharing
 - Anthropic benefits from increased Claude adoption
-- Deep Study AI benefits from featured placement
+- Smart AI Memory benefits from featured placement
 
 ---
 
@@ -341,7 +341,7 @@ Learn more: https://anthropic.com
 **Benefits:**
 - **Users:** Choice, transparency, best-in-class tools
 - **Anthropic:** Brand exposure, API revenue, enterprise validation
-- **Deep Study AI:** Partnership credibility, technical support, sustainable business
+- **Smart AI Memory:** Partnership credibility, technical support, sustainable business
 
 **Next Steps:**
 1. Launch Pro tier with included Claude credits

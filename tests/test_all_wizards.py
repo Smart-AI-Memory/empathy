@@ -4,14 +4,16 @@ Comprehensive Test Suite for All 16 Wizards
 Tests configuration, security integration, compliance verification,
 and PII pattern detection for all domain-specific wizards.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
+from unittest.mock import MagicMock, patch
+
 import pytest
 
-from empathy_llm_toolkit import EmpathyLLM
-from empathy_llm_toolkit.wizards import (
+# Import from archived wizards location
+from archived_wizards.empathy_llm_toolkit_wizards import (
     AccountingWizard,
     CustomerSupportWizard,
     EducationWizard,
@@ -29,17 +31,29 @@ from empathy_llm_toolkit.wizards import (
     SalesWizard,
     TechnologyWizard,
 )
+from empathy_llm_toolkit import EmpathyLLM
+
+
+# Mock anthropic package for tests
+@pytest.fixture
+def mock_anthropic():
+    """Mock anthropic module so tests don't require actual package"""
+    mock_module = MagicMock()
+    mock_client = MagicMock()
+    mock_module.Anthropic.return_value = mock_client
+    with patch.dict("sys.modules", {"anthropic": mock_module}):
+        yield mock_module
 
 
 # Test fixtures
 @pytest.fixture
-def llm_with_security():
+def llm_with_security(mock_anthropic):
     """EmpathyLLM instance with security enabled"""
     return EmpathyLLM(provider="anthropic", api_key="test-key", enable_security=True)
 
 
 @pytest.fixture
-def llm_without_security():
+def llm_without_security(mock_anthropic):
     """EmpathyLLM instance without security"""
     return EmpathyLLM(provider="anthropic", api_key="test-key", enable_security=False)
 
@@ -302,7 +316,7 @@ class TestWizardSecurityWarnings:
         self, llm_without_security, wizard_class, caplog
     ):
         """Test SENSITIVE wizards warn when security is disabled"""
-        wizard = wizard_class(llm_without_security)
+        _ = wizard_class(llm_without_security)
 
         # Should log warning for SENSITIVE wizards
         assert any(

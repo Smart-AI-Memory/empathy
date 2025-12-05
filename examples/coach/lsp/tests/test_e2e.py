@@ -14,6 +14,9 @@ import pytest
 
 from ..server import CoachLanguageServer
 
+# LSP protocol method name constant
+TEXT_DOCUMENT_DID_OPEN = "textDocument/didOpen"
+
 
 class TestEndToEnd:
     """End-to-end integration tests"""

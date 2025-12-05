@@ -3,7 +3,7 @@ Collaboration State Management
 
 Tracks AI-human collaboration over time to enable Level 3+ empathy.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

@@ -6,6 +6,8 @@
 
 📚 **Book Status**: Preview chapter available now | Full book launching Q1 2026
 
+**Created with Claude Code**: This framework and book were created in consultation with Claude Sonnet 4.5 using Claude Code (Anthropic's official developer tool), demonstrating the Level 4-5 AI collaboration principles described within.
+
 ---
 
 ## About This Book
@@ -119,19 +121,26 @@ Apply the framework to any domain: healthcare, customer service, education, fina
 
 ### The Numbers
 ```
-Before Framework:
-• 120 hours per wizard
+Without Framework:
+• Days to weeks per wizard
 • Manual documentation (3-4 hours each)
 • 15-20% bug rate
 • High context switching
+• No reusable patterns
 
-After Framework:
-• 40 hours per wizard (66% reduction)
+With Framework + Patterns:
+• Few hours to 1 day+ per wizard (varies by complexity and compliance)
+• Healthcare wizards take longer: Enterprise security, HIPAA compliance,
+  PHI protection, audit trails, encryption (full enterprise quality)
+• General wizards faster: Simpler requirements, established patterns
 • 0 minutes documentation (auto-generated)
 • <5% bug rate (framework handles edge cases)
-• Low context switching (self-service patterns)
+• Much faster with refined prototypes (pattern reuse)
 
-Cumulative 3-Year Savings: 5,680 hours
+Real Results: 53+ wizards built
+• 23 healthcare wizards (HIPAA-compliant, enterprise security)
+• 30+ general wizards (faster with established patterns)
+First few wizards establish patterns → subsequent wizards built in hours
 ```
 
 ---
@@ -191,13 +200,13 @@ The Empathy Framework integrates insights from:
 ## Author
 
 **Patrick Roebuck**
-Founder, Deep Study AI, LLC
+Founder, Smart AI Memory, LLC
 
 Built AI Nurse Florence from concept to production in 3.5 months using the Empathy Framework. Previously worked in healthcare IT, now focused on advancing AI-human collaboration through anticipatory empathy and systems thinking.
 
 **Connect**:
-- Email: hello@deepstudy.ai
-- Twitter/X: [@deepstudy_ai]
+- Email: patrick.roebuck@smartaimemory.com
+- Twitter/X: [@smartaimemory]
 - LinkedIn: [Patrick Roebuck]
 
 ---
@@ -206,7 +215,7 @@ Built AI Nurse Florence from concept to production in 3.5 months using the Empat
 
 **Want to know when the full book launches?**
 
-→ **[Sign up for updates](https://deepstudy.ai/newsletter)** *(coming soon)*
+→ **[Sign up for updates](https://smartaimemory.com)** *(coming soon)*
 
 Or **star this repository** to follow along as new chapters are added.
 
@@ -221,7 +230,7 @@ This work is being developed in parallel with academic research on Anticipatory 
 - "Anticipatory AI in Healthcare: Clinical Compliance Case Study" (ICSE 2026)
 - "Multi-Agent Social Reasoning and Collective Intelligence" (AAAI 2026)
 
-**Research Collaboration**: Interested in academic partnership? Contact research@deepstudy.ai
+**Research Collaboration**: Interested in academic partnership? Contact admin@smartaimemory.com
 
 **Target Institutions**: MIT CSAIL, Stanford HAI, CMU HCII, UC Berkeley BAIR
 
@@ -232,8 +241,8 @@ This work is being developed in parallel with academic research on Anticipatory 
 Found a typo? Have feedback on the preview chapter? Want to share your own Level 4 implementation?
 
 **Ways to contribute**:
-- 🐛 **Report issues**: [Open an issue](https://github.com/deepstudy-ai/empathy-framework-book-preview/issues)
-- 💬 **Share feedback**: [Start a discussion](https://github.com/deepstudy-ai/empathy-framework-book-preview/discussions)
+- 🐛 **Report issues**: [Open an issue](https://github.com/Smart-AI-Memory/empathy-framework/issues)
+- 💬 **Share feedback**: [Start a discussion](https://github.com/Smart-AI-Memory/empathy-framework/discussions)
 - 📖 **Use case submissions**: Share your Empathy Framework implementations
 - ⭐ **Spread the word**: Star this repo, share on social media
 
@@ -241,7 +250,7 @@ Found a typo? Have feedback on the preview chapter? Want to share your own Level
 
 ## License
 
-Copyright © 2025 Deep Study AI, LLC
+Copyright © 2025 Smart AI Memory, LLC
 
 **Preview Chapter**: Available for free reading and sharing (with attribution)
 
@@ -299,4 +308,4 @@ A: The framework is tool-agnostic. Examples use Claude/GPT-4/LangGraph, but prin
 
 🔔 **Watch** for notifications when updates are published
 
-🗣️ **Discuss** in [GitHub Discussions](https://github.com/deepstudy-ai/empathy-framework-book-preview/discussions)
+🗣️ **Discuss** in [GitHub Discussions](https://github.com/Smart-AI-Memory/empathy-framework/discussions)

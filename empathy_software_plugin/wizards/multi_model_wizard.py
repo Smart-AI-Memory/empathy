@@ -8,7 +8,7 @@ model for each task). But we learned: model coordination overhead, prompt
 consistency, and cost tracking become complex fast. This wizard alerts before
 those issues compound.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

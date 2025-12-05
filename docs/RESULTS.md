@@ -162,7 +162,7 @@ Week 6:  90.71% (1,489 tests) - Integration & edge cases ✅
 
 ### License Header Template
 ```python
-# Copyright (c) 2025 Deep Study AI, LLC
+# Copyright (c) 2025 Smart AI Memory, LLC
 # Licensed under Fair Source License 0.9
 # See LICENSE file for details
 # Converts to Apache 2.0 on January 1, 2029

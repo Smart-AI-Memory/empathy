@@ -2,6 +2,9 @@
 
 Complete guide to HIPAA-compliant Level 4 Anticipatory wizards for healthcare applications.
 
+!!! tip "Try the Live Demo"
+    Explore all 23 healthcare wizards in action at **[healthcare.smartaimemory.com](https://healthcare.smartaimemory.com/static/dashboard.html)**. Test the complete workflow from data entry to document generation - no installation required.
+
 ---
 
 ## Overview

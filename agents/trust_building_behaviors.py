@@ -13,7 +13,7 @@ These behaviors demonstrate Level 4 Anticipatory Empathy by:
 3. Providing structural relief (not just emotional support)
 4. Building trust through consistent, helpful actions
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

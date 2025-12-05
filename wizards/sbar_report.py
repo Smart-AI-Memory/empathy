@@ -9,10 +9,9 @@ from datetime import datetime
 
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
+from services.openai_client import get_client
 from utils.api_responses import create_error_response, create_success_response
 from utils.logging import get_logger
-
-from services.openai_client import get_client
 
 router = APIRouter(prefix="/wizards/sbar-report", tags=["wizards"])
 logger = get_logger(__name__)

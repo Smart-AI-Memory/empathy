@@ -164,7 +164,7 @@ And it's available now.
 ---
 
 **About the Empathy Framework**
-Open-source AI framework for understanding code through 5 levels of empathy, from syntax to cross-domain pattern transfer. Built by Deep Study AI, LLC.
+Open-source AI framework for understanding code through 5 levels of empathy, from syntax to cross-domain pattern transfer. Built by Smart AI Memory, LLC.
 
 **Contact:** patrick.roebuck1955@gmail.com
 **Organization:** Smart-AI-Memory

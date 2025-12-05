@@ -5,7 +5,7 @@ Checks patient sensor data against clinical protocol criteria.
 
 This is the "linter" for healthcare - runs the protocol rules against current state.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

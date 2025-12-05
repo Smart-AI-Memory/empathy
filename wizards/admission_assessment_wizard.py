@@ -39,7 +39,7 @@ except ImportError:
 settings = get_settings()
 
 router = APIRouter(
-    prefix="/api/v1/wizards/admission-assessment",
+    prefix="/wizards/admission-assessment",
     tags=["clinical-wizards"],
     responses={
         404: {"description": "Wizard session not found"},
@@ -147,6 +147,14 @@ ADMISSION_ASSESSMENT_STEPS = {
         ],
         "help_text": "Identify nursing diagnoses, set priorities, establish patient-centered goals, and note education needs",
     },
+    7: {
+        "step": 7,
+        "title": "Review & Finalize",
+        "prompt": "Review your admission assessment and finalize the document",
+        "fields": ["review_complete", "user_approved"],
+        "help_text": "Review all sections of the admission assessment. Click 'Generate Preview' to see the formatted assessment. You can go back to edit any section before finalizing.",
+        "is_review_step": True,
+    },
 }
 
 
@@ -165,8 +173,12 @@ async def _store_wizard_session(wizard_id: str, session_data: dict[str, Any]) ->
         if _has_redis:
             redis_client = await get_redis_client()
             if redis_client:
+                import json
+
                 cache_key = f"wizard:admission_assessment:{wizard_id}"
-                await redis_client.setex(cache_key, 7200, str(session_data))  # 2 hour TTL
+                await redis_client.setex(
+                    cache_key, 7200, json.dumps(session_data)  # 2 hour TTL - FIXED: use JSON
+                )
                 logger.info(f"Stored admission assessment wizard session {wizard_id} in Redis")
                 return True
     except Exception as e:
@@ -184,12 +196,13 @@ async def _get_wizard_session(wizard_id: str) -> dict[str, Any] | None:
         if _has_redis:
             redis_client = await get_redis_client()
             if redis_client:
+                import json
+
                 cache_key = f"wizard:admission_assessment:{wizard_id}"
                 session_str = await redis_client.get(cache_key)
                 if session_str:
-                    import ast
-
-                    return ast.literal_eval(session_str)
+                    # SECURITY FIX: Use json.loads() instead of ast.literal_eval()
+                    return json.loads(session_str)
     except Exception as e:
         logger.warning(f"Failed to retrieve session from Redis: {e}, checking memory")
 
@@ -307,7 +320,7 @@ async def start_admission_assessment_wizard():
             "wizard_id": wizard_id,
             "wizard_type": "admission_assessment",
             "current_step": 1,
-            "total_steps": 6,
+            "total_steps": 7,
             "collected_data": {},
             "created_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
@@ -372,35 +385,14 @@ async def submit_admission_assessment_step(wizard_id: str, step_data: dict[str, 
         session["collected_data"].update(step_data.get("data", {}))
         session["updated_at"] = datetime.now().isoformat()
 
-        # Check if we're done
-        if current_step >= total_steps:
-            # Generate final report
-            report = _generate_admission_assessment_report(session["collected_data"])
+        # Advance to next step (but don't auto-complete, even on final step)
+        if current_step < total_steps:
+            next_step = current_step + 1
+            session["current_step"] = next_step
+        else:
+            # On review step - stay on same step, don't auto-complete
+            next_step = current_step
 
-            # Mark session as complete
-            session["completed"] = True
-            session["completed_at"] = datetime.now().isoformat()
-            await _store_wizard_session(wizard_id, session)
-
-            response_data = {
-                "wizard_session": session,
-                "report": report,
-                "progress": {
-                    "current": total_steps,
-                    "total": total_steps,
-                    "percentage": 100,
-                },
-                "completed": True,
-            }
-
-            return create_success_response(
-                data=response_data,
-                message="Admission assessment completed successfully",
-            )
-
-        # Move to next step
-        next_step = current_step + 1
-        session["current_step"] = next_step
         await _store_wizard_session(wizard_id, session)
 
         # Get next step configuration
@@ -502,6 +494,103 @@ Enhanced text:"""
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to enhance text: {str(e)}",
         )
+
+
+@router.post("/{wizard_id}/preview", summary="Preview admission assessment report")
+async def preview_admission_assessment_report(wizard_id: str):
+    """
+    Generate preview of admission assessment report without finalizing.
+
+    This endpoint allows users to see the formatted admission assessment before
+    finalizing it. The report is NOT marked as complete. Users can
+    still go back and edit data after previewing.
+    """
+    try:
+        session = await _get_wizard_session(wizard_id)
+        if not session:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+        # Verify user is on review step
+        if session["current_step"] != session["total_steps"]:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Not on review step. Complete steps 1-{session['total_steps']-1} first.",
+            )
+
+        # Generate preview report (does NOT mark as complete)
+        preview_report = _generate_admission_assessment_report(session["collected_data"])
+
+        # Store preview in session
+        session["preview_report"] = preview_report
+        session["preview_generated_at"] = datetime.now().isoformat()
+        await _store_wizard_session(wizard_id, session)
+
+        response_data = {
+            "preview": preview_report,
+            "wizard_session": session,
+            "message": "Review the admission assessment above. Click 'Finalize Report' to save, or go back to edit any section.",
+        }
+
+        return create_success_response(data=response_data, message="Preview generated successfully")
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.post("/{wizard_id}/save", summary="Finalize admission assessment report")
+async def save_admission_assessment_report(wizard_id: str, approval_data: dict[str, Any]):
+    """
+    Finalize and save the admission assessment report after user review and approval.
+
+    Requires that the user has:
+    1. Generated a preview first (/preview endpoint)
+    2. Explicitly approved the report (user_approved: true)
+
+    Only after calling this endpoint is the report marked as complete.
+    """
+    try:
+        session = await _get_wizard_session(wizard_id)
+        if not session:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+        # Verify preview was generated
+        if "preview_report" not in session:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Must generate preview before saving. Call /preview endpoint first.",
+            )
+
+        # Verify user explicitly approved
+        if not approval_data.get("user_approved", False):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User approval required. Set 'user_approved': true in request body.",
+            )
+
+        # NOW we mark as complete
+        session["completed"] = True
+        session["completed_at"] = datetime.now().isoformat()
+        session["final_report"] = session["preview_report"]
+        session["user_approved"] = True
+
+        await _store_wizard_session(wizard_id, session)
+
+        response_data = {
+            "wizard_session": session,
+            "report": session["final_report"],
+            "completed": True,
+        }
+
+        return create_success_response(
+            data=response_data, message="Admission assessment finalized successfully"
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @router.get("/{wizard_id}/report", summary="Get admission assessment report")

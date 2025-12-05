@@ -7,7 +7,7 @@ In our experience developing the Empathy Framework across multiple projects,
 this wizard identified testing scalability issues that would have surfaced
 weeks later, enabling us to implement automation frameworks proactively.
 
-Copyright 2025 Deep Study AI, LLC
+Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 

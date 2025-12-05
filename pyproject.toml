@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "empathy-framework"
-version = "1.8.0b0"
+version = "1.9.6"
 description = "A five-level maturity model for AI-human collaboration with anticipatory empathy"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.10"
@@ -228,8 +228,12 @@ select = [
 ignore = [
     "E501",  # line too long (handled by black)
     "B008",  # do not perform function calls in argument defaults
+    "B904",  # raise exceptions with from err (too verbose for HTTPException pattern)
     "C901",  # too complex
 ]
+
+[tool.ruff.lint.isort]
+known-first-party = ["services", "empathy_llm_toolkit", "empathy_software_plugin", "empathy_os", "coach_wizards"]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]  # unused imports in __init__.py
