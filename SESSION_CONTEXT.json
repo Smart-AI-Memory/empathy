@@ -1,0 +1,145 @@
+{
+  "session_date": "2025-11-30",
+  "session_summary": "Website link updates, MCP Registry submission preparation",
+
+  "projects": {
+    "empathy_framework": {
+      "path": "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework",
+      "version": "1.9.7",
+      "pypi": "empathy-framework",
+      "monthly_downloads": 1440,
+      "test_count": 1489,
+      "coverage": "76%"
+    },
+    "memdocs": {
+      "path": "/Users/patrickroebuck/projects/memdocs",
+      "version": "2.0.17",
+      "pypi": "memdocs",
+      "monthly_downloads": 1555,
+      "pending_changes": [
+        "README.md: Added mcp-name comment",
+        "pyproject.toml: Version bumped to 2.0.17"
+      ],
+      "needs_commit_and_publish": true
+    },
+    "website": {
+      "path": "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/website",
+      "changes_made": [
+        "Navigation.tsx: Dev Wizards link → https://wizards.smartaimemory.com",
+        "dashboard/page.tsx: Dev Wizards link → https://wizards.smartaimemory.com",
+        "sitemap.ts: Removed /dev-dashboard from sitemap"
+      ],
+      "needs_deployment": true
+    }
+  },
+
+  "completed_tasks": [
+    {
+      "task": "Update Dev Wizards links",
+      "files": [
+        "website/components/Navigation.tsx",
+        "website/app/dashboard/page.tsx",
+        "website/app/sitemap.ts"
+      ],
+      "old_url": "/dev-dashboard",
+      "new_url": "https://wizards.smartaimemory.com"
+    },
+    {
+      "task": "Build MCP Registry publisher CLI",
+      "location": "/tmp/mcp-registry/bin/mcp-publisher",
+      "note": "Built from source, Go installed via Homebrew"
+    },
+    {
+      "task": "GitHub authentication for MCP Registry",
+      "user": "silversurfer562",
+      "namespace": "io.github.silversurfer562"
+    },
+    {
+      "task": "Create server.json for MemDocs",
+      "file": "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/server.json"
+    },
+    {
+      "task": "Add mcp-name to MemDocs README",
+      "file": "/Users/patrickroebuck/projects/memdocs/README.md",
+      "line_added": "<!-- mcp-name: io.github.silversurfer562/memdocs -->"
+    },
+    {
+      "task": "Bump MemDocs version",
+      "file": "/Users/patrickroebuck/projects/memdocs/pyproject.toml",
+      "from": "2.0.16",
+      "to": "2.0.17"
+    }
+  ],
+
+  "pending_tasks": [
+    {
+      "priority": 1,
+      "task": "Complete MCP Registry publication",
+      "project": "memdocs",
+      "steps": [
+        "cd /Users/patrickroebuck/projects/memdocs",
+        "git add README.md pyproject.toml",
+        "git commit -m 'Add MCP Registry metadata and bump to 2.0.17'",
+        "git push origin main",
+        "rm -rf dist/",
+        "python -m build",
+        "python -m twine upload dist/*",
+        "cd /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework",
+        "/tmp/mcp-registry/bin/mcp-publisher login github",
+        "/tmp/mcp-registry/bin/mcp-publisher publish"
+      ]
+    },
+    {
+      "priority": 2,
+      "task": "Post Twitter announcement",
+      "file": "READY_TO_POST_TWITTER.txt",
+      "time_required": "5 minutes"
+    },
+    {
+      "priority": 3,
+      "task": "Send Anthropic partnership email",
+      "file": "READY_TO_SEND_EMAIL.txt",
+      "optimal_timing": "Tuesday-Thursday, 9-11am PT"
+    },
+    {
+      "priority": 4,
+      "task": "Deploy website changes",
+      "project": "website",
+      "changes": "Dev Wizards link now external"
+    },
+    {
+      "priority": 5,
+      "task": "Monitor PyPI name claim",
+      "issue_url": "https://github.com/pypi/support/issues/8401",
+      "expected_response": "1-2 weeks"
+    }
+  ],
+
+  "mcp_registry": {
+    "publisher_cli": "/tmp/mcp-registry/bin/mcp-publisher",
+    "authenticated_user": "silversurfer562",
+    "server_json_path": "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/server.json",
+    "target_namespace": "io.github.silversurfer562/memdocs",
+    "validation_requirement": "PyPI README must contain: mcp-name: io.github.silversurfer562/memdocs",
+    "last_error": "PyPI package ownership validation failed - README needs mcp-name",
+    "status": "awaiting_pypi_publish"
+  },
+
+  "marketing_materials": {
+    "ready_to_use": [
+      "READY_TO_POST_TWITTER.txt",
+      "READY_TO_SEND_EMAIL.txt",
+      "PITCH_DECK.md",
+      "MCP_REGISTRY_SUBMISSION_GUIDE.md"
+    ],
+    "metrics_updated": "10,000+ total downloads"
+  },
+
+  "useful_commands": {
+    "rebuild_mcp_publisher": "cd /tmp && git clone https://github.com/modelcontextprotocol/registry.git mcp-registry && cd mcp-registry && make publisher",
+    "mcp_login": "/tmp/mcp-registry/bin/mcp-publisher login github",
+    "mcp_publish": "/tmp/mcp-registry/bin/mcp-publisher publish",
+    "run_tests": "cd /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework && pytest",
+    "build_website": "cd /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/website && npm run build"
+  }
+}

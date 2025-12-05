@@ -1,0 +1,100 @@
+{
+  "task": "MCP Registry Publication for MemDocs",
+  "status": "pending_pypi_update",
+  "created": "2025-11-30",
+
+  "memdocs_project": {
+    "path": "/Users/patrickroebuck/projects/memdocs",
+    "changes_made": {
+      "readme": {
+        "file": "README.md",
+        "added_line": "<!-- mcp-name: io.github.silversurfer562/memdocs -->",
+        "location": "After badges, before navigation links (line 13)"
+      },
+      "version": {
+        "file": "pyproject.toml",
+        "old_version": "2.0.16",
+        "new_version": "2.0.17"
+      }
+    },
+    "commands_to_run": [
+      "git add README.md pyproject.toml",
+      "git commit -m \"Add MCP Registry metadata and bump to 2.0.17\"",
+      "git push origin main",
+      "rm -rf dist/",
+      "python -m build",
+      "python -m twine upload dist/*"
+    ]
+  },
+
+  "mcp_registry": {
+    "publisher_cli_path": "/tmp/mcp-registry/bin/mcp-publisher",
+    "authenticated_as": "silversurfer562",
+    "namespace": "io.github.silversurfer562",
+    "server_name": "memdocs",
+    "full_server_id": "io.github.silversurfer562/memdocs"
+  },
+
+  "server_json": {
+    "location": "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/server.json",
+    "content": {
+      "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+      "name": "io.github.silversurfer562/memdocs",
+      "description": "Git-native project memory for Claude Code teams with enterprise-grade audit compliance",
+      "repository": {
+        "url": "https://github.com/Smart-AI-Memory/memdocs",
+        "source": "github"
+      },
+      "version": "2.0.17",
+      "packages": [
+        {
+          "registryType": "pypi",
+          "identifier": "memdocs",
+          "version": "2.0.17",
+          "runtimeHint": "uvx",
+          "transport": {
+            "type": "stdio"
+          },
+          "environmentVariables": [
+            {
+              "name": "PROJECT_ROOT",
+              "description": "Root directory of the project to track",
+              "isRequired": false,
+              "format": "string",
+              "isSecret": false
+            },
+            {
+              "name": "ANTHROPIC_API_KEY",
+              "description": "API key for Claude AI operations (summarization, analysis)",
+              "isRequired": true,
+              "format": "string",
+              "isSecret": true
+            }
+          ]
+        }
+      ]
+    }
+  },
+
+  "validation_requirements": {
+    "pypi_readme_must_contain": "mcp-name: io.github.silversurfer562/memdocs",
+    "github_namespace_owner": "silversurfer562",
+    "registry_url": "https://registry.modelcontextprotocol.io"
+  },
+
+  "verification_urls": {
+    "pypi_package": "https://pypi.org/project/memdocs/2.0.17/",
+    "github_repo": "https://github.com/Smart-AI-Memory/memdocs",
+    "mcp_registry": "https://registry.modelcontextprotocol.io/servers/io.github.silversurfer562/memdocs"
+  },
+
+  "next_steps_for_claude": [
+    "In MemDocs project: Verify README.md contains mcp-name comment",
+    "In MemDocs project: Verify pyproject.toml version is 2.0.17",
+    "In MemDocs project: Commit and push changes",
+    "In MemDocs project: Build with 'python -m build'",
+    "In MemDocs project: Upload with 'twine upload dist/*'",
+    "In Empathy project: Re-authenticate with 'mcp-publisher login github' if needed",
+    "In Empathy project: Publish with 'mcp-publisher publish'"
+  ]
+}
