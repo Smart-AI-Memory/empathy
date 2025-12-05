@@ -4,6 +4,7 @@ Wizard Dashboard Backend API
 Provides REST endpoints for wizard data.
 """
 
+import time
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,8 +18,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-import time
 
 # Calculate timestamps for realistic created/updated dates
 NOW = int(time.time() * 1000)

@@ -44,7 +44,7 @@ def benchmark_pipeline(iterations=100):
 
         # Benchmark
         start = time.perf_counter()
-        for i in range(iterations):
+        for _ in range(iterations):
             integration.store_pattern(
                 content=test_content,
                 pattern_type="clinical",

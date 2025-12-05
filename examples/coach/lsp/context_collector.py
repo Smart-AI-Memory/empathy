@@ -202,7 +202,11 @@ Recent commits: {git_info['recent_commits']}
         elif (project_root / "requirements.txt").exists():
             try:
                 deps = (project_root / "requirements.txt").read_text()
-                lines = [l.strip() for l in deps.split("\n") if l.strip() and not l.startswith("#")]
+                lines = [
+                    line.strip()
+                    for line in deps.split("\n")
+                    if line.strip() and not line.startswith("#")
+                ]
                 return "Python requirements:\n" + "\n".join(lines[:15])
             except Exception:
                 return "Python project (requirements.txt found)"

@@ -217,7 +217,6 @@ class TestAnalyzeMethod:
                 return_value=mock_trajectory_prediction,
             ),
         ):
-
             context = {
                 "patient_id": "12345",
                 "sensor_data": {"heart_rate": 105, "temperature": 38.5},
@@ -255,7 +254,6 @@ class TestAnalyzeMethod:
                 return_value=mock_trajectory_prediction,
             ),
         ):
-
             context = {
                 "patient_id": "12345",
                 "sensor_data": '{"heart_rate": 105}',
@@ -284,7 +282,6 @@ class TestAnalyzeMethod:
                 return_value=mock_trajectory_prediction,
             ),
         ):
-
             context = {
                 "patient_id": "12345",
                 "sensor_data": {"heart_rate": 105, "temperature": 38.5},
@@ -338,7 +335,6 @@ class TestAnalyzeMethod:
                 return_value=mock_trajectory_prediction,
             ),
         ):
-
             # First reading
             context1 = {"patient_id": "12345", "sensor_data": {"heart_rate": 90}}
             await monitor.analyze(context1)
@@ -374,7 +370,6 @@ class TestAnalyzeMethod:
                 return_value=mock_trajectory_prediction,
             ),
         ):
-
             context = {"patient_id": "12345", "sensor_data": {"heart_rate": 90}}
             await monitor.analyze(context)
 

@@ -103,14 +103,14 @@ def analyze_healthcare_handoff(memory: PatternMemory):
     # Read healthcare code
     healthcare_file = Path(__file__).parent / "data" / "healthcare_handoff_code.py"
     with open(healthcare_file) as f:
-        healthcare_code = f.read()
+        f.read()
 
     print_info("Analyzing healthcare handoff protocol...")
     print_info(f"File: {healthcare_file.name}")
     print()
 
     # Use ComplianceWizard to analyze healthcare protocol
-    wizard = ComplianceWizard()
+    ComplianceWizard()
 
     # Create mock issues based on the healthcare code's vulnerabilities
     issues = [
@@ -190,14 +190,14 @@ def analyze_deployment_pipeline(memory: PatternMemory, healthcare_pattern: dict)
     # Read deployment code
     deployment_file = Path(__file__).parent / "data" / "deployment_pipeline.py"
     with open(deployment_file) as f:
-        deployment_code = f.read()
+        f.read()
 
     print_info("Analyzing software deployment pipeline...")
     print_info(f"File: {deployment_file.name}")
     print()
 
     # Use CICDWizard to analyze deployment
-    wizard = CICDWizard()
+    CICDWizard()
 
     print("CICDWizard Analysis:")
     print_info("Standard analysis complete")
@@ -317,7 +317,7 @@ def main():
     input("\n\nPress Enter to continue to software analysis...\n")
 
     # Step 2: Analyze software domain with cross-domain pattern matching
-    prediction = analyze_deployment_pipeline(memory, healthcare_pattern)
+    analyze_deployment_pipeline(memory, healthcare_pattern)
 
     # Summary
     print_header("SUMMARY: Level 5 Systems Empathy", "=")

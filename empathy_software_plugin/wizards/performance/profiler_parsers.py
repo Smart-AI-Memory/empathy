@@ -93,9 +93,16 @@ class CProfileParser(BaseProfilerParser):
         for line in data.split("\n"):
             match = re.match(pattern, line.strip())
             if match:
-                (ncalls, tottime, percall_tot, cumtime, percall_cum, filepath, lineno, funcname) = (
-                    match.groups()
-                )
+                (
+                    ncalls,
+                    tottime,
+                    percall_tot,
+                    cumtime,
+                    percall_cum,
+                    filepath,
+                    lineno,
+                    funcname,
+                ) = match.groups()
 
                 profiles.append(
                     FunctionProfile(

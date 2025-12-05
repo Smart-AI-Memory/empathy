@@ -49,7 +49,7 @@ class TestHealthcareWizardConfiguration:
             enable_security=False,  # Not HIPAA compliant
         )
 
-        wizard = HealthcareWizard(llm)
+        HealthcareWizard(llm)
 
         # Should log warning about security not enabled
         assert any(
