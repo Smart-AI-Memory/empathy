@@ -1,7 +1,29 @@
 {
-  "task": "MCP Registry Publication for MemDocs",
-  "status": "pending_pypi_update",
+  "task": "MCP Registry Publication for MemDocs + Empathy PyPI Publication",
+  "status": "pending_pypi_updates",
   "created": "2025-11-30",
+  "updated": "2025-12-05",
+
+  "empathy_project": {
+    "path": "/Users/patrickroebuck/projects/empathy_review_20251109_212721/empathy",
+    "package_name": "empathy",
+    "version": "2.0.0",
+    "status": "built_awaiting_name_claim",
+    "dist_location": "/Users/patrickroebuck/projects/empathy_review_20251109_212721/empathy/dist/",
+    "pypi_name_claim_issue": "https://github.com/pypi/support/issues/8401",
+    "commands_when_approved": [
+      "cd /Users/patrickroebuck/projects/empathy_review_20251109_212721/empathy",
+      "python -m twine upload dist/*"
+    ]
+  },
+
+  "empathy_framework_project": {
+    "path": "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework",
+    "package_name": "empathy-framework",
+    "version": "2.0.0",
+    "status": "published",
+    "pypi_url": "https://pypi.org/project/empathy-framework/2.0.0/"
+  },
 
   "memdocs_project": {
     "path": "/Users/patrickroebuck/projects/memdocs",
