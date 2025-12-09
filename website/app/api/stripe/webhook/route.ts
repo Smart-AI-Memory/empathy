@@ -111,9 +111,16 @@ export async function POST(req: NextRequest) {
         // Initialize database if needed
         await ensureDbInitialized();
 
+        // Get customer email - check both locations
+        const customerEmail = session.customer_email || session.customer_details?.email;
+        if (!customerEmail) {
+          console.error('No customer email found in session');
+          break;
+        }
+
         // Create or find customer
         const customer = await findOrCreateCustomer(
-          session.customer_email!,
+          customerEmail,
           session.customer as string,
           session.customer_details?.name || undefined
         );
