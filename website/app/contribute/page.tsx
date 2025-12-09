@@ -41,7 +41,7 @@ export default function ContributePage() {
           <div className="container">
             <div className="max-w-5xl mx-auto">
               <h2 className="text-3xl font-bold text-center mb-12">
-                Monthly Sponsorship Tiers
+                Support Tiers
               </h2>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -52,7 +52,6 @@ export default function ContributePage() {
                     <h3 className="text-xl font-bold mb-2">Coffee Supporter</h3>
                     <div className="mb-4">
                       <span className="text-4xl font-bold">$5</span>
-                      <span className="text-[var(--muted)]">/month</span>
                     </div>
                   </div>
                   <ul className="space-y-2 mb-6 text-sm text-[var(--text-secondary)]">
@@ -71,8 +70,8 @@ export default function ContributePage() {
                   </ul>
                   <CheckoutButton
                     priceId={CONTRIB_5_PRICE_ID}
-                    mode="subscription"
-                    buttonText="$5/month"
+                    mode="payment"
+                    buttonText="Contribute $5"
                     className="btn btn-outline w-full"
                   />
                 </div>
@@ -84,7 +83,6 @@ export default function ContributePage() {
                     <h3 className="text-xl font-bold mb-2">Star Supporter</h3>
                     <div className="mb-4">
                       <span className="text-4xl font-bold">$25</span>
-                      <span className="text-[var(--muted)]">/month</span>
                     </div>
                   </div>
                   <ul className="space-y-2 mb-6 text-sm text-[var(--text-secondary)]">
@@ -103,8 +101,8 @@ export default function ContributePage() {
                   </ul>
                   <CheckoutButton
                     priceId={CONTRIB_25_PRICE_ID}
-                    mode="subscription"
-                    buttonText="$25/month"
+                    mode="payment"
+                    buttonText="Contribute $25"
                     className="btn btn-outline w-full"
                   />
                 </div>
@@ -121,7 +119,6 @@ export default function ContributePage() {
                     <h3 className="text-xl font-bold mb-2">Rocket Supporter</h3>
                     <div className="mb-4">
                       <span className="text-4xl font-bold">$100</span>
-                      <span className="text-[var(--muted)]">/month</span>
                     </div>
                   </div>
                   <ul className="space-y-2 mb-6 text-sm text-[var(--text-secondary)]">
@@ -140,8 +137,8 @@ export default function ContributePage() {
                   </ul>
                   <CheckoutButton
                     priceId={CONTRIB_100_PRICE_ID}
-                    mode="subscription"
-                    buttonText="$100/month"
+                    mode="payment"
+                    buttonText="Contribute $100"
                     className="btn btn-primary w-full"
                   />
                 </div>
@@ -153,7 +150,6 @@ export default function ContributePage() {
                     <h3 className="text-xl font-bold mb-2">Diamond Supporter</h3>
                     <div className="mb-4">
                       <span className="text-4xl font-bold">$500</span>
-                      <span className="text-[var(--muted)]">/month</span>
                     </div>
                   </div>
                   <ul className="space-y-2 mb-6 text-sm text-[var(--text-secondary)]">
@@ -172,8 +168,8 @@ export default function ContributePage() {
                   </ul>
                   <CheckoutButton
                     priceId={CONTRIB_500_PRICE_ID}
-                    mode="subscription"
-                    buttonText="$500/month"
+                    mode="payment"
+                    buttonText="Contribute $500"
                     className="btn btn-outline w-full"
                   />
                 </div>
