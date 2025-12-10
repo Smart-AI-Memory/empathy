@@ -1,0 +1,55 @@
+# Docker Compose for Empathy Framework Development
+#
+# Services:
+#   - redis: Redis for short-term memory
+#   - redis-commander: Web UI for Redis (optional, for debugging)
+#
+# Usage:
+#   docker-compose up -d          # Start all services
+#   docker-compose up redis       # Start only Redis
+#   docker-compose down           # Stop all services
+#   docker-compose logs redis     # View Redis logs
+#
+# Copyright 2025 Smart AI Memory, LLC
+# Licensed under Fair Source 0.9
+
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: empathy-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 100mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Optional: Redis Commander web UI for debugging
+  # Access at http://localhost:8081
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: empathy-redis-commander
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - debug  # Only starts with: docker-compose --profile debug up
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  default:
+    name: empathy-network
