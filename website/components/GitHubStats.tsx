@@ -27,8 +27,8 @@ export default function GitHubStats({ repo = 'Smart-AI-Memory/empathy', compact 
           headers: {
             Accept: 'application/vnd.github.v3+json',
           },
-          // Cache for 5 minutes
-          next: { revalidate: 300 },
+          // Cache for 1 hour
+          next: { revalidate: 3600 },
         });
 
         if (!response.ok) {

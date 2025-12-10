@@ -9,17 +9,17 @@ export default function Footer() {
       role="contentinfo"
     >
       <div className="container py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Brand Column */}
-          <div className="md:col-span-1">
+          <div>
             <Link
               href="/"
               className="text-xl font-bold text-gradient hover:opacity-80 transition-opacity"
             >
-              Smart AI Memory
+              SmartAI Memory
             </Link>
             <p className="mt-4 text-sm text-[var(--text-secondary)]">
-              Building the future of AI-human collaboration with production-ready frameworks.
+              Building anticipatory AI systems that predict problems before they happen.
             </p>
             <div className="flex gap-4 mt-4">
               <a
@@ -67,10 +67,10 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/plugins"
+                  href="/book"
                   className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
                 >
-                  Plugins
+                  Book
                 </Link>
               </li>
               <li>
@@ -90,47 +90,22 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/docs"
+                  href="/framework-docs/"
                   className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
                 >
                   Documentation
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/faq"
-                  className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
-                >
-                  FAQ
-                </Link>
-              </li>
-              <li>
                 <a
-                  href="https://github.com/Smart-AI-Memory/empathy-framework/discussions"
+                  href="https://github.com/Smart-AI-Memory/empathy-framework"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
                 >
-                  Community
+                  GitHub
                 </a>
               </li>
-              <li>
-                <a
-                  href="https://github.com/Smart-AI-Memory/empathy-framework/issues"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
-                >
-                  Bug Reports
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Company Column */}
-          <div>
-            <h3 className="font-bold text-sm uppercase tracking-wide mb-4">Company</h3>
-            <ul className="space-y-2">
               <li>
                 <Link
                   href="/contact"
@@ -139,48 +114,20 @@ export default function Footer() {
                   Contact
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/book"
-                  className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
-                >
-                  Book
-                </Link>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/Smart-AI-Memory/empathy-framework/blob/main/LICENSE-FAIR-SOURCE.md"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
-                >
-                  Fair Source License
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/Smart-AI-Memory/empathy-framework/blob/main/LICENSE-COMMERCIAL.md"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
-                >
-                  Commercial License
-                </a>
-              </li>
             </ul>
           </div>
         </div>
 
         <div className="pt-8 border-t border-[var(--border)] flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-sm text-[var(--muted)] text-center md:text-left">
-            © {currentYear} Deep Study AI, LLC. All rights reserved.
+            © {currentYear} SmartAI Memory · Fair Source License
           </div>
           <div className="flex gap-6 text-xs text-[var(--muted)]">
             <Link href="/privacy" className="hover:text-[var(--primary)] transition-colors">
-              Privacy Policy
+              Privacy
             </Link>
             <Link href="/terms" className="hover:text-[var(--primary)] transition-colors">
-              Terms of Service
+              Terms
             </Link>
           </div>
         </div>

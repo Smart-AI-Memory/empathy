@@ -195,8 +195,63 @@ export default function BookPage() {
         </div>
       </section>
 
-      {/* Pre-order Benefits */}
+      {/* Chapter 23 Preview */}
       <section className="py-20 bg-[var(--border)] bg-opacity-30">
+        <div className="container">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <span className="text-xs px-3 py-1 bg-[var(--primary)] bg-opacity-20 text-[var(--primary)] rounded-full">
+                FREE PREVIEW
+              </span>
+            </div>
+            <h2 className="text-3xl font-bold text-center mb-6">Chapter 23: Distributed Memory Networks</h2>
+            <p className="text-center text-[var(--text-secondary)] mb-8 max-w-2xl mx-auto">
+              Learn how multiple AI agents coordinate through shared pattern libraries, resolve conflicts,
+              and collaborate efficiently. This chapter covers the ConflictResolver, AgentMonitor, and
+              team coordination patterns.
+            </p>
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              <div className="bg-[var(--background)] p-6 rounded-lg text-center">
+                <div className="text-3xl mb-3">🔀</div>
+                <h3 className="font-bold mb-2">Conflict Resolution</h3>
+                <p className="text-sm text-[var(--text-secondary)]">
+                  5 strategies for resolving pattern conflicts between agents
+                </p>
+              </div>
+              <div className="bg-[var(--background)] p-6 rounded-lg text-center">
+                <div className="text-3xl mb-3">📊</div>
+                <h3 className="font-bold mb-2">Team Monitoring</h3>
+                <p className="text-sm text-[var(--text-secondary)]">
+                  Track collaboration efficiency and agent performance
+                </p>
+              </div>
+              <div className="bg-[var(--background)] p-6 rounded-lg text-center">
+                <div className="text-3xl mb-3">🤝</div>
+                <h3 className="font-bold mb-2">Pattern Sharing</h3>
+                <p className="text-sm text-[var(--text-secondary)]">
+                  Agents learn from each other through shared pattern libraries
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="https://smart-ai-memory.github.io/memdocs-empathy-book/chapters/part-6/23-distributed-memory.html"
+                className="btn btn-primary"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Read Chapter 23 Free
+              </a>
+              <Link href="/demo/distributed-memory" className="btn btn-outline">
+                Try Interactive Demo
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pre-order Benefits */}
+      <section className="py-20">
         <div className="container">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-center mb-12">Pre-order Benefits</h2>

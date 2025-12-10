@@ -1,13 +1,43 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTheme } from '@/lib/theme-provider';
+
+const navItems = [
+  { label: 'Framework', href: '/framework' },
+  { label: 'Docs', href: '/framework-docs/' },
+  { label: 'Book', href: '/book' },
+  { label: 'Pricing', href: '/pricing' },
+];
+
+const demoItems = [
+  {
+    label: 'Healthcare Wizards',
+    href: 'https://healthcare.smartaimemory.com/static/dashboard.html',
+    external: true,
+    description: '14+ HIPAA-compliant clinical tools',
+  },
+  {
+    label: 'Dev Wizards',
+    href: 'https://wizards.smartaimemory.com',
+    external: true,
+    description: '16+ development & debugging tools',
+  },
+  {
+    label: 'Distributed Memory Demo',
+    href: '/demo/distributed-memory',
+    external: false,
+    description: 'Multi-agent coordination (Ch. 23)',
+  },
+];
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDemosOpen, setIsDemosOpen] = useState(false);
   const { setTheme, resolvedTheme } = useTheme();
+  const demosRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,6 +45,17 @@ export default function Navigation() {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close demos dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (demosRef.current && !demosRef.current.contains(event.target as Node)) {
+        setIsDemosOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const toggleTheme = () => {
@@ -44,67 +85,86 @@ export default function Navigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
-            <Link
-              href="/framework"
-              className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-            >
-              Framework
-            </Link>
-            <Link
-              href="/pricing"
-              className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/blog"
-              className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-            >
-              Blog
-            </Link>
-            <Link
-              href="/framework-docs/"
-              className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-            >
-              Docs
-            </Link>
-            <a
-              href="https://healthcare.smartaimemory.com/static/dashboard.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-            >
-              Healthcare Wizards
-            </a>
-            <a
-              href="https://wizards.smartaimemory.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-            >
-              Dev Wizards
-            </a>
-            <Link
-              href="/plugins"
-              className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-            >
-              Plugins
-            </Link>
-            <Link
-              href="/faq"
-              className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-            >
-              FAQ
-            </Link>
-            <Link
-              href="/contact"
-              className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-            >
-              Contact
-            </Link>
+            {navItems.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
+              >
+                {item.label}
+              </Link>
+            ))}
+
+            {/* Demos Dropdown */}
+            <div className="relative" ref={demosRef}>
+              <button
+                type="button"
+                onClick={() => setIsDemosOpen(!isDemosOpen)}
+                className="flex items-center gap-1 text-sm font-medium hover:text-[var(--primary)] transition-colors"
+                aria-expanded={isDemosOpen ? 'true' : 'false'}
+                aria-haspopup="true"
+              >
+                Demos
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={`transition-transform ${isDemosOpen ? 'rotate-180' : ''}`}
+                  aria-hidden="true"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+
+              {isDemosOpen && (
+                <div className="absolute top-full right-0 mt-2 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg py-2 animate-fade-in">
+                  {demoItems.map((demo) => (
+                    <a
+                      key={demo.label}
+                      href={demo.href}
+                      target={demo.external ? '_blank' : undefined}
+                      rel={demo.external ? 'noopener noreferrer' : undefined}
+                      className="block px-4 py-2 hover:bg-[var(--border)] hover:bg-opacity-50 transition-colors"
+                      onClick={() => setIsDemosOpen(false)}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm">{demo.label}</span>
+                        {demo.external && (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="text-[var(--muted)]"
+                            aria-hidden="true"
+                          >
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                            <polyline points="15 3 21 3 21 9" />
+                            <line x1="10" y1="14" x2="21" y2="3" />
+                          </svg>
+                        )}
+                      </div>
+                      <p className="text-xs text-[var(--muted)] mt-0.5">{demo.description}</p>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Theme Toggle */}
             <button
+              type="button"
               onClick={toggleTheme}
               className="p-2 rounded-lg hover:bg-[var(--border)] transition-colors"
               aria-label={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
@@ -180,10 +240,11 @@ export default function Navigation() {
 
           {/* Mobile Menu Button */}
           <button
+            type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden p-2 rounded-lg hover:bg-[var(--border)] transition-colors"
             aria-label="Toggle mobile menu"
-            aria-expanded={isMobileMenuOpen}
+            aria-expanded={isMobileMenuOpen ? 'true' : 'false'}
           >
             {isMobileMenuOpen ? (
               <svg
@@ -226,75 +287,40 @@ export default function Navigation() {
         {isMobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-[var(--border)]">
             <div className="flex flex-col space-y-4">
-              <Link
-                href="/framework"
-                className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Framework
-              </Link>
-              <Link
-                href="/pricing"
-                className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Pricing
-              </Link>
-              <Link
-                href="/blog"
-                className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Blog
-              </Link>
-              <Link
-                href="/framework-docs/"
-                className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Docs
-              </Link>
-              <a
-                href="https://healthcare.smartaimemory.com/static/dashboard.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Healthcare Wizards
-              </a>
-              <a
-                href="https://wizards.smartaimemory.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Dev Wizards
-              </a>
-              <Link
-                href="/plugins"
-                className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Plugins
-              </Link>
-              <Link
-                href="/faq"
-                className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                FAQ
-              </Link>
-              <Link
-                href="/contact"
-                className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Contact
-              </Link>
+              {navItems.map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="text-sm font-medium hover:text-[var(--primary)] transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
+
+              {/* Mobile Demos Section */}
+              <div className="pt-2 border-t border-[var(--border)]">
+                <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide mb-2">
+                  Demos
+                </p>
+                {demoItems.map((demo) => (
+                  <a
+                    key={demo.label}
+                    href={demo.href}
+                    target={demo.external ? '_blank' : undefined}
+                    rel={demo.external ? 'noopener noreferrer' : undefined}
+                    className="block py-2 text-sm font-medium hover:text-[var(--primary)] transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {demo.label}
+                    {demo.external && ' ↗'}
+                  </a>
+                ))}
+              </div>
+
               <div className="flex items-center gap-4 pt-4 border-t border-[var(--border)]">
                 <button
+                  type="button"
                   onClick={toggleTheme}
                   className="flex items-center gap-2 text-sm font-medium"
                   aria-label={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
