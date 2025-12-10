@@ -34,6 +34,14 @@ from .logging_config import LoggingConfig, get_logger
 from .monitoring import AgentMetrics, AgentMonitor, TeamMetrics
 from .pattern_library import Pattern, PatternLibrary, PatternMatch
 from .persistence import MetricsCollector, PatternPersistence, StateManager
+from .redis_memory import (
+    AccessTier,
+    AgentCredentials,
+    ConflictContext,
+    RedisShortTermMemory,
+    StagedPattern,
+    TTLStrategy,
+)
 from .trust_building import TrustBuildingBehaviors
 
 __all__ = [
@@ -59,6 +67,13 @@ __all__ = [
     "AgentMonitor",
     "AgentMetrics",
     "TeamMetrics",
+    # Redis Short-Term Memory
+    "RedisShortTermMemory",
+    "AccessTier",
+    "AgentCredentials",
+    "StagedPattern",
+    "ConflictContext",
+    "TTLStrategy",
     # Trust
     "TrustBuildingBehaviors",
     # Persistence
