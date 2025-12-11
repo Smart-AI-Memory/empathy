@@ -26,7 +26,7 @@ export default function BookPage() {
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-5xl font-bold mb-6">
-              The Empathy Framework
+              Empathy
             </h1>
             <p className="text-2xl mb-4 opacity-90">
               Multi-Agent Coordination with Persistent and Short-Term Memory
@@ -47,7 +47,7 @@ export default function BookPage() {
               <div className="w-full max-w-md aspect-[3/4] gradient-accent rounded-lg shadow-2xl mb-8 flex items-center justify-center">
                 <div className="text-center text-white p-8">
                   <div className="text-6xl mb-4">📖</div>
-                  <h2 className="text-3xl font-bold mb-2">The Empathy Framework</h2>
+                  <h2 className="text-3xl font-bold mb-2">Empathy</h2>
                   <p className="text-lg opacity-90">Multi-Agent Coordination with Persistent and Short-Term Memory</p>
                   <p className="text-sm mt-4 opacity-75">By Patrick Roebuck</p>
                 </div>

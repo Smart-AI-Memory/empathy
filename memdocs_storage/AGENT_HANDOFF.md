@@ -6,7 +6,7 @@
 
 ## Book Title Update
 
-**Title**: The Empathy Framework
+**Title**: Empathy
 **Subtitle**: Multi-Agent Coordination with Persistent and Short-Term Memory
 **Author**: Patrick Roebuck
 
