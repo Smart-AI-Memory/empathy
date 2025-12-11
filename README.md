@@ -19,13 +19,12 @@
 # Install core framework
 pip install empathy-framework
 
-# Install with MemDocs + LLM providers (recommended)
+# Install full framework with all features (recommended)
 # Built with Claude Code - created in consultation with Claude Sonnet 4.5
 pip install empathy-framework[full]
 
 # Or install specific components:
 pip install empathy-framework[llm]      # LLM providers (Anthropic, OpenAI)
-pip install empathy-framework[memdocs]  # MemDocs integration
 pip install empathy-framework[all]      # Everything including dev tools
 ```
 
@@ -51,7 +50,7 @@ result = await os.collaborate("Build a secure API endpoint")
 
 The **Empathy** is a systematic approach to building AI systems that progress from reactive responses to anticipatory problem prevention. By integrating emotional intelligence (Goleman), tactical empathy (Voss), systems thinking (Meadows, Senge), and clear reasoning (Naval Ravikant), it provides a maturity model for AI-human collaboration.
 
-**Part of the Smart-AI-Memory ecosystem** - Designed to work seamlessly with [MemDocs](https://github.com/Smart-AI-Memory/memdocs) for intelligent document memory and retrieval, enabling AI systems to maintain long-term context and learn from interactions over time.
+**Part of the Smart-AI-Memory ecosystem** - Includes built-in long-term memory for pattern storage, enabling AI systems to maintain context and learn from interactions over time.
 
 ### 🚀 Built with Claude Code
 
@@ -61,11 +60,10 @@ The **Empathy** is a systematic approach to building AI systems that progress fr
 
 **This framework was created in consultation with Claude Sonnet 4.5 using [Claude Code](https://claude.ai/claude-code)** (Anthropic's official developer tool - CLI and VS Code extension) combined with **MemDocs** and the **Empathy Framework** itself, demonstrating the **200-400% productivity gains** possible with Level 4 Anticipatory AI:
 
-**Claude Code + MemDocs + Empathy Framework = Level 4-5 Development**
+**Claude Code + Empathy Framework = Level 4-5 Development**
 
 - **Claude Code**: Anthropic's official developer tool - AI pair programming with multi-file editing, command execution, and anticipatory assistance (CLI and VS Code extension)
-- **MemDocs**: Git-native project memory maintaining context across sessions (also created with Claude Code)
-- **Empathy Framework**: Structured 5-level maturity model guiding AI behavior from reactive to anticipatory
+- **Empathy Framework**: Structured 5-level maturity model with built-in long-term memory, guiding AI behavior from reactive to anticipatory
 
 **Measured Results from This Project**:
 - **32.19% → 83.13% test coverage** in systematic phases (2.6x increase)
@@ -74,15 +72,15 @@ The **Empathy** is a systematic approach to building AI systems that progress fr
 - **Parallel agent processing** completing 3 complex modules simultaneously
 - **Zero test failures** maintained throughout (quality at scale)
 
-The combination of Claude Code (Anthropic's official developer tool) providing Level 4 anticipatory suggestions, MemDocs maintaining architectural context, and the Empathy Framework ensuring systematic quality progression demonstrates the non-linear productivity multiplier effect described in our book chapter.
+The combination of Claude Code (Anthropic's official developer tool) providing Level 4 anticipatory suggestions and the Empathy Framework ensuring systematic quality progression demonstrates the non-linear productivity multiplier effect described in our book chapter.
 
-**Both empathy-framework and memdocs were created in consultation with Claude Sonnet 4.5 using Claude Code**, showcasing what's possible when developer tools reach Level 4-5 maturity.
+**The Empathy Framework was created in consultation with Claude Sonnet 4.5 using Claude Code**, showcasing what's possible when developer tools reach Level 4-5 maturity.
 
 **Empathy**, in this context, is not about feelings—it's about:
 - **Alignment**: Understanding the human's goals, context, and constraints
 - **Prediction**: Anticipating future needs based on system trajectory
 - **Timely Action**: Intervening at the right moment with the right support
-- **Memory Integration**: Leveraging MemDocs to maintain context across sessions and learn from patterns
+- **Memory Integration**: Built-in long-term memory to maintain context across sessions and learn from patterns
 
 ---
 
@@ -120,6 +118,10 @@ The Empathy provides:
 - Security pattern detection (SQL injection, XSS, CSRF)
 - Performance anti-pattern identification
 - Extensible wizard base class for custom implementations
+- **Enterprise-grade PII scrubbing** (GDPR, HIPAA, SOC2 compliant)
+- **Secrets detection** (API keys, passwords, private keys)
+- **Audit logging** with structured JSON for SIEM integration
+- **Secure MemDocs** with AES-256-GCM encryption
 
 **AI Integration:**
 - LLM toolkit with Claude Sonnet 4.5 and GPT-4 support
@@ -137,6 +139,39 @@ The Empathy provides:
 - FastAPI backend for REST API access
 - Plugin architecture for extensibility
 - Pattern library for Level 5 sharing
+
+---
+
+## Enterprise Security
+
+The Empathy Framework includes enterprise-grade security controls built for GDPR, HIPAA, and SOC2 compliance:
+
+| Feature | Description |
+|---------|-------------|
+| **PII Scrubbing** | Automatic detection and removal of emails, SSN, phone numbers, credit cards, IP addresses, medical record numbers |
+| **Secrets Detection** | Detects API keys (Anthropic, OpenAI, AWS, GitHub, Stripe), passwords, private keys, JWT tokens |
+| **Audit Logging** | Tamper-evident JSON logs for SIEM integration, SOC2/HIPAA compliant |
+| **Secure MemDocs** | Three-tier classification (PUBLIC, INTERNAL, SENSITIVE) with AES-256-GCM encryption |
+| **Claude Memory** | Hierarchical security policies (Enterprise → User → Project) |
+| **Air-Gapped Mode** | Full support for disconnected environments with local LLMs |
+
+```python
+from empathy_llm_toolkit.security import PIIScrubber, SecretsDetector
+
+# Scrub PII before sending to LLM
+scrubber = PIIScrubber()
+sanitized, detections = scrubber.scrub("Contact john@email.com at 555-1234")
+# Output: "Contact [EMAIL] at [PHONE]"
+
+# Detect secrets in code
+detector = SecretsDetector()
+secrets = detector.detect(code_content)
+# Blocks API calls if secrets found
+```
+
+📖 **[Full Security Documentation](docs/FAQ.md#security-and-privacy)** | **[Security Architecture](SECURE_MEMORY_ARCHITECTURE.md)**
+
+---
 
 ## Development Status
 

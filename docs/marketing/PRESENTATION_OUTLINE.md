@@ -170,7 +170,7 @@ Let me show you what Level 5 looks like in practice."
 1. **Learn from Domain A (Healthcare)**
    - Analyze code/processes
    - Extract semantic patterns
-   - Store in long-term memory (MemDocs)
+   - Store in long-term memory (Long-Term Memory)
 
 2. **Apply to Domain B (Software)**
    - Analyze different code/processes
@@ -187,7 +187,7 @@ Let me show you what Level 5 looks like in practice."
   ```
   Healthcare Code
         ↓
-  [Extract Pattern] → MemDocs Storage
+  [Extract Pattern] → Long-Term Memory Storage
                             ↓
                      [Retrieve Pattern]
                             ↓
@@ -202,7 +202,7 @@ Let me show you what Level 5 looks like in practice."
 
 First, we analyze code or processes in Domain A—let's say healthcare. The framework extracts semantic patterns: not just 'this variable is named X,' but 'this is a handoff failure pattern caused by lack of verification.'
 
-These patterns are stored in long-term memory using MemDocs, our document memory system. They're tagged with metadata: domain, confidence, failure rates, solutions.
+These patterns are stored in long-term memory using Long-Term Memory, our document memory system. They're tagged with metadata: domain, confidence, failure rates, solutions.
 
 Second, when we analyze code in a completely different domain—Domain B, software deployment—the framework retrieves patterns that match semantically. It's asking 'have I seen this type of problem before, even in a different context?'
 
@@ -451,7 +451,7 @@ That's the power of Level 5 Systems Empathy."
 ## Slide 8: Architecture
 
 ### Title
-**How It Works: Coach Wizards + MemDocs**
+**How It Works: Coach Wizards + Long-Term Memory**
 
 ### Key Points
 
@@ -464,7 +464,7 @@ That's the power of Level 5 Systems Empathy."
 - ...and 11 more specialized wizards
 - Each implements Levels 1-4 analysis
 
-**MemDocs (Long-Term Pattern Memory):**
+**Long-Term Memory (Long-Term Pattern Memory):**
 - Persistent storage across sessions
 - Semantic pattern indexing
 - Cross-domain retrieval
@@ -472,7 +472,7 @@ That's the power of Level 5 Systems Empathy."
 - Continuous learning over time
 
 **Level 5 Integration:**
-- Wizards extract patterns → MemDocs stores → Wizards retrieve → Cross-domain predictions
+- Wizards extract patterns → Long-Term Memory stores → Wizards retrieve → Cross-domain predictions
 - Closed feedback loop
 - Gets smarter with every analysis
 
@@ -481,7 +481,7 @@ That's the power of Level 5 Systems Empathy."
   ```
   [Code Input]
        ↓
-  [Coach Wizards] ←→ [MemDocs Storage]
+  [Coach Wizards] ←→ [Long-Term Memory Storage]
        ↓                    ↑
   [Pattern Extraction]     |
        ↓                    |
@@ -490,22 +490,22 @@ That's the power of Level 5 Systems Empathy."
   [Predictions + Prevention]
   ```
 - **Icon grid showing all 16+ wizards**
-- **MemDocs logo/icon with database visualization**
+- **Long-Term Memory logo/icon with database visualization**
 - **Arrows showing data flow**
 
 ### Speaker Notes
 
-"The Empathy Framework combines two key components: Coach Wizards and MemDocs.
+"The Empathy Framework combines two key components: Coach Wizards and Long-Term Memory.
 
 Coach Wizards are specialized analyzers. We have 16 and counting. SecurityWizard for vulnerabilities. PerformanceWizard for optimization. ComplianceWizard for regulatory requirements. CICDWizard for deployment risks. Each wizard is an expert in its domain.
 
 Each wizard implements all five levels of the maturity model. They can analyze code reactively, guide you through fixes, proactively suggest improvements, and make anticipatory predictions.
 
-MemDocs is our long-term pattern memory system. When wizards extract patterns, MemDocs stores them with rich metadata: what domain, how confident, when discovered, what the solution is.
+Long-Term Memory is our long-term pattern memory system. When wizards extract patterns, Long-Term Memory stores them with rich metadata: what domain, how confident, when discovered, what the solution is.
 
 This storage persists across sessions. The framework remembers patterns from your codebase yesterday, last week, last year. And it can retrieve patterns semantically, not just by keyword matching.
 
-When a wizard analyzes new code, it queries MemDocs: 'have I seen this type of problem before, even in a different domain?' If there's a match, cross-domain prediction activates.
+When a wizard analyzes new code, it queries Long-Term Memory: 'have I seen this type of problem before, even in a different domain?' If there's a match, cross-domain prediction activates.
 
 This creates a continuous learning loop. The more code you analyze, the more patterns are stored, the better the predictions become. The framework gets smarter over time.
 
@@ -543,7 +543,7 @@ That's the architecture enabling Level 5 Transformative Empathy."
 
 **What's Included:**
 - All 16+ Coach Wizards
-- MemDocs integration
+- long-term memory
 - Level 1-5 capabilities
 - REST API access
 - Pre-commit hooks
@@ -586,7 +586,7 @@ And here's the key: on January 1, 2029, the license automatically converts to Ap
 
 This is sustainable development: commercial licenses fund ongoing improvements, small teams always have free access, and everyone benefits from the roadmap to open source.
 
-With your license, you get all 16 wizards, MemDocs integration, the full five-level capability stack, REST API, and regular updates.
+With your license, you get all 16 wizards, long-term memory, the full five-level capability stack, REST API, and regular updates.
 
 For enterprise needs, we offer custom wizard development, training workshops, priority support, and on-premise deployment options.
 
@@ -750,11 +750,11 @@ Keep these in reserve for Q&A or extended presentations:
 2. LLM-based abstraction (Claude/GPT-4)
 3. Metadata tagging (domain, confidence, context)
 4. Vector embedding for semantic search
-5. Storage in MemDocs with retrieval index
+5. Storage in Long-Term Memory with retrieval index
 
 **How matching works:**
 1. New code analyzed semantically
-2. Query MemDocs with pattern signature
+2. Query Long-Term Memory with pattern signature
 3. Cosine similarity across vector embeddings
 4. Threshold-based filtering (>0.75 similarity)
 5. Cross-domain candidates ranked by confidence

@@ -21,19 +21,21 @@ Licensed under Fair Source 0.9
 
 import pytest
 
+from empathy_os.redis_config import get_redis_memory
 from empathy_os.redis_memory import (
     AccessTier,
     AgentCredentials,
-    RedisShortTermMemory,
     StagedPattern,
     TTLStrategy,
 )
 
 
 def redis_available() -> bool:
-    """Check if Redis is available"""
+    """Check if Redis is available (respects REDIS_URL env var)"""
     try:
-        memory = RedisShortTermMemory(use_mock=False)
+        memory = get_redis_memory()
+        if memory.use_mock:
+            return False  # Mock mode doesn't count as "available"
         return memory.ping()
     except Exception:
         return False
@@ -48,8 +50,8 @@ pytestmark = pytest.mark.skipif(
 
 @pytest.fixture
 def memory():
-    """Create real Redis memory instance"""
-    mem = RedisShortTermMemory(use_mock=False)
+    """Create real Redis memory instance (respects REDIS_URL env var)"""
+    mem = get_redis_memory()
     yield mem
     # Cleanup: Clear all empathy keys after each test
     if mem._client:

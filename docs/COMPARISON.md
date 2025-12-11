@@ -100,7 +100,7 @@ Learn patterns from one domain (e.g., healthcare handoff protocols) and apply th
 **Cross-Domain Capabilities**:
 1. Healthcare → Software: Handoff protocols, compliance patterns, monitoring strategies
 2. Software → Healthcare: Testing methodologies, version control, incident tracking
-3. Memory Integration: MemDocs stores patterns for long-term learning
+3. Memory Integration: Long-Term Memory stores patterns for long-term learning
 
 **Competitors**: ❌ None offer cross-domain transfer
 - All competitors are single-domain tools (software OR healthcare, never both)

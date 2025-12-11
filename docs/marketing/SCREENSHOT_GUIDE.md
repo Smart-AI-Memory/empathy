@@ -149,7 +149,7 @@ Reasoning:
 ✨ What just happened:
 
   1. Healthcare analysis identified critical handoff failures
-  2. Pattern stored in long-term memory (MemDocs)
+  2. Pattern stored in long-term memory (Long-Term Memory)
   3. Software analysis retrieved healthcare pattern
   4. Cross-domain match: deployment handoffs have same vulnerabilities
   5. Level 4 Anticipatory: predicted failure 30-45 days ahead
@@ -164,7 +164,7 @@ Reasoning:
 🚀 This is Level 5 Transformative Empathy:
 
   Pattern learned in healthcare → Applied to software
-  Powered by: Empathy Framework + MemDocs
+  Powered by: Empathy Framework + Long-Term Memory
 ```
 
 **Annotation suggestions:**
@@ -208,7 +208,7 @@ from coach_wizards import (
 **Why:** Demonstrates completeness and professionalism
 
 #### 10. Architecture Diagram
-**What to show:** Coach Wizards + MemDocs integration
+**What to show:** Coach Wizards + long-term memory
 **Why:** Technical credibility (from docs or create custom)
 
 ---

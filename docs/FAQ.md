@@ -11,7 +11,8 @@
 - [Technical Questions](#technical-questions)
 - [Licensing and Pricing](#licensing-and-pricing)
 - [Integration and Usage](#integration-and-usage)
-- [MemDocs Integration](#memdocs-integration)
+- [Long-Term Memory](#long-term-memory)
+- [Security and Privacy](#security-and-privacy)
 - [Support and Community](#support-and-community)
 
 ---
@@ -29,7 +30,7 @@ Unlike traditional AI tools that simply answer questions, the Empathy Framework 
 Level 5 Systems Empathy is the world's first AI framework that can:
 
 1. **Learn patterns in one domain** (e.g., healthcare handoff protocols)
-2. **Store them in long-term memory** (via MemDocs integration)
+2. **Store them in long-term memory** (built-in pattern storage)
 3. **Apply them cross-domain** (e.g., predict software deployment failures)
 4. **Prevent failures before they happen** (using trajectory analysis)
 
@@ -231,7 +232,7 @@ Everything! There is no "free tier" vs "paid tier" - the entire framework is fre
 - Full source code access
 - All 16+ Coach wizards
 - All empathy levels (1-5)
-- MemDocs integration
+- Long-term memory (pattern storage)
 - Pattern library
 - Configuration system
 - CLI tools
@@ -443,40 +444,38 @@ class TestMyWizard(unittest.TestCase):
 
 ---
 
-## MemDocs Integration
+## Long-Term Memory
 
-### How does MemDocs integration work?
+### How does long-term memory work?
 
-MemDocs provides long-term memory for the Empathy Framework:
+The Empathy Framework includes built-in long-term memory for pattern storage:
 
-1. **Pattern Storage:** When a wizard finds an important pattern, it's stored in MemDocs
-2. **Cross-Domain Retrieval:** When analyzing code, MemDocs searches for similar patterns from other domains
+1. **Pattern Storage:** When a wizard finds an important pattern, it's stored in long-term memory
+2. **Cross-Domain Retrieval:** When analyzing code, the system searches for similar patterns from other domains
 3. **Level 5 Systems Empathy:** Patterns learned in healthcare can prevent failures in software
 
 **Installation:**
 
 ```bash
-pip install empathy-framework[full]  # Includes MemDocs
+pip install empathy-framework[full]  # Includes all components
 ```
 
 **Usage:**
 
 ```python
-from memdocs import MemoryStore
-from empathy_llm_toolkit import EmpathyLLM
+from empathy_os import EmpathyOS
 
-# Initialize shared memory
-memory = MemoryStore("patterns.db")
+# Initialize with built-in pattern storage
+os = EmpathyOS()
 
-# Framework automatically uses MemDocs if installed
-llm = EmpathyLLM(
-    provider="anthropic",
-    target_level=5,  # Level 5 requires MemDocs
-    pattern_library=memory
+# Long-term memory is enabled by default
+os.persist_pattern(
+    content="Pattern content",
+    pattern_type="coding_pattern"
 )
 ```
 
-### What's stored in MemDocs?
+### What's stored in long-term memory?
 
 **Patterns Stored:**
 - User interaction patterns (sequential, conditional, adaptive)
@@ -491,31 +490,27 @@ llm = EmpathyLLM(
 - Personal information
 - Proprietary business logic
 
-### Is my data secure with MemDocs?
+### Is my data secure with long-term memory?
 
-Yes! MemDocs is privacy-first:
+Yes! The system is privacy-first:
 
 **Local Storage:** All data stays on your machine by default
 
-**Encryption:** Database is encrypted at rest (optional)
+**Encryption:** Database is encrypted at rest (optional, required for SENSITIVE)
 
 **No Telemetry:** Zero data collection or tracking
 
 **Data Control:** You own and control all stored data
 
-**Sharing (Optional):** You can opt-in to share anonymized patterns with the community
-
-### Can I disable MemDocs?
+### Can I disable long-term memory?
 
 Yes! It's completely optional:
 
 ```python
-# Disable MemDocs (limits to Level 4 max)
-llm = EmpathyLLM(
-    provider="anthropic",
-    target_level=4,  # Can't use Level 5 without MemDocs
-    pattern_library=None  # No long-term memory
-)
+from empathy_os import EmpathyOS
+
+# Disable long-term memory
+os = EmpathyOS(enable_long_term_memory=False)
 ```
 
 Or via configuration:
@@ -523,8 +518,203 @@ Or via configuration:
 ```yaml
 # empathy.config.yml
 pattern_library_enabled: false
-pattern_sharing: false
 ```
+
+---
+
+## Security and Privacy
+
+### What security features does Empathy Framework include?
+
+The Empathy Framework includes enterprise-grade security controls built for GDPR, HIPAA, and SOC2 compliance:
+
+**PII Scrubbing**
+- Automatically detects and removes Personally Identifiable Information
+- Supported types: Email, SSN, phone numbers, credit cards, IP addresses, names, medical record numbers (MRN), patient IDs
+- Custom pattern support for organization-specific PII
+- Detailed audit logs for compliance reporting
+
+**Secrets Detection**
+- Detects API keys (Anthropic, OpenAI, AWS, GitHub, Slack, Stripe)
+- Detects passwords, private keys (RSA, SSH, EC, PGP, TLS)
+- Detects JWT tokens, OAuth tokens, database connection strings
+- Shannon entropy analysis for unknown secret patterns
+- Never logs or exposes actual secret values
+
+**Audit Logging**
+- Tamper-evident audit logs
+- Structured JSON logging for SIEM integration
+- Tracks all LLM requests, PII detections, secrets found
+- SOC2 CC7.2 and HIPAA §164.312(b) compliant
+
+**Secure Pattern Storage**
+- Three-tier classification: PUBLIC, INTERNAL, SENSITIVE
+- AES-256-GCM encryption for SENSITIVE patterns
+- Retention policies per classification
+- Access control based on user roles
+
+### How do I use PII scrubbing?
+
+```python
+from empathy_llm_toolkit.security import PIIScrubber
+
+# Initialize scrubber
+scrubber = PIIScrubber()
+
+# Scrub PII from content
+text = "Contact John at john.doe@email.com or 555-123-4567"
+sanitized, detections = scrubber.scrub(text)
+
+print(sanitized)
+# Output: "Contact John at [EMAIL] or [PHONE]"
+
+print(f"Found {len(detections)} PII instances")
+# Each detection includes: pii_type, position, confidence
+
+# Add custom patterns for organization-specific PII
+scrubber.add_custom_pattern(
+    name="employee_id",
+    pattern=r"EMP-\d{6}",
+    replacement="[EMPLOYEE_ID]",
+    description="Company employee identifier"
+)
+```
+
+### How do I detect secrets in code?
+
+```python
+from empathy_llm_toolkit.security import SecretsDetector, detect_secrets
+
+# Quick detection
+detections = detect_secrets(code_content)
+
+# Or with configuration
+detector = SecretsDetector(
+    enable_entropy_analysis=True,  # Detect high-entropy strings
+    entropy_threshold=4.5
+)
+
+detections = detector.detect(code_content)
+
+for detection in detections:
+    print(f"Found {detection.secret_type.value} at line {detection.line_number}")
+    print(f"Severity: {detection.severity.value}")
+    # Note: Actual secret value is NEVER exposed
+
+# Add custom patterns
+detector.add_custom_pattern(
+    name="company_api_key",
+    pattern=r"acme_[a-zA-Z0-9]{32}",
+    severity="high"
+)
+```
+
+### How does Claude Memory security work?
+
+The framework supports a hierarchical memory system with security controls:
+
+**Three-Level Hierarchy:**
+1. **Enterprise** (`/etc/claude/CLAUDE.md`) - Organization-wide security policies
+2. **User** (`~/.claude/CLAUDE.md`) - Personal preferences (cannot override enterprise)
+3. **Project** (`./.claude/CLAUDE.md`) - Team rules (cannot override enterprise or user)
+
+**Security Enforcement:**
+- Enterprise policies CANNOT be overridden by user or project memory
+- PII scrubbing patterns defined at enterprise level
+- Secrets detection enforced before any LLM call
+- Audit logging of all memory access
+
+```python
+from empathy_llm_toolkit.claude_memory import ClaudeMemoryConfig, ClaudeMemoryLoader
+
+config = ClaudeMemoryConfig(
+    enabled=True,
+    load_enterprise=True,  # Load org-wide security policies
+    load_user=True,
+    load_project=True
+)
+
+loader = ClaudeMemoryLoader(config)
+memory = loader.load_all_memory()
+# Enterprise security policies are enforced automatically
+```
+
+### Is my data secure with the Empathy Framework?
+
+**Yes!** Security is built into the core:
+
+| Feature | Implementation |
+|---------|----------------|
+| PII Protection | Automatic scrubbing before LLM calls (GDPR Article 5) |
+| Secrets Prevention | Detection blocks API calls containing secrets |
+| Encryption | AES-256-GCM for SENSITIVE patterns |
+| Audit Trail | Complete logging of all operations (SOC2, HIPAA) |
+| Local Storage | All data stays on your machine by default |
+| No Telemetry | Zero data collection or phone-home |
+
+### What compliance standards does this support?
+
+**GDPR (General Data Protection Regulation):**
+- Article 5(1)(c) - Data Minimization: PII scrubbing
+- Article 5(1)(e) - Storage Limitation: Retention policies
+- Article 25 - Data Protection by Design: Classification system
+- Article 30 - Records of Processing: Audit logging
+- Article 32 - Security of Processing: Encryption
+
+**HIPAA (Health Insurance Portability and Accountability Act):**
+- §164.312(a)(1) - Access Control: Classification-based access
+- §164.312(b) - Audit Controls: Comprehensive audit logging
+- §164.312(c)(1) - Integrity: Tamper-evident logs
+- §164.514 - De-identification: PII/PHI scrubbing
+
+**SOC2 (Service Organization Control 2):**
+- CC6.1 - Logical Access: User authentication + authorization
+- CC6.6 - Encryption: AES-256-GCM for SENSITIVE data
+- CC7.2 - System Monitoring: Audit logging with alerting
+
+### Can I run this in air-gapped environments?
+
+Yes! The framework supports air-gapped mode:
+
+```bash
+# Enable air-gapped mode
+export AIR_GAPPED_MODE=true
+```
+
+**In air-gapped mode:**
+- NO external LLM API calls
+- Use local models only (Ollama)
+- Pattern storage: local filesystem only
+- Audit logs: local filesystem only
+- Memory: local CLAUDE.md files only
+
+### How do I set up secure pattern storage?
+
+```python
+from empathy_llm_toolkit.security import SecurePatternStorage, Classification
+
+# Initialize with security policies
+storage = SecurePatternStorage(claude_memory_config)
+
+# Store a pattern with auto-classification
+result = storage.store_pattern(
+    pattern_content="Clinical protocol for patient handoffs...",
+    pattern_type="healthcare",
+    user_id="doctor@hospital.com",
+    auto_classify=True  # Auto-detects as SENSITIVE
+)
+
+# Result includes:
+# - pattern_id: Unique identifier
+# - classification: "SENSITIVE" (auto-detected from healthcare keywords)
+# - sanitization_report: PII removed, secrets checked
+# - encryption: Applied for SENSITIVE patterns
+```
+
+**Classification Rules:**
+- `PUBLIC`: General patterns, shareable, 365-day retention
+- `INTERNAL`: Proprietary patterns, team-only, 180-day retention
+- `SENSITIVE`: Healthcare/financial, encrypted, 90-day retention
 
 ---
 
@@ -723,7 +913,7 @@ Yes! Fair Source 0.9 allows this. Many companies build SaaS products on top of F
 **Mid-term (Q3-Q4 2025):**
 - Multi-language support expansion
 - Team collaboration features
-- Enhanced MemDocs cross-domain learning
+- Enhanced cross-domain learning
 - Real-time code analysis
 
 **Long-term (2026+):**

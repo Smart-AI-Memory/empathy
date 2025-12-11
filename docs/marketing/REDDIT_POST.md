@@ -42,7 +42,7 @@ Here's the architecture:
 **1. Domain-Specific Analysis (Healthcare)**
 ```python
 from coach_wizards import ComplianceWizard
-from memdocs import MemoryStore
+from pattern-storage import MemoryStore
 
 # Analyze healthcare handoff protocol
 compliance_wizard = ComplianceWizard()
@@ -119,7 +119,7 @@ The system has three main components:
 - `PerformanceWizard` - Performance optimization
 - 16 total software wizards + 18 healthcare wizards
 
-**MemDocs** - Long-term memory system that:
+**Long-Term Memory** - Long-term memory system that:
 - Stores patterns across sessions
 - Enables semantic search across domains
 - Maintains context about root causes and solutions
@@ -135,7 +135,7 @@ The system has three main components:
 ### Running the Demo
 
 ```bash
-# Install with MemDocs integration
+# Install with long-term memory
 pip install empathy-framework[full]
 
 # Set up API key (uses Claude for reasoning)
@@ -217,7 +217,7 @@ PREVENTION STEPS
 **Traditional code analysis tools work in isolation.** They can find SQL injection vulnerabilities or performance bottlenecks within your codebase. But they can't recognize that hospital shift-change protocols have relevance to Kubernetes deployments.
 
 This requires:
-- **Long-term memory** (MemDocs) to store patterns across sessions
+- **Long-term memory** (Long-Term Memory) to store patterns across sessions
 - **Cross-domain reasoning** to recognize similar failure modes
 - **Anticipatory prediction** to forecast failures 30-90 days ahead
 - **Transformative insight** to apply lessons from one field to another

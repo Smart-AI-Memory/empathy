@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idea-plugin>
+    <id>com.smartaimemory.pycharm</id>
+    <name>SmartAI Memory - Empathy Framework</name>
+    <version>1.0.0</version>
+    <vendor email="patrick.roebuck@smartaimemory.com" url="https://smartaimemory.com">SmartAI Memory</vendor>
+
+    <description><![CDATA[
+        <h1>SmartAI Memory - Empathy Framework Integration</h1>
+        <p>Brings the power of 5-layer code analysis to your PyCharm IDE:</p>
+        <ul>
+            <li><b>Layer 1:</b> Rules & Standards (fast, deterministic)</li>
+            <li><b>Layer 2:</b> Pattern Detection (domain-specific)</li>
+            <li><b>Layer 3:</b> Expert Analysis (AI-powered insights)</li>
+            <li><b>Layer 4:</b> Anticipatory Predictions (future issues)</li>
+            <li><b>Layer 5:</b> Empathy (personalized learning)</li>
+        </ul>
+
+        <h2>Features:</h2>
+        <ul>
+            <li>Inline security, performance, and quality issues</li>
+            <li>Predictive insights that anticipate future problems</li>
+            <li>Semantic search across your entire codebase</li>
+            <li>Git-native memory storage (no cloud required)</li>
+            <li>MemDocs integration for persistent project memory</li>
+        </ul>
+
+        <p>Free for teams ≤5 employees. $99/year for commercial teams.</p>
+    ]]></description>
+
+    <change-notes><![CDATA[
+        <h2>Version 1.0.0</h2>
+        <ul>
+            <li>Initial release</li>
+            <li>5-layer Empathy Framework analysis</li>
+            <li>MemDocs integration</li>
+            <li>Inline annotations and quick fixes</li>
+            <li>Semantic search</li>
+            <li>Project-wide analysis</li>
+        </ul>
+    ]]></change-notes>
+
+    <!-- Require IntelliJ Platform 2024.1+ -->
+    <idea-version since-build="241"/>
+
+    <!-- Python plugin dependency for PyCharm -->
+    <depends>com.intellij.modules.python</depends>
+
+    <!-- Project-level services -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Tool Window -->
+        <toolWindow
+                id="SmartAI Memory"
+                anchor="right"
+                icon="/icons/smartai-icon.png"
+                factoryClass="com.smartaimemory.plugin.ui.AnalysisResultsToolWindow"/>
+
+        <!-- Project services -->
+        <projectService serviceImplementation="com.smartaimemory.plugin.services.MemDocsService"/>
+        <projectService serviceImplementation="com.smartaimemory.plugin.services.EmpathyApiService"/>
+        <projectService serviceImplementation="com.smartaimemory.plugin.settings.SmartAIMemorySettings"/>
+
+        <!-- Settings page -->
+        <projectConfigurable
+                instance="com.smartaimemory.plugin.settings.SmartAIMemoryConfigurable"
+                displayName="SmartAI Memory"
+                id="com.smartaimemory.plugin.settings"/>
+
+        <!-- Line marker provider for gutter icons -->
+        <codeInsight.lineMarkerProvider
+                language="Python"
+                implementationClass="com.smartaimemory.plugin.ui.EmpathyLineMarkerProvider"/>
+
+        <!-- Documentation provider for hover tooltips -->
+        <lang.documentationProvider
+                language="Python"
+                implementationClass="com.smartaimemory.plugin.editor.EmpathyHoverProvider"/>
+    </extensions>
+
+    <!-- Actions -->
+    <actions>
+        <!-- Context menu actions -->
+        <action
+                id="SmartAIMemory.AnalyzeFile"
+                class="com.smartaimemory.plugin.actions.AnalyzeFileAction"
+                text="Analyze with Empathy Framework"
+                description="Run Empathy Framework analysis on this file"
+                icon="/icons/analyze-icon.png">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="ReplaceInPath"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+
+        <!-- Main menu actions -->
+        <action
+                id="SmartAIMemory.SearchMemDocs"
+                class="com.smartaimemory.plugin.search.MemDocsSearchAction"
+                text="Search MemDocs"
+                description="Semantic search across MemDocs memory"
+                icon="/icons/search-icon.png">
+            <keyboard-shortcut first-keystroke="control shift M" keymap="$default"/>
+        </action>
+
+        <action
+                id="SmartAIMemory.AnalyzeProject"
+                class="com.smartaimemory.plugin.actions.AnalyzeProjectAction"
+                text="Analyze Entire Project"
+                description="Run Empathy Framework analysis on all Python files"
+                icon="/icons/analyze-project-icon.png">
+        </action>
+    </actions>
+
+    <!-- File change listener for auto-analysis -->
+    <applicationListeners>
+        <listener
+                class="com.smartaimemory.plugin.listeners.FileChangeListener"
+                topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
+    </applicationListeners>
+</idea-plugin>

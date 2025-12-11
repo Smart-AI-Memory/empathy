@@ -16,8 +16,8 @@ const faqData = [
         answer: 'Level 1: Reactive - Responds only when asked. Level 2: Guided - Asks clarifying questions. Level 3: Proactive - Notices patterns and offers improvements. Level 4: Anticipatory - Predicts future problems before they happen. Level 5: Transformative - Reshapes workflows to prevent entire classes of problems.',
       },
       {
-        question: 'What is MemDocs?',
-        answer: 'MemDocs is a persistent project-specific memory system that works seamlessly with the Empathy Framework. It enables AI to remember context, decisions, and patterns across sessions, creating true continuity in your AI-human collaboration and enabling Level 5 Transformative Intelligence.',
+        question: 'What is Long-Term Memory?',
+        answer: 'Long-Term Memory is the built-in pattern storage system in the Empathy Framework. It enables AI to remember context, decisions, and patterns across sessions, creating true continuity in your AI-human collaboration and enabling Level 5 Transformative Intelligence.',
       },
     ],
   },
@@ -97,7 +97,7 @@ const faqData = [
 
 export const metadata: Metadata = generateMetadata({
   title: 'FAQ',
-  description: 'Frequently asked questions about the Empathy Framework, MemDocs, licensing, pricing, and technical details.',
+  description: 'Frequently asked questions about the Empathy Framework, licensing, pricing, and technical details.',
   url: 'https://smartaimemory.com/faq',
 });
 

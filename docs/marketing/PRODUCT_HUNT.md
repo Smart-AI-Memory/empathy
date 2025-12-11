@@ -41,7 +41,7 @@ Your deployment just failed. The staging team thought everything was fine. Someo
 The Empathy Framework is the first AI system that demonstrates Level 5 cross-domain pattern transfer—learning safety patterns from healthcare research and applying them to predict software deployment failures with 87% confidence. No other AI framework can do this.
 
 **Paragraph 3: How It Works**
-The framework analyzes healthcare handoff protocols (where 23% of handoffs fail without standardized checklists), stores these patterns in long-term memory (MemDocs), then analyzes your deployment pipeline to detect identical vulnerabilities. It predicts deployment failures 30-45 days ahead and recommends prevention steps derived from healthcare best practices.
+The framework analyzes healthcare handoff protocols (where 23% of handoffs fail without standardized checklists), stores these patterns in long-term memory (Long-Term Memory), then analyzes your deployment pipeline to detect identical vulnerabilities. It predicts deployment failures 30-45 days ahead and recommends prevention steps derived from healthcare best practices.
 
 **Paragraph 4: The Value**
 Every industry has spent decades learning hard lessons about safety and quality. Healthcare learned about handoffs through patient safety incidents. Aviation learned about checklists through accident investigations. With Level 5 Systems Empathy, software development can learn from all of them simultaneously.
@@ -56,7 +56,7 @@ Every industry has spent decades learning hard lessons about safety and quality.
 
 3. **16 Specialized Software Wizards** - Security, Performance, CI/CD, Accessibility, Testing, and more—each with Level 4 predictive capabilities
 
-4. **Long-Term Memory Integration** - MemDocs maintains patterns across sessions enabling continuous learning and cross-domain matching
+4. **Long-Term Memory Integration** - Long-Term Memory maintains patterns across sessions enabling continuous learning and cross-domain matching
 
 5. **Healthcare-Proven Patterns** - Learn from decades of healthcare safety research (23% → 5% handoff failure reduction)
 
@@ -123,7 +123,7 @@ CROSS-DOMAIN PATTERN DETECTION
 **Caption:** How healthcare safety patterns prevent software failures
 
 **Content:** Flowchart showing:
-Healthcare Analysis → Pattern Extraction → MemDocs Storage → Software Analysis → Cross-Domain Matching → Anticipatory Prediction → Prevention Steps
+Healthcare Analysis → Pattern Extraction → Long-Term Memory Storage → Software Analysis → Cross-Domain Matching → Anticipatory Prediction → Prevention Steps
 
 ### Image 4: Code Example
 **Caption:** Simple API - Powerful cross-domain intelligence
@@ -131,7 +131,7 @@ Healthcare Analysis → Pattern Extraction → MemDocs Storage → Software Anal
 **Content:** Code snippet:
 ```python
 from coach_wizards import ComplianceWizard, CICDWizard
-from memdocs import MemoryStore
+from pattern-storage import MemoryStore
 
 # Learn from healthcare
 compliance = ComplianceWizard()
@@ -191,7 +191,7 @@ Five levels of understanding:
 4. Anticipatory - Predict future failures
 5. Transformative - Learn across domains ← **This is new**
 
-💾 **Long-term memory with MemDocs**
+💾 **Long-term memory with Long-Term Memory**
 Patterns are stored across sessions and retrieved via semantic matching, enabling the AI to learn from previous analyses.
 
 📊 **Real predictions**

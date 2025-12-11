@@ -37,7 +37,7 @@ export default function DevDashboard() {
                 Empathy Framework
               </span>
               <span className="px-3 py-1 bg-[var(--secondary)] text-white rounded-full text-sm font-semibold">
-                MemDocs
+                Long-Term Memory
               </span>
               <span className="px-3 py-1 bg-[var(--muted)] text-white rounded-full text-sm font-semibold">
                 VS Code
@@ -369,7 +369,7 @@ export default function DevDashboard() {
               <div>
                 <h3 className="text-xl font-bold mb-2">Continuous Learning</h3>
                 <p className="text-[var(--text-secondary)]">
-                  MemDocs integration enables the system to learn from your project's history,
+                  Long-term memory enables the system to learn from your project's history,
                   improving predictions and adapting to your team's coding patterns over time.
                 </p>
               </div>

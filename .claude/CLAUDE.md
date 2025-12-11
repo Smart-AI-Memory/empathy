@@ -18,11 +18,11 @@
 
 ## 🔐 Security Implementation
 
-### Memory + MemDocs Integration
+### Memory + Pattern Storage Integration
 
 **This project demonstrates secure integration of:**
 1. Claude Memory (CLAUDE.md) - Instructions and policies
-2. MemDocs - Pattern storage with classification
+2. Long-Term Memory - Pattern storage with classification
 3. Enterprise privacy controls
 
 **When you interact with this codebase:**
@@ -48,7 +48,7 @@ SOFTWARE_PII = {
 }
 ```
 
-### MemDocs Classification Rules
+### Pattern Classification Rules
 
 **Code patterns:**
 
@@ -84,24 +84,24 @@ def classify_pattern(content: str, pattern_type: str) -> str:
 **Storage configuration:**
 
 ```python
-MEMDOCS_CONFIG = {
+PATTERN_STORAGE_CONFIG = {
     "PUBLIC": {
-        "location": "./memdocs/public/",
+        "location": "./patterns/public/",
         "encryption": False,
         "retention_days": 365,
         "description": "General-purpose patterns, shareable"
     },
     "INTERNAL": {
-        "location": "./memdocs/internal/",
+        "location": "./patterns/internal/",
         "encryption": False,  # Optional for INTERNAL
         "retention_days": 180,
         "description": "Empathy Framework proprietary patterns"
     },
     "SENSITIVE": {
-        "location": "./memdocs/sensitive/",
+        "location": "./patterns/sensitive/",
         "encryption": True,  # AES-256-GCM required
         "retention_days": 90,
-        "encryption_key_env": "MEMDOCS_ENCRYPTION_KEY",
+        "encryption_key_env": "PATTERN_ENCRYPTION_KEY",
         "description": "Healthcare patterns (HIPAA-regulated)"
     }
 }
@@ -123,8 +123,8 @@ pytest tests/test_pii_scrubbing.py -v
 # 3. Test secrets detection
 pytest tests/test_secrets_detection.py -v
 
-# 4. Test MemDocs classification
-pytest tests/test_memdocs_classification.py -v
+# 4. Test pattern classification
+pytest tests/test_pattern_classification.py -v
 
 # 5. Full test suite
 pytest tests/test_claude_memory.py -v
@@ -160,7 +160,7 @@ pytest tests/test_claude_memory.py -v
     "total_bytes": 2500
   },
 
-  "memdocs": {
+  "pattern_storage": {
     "patterns_retrieved": ["pattern_xyz_security"],
     "patterns_stored": [],
     "classifications_used": ["INTERNAL", "PUBLIC"]
@@ -197,7 +197,7 @@ HEALTHCARE_WIZARDS = [
 
 # ALWAYS:
 # 1. Classify patterns as SENSITIVE
-# 2. Encrypt before storing in MemDocs
+# 2. Encrypt before storing in long-term memory
 # 3. Log with healthcare_pattern_detected: true
 # 4. Apply 90-day retention policy (HIPAA minimum)
 # 5. Audit all accesses
@@ -243,7 +243,7 @@ response = await llm.interact(
 
 ## 🔍 Code Review Checklist
 
-**For PRs that modify memory/MemDocs integration:**
+**For PRs that modify memory/pattern storage integration:**
 
 - [ ] PII scrubbing tests updated
 - [ ] Secrets detection patterns reviewed
@@ -267,11 +267,11 @@ response = await llm.interact(
 
 ```python
 from empathy_llm_toolkit.claude_memory import ClaudeMemoryConfig
-from secure_memdocs import SecureMemDocsIntegration
+from empathy_llm_toolkit.security import SecurePatternStorage
 
 # Initialize with security policies
 config = ClaudeMemoryConfig(enabled=True)
-integration = SecureMemDocsIntegration(config)
+storage = SecurePatternStorage(config)
 
 # Example 1: Store PUBLIC pattern
 pattern1 = """
@@ -283,7 +283,7 @@ When handling errors in async code:
 3. Return user-friendly messages
 """
 
-result = integration.store_pattern(
+result = storage.store_pattern(
     pattern_content=pattern1,
     pattern_type="coding_pattern",
     user_id="dev@company.com",
@@ -302,7 +302,7 @@ Our proprietary algorithm for 30-90 day predictions:
 3. Generate actionable alerts
 """
 
-result = integration.store_pattern(
+result = storage.store_pattern(
     pattern_content=pattern2,
     pattern_type="algorithm",
     user_id="dev@company.com",
@@ -323,7 +323,7 @@ R - Recommendation: Care plan
 """
 
 # Must explicitly acknowledge SENSITIVE classification
-result = integration.store_pattern(
+result = storage.store_pattern(
     pattern_content=pattern3,
     pattern_type="clinical_protocol",
     user_id="doctor@hospital.com",
@@ -367,7 +367,7 @@ result = integration.store_pattern(
   run: pytest tests/test_secrets_detection.py --strict
 
 - name: Classification Verification
-  run: pytest tests/test_memdocs_classification.py --strict
+  run: pytest tests/test_pattern_classification.py --strict
 
 - name: Audit Log Validation
   run: python scripts/validate_audit_logs.py
@@ -396,7 +396,7 @@ By working on this project, I confirm:
 - ✅ I have read the enterprise security policy
 - ✅ I understand healthcare data requires SENSITIVE classification
 - ✅ I will not commit PII or secrets
-- ✅ I will classify all MemDocs patterns appropriately
+- ✅ I will classify all patterns appropriately
 - ✅ I will report security concerns immediately
 
 ---

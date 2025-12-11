@@ -31,7 +31,7 @@ Here's how it works:
 
 1. **Healthcare Analysis**: The ComplianceWizard analyzes healthcare handoff code and identifies the "critical handoff failure" pattern (23% baseline failure rate)
 
-2. **Long-Term Memory**: The pattern is stored in MemDocs with context about root causes and solutions
+2. **Long-Term Memory**: The pattern is stored in Long-Term Memory with context about root causes and solutions
 
 3. **Software Analysis**: The CICDWizard analyzes your deployment pipeline
 
@@ -64,7 +64,7 @@ The Empathy Framework is built on three core components:
 
 **1. Coach Wizards** - 16 specialized AI agents for different aspects of software development (Security, Performance, CI/CD, Accessibility, etc.) plus 18 clinical documentation wizards for healthcare
 
-**2. MemDocs Integration** - Long-term memory system that stores patterns across sessions and enables cross-domain pattern matching
+**2. Long-Term Memory Integration** - Long-term memory system that stores patterns across sessions and enables cross-domain pattern matching
 
 **3. Five Levels of Understanding:**
 - Level 1: Syntactic (parse code structure)
@@ -101,9 +101,9 @@ PREVENTION STEPS:
 
 A pattern learned from hospital protocols just prevented a deployment failure. That's transformative intelligence.
 
-### Built with Claude Code + MemDocs
+### Built with Claude Code + Long-Term Memory
 
-The framework itself was developed using Claude Code with MemDocs integration—demonstrating the 200-400% productivity gains possible with Level 4 Anticipatory AI:
+The framework itself was developed using Claude Code with long-term memory—demonstrating the 200-400% productivity gains possible with Level 4 Anticipatory AI:
 
 - 32% → 83% test coverage in systematic phases
 - 887 → 1,247 comprehensive tests added

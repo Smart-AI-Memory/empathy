@@ -15,7 +15,7 @@ I built an AI framework that learns this pattern from healthcare code, then appl
 **Here's what it does:**
 
 1. Analyzes healthcare handoff protocols (finds the 23% failure pattern)
-2. Stores the pattern in long-term memory (MemDocs)
+2. Stores the pattern in long-term memory (Long-Term Memory)
 3. Analyzes your deployment pipeline
 4. Detects the same handoff gaps: no verification checklist, assumptions about what production team knows, time pressure shortcuts
 5. Predicts deployment failure 30-45 days ahead

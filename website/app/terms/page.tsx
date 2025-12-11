@@ -88,7 +88,7 @@ export default function TermsPage() {
 
               <h3>5.1 Our Intellectual Property</h3>
               <p>
-                The Empathy Framework, MemDocs, documentation, and website content are owned by
+                The Empathy Framework, documentation, and website content are owned by
                 Deep Study AI, LLC and protected by copyright, trademark, and other intellectual property laws.
               </p>
 

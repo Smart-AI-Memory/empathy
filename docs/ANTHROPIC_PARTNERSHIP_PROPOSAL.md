@@ -38,7 +38,7 @@ A five-level maturity model for AI-human collaboration that progresses from reac
 
 ## Proof of Concept: Built With Claude Code
 
-**Both empathy-framework and memdocs were created in consultation with Claude Sonnet 4.5 using Claude Code**, demonstrating transformative productivity with Anthropic's official developer tool:
+**Both empathy-framework and pattern-storage were created in consultation with Claude Sonnet 4.5 using Claude Code**, demonstrating transformative productivity with Anthropic's official developer tool:
 
 ### Development Speed (Measured):
 - **Traditional development**: Days to weeks per specialized wizard

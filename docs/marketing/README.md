@@ -186,7 +186,7 @@ All content emphasizes these key points:
 - 100% coverage on core modules
 - Production-ready framework
 - 16 software wizards + 18 healthcare wizards
-- Built with Claude Code + MemDocs
+- Built with Claude Code + Long-Term Memory
 
 ### 4. Fair Source Licensing
 - Free for teams ≤5 employees

@@ -45,7 +45,7 @@ Level 5 cross-domain pattern transfer.
 
 ### Tweet 6: How It Works
 1. Analyze healthcare handoff code (find 23% failure pattern)
-2. Store pattern in long-term memory (MemDocs)
+2. Store pattern in long-term memory (Long-Term Memory)
 3. Analyze deployment pipeline
 4. Detect same handoff gaps
 5. Predict failure 30-45 days ahead (87% confidence)
@@ -98,7 +98,7 @@ What cross-domain patterns would help your team?
 
 ### Option A: More Technical
 For developer-focused threads, emphasize the technical architecture:
-- MemDocs long-term memory integration
+- Long-Term Memory long-term memory integration
 - ComplianceWizard + CICDWizard collaboration
 - Pattern extraction and matching algorithms
 - 87% prediction confidence methodology

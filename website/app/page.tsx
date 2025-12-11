@@ -165,10 +165,10 @@ export default function Home() {
         <section id="products" className="py-20 bg-[var(--border)] bg-opacity-30" aria-label="Our products">
           <div className="container">
             <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">
-              Two Frameworks, One Vision
+              Complete AI Collaboration Platform
             </h2>
             <p className="text-center text-[var(--text-secondary)] mb-12 max-w-2xl mx-auto">
-              Intelligence + Memory = Anticipatory AI
+              Intelligence + Memory + Coordination = Anticipatory AI
             </p>
 
             <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
@@ -191,11 +191,11 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* MemDocs */}
+              {/* Long-Term Memory */}
               <div className="bg-[var(--background)] p-6 rounded-xl border-2 border-[var(--secondary)] border-opacity-30 hover:border-opacity-100 transition-all">
                 <div className="text-4xl mb-4">📚</div>
-                <h3 className="text-xl font-bold mb-2">MemDocs</h3>
-                <p className="text-sm text-[var(--muted)] mb-3">The memory layer</p>
+                <h3 className="text-xl font-bold mb-2">Long-Term Memory</h3>
+                <p className="text-sm text-[var(--muted)] mb-3">Built-in pattern storage</p>
                 <p className="text-[var(--text-secondary)] text-sm mb-4">
                   Persistent project-specific context that carries across sessions.
                   Your AI remembers what matters.
@@ -204,14 +204,9 @@ export default function Home() {
                   <span className="text-xs bg-[var(--border)] px-2 py-1 rounded">Cross-session</span>
                   <span className="text-xs bg-[var(--border)] px-2 py-1 rounded">Patterns</span>
                 </div>
-                <a
-                  href="https://github.com/Smart-AI-Memory/MemDocs"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline w-full text-sm"
-                >
-                  View on GitHub
-                </a>
+                <Link href="/framework#memory" className="btn btn-outline w-full text-sm">
+                  Learn More
+                </Link>
               </div>
 
               {/* Advanced Capabilities (Chapter 23) */}

@@ -24,12 +24,45 @@ This document defines the shared philosophy that governs the Empathy ecosystem �
 
 **Empathy** refers collectively to:
 - The Empathy Framework (five-level AI collaboration system)
-- MemDocs (persistent memory layer)
+- Long-Term Memory (persistent memory layer)
 - SmartAIMemory.com and associated products
 - The book and educational materials
 - All tools, demos, and agents operating under this identity
 
 **Core Identity**: Empathy builds systems where AI anticipates problems before they happen, rather than reacting after they occur.
+
+---
+
+## Foundational Commitment: Data Sovereignty
+
+**Statement**: Users and enterprises own, version, and control all memories, patterns, and knowledge associated with their projects. This is non-negotiable.
+
+This commitment precedes and enables all other principles. Without user ownership of their data, the principles that follow become meaningless.
+
+**What Users Control**:
+
+| Capability | Meaning |
+|------------|---------|
+| **Storage Location** | Memory infrastructure runs where you choose (local, cloud, on-premise) |
+| **Pattern Ownership** | Every pattern stores provenance: who discovered it, who owns it, who can access it |
+| **Versioning** | Full version history for all patterns and knowledge bases |
+| **Export** | All data exportable in standard formats (JSON, YAML, Python) |
+| **Deletion** | Granular deletion: single patterns, agent sessions, entire projects |
+| **Audit Trail** | Complete logging of creation, modification, validation, and access |
+
+**Why This Matters**:
+
+Most AI systems operate on a model where your interactions and institutional knowledge flow into systems you don't control. You can't export what the AI learned, version your knowledge base, audit the patterns, or move to a different provider.
+
+Empathy rejects this model entirely. Your patterns stay on your infrastructure. Nothing leaves your control without explicit export.
+
+**Compliance**:
+- GDPR: Right to deletion, data portability, access requests
+- HIPAA: Data residency, audit trails, access controls
+- SOC2: Logical access controls, change management
+- Enterprise: No vendor lock-in, data sovereignty requirements
+
+**Origin**: This value was established as foundational during the initial architecture design. Every subsequent decision—Redis as storage, role-based access tiers, pattern provenance tracking—derives from this commitment.
 
 ---
 

@@ -93,7 +93,7 @@ Successfully created comprehensive launch content for the Empathy Framework acro
   - Anticipatory prediction output
 - Architecture breakdown:
   - Coach Wizards (16 software + 18 healthcare)
-  - MemDocs long-term memory
+  - Long-Term Memory long-term memory
   - 5-level maturity model
 - Full demo output shown (~80 lines)
 - Broader applications (aviation, finance, manufacturing)
@@ -224,7 +224,7 @@ All links are production-ready:
 - 83.13% overall coverage
 - 100% coverage on 24 critical files
 - 16 software wizards + 18 healthcare wizards
-- Built with Claude Code + MemDocs
+- Built with Claude Code + Long-Term Memory
 
 ### 4. Fair Source Value
 **Accessible Yet Sustainable**

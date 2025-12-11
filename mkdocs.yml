@@ -20,9 +20,11 @@ nav:
   - Home: index.md
   - Getting Started:
       - Installation: getting-started/installation.md
+      - Prerequisites: guides/prerequisites.md
       - Quick Start: getting-started/quickstart.md
       - Configuration: getting-started/configuration.md
   - Guides:
+      - How to Read This Book: guides/how-to-read-this-book.md
       - Preface - Why Empathy Exists: guides/preface.md
       - Foreword by Claude: guides/foreword.md
       - Philosophy of Multi-Agent Coordination: guides/multi-agent-philosophy.md
@@ -30,6 +32,7 @@ nav:
       - Implementing Short-Term Memory: guides/short-term-memory-implementation.md
       - Practical Patterns: guides/practical-patterns.md
       - Short-Term Memory Reference: SHORT_TERM_MEMORY.md
+      - Glossary: guides/glossary.md
   - Examples:
       - Simple Chatbot: examples/simple-chatbot.md
       - SBAR Clinical Handoff: examples/sbar-clinical-handoff.md

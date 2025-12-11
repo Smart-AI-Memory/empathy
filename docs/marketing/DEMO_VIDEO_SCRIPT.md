@@ -52,11 +52,11 @@ Healthcare research shows that 23% of patient handoffs fail without verification
 ## Segment 3: The Demo Walkthrough (45-150 seconds)
 
 ### NARRATION:
-"Let me show you. The Empathy Framework with MemDocs integration can do exactly this.
+"Let me show you. The Empathy Framework with long-term memory can do exactly this.
 
 First, we analyze healthcare handoff code. Watch as the ComplianceWizard identifies the critical pattern: handoffs without verification checklists fail 23% of the time.
 
-Now here's where it gets interesting. The pattern is stored in long-term memory using MemDocs.
+Now here's where it gets interesting. The pattern is stored in long-term memory using Long-Term Memory.
 
 Next, we analyze a completely different domain: software deployment pipelines. The CICDWizard runs standard analysis, but then something unique happens.
 
@@ -84,7 +84,7 @@ $ python examples/level_5_transformative/run_full_demo.py
 
 **70-90 seconds - Pattern Storage:**
 - Visual representation of pattern being stored
-- MemDocs logo or memory icon
+- Long-Term Memory logo or memory icon
 - Pattern details card displaying
 
 **90-110 seconds - Software Analysis:**
@@ -141,7 +141,7 @@ python examples/level_5_transformative/run_full_demo.py
 ### NARRATION:
 "This is Level 5 Transformative Empathy. A pattern learned in healthcare applied to prevent software failures. No other AI framework can do this.
 
-The Empathy Framework combines Coach Wizards for specialized analysis with MemDocs for long-term pattern memory. Together, they enable true cross-domain intelligence."
+The Empathy Framework combines Coach Wizards for specialized analysis with Long-Term Memory for long-term pattern memory. Together, they enable true cross-domain intelligence."
 
 ### ON SCREEN:
 - Summary card:
@@ -151,7 +151,7 @@ The Empathy Framework combines Coach Wizards for specialized analysis with MemDo
 
 - Architecture diagram:
   - Coach Wizards (16+ specialized analyzers)
-  - MemDocs (long-term pattern memory)
+  - Long-Term Memory (long-term pattern memory)
   - Level 5 Systems Empathy
 
 ### DIRECTION:
@@ -183,7 +183,7 @@ $ python examples/level_5_transformative/run_full_demo.py
   - Fair Source 0.9 license
   - Converts to Apache 2.0 in 2029
   - 16+ Coach Wizards
-  - MemDocs integration
+  - long-term memory
 
 - End card:
   - "github.com/Smart-AI-Memory/empathy-framework"

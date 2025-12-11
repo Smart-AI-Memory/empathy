@@ -1020,3 +1020,139 @@ class TestEmpathyOSAsyncMethods:
         assert len(results) == 1
         assert results[0]["deployed"] is False
         assert "error" in results[0]
+
+
+class TestSharedPatternLibrary:
+    """Test EmpathyOS shared pattern library integration (Chapter 23)"""
+
+    def test_initialization_without_shared_library(self):
+        """Test EmpathyOS initializes without shared library"""
+        empathy = EmpathyOS(user_id="test_agent")
+
+        assert empathy.shared_library is None
+        assert empathy.has_shared_library() is False
+
+    def test_initialization_with_shared_library(self):
+        """Test EmpathyOS initializes with shared library"""
+        from empathy_os import PatternLibrary
+
+        library = PatternLibrary()
+        empathy = EmpathyOS(user_id="test_agent", shared_library=library)
+
+        assert empathy.shared_library is library
+        assert empathy.has_shared_library() is True
+
+    def test_contribute_pattern_without_library(self):
+        """Test contribute_pattern raises error without library"""
+        from empathy_os import Pattern
+
+        empathy = EmpathyOS(user_id="test_agent")
+
+        pattern = Pattern(
+            id="pat_001",
+            agent_id="test_agent",
+            pattern_type="test",
+            name="Test",
+            description="Test",
+        )
+
+        with pytest.raises(RuntimeError, match="No shared library configured"):
+            empathy.contribute_pattern(pattern)
+
+    def test_query_patterns_without_library(self):
+        """Test query_patterns raises error without library"""
+        empathy = EmpathyOS(user_id="test_agent")
+
+        with pytest.raises(RuntimeError, match="No shared library configured"):
+            empathy.query_patterns(context={"test": True})
+
+    def test_contribute_pattern_with_library(self):
+        """Test contributing pattern through EmpathyOS"""
+        from empathy_os import Pattern, PatternLibrary
+
+        library = PatternLibrary()
+        empathy = EmpathyOS(user_id="code_reviewer", shared_library=library)
+
+        pattern = Pattern(
+            id="pat_001",
+            agent_id="code_reviewer",
+            pattern_type="best_practice",
+            name="Mutable Default Fix",
+            description="Avoid mutable default arguments",
+        )
+
+        empathy.contribute_pattern(pattern)
+
+        # Pattern should be in library
+        assert "pat_001" in library.patterns
+        # Should be attributed to the agent
+        assert "code_reviewer" in library.agent_contributions
+
+    def test_query_patterns_with_library(self):
+        """Test querying patterns through EmpathyOS"""
+        from empathy_os import Pattern, PatternLibrary
+
+        library = PatternLibrary()
+
+        # Agent 1 contributes a pattern
+        agent1 = EmpathyOS(user_id="agent1", shared_library=library)
+        pattern = Pattern(
+            id="pat_001",
+            agent_id="agent1",
+            pattern_type="best_practice",
+            name="Test Pattern",
+            description="A test pattern",
+            confidence=0.9,
+            context={"language": "python"},
+        )
+        agent1.contribute_pattern(pattern)
+
+        # Agent 2 queries for patterns
+        agent2 = EmpathyOS(user_id="agent2", shared_library=library)
+        matches = agent2.query_patterns(context={"language": "python"})
+
+        # Results should be returned (as PatternMatch list)
+        assert isinstance(matches, list)
+
+    def test_multi_agent_pattern_sharing(self):
+        """Test Chapter 23 scenario: multiple agents sharing patterns"""
+        from empathy_os import Pattern, PatternLibrary
+
+        # Create shared library (as in Chapter 23)
+        shared_library = PatternLibrary()
+
+        # Create specialized agents (as in Chapter 23)
+        code_reviewer = EmpathyOS(
+            user_id="code_reviewer",
+            target_level=4,
+            shared_library=shared_library,
+        )
+
+        test_generator = EmpathyOS(
+            user_id="test_generator",
+            target_level=3,
+            shared_library=shared_library,
+        )
+
+        # Code reviewer discovers a pattern
+        pattern = Pattern(
+            id="avoid_mutable_defaults",
+            agent_id="code_reviewer",
+            pattern_type="warning",
+            name="Mutable Default Argument",
+            description="Avoid mutable default arguments in Python functions",
+            confidence=0.95,
+            context={"language": "python", "issue": "mutable_default_argument"},
+        )
+
+        code_reviewer.contribute_pattern(pattern)
+
+        # Test generator can now query this pattern
+        _matches = test_generator.query_patterns(
+            context={"language": "python"},
+        )
+
+        # Verify the pattern is accessible
+        assert shared_library.get_pattern("avoid_mutable_defaults") is not None
+        # Both agents share the same library
+        assert code_reviewer.shared_library is test_generator.shared_library

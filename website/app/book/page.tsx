@@ -29,10 +29,10 @@ export default function BookPage() {
               The Empathy Framework
             </h1>
             <p className="text-2xl mb-4 opacity-90">
-              Transforming Software Development with Anticipatory AI
+              Multi-Agent Coordination with Persistent and Short-Term Memory
             </p>
             <p className="text-lg opacity-75">
-              Coming December 2025
+              Available Now
             </p>
           </div>
         </div>
@@ -48,15 +48,15 @@ export default function BookPage() {
                 <div className="text-center text-white p-8">
                   <div className="text-6xl mb-4">📖</div>
                   <h2 className="text-3xl font-bold mb-2">The Empathy Framework</h2>
-                  <p className="text-lg opacity-90">Anticipatory AI for Software Development</p>
+                  <p className="text-lg opacity-90">Multi-Agent Coordination with Persistent and Short-Term Memory</p>
                   <p className="text-sm mt-4 opacity-75">By Patrick Roebuck</p>
                 </div>
               </div>
 
               <div className="w-full max-w-md bg-[var(--border)] bg-opacity-30 rounded-lg p-8">
                 <div className="text-center mb-6">
-                  <div className="text-5xl font-bold text-[var(--primary)] mb-2">$49</div>
-                  <p className="text-[var(--muted)] text-sm">Pre-order Price</p>
+                  <div className="text-5xl font-bold text-[var(--primary)] mb-2">$60</div>
+                  <p className="text-[var(--muted)] text-sm">Complete Book</p>
                 </div>
 
                 <div className="space-y-4 mb-6">
@@ -66,36 +66,41 @@ export default function BookPage() {
                   </div>
                   <div className="flex items-start gap-3">
                     <span className="text-[var(--success)] mt-1">✓</span>
-                    <span className="text-sm">First year developer license ($49.99 vs $99.99/year)</span>
+                    <span className="text-sm">Complete guide to multi-agent coordination</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <span className="text-[var(--success)] mt-1">✓</span>
-                    <span className="text-sm">Software Development Plugin access</span>
+                    <span className="text-sm">Philosophy of anticipatory AI</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <span className="text-[var(--success)] mt-1">✓</span>
-                    <span className="text-sm">Healthcare Plugin access</span>
+                    <span className="text-sm">Implementation patterns with code</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <span className="text-[var(--success)] mt-1">✓</span>
-                    <span className="text-sm">Permanent access to book (all editions)</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="text-[var(--success)] mt-1">✓</span>
-                    <span className="text-sm">Renew license at $99.99/year after first year</span>
+                    <span className="text-sm">Lifetime access to all updates</span>
                   </div>
                 </div>
 
                 <CheckoutButton
                   priceId={BOOK_PRICE_ID}
                   mode="payment"
-                  buttonText="Pre-order Now - $49"
+                  buttonText="Buy Now - $60"
                   className="btn btn-primary w-full text-lg mb-4"
                 />
 
                 <p className="text-xs text-center text-[var(--muted)]">
-                  Secure checkout powered by Stripe. Available December 2025.
+                  Secure checkout powered by Stripe. Instant digital delivery.
                 </p>
+
+                <div className="mt-6 pt-6 border-t border-[var(--border)]">
+                  <p className="text-sm text-center text-[var(--text-secondary)] mb-3">
+                    Company with 6+ employees?
+                  </p>
+                  <Link href="/pricing" className="btn btn-outline w-full text-sm">
+                    Commercial License - $99/dev/year
+                  </Link>
+                </div>
               </div>
             </div>
 
@@ -248,31 +253,31 @@ export default function BookPage() {
         </div>
       </section>
 
-      {/* Pre-order Benefits */}
+      {/* What's Inside */}
       <section className="py-20">
         <div className="container">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12">Pre-order Benefits</h2>
+            <h2 className="text-3xl font-bold text-center mb-12">What's Inside</h2>
             <div className="grid md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="text-4xl mb-4">💰</div>
-                <h3 className="text-xl font-bold mb-3">Best Price</h3>
+                <div className="text-4xl mb-4">🧠</div>
+                <h3 className="text-xl font-bold mb-3">Philosophy</h3>
                 <p className="text-[var(--text-secondary)]">
-                  Lock in the pre-order price of $49. Price will increase after December 2025 launch.
+                  Data sovereignty, trust as earned, and the six foundational principles of multi-agent coordination.
                 </p>
               </div>
               <div className="text-center">
-                <div className="text-4xl mb-4">📚</div>
-                <h3 className="text-xl font-bold mb-3">Complete Edition</h3>
+                <div className="text-4xl mb-4">⚙️</div>
+                <h3 className="text-xl font-bold mb-3">Implementation</h3>
                 <p className="text-[var(--text-secondary)]">
-                  Get the full book plus Software and Healthcare plugins when released in December 2025.
+                  Step-by-step guides to building short-term memory, agent coordination, and pattern staging.
                 </p>
               </div>
               <div className="text-center">
-                <div className="text-4xl mb-4">🚀</div>
-                <h3 className="text-xl font-bold mb-3">December 2025</h3>
+                <div className="text-4xl mb-4">📊</div>
+                <h3 className="text-xl font-bold mb-3">Practical Patterns</h3>
                 <p className="text-[var(--text-secondary)]">
-                  Immediate access to the complete book, plugins, and licenses upon release.
+                  5 production-ready patterns with measurable benefits: 3x faster reviews, 68% auto-resolution.
                 </p>
               </div>
             </div>
@@ -289,19 +294,33 @@ export default function BookPage() {
               <div className="border-b border-[var(--border)] pb-6">
                 <h3 className="text-xl font-bold mb-3">What's included with the book?</h3>
                 <p className="text-[var(--text-secondary)]">
-                  When released in December 2025, you'll get the complete book (theory and implementation examples),
-                  plus working Software and Healthcare plugins with 1 developer license. All updates to this
-                  edition are included.
+                  The complete book covering multi-agent coordination philosophy, implementation guides, and
+                  production-ready patterns. Digital formats (PDF, ePub, Mobi) with lifetime access to updates.
                 </p>
               </div>
 
               <div className="border-b border-[var(--border)] pb-6">
-                <h3 className="text-xl font-bold mb-3">How does the developer license work?</h3>
+                <h3 className="text-xl font-bold mb-3">Do I need the book to use the framework?</h3>
                 <p className="text-[var(--text-secondary)]">
-                  Each book purchase includes a 1-year developer license at the special price of $49.99 (50% off
-                  the regular $99.99/year). After the first year, you can renew at $99.99/year. The license covers
-                  one developer across all their development environments. Need more licenses for your team? Each
-                  team member needs their own book purchase and license.
+                  No. The Empathy Framework is open source and documented online. The book provides deeper
+                  coverage of the philosophy, implementation details, and patterns that aren't in the docs.
+                </p>
+              </div>
+
+              <div className="border-b border-[var(--border)] pb-6">
+                <h3 className="text-xl font-bold mb-3">Who is the book for?</h3>
+                <p className="text-[var(--text-secondary)]">
+                  The book is for students, academics, solo developers, and small teams (≤5 employees) who
+                  already have free commercial use rights under Fair Source 0.9. You can use the framework
+                  and learn from the book at no additional licensing cost.
+                </p>
+              </div>
+
+              <div className="border-b border-[var(--border)] pb-6">
+                <h3 className="text-xl font-bold mb-3">What about larger companies?</h3>
+                <p className="text-[var(--text-secondary)]">
+                  Companies with 6+ employees need the Commercial License ($99/dev/year) to use the framework.
+                  Visit our <Link href="/pricing" className="text-[var(--primary)] underline">pricing page</Link> for details.
                 </p>
               </div>
 
@@ -309,24 +328,16 @@ export default function BookPage() {
                 <h3 className="text-xl font-bold mb-3">Is the Core Framework free?</h3>
                 <p className="text-[var(--text-secondary)]">
                   The Empathy Framework uses Fair Source License 0.9. It's free for students, educators, and
-                  companies with 5 or fewer employees. Commercial licensing is required for companies with 6+ employees.
-                  The book includes your first year of commercial licensing at 50% off ($49.99 vs $99.99/year).
-                </p>
-              </div>
-
-              <div className="border-b border-[var(--border)] pb-6">
-                <h3 className="text-xl font-bold mb-3">What if I need to change my developer license?</h3>
-                <p className="text-[var(--text-secondary)]">
-                  You can deactivate your license from one machine and activate it on another. Contact support
-                  if you need assistance.
+                  companies with 5 or fewer employees. Commercial licensing ($99/year per developer) is required
+                  for companies with 6+ employees.
                 </p>
               </div>
 
               <div className="pb-6">
-                <h3 className="text-xl font-bold mb-3">When will the book be available?</h3>
+                <h3 className="text-xl font-bold mb-3">What format is the book?</h3>
                 <p className="text-[var(--text-secondary)]">
-                  The complete book, including all theory, implementation examples, and commercial plugins,
-                  will be released in December 2025. Pre-orders will be available soon to lock in the $49 price.
+                  Instant digital delivery in PDF, ePub, and Mobi formats. Read on any device.
+                  You get lifetime access to all updates to this edition.
                 </p>
               </div>
             </div>
@@ -338,14 +349,14 @@ export default function BookPage() {
       <section className="py-20 gradient-primary text-white">
         <div className="container">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-6">Coming December 2025</h2>
+            <h2 className="text-4xl font-bold mb-6">Ready to Build Anticipatory AI?</h2>
             <p className="text-xl mb-8 opacity-90">
-              The complete guide to building Level 4 Anticipatory AI systems with working commercial plugins.
+              The complete guide to building Level 4 Anticipatory AI systems with multi-agent coordination.
             </p>
             <CheckoutButton
               priceId={BOOK_PRICE_ID}
               mode="payment"
-              buttonText="Pre-order Now - $49"
+              buttonText="Buy the Book - $60"
               className="btn bg-white text-[var(--primary)] hover:bg-gray-100 text-lg px-8 py-4"
             />
           </div>

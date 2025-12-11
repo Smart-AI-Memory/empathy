@@ -9,7 +9,7 @@ The LLM Toolkit provides:
 - **Unified LLM Interface**: Single API for multiple providers (Anthropic, OpenAI, Ollama)
 - **Security Controls**: PII scrubbing, secrets detection, content filtering
 - **Compliance**: HIPAA, GDPR, SOC2 audit logging
-- **Claude Memory Integration**: CLAUDE.md support with MemDocs pattern storage
+- **Claude Memory Integration**: CLAUDE.md support with Long-Term Memory pattern storage
 - **Healthcare Wizards**: FHIR, HL7, clinical protocol support
 
 ## Key Features
@@ -341,13 +341,13 @@ response = llm.interact(
 # Memory instructions from CLAUDE.md are automatically followed
 ```
 
-### MemDocs Pattern Storage
+### Long-Term Memory Pattern Storage
 
 ```python
-from empathy_llm_toolkit.secure_memdocs import SecureMemDocsIntegration
+from empathy_llm_toolkit.secure_pattern-storage import SecureLong-Term MemoryIntegration
 
 # Initialize with classification
-memdocs = SecureMemDocsIntegration(
+pattern-storage = SecureLong-Term MemoryIntegration(
     claude_memory_config=memory_config,
     classification_mode="auto"  # or "PUBLIC", "INTERNAL", "SENSITIVE"
 )
@@ -362,7 +362,7 @@ Always deploy on Monday mornings:
 - Avoid weekend emergencies
 """
 
-result = memdocs.store_pattern(
+result = pattern-storage.store_pattern(
     pattern_content=pattern_data,
     pattern_type="best_practice",
     user_id="user_123",

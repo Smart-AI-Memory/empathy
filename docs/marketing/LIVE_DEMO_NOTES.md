@@ -177,7 +177,7 @@ $ python run_full_demo.py
 - Verbal-only communication during transitions
 - No written verification step
 
-The framework extracts this pattern and stores it in long-term memory using MemDocs. This is key—it's not just analyzing the code, it's learning a reusable pattern."
+The framework extracts this pattern and stores it in long-term memory using Long-Term Memory. This is key—it's not just analyzing the code, it's learning a reusable pattern."
 
 **Pause and highlight:**
 - Point at terminal when "Pattern stored in memory" appears
@@ -365,7 +365,7 @@ For workshops or detailed technical sessions:
 1. **Introduction (3m):** Background, problem statement, framework overview
 2. **Five Levels Explanation (5m):** Quick overview of Levels 1-5
 3. **Healthcare Analysis (5m):** Detailed walkthrough, explain ComplianceWizard
-4. **MemDocs Integration (3m):** Show how pattern storage works
+4. **Long-Term Memory Integration (3m):** Show how pattern storage works
 5. **Software Analysis (5m):** Detailed walkthrough, explain CICDWizard
 6. **Cross-Domain Magic (5m):** Deep dive into pattern matching algorithm
 7. **Real-World Applications (3m):** Other examples, use cases
@@ -387,7 +387,7 @@ For workshops or detailed technical sessions:
 
 **Q: "How does the cross-domain pattern matching work?"**
 
-A: "The framework extracts semantic patterns—not just code structure. It identifies 'handoff failure' characteristics: lack of verification, assumptions, time pressure. These are domain-agnostic. MemDocs stores these patterns with rich metadata, enabling semantic retrieval across domains."
+A: "The framework extracts semantic patterns—not just code structure. It identifies 'handoff failure' characteristics: lack of verification, assumptions, time pressure. These are domain-agnostic. Long-Term Memory stores these patterns with rich metadata, enabling semantic retrieval across domains."
 
 **Q: "What LLMs does it use?"**
 
@@ -423,7 +423,7 @@ A: "No catch. The 'magic' is combining domain-specific wizards with long-term pa
 
 **Q: "Why hasn't anyone done this before?"**
 
-A: "Great question! Most AI code tools focus on single-domain analysis. The key innovation is MemDocs for long-term pattern storage and the five-level maturity model guiding pattern abstraction. Plus, modern LLMs make semantic cross-domain matching possible."
+A: "Great question! Most AI code tools focus on single-domain analysis. The key innovation is Long-Term Memory for long-term pattern storage and the five-level maturity model guiding pattern abstraction. Plus, modern LLMs make semantic cross-domain matching possible."
 
 **Q: "What if the prediction is wrong?"**
 
@@ -564,7 +564,7 @@ python run_security_wizard_demo.py
 
 1. **Cross-domain learning** - No other framework transfers patterns between domains
 2. **Level 4 Anticipatory** - Predicts 30-90 days ahead, not just current issues
-3. **Long-term memory** - MemDocs enables pattern accumulation over time
+3. **Long-term memory** - Long-Term Memory enables pattern accumulation over time
 4. **Source-available** - Fair Source license, free for small teams
 5. **Research-backed** - Built on healthcare safety research, systems thinking
 

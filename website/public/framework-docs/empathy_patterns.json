@@ -1,0 +1,387 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "metadata": {
+    "version": "1.1.0",
+    "last_updated": "2025-12-10",
+    "description": "Structured registry of patterns discovered and validated within the Empathy ecosystem",
+    "maintainers": ["Patrick Roebuck", "Claude (Anthropic)"],
+    "related_docs": [
+      "EMPATHY_PHILOSOPHY.md",
+      "TEACHING_AI_YOUR_PHILOSOPHY.md",
+      "HOW_CLAUDE_LEARNS.md"
+    ]
+  },
+
+  "pattern_schema": {
+    "id": "string (unique identifier)",
+    "name": "string (human-readable name)",
+    "description": "string (what the pattern does)",
+    "principle": "string (which foundational principle it relates to)",
+    "type": "string (category: workflow, code, communication, architecture, conflict_resolution)",
+    "origin": {
+      "source": "string (human, ai, emergent, collaborative)",
+      "context": "string (where/when discovered)",
+      "contributors": ["array of contributor identifiers"]
+    },
+    "validation": {
+      "confidence": "number (0.0-1.0)",
+      "last_validated": "ISO date string",
+      "validation_method": "string (tested, observed, theoretical)",
+      "usage_count": "number"
+    },
+    "application": {
+      "when_to_use": "string",
+      "when_not_to_use": "string",
+      "example": "string or code block"
+    },
+    "related_patterns": ["array of pattern IDs"],
+    "status": "string (active, deprecated, experimental)"
+  },
+
+  "patterns": [
+    {
+      "id": "PAT-001",
+      "name": "Standalone Content Marketing",
+      "description": "Provide complete, valuable content (like a book chapter) without navigation to related paid content, using strategic CTAs instead of content access as conversion mechanism",
+      "principle": "transparency_of_reasoning",
+      "type": "workflow",
+      "origin": {
+        "source": "collaborative",
+        "context": "SmartAIMemory.com Chapter 23 implementation - discovered that external links to full book content created 'backdoor' access",
+        "contributors": ["Patrick Roebuck", "Claude"]
+      },
+      "validation": {
+        "confidence": 0.85,
+        "last_validated": "2025-12-10",
+        "validation_method": "observed",
+        "usage_count": 1
+      },
+      "application": {
+        "when_to_use": "When offering free sample content that relates to paid products",
+        "when_not_to_use": "When full content access is the product itself",
+        "example": "Created /chapter-23 as standalone page with CTAs to book purchase, rather than linking to external site with full book navigation"
+      },
+      "related_patterns": [],
+      "status": "active"
+    },
+    {
+      "id": "PAT-002",
+      "name": "Conflict Visibility Over Suppression",
+      "description": "When agents or systems disagree, surface the conflict explicitly rather than silently picking a winner. The conflict itself contains information.",
+      "principle": "conflict_as_signal",
+      "type": "architecture",
+      "origin": {
+        "source": "collaborative",
+        "context": "Distributed Memory Networks design - Chapter 23 and demo implementation",
+        "contributors": ["Patrick Roebuck", "Claude"]
+      },
+      "validation": {
+        "confidence": 0.90,
+        "last_validated": "2025-12-10",
+        "validation_method": "tested",
+        "usage_count": 3
+      },
+      "application": {
+        "when_to_use": "Any multi-agent system or collaborative workflow where different perspectives exist",
+        "when_not_to_use": "Single-agent systems with no competing recommendations",
+        "example": "Demo conflict resolution shows both patterns, their scores, and reasoning - doesn't just return 'winner'"
+      },
+      "related_patterns": ["PAT-003"],
+      "status": "active"
+    },
+    {
+      "id": "PAT-003",
+      "name": "Preserve Losing Patterns",
+      "description": "When resolving conflicts, store both winning and losing patterns. Today's 'loser' may be tomorrow's correct choice in different context.",
+      "principle": "conflict_as_signal",
+      "type": "architecture",
+      "origin": {
+        "source": "collaborative",
+        "context": "Discussion of suppressed conflicts becoming technical debt",
+        "contributors": ["Patrick Roebuck", "Claude"]
+      },
+      "validation": {
+        "confidence": 0.80,
+        "last_validated": "2025-12-10",
+        "validation_method": "theoretical",
+        "usage_count": 1
+      },
+      "application": {
+        "when_to_use": "Any conflict resolution in multi-agent systems",
+        "when_not_to_use": "When patterns are definitively wrong (security vulnerabilities, etc.)",
+        "example": "PatternLibrary.resolve_conflict() stores resolution but keeps both patterns accessible"
+      },
+      "related_patterns": ["PAT-002"],
+      "status": "active"
+    },
+    {
+      "id": "PAT-004",
+      "name": "Parallel Agent Execution",
+      "description": "When tasks are independent, execute multiple agents simultaneously rather than sequentially. Reduces total time significantly.",
+      "principle": "anticipation_over_reaction",
+      "type": "workflow",
+      "origin": {
+        "source": "collaborative",
+        "context": "Homepage redesign work - multiple independent components built in parallel",
+        "contributors": ["Patrick Roebuck", "Claude"]
+      },
+      "validation": {
+        "confidence": 0.95,
+        "last_validated": "2025-12-10",
+        "validation_method": "tested",
+        "usage_count": 5
+      },
+      "application": {
+        "when_to_use": "Multiple independent tasks with no data dependencies",
+        "when_not_to_use": "Tasks that depend on outputs of other tasks",
+        "example": "Creating GitHubStarsBadge, TestsBadge, and PersonaCards components simultaneously"
+      },
+      "related_patterns": [],
+      "status": "active"
+    },
+    {
+      "id": "PAT-005",
+      "name": "Philosophy Stack (Four Layers)",
+      "description": "Structure knowledge transfer in four layers: Philosophy (why) → Standards (rules) → Patterns (templates) → In-Code Documentation (reinforcement)",
+      "principle": "transparency_of_reasoning",
+      "type": "architecture",
+      "origin": {
+        "source": "collaborative",
+        "context": "TEACHING_AI_YOUR_PHILOSOPHY.md development",
+        "contributors": ["Patrick Roebuck", "Claude"]
+      },
+      "validation": {
+        "confidence": 0.90,
+        "last_validated": "2025-12-10",
+        "validation_method": "tested",
+        "usage_count": 10
+      },
+      "application": {
+        "when_to_use": "Establishing consistent development practices across human-AI teams",
+        "when_not_to_use": "One-off tasks that don't need standardization",
+        "example": "EMPATHY_PHILOSOPHY.md (Layer 1) references CODING_STANDARDS.md (Layer 2) which references PATTERNS.md (Layer 3)"
+      },
+      "related_patterns": ["PAT-006"],
+      "status": "active"
+    },
+    {
+      "id": "PAT-006",
+      "name": "Cross-Reference Documentation",
+      "description": "Documentation should link to related documents, creating a navigable knowledge graph rather than isolated files.",
+      "principle": "patterns_as_shared_property",
+      "type": "communication",
+      "origin": {
+        "source": "human",
+        "context": "Shirley Thomas mentorship - 'Never leave context stranded'",
+        "contributors": ["Shirley Thomas", "Patrick Roebuck"]
+      },
+      "validation": {
+        "confidence": 0.95,
+        "last_validated": "2025-12-10",
+        "validation_method": "observed",
+        "usage_count": 20
+      },
+      "application": {
+        "when_to_use": "Any documentation that relates to other documents",
+        "when_not_to_use": "Self-contained reference material",
+        "example": "# Per EMPATHY_PHILOSOPHY.md: Principle 4 - Conflict as Signal"
+      },
+      "related_patterns": ["PAT-005"],
+      "status": "active"
+    },
+    {
+      "id": "PAT-007",
+      "name": "CSS Specificity for Dynamic Content",
+      "description": "Use !important on button text colors when default anchor styles might override intended appearance in dynamic contexts",
+      "principle": "anticipation_over_reaction",
+      "type": "code",
+      "origin": {
+        "source": "collaborative",
+        "context": "SmartAIMemory.com button hover states - white text on blue turning black",
+        "contributors": ["Patrick Roebuck", "Claude"]
+      },
+      "validation": {
+        "confidence": 0.85,
+        "last_validated": "2025-12-10",
+        "validation_method": "tested",
+        "usage_count": 2
+      },
+      "application": {
+        "when_to_use": "Button components that may be rendered as anchor tags with inherited link styles",
+        "when_not_to_use": "When CSS architecture already handles specificity properly",
+        "example": ".btn-primary { color: white !important; } .btn-primary:hover { color: white !important; }"
+      },
+      "related_patterns": [],
+      "status": "active"
+    },
+    {
+      "id": "PAT-008",
+      "name": "Living Document Protocol",
+      "description": "Design foundational documents with built-in maintenance protocols, version tracking, and clear change processes",
+      "principle": "emergence_welcome",
+      "type": "workflow",
+      "origin": {
+        "source": "collaborative",
+        "context": "EMPATHY_PHILOSOPHY.md design discussion",
+        "contributors": ["Patrick Roebuck", "Claude"]
+      },
+      "validation": {
+        "confidence": 0.75,
+        "last_validated": "2025-12-10",
+        "validation_method": "theoretical",
+        "usage_count": 1
+      },
+      "application": {
+        "when_to_use": "Documents that govern processes or encode institutional knowledge",
+        "when_not_to_use": "Static reference material that shouldn't change",
+        "example": "EMPATHY_PHILOSOPHY.md includes Maintenance Protocol section with review cycles and change types"
+      },
+      "related_patterns": ["PAT-005"],
+      "status": "active"
+    }
+  ],
+
+  "principles_index": {
+    "anticipation_over_reaction": ["PAT-004", "PAT-007"],
+    "transparency_of_reasoning": ["PAT-001", "PAT-005"],
+    "patterns_as_shared_property": ["PAT-006"],
+    "conflict_as_signal": ["PAT-002", "PAT-003"],
+    "emergence_welcome": ["PAT-008"],
+    "human_in_loop": []
+  },
+
+  "statistics": {
+    "total_patterns": 12,
+    "by_status": {
+      "active": 12,
+      "deprecated": 0,
+      "experimental": 0
+    },
+    "by_type": {
+      "workflow": 3,
+      "architecture": 5,
+      "communication": 1,
+      "code": 1,
+      "conflict_resolution": 2
+    },
+    "by_origin": {
+      "collaborative": 9,
+      "human": 2,
+      "ai": 0,
+      "emergent": 1
+    },
+    "average_confidence": 0.86
+  },
+
+  "new_patterns_v1.1": [
+    {
+      "id": "PAT-009",
+      "name": "Interest-Based Conflict Resolution",
+      "description": "Resolve conflicts by extracting underlying interests rather than debating positions. Seek synthesis that satisfies multiple interests before falling back to BATNA.",
+      "principle": "conflict_as_negotiation",
+      "type": "conflict_resolution",
+      "origin": {
+        "source": "human",
+        "context": "Harvard Negotiation Project 'Getting to Yes' framework, adapted for AI-AI and human-AI coordination",
+        "contributors": ["Fisher & Ury", "Patrick Roebuck", "Claude"]
+      },
+      "validation": {
+        "confidence": 0.90,
+        "last_validated": "2025-12-10",
+        "validation_method": "theoretical",
+        "usage_count": 1
+      },
+      "application": {
+        "when_to_use": "Any conflict between agents or patterns where both sides have legitimate concerns",
+        "when_not_to_use": "Clear-cut errors or security vulnerabilities where one pattern is definitively wrong",
+        "example": "Security wants null checks (interest: prevent crashes), Performance wants to skip validation (interest: reduce latency). Synthesis: null check with early return satisfies both."
+      },
+      "related_patterns": ["PAT-002", "PAT-003", "PAT-010"],
+      "status": "active"
+    },
+    {
+      "id": "PAT-010",
+      "name": "BATNA Definition",
+      "description": "Every negotiation needs a defined fallback (Best Alternative to Negotiated Agreement). Define context-specific BATNAs so resolution has clear paths when synthesis fails.",
+      "principle": "conflict_as_negotiation",
+      "type": "conflict_resolution",
+      "origin": {
+        "source": "human",
+        "context": "Harvard Negotiation Project, operationalized for multi-agent systems",
+        "contributors": ["Fisher & Ury", "Patrick Roebuck", "Claude"]
+      },
+      "validation": {
+        "confidence": 0.85,
+        "last_validated": "2025-12-10",
+        "validation_method": "theoretical",
+        "usage_count": 1
+      },
+      "application": {
+        "when_to_use": "Before any conflict resolution system is deployed, define what happens if synthesis fails",
+        "when_not_to_use": "N/A - should always be defined",
+        "example": "General dev: team priority. Security-sensitive: choose safest. High-stakes: escalate to human. Time-critical: highest confidence."
+      },
+      "related_patterns": ["PAT-009"],
+      "status": "active"
+    },
+    {
+      "id": "PAT-011",
+      "name": "Role-Based Memory Access Tiers",
+      "description": "Implement four-tier access control (Observer, Contributor, Validator, Steward) to ensure data integrity while enabling appropriate participation at each level.",
+      "principle": "patterns_as_shared_property",
+      "type": "architecture",
+      "origin": {
+        "source": "collaborative",
+        "context": "Discussion of memory architecture for multi-agent coordination with data integrity requirements",
+        "contributors": ["Patrick Roebuck", "Claude"]
+      },
+      "validation": {
+        "confidence": 0.80,
+        "last_validated": "2025-12-10",
+        "validation_method": "theoretical",
+        "usage_count": 1
+      },
+      "application": {
+        "when_to_use": "Any shared memory system where different participants need different levels of access",
+        "when_not_to_use": "Single-agent systems or fully trusted homogeneous teams",
+        "example": "Specialized agents get Tier 2 (Contributor) - can stage patterns but not promote. Human reviewers get Tier 3 (Validator) - can promote to library."
+      },
+      "related_patterns": ["PAT-012"],
+      "status": "active"
+    },
+    {
+      "id": "PAT-012",
+      "name": "Redis Short-Term Memory",
+      "description": "Use Redis as fast, TTL-based short-term memory for agents to stash intermediate results, stage patterns, and coordinate in real-time.",
+      "principle": "anticipation_over_reaction",
+      "type": "architecture",
+      "origin": {
+        "source": "collaborative",
+        "context": "Discussion of giving AI agents working memory beyond conversation context",
+        "contributors": ["Patrick Roebuck", "Claude"]
+      },
+      "validation": {
+        "confidence": 0.75,
+        "last_validated": "2025-12-10",
+        "validation_method": "theoretical",
+        "usage_count": 0
+      },
+      "application": {
+        "when_to_use": "Multi-agent systems needing fast coordination, pattern staging, or intermediate result storage",
+        "when_not_to_use": "Simple single-session interactions where context window is sufficient",
+        "example": "Agent stashes analysis findings with 1hr TTL. Later retrieves without re-computing. Staged patterns await validation with 24hr TTL."
+      },
+      "related_patterns": ["PAT-011", "PAT-004"],
+      "status": "active"
+    }
+  ],
+
+  "principles_index_v1.1": {
+    "anticipation_over_reaction": ["PAT-004", "PAT-007", "PAT-012"],
+    "transparency_of_reasoning": ["PAT-001", "PAT-005"],
+    "patterns_as_shared_property": ["PAT-006", "PAT-011"],
+    "conflict_as_negotiation": ["PAT-002", "PAT-003", "PAT-009", "PAT-010"],
+    "emergence_welcome": ["PAT-008"],
+    "human_in_loop": []
+  }
+}

@@ -287,7 +287,7 @@ $ python examples/level_5_transformative/run_full_demo.py
 4. **Summary** (3 seconds)
    ```
    Pattern learned in healthcare → Applied to software
-   Powered by: Empathy Framework + MemDocs
+   Powered by: Empathy Framework + Long-Term Memory
    ```
 
 ---

@@ -184,7 +184,6 @@ pip install empathy-framework[full]
 
 # Specific components
 pip install empathy-framework[llm]       # LLM providers
-pip install empathy-framework[memdocs]   # MemDocs integration
 pip install empathy-framework[agents]    # LangChain agents
 pip install empathy-framework[all]       # Everything + dev tools
 
