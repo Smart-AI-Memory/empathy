@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline';">
+    <link href="{{cssUri}}" rel="stylesheet">
+    <title>Empathy Memory Panel</title>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="title">Empathy Memory</h1>
+            <button id="refresh-btn" class="btn btn-icon" title="Refresh">
+                <span class="icon">&#x21bb;</span>
+            </button>
+        </div>
+
+        <!-- Connection Status -->
+        <div id="connection-status" class="status-card hidden">
+            <div class="status-icon status-error">&#x26a0;</div>
+            <div class="status-message">
+                <strong>Connection Error</strong>
+                <p id="connection-message">Cannot connect to Memory API</p>
+            </div>
+        </div>
+
+        <!-- Redis Status -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Redis Status</h2>
+                <div id="redis-status-badge" class="badge badge-gray">Unknown</div>
+            </div>
+            <div class="card">
+                <div class="stat-grid">
+                    <div class="stat">
+                        <span class="stat-label">Status</span>
+                        <span id="redis-status" class="stat-value">-</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Method</span>
+                        <span id="redis-method" class="stat-value">-</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Host</span>
+                        <span id="redis-host" class="stat-value">-</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Port</span>
+                        <span id="redis-port" class="stat-value">-</span>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button id="start-redis-btn" class="btn btn-primary">
+                        <span class="icon">&#x25b6;</span> Start Redis
+                    </button>
+                    <button id="stop-redis-btn" class="btn btn-secondary">
+                        <span class="icon">&#x25a0;</span> Stop Redis
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Memory Statistics -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Memory Statistics</h2>
+            </div>
+            <div class="card">
+                <div class="subsection">
+                    <h3>Short-term (Redis)</h3>
+                    <div class="stat-grid">
+                        <div class="stat">
+                            <span class="stat-label">Total Keys</span>
+                            <span id="redis-keys-total" class="stat-value">0</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Working Keys</span>
+                            <span id="redis-keys-working" class="stat-value">0</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Staged Patterns</span>
+                            <span id="redis-keys-staged" class="stat-value">0</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Memory Used</span>
+                            <span id="redis-memory-used" class="stat-value">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="subsection">
+                    <h3>Long-term (Patterns)</h3>
+                    <div class="stat-grid">
+                        <div class="stat">
+                            <span class="stat-label">Total Patterns</span>
+                            <span id="patterns-total" class="stat-value">0</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">
+                                <span class="badge badge-green">PUBLIC</span>
+                            </span>
+                            <span id="patterns-public" class="stat-value">0</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">
+                                <span class="badge badge-yellow">INTERNAL</span>
+                            </span>
+                            <span id="patterns-internal" class="stat-value">0</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">
+                                <span class="badge badge-red">SENSITIVE</span>
+                            </span>
+                            <span id="patterns-sensitive" class="stat-value">0</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Encrypted</span>
+                            <span id="patterns-encrypted" class="stat-value">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patterns List -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Pattern Library</h2>
+                <div class="actions">
+                    <select id="pattern-filter" class="select">
+                        <option value="">All Classifications</option>
+                        <option value="PUBLIC">PUBLIC</option>
+                        <option value="INTERNAL">INTERNAL</option>
+                        <option value="SENSITIVE">SENSITIVE</option>
+                    </select>
+                    <button id="view-patterns-btn" class="btn btn-secondary btn-sm">
+                        <span class="icon">&#x1f441;</span> View
+                    </button>
+                    <button id="export-patterns-btn" class="btn btn-secondary btn-sm">
+                        <span class="icon">&#x2193;</span> Export
+                    </button>
+                </div>
+            </div>
+            <div id="patterns-list" class="card">
+                <div class="empty-state">
+                    <span class="icon-large">&#x1f4da;</span>
+                    <p>Click "View" to load patterns</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Health Check -->
+        <div class="section">
+            <div class="section-header">
+                <h2>System Health</h2>
+                <button id="health-check-btn" class="btn btn-secondary btn-sm">
+                    <span class="icon">&#x2764;</span> Run Check
+                </button>
+            </div>
+            <div id="health-results" class="card hidden">
+                <div id="health-overall" class="health-overall">
+                    <span class="icon">&#x2713;</span>
+                    <span id="health-status">Unknown</span>
+                </div>
+                <div id="health-checks" class="health-checks"></div>
+                <div id="health-recommendations" class="health-recommendations hidden"></div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Quick Actions</h2>
+            </div>
+            <div class="card">
+                <div class="actions-vertical">
+                    <button id="clear-short-term-btn" class="btn btn-warning">
+                        <span class="icon">&#x1f5d1;</span> Clear Short-term Memory
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <span id="last-updated">Last updated: Never</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const vscode = acquireVsCodeApi();
+
+            // State
+            let currentStatus = null;
+            let currentStats = null;
+
+            // Elements
+            const elements = {
+                refreshBtn: document.getElementById('refresh-btn'),
+                connectionStatus: document.getElementById('connection-status'),
+                connectionMessage: document.getElementById('connection-message'),
+
+                // Redis
+                redisStatusBadge: document.getElementById('redis-status-badge'),
+                redisStatus: document.getElementById('redis-status'),
+                redisMethod: document.getElementById('redis-method'),
+                redisHost: document.getElementById('redis-host'),
+                redisPort: document.getElementById('redis-port'),
+                startRedisBtn: document.getElementById('start-redis-btn'),
+                stopRedisBtn: document.getElementById('stop-redis-btn'),
+
+                // Stats
+                redisKeysTotal: document.getElementById('redis-keys-total'),
+                redisKeysWorking: document.getElementById('redis-keys-working'),
+                redisKeysStaged: document.getElementById('redis-keys-staged'),
+                redisMemoryUsed: document.getElementById('redis-memory-used'),
+                patternsTotal: document.getElementById('patterns-total'),
+                patternsPublic: document.getElementById('patterns-public'),
+                patternsInternal: document.getElementById('patterns-internal'),
+                patternsSensitive: document.getElementById('patterns-sensitive'),
+                patternsEncrypted: document.getElementById('patterns-encrypted'),
+
+                // Patterns
+                patternFilter: document.getElementById('pattern-filter'),
+                viewPatternsBtn: document.getElementById('view-patterns-btn'),
+                exportPatternsBtn: document.getElementById('export-patterns-btn'),
+                patternsList: document.getElementById('patterns-list'),
+
+                // Health
+                healthCheckBtn: document.getElementById('health-check-btn'),
+                healthResults: document.getElementById('health-results'),
+                healthOverall: document.getElementById('health-overall'),
+                healthStatus: document.getElementById('health-status'),
+                healthChecks: document.getElementById('health-checks'),
+                healthRecommendations: document.getElementById('health-recommendations'),
+
+                // Actions
+                clearShortTermBtn: document.getElementById('clear-short-term-btn'),
+
+                lastUpdated: document.getElementById('last-updated')
+            };
+
+            // Event listeners
+            elements.refreshBtn.addEventListener('click', () => {
+                vscode.postMessage({ type: 'refresh' });
+            });
+
+            elements.startRedisBtn.addEventListener('click', () => {
+                vscode.postMessage({ type: 'startRedis' });
+            });
+
+            elements.stopRedisBtn.addEventListener('click', () => {
+                vscode.postMessage({ type: 'stopRedis' });
+            });
+
+            elements.viewPatternsBtn.addEventListener('click', () => {
+                const classification = elements.patternFilter.value || undefined;
+                vscode.postMessage({ type: 'listPatterns', classification });
+            });
+
+            elements.exportPatternsBtn.addEventListener('click', () => {
+                const classification = elements.patternFilter.value || undefined;
+                vscode.postMessage({ type: 'exportPatterns', classification });
+            });
+
+            elements.healthCheckBtn.addEventListener('click', () => {
+                vscode.postMessage({ type: 'healthCheck' });
+            });
+
+            elements.clearShortTermBtn.addEventListener('click', () => {
+                vscode.postMessage({ type: 'clearShortTerm' });
+            });
+
+            // Message handler
+            window.addEventListener('message', event => {
+                const message = event.data;
+
+                switch (message.type) {
+                    case 'statusUpdate':
+                        updateStatus(message.status, message.stats);
+                        break;
+                    case 'patternsUpdate':
+                        updatePatternsList(message.patterns);
+                        break;
+                    case 'healthUpdate':
+                        updateHealth(message.health);
+                        break;
+                    case 'connectionError':
+                        showConnectionError(message.message);
+                        break;
+                }
+            });
+
+            // Update status
+            function updateStatus(status, stats) {
+                currentStatus = status;
+                currentStats = stats;
+
+                // Hide connection error
+                elements.connectionStatus.classList.add('hidden');
+
+                // Update Redis status
+                const redisRunning = status.redis.status === 'running';
+                elements.redisStatus.textContent = status.redis.status.toUpperCase();
+                elements.redisMethod.textContent = status.redis.method;
+                elements.redisHost.textContent = status.redis.host;
+                elements.redisPort.textContent = status.redis.port;
+
+                elements.redisStatusBadge.className = 'badge ' + (redisRunning ? 'badge-green' : 'badge-gray');
+                elements.redisStatusBadge.textContent = redisRunning ? 'Running' : 'Stopped';
+
+                // Update buttons
+                elements.startRedisBtn.disabled = redisRunning;
+                elements.stopRedisBtn.disabled = !redisRunning;
+
+                // Update stats
+                elements.redisKeysTotal.textContent = stats.redis_keys_total;
+                elements.redisKeysWorking.textContent = stats.redis_keys_working;
+                elements.redisKeysStaged.textContent = stats.redis_keys_staged;
+                elements.redisMemoryUsed.textContent = stats.redis_memory_used;
+                elements.patternsTotal.textContent = stats.patterns_total;
+                elements.patternsPublic.textContent = stats.patterns_public;
+                elements.patternsInternal.textContent = stats.patterns_internal;
+                elements.patternsSensitive.textContent = stats.patterns_sensitive;
+                elements.patternsEncrypted.textContent = stats.patterns_encrypted;
+
+                // Update timestamp
+                const now = new Date().toLocaleTimeString();
+                elements.lastUpdated.textContent = `Last updated: ${now}`;
+            }
+
+            // Update patterns list
+            function updatePatternsList(patterns) {
+                if (!patterns || patterns.length === 0) {
+                    elements.patternsList.innerHTML = `
+                        <div class="empty-state">
+                            <span class="icon-large">&#x1f4da;</span>
+                            <p>No patterns found</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '<div class="patterns-list">';
+                patterns.forEach(pattern => {
+                    const badgeClass =
+                        pattern.classification === 'PUBLIC' ? 'badge-green' :
+                        pattern.classification === 'INTERNAL' ? 'badge-yellow' :
+                        'badge-red';
+
+                    const encrypted = pattern.encrypted ? '🔒' : '';
+
+                    html += `
+                        <div class="pattern-item">
+                            <div class="pattern-header">
+                                <span class="badge ${badgeClass}">${pattern.classification}</span>
+                                <span class="pattern-type">${pattern.pattern_type}</span>
+                                ${encrypted}
+                            </div>
+                            <div class="pattern-id">${pattern.pattern_id}</div>
+                            <div class="pattern-meta">
+                                <span>Created: ${new Date(pattern.created_at).toLocaleDateString()}</span>
+                                <span>User: ${pattern.user_id}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+
+                elements.patternsList.innerHTML = html;
+            }
+
+            // Update health
+            function updateHealth(health) {
+                elements.healthResults.classList.remove('hidden');
+
+                // Overall status
+                const statusIcon =
+                    health.overall === 'healthy' ? '✓' :
+                    health.overall === 'degraded' ? '⚠' :
+                    '✗';
+                const statusClass =
+                    health.overall === 'healthy' ? 'status-success' :
+                    health.overall === 'degraded' ? 'status-warning' :
+                    'status-error';
+
+                elements.healthOverall.className = 'health-overall ' + statusClass;
+                elements.healthOverall.querySelector('.icon').textContent = statusIcon;
+                elements.healthStatus.textContent = health.overall.toUpperCase();
+
+                // Checks
+                let checksHtml = '';
+                health.checks.forEach(check => {
+                    const icon =
+                        check.status === 'pass' ? '✓' :
+                        check.status === 'warn' ? '⚠' :
+                        check.status === 'fail' ? '✗' :
+                        'ℹ';
+                    const iconClass =
+                        check.status === 'pass' ? 'status-success' :
+                        check.status === 'warn' ? 'status-warning' :
+                        check.status === 'fail' ? 'status-error' :
+                        'status-info';
+
+                    checksHtml += `
+                        <div class="health-check">
+                            <span class="health-icon ${iconClass}">${icon}</span>
+                            <div>
+                                <strong>${check.name}</strong>
+                                <p>${check.message}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                elements.healthChecks.innerHTML = checksHtml;
+
+                // Recommendations
+                if (health.recommendations && health.recommendations.length > 0) {
+                    elements.healthRecommendations.classList.remove('hidden');
+                    let recsHtml = '<h4>Recommendations</h4><ul>';
+                    health.recommendations.forEach(rec => {
+                        recsHtml += `<li>${rec}</li>`;
+                    });
+                    recsHtml += '</ul>';
+                    elements.healthRecommendations.innerHTML = recsHtml;
+                } else {
+                    elements.healthRecommendations.classList.add('hidden');
+                }
+            }
+
+            // Show connection error
+            function showConnectionError(message) {
+                elements.connectionStatus.classList.remove('hidden');
+                elements.connectionMessage.textContent = message;
+            }
+
+            // Initialize
+            vscode.postMessage({ type: 'ready' });
+        })();
+    </script>
+</body>
+</html>

@@ -28,7 +28,9 @@ Licensed under Fair Source 0.9
 """
 
 import os
+import uuid
 from dataclasses import dataclass, field
+from datetime import datetime
 from enum import Enum
 from typing import Any
 
@@ -37,7 +39,14 @@ import structlog
 from .claude_memory import ClaudeMemoryConfig
 from .config import get_redis_memory
 from .long_term import Classification, SecureMemDocsIntegration
-from .short_term import AccessTier, AgentCredentials, RedisShortTermMemory
+from .redis_bootstrap import RedisStartMethod, RedisStatus, ensure_redis
+from .short_term import (
+    AccessTier,
+    AgentCredentials,
+    RedisShortTermMemory,
+    StagedPattern,
+    TTLStrategy,
+)
 
 logger = structlog.get_logger(__name__)
 
@@ -59,7 +68,10 @@ class MemoryConfig:
 
     # Short-term memory settings
     redis_url: str | None = None
+    redis_host: str = "localhost"
+    redis_port: int = 6379
     redis_mock: bool = False
+    redis_auto_start: bool = True  # Auto-start Redis if not running
     default_ttl_seconds: int = 3600  # 1 hour
 
     # Long-term memory settings
@@ -97,7 +109,10 @@ class MemoryConfig:
         return cls(
             environment=environment,
             redis_url=os.getenv("REDIS_URL"),
+            redis_host=os.getenv("EMPATHY_REDIS_HOST", "localhost"),
+            redis_port=int(os.getenv("EMPATHY_REDIS_PORT", "6379")),
             redis_mock=os.getenv("EMPATHY_REDIS_MOCK", "").lower() == "true",
+            redis_auto_start=os.getenv("EMPATHY_REDIS_AUTO_START", "true").lower() == "true",
             storage_dir=os.getenv("EMPATHY_STORAGE_DIR", "./memdocs_storage"),
             encryption_enabled=os.getenv("EMPATHY_ENCRYPTION", "true").lower() == "true",
             claude_memory_enabled=os.getenv("EMPATHY_CLAUDE_MEMORY", "true").lower() == "true",
@@ -123,6 +138,7 @@ class UnifiedMemory:
     # Internal state
     _short_term: RedisShortTermMemory | None = field(default=None, init=False)
     _long_term: SecureMemDocsIntegration | None = field(default=None, init=False)
+    _redis_status: RedisStatus | None = field(default=None, init=False)
     _initialized: bool = field(default=False, init=False)
 
     def __post_init__(self):
@@ -137,20 +153,58 @@ class UnifiedMemory:
         # Initialize short-term memory (Redis)
         try:
             if self.config.redis_mock:
-                self._short_term = RedisShortTermMemory(mock_mode=True)
+                self._short_term = RedisShortTermMemory(use_mock=True)
+                self._redis_status = RedisStatus(
+                    available=False,
+                    method=RedisStartMethod.MOCK,
+                    message="Mock mode explicitly enabled",
+                )
             elif self.config.redis_url:
                 self._short_term = get_redis_memory(url=self.config.redis_url)
+                self._redis_status = RedisStatus(
+                    available=True,
+                    method=RedisStartMethod.ALREADY_RUNNING,
+                    message="Connected via REDIS_URL",
+                )
             else:
-                self._short_term = get_redis_memory()
+                # Use auto-start if enabled
+                if self.config.redis_auto_start:
+                    self._redis_status = ensure_redis(
+                        host=self.config.redis_host,
+                        port=self.config.redis_port,
+                        auto_start=True,
+                        verbose=True,
+                    )
+                    if self._redis_status.available:
+                        self._short_term = RedisShortTermMemory(
+                            host=self.config.redis_host,
+                            port=self.config.redis_port,
+                            use_mock=False,
+                        )
+                    else:
+                        self._short_term = RedisShortTermMemory(use_mock=True)
+                else:
+                    self._short_term = get_redis_memory()
+                    self._redis_status = RedisStatus(
+                        available=True,
+                        method=RedisStartMethod.ALREADY_RUNNING,
+                        message="Connected to existing Redis",
+                    )
 
             logger.info(
                 "short_term_memory_initialized",
-                mock_mode=self.config.redis_mock,
+                mock_mode=self.config.redis_mock or not self._redis_status.available,
+                redis_method=self._redis_status.method.value if self._redis_status else "unknown",
                 environment=self.config.environment.value,
             )
         except Exception as e:
             logger.warning("short_term_memory_failed", error=str(e))
-            self._short_term = RedisShortTermMemory(mock_mode=True)
+            self._short_term = RedisShortTermMemory(use_mock=True)
+            self._redis_status = RedisStatus(
+                available=False,
+                method=RedisStartMethod.MOCK,
+                message=f"Failed to initialize: {e}",
+            )
 
         # Initialize long-term memory (SecureMemDocs)
         try:
@@ -202,8 +256,22 @@ class UnifiedMemory:
             logger.warning("short_term_memory_unavailable")
             return False
 
-        ttl = ttl_seconds or self.config.default_ttl_seconds
-        return self._short_term.stash(self.credentials, key, value, ttl_seconds=ttl)
+        # Map ttl_seconds to TTLStrategy (use WORKING_RESULTS as default)
+        ttl_strategy = TTLStrategy.WORKING_RESULTS
+        if ttl_seconds is not None:
+            # Find closest TTL strategy or use working results
+            if ttl_seconds <= TTLStrategy.COORDINATION.value:
+                ttl_strategy = TTLStrategy.COORDINATION
+            elif ttl_seconds <= TTLStrategy.SESSION.value:
+                ttl_strategy = TTLStrategy.SESSION
+            elif ttl_seconds <= TTLStrategy.WORKING_RESULTS.value:
+                ttl_strategy = TTLStrategy.WORKING_RESULTS
+            elif ttl_seconds <= TTLStrategy.STAGED_PATTERNS.value:
+                ttl_strategy = TTLStrategy.STAGED_PATTERNS
+            else:
+                ttl_strategy = TTLStrategy.CONFLICT_CONTEXT
+
+        return self._short_term.stash(key, value, self.credentials, ttl_strategy)
 
     def retrieve(self, key: str) -> Any | None:
         """
@@ -218,7 +286,7 @@ class UnifiedMemory:
         if not self._short_term:
             return None
 
-        return self._short_term.retrieve(self.credentials, key)
+        return self._short_term.retrieve(key, self.credentials)
 
     def stage_pattern(
         self,
@@ -232,7 +300,7 @@ class UnifiedMemory:
         Args:
             pattern_data: Pattern content and metadata
             pattern_type: Type of pattern (algorithm, protocol, etc.)
-            ttl_hours: Hours before staged pattern expires
+            ttl_hours: Hours before staged pattern expires (not used in current impl)
 
         Returns:
             Staged pattern ID or None if failed
@@ -241,13 +309,26 @@ class UnifiedMemory:
             logger.warning("short_term_memory_unavailable")
             return None
 
-        staged = self._short_term.stage_pattern(
-            credentials=self.credentials,
-            pattern_data=pattern_data,
+        # Create a StagedPattern object from the pattern_data dict
+        pattern_id = f"staged_{uuid.uuid4().hex[:12]}"
+        staged_pattern = StagedPattern(
+            pattern_id=pattern_id,
+            agent_id=self.user_id,
             pattern_type=pattern_type,
-            ttl_hours=ttl_hours,
+            name=pattern_data.get("name", f"Pattern {pattern_id[:8]}"),
+            description=pattern_data.get("description", ""),
+            code=pattern_data.get("code"),
+            context=pattern_data.get("context", {}),
+            confidence=pattern_data.get("confidence", 0.5),
+            staged_at=datetime.now(),
+            interests=pattern_data.get("interests", []),
         )
-        return staged.pattern_id if staged else None
+        # Store content in context if provided
+        if "content" in pattern_data:
+            staged_pattern.context["content"] = pattern_data["content"]
+
+        success = self._short_term.stage_pattern(staged_pattern, self.credentials)
+        return pattern_id if success else None
 
     def get_staged_patterns(self) -> list[dict]:
         """
@@ -259,7 +340,8 @@ class UnifiedMemory:
         if not self._short_term:
             return []
 
-        return self._short_term.get_staged_patterns(self.credentials)
+        staged_list = self._short_term.list_staged_patterns(self.credentials)
+        return [p.to_dict() for p in staged_list]
 
     # =========================================================================
     # LONG-TERM MEMORY OPERATIONS
@@ -443,6 +525,20 @@ class UnifiedMemory:
         """Check if long-term memory is available."""
         return self._long_term is not None
 
+    @property
+    def redis_status(self) -> RedisStatus | None:
+        """Get Redis connection status."""
+        return self._redis_status
+
+    @property
+    def using_real_redis(self) -> bool:
+        """Check if using real Redis (not mock)."""
+        return (
+            self._redis_status is not None
+            and self._redis_status.available
+            and self._redis_status.method != RedisStartMethod.MOCK
+        )
+
     def health_check(self) -> dict[str, Any]:
         """
         Check health of memory backends.
@@ -450,11 +546,17 @@ class UnifiedMemory:
         Returns:
             Status of each memory backend
         """
+        redis_info = {
+            "available": self.has_short_term,
+            "mock_mode": not self.using_real_redis,
+        }
+        if self._redis_status:
+            redis_info["method"] = self._redis_status.method.value
+            redis_info["host"] = self._redis_status.host
+            redis_info["port"] = self._redis_status.port
+
         return {
-            "short_term": {
-                "available": self.has_short_term,
-                "mock_mode": self.config.redis_mock,
-            },
+            "short_term": redis_info,
             "long_term": {
                 "available": self.has_long_term,
                 "storage_dir": self.config.storage_dir,

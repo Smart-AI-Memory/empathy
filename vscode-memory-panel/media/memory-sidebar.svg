@@ -1,0 +1,6 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Database icon for sidebar -->
+  <path d="M12 2C6.48 2 2 3.79 2 6V18C2 20.21 6.48 22 12 22C17.52 22 22 20.21 22 18V6C22 3.79 17.52 2 12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <ellipse cx="12" cy="6" rx="10" ry="4" stroke="currentColor" stroke-width="2"/>
+  <path d="M2 12C2 14.21 6.48 16 12 16C17.52 16 22 14.21 22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

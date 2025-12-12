@@ -73,6 +73,13 @@ from .config import (
     get_redis_memory,
 )
 
+# Control Panel
+from .control_panel import (
+    ControlPanelConfig,
+    MemoryControlPanel,
+    MemoryStats,
+)
+
 # Long-term memory (Persistent patterns)
 from .long_term import (
     Classification,
@@ -86,6 +93,15 @@ from .long_term import (
 )
 from .long_term import (
     PermissionError as MemoryPermissionError,
+)
+
+# Redis Bootstrap
+from .redis_bootstrap import (
+    RedisStartMethod,
+    RedisStatus,
+    ensure_redis,
+    get_redis_or_mock,
+    stop_redis,
 )
 
 # Security components
@@ -126,6 +142,16 @@ __all__ = [
     "UnifiedMemory",
     "MemoryConfig",
     "Environment",
+    # Redis Bootstrap
+    "ensure_redis",
+    "get_redis_or_mock",
+    "stop_redis",
+    "RedisStartMethod",
+    "RedisStatus",
+    # Control Panel
+    "MemoryControlPanel",
+    "ControlPanelConfig",
+    "MemoryStats",
     # Short-term Memory
     "RedisShortTermMemory",
     "AccessTier",

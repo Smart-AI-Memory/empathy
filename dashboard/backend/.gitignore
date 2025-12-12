@@ -1,0 +1,77 @@
+# Empathy Memory Dashboard API - Git Ignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.cache
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Memory storage (development)
+memdocs_storage/
+*.db
+*.sqlite
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# API exports
+*_export.json
+
+# Documentation builds
+docs/_build/

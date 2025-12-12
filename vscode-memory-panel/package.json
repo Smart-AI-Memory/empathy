@@ -1,0 +1,172 @@
+{
+  "name": "empathy-memory-panel",
+  "displayName": "Empathy Memory Panel",
+  "description": "Enterprise memory system control panel for Empathy Framework with Redis monitoring and pattern management",
+  "version": "1.0.0",
+  "publisher": "deepstudyai",
+  "icon": "media/memory-icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/empathy-framework"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Programming Languages",
+    "Data Science"
+  ],
+  "keywords": [
+    "empathy",
+    "memory",
+    "redis",
+    "ai",
+    "patterns",
+    "monitoring",
+    "enterprise"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "empathyMemory.showPanel",
+        "title": "Empathy Memory: Show Panel",
+        "icon": "$(database)"
+      },
+      {
+        "command": "empathyMemory.startRedis",
+        "title": "Empathy Memory: Start Redis",
+        "icon": "$(play)"
+      },
+      {
+        "command": "empathyMemory.stopRedis",
+        "title": "Empathy Memory: Stop Redis",
+        "icon": "$(stop)"
+      },
+      {
+        "command": "empathyMemory.refreshStatus",
+        "title": "Empathy Memory: Refresh Status",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "empathyMemory.viewPatterns",
+        "title": "Empathy Memory: View Patterns",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "empathyMemory.exportPatterns",
+        "title": "Empathy Memory: Export Patterns",
+        "icon": "$(export)"
+      },
+      {
+        "command": "empathyMemory.healthCheck",
+        "title": "Empathy Memory: Run Health Check",
+        "icon": "$(heart)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "empathy-memory",
+          "title": "Empathy Memory",
+          "icon": "media/memory-sidebar.svg"
+        }
+      ]
+    },
+    "views": {
+      "empathy-memory": [
+        {
+          "type": "webview",
+          "id": "empathyMemory.controlPanel",
+          "name": "Control Panel",
+          "icon": "$(dashboard)"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Empathy Memory",
+      "properties": {
+        "empathyMemory.apiHost": {
+          "type": "string",
+          "default": "localhost",
+          "description": "Memory API host"
+        },
+        "empathyMemory.apiPort": {
+          "type": "number",
+          "default": 8765,
+          "description": "Memory API port"
+        },
+        "empathyMemory.autoRefresh": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically refresh status every 30 seconds"
+        },
+        "empathyMemory.autoRefreshInterval": {
+          "type": "number",
+          "default": 30,
+          "description": "Auto-refresh interval in seconds",
+          "minimum": 5,
+          "maximum": 300
+        },
+        "empathyMemory.showNotifications": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show notifications for important events"
+        }
+      }
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "empathyMemory.refreshStatus",
+          "when": "view == empathyMemory.controlPanel",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "empathyMemory.showPanel"
+        },
+        {
+          "command": "empathyMemory.startRedis"
+        },
+        {
+          "command": "empathyMemory.stopRedis"
+        },
+        {
+          "command": "empathyMemory.viewPatterns"
+        },
+        {
+          "command": "empathyMemory.exportPatterns"
+        },
+        {
+          "command": "empathyMemory.healthCheck"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.x",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3",
+    "@vscode/test-electron": "^2.3.8",
+    "@vscode/vsce": "^2.22.0"
+  },
+  "dependencies": {}
+}

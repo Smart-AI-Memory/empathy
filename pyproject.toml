@@ -3,8 +3,8 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "empathy-framework"
-version = "2.0.1"
+name = "empathy"
+version = "2.1.0"
 description = "A five-level maturity model for AI-human collaboration with anticipatory empathy"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.10"

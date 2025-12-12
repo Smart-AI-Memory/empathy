@@ -1,0 +1,512 @@
+/**
+ * Empathy Memory Panel Styles
+ *
+ * Modern, clean UI with VS Code theme integration.
+ * Uses CSS variables for theme compatibility.
+ *
+ * Copyright 2025 Smart AI Memory, LLC
+ * Licensed under Fair Source 0.9
+ */
+
+/* Reset and base styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--vscode-font-family);
+    font-size: var(--vscode-font-size);
+    color: var(--vscode-foreground);
+    background-color: var(--vscode-sideBar-background);
+    padding: 0;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Container */
+.container {
+    padding: 16px;
+    max-width: 100%;
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--vscode-panel-border);
+}
+
+.title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+    margin: 0;
+}
+
+/* Section */
+.section {
+    margin-bottom: 24px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.section-header h2 {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--vscode-descriptionForeground);
+    margin: 0;
+}
+
+.subsection {
+    margin-bottom: 16px;
+}
+
+.subsection h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--vscode-panel-border);
+}
+
+/* Cards */
+.card {
+    background-color: var(--vscode-editor-background);
+    border: 1px solid var(--vscode-panel-border);
+    border-radius: 6px;
+    padding: 16px;
+}
+
+.status-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: var(--vscode-inputValidation-errorBackground);
+    border: 1px solid var(--vscode-inputValidation-errorBorder);
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 16px;
+}
+
+.status-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.status-message {
+    flex: 1;
+}
+
+.status-message strong {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--vscode-errorForeground);
+}
+
+.status-message p {
+    font-size: 12px;
+    color: var(--vscode-descriptionForeground);
+    margin: 0;
+}
+
+/* Statistics Grid */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-label {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--vscode-foreground);
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-green {
+    background-color: rgba(0, 200, 83, 0.2);
+    color: #00c853;
+    border: 1px solid #00c853;
+}
+
+.badge-yellow {
+    background-color: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    border: 1px solid #ffc107;
+}
+
+.badge-red {
+    background-color: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+    border: 1px solid #f44336;
+}
+
+.badge-gray {
+    background-color: rgba(158, 158, 158, 0.2);
+    color: #9e9e9e;
+    border: 1px solid #9e9e9e;
+}
+
+/* Buttons */
+.btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-primary {
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+}
+
+.btn-primary:hover {
+    background-color: var(--vscode-button-hoverBackground);
+}
+
+.btn-secondary {
+    background-color: var(--vscode-button-secondaryBackground);
+    color: var(--vscode-button-secondaryForeground);
+}
+
+.btn-secondary:hover {
+    background-color: var(--vscode-button-secondaryHoverBackground);
+}
+
+.btn-warning {
+    background-color: rgba(255, 152, 0, 0.9);
+    color: white;
+}
+
+.btn-warning:hover {
+    background-color: rgba(255, 152, 0, 1);
+}
+
+.btn-icon {
+    padding: 6px 8px;
+    background-color: transparent;
+    border: 1px solid var(--vscode-panel-border);
+    color: var(--vscode-foreground);
+}
+
+.btn-icon:hover {
+    background-color: var(--vscode-toolbar-hoverBackground);
+}
+
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 11px;
+}
+
+.icon {
+    font-size: 14px;
+}
+
+.icon-large {
+    font-size: 48px;
+    opacity: 0.3;
+}
+
+/* Actions */
+.actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.actions-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Select */
+.select {
+    padding: 4px 8px;
+    border: 1px solid var(--vscode-panel-border);
+    border-radius: 4px;
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.select:focus {
+    outline: 1px solid var(--vscode-focusBorder);
+}
+
+/* Patterns List */
+.patterns-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pattern-item {
+    padding: 12px;
+    border: 1px solid var(--vscode-panel-border);
+    border-radius: 4px;
+    background-color: var(--vscode-sideBar-background);
+    transition: all 0.2s ease;
+}
+
+.pattern-item:hover {
+    background-color: var(--vscode-list-hoverBackground);
+    border-color: var(--vscode-focusBorder);
+}
+
+.pattern-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.pattern-type {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pattern-id {
+    font-size: 12px;
+    color: var(--vscode-foreground);
+    font-family: var(--vscode-editor-font-family);
+    margin-bottom: 6px;
+}
+
+.pattern-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+/* Health Check */
+.health-overall {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.health-overall .icon {
+    font-size: 24px;
+}
+
+.health-overall.status-success {
+    background-color: rgba(0, 200, 83, 0.1);
+    color: #00c853;
+    border: 1px solid #00c853;
+}
+
+.health-overall.status-warning {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+    border: 1px solid #ffc107;
+}
+
+.health-overall.status-error {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: #f44336;
+    border: 1px solid #f44336;
+}
+
+.health-checks {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.health-check {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: var(--vscode-sideBar-background);
+}
+
+.health-icon {
+    font-size: 16px;
+    margin-top: 2px;
+}
+
+.health-icon.status-success {
+    color: #00c853;
+}
+
+.health-icon.status-warning {
+    color: #ffc107;
+}
+
+.health-icon.status-error {
+    color: #f44336;
+}
+
+.health-icon.status-info {
+    color: var(--vscode-descriptionForeground);
+}
+
+.health-check strong {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 12px;
+}
+
+.health-check p {
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+    margin: 0;
+}
+
+.health-recommendations {
+    padding: 12px;
+    background-color: rgba(255, 193, 7, 0.1);
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+}
+
+.health-recommendations h4 {
+    font-size: 12px;
+    margin-bottom: 8px;
+    color: #ffc107;
+}
+
+.health-recommendations ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.health-recommendations li {
+    font-size: 11px;
+    margin-bottom: 4px;
+    color: var(--vscode-foreground);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--vscode-descriptionForeground);
+}
+
+.empty-state p {
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+/* Footer */
+.footer {
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid var(--vscode-panel-border);
+    text-align: center;
+    font-size: 11px;
+    color: var(--vscode-descriptionForeground);
+}
+
+/* Utility classes */
+.hidden {
+    display: none !important;
+}
+
+/* Status colors */
+.status-success {
+    color: #00c853;
+}
+
+.status-warning {
+    color: #ffc107;
+}
+
+.status-error {
+    color: #f44336;
+}
+
+.status-info {
+    color: var(--vscode-descriptionForeground);
+}
+
+/* Responsive adjustments */
+@media (max-width: 400px) {
+    .stat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .actions {
+        width: 100%;
+    }
+}
