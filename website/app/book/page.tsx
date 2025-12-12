@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 // Gumroad product URL for pay-what-you-want book
-const GUMROAD_BOOK_URL = 'https://smartaimemory.gumroad.com/l/empathy-book';
+const GUMROAD_BOOK_URL = 'https://roebucksmith.gumroad.com/l/empathy-book';
 
 export default function BookPage() {
   return (
