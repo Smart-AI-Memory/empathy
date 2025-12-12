@@ -6,9 +6,15 @@
 
 ## The Problem
 
-Most AI tools are **reactive**. They wait for you to ask, then respond. By the time you discover a security vulnerability, performance bottleneck, or compliance gap—it's already a crisis.
+Today's AI tools are **brilliant but broken** for enterprise use:
 
-**Empathy is different.** It predicts what you'll need 30-90 days ahead and prevents problems before they become urgent.
+- **Stateless** — They forget everything between sessions
+- **Cloud-dependent** — Your data leaves your infrastructure
+- **Isolated** — They can't coordinate with other agents
+- **Reactive** — They wait for problems instead of preventing them
+- **Expensive** — Every query costs the same, regardless of complexity
+
+**Empathy solves all five.** Persistent memory. Local-first. Multi-agent orchestration. Anticipatory intelligence. Smart cost routing.
 
 ---
 
@@ -48,12 +54,12 @@ Most AI tools are **reactive**. They wait for you to ask, then respond. By the t
 
 ---
 
-## Proven in Production
+## Built for Real Use Cases
 
-**AI Nurse Florence** — Running in healthcare environments with:
-- HIPAA-compliant memory and audit logging
-- 90-day advance compliance predictions
-- 4,167+ hours annually returned to patient care (50-nurse hospital)
+**AI Nurse Florence** — Healthcare assistant built on Empathy Framework:
+- HIPAA-compliant memory with encrypted pattern storage
+- Clinical protocol support (SBAR, SOAP notes)
+- Demonstrates enterprise-grade privacy controls
 
 ---
 
