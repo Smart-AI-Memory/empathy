@@ -54,8 +54,8 @@ export default function BookPage() {
 
               <div className="w-full max-w-md bg-[var(--border)] bg-opacity-30 rounded-lg p-8">
                 <div className="text-center mb-6">
-                  <div className="text-4xl font-bold text-[var(--primary)] mb-2">Name Your Price</div>
-                  <p className="text-[var(--muted)] text-sm">Free or pay what you want</p>
+                  <div className="text-4xl font-bold text-[var(--primary)] mb-2">$5+</div>
+                  <p className="text-[var(--muted)] text-sm">Pay what you want (min $5)</p>
                 </div>
 
                 <div className="space-y-4 mb-6">
@@ -91,7 +91,7 @@ export default function BookPage() {
                 </a>
 
                 <p className="text-xs text-center text-[var(--muted)]">
-                  Your support helps development. Even $0 downloads help us track interest.
+                  Your support helps development. Pay more if you find value!
                 </p>
 
                 <div className="mt-6 pt-6 border-t border-[var(--border)]">
@@ -360,7 +360,7 @@ export default function BookPage() {
               rel="noopener noreferrer"
               className="btn bg-white text-[var(--primary)] hover:bg-gray-100 text-lg px-8 py-4 inline-block"
             >
-              Get the Book Free
+              Get the Book - $5+
             </a>
           </div>
         </div>
