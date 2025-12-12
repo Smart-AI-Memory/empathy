@@ -53,7 +53,7 @@ export default function PricingPage() {
                 <div className="space-y-3 mb-8">
                   <div className="flex items-start gap-2">
                     <span className="text-[var(--success)] mt-1">✓</span>
-                    <span className="text-sm">Full Empathy Framework access</span>
+                    <span className="text-sm">Full Empathy access</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="text-[var(--success)] mt-1">✓</span>
@@ -209,7 +209,7 @@ export default function PricingPage() {
                     What counts as a "developer"?
                   </h3>
                   <p className="text-[var(--text-secondary)]">
-                    A developer is anyone who uses the Empathy Framework in their development environment.
+                    A developer is anyone who uses Empathy in their development environment.
                     One license covers all environments for that developer (workstation, staging, production, CI/CD).
                   </p>
                 </div>
@@ -288,7 +288,7 @@ export default function PricingPage() {
                 Ready to Get Started?
               </h2>
               <p className="text-xl text-[var(--text-secondary)] mb-8">
-                Start using the Empathy Framework today. Free for small teams, fair pricing for everyone else.
+                Start using Empathy today. Free for small teams, fair pricing for everyone else.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a

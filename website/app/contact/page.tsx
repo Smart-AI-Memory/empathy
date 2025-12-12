@@ -136,7 +136,7 @@ export default function ContactPage() {
       <nav className="border-b border-[var(--border)] py-4">
         <div className="container flex justify-between items-center">
           <Link href="/" className="text-xl font-bold text-gradient">
-            Empathy Framework
+            Empathy
           </Link>
           <div className="flex gap-6">
             <Link href="/framework" className="text-sm hover:text-[var(--primary)]">Framework</Link>

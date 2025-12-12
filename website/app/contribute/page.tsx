@@ -7,7 +7,7 @@ import CheckoutButton from '@/components/CheckoutButton';
 
 export const metadata: Metadata = generateMetadata({
   title: 'Support Empathy Development',
-  description: 'Support the ongoing development of the Empathy Framework. Every contribution helps make anticipatory AI accessible to everyone.',
+  description: 'Support the ongoing development of Empathy. Every contribution helps make anticipatory AI accessible to everyone.',
   url: 'https://smartaimemory.com/contribute',
 });
 

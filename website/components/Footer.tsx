@@ -52,7 +52,7 @@ export default function Footer() {
                   href="/framework"
                   className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
                 >
-                  Empathy Framework
+                  Empathy
                 </Link>
               </li>
               <li>

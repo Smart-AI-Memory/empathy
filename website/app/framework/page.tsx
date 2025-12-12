@@ -7,7 +7,7 @@ export default function FrameworkPage() {
       <nav className="border-b border-[var(--border)] py-4">
         <div className="container flex justify-between items-center">
           <Link href="/" className="text-xl font-bold text-gradient">
-            Empathy Framework
+            Empathy
           </Link>
           <div className="flex gap-6">
             <Link href="/book" className="text-sm hover:text-[var(--primary)]">Book</Link>
@@ -22,7 +22,7 @@ export default function FrameworkPage() {
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl font-bold mb-6">
-              Empathy Framework <span className="text-gradient">Core</span>
+              Empathy <span className="text-gradient">Core</span>
             </h1>
             <p className="text-2xl text-[var(--text-secondary)] mb-8">
               Fair Source foundation for building Level 4 Anticipatory AI systems
@@ -229,7 +229,7 @@ result = await wizard.analyze({"data": your_data})`}
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl font-bold mb-6">Join the Community</h2>
             <p className="text-xl text-[var(--text-secondary)] mb-12">
-              The Empathy Framework is Fair Source licensed and welcomes contributions from developers worldwide.
+              Empathy is Fair Source licensed and welcomes contributions from developers worldwide.
             </p>
 
             <div className="grid md:grid-cols-3 gap-6">

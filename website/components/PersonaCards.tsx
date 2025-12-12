@@ -31,7 +31,7 @@ export default function PersonaCards() {
         <h2 className="text-3xl font-bold text-center mb-4">Who This Is For</h2>
         <p className="text-center text-[var(--text-secondary)] mb-10 max-w-2xl mx-auto">
           Whether you&apos;re building production systems or learning AI fundamentals,
-          the Empathy Framework meets you where you are.
+          Empathy meets you where you are.
         </p>
 
         <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">

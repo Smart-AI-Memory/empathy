@@ -32,7 +32,7 @@ export default function SocialProof({ showTestimonial = true }: SocialProofProps
           {showTestimonial && (
             <div className="bg-[var(--border)] bg-opacity-30 p-8 rounded-xl max-w-2xl mx-auto">
               <blockquote className="text-lg text-[var(--text-primary)] italic mb-4 text-center">
-                &quot;The Empathy Framework transformed how our team approaches AI integration.
+                &quot;Empathy transformed how our team approaches AI integration.
                 Level 4 anticipatory intelligence catches issues we never would have found.&quot;
               </blockquote>
               <div className="text-center">

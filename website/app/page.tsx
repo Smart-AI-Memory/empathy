@@ -31,7 +31,7 @@ const levels = [
     level: 4,
     name: 'Anticipatory',
     description: 'Predicts future problems before they happen',
-    example: 'Empathy Framework',
+    example: 'Empathy',
     highlight: true,
   },
   {
@@ -172,10 +172,10 @@ export default function Home() {
             </p>
 
             <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {/* Empathy Framework */}
+              {/* Empathy */}
               <div className="bg-[var(--background)] p-6 rounded-xl border-2 border-[var(--primary)] border-opacity-30 hover:border-opacity-100 transition-all">
                 <div className="text-4xl mb-4">🧠</div>
-                <h3 className="text-xl font-bold mb-2">Empathy Framework</h3>
+                <h3 className="text-xl font-bold mb-2">Empathy</h3>
                 <p className="text-sm text-[var(--muted)] mb-3">The intelligence layer</p>
                 <p className="text-[var(--text-secondary)] text-sm mb-4">
                   5-level maturity model with 45+ specialized wizards for healthcare,

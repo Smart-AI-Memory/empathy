@@ -93,7 +93,7 @@ export default function DistributedMemoryDemo() {
       <nav className="border-b border-[var(--border)] py-4">
         <div className="container flex justify-between items-center">
           <Link href="/" className="text-xl font-bold text-gradient">
-            Empathy Framework
+            Empathy
           </Link>
           <div className="flex gap-6">
             <Link href="/book" className="text-sm hover:text-[var(--primary)]">Book</Link>
@@ -423,7 +423,7 @@ print(f"Collaboration efficiency: {stats['collaboration_efficiency']:.0%}")`}
                 Read Chapter 23
               </Link>
               <Link href="/book" className="btn btn-outline">
-                Pre-order the Book
+                Get the Book
               </Link>
             </div>
           </div>

@@ -13,7 +13,7 @@ function getResend(): Resend {
   return resend;
 }
 
-const FROM_EMAIL = process.env.FROM_EMAIL || 'Empathy Framework <noreply@smartaimemory.com>';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'Empathy <noreply@smartaimemory.com>';
 const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || 'admin@smartaimemory.com';
 
 interface EmailResult {
@@ -35,7 +35,7 @@ export async function sendLicenseEmail(data: {
     const result = await getResend().emails.send({
       from: FROM_EMAIL,
       to: data.to,
-      subject: `Your Empathy Framework License - ${data.productName}`,
+      subject: `Your Empathy License - ${data.productName}`,
       html: `
 <!DOCTYPE html>
 <html>
@@ -58,7 +58,7 @@ export async function sendLicenseEmail(data: {
   <div class="container">
     <div class="header">
       <h1>Thank You for Your Purchase!</h1>
-      <p>Your Empathy Framework license is ready</p>
+      <p>Your Empathy license is ready</p>
     </div>
     <div class="content">
       <p>Hi${data.customerName ? ` ${data.customerName}` : ''},</p>
@@ -86,7 +86,7 @@ export async function sendLicenseEmail(data: {
 
       <h3>Getting Started</h3>
       <ol>
-        <li>Install the Empathy Framework: <code>pip install empathy</code></li>
+        <li>Install Empathy: <code>pip install empathy</code></li>
         <li>Set your license key as an environment variable: <code>EMPATHY_LICENSE_KEY=${data.licenseKey}</code></li>
         <li>Check out our <a href="https://smartaimemory.com/docs">documentation</a> to get started</li>
       </ol>
@@ -129,7 +129,7 @@ export async function sendBookEmail(data: {
     const result = await getResend().emails.send({
       from: FROM_EMAIL,
       to: data.to,
-      subject: 'Your Empathy Framework Book - Download Ready!',
+      subject: 'Your Empathy Book - Download Ready!',
       html: `
 <!DOCTYPE html>
 <html>
@@ -151,11 +151,11 @@ export async function sendBookEmail(data: {
   <div class="container">
     <div class="header">
       <h1>Your Book is Ready!</h1>
-      <p>The Empathy Framework - Anticipatory AI for Software Development</p>
+      <p>Multi-Agent Coordination with Persistent and Short-Term Memory</p>
     </div>
     <div class="content">
       <p>Hi${data.customerName ? ` ${data.customerName}` : ''},</p>
-      <p>Thank you for pre-ordering <strong>The Empathy Framework</strong>! Your download links are ready.</p>
+      <p>Thank you for purchasing <strong>Empathy</strong>! Your download links are ready.</p>
 
       <div class="download-box">
         <h3 style="margin-top: 0;">Download Your Book</h3>
@@ -212,7 +212,7 @@ export async function sendContributionEmail(data: {
     const result = await getResend().emails.send({
       from: FROM_EMAIL,
       to: data.to,
-      subject: 'Thank You for Supporting Empathy Framework!',
+      subject: 'Thank You for Supporting Empathy!',
       html: `
 <!DOCTYPE html>
 <html>
@@ -244,7 +244,7 @@ export async function sendContributionEmail(data: {
 
       <p>Your generous contribution directly supports:</p>
       <ul>
-        <li>Continued development of the Empathy Framework</li>
+        <li>Continued development of Empathy</li>
         <li>Free access for students and educators</li>
         <li>Open-source community resources</li>
         <li>New wizard development and features</li>

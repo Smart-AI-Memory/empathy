@@ -34,7 +34,7 @@ export default function DevDashboard() {
                 Claude Code
               </span>
               <span className="px-3 py-1 bg-[var(--accent)] text-white rounded-full text-sm font-semibold">
-                Empathy Framework
+                Empathy
               </span>
               <span className="px-3 py-1 bg-[var(--secondary)] text-white rounded-full text-sm font-semibold">
                 Long-Term Memory
@@ -330,7 +330,7 @@ export default function DevDashboard() {
               <div>
                 <h3 className="text-xl font-bold mb-2">Codebase Analysis</h3>
                 <p className="text-[var(--text-secondary)]">
-                  Empathy Framework continuously analyzes your codebase, tracking changes, patterns,
+                  Empathy continuously analyzes your codebase, tracking changes, patterns,
                   dependencies, and code quality metrics in real-time.
                 </p>
               </div>
@@ -406,7 +406,7 @@ export default function DevDashboard() {
                 We shipped higher quality code, many times faster."
               </p>
               <footer className="text-sm text-[var(--muted)]">
-                — Development team using Empathy Framework in production
+                — Development team using Empathy in production
               </footer>
             </blockquote>
           </div>
@@ -421,7 +421,7 @@ export default function DevDashboard() {
               Build Your Own Development Intelligence
             </h2>
             <p className="text-xl text-[var(--text-secondary)] mb-8">
-              The Empathy Framework is Fair Source licensed and production-ready.
+              Empathy is Fair Source licensed and production-ready.
               Start building anticipatory AI for software development today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

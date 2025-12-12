@@ -10,7 +10,7 @@ export default function BookPage() {
       <nav className="border-b border-[var(--border)] py-4">
         <div className="container flex justify-between items-center">
           <Link href="/" className="text-xl font-bold text-gradient">
-            Empathy Framework
+            Empathy
           </Link>
           <div className="flex gap-6">
             <Link href="/framework" className="text-sm hover:text-[var(--primary)]">Framework</Link>
@@ -303,7 +303,7 @@ export default function BookPage() {
               <div className="border-b border-[var(--border)] pb-6">
                 <h3 className="text-xl font-bold mb-3">Do I need the book to use the framework?</h3>
                 <p className="text-[var(--text-secondary)]">
-                  No. The Empathy Framework is open source and documented online. The book provides deeper
+                  No. Empathy is open source and documented online. The book provides deeper
                   coverage of the philosophy, implementation details, and patterns that aren't in the docs.
                 </p>
               </div>
@@ -328,7 +328,7 @@ export default function BookPage() {
               <div className="border-b border-[var(--border)] pb-6">
                 <h3 className="text-xl font-bold mb-3">Is the Core Framework free?</h3>
                 <p className="text-[var(--text-secondary)]">
-                  The Empathy Framework uses Fair Source License 0.9. It's free for students, educators, and
+                  Empathy uses Fair Source License 0.9. It's free for students, educators, and
                   companies with 5 or fewer employees. Commercial licensing ($99/year per developer) is required
                   for companies with 6+ employees.
                 </p>

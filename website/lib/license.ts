@@ -52,7 +52,7 @@ export function getProductTypeFromPriceId(priceId: string): {
   if (priceId === 'price_1Sbf3xAbABKRT84gGn7yaivw' || priceId.includes('BOOK')) {
     return {
       type: 'book',
-      name: 'The Empathy Framework Book + License',
+      name: 'The Empathy Book + License',
       includesLicense: true, // Book includes 1-year license
     };
   }
@@ -61,7 +61,7 @@ export function getProductTypeFromPriceId(priceId: string): {
   if (priceId === 'price_1SbfCjAbABKRT84gSh7BoLAl' || priceId.includes('LICENSE')) {
     return {
       type: 'license',
-      name: 'Empathy Framework Commercial License',
+      name: 'Empathy Commercial License',
       includesLicense: true,
     };
   }

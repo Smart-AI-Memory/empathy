@@ -8,8 +8,8 @@ const faqData = [
     category: 'General',
     questions: [
       {
-        question: 'What is the Empathy Framework?',
-        answer: 'The Empathy Framework is a production-ready 5-level maturity model for AI-human collaboration. It progresses from reactive responses (Level 1) to Level 4 Anticipatory Intelligence that predicts problems before they happen. It includes 30+ production wizards for software development and healthcare applications.',
+        question: 'What is Empathy?',
+        answer: 'Empathy is a production-ready 5-level maturity model for AI-human collaboration. It progresses from reactive responses (Level 1) to Level 4 Anticipatory Intelligence that predicts problems before they happen. It includes 30+ production wizards for software development and healthcare applications.',
       },
       {
         question: 'What are the 5 levels of AI empathy?',
@@ -17,7 +17,7 @@ const faqData = [
       },
       {
         question: 'What is Long-Term Memory?',
-        answer: 'Long-Term Memory is the built-in pattern storage system in the Empathy Framework. It enables AI to remember context, decisions, and patterns across sessions, creating true continuity in your AI-human collaboration and enabling Level 5 Transformative Intelligence.',
+        answer: 'Long-Term Memory is the built-in pattern storage system in Empathy. It enables AI to remember context, decisions, and patterns across sessions, creating true continuity in your AI-human collaboration and enabling Level 5 Transformative Intelligence.',
       },
     ],
   },
@@ -25,8 +25,8 @@ const faqData = [
     category: 'Licensing & Pricing',
     questions: [
       {
-        question: 'How much does the Empathy Framework cost?',
-        answer: 'The Empathy Framework is free for students, educators, and teams with 5 or fewer employees under the Fair Source License 0.9. For businesses with 6+ employees, commercial licensing starts at $99/developer/year, covering all environments (workstation, staging, production, CI/CD).',
+        question: 'How much does Empathy cost?',
+        answer: 'Empathy is free for students, educators, and teams with 5 or fewer employees under the Fair Source License 0.9. For businesses with 6+ employees, commercial licensing starts at $99/developer/year, covering all environments (workstation, staging, production, CI/CD).',
       },
       {
         question: 'What is the Fair Source License?',
@@ -43,15 +43,15 @@ const faqData = [
     questions: [
       {
         question: 'Which LLM providers are supported?',
-        answer: 'The Empathy Framework supports multiple LLM providers including Anthropic Claude, OpenAI GPT-4, Google Gemini, and local models via Ollama. The framework is designed to be provider-agnostic, allowing you to choose the best model for your use case.',
+        answer: 'Empathy supports multiple LLM providers including Anthropic Claude, OpenAI GPT-4, Google Gemini, and local models via Ollama. The framework is designed to be provider-agnostic, allowing you to choose the best model for your use case.',
       },
       {
         question: 'What are wizards?',
-        answer: 'Wizards are specialized AI agents in the Empathy Framework that anticipate needs and predict problems in specific domains. The framework includes 16+ software development wizards (security, testing, debugging, etc.) and 18+ healthcare wizards (patient monitoring, protocol compliance, etc.).',
+        answer: 'Wizards are specialized AI agents in Empathy that anticipate needs and predict problems in specific domains. The framework includes 16+ software development wizards (security, testing, debugging, etc.) and 18+ healthcare wizards (patient monitoring, protocol compliance, etc.).',
       },
       {
         question: 'How is the framework tested?',
-        answer: 'The Empathy Framework has 553 tests with 83.13% overall coverage and 95%+ coverage on core modules. It includes comprehensive unit tests, integration tests, and cross-platform compatibility testing.',
+        answer: 'Empathy has 553 tests with 83.13% overall coverage and 95%+ coverage on core modules. It includes comprehensive unit tests, integration tests, and cross-platform compatibility testing.',
       },
       {
         question: 'What platforms are supported?',
@@ -63,7 +63,7 @@ const faqData = [
     category: 'Use Cases',
     questions: [
       {
-        question: 'What can I build with the Empathy Framework?',
+        question: 'What can I build with Empathy?',
         answer: 'You can build anticipatory AI systems for software development (bug prediction, security scanning, test generation), healthcare (patient monitoring, clinical decision support), and any domain where predicting problems before they happen adds value.',
       },
       {
@@ -97,7 +97,7 @@ const faqData = [
 
 export const metadata: Metadata = generateMetadata({
   title: 'FAQ',
-  description: 'Frequently asked questions about the Empathy Framework, licensing, pricing, and technical details.',
+  description: 'Frequently asked questions about Empathy, licensing, pricing, and technical details.',
   url: 'https://smartaimemory.com/faq',
 });
 
@@ -129,7 +129,7 @@ export default function FAQPage() {
                 Frequently Asked Questions
               </h1>
               <p className="text-2xl mb-8 opacity-90">
-                Everything you need to know about the Empathy Framework
+                Everything you need to know about Empathy
               </p>
             </div>
           </div>

@@ -109,7 +109,7 @@ export async function sendNewsletterConfirmation(email: string): Promise<boolean
     <p>Thank you for subscribing to our newsletter.</p>
     <p>You'll receive updates about:</p>
     <ul>
-      <li>New Empathy Framework releases and features</li>
+      <li>New Empathy releases and features</li>
       <li>AI development insights and best practices</li>
       <li>Community highlights and use cases</li>
       <li>Exclusive content and early access</li>
@@ -125,7 +125,7 @@ Welcome to Smart AI Memory Newsletter!
 Thank you for subscribing to our newsletter.
 
 You'll receive updates about:
-- New Empathy Framework releases and features
+- New Empathy releases and features
 - AI development insights and best practices
 - Community highlights and use cases
 - Exclusive content and early access
