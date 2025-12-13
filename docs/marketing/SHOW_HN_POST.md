@@ -1,45 +1,71 @@
-# Show HN: AI That Learns Deployment Safety From Hospital Handoffs
+# Show HN: Empathy Framework – AI collaboration with persistent memory
 
-**Title:** AI that learns deployment safety from hospital handoffs (cross-domain pattern transfer)
+**Title:** Empathy Framework – AI collaboration with persistent memory and multi-agent orchestration
 
 **URL:** https://github.com/Smart-AI-Memory/empathy
 
 ---
 
-Your deployment just failed. The staging team thought everything was fine. Someone assumed environment variables were correct. Critical information got lost during the handoff.
+I've been building AI tools for healthcare and software development. The biggest frustration? Every AI session starts from zero. No memory of what you worked on yesterday, no patterns learned across projects, no coordination between agents.
 
-This exact scenario plays out in hospitals every day. The Joint Commission found that 80% of serious medical errors involve miscommunication during patient handoffs. Healthcare's solution: standardized checklists with verification steps. Handoff failure rates dropped from 23% to under 5%.
+So I built the Empathy Framework.
 
-I built an AI framework that learns this pattern from healthcare code, then applies it to predict deployment failures in software with 87% confidence.
+**The five problems it solves:**
 
-**Here's what it does:**
+1. **Stateless** — AI forgets everything between sessions. Empathy has dual-layer memory: Redis for millisecond ops, pattern storage for long-term knowledge.
 
-1. Analyzes healthcare handoff protocols (finds the 23% failure pattern)
-2. Stores the pattern in long-term memory (Long-Term Memory)
-3. Analyzes your deployment pipeline
-4. Detects the same handoff gaps: no verification checklist, assumptions about what production team knows, time pressure shortcuts
-5. Predicts deployment failure 30-45 days ahead
-6. Recommends prevention steps derived from healthcare best practices
+2. **Cloud-dependent** — Your code goes to someone else's servers. Empathy runs entirely local-first. Nothing leaves your infrastructure.
 
-**No other AI framework can do this.** Traditional tools analyze code in isolation. This demonstrates Level 5 Systems Empathy—learning safety patterns from one domain (healthcare) and applying them to prevent failures in another (software).
+3. **Isolated** — AI tools can't coordinate. Empathy has built-in multi-agent orchestration (Empathy OS) for human↔AI and AI↔AI collaboration.
 
-The pattern transfer works both ways:
-- Healthcare handoff protocols → Deployment checklists
-- Aviation pre-flight checklists → Pre-deployment verification
-- Financial audit trails → Code change compliance
+4. **Reactive** — AI waits for you to find problems. Empathy predicts issues 30-90 days ahead using pattern analysis.
 
-**Try the demo:**
+5. **Expensive** — Every query costs the same. Empathy routes: cheap models detect, capable models decide. 40-60% cost reduction.
+
+**What's included:**
+
+- Memory Control Panel CLI (`empathy-memory serve`) and REST API
+- 30+ production wizards (security, performance, testing, docs, accessibility)
+- Agent toolkit to build custom agents that inherit memory and prediction
+- Healthcare suite with HIPAA-compliant patterns (SBAR, SOAP notes)
+- Works with Claude, GPT-4, Ollama, or your own models
+
+**Quick start:**
+
 ```bash
-pip install empathy-framework[full]
-python examples/level_5_transformative/run_full_demo.py
+pip install empathy-framework
+empathy-memory serve
 ```
 
-Built with the Empathy Framework—an open-source AI system with 5 levels of code understanding, from syntax parsing to cross-domain pattern transfer. Fair Source 0.9 licensed (free for teams ≤5 employees, $99/dev/year commercial).
+That's it. Redis starts, API server runs, memory system ready.
 
-Every industry has spent decades learning hard lessons about safety and quality. With cross-domain AI, software development can learn from all of them simultaneously.
+**Example:**
 
-**Live demo:** https://github.com/Smart-AI-Memory/empathy/tree/main/examples/level_5_transformative
+```python
+from empathy_os import EmpathyOS
 
-**Docs:** https://empathy-framework.readthedocs.io
+os = EmpathyOS()
 
-Would love your feedback on the cross-domain pattern matching approach!
+result = await os.collaborate(
+    "Review this deployment pipeline for problems",
+    context={"code": pipeline_code}
+)
+
+print(result.current_issues)      # What's wrong now
+print(result.predicted_issues)    # What will break in 30-90 days
+print(result.prevention_steps)    # How to prevent it
+```
+
+**Licensing:**
+
+Fair Source 0.9 — Free for students, educators, and teams ≤5 employees. Commercial license $99/dev/year. Auto-converts to Apache 2.0 on January 1, 2029.
+
+**What I'm looking for:**
+
+- Feedback on the memory architecture (Redis + patterns approach)
+- Ideas for cross-domain pattern transfer (healthcare insights → software)
+- Integration suggestions (CI/CD, IDE, pre-commit hooks?)
+
+GitHub: https://github.com/Smart-AI-Memory/empathy
+
+Happy to answer questions about the architecture or use cases.

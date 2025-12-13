@@ -191,22 +191,16 @@ clean_text, detections = scrubber.scrub(
 
 ## Getting Started
 
-Install Empathy with memory support:
+Install Empathy and start the memory system:
 
 ```bash
-pip install empathy[full]
+pip install empathy-framework
+empathy-memory serve
 ```
 
-Set up Redis for short-term memory:
+That's it. Redis auto-starts, API server runs, memory system ready.
 
-```bash
-# Docker (easiest)
-docker run -d -p 6379:6379 redis:alpine
-
-# Or use your existing Redis instance
-```
-
-Configure in your project:
+Or configure manually:
 
 ```python
 from empathy_os import EmpathyOS
