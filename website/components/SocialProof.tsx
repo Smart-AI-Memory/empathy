@@ -1,15 +1,11 @@
 const metrics = [
-  { value: '1,954', label: 'Tests Passing' },
-  { value: '90%', label: 'Code Coverage' },
-  { value: '45+', label: 'Wizards Available' },
+  { value: '2,249', label: 'Tests Passing' },
+  { value: '81%', label: 'Code Coverage' },
+  { value: '44', label: 'Wizards Available' },
   { value: '5', label: 'LLMs Supported' },
 ];
 
-interface SocialProofProps {
-  showTestimonial?: boolean;
-}
-
-export default function SocialProof({ showTestimonial = true }: SocialProofProps) {
+export default function SocialProof() {
   return (
     <section className="py-16">
       <div className="container">
@@ -28,20 +24,6 @@ export default function SocialProof({ showTestimonial = true }: SocialProofProps
             ))}
           </div>
 
-          {/* Testimonial */}
-          {showTestimonial && (
-            <div className="bg-[var(--border)] bg-opacity-30 p-8 rounded-xl max-w-2xl mx-auto">
-              <blockquote className="text-lg text-[var(--text-primary)] italic mb-4 text-center">
-                &quot;Empathy transformed how our team approaches AI integration.
-                Level 4 anticipatory intelligence catches issues we never would have found.&quot;
-              </blockquote>
-              <div className="text-center">
-                <div className="text-sm text-[var(--muted)]">
-                  — Testimonial Coming Soon
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </section>

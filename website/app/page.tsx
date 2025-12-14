@@ -178,7 +178,7 @@ export default function Home() {
                 <h3 className="text-xl font-bold mb-2">Empathy</h3>
                 <p className="text-sm text-[var(--muted)] mb-3">The intelligence layer</p>
                 <p className="text-[var(--text-secondary)] text-sm mb-4">
-                  5-level maturity model with 45+ specialized wizards for healthcare,
+                  5-level maturity model with 44 specialized wizards for healthcare,
                   software development, and AI collaboration.
                 </p>
                 <div className="flex flex-wrap gap-1 mb-4">

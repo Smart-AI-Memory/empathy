@@ -23,7 +23,7 @@ export default function DocsRedirectPage() {
           <div className="text-6xl mb-4">📚</div>
           <h1 className="text-4xl font-bold mb-4">Documentation Moved</h1>
           <p className="text-xl text-[var(--text-secondary)] mb-6">
-            Our documentation has been upgraded to a comprehensive MkDocs site with 45+ wizard guides.
+            Our documentation has been upgraded to a comprehensive MkDocs site with 44 wizard guides.
           </p>
           <p className="text-[var(--text-secondary)] mb-8">
             Redirecting you to the new documentation...
@@ -56,15 +56,15 @@ export default function DocsRedirectPage() {
           <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
             <li className="flex items-start gap-2">
               <span className="text-[var(--success)] mt-1">✓</span>
-              <span><strong>45+ Wizard Guides</strong> - Comprehensive documentation for all wizards</span>
+              <span><strong>44 Wizard Guides</strong> - Comprehensive documentation for all wizards</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-[var(--success)] mt-1">✓</span>
-              <span><strong>Healthcare Section</strong> - 18 HIPAA-compliant wizards with clinical examples</span>
+              <span><strong>Healthcare Section</strong> - 16 HIPAA-compliant wizards with clinical examples</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-[var(--success)] mt-1">✓</span>
-              <span><strong>Software Development</strong> - 12 wizards for debugging, testing, and security</span>
+              <span><strong>Software Development</strong> - 16 wizards for debugging, testing, and security</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-[var(--success)] mt-1">✓</span>
