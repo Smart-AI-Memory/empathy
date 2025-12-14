@@ -94,6 +94,34 @@ export async function initializeDatabase(): Promise<void> {
       last_download_at TIMESTAMP WITH TIME ZONE
     );
 
+    -- Newsletter subscribers table
+    CREATE TABLE IF NOT EXISTS subscribers (
+      id SERIAL PRIMARY KEY,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      source VARCHAR(50) DEFAULT 'website', -- 'website', 'book_purchase', 'contact_form'
+      status VARCHAR(50) DEFAULT 'active', -- 'active', 'unsubscribed', 'bounced'
+      mailchimp_id VARCHAR(255),
+      tags TEXT[], -- Array of tags like 'newsletter', 'book_buyer', etc.
+      subscribed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      unsubscribed_at TIMESTAMP WITH TIME ZONE,
+      metadata JSONB
+    );
+
+    -- Contact form submissions table
+    CREATE TABLE IF NOT EXISTS contacts (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      email VARCHAR(255) NOT NULL,
+      company VARCHAR(255),
+      topic VARCHAR(100) NOT NULL,
+      message TEXT NOT NULL,
+      status VARCHAR(50) DEFAULT 'new', -- 'new', 'read', 'replied', 'archived'
+      submitted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      replied_at TIMESTAMP WITH TIME ZONE,
+      notes TEXT,
+      metadata JSONB
+    );
+
     -- Create indexes for common queries
     CREATE INDEX IF NOT EXISTS idx_customers_email ON customers(email);
     CREATE INDEX IF NOT EXISTS idx_customers_stripe_id ON customers(stripe_customer_id);
@@ -102,6 +130,10 @@ export async function initializeDatabase(): Promise<void> {
     CREATE INDEX IF NOT EXISTS idx_licenses_customer ON licenses(customer_id);
     CREATE INDEX IF NOT EXISTS idx_licenses_key ON licenses(license_key);
     CREATE INDEX IF NOT EXISTS idx_downloads_token ON downloads(download_token);
+    CREATE INDEX IF NOT EXISTS idx_subscribers_email ON subscribers(email);
+    CREATE INDEX IF NOT EXISTS idx_subscribers_status ON subscribers(status);
+    CREATE INDEX IF NOT EXISTS idx_contacts_email ON contacts(email);
+    CREATE INDEX IF NOT EXISTS idx_contacts_status ON contacts(status);
   `;
 
   await query(schema);
@@ -361,6 +393,153 @@ export async function validateAndIncrementDownload(token: string): Promise<Downl
        AND (expires_at IS NULL OR expires_at > CURRENT_TIMESTAMP)
      RETURNING *`,
     [token]
+  );
+  return result.rows[0] || null;
+}
+
+// Subscriber operations
+export interface Subscriber {
+  id: number;
+  email: string;
+  source: string;
+  status: string;
+  mailchimp_id: string | null;
+  tags: string[] | null;
+  subscribed_at: Date;
+  unsubscribed_at: Date | null;
+  metadata: Record<string, unknown> | null;
+}
+
+export async function createSubscriber(data: {
+  email: string;
+  source?: string;
+  tags?: string[];
+  mailchimpId?: string;
+  metadata?: Record<string, unknown>;
+}): Promise<{ subscriber: Subscriber; created: boolean }> {
+  // Check if already exists
+  const existing = await query<Subscriber>(
+    'SELECT * FROM subscribers WHERE email = $1',
+    [data.email.toLowerCase()]
+  );
+
+  if (existing.rows.length > 0) {
+    // Update if resubscribing
+    const subscriber = existing.rows[0];
+    if (subscriber.status === 'unsubscribed') {
+      const result = await query<Subscriber>(
+        `UPDATE subscribers
+         SET status = 'active', unsubscribed_at = NULL, subscribed_at = CURRENT_TIMESTAMP
+         WHERE id = $1
+         RETURNING *`,
+        [subscriber.id]
+      );
+      return { subscriber: result.rows[0], created: false };
+    }
+    return { subscriber, created: false };
+  }
+
+  // Create new subscriber
+  const result = await query<Subscriber>(
+    `INSERT INTO subscribers (email, source, tags, mailchimp_id, metadata)
+     VALUES ($1, $2, $3, $4, $5)
+     RETURNING *`,
+    [
+      data.email.toLowerCase(),
+      data.source || 'website',
+      data.tags || ['newsletter'],
+      data.mailchimpId,
+      data.metadata ? JSON.stringify(data.metadata) : null,
+    ]
+  );
+
+  return { subscriber: result.rows[0], created: true };
+}
+
+export async function updateSubscriberMailchimpId(email: string, mailchimpId: string): Promise<void> {
+  await query(
+    'UPDATE subscribers SET mailchimp_id = $1 WHERE email = $2',
+    [mailchimpId, email.toLowerCase()]
+  );
+}
+
+export async function unsubscribe(email: string): Promise<boolean> {
+  const result = await query(
+    `UPDATE subscribers
+     SET status = 'unsubscribed', unsubscribed_at = CURRENT_TIMESTAMP
+     WHERE email = $1 AND status = 'active'`,
+    [email.toLowerCase()]
+  );
+  return (result.rowCount ?? 0) > 0;
+}
+
+export async function getAllSubscribers(status?: string): Promise<Subscriber[]> {
+  const whereClause = status ? 'WHERE status = $1' : '';
+  const params = status ? [status] : [];
+  const result = await query<Subscriber>(
+    `SELECT * FROM subscribers ${whereClause} ORDER BY subscribed_at DESC`,
+    params
+  );
+  return result.rows;
+}
+
+// Contact operations
+export interface Contact {
+  id: number;
+  name: string;
+  email: string;
+  company: string | null;
+  topic: string;
+  message: string;
+  status: string;
+  submitted_at: Date;
+  replied_at: Date | null;
+  notes: string | null;
+  metadata: Record<string, unknown> | null;
+}
+
+export async function createContact(data: {
+  name: string;
+  email: string;
+  company?: string;
+  topic: string;
+  message: string;
+  metadata?: Record<string, unknown>;
+}): Promise<Contact> {
+  const result = await query<Contact>(
+    `INSERT INTO contacts (name, email, company, topic, message, metadata)
+     VALUES ($1, $2, $3, $4, $5, $6)
+     RETURNING *`,
+    [
+      data.name,
+      data.email.toLowerCase(),
+      data.company,
+      data.topic,
+      data.message,
+      data.metadata ? JSON.stringify(data.metadata) : null,
+    ]
+  );
+
+  return result.rows[0];
+}
+
+export async function getAllContacts(status?: string): Promise<Contact[]> {
+  const whereClause = status ? 'WHERE status = $1' : '';
+  const params = status ? [status] : [];
+  const result = await query<Contact>(
+    `SELECT * FROM contacts ${whereClause} ORDER BY submitted_at DESC`,
+    params
+  );
+  return result.rows;
+}
+
+export async function updateContactStatus(id: number, status: string, notes?: string): Promise<Contact | null> {
+  const result = await query<Contact>(
+    `UPDATE contacts
+     SET status = $1, notes = COALESCE($2, notes), replied_at = CASE WHEN $1 = 'replied' THEN CURRENT_TIMESTAMP ELSE replied_at END
+     WHERE id = $3
+     RETURNING *`,
+    [status, notes, id]
   );
   return result.rows[0] || null;
 }

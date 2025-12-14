@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendNewsletterConfirmation } from '@/lib/email/sendgrid';
-// Alternative: import { subscribeToMailchimp } from '@/lib/email/mailchimp';
+import { subscribeToMailchimp } from '@/lib/email/mailchimp';
+import { createSubscriber, updateSubscriberMailchimpId } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,25 +32,52 @@ export async function POST(request: NextRequest) {
       source: 'website',
     });
 
-    // Send confirmation email via SendGrid
-    // Alternative: Use Mailchimp
-    // const subscribed = await subscribeToMailchimp({ email });
-
-    const emailSent = await sendNewsletterConfirmation(email);
-
-    if (!emailSent && process.env.SENDGRID_API_KEY) {
-      console.warn('Failed to send newsletter confirmation, but returning success to user');
+    // Store in database
+    let dbSuccess = false;
+    try {
+      const { subscriber, created } = await createSubscriber({
+        email,
+        source: 'website',
+        tags: ['newsletter'],
+      });
+      dbSuccess = true;
+      console.log(`Subscriber ${created ? 'created' : 'already exists'}:`, subscriber.email);
+    } catch (dbError) {
+      console.error('Database error (continuing anyway):', dbError);
     }
 
-    // TODO: Store in database for your own newsletter management
-    // await db.newsletterSubscribers.create({
-    //   data: {
-    //     email,
-    //     subscribedAt: new Date(),
-    //     source: 'website',
-    //     confirmed: false,
-    //   },
-    // });
+    // Sync to Mailchimp
+    let mailchimpSuccess = false;
+    const mailchimpResult = await subscribeToMailchimp({ email });
+    if (mailchimpResult.success) {
+      mailchimpSuccess = true;
+      console.log('Mailchimp subscription successful');
+
+      // Update subscriber with Mailchimp ID if we have it
+      if (mailchimpResult.id && dbSuccess) {
+        try {
+          await updateSubscriberMailchimpId(email, mailchimpResult.id);
+        } catch (updateError) {
+          console.error('Failed to update Mailchimp ID:', updateError);
+        }
+      }
+    } else {
+      console.warn('Mailchimp subscription failed:', mailchimpResult.error);
+    }
+
+    // Send confirmation email via SendGrid
+    const emailSent = await sendNewsletterConfirmation(email);
+    if (!emailSent && process.env.SENDGRID_API_KEY) {
+      console.warn('Failed to send newsletter confirmation email');
+    }
+
+    // Log summary
+    console.log('Newsletter subscription complete:', {
+      email,
+      database: dbSuccess,
+      mailchimp: mailchimpSuccess,
+      confirmationEmail: emailSent,
+    });
 
     return NextResponse.json(
       {

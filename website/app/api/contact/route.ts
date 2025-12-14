@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendContactFormEmail } from '@/lib/email/sendgrid';
+import { createContact } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,8 +34,29 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
 
+    // Store in database
+    let dbSuccess = false;
+    let contactId: number | null = null;
+    try {
+      const contact = await createContact({
+        name,
+        email,
+        company,
+        topic,
+        message,
+        metadata: {
+          userAgent: request.headers.get('user-agent'),
+          ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
+        },
+      });
+      dbSuccess = true;
+      contactId = contact.id;
+      console.log('Contact saved to database:', contact.id);
+    } catch (dbError) {
+      console.error('Database error (continuing anyway):', dbError);
+    }
+
     // Send email via SendGrid
-    // If SendGrid is not configured, it will log an error but still return success
     const emailSent = await sendContactFormEmail({
       name,
       email,
@@ -44,9 +66,15 @@ export async function POST(request: NextRequest) {
     });
 
     if (!emailSent && process.env.SENDGRID_API_KEY) {
-      // If SendGrid is configured but email failed, log warning
       console.warn('Failed to send contact form email, but returning success to user');
     }
+
+    // Log summary
+    console.log('Contact form complete:', {
+      contactId,
+      database: dbSuccess,
+      emailNotification: emailSent,
+    });
 
     return NextResponse.json(
       {
