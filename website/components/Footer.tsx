@@ -52,18 +52,8 @@ export default function Footer() {
                   href="/framework"
                   className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
                 >
-                  Empathy
+                  Empathy Framework
                 </Link>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/Smart-AI-Memory/MemDocs"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
-                >
-                  MemDocs
-                </a>
               </li>
               <li>
                 <Link

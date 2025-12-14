@@ -41,9 +41,9 @@ So we built something different.
 
 Empathy uses a three-tier memory system, each optimized for different use cases:
 
-### Long-Term Memory (MemDocs)
+### Long-Term Memory
 
-**What it is:** Git-based persistent storage for patterns, decisions, and context that should survive across sessions, projects, and even team members.
+**What it is:** Git-based persistent storage for patterns, decisions, and context that should survive across sessions, projects, and even team members. This functionality is built directly into the Empathy Framework.
 
 **Where it lives:** Your repository. Your infrastructure. Version-controlled alongside your code.
 
@@ -61,11 +61,11 @@ Empathy uses a three-tier memory system, each optimized for different use cases:
 - Cross-session context ("Remember we're targeting Python 3.10+")
 
 ```python
-from empathy_llm_toolkit import MemDocs
+from empathy_os.memory import LongTermMemory
 
 # Store a pattern - you control where it lives
-memdocs = MemDocs(storage_path="./project-memory")
-memdocs.store(
+memory = LongTermMemory(storage_path="./project-memory")
+memory.store(
     "architecture_decision",
     content="We chose PostgreSQL over MongoDB for ACID compliance",
     classification="INTERNAL"
@@ -163,7 +163,7 @@ Here's how the tiers work together:
                        ▼
 ┌─────────────────────────────────────────────────────┐
 │                   Long-Term Memory                   │
-│              (MemDocs, git-based, encrypted)         │
+│              (Git-based, encrypted)                  │
 │                                                      │
 │  Persistent patterns, architecture decisions,        │
 │  team knowledge, compliance documentation            │
@@ -197,7 +197,7 @@ clean_text, detections = scrubber.scrub(
 Install Empathy with memory support:
 
 ```bash
-pip install empathy[full]
+pip install empathy-framework[full]
 ```
 
 Set up Redis for short-term memory:

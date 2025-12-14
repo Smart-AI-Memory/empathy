@@ -16,7 +16,7 @@ export interface SEOConfig {
 const defaultMetadata = {
   siteName: 'Smart AI Memory',
   title: 'Smart AI Memory - Building the Future of AI-Human Collaboration',
-  description: 'Production-ready frameworks for building Level 4 Anticipatory AI systems. Empathy, MemDocs, and tools that enable AI to predict problems before they happen.',
+  description: 'Production-ready framework for building Level 4 Anticipatory AI systems. Empathy Framework enables AI to predict problems before they happen.',
   url: 'https://smartaimemory.com',
   image: '/og-image.png',
   twitterHandle: '@smartaimemory',
@@ -25,8 +25,7 @@ const defaultMetadata = {
     'Anticipatory Intelligence',
     'AI-Human Collaboration',
     'Level 4 AI',
-    'Empathy',
-    'MemDocs',
+    'Empathy Framework',
     'Claude Code',
     'AI Development',
     'Machine Learning',
@@ -134,7 +133,6 @@ export function generateStructuredData(type: 'organization' | 'product' | 'artic
         sameAs: [
           'https://github.com/Smart-AI-Memory',
           'https://github.com/Smart-AI-Memory/empathy',
-          'https://github.com/Smart-AI-Memory/MemDocs',
         ],
         contactPoint: {
           '@type': 'ContactPoint',
