@@ -50,6 +50,21 @@ empathy-memory serve
 | [WHY_EMPATHY.md](WHY_EMPATHY.md) | Enterprise | One-page summary |
 | [VISUAL_ASSET_SPECS.md](VISUAL_ASSET_SPECS.md) | Design | Specs for visual assets |
 | [LAUNCH_SUMMARY.md](LAUNCH_SUMMARY.md) | Internal | Full launch planning |
+| [THREE_THINGS_NOT_POSSIBLE_BEFORE.md](THREE_THINGS_NOT_POSSIBLE_BEFORE.md) | Demo | 3 capabilities enabled by memory |
+| [NEW_POSSIBILITIES_ANALYSIS.md](NEW_POSSIBILITIES_ANALYSIS.md) | Internal | Feature brainstorm & roadmap |
+
+### Demo Script
+
+**Interactive showcase of memory-enhanced capabilities:**
+
+```bash
+python examples/persistent_memory_showcase.py
+```
+
+Demonstrates:
+1. Bug Pattern Correlation - "This bug looks like one we fixed 3 months ago"
+2. Tech Debt Trajectory - "At current trajectory, debt doubles in 90 days"
+3. Security False Positive Learning - "Suppressing 8 warnings you marked as acceptable"
 
 ### Archive
 Old v1 content (narrow hospital→deployment focus) preserved in [archive/](archive/).

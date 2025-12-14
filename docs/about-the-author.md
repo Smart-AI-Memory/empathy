@@ -24,9 +24,9 @@ This book itself reflects that collaboration—Patrick wrote the preface, Claude
 
 ## Connect
 
-- **GitHub**: [github.com/Smart-AI-Memory](https://github.com/Smart-AI-Memory)
-- **Framework**: [github.com/Smart-AI-Memory/empathy](https://github.com/Smart-AI-Memory/empathy)
-- **Email**: patrick.roebuck@smartaimemory.com
+- **GitHub**: github.com/Smart-AI-Memory
+- **Framework**: Available on GitHub and PyPI
+- **Website**: smartaimemory.com
 
 ---
 

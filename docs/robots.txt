@@ -1,0 +1,17 @@
+# Empathy Framework - robots.txt
+# https://smartaimemory.com
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://smartaimemory.com/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
+
+# Disallow development/internal pages
+Disallow: /ANTHROPIC_PARTNERSHIP_PROPOSAL/
+Disallow: /OPENSSF_APPLICATION/
+Disallow: /CASE_STUDY_TEMPLATE/
+Disallow: /marketing/

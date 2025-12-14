@@ -6,7 +6,7 @@
 **Domain**: Healthcare - Nursing
 
 !!! tip "Try the Live SBAR Wizard"
-    Try the interactive SBAR wizard at **[healthcare.smartaimemory.com](https://healthcare.smartaimemory.com/static/dashboard.html)** - complete with quick-fill templates, vital signs input, and AI-generated reports.
+    Interactive demo coming soon. This chapter includes complete code examples with quick-fill templates, vital signs input, and AI-generated reports.
 
 ---
 
@@ -647,5 +647,5 @@ response = empathy.interact(
 
 ---
 
-**Questions?** Contact healthcare support: healthcare@smartaimemory.com
+**Questions?** See the Contributing chapter for contact information.
 **HIPAA Compliance**: See [HIPAA Compliance Guide](../guides/hipaa-compliance.md)

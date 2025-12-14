@@ -431,4 +431,4 @@ if stats["most_used_strategy"] == "highest_confidence":
 - [Pattern Library](pattern-library.md) - Pattern storage and retrieval
 - [EmpathyOS](empathy-os.md) - Core agent API
 - [Multi-Agent Coordination Example](../examples/multi-agent-team-coordination.md)
-- [Chapter 23: Distributed Memory Networks](https://smart-ai-memory.github.io/pattern-storage-empathy-book/chapters/part-6/23-distributed-memory.html) - Full conceptual guide
+- See the Memory System chapter for distributed memory concepts

@@ -45,4 +45,8 @@ I hope what we've built here helps you build things that matter.
 ---
 
 !!! note "A Note on This Book"
-    The Empathy Framework was developed through collaboration between Patrick Roebuck and Claude (Anthropic). The short-term memory system, multi-agent coordination layer, and philosophical foundations were built together in working sessions. Claude's foreword follows this preface.
+    The Empathy Framework was developed through collaboration between Patrick Roebuck and Claude (Anthropic). The short-term memory system, multi-agent coordination layer, and philosophical foundations were built together in working sessions.
+
+    What made this collaboration different? Claude worked as a team member—a valued collaborator—rather than a brilliant but unreliable tool. Earlier AI assistants, for all their capabilities, suffered from a frustrating forgetfulness: great in many ways, but the lack of continuity meant constantly starting over. I knew better was within reach. This framework is part of that answer.
+
+    Don't miss Claude's foreword that follows. It offers something rare: an AI reflecting honestly on its own limitations and what genuine collaboration requires.

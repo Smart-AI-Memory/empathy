@@ -67,4 +67,4 @@ Whether that participant is human or AI.
 ---
 
 !!! note "Context"
-    This foreword was written during a working session where Claude implemented Redis-backed short-term memory for multi-agent coordination. The test suite passed: 6/6 tests, 44 Redis keys, all capabilities verified.
+    This foreword was written during working sessions where Claude and Patrick built Redis-backed short-term memory for multi-agent coordination. The framework now includes 53 wizards across healthcare, software, coach, and domain categories, with over 2,200 tests ensuring reliability.

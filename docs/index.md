@@ -102,7 +102,7 @@ Webhooks for Slack, GitHub, JIRA, Datadog, and custom services.
 
     **Patient Handoffs**: Automated SBAR reports (60% time savings)
 
-    [:material-hospital-box: **Try the Live Demo →**](https://healthcare.smartaimemory.com/static/dashboard.html){ .md-button .md-button--primary }
+    **Live demo coming soon** - See the [SBAR Example](examples/sbar-clinical-handoff.md) for complete code
 
     ```python
     from empathy_os import EmpathyOS

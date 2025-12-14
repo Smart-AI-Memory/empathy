@@ -89,8 +89,6 @@ response = empathy.interact(
 
 ### PIIScrubber
 
-**Note**: Security features are being implemented. Full documentation coming soon.
-
 Detect and scrub personally identifiable information.
 
 **Detects:**
@@ -131,8 +129,6 @@ for item in items:
 
 ### SecretsDetector
 
-**Note**: Security features are being implemented. Full documentation coming soon.
-
 Detect API keys, tokens, and credentials.
 
 **Detects:**
@@ -168,8 +164,6 @@ else:
 ```
 
 ### AuditLogger
-
-**Note**: Security features are being implemented. Full documentation coming soon.
 
 Compliance audit logging (HIPAA, GDPR, SOC2).
 

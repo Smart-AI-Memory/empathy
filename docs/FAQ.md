@@ -922,7 +922,7 @@ Yes! Fair Source 0.9 allows this. Many companies build SaaS products on top of F
 - Enterprise features (RBAC, audit logs)
 - Cloud-hosted option
 
-See [ROADMAP.md](../ROADMAP.md) for detailed roadmap.
+Check our GitHub repository for the latest development updates.
 
 ---
 

@@ -16,7 +16,7 @@ This book serves multiple audiences. Choose the path that matches your goals:
 
 **Start here**:
 1. [Preface](./preface.md) - Why the framework exists (5 min)
-2. [Foreword by Claude](../FOREWORD_BY_CLAUDE.md) - A unique AI perspective (5 min)
+2. [Foreword by Claude](./foreword.md) - A unique AI perspective (5 min)
 3. [Multi-Agent Philosophy](./multi-agent-philosophy.md) - The six foundational principles (20 min)
 
 **Then explore**: The examples and case studies to see principles in action.
@@ -125,7 +125,7 @@ The [Unified Memory System](./unified-memory-system.md) consolidates what were p
 
 This book was written collaboratively by Patrick Roebuck and Claude. The framework itself was built using the principles it teaches - multi-agent coordination, pattern discovery, and earned trust.
 
-Claude's [Foreword](../FOREWORD_BY_CLAUDE.md) offers a perspective you won't find in other technical books: an AI reflecting on the nature of collaboration and memory.
+Claude's [Foreword](./foreword.md) offers a perspective you won't find in other technical books: an AI reflecting on the nature of collaboration and memory.
 
 ---
 

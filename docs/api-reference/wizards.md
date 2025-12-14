@@ -22,7 +22,7 @@ Domain-specific AI assistants with built-in security, compliance, and industry b
 
     ## Healthcare Wizards
 
-    **20+ HIPAA-compliant AI assistants** for medical applications with enhanced PHI protection.
+    **17 HIPAA-compliant AI assistants** for medical applications with enhanced PHI protection.
 
     ### Key Features
 

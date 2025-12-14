@@ -2,10 +2,10 @@
 # MkDocs configuration file
 
 # Site Information
-site_name: Empathy
-site_description: Production-ready Level 4 Anticipatory Intelligence for AI-human collaboration
+site_name: Empathy Framework
+site_description: Production-ready Level 4 Anticipatory Intelligence for AI-human collaboration. Build AI systems that predict problems before they happen.
 site_author: Patrick Roebuck
-site_url: https://empathy-framework.readthedocs.io
+site_url: https://smartaimemory.com
 
 # Repository
 repo_name: Smart-AI-Memory/empathy
@@ -59,6 +59,7 @@ nav:
 # Theme Configuration (Material)
 theme:
   name: material
+  custom_dir: docs/overrides
 
   # Color scheme
   palette:
@@ -137,3 +138,28 @@ extra:
       link: https://github.com/Smart-AI-Memory/empathy
     - icon: fontawesome/brands/python
       link: https://pypi.org/project/empathy-framework/
+
+  # Plausible Analytics is added via docs/overrides/main.html
+
+  # Open Graph / Social sharing
+  meta:
+    - property: og:type
+      content: website
+    - property: og:title
+      content: Empathy Framework - Level 4 Anticipatory AI
+    - property: og:description
+      content: Build AI systems that predict problems before they happen. Production-ready framework for AI-human collaboration.
+    - property: og:image
+      content: https://smartaimemory.com/assets/images/empathy-brain-logo.png
+    - property: og:url
+      content: https://smartaimemory.com
+    - name: twitter:card
+      content: summary_large_image
+    - name: twitter:title
+      content: Empathy Framework - Level 4 Anticipatory AI
+    - name: twitter:description
+      content: Build AI systems that predict problems before they happen.
+    - name: twitter:image
+      content: https://smartaimemory.com/assets/images/empathy-brain-logo.png
+    - name: keywords
+      content: AI framework, anticipatory AI, machine learning, multi-agent systems, healthcare AI, HIPAA compliant, Python AI library
