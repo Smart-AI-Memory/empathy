@@ -404,7 +404,12 @@ def cmd_health(args):
                 print(f"  ... and {len(result['fixed']) - 5} more")
 
         if result["skipped"]:
-            print(f"\n⚠ Skipped {len(result['skipped'])} issue(s) (use --interactive to fix)")
+            if args.interactive:
+                print(f"\n⚠ Skipped {len(result['skipped'])} issue(s) (could not auto-fix)")
+            else:
+                print(
+                    f"\n⚠ Skipped {len(result['skipped'])} issue(s) (use --interactive to review)"
+                )
 
         if result["failed"]:
             print(f"\n✗ Failed to fix {len(result['failed'])} issue(s)")
