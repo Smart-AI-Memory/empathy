@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "empathy-framework"
-version = "2.2.5"
+version = "2.2.6"
 description = "AI collaboration framework with persistent memory, anticipatory intelligence, and multi-agent orchestration"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.10"
@@ -182,12 +182,14 @@ empathy-memory = "empathy_os.memory.control_panel:main"
 
 [project.urls]
 Homepage = "https://smartaimemory.com"
-Documentation = "https://github.com/Smart-AI-Memory/empathy/tree/main/docs"
+Documentation = "https://smartaimemory.com/docs"
+"Getting Started" = "https://smartaimemory.com/docs/getting-started"
+FAQ = "https://smartaimemory.com/docs/faq"
+Book = "https://smartaimemory.com/book"
 Repository = "https://github.com/Smart-AI-Memory/empathy"
 Issues = "https://github.com/Smart-AI-Memory/empathy/issues"
 Discussions = "https://github.com/Smart-AI-Memory/empathy/discussions"
 Changelog = "https://github.com/Smart-AI-Memory/empathy/blob/main/CHANGELOG.md"
-Funding = "https://smartaimemory.com"
 
 [tool.setuptools]
 # Package discovery
