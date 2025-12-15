@@ -5,6 +5,24 @@ All notable changes to the Empathy Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.5] - 2025-12-15
+
+### Added
+- **Distribution Policy** - Comprehensive policy for PyPI and git archive exclusions
+  - `MANIFEST.in` updated with organized include/exclude sections
+  - `.gitattributes` with export-ignore for GitHub ZIP downloads
+  - `DISTRIBUTION_POLICY.md` documenting the philosophy and implementation
+- **Code Foresight Positioning** - Marketing positioning for Code Foresight feature
+  - End-of-Day Prep feature spec for instant morning reports
+  - Conversation content for book/video integration
+
+### Changed
+- Marketing materials, book production files, memory/data files, and internal planning documents now excluded from PyPI distributions and git archives
+- Users get a focused package (364 files, 1.1MB) with only what they need
+
+### Philosophy
+> Users get what empowers them, not our development history.
+
 ## [2.1.4] - 2025-12-15
 
 ### Added

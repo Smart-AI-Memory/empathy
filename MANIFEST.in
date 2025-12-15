@@ -1,40 +1,158 @@
-# Include documentation
+# =============================================================================
+# MANIFEST.in - PyPI Distribution Control
+# =============================================================================
+# This file controls what gets included in PyPI source distributions.
+# See DISTRIBUTION_POLICY.md for the complete policy documentation.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# INCLUDE: Core framework files for end users
+# -----------------------------------------------------------------------------
+
+# Essential documentation
 include README.md
 include LICENSE
-include LICENSE-COMMERCIAL.md
 include CHANGELOG.md
 include CONTRIBUTING.md
 include SPONSORSHIP.md
 include CODE_OF_CONDUCT.md
+include SECURITY.md
+include QUICKSTART.md
 
-# Include configuration files
+# Build configuration
 include pyproject.toml
-include setup.py
 include requirements.txt
 include .bandit
 
-# Include all YAML/JSON configs
+# Configuration examples
+include empathy.config.example.json
+include empathy.config.example.yml
+
+# Include all YAML/JSON configs in source packages
 recursive-include src *.yml *.yaml *.json
 recursive-include empathy_* *.yml *.yaml *.json
 recursive-include coach_wizards *.yml *.yaml *.json
 recursive-include wizards *.yml *.yaml *.json
 recursive-include agents *.yml *.yaml *.json
 
-# Include documentation
-recursive-include docs *.md *.rst *.txt
+# Include user-facing documentation (selective)
+recursive-include docs/api-reference *.md
+recursive-include docs/examples *.md
+recursive-include docs/getting-started *.md
+recursive-include docs/guides *.md
+include docs/index.md
+include docs/CLI_GUIDE.md
+include docs/FAQ.md
+include docs/QUICKSTART_GUIDE.md
+include docs/USER_GUIDE.md
+include docs/API_REFERENCE.md
+include docs/COMPARISON.md
 
-# Include examples
+# Include examples (selective)
 recursive-include examples *.py *.md *.yml *.yaml
+prune examples/wizard-dashboard/node_modules
+prune examples/wizard-dashboard/dist
+prune examples/wizard-dashboard/.next
 
-# Exclude website and non-framework content
+# -----------------------------------------------------------------------------
+# EXCLUDE: Marketing materials (internal use only)
+# -----------------------------------------------------------------------------
+prune docs/marketing
+exclude docs/ANTHROPIC_PARTNERSHIP_PROPOSAL.md
+exclude docs/BOOK_PRODUCTION_PIPELINE_PLAN.md
+exclude docs/CASE_STUDY_TEMPLATE.md
+exclude docs/DEMO_VIDEO_SCRIPT.md
+exclude docs/DOCUMENTATION_PIPELINE_PLAN.md
+exclude docs/MEMDOCS_MERGER_PLAN.md
+exclude docs/OPENSSF_APPLICATION.md
+exclude docs/POWERED_BY_CLAUDE_TIERS.md
+exclude docs/WIZARD_AGENT_IMPROVEMENT_PLAN.md
+exclude docs/about-the-author.md
+exclude docs/book-cover.md
+exclude docs/get-the-book.md
+prune docs/book-cover
+
+# -----------------------------------------------------------------------------
+# EXCLUDE: Book production files
+# -----------------------------------------------------------------------------
+prune book-indesign
+prune book-cover
+prune ebook-site
+
+# -----------------------------------------------------------------------------
+# EXCLUDE: Memory/data files (user-generated, environment-specific)
+# -----------------------------------------------------------------------------
+prune .empathy
+prune patterns
+prune memdocs_storage
+exclude docs/empathy_patterns.json
+
+# -----------------------------------------------------------------------------
+# EXCLUDE: Infrastructure files (deployment-specific)
+# -----------------------------------------------------------------------------
 prune website
 prune backend
+prune dashboard
+prune services
+prune vscode-memory-panel
+prune 10_9_2025_ai_nurse_florence
+prune salvaged
+prune archived_wizards
+prune wizards_consolidated
+prune drafts
+prune plugins
+prune bin
+prune scripts
+prune logs
+
+# Deployment configs
+exclude Dockerfile
+exclude Dockerfile.scanner
+exclude docker-compose.yml
 exclude nixpacks.toml
-exclude org-ruleset-*.json
+exclude railway.toml
 exclude render.yaml
 exclude vercel.json
+exclude server.json
+exclude mkdocs.yml
+exclude mkdocs-ebook.yml
+exclude mkdocs-pypi.yml
 
-# Exclude working/planning files
+# -----------------------------------------------------------------------------
+# EXCLUDE: Development/testing artifacts
+# -----------------------------------------------------------------------------
+prune htmlcov
+prune htmlcov_logging
+prune site
+prune .pytest_cache
+prune .mypy_cache
+prune .ruff_cache
+
+# Coverage and audit reports
+exclude coverage.xml
+exclude coverage.json
+exclude security_scan_results.json
+exclude security_audit.json
+exclude pip_audit.json
+exclude pip_audit_results.json
+
+# Profiling/benchmarking scripts
+exclude profile_*.py
+exclude benchmark_*.py
+exclude demo_security_complete.py
+exclude test_memory_integration.py
+
+# Legacy files
+exclude setup.py.legacy
+exclude pytest.ini
+exclude install.sh
+exclude convert_pitch_deck.sh
+
+# -----------------------------------------------------------------------------
+# EXCLUDE: Internal planning/working documents
+# -----------------------------------------------------------------------------
+
+# Root-level internal docs
 exclude BADGES_REMINDER.md
 exclude POST_HACKERNEWS_REMINDER.md
 exclude SEND_LANGCHAIN_EMAIL.md
@@ -43,17 +161,68 @@ exclude OUTREACH_EMAILS.md
 exclude TODO_BADGES.md
 exclude COMPREHENSIVE_COMPLETION_PLAN.md
 exclude COMMERCIAL_READINESS.md
-exclude QUALITY_REVIEW.md
 exclude COMMERCIAL_ROADMAP.md
+exclude QUALITY_REVIEW.md
+exclude PLANNING.md
+exclude EXECUTION_PLAN.md
+exclude SESSION_CONTEXT.json
+exclude SESSION_HANDOFF_SUGGESTIONS.md
+exclude MCP_PUBLISH_CONFIG.json
+exclude MCP_PUBLISH_INSTRUCTIONS.md
+exclude STRIPE_INTEGRATION_PLAN.md
+exclude TEST_COVERAGE_PLAN.md
+exclude PITCH_DECK.md
+exclude PITCH_DECK_README.md
+prune pitch_deck_assets
+prune pitch_deck_exports
+exclude performance_profile_baseline.md
+exclude DOCUMENTATION_PATTERNS.md
+exclude ENTERPRISE_PRIVACY_INTEGRATION.md
+exclude GOVERNANCE.md
+exclude HEALTHCARE_WIZARD_COMPLETE.md
+exclude EXAMPLES_COMPLETE.md
+exclude 16_WIZARDS_COMPLETE.md
+exclude OPTION_A_IMPLEMENTATION_PLAN.md
+exclude PARALLELIZATION_COMPLETE.md
+exclude PHASE2_*.md
+exclude PHASE3_*.md
+exclude WEEK2_EXECUTION_PLAN.md
+exclude PLUGIN_SYSTEM_README.md
+exclude SOFTWARE_PLUGIN_README.md
+exclude SECURE_MEMORY_ARCHITECTURE.md
+exclude PUBLISHING.md
+exclude MKDOCS_TUTORIAL.md
+exclude org-ruleset-*.json
 
-# Exclude node_modules and frontend build artifacts
-prune examples/wizard-dashboard/node_modules
-prune examples/wizard-dashboard/dist
-prune examples/wizard-dashboard/.next
-global-exclude node_modules
-recursive-exclude examples/wizard-dashboard/node_modules *
+# Docs internal planning
+exclude docs/CONTRIBUTING_TESTS.md
+exclude docs/COVERAGE_ANALYSIS.md
+exclude docs/DEPLOYMENT_ROLLBACK.md
+exclude docs/MEMDOCS_EMPATHY_INTEGRATION.md
+exclude docs/OPENSSF_APPLICATION_GUIDE.md
+exclude docs/OPENSSF_BADGE_PREPARATION.md
+exclude docs/PLAN_*.md
+exclude docs/RESULTS.md
+exclude docs/REVIEW_GUIDE.md
+exclude docs/SESSION_SUMMARY_*.md
+exclude docs/CODE_REVIEW_REPORT_*.md
+exclude docs/SHORT_TERM_MEMORY.md
+exclude docs/TEACHING_AI_YOUR_PHILOSOPHY.md
+exclude docs/TESTING_STRATEGY.md
+exclude docs/THIRD_PARTY_BADGES.md
+exclude docs/TROUBLESHOOTING.md
+exclude docs/generate_word_doc.py
+exclude docs/robots.txt
+prune docs/stylesheets
+prune docs/overrides
+prune docs/concepts
+prune docs/tutorials
+prune docs/__pycache__
+prune docs/assets
 
-# Exclude unnecessary files
+# -----------------------------------------------------------------------------
+# EXCLUDE: Global patterns
+# -----------------------------------------------------------------------------
 global-exclude *.pyc
 global-exclude *.pyo
 global-exclude *.pyd
@@ -62,10 +231,29 @@ global-exclude *.so
 global-exclude *.dylib
 global-exclude .DS_Store
 global-exclude .git*
-global-exclude .env
+global-exclude .env*
 global-exclude .vscode
 global-exclude .idea
+global-exclude *.egg-info
+global-exclude node_modules
+global-exclude *.log
+global-exclude *.tmp
+global-exclude *~
+global-exclude \#*
+global-exclude .coverage
 
-# Temporarily exclude examples with syntax errors (to be fixed)
+# Credential files (safety net)
+global-exclude *.pem
+global-exclude *.key
+global-exclude *_token
+global-exclude *credentials*
+global-exclude .mcpregistry_*
+
+# -----------------------------------------------------------------------------
+# EXCLUDE: Examples with known issues
+# -----------------------------------------------------------------------------
 exclude examples/bug_prediction.py
 exclude examples/debugging_assistant.py
+exclude examples/full_repo_test.py
+exclude examples/persistent_memory_showcase.py
+prune examples/website_examples

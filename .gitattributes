@@ -1,0 +1,207 @@
+# =============================================================================
+# .gitattributes - Git Archive Export Control
+# =============================================================================
+# Files marked with 'export-ignore' are excluded from:
+# - git archive commands
+# - GitHub "Download ZIP" downloads
+# - Release tarballs
+#
+# See DISTRIBUTION_POLICY.md for the complete policy documentation.
+# Philosophy: Users get what empowers them, not our development history.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Marketing materials (internal use only)
+# -----------------------------------------------------------------------------
+docs/marketing/                     export-ignore
+docs/ANTHROPIC_PARTNERSHIP_PROPOSAL.md export-ignore
+docs/BOOK_PRODUCTION_PIPELINE_PLAN.md export-ignore
+docs/CASE_STUDY_TEMPLATE.md         export-ignore
+docs/DEMO_VIDEO_SCRIPT.md           export-ignore
+docs/DOCUMENTATION_PIPELINE_PLAN.md export-ignore
+docs/MEMDOCS_MERGER_PLAN.md         export-ignore
+docs/OPENSSF_APPLICATION.md         export-ignore
+docs/POWERED_BY_CLAUDE_TIERS.md     export-ignore
+docs/WIZARD_AGENT_IMPROVEMENT_PLAN.md export-ignore
+docs/about-the-author.md            export-ignore
+docs/book-cover.md                  export-ignore
+docs/get-the-book.md                export-ignore
+docs/book-cover/                    export-ignore
+
+# -----------------------------------------------------------------------------
+# Book production files
+# -----------------------------------------------------------------------------
+book-indesign/                      export-ignore
+book-cover/                         export-ignore
+ebook-site/                         export-ignore
+
+# -----------------------------------------------------------------------------
+# Memory/data files (user-generated, environment-specific)
+# -----------------------------------------------------------------------------
+.empathy/                           export-ignore
+patterns/                           export-ignore
+memdocs_storage/                    export-ignore
+docs/empathy_patterns.json          export-ignore
+
+# -----------------------------------------------------------------------------
+# Infrastructure files (deployment-specific)
+# -----------------------------------------------------------------------------
+website/                            export-ignore
+backend/                            export-ignore
+dashboard/                          export-ignore
+services/                           export-ignore
+vscode-memory-panel/                export-ignore
+10_9_2025_ai_nurse_florence/        export-ignore
+salvaged/                           export-ignore
+archived_wizards/                   export-ignore
+wizards_consolidated/               export-ignore
+drafts/                             export-ignore
+plugins/                            export-ignore
+bin/                                export-ignore
+scripts/                            export-ignore
+logs/                               export-ignore
+
+# Deployment configs
+Dockerfile                          export-ignore
+Dockerfile.scanner                  export-ignore
+docker-compose.yml                  export-ignore
+nixpacks.toml                       export-ignore
+railway.toml                        export-ignore
+render.yaml                         export-ignore
+vercel.json                         export-ignore
+server.json                         export-ignore
+mkdocs.yml                          export-ignore
+mkdocs-ebook.yml                    export-ignore
+mkdocs-pypi.yml                     export-ignore
+
+# -----------------------------------------------------------------------------
+# Development/testing artifacts
+# -----------------------------------------------------------------------------
+htmlcov/                            export-ignore
+htmlcov_logging/                    export-ignore
+site/                               export-ignore
+.pytest_cache/                      export-ignore
+.mypy_cache/                        export-ignore
+.ruff_cache/                        export-ignore
+coverage.xml                        export-ignore
+coverage.json                       export-ignore
+security_scan_results.json          export-ignore
+security_audit.json                 export-ignore
+pip_audit.json                      export-ignore
+pip_audit_results.json              export-ignore
+
+# Profiling/benchmarking scripts
+profile_*.py                        export-ignore
+benchmark_*.py                      export-ignore
+demo_security_complete.py           export-ignore
+test_memory_integration.py          export-ignore
+
+# Legacy/utility files
+setup.py.legacy                     export-ignore
+pytest.ini                          export-ignore
+install.sh                          export-ignore
+convert_pitch_deck.sh               export-ignore
+
+# -----------------------------------------------------------------------------
+# Internal planning/working documents
+# -----------------------------------------------------------------------------
+
+# Root-level internal docs
+BADGES_REMINDER.md                  export-ignore
+POST_HACKERNEWS_REMINDER.md         export-ignore
+SEND_LANGCHAIN_EMAIL.md             export-ignore
+HN_ARTICLE_EMPATHY_MEMDOCS.md       export-ignore
+OUTREACH_EMAILS.md                  export-ignore
+TODO_BADGES.md                      export-ignore
+COMPREHENSIVE_COMPLETION_PLAN.md    export-ignore
+COMMERCIAL_READINESS.md             export-ignore
+COMMERCIAL_ROADMAP.md               export-ignore
+QUALITY_REVIEW.md                   export-ignore
+PLANNING.md                         export-ignore
+EXECUTION_PLAN.md                   export-ignore
+SESSION_CONTEXT.json                export-ignore
+SESSION_HANDOFF_SUGGESTIONS.md      export-ignore
+MCP_PUBLISH_CONFIG.json             export-ignore
+MCP_PUBLISH_INSTRUCTIONS.md         export-ignore
+STRIPE_INTEGRATION_PLAN.md          export-ignore
+TEST_COVERAGE_PLAN.md               export-ignore
+PITCH_DECK.md                       export-ignore
+PITCH_DECK_README.md                export-ignore
+pitch_deck_assets/                  export-ignore
+pitch_deck_exports/                 export-ignore
+performance_profile_baseline.md     export-ignore
+DOCUMENTATION_PATTERNS.md           export-ignore
+ENTERPRISE_PRIVACY_INTEGRATION.md   export-ignore
+GOVERNANCE.md                       export-ignore
+HEALTHCARE_WIZARD_COMPLETE.md       export-ignore
+EXAMPLES_COMPLETE.md                export-ignore
+16_WIZARDS_COMPLETE.md              export-ignore
+OPTION_A_IMPLEMENTATION_PLAN.md     export-ignore
+PARALLELIZATION_COMPLETE.md         export-ignore
+PHASE2_AUDIT_LOGGER_COMPLETE.md     export-ignore
+PHASE2_COMPLETE.md                  export-ignore
+PHASE3_PROJECT_PLAN.md              export-ignore
+PHASE3_SECURITY_INTEGRATION_SUMMARY.md export-ignore
+WEEK2_EXECUTION_PLAN.md             export-ignore
+PLUGIN_SYSTEM_README.md             export-ignore
+SOFTWARE_PLUGIN_README.md           export-ignore
+SECURE_MEMORY_ARCHITECTURE.md       export-ignore
+PUBLISHING.md                       export-ignore
+MKDOCS_TUTORIAL.md                  export-ignore
+org-ruleset-*.json                  export-ignore
+
+# Docs internal planning
+docs/CONTRIBUTING_TESTS.md          export-ignore
+docs/COVERAGE_ANALYSIS.md           export-ignore
+docs/DEPLOYMENT_ROLLBACK.md         export-ignore
+docs/MEMDOCS_EMPATHY_INTEGRATION.md export-ignore
+docs/OPENSSF_APPLICATION_GUIDE.md   export-ignore
+docs/OPENSSF_BADGE_PREPARATION.md   export-ignore
+docs/PLAN_*.md                      export-ignore
+docs/RESULTS.md                     export-ignore
+docs/REVIEW_GUIDE.md                export-ignore
+docs/SESSION_SUMMARY_*.md           export-ignore
+docs/CODE_REVIEW_REPORT_*.md        export-ignore
+docs/SHORT_TERM_MEMORY.md           export-ignore
+docs/TEACHING_AI_YOUR_PHILOSOPHY.md export-ignore
+docs/TESTING_STRATEGY.md            export-ignore
+docs/THIRD_PARTY_BADGES.md          export-ignore
+docs/TROUBLESHOOTING.md             export-ignore
+docs/generate_word_doc.py           export-ignore
+docs/robots.txt                     export-ignore
+docs/stylesheets/                   export-ignore
+docs/overrides/                     export-ignore
+docs/concepts/                      export-ignore
+docs/tutorials/                     export-ignore
+docs/__pycache__/                   export-ignore
+docs/assets/                        export-ignore
+
+# Examples with issues
+examples/bug_prediction.py          export-ignore
+examples/debugging_assistant.py     export-ignore
+examples/full_repo_test.py          export-ignore
+examples/persistent_memory_showcase.py export-ignore
+examples/website_examples/          export-ignore
+
+# -----------------------------------------------------------------------------
+# Environment and credentials (safety net)
+# -----------------------------------------------------------------------------
+.env                                export-ignore
+.env.*                              export-ignore
+*.pem                               export-ignore
+*.key                               export-ignore
+.mcpregistry_*                      export-ignore
+
+# -----------------------------------------------------------------------------
+# This file and policy documentation (meta)
+# -----------------------------------------------------------------------------
+DISTRIBUTION_POLICY.md              export-ignore
+.pre-commit-config.yaml             export-ignore
+.pre-commit-config.example.yaml     export-ignore
+.coveragerc                         export-ignore
+.docint.yml                         export-ignore
+
+# -----------------------------------------------------------------------------
+# Git configuration
+# -----------------------------------------------------------------------------
+.github/                            export-ignore
