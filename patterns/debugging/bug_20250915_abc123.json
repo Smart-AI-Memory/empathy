@@ -1,0 +1,13 @@
+{
+  "bug_id": "bug_20250915_abc123",
+  "date": "2025-09-13T20:22:06.242273",
+  "file_path": "src/components/ProductList.tsx",
+  "error_type": "null_reference",
+  "error_message": "TypeError: Cannot read property 'map' of undefined",
+  "root_cause": "API returned null instead of empty array",
+  "fix_applied": "Added default empty array fallback: data?.items ?? []",
+  "fix_code": "const items = data?.items ?? [];",
+  "resolution_time_minutes": 15,
+  "resolved_by": "@sarah",
+  "status": "resolved"
+}

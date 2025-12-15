@@ -1,0 +1,13 @@
+{
+  "bug_id": "bug_demo_null_ref",
+  "date": "2025-12-15T10:00:00.000000",
+  "file_path": "src/components/Dashboard.tsx",
+  "error_type": "null_reference",
+  "error_message": "TypeError: Cannot read property 'length' of undefined",
+  "root_cause": "",
+  "fix_applied": "",
+  "fix_code": "",
+  "status": "investigating",
+  "demo": true,
+  "notes": "Demo bug for testing Session Status Assistant"
+}

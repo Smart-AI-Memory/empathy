@@ -1,0 +1,14 @@
+{
+  "bug_id": "bug_20251212_3c5b9951",
+  "date": "2025-12-12T20:20:52.590261",
+  "file_path": "src/components/OrderList.tsx",
+  "error_type": "null_reference",
+  "error_message": "TypeError: Cannot read property 'map' of undefined",
+  "root_cause": "API returns undefined instead of empty array",
+  "fix_applied": "Added optional chaining and default array fallback",
+  "fix_code": "data?.items ?? []",
+  "resolution_time_minutes": 15,
+  "resolved_by": "@developer",
+  "status": "resolved",
+  "resolved_at": "2025-12-15T02:33:50.507882"
+}

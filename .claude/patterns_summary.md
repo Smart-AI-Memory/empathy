@@ -1,12 +1,16 @@
 # Pattern Library Summary
-Generated: 2025-12-15 01:02
+Generated: 2025-12-15 03:34
 
 This summary is auto-generated from stored patterns.
 Use these patterns to inform debugging, security, and code quality decisions.
 
-## Bug Patterns (16 stored)
+## Bug Patterns (19 stored)
 
-### async_timing (2 occurrences)
+### async_timing (3 occurrences)
+
+- **bug_demo_async_timing** (investigating)
+  - Root cause:
+  - Fix:
 
 - **bug_20251101_ghi789** (resolved)
   - Root cause: Missing await on async function call
@@ -20,35 +24,42 @@ Use these patterns to inform debugging, security, and code quality decisions.
 
 ### import_error (3 occurrences)
 
-- **bug_20251212_9c315fc5** (investigating)
-  - Root cause:
-  - Fix:
+- **bug_20251212_9c315fc5** (resolved)
+  - Root cause: structlog package not in requirements.txt
+  - Fix: Added structlog to dependencies
+  - Resolution time: 3 min
 
-- **bug_20251212_f858ff98** (investigating)
-  - Root cause:
-  - Fix:
+- **bug_20251212_f858ff98** (resolved)
+  - Root cause: Duplicate of bug_20251212_9c315fc5 - structlog missing
+  - Fix: Added structlog to requirements.txt
+  - Resolution time: 1 min
 
 - **bug_py_import_001** (resolved)
   - Root cause: Redis not installed in environment
   - Fix: Added redis to requirements.txt and installed
   - Resolution time: 5 min
 
-### null_reference (9 occurrences)
+### null_reference (10 occurrences)
 
 - **bug_20250915_abc123** (resolved)
   - Root cause: API returned null instead of empty array
   - Fix: Added default empty array fallback: data?.items ?? []
   - Resolution time: 15 min
 
-- **bug_20251212_3c5b9951** (investigating)
+- **bug_20251212_3c5b9951** (resolved)
+  - Root cause: API returns undefined instead of empty array
+  - Fix: Added optional chaining and default array fallback
+  - Resolution time: 15 min
+
+- **bug_demo_null_ref** (investigating)
   - Root cause:
   - Fix:
 
-- **bug_20251212_97c0f72f** (investigating)
+### type_mismatch (2 occurrences)
+
+- **bug_demo_type_error** (investigating)
   - Root cause:
   - Fix:
-
-### type_mismatch (1 occurrences)
 
 - **bug_type_001** (resolved)
   - Root cause: File read in binary mode instead of text
@@ -57,9 +68,10 @@ Use these patterns to inform debugging, security, and code quality decisions.
 
 ### unknown (1 occurrences)
 
-- **bug_20251212_221b2e5f** (investigating)
-  - Root cause:
-  - Fix:
+- **bug_20251212_221b2e5f** (resolved)
+  - Root cause: Async function called without await keyword
+  - Fix: Added await to async analyze() call
+  - Resolution time: 4 min
 
 ## Security Decisions (11 stored)
 

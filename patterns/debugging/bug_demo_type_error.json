@@ -1,0 +1,13 @@
+{
+  "bug_id": "bug_demo_type_error",
+  "date": "2025-12-15T10:00:00.000000",
+  "file_path": "src/utils/parser.py",
+  "error_type": "type_mismatch",
+  "error_message": "TypeError: expected str but got bytes",
+  "root_cause": "",
+  "fix_applied": "",
+  "fix_code": "",
+  "status": "investigating",
+  "demo": true,
+  "notes": "Demo bug for testing Session Status Assistant"
+}

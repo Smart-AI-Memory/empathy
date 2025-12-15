@@ -1,0 +1,13 @@
+{
+  "bug_id": "bug_demo_async_timing",
+  "date": "2025-12-15T10:00:00.000000",
+  "file_path": "src/services/DataFetcher.ts",
+  "error_type": "async_timing",
+  "error_message": "Promise { <pending> } returned instead of resolved value",
+  "root_cause": "",
+  "fix_applied": "",
+  "fix_code": "",
+  "status": "investigating",
+  "demo": true,
+  "notes": "Demo bug for testing Session Status Assistant"
+}

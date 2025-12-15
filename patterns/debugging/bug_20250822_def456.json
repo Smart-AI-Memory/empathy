@@ -1,0 +1,13 @@
+{
+  "bug_id": "bug_20250822_def456",
+  "date": "2025-08-24T20:22:06.242279",
+  "file_path": "src/components/UserList.tsx",
+  "error_type": "null_reference",
+  "error_message": "TypeError: Cannot read property 'map' of null",
+  "root_cause": "Component rendered before data fetched",
+  "fix_applied": "Added loading state check before rendering list",
+  "fix_code": "if (!data) return <Loading />;",
+  "resolution_time_minutes": 8,
+  "resolved_by": "@mike",
+  "status": "resolved"
+}

@@ -1,0 +1,14 @@
+{
+  "bug_id": "bug_20251212_97c0f72f",
+  "date": "2025-12-12T20:22:06.243034",
+  "file_path": "src/components/OrderList.tsx",
+  "error_type": "null_reference",
+  "error_message": "TypeError: Cannot read property 'map' of undefined",
+  "root_cause": "API response returned undefined instead of empty array when no orders exist",
+  "fix_applied": "Added optional chaining and nullish coalescing fallback",
+  "fix_code": "orders?.map(order => ...) ?? []",
+  "resolution_time_minutes": 8,
+  "resolved_by": "@claude",
+  "status": "resolved",
+  "resolved_at": "2025-12-15T03:28:18.758347"
+}
