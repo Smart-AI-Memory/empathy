@@ -386,6 +386,126 @@ empathy status --inactivity 30  # Show after 30 min of inactivity
 
 ---
 
+### Code Health Assistant (New in v2.2.0)
+
+#### Quick Health Check
+
+Run fast health checks (lint, format, types):
+
+```bash
+empathy health
+```
+
+Output:
+```
+📊 Code Health: Good (87/100)
+
+🟢 Tests: 142 passed, 0 failed
+🟡 Lint: 3 warnings
+🟢 Types: No errors
+
+[1] Fix 3 auto-fixable issues  [2] See details  [3] Full report
+```
+
+#### Comprehensive Health Check
+
+Run all health checks including tests, security, and dependencies:
+
+```bash
+empathy health --deep
+```
+
+#### Specific Check
+
+Run only a specific category of health checks:
+
+```bash
+empathy health --check lint
+empathy health --check format
+empathy health --check types
+empathy health --check tests
+empathy health --check security
+empathy health --check deps
+```
+
+#### Auto-Fix Issues
+
+Preview what would be fixed:
+
+```bash
+empathy health --fix --dry-run
+```
+
+Apply safe fixes automatically:
+
+```bash
+empathy health --fix
+```
+
+Fix specific category:
+
+```bash
+empathy health --fix --check lint
+```
+
+Interactive mode (prompt for non-safe fixes):
+
+```bash
+empathy health --fix --interactive
+```
+
+#### Detail Levels
+
+Summary view (default):
+```bash
+empathy health
+```
+
+Details view (shows individual issues):
+```bash
+empathy health --details
+```
+
+Full report:
+```bash
+empathy health --full
+```
+
+#### Health Trends
+
+View health trends over time:
+
+```bash
+empathy health --trends 30  # Last 30 days
+```
+
+Output:
+```
+📈 Health Trends (30 days)
+
+Average Score: 85/100
+Trend: improving (+5)
+
+Recent scores:
+  2025-12-15: 87/100
+  2025-12-14: 85/100
+  2025-12-13: 82/100
+
+🔥 Hotspots (files with recurring issues):
+  src/api/client.py: 12 issues
+  src/utils/helpers.py: 8 issues
+```
+
+#### JSON Output
+
+Get machine-readable output:
+
+```bash
+empathy health --json
+```
+
+---
+
 ## Usage Examples
 
 ### Development Workflow

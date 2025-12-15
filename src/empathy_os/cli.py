@@ -326,6 +326,128 @@ def cmd_review(args):
                 print(f"  • {rec}")
 
 
+def cmd_health(args):
+    """Code health assistant - run health checks and auto-fix issues."""
+    import asyncio
+
+    from empathy_llm_toolkit.code_health import (
+        AutoFixer,
+        CheckCategory,
+        HealthCheckRunner,
+        HealthTrendTracker,
+        format_health_output,
+    )
+
+    runner = HealthCheckRunner(
+        project_root=args.project_root,
+    )
+
+    # Determine what checks to run
+    if args.check:
+        # Run specific check
+        try:
+            category = CheckCategory(args.check)
+            report_future = runner.run_check(category)
+            result = asyncio.run(report_future)
+            # Create a minimal report with just this result
+            from empathy_llm_toolkit.code_health import HealthReport
+
+            report = HealthReport(project_root=args.project_root)
+            report.add_result(result)
+        except ValueError:
+            print(f"Unknown check category: {args.check}")
+            print(f"Available: {', '.join(c.value for c in CheckCategory)}")
+            return
+    elif args.deep:
+        # Run all checks
+        print("Running comprehensive health check...\n")
+        report = asyncio.run(runner.run_all())
+    else:
+        # Run quick checks (default)
+        report = asyncio.run(runner.run_quick())
+
+    # Handle fix mode
+    if args.fix:
+        fixer = AutoFixer()
+
+        if args.dry_run:
+            # Preview only
+            fixes = fixer.preview_fixes(report)
+            if fixes:
+                print("Would fix the following issues:\n")
+                for fix in fixes:
+                    safe_indicator = " (safe)" if fix["safe"] else " (needs confirmation)"
+                    print(f"  [{fix['category']}] {fix['file']}")
+                    print(f"    {fix['issue']}")
+                    print(f"    Command: {fix['fix_command']}{safe_indicator}")
+                    print()
+            else:
+                print("No auto-fixable issues found.")
+            return
+
+        # Apply fixes
+        if args.check:
+            try:
+                category = CheckCategory(args.check)
+                result = asyncio.run(fixer.fix_category(report, category))
+            except ValueError:
+                result = {"fixed": [], "skipped": [], "failed": []}
+        else:
+            result = asyncio.run(fixer.fix_all(report, interactive=args.interactive))
+
+        # Report fix results
+        if result["fixed"]:
+            print(f"✓ Fixed {len(result['fixed'])} issue(s)")
+            for fix in result["fixed"][:5]:
+                print(f"  - {fix['file_path']}: {fix['message']}")
+            if len(result["fixed"]) > 5:
+                print(f"  ... and {len(result['fixed']) - 5} more")
+
+        if result["skipped"]:
+            print(f"\n⚠ Skipped {len(result['skipped'])} issue(s) (use --interactive to fix)")
+
+        if result["failed"]:
+            print(f"\n✗ Failed to fix {len(result['failed'])} issue(s)")
+
+        return
+
+    # Handle trends
+    if args.trends:
+        tracker = HealthTrendTracker(project_root=args.project_root)
+        trends = tracker.get_trends(days=args.trends)
+
+        print(f"📈 Health Trends ({trends['period_days']} days)\n")
+        print(f"Average Score: {trends['average_score']}/100")
+        print(f"Trend: {trends['trend_direction']} ({trends['score_change']:+d})")
+
+        if trends["data_points"]:
+            print("\nRecent scores:")
+            for point in trends["data_points"][:7]:
+                print(f"  {point['date']}: {point['score']}/100")
+
+        hotspots = tracker.identify_hotspots()
+        if hotspots:
+            print("\n🔥 Hotspots (files with recurring issues):")
+            for spot in hotspots[:5]:
+                print(f"  {spot['file']}: {spot['issue_count']} issues")
+
+        return
+
+    # Output report
+    if args.json:
+        import json
+
+        print(json.dumps(report.to_dict(), indent=2, default=str))
+    else:
+        level = 3 if args.full else (2 if args.details else 1)
+        print(format_health_output(report, level=level))
+
+    # Record to trend history
+    if not args.check:  # Only record full runs
+        tracker = HealthTrendTracker(project_root=args.project_root)
+        tracker.record_check(report)
+
+
 def cmd_metrics_show(args):
     """Display metrics for a user"""
     db_path = args.db
@@ -988,6 +1110,38 @@ def main():
     parser_review.add_argument("--patterns-dir", default="./patterns", help="Patterns directory")
     parser_review.add_argument("--json", action="store_true", help="Output as JSON")
     parser_review.set_defaults(func=cmd_review)
+
+    # Health command (Code Health Assistant)
+    parser_health = subparsers.add_parser(
+        "health", help="Code health assistant - run checks and auto-fix issues"
+    )
+    parser_health.add_argument(
+        "--deep", action="store_true", help="Run comprehensive checks (slower)"
+    )
+    parser_health.add_argument(
+        "--check",
+        choices=["lint", "format", "types", "tests", "security", "deps"],
+        help="Run specific check only",
+    )
+    parser_health.add_argument("--fix", action="store_true", help="Auto-fix issues where possible")
+    parser_health.add_argument(
+        "--dry-run", action="store_true", help="Show what would be fixed without applying"
+    )
+    parser_health.add_argument(
+        "--interactive", action="store_true", help="Prompt before applying non-safe fixes"
+    )
+    parser_health.add_argument("--details", action="store_true", help="Show detailed issue list")
+    parser_health.add_argument(
+        "--full", action="store_true", help="Show full report with all details"
+    )
+    parser_health.add_argument(
+        "--trends", type=int, metavar="DAYS", help="Show health trends over N days"
+    )
+    parser_health.add_argument(
+        "--project-root", default=".", help="Project root directory (default: current)"
+    )
+    parser_health.add_argument("--json", action="store_true", help="Output as JSON")
+    parser_health.set_defaults(func=cmd_health)
 
     # Parse arguments
     args = parser.parse_args()
