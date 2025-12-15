@@ -1,0 +1,268 @@
+---
+title: "Building Real-Time AI Memory with Redis"
+date: "2025-12-15"
+author: "Patrick Roebuck"
+excerpt: "We needed sub-millisecond coordination between AI agents. Redis made it possible. Here's how we built a dual-layer AI memory system using Redis for real-time state and git-based patterns for long-term knowledge."
+tags: ["redis", "ai", "memory", "multi-agent", "architecture"]
+published: true
+---
+
+# Building Real-Time AI Memory with Redis
+
+We needed sub-millisecond coordination between AI agents. Redis made it possible. Here's how we built a dual-layer AI memory system using Redis for real-time state and git-based patterns for long-term knowledge.
+
+## The Problem: Stateless AI
+
+Every AI conversation starts from scratch. Your AI assistant doesn't remember:
+- The architecture decisions from yesterday
+- The bugs you fixed last month
+- What other agents on your team are working on
+
+This isn't just inconvenient—it's expensive. You waste tokens re-explaining context. You lose team knowledge. You can't coordinate multiple AI agents.
+
+We needed a memory system for AI.
+
+## Why Redis?
+
+We evaluated several options for real-time AI memory:
+
+| Option | Latency | Simplicity | Pub/Sub | Verdict |
+|--------|---------|------------|---------|---------|
+| PostgreSQL | ~10ms | Medium | No | Too slow for real-time |
+| MongoDB | ~5ms | Medium | Change streams | Possible, but complex |
+| SQLite | &lt;1ms | High | No | No coordination |
+| **Redis** | **&lt;1ms** | **High** | **Yes** | **Perfect fit** |
+
+Redis won because:
+
+1. **Sub-millisecond latency** — AI decisions need to be fast
+2. **Simple key-value model** — Memory contexts map naturally to keys
+3. **Pub/sub built-in** — Agents can notify each other instantly
+4. **Battle-tested** — We didn't want to debug infrastructure
+
+## The Architecture
+
+We built a **dual-layer memory system**:
+
+**Layer 1: Git-based patterns** — Long-term knowledge that persists across sessions. Bug fixes, security decisions, architectural patterns. Version-controlled, zero infrastructure for individuals.
+
+**Layer 2: Redis** — Real-time coordination for active sessions. What agents are working on, shared context, instant notifications. This is where Redis shines.
+
+## Redis Use Cases in Our System
+
+### 1. Session Context Storage
+
+When a user starts a session, we store their context in Redis:
+
+```python
+# Store session context
+redis_client.hset(
+    f"session:{session_id}",
+    mapping={
+        "user_id": user_id,
+        "project": project_path,
+        "started_at": datetime.now().isoformat(),
+        "context": json.dumps(initial_context)
+    }
+)
+
+# Set TTL for automatic cleanup
+redis_client.expire(f"session:{session_id}", 3600)  # 1 hour
+```
+
+Why Redis? We need instant access (&lt;1ms) and automatic expiration. Sessions are ephemeral—they shouldn't clutter persistent storage.
+
+### 2. Multi-Agent Coordination
+
+When multiple AI agents work together, they need shared state:
+
+```python
+# Agent claims a task
+redis_client.set(
+    f"task:{task_id}:owner",
+    agent_id,
+    nx=True,  # Only if not exists
+    ex=300    # 5 minute lock
+)
+
+# Agent shares findings
+redis_client.lpush(
+    f"task:{task_id}:findings",
+    json.dumps(finding)
+)
+
+# Other agents check findings
+findings = redis_client.lrange(f"task:{task_id}:findings", 0, -1)
+```
+
+This enables patterns like:
+- **Task claiming** — Prevent duplicate work
+- **Result sharing** — Agents build on each other's findings
+- **Conflict resolution** — Detect when agents disagree
+
+### 3. Real-Time Notifications (Pub/Sub)
+
+Agents need to react to events instantly:
+
+```python
+# Publisher: Agent completes analysis
+redis_client.publish(
+    "agent:events",
+    json.dumps({
+        "event": "analysis_complete",
+        "agent_id": agent_id,
+        "task_id": task_id,
+        "findings_count": len(findings)
+    })
+)
+
+# Subscriber: Orchestrator listens
+pubsub = redis_client.pubsub()
+pubsub.subscribe("agent:events")
+
+for message in pubsub.listen():
+    if message["type"] == "message":
+        event = json.loads(message["data"])
+        handle_agent_event(event)
+```
+
+This enables:
+- **Instant coordination** — No polling, no delays
+- **Event-driven architecture** — Agents react to changes
+- **Loose coupling** — Agents don't need to know about each other
+
+### 4. Short-Term Memory (Conversation Context)
+
+AI needs to remember recent conversation context:
+
+```python
+# Store recent messages (sliding window)
+redis_client.lpush(f"memory:{user_id}:messages", json.dumps(message))
+redis_client.ltrim(f"memory:{user_id}:messages", 0, 99)  # Keep last 100
+
+# Retrieve for context injection
+recent = redis_client.lrange(f"memory:{user_id}:messages", 0, 9)
+context = [json.loads(m) for m in recent]
+```
+
+This provides:
+- **Fast retrieval** — Context ready in &lt;1ms
+- **Automatic pruning** — Old messages fall off
+- **Per-user isolation** — Each user has their own memory
+
+## Performance Results
+
+We benchmarked our Redis integration:
+
+| Operation | Latency | Throughput |
+|-----------|---------|------------|
+| Session context read | 0.3ms | 10,000/sec |
+| Agent coordination write | 0.4ms | 8,000/sec |
+| Pub/sub message | 0.1ms | 50,000/sec |
+| Memory context retrieval | 0.5ms | 6,000/sec |
+
+**Key insight:** Redis is fast enough that memory lookups don't impact AI response latency. The LLM call (100-2000ms) dominates; Redis adds &lt;1ms overhead.
+
+## Lessons Learned
+
+### 1. Use Appropriate TTLs
+
+Memory should expire. We learned this the hard way:
+
+```python
+# Bad: No expiration
+redis_client.set(f"session:{id}", data)  # Leaks memory!
+
+# Good: Always set TTL
+redis_client.set(f"session:{id}", data, ex=3600)
+```
+
+### 2. Namespace Your Keys
+
+With multiple concerns in one Redis instance, namespacing prevents collisions:
+
+```python
+# Bad: Flat keys
+redis_client.set("context", data)
+
+# Good: Namespaced
+redis_client.set(f"empathy:session:{id}:context", data)
+```
+
+### 3. Use Hash Types for Structured Data
+
+Instead of multiple keys, use hashes:
+
+```python
+# Bad: Multiple keys
+redis_client.set(f"session:{id}:user", user_id)
+redis_client.set(f"session:{id}:project", project)
+redis_client.set(f"session:{id}:started", timestamp)
+
+# Good: Single hash
+redis_client.hset(f"session:{id}", mapping={
+    "user": user_id,
+    "project": project,
+    "started": timestamp
+})
+```
+
+### 4. Graceful Degradation
+
+Redis should be optional for basic functionality:
+
+```python
+class MemorySystem:
+    def __init__(self, redis_url=None):
+        self.redis = None
+        if redis_url:
+            try:
+                self.redis = redis.from_url(redis_url)
+                self.redis.ping()
+            except redis.ConnectionError:
+                logger.warning("Redis unavailable, using local-only mode")
+
+    def get_context(self, session_id):
+        if self.redis:
+            return self._get_from_redis(session_id)
+        return self._get_from_local(session_id)
+```
+
+This way, students can use the framework without Redis, while teams get full coordination features.
+
+## What's Next
+
+We're exploring additional Redis capabilities:
+
+1. **Redis Stack + Vector Search** — Semantic memory retrieval
+2. **Redis Streams** — Durable event logs for audit trails
+3. **Redis Cluster** — Scaling for enterprise deployments
+4. **RediSearch** — Full-text search over conversation history
+
+## Try It Yourself
+
+```bash
+# Install
+pip install empathy-framework
+
+# Start memory server (auto-starts Redis)
+empathy-memory serve
+
+# Check status
+empathy-memory status
+```
+
+The full source is available: [github.com/Smart-AI-Memory/empathy](https://github.com/Smart-AI-Memory/empathy-framework)
+
+## Conclusion
+
+Redis is the perfect fit for real-time AI memory:
+- **Fast enough** that it doesn't slow down AI interactions
+- **Simple enough** that integration is straightforward
+- **Powerful enough** for multi-agent coordination
+
+If you're building AI systems that need to remember and coordinate, consider Redis as your memory layer.
+
+---
+
+*Built by [Smart AI Memory](https://smartaimemory.com) — AI collaboration with persistent memory, powered by Redis.*
