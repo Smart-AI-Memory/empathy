@@ -492,17 +492,24 @@ class UnifiedMemory:
             return None
 
         # Persist to long-term storage
+        # Content is stored in context dict by stage_pattern
+        context = staged.get("context", {})
+        content = context.get("content", "") or staged.get("description", "")
         result = self.persist_pattern(
-            content=staged.get("content", ""),
+            content=content,
             pattern_type=staged.get("pattern_type", "general"),
             classification=classification,
             auto_classify=auto_classify,
-            metadata=staged.get("metadata"),
+            metadata=context,
         )
 
         if result:
-            # Remove from staging (clear from short-term)
-            self._short_term.delete(self.credentials, f"staged:{staged_pattern_id}")
+            # Remove from staging (use promote_pattern which handles deletion)
+            try:
+                self._short_term.promote_pattern(staged_pattern_id, self.credentials)
+            except PermissionError:
+                # If we can't promote (delete from staging), just log it
+                logger.warning("could_not_remove_from_staging", pattern_id=staged_pattern_id)
             logger.info(
                 "pattern_promoted",
                 staged_id=staged_pattern_id,

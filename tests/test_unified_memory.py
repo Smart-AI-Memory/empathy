@@ -674,7 +674,9 @@ class TestUnifiedMemoryEdgeCases:
     @patch("empathy_os.memory.unified.RedisShortTermMemory")
     def test_short_term_init_exception_fallback(self, mock_redis):
         """Test fallback to mock when short-term init fails"""
-        mock_redis.side_effect = Exception("Connection failed")
+        # First call (normal init) fails, second call (fallback mock) succeeds
+        mock_instance = Mock()
+        mock_redis.side_effect = [Exception("Connection failed"), mock_instance]
 
         with tempfile.TemporaryDirectory() as tmpdir:
             config = MemoryConfig(storage_dir=tmpdir, redis_mock=False)
@@ -682,6 +684,7 @@ class TestUnifiedMemoryEdgeCases:
 
             # Should fallback to mock despite exception
             assert memory._short_term is not None
+            assert memory._short_term is mock_instance
 
     def test_empty_user_id(self):
         """Test with empty user_id"""

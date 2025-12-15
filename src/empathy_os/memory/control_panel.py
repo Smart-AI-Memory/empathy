@@ -832,7 +832,9 @@ Quick Start:
         else:
             print(f"\nPatterns ({len(patterns)} found):")
             for p in patterns:
-                print(f"  [{p['classification']}] {p['pattern_id']} ({p['pattern_type']})")
+                print(
+                    f"  [{p.get('classification', 'UNKNOWN')}] {p.get('pattern_id', 'unknown')} ({p.get('pattern_type', 'unknown')})"
+                )
 
     elif args.command == "export":
         output = args.output or "patterns_export.json"

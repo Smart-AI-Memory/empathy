@@ -573,11 +573,13 @@ class TestEnsureRedis:
     @patch("empathy_os.memory.redis_bootstrap._check_redis_running")
     @patch("empathy_os.memory.redis_bootstrap._start_via_homebrew")
     @patch("empathy_os.memory.redis_bootstrap._start_via_docker")
-    def test_fallback_to_docker(self, mock_docker, mock_homebrew, mock_check):
+    @patch("empathy_os.memory.redis_bootstrap._start_via_direct")
+    def test_fallback_to_docker(self, mock_direct, mock_docker, mock_homebrew, mock_check):
         """Test fallback to Docker when Homebrew fails"""
-        mock_check.side_effect = [False, False, True]
+        mock_check.side_effect = [False, True]  # Initial check False, verify after Docker True
         mock_homebrew.return_value = False
         mock_docker.return_value = True
+        mock_direct.return_value = False  # Prevent fallback to direct
 
         status = ensure_redis(verbose=False)
         assert status.available is True
