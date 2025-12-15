@@ -353,9 +353,11 @@ Line 5"""
         large_content = "\n".join([f"line {i}: some code here" for i in range(10000)])
         # Add a secret in the middle
         lines = large_content.split("\n")
+        # fmt: off
         lines[5000] = (
             'api_key = "sk-ant-api03-abc123xyz789def456ghi789jkl012mno345pqr678stu901vwx234yz567abc890def123ghi456jkl789mno012pqr"'
         )
+        # fmt: on
         large_content = "\n".join(lines)
 
         start_time = time.time()

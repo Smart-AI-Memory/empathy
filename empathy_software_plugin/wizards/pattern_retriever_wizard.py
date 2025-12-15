@@ -164,9 +164,11 @@ class PatternRetrieverWizard(BaseWizard):
                         data = json.load(f)
                         data["_type"] = "debugging"
                         data["_id"] = data.get("bug_id", json_file.stem)
+                        # fmt: off
                         data["_summary"] = (
                             f"{data.get('error_type', 'unknown')}: {data.get('root_cause', 'N/A')}"
                         )
+                        # fmt: on
                         patterns.append(data)
                 except (json.JSONDecodeError, OSError):
                     pass
@@ -183,9 +185,11 @@ class PatternRetrieverWizard(BaseWizard):
                     for decision in data.get("decisions", []):
                         decision["_type"] = "security"
                         decision["_id"] = f"sec_{decision.get('finding_hash', 'unknown')}"
+                        # fmt: off
                         decision["_summary"] = (
                             f"{decision.get('finding_hash', 'unknown')}: {decision.get('decision', 'N/A')}"
                         )
+                        # fmt: on
                         patterns.append(decision)
             except (json.JSONDecodeError, OSError):
                 pass
@@ -205,9 +209,11 @@ class PatternRetrieverWizard(BaseWizard):
                         latest = max(snapshots, key=lambda s: s.get("date", ""))
                         latest["_type"] = "tech_debt"
                         latest["_id"] = f"debt_{latest.get('date', 'latest')[:10]}"
+                        # fmt: off
                         latest["_summary"] = (
                             f"{latest.get('total_items', 0)} items, hotspots: {', '.join(latest.get('hotspots', [])[:2])}"
                         )
+                        # fmt: on
                         patterns.append(latest)
             except (json.JSONDecodeError, OSError):
                 pass
