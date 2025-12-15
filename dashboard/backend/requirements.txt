@@ -2,9 +2,9 @@
 # Python 3.11+
 
 # FastAPI framework
-fastapi==0.109.0
-uvicorn[standard]==0.27.0
-python-multipart==0.0.6
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
 
 # Pydantic for validation
 pydantic==2.5.3
@@ -17,7 +17,7 @@ python-cors==1.0.0
 websockets==12.0
 
 # Authentication (JWT)
-python-jose[cryptography]==3.3.0
+python-jose[cryptography]==3.4.0
 passlib[bcrypt]==1.7.4
 
 # Structured logging
