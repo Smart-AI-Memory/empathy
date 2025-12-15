@@ -12,7 +12,7 @@
         <meta name="author" content="Patrick Roebuck">
       
       
-        <link rel="canonical" href="https://smartaimemory.com/framework-docs/blog/reddit/r_python_main_post/">
+        <link rel="canonical" href="https://smartaimemory.com/framework-docs/getting-started/redis-setup/">
       
       
       
@@ -20,19 +20,19 @@
         
       
       
-      <link rel="icon" href="../../../assets/images/empathy-brain-logo.png">
+      <link rel="icon" href="../../assets/images/empathy-brain-logo.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
     
     
       
-        <title>Reddit Post: r/Python - Empathy Framework</title>
+        <title>Redis Setup Guide - Empathy Framework</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -51,9 +51,9 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -81,7 +81,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#reddit-post-rpython" class="md-skip">
+        <a href="#redis-setup-guide" class="md-skip">
           Skip to content
         </a>
       
@@ -95,9 +95,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../.." title="Empathy Framework" class="md-header__button md-logo" aria-label="Empathy Framework" data-md-component="logo">
+    <a href="../.." title="Empathy Framework" class="md-header__button md-logo" aria-label="Empathy Framework" data-md-component="logo">
       
-  <img src="../../../assets/images/empathy-brain-logo.png" alt="logo">
+  <img src="../../assets/images/empathy-brain-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -114,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Reddit Post: r/Python
+              Redis Setup Guide
             
           </span>
         </div>
@@ -227,7 +227,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../.." class="md-tabs__link">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -246,7 +246,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../get-the-book/" class="md-tabs__link">
+      <a href="../../get-the-book/" class="md-tabs__link">
         
   
   
@@ -267,7 +267,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../book-cover/" class="md-tabs__link">
+        <a href="../../book-cover/" class="md-tabs__link">
           
   
   
@@ -287,7 +287,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../getting-started/installation/" class="md-tabs__link">
+        <a href="../installation/" class="md-tabs__link">
           
   
   
@@ -307,7 +307,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../guides/multi-agent-philosophy/" class="md-tabs__link">
+        <a href="../../guides/multi-agent-philosophy/" class="md-tabs__link">
           
   
   
@@ -327,7 +327,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../guides/unified-memory-system/" class="md-tabs__link">
+        <a href="../../guides/unified-memory-system/" class="md-tabs__link">
           
   
   
@@ -347,7 +347,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../examples/simple-chatbot/" class="md-tabs__link">
+        <a href="../../examples/simple-chatbot/" class="md-tabs__link">
           
   
   
@@ -367,7 +367,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../api-reference/" class="md-tabs__link">
+        <a href="../../api-reference/" class="md-tabs__link">
           
   
   
@@ -385,7 +385,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../FAQ/" class="md-tabs__link">
+      <a href="../../FAQ/" class="md-tabs__link">
         
   
   
@@ -404,7 +404,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../contributing/" class="md-tabs__link">
+      <a href="../../contributing/" class="md-tabs__link">
         
   
   
@@ -439,9 +439,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="Empathy Framework" class="md-nav__button md-logo" aria-label="Empathy Framework" data-md-component="logo">
+    <a href="../.." title="Empathy Framework" class="md-nav__button md-logo" aria-label="Empathy Framework" data-md-component="logo">
       
-  <img src="../../../assets/images/empathy-brain-logo.png" alt="logo">
+  <img src="../../assets/images/empathy-brain-logo.png" alt="logo">
 
     </a>
     Empathy Framework
@@ -468,7 +468,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -495,7 +495,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get-the-book/" class="md-nav__link">
+      <a href="../../get-the-book/" class="md-nav__link">
         
   
   
@@ -576,7 +576,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../book-cover/" class="md-nav__link">
+      <a href="../../book-cover/" class="md-nav__link">
         
   
   
@@ -604,7 +604,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/how-to-read-this-book/" class="md-nav__link">
+      <a href="../../guides/how-to-read-this-book/" class="md-nav__link">
         
   
   
@@ -632,7 +632,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/preface/" class="md-nav__link">
+      <a href="../../guides/preface/" class="md-nav__link">
         
   
   
@@ -660,7 +660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/foreword/" class="md-nav__link">
+      <a href="../../guides/foreword/" class="md-nav__link">
         
   
   
@@ -749,7 +749,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../getting-started/installation/" class="md-nav__link">
+      <a href="../installation/" class="md-nav__link">
         
   
   
@@ -777,7 +777,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/prerequisites/" class="md-nav__link">
+      <a href="../../guides/prerequisites/" class="md-nav__link">
         
   
   
@@ -805,7 +805,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../getting-started/quickstart/" class="md-nav__link">
+      <a href="../quickstart/" class="md-nav__link">
         
   
   
@@ -833,7 +833,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../getting-started/configuration/" class="md-nav__link">
+      <a href="../configuration/" class="md-nav__link">
         
   
   
@@ -922,7 +922,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/multi-agent-philosophy/" class="md-nav__link">
+      <a href="../../guides/multi-agent-philosophy/" class="md-nav__link">
         
   
   
@@ -950,7 +950,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../EMPATHY_PHILOSOPHY/" class="md-nav__link">
+      <a href="../../EMPATHY_PHILOSOPHY/" class="md-nav__link">
         
   
   
@@ -1039,7 +1039,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/unified-memory-system/" class="md-nav__link">
+      <a href="../../guides/unified-memory-system/" class="md-nav__link">
         
   
   
@@ -1067,7 +1067,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/short-term-memory-implementation/" class="md-nav__link">
+      <a href="../../guides/short-term-memory-implementation/" class="md-nav__link">
         
   
   
@@ -1095,7 +1095,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/practical-patterns/" class="md-nav__link">
+      <a href="../../guides/practical-patterns/" class="md-nav__link">
         
   
   
@@ -1123,7 +1123,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../SHORT_TERM_MEMORY/" class="md-nav__link">
+      <a href="../../SHORT_TERM_MEMORY/" class="md-nav__link">
         
   
   
@@ -1151,7 +1151,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/glossary/" class="md-nav__link">
+      <a href="../../guides/glossary/" class="md-nav__link">
         
   
   
@@ -1240,7 +1240,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../examples/simple-chatbot/" class="md-nav__link">
+      <a href="../../examples/simple-chatbot/" class="md-nav__link">
         
   
   
@@ -1268,7 +1268,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../examples/sbar-clinical-handoff/" class="md-nav__link">
+      <a href="../../examples/sbar-clinical-handoff/" class="md-nav__link">
         
   
   
@@ -1296,7 +1296,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../examples/multi-agent-team-coordination/" class="md-nav__link">
+      <a href="../../examples/multi-agent-team-coordination/" class="md-nav__link">
         
   
   
@@ -1324,7 +1324,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../examples/adaptive-learning-system/" class="md-nav__link">
+      <a href="../../examples/adaptive-learning-system/" class="md-nav__link">
         
   
   
@@ -1352,7 +1352,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../examples/webhook-event-integration/" class="md-nav__link">
+      <a href="../../examples/webhook-event-integration/" class="md-nav__link">
         
   
   
@@ -1441,7 +1441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../api-reference/" class="md-nav__link">
+      <a href="../../api-reference/" class="md-nav__link">
         
   
   
@@ -1469,7 +1469,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../api-reference/empathy-os/" class="md-nav__link">
+      <a href="../../api-reference/empathy-os/" class="md-nav__link">
         
   
   
@@ -1497,7 +1497,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../api-reference/config/" class="md-nav__link">
+      <a href="../../api-reference/config/" class="md-nav__link">
         
   
   
@@ -1525,7 +1525,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../api-reference/core/" class="md-nav__link">
+      <a href="../../api-reference/core/" class="md-nav__link">
         
   
   
@@ -1553,7 +1553,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../api-reference/pattern-library/" class="md-nav__link">
+      <a href="../../api-reference/pattern-library/" class="md-nav__link">
         
   
   
@@ -1581,7 +1581,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../api-reference/multi-agent/" class="md-nav__link">
+      <a href="../../api-reference/multi-agent/" class="md-nav__link">
         
   
   
@@ -1609,7 +1609,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../api-reference/persistence/" class="md-nav__link">
+      <a href="../../api-reference/persistence/" class="md-nav__link">
         
   
   
@@ -1637,7 +1637,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../api-reference/llm-toolkit/" class="md-nav__link">
+      <a href="../../api-reference/llm-toolkit/" class="md-nav__link">
         
   
   
@@ -1719,7 +1719,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../api-reference/wizards/" class="md-nav__link">
+      <a href="../../api-reference/wizards/" class="md-nav__link">
         
   
   
@@ -1747,7 +1747,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../api-reference/software-wizards/" class="md-nav__link">
+      <a href="../../api-reference/software-wizards/" class="md-nav__link">
         
   
   
@@ -1775,7 +1775,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../api-reference/ai-wizards/" class="md-nav__link">
+      <a href="../../api-reference/ai-wizards/" class="md-nav__link">
         
   
   
@@ -1818,7 +1818,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../FAQ/" class="md-nav__link">
+      <a href="../../FAQ/" class="md-nav__link">
         
   
   
@@ -1845,7 +1845,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../contributing/" class="md-nav__link">
+      <a href="../../contributing/" class="md-nav__link">
         
   
   
@@ -1892,33 +1892,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-we-tested" class="md-nav__link">
+  <a href="#quick-start" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What We Tested
+        Quick Start
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-results" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The Results
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="The Results">
+    <nav class="md-nav" aria-label="Quick Start">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#bug-correlation" class="md-nav__link">
+  <a href="#option-1-homebrew-macos" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Bug Correlation
+        Option 1: Homebrew (macOS)
       
     </span>
   </a>
@@ -1926,10 +1915,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#tech-debt-trajectory" class="md-nav__link">
+  <a href="#option-2-docker" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tech Debt Trajectory
+        Option 2: Docker
       
     </span>
   </a>
@@ -1937,10 +1926,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#security-learning" class="md-nav__link">
+  <a href="#option-3-railway-production" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Security Learning
+        Option 3: Railway (Production)
       
     </span>
   </a>
@@ -1953,10 +1942,99 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-key-insight" class="md-nav__link">
+  <a href="#configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Key Insight
+        Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#environment-variable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment Variable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verify-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify Connection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-in-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage in Code
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage in Code">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-empathyos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        With EmpathyOS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wizard-sessions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wizard Sessions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#graceful-degradation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Graceful Degradation
       
     </span>
   </a>
@@ -1964,21 +2042,110 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#try-it" class="md-nav__link">
+  <a href="#troubleshooting" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Try It
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connection-refused" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection Refused
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#questions-for-discussion" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#railway-internal-url-errors" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Questions for Discussion
+        Railway Internal URL Errors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-what-url-is-being-used" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check What URL Is Being Used
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#production-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Production Considerations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Production Considerations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps
       
     </span>
   </a>
@@ -2005,84 +2172,147 @@
   
 
 
-<h1 id="reddit-post-rpython">Reddit Post: r/Python<a class="headerlink" href="#reddit-post-rpython" title="Permanent link">&para;</a></h1>
-<p><strong>Title:</strong> We tested our AI memory system on our own codebase. 78.7% noise reduction on security scans.</p>
-<hr />
-<p><strong>TL;DR:</strong> Built a memory layer for AI dev tools. Tested it on our own repo. Bug correlation found 4 historical matches with proven fixes. Tech debt tracking showed +14.3% monthly growth. Security scanning dropped from 108 findings to 23 after learning from team decisions. All of this is impossible without persistent memory. Code is open source.</p>
-<hr />
-<p>We've been building memory-enhanced development tools for a few months. Last week we decided to test them on our own codebase instead of synthetic data.</p>
-<p>The question: <strong>Does persistent memory actually provide value that wasn't possible before?</strong></p>
-<h2 id="what-we-tested">What We Tested<a class="headerlink" href="#what-we-tested" title="Permanent link">&para;</a></h2>
-<p>Three capabilities that require memory:</p>
+<h1 id="redis-setup-guide">Redis Setup Guide<a class="headerlink" href="#redis-setup-guide" title="Permanent link">&para;</a></h1>
+<p>Redis provides <strong>short-term memory</strong> for the Empathy Framework, enabling:
+- Multi-agent coordination and state sharing
+- Session persistence across requests
+- Pattern staging before long-term storage
+- Real-time collaboration between wizards</p>
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<h3 id="option-1-homebrew-macos">Option 1: Homebrew (macOS)<a class="headerlink" href="#option-1-homebrew-macos" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Install</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>brew<span class="w"> </span>install<span class="w"> </span>redis
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Start as background service</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"> </span>redis
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># Verify</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>redis-cli<span class="w"> </span>ping
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># Should return: PONG</span>
+</code></pre></div>
+<h3 id="option-2-docker">Option 2: Docker<a class="headerlink" href="#option-2-docker" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Start Redis container</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">6379</span>:6379<span class="w"> </span>--name<span class="w"> </span>empathy-redis<span class="w"> </span>redis:alpine
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Verify</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>empathy-redis<span class="w"> </span>redis-cli<span class="w"> </span>ping
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># Should return: PONG</span>
+</code></pre></div>
+<h3 id="option-3-railway-production">Option 3: Railway (Production)<a class="headerlink" href="#option-3-railway-production" title="Permanent link">&para;</a></h3>
 <ol>
-<li><strong>Bug Pattern Correlation</strong> — Match new errors against bugs your team already fixed</li>
-<li><strong>Tech Debt Trajectory</strong> — Track debt over time, predict when it becomes critical</li>
-<li><strong>Security False Positive Learning</strong> — Suppress findings your team already reviewed</li>
+<li>Go to your Railway project dashboard</li>
+<li>Click <strong>+ New</strong> → <strong>Database</strong> → <strong>Redis</strong></li>
+<li>Railway automatically sets <code>REDIS_URL</code> for linked services</li>
 </ol>
-<h2 id="the-results">The Results<a class="headerlink" href="#the-results" title="Permanent link">&para;</a></h2>
-<h3 id="bug-correlation">Bug Correlation<a class="headerlink" href="#bug-correlation" title="Permanent link">&para;</a></h3>
-<p>We seeded 4 historical bug patterns (the kind that accumulate as your team fixes issues). Then threw 3 "new" bugs at it:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Test: ModuleNotFoundError: No module named &#39;structlog&#39;
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  → Found 2 matches (100% similarity to &#39;redis&#39; import error)
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  → Recommended fix: Add to requirements.txt
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  → Estimated time: 5 minutes (based on @sarah&#39;s fix 3 months ago)
-</code></pre></div>
-<p>Without memory: "Try pip install structlog"
-With memory: "This looks like the issue Sarah fixed in September. Here's what worked."</p>
-<h3 id="tech-debt-trajectory">Tech Debt Trajectory<a class="headerlink" href="#tech-debt-trajectory" title="Permanent link">&para;</a></h3>
-<p>Scanned for TODO, FIXME, HACK markers:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Current: 343 items
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Previous (30 days ago): 300 items
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Change: +14.3%
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Trend: INCREASING
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>Projection:
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>  30 days: 386 items
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>  90 days: 472 items
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>  Days until 2x: 239
-</code></pre></div>
-<p>Without memory: "343 items found"
-With memory: "343 items, up 14.3% from last month, doubles in 8 months at this rate"</p>
-<h3 id="security-learning">Security Learning<a class="headerlink" href="#security-learning" title="Permanent link">&para;</a></h3>
-<p>This one surprised us:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Scan WITHOUT learning: 108 findings
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Scan WITH learning: 23 findings
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
+<h3 id="environment-variable">Environment Variable<a class="headerlink" href="#environment-variable" title="Permanent link">&para;</a></h3>
+<p>Add to your <code>.env</code> file:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Local development</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nv">REDIS_URL</span><span class="o">=</span>redis://localhost:6379
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Noise reduction: 78.7%
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Railway (auto-set when Redis service is linked)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># REDIS_URL=redis://default:password@host.railway.internal:6379</span>
 </code></pre></div>
-<p>Those 85 suppressed findings? Mostly "hardcoded secrets" in test fixtures that every security tool flags. Every time. Forever.</p>
-<p>We recorded 3 team decisions:
-- <code>hardcoded_secret</code> in tests → false positive
-- <code>insecure_random</code> for UI animations → accepted
-- <code>sql_injection</code> with ORM → false positive (ORM handles escaping)</p>
-<p>Next scan: 23 findings that actually need attention instead of 108 to wade through.</p>
-<h2 id="the-key-insight">The Key Insight<a class="headerlink" href="#the-key-insight" title="Permanent link">&para;</a></h2>
-<p><strong>Scanning is easy. Learning is hard. And learning requires remembering.</strong></p>
-<p>You can scan code without memory. You can't learn from it.</p>
-<h2 id="try-it">Try It<a class="headerlink" href="#try-it" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pip<span class="w"> </span>install<span class="w"> </span>empathy-framework
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>python<span class="w"> </span>examples/full_repo_test.py
+<h3 id="verify-connection">Verify Connection<a class="headerlink" href="#verify-connection" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span> <span class="nn">wizards_consolidated.redis_config</span> <span class="kn">import</span> <span class="n">redis_health_check</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">result</span> <span class="o">=</span> <span class="n">redis_health_check</span><span class="p">()</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># {&#39;status&#39;: &#39;healthy&#39;, &#39;version&#39;: &#39;8.4.0&#39;, &#39;connected_clients&#39;: 1, ...}</span>
 </code></pre></div>
-<p>Or individual demos:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>python<span class="w"> </span>examples/website_examples/01_bug_correlation.py
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>python<span class="w"> </span>examples/website_examples/02_tech_debt_trajectory.py
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>python<span class="w"> </span>examples/website_examples/03_security_learning.py
+<p>Or from command line:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;from wizards_consolidated.redis_config import redis_health_check; print(redis_health_check())&quot;</span>
+</code></pre></div>
+<h2 id="usage-in-code">Usage in Code<a class="headerlink" href="#usage-in-code" title="Permanent link">&para;</a></h2>
+<h3 id="basic-usage">Basic Usage<a class="headerlink" href="#basic-usage" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span> <span class="nn">empathy_os</span> <span class="kn">import</span> <span class="n">get_redis_memory</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># Auto-detects REDIS_URL, falls back to localhost, then mock mode</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">memory</span> <span class="o">=</span> <span class="n">get_redis_memory</span><span class="p">()</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1"># Store data (expires in 1 hour by default)</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="n">memory</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;my_key&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span><span class="p">},</span> <span class="n">ttl</span><span class="o">=</span><span class="mi">3600</span><span class="p">)</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="c1"># Retrieve data</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="n">data</span> <span class="o">=</span> <span class="n">memory</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;my_key&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="with-empathyos">With EmpathyOS<a class="headerlink" href="#with-empathyos" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span> <span class="nn">empathy_os</span> <span class="kn">import</span> <span class="n">EmpathyOS</span><span class="p">,</span> <span class="n">get_redis_memory</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">memory</span> <span class="o">=</span> <span class="n">get_redis_memory</span><span class="p">()</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">empathy</span> <span class="o">=</span> <span class="n">EmpathyOS</span><span class="p">(</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;developer&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="n">short_term_memory</span><span class="o">=</span><span class="n">memory</span><span class="p">,</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="p">)</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1"># Store working data</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="n">empathy</span><span class="o">.</span><span class="n">stash</span><span class="p">(</span><span class="s2">&quot;analysis_results&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;issues&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">})</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="c1"># Retrieve later</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="n">results</span> <span class="o">=</span> <span class="n">empathy</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="s2">&quot;analysis_results&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="wizard-sessions">Wizard Sessions<a class="headerlink" href="#wizard-sessions" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span> <span class="nn">wizards_consolidated.healthcare.sbar_wizard</span> <span class="kn">import</span> <span class="n">SBARWizard</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c1"># Sessions automatically use Redis when available</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">wizard</span> <span class="o">=</span> <span class="n">SBARWizard</span><span class="p">()</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">session</span> <span class="o">=</span> <span class="n">wizard</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;nurse_001&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="graceful-degradation">Graceful Degradation<a class="headerlink" href="#graceful-degradation" title="Permanent link">&para;</a></h2>
+<p>The framework handles Redis unavailability gracefully:</p>
+<ul>
+<li><strong>Redis available</strong>: Full short-term memory functionality</li>
+<li><strong>Redis unavailable</strong>: Falls back to in-memory storage (session-only, not shared)</li>
+<li><strong>Mock mode</strong>: Set <code>REDIS_URL=""</code> to force in-memory mode for testing</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<h3 id="connection-refused">Connection Refused<a class="headerlink" href="#connection-refused" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Error: Connection refused to localhost:6379
+</code></pre></div>
+<p><strong>Solution</strong>: Redis isn't running. Start it:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>brew<span class="w"> </span>services<span class="w"> </span>start<span class="w"> </span>redis
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="c1"># or</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>docker<span class="w"> </span>start<span class="w"> </span>empathy-redis
 </code></pre></div></p>
-<p>GitHub: https://github.com/Smart-AI-Memory/empathy</p>
-<h2 id="questions-for-discussion">Questions for Discussion<a class="headerlink" href="#questions-for-discussion" title="Permanent link">&para;</a></h2>
-<ol>
-<li>
-<p>What's the worst false positive fatigue you've experienced with security tools?</p>
-</li>
-<li>
-<p>How does your team share debugging knowledge? (We've seen everything from Slack channels to Notion wikis to... nothing)</p>
-</li>
-<li>
-<p>Do you track tech debt trends, or just point-in-time counts?</p>
-</li>
-</ol>
-<hr />
-<p><em>Built this as part of an AI collaboration framework we're working on. Happy to answer questions about the architecture or implementation.</em></p>
+<h3 id="railway-internal-url-errors">Railway Internal URL Errors<a class="headerlink" href="#railway-internal-url-errors" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>Error connecting to redis-xxx.railway.internal:6379
+</code></pre></div>
+<p><strong>Solution</strong>: Railway internal URLs only work within Railway's network. For local development:
+1. Use <code>REDIS_URL=redis://localhost:6379</code> in your <code>.env</code>
+2. Run Redis locally (Homebrew or Docker)</p>
+<h3 id="check-what-url-is-being-used">Check What URL Is Being Used<a class="headerlink" href="#check-what-url-is-being-used" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nb">echo</span><span class="w"> </span><span class="nv">$REDIS_URL</span>
+</code></pre></div>
+<p>If it shows a Railway URL locally, override it:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_URL</span><span class="o">=</span>redis://localhost:6379
+</code></pre></div></p>
+<h2 id="production-considerations">Production Considerations<a class="headerlink" href="#production-considerations" title="Permanent link">&para;</a></h2>
+<h3 id="security">Security<a class="headerlink" href="#security" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Railway Redis is only accessible within the private network</li>
+<li>Use <code>REDIS_PRIVATE_URL</code> for internal communication</li>
+<li>Never expose Redis ports publicly</li>
+</ul>
+<h3 id="memory-management">Memory Management<a class="headerlink" href="#memory-management" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Set appropriate TTLs to prevent memory bloat</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">memory</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;temp_data&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">ttl</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>  <span class="c1"># 5 minutes</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">memory</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;session_data&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">ttl</span><span class="o">=</span><span class="mi">3600</span><span class="p">)</span>  <span class="c1"># 1 hour</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="n">memory</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;staging_pattern&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">ttl</span><span class="o">=</span><span class="mi">86400</span><span class="p">)</span>  <span class="c1"># 24 hours</span>
+</code></pre></div>
+<h3 id="monitoring">Monitoring<a class="headerlink" href="#monitoring" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">from</span> <span class="nn">wizards_consolidated.redis_config</span> <span class="kn">import</span> <span class="n">redis_health_check</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="n">health</span> <span class="o">=</span> <span class="n">redis_health_check</span><span class="p">()</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Memory used: </span><span class="si">{</span><span class="n">health</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;used_memory&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connected clients: </span><span class="si">{</span><span class="n">health</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;connected_clients&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../SHORT_TERM_MEMORY/">Short-Term Memory Guide</a> - Deep dive into memory patterns</li>
+<li><a href="../../guides/multi-agent-coordination/">Multi-Agent Coordination</a> - Team coordination with Redis</li>
+<li><a href="../configuration/">Configuration Reference</a> - All configuration options</li>
+</ul>
 
 
 
@@ -2169,10 +2399,10 @@ With memory: "343 items, up 14.3% from last month, doubles in 8 months at this r
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
       
     
   </body>

@@ -12,7 +12,7 @@
         <meta name="author" content="Patrick Roebuck">
       
       
-        <link rel="canonical" href="https://smartaimemory.com/CLI_GUIDE/">
+        <link rel="canonical" href="https://smartaimemory.com/framework-docs/CLI_GUIDE/">
       
       
       
@@ -2053,6 +2053,106 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#pattern-enhancement-commands-new-in-v214" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern Enhancement Commands (New in v2.1.4)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern Enhancement Commands (New in v2.1.4)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resolve-investigating-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolve Investigating Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-based-code-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern-Based Code Review
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#session-status-assistant-new-in-v215" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session Status Assistant (New in v2.1.5)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session Status Assistant (New in v2.1.5)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-project-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check Project Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#priority-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Priority System
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interactive-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2361,128 +2461,282 @@
 <a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>  - charlie
 </code></pre></div></p>
 <hr />
+<h3 id="pattern-enhancement-commands-new-in-v214">Pattern Enhancement Commands (New in v2.1.4)<a class="headerlink" href="#pattern-enhancement-commands-new-in-v214" title="Permanent link">&para;</a></h3>
+<h4 id="resolve-investigating-patterns">Resolve Investigating Patterns<a class="headerlink" href="#resolve-investigating-patterns" title="Permanent link">&para;</a></h4>
+<p>Mark investigating bug patterns as resolved with root cause and fix:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># List all investigating bugs</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>empathy<span class="w"> </span>patterns<span class="w"> </span>resolve
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># Resolve a specific bug</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>empathy<span class="w"> </span>patterns<span class="w"> </span>resolve<span class="w"> </span>bug_20251212_3c5b9951<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="w">  </span>--root-cause<span class="w"> </span><span class="s2">&quot;Missing null check on API response&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="w">  </span>--fix<span class="w"> </span><span class="s2">&quot;Added optional chaining operator&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="w">  </span>--fix-code<span class="w"> </span><span class="s2">&quot;data?.items ?? []&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="w">  </span>--time<span class="w"> </span><span class="m">15</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="w">  </span>--resolved-by<span class="w"> </span><span class="s2">&quot;@developer&quot;</span>
+</code></pre></div>
+<p>Output:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>✓ Resolved: bug_20251212_3c5b9951
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>✓ Regenerated patterns_summary.md
+</code></pre></div></p>
+<hr />
+<h4 id="pattern-based-code-review">Pattern-Based Code Review<a class="headerlink" href="#pattern-based-code-review" title="Permanent link">&para;</a></h4>
+<p>Review code against historical bug patterns:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># Review recent changes</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>empathy<span class="w"> </span>review
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="c1"># Review staged changes only</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>empathy<span class="w"> </span>review<span class="w"> </span>--staged
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="c1"># Review specific files</span>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>empathy<span class="w"> </span>review<span class="w"> </span>src/api.py<span class="w"> </span>src/utils.py
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="c1"># Set minimum severity threshold</span>
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>empathy<span class="w"> </span>review<span class="w"> </span>--severity<span class="w"> </span>warning
+<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a>
+<a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="c1"># Output as JSON</span>
+<a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>empathy<span class="w"> </span>review<span class="w"> </span>--json
+</code></pre></div>
+<p>Output:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>Code Review Results
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>========================================
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>⚠️  src/api.py:47
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>    Pattern: null_reference (bug_20250915_abc123)
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>    Risk: API response accessed without null check
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>    Historical: &quot;API returned null instead of empty array&quot;
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>    Suggestion: Add fallback - data?.items ?? []
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>    Confidence: 85%
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a>Summary: 1 findings in 1 file(s)
+<a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a>
+<a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a>Recommendations:
+<a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a>  • Fix 1 null_reference issue(s): Add null check
+</code></pre></div></p>
+<hr />
+<h3 id="session-status-assistant-new-in-v215">Session Status Assistant (New in v2.1.5)<a class="headerlink" href="#session-status-assistant-new-in-v215" title="Permanent link">&para;</a></h3>
+<h4 id="check-project-status">Check Project Status<a class="headerlink" href="#check-project-status" title="Permanent link">&para;</a></h4>
+<p>Get a prioritized status report of your project when you return after a break:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1"># Show status (only if enough time has passed since last interaction)</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>empathy<span class="w"> </span>status
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="c1"># Force show status regardless of inactivity</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>empathy<span class="w"> </span>status<span class="w"> </span>--force
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="c1"># Show all items (no limit)</span>
+<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a>empathy<span class="w"> </span>status<span class="w"> </span>--full
+<a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a>
+<a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a><span class="c1"># Output as JSON</span>
+<a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a>empathy<span class="w"> </span>status<span class="w"> </span>--json
+<a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a>
+<a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a><span class="c1"># Select an item to get its action prompt</span>
+<a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a>empathy<span class="w"> </span>status<span class="w"> </span>--select<span class="w"> </span><span class="m">1</span>
+</code></pre></div>
+<p>Output:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>📊 Project Status (6 items need attention)
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>🎉 Wins since last session:
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>   • 3 bugs resolved since last session
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>🔴 Security: 2 decisions pending review
+<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>   → Review XSS finding in auth.ts
+<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>
+<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>🟡 Bugs: 3 investigating, 1 high-severity
+<a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a>   → Resolve null_reference in OrderList.tsx
+<a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a>
+<a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a>🟢 Tech Debt: Stable (343 items, +0 this week)
+<a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a>
+<a id="__codelineno-22-14" name="__codelineno-22-14" href="#__codelineno-22-14"></a>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<a id="__codelineno-22-15" name="__codelineno-22-15" href="#__codelineno-22-15"></a>[1] Fix high-severity bug  [2] Review security  [3] See full status
+</code></pre></div></p>
+<h4 id="priority-system">Priority System<a class="headerlink" href="#priority-system" title="Permanent link">&para;</a></h4>
+<p>Items are prioritized by severity:</p>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Category</th>
+<th>Weight</th>
+<th>Icon</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0</td>
+<td>Security pending</td>
+<td>100</td>
+<td>🔴</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>Bugs high-severity</td>
+<td>80</td>
+<td>🔴</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>Bugs investigating</td>
+<td>60</td>
+<td>🟡</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>Tech debt increasing</td>
+<td>40</td>
+<td>🟡</td>
+</tr>
+<tr>
+<td>P4</td>
+<td>Roadmap unchecked</td>
+<td>30</td>
+<td>🔵</td>
+</tr>
+<tr>
+<td>P5</td>
+<td>Commits WIP/TODO</td>
+<td>20</td>
+<td>⚪</td>
+</tr>
+</tbody>
+</table>
+<h4 id="interactive-selection">Interactive Selection<a class="headerlink" href="#interactive-selection" title="Permanent link">&para;</a></h4>
+<p>Select an item number to get its full action prompt:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>empathy<span class="w"> </span>status<span class="w"> </span>--force<span class="w"> </span>--select<span class="w"> </span><span class="m">1</span>
+</code></pre></div>
+<p>Output:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>Action prompt for selection 1:
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>Continue investigating bug bug_20251212_97c0f72f:
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>TypeError: Cannot read property &#39;map&#39; of undefined.
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>Use: empathy patterns resolve bug_20251212_97c0f72f --root-cause &#39;&lt;cause&gt;&#39; --fix &#39;&lt;fix&gt;&#39;
+</code></pre></div></p>
+<h4 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h4>
+<p>Set inactivity threshold (default: 60 minutes):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>empathy<span class="w"> </span>status<span class="w"> </span>--inactivity<span class="w"> </span><span class="m">30</span><span class="w">  </span><span class="c1"># Show after 30 min of inactivity</span>
+</code></pre></div>
+<hr />
 <h2 id="usage-examples">Usage Examples<a class="headerlink" href="#usage-examples" title="Permanent link">&para;</a></h2>
 <h3 id="development-workflow">Development Workflow<a class="headerlink" href="#development-workflow" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># 1. Initialize project</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>empathy-framework<span class="w"> </span>init<span class="w"> </span>--format<span class="w"> </span>yaml<span class="w"> </span>--output<span class="w"> </span>dev-config.yml
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
-<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># 2. Edit dev-config.yml to customize settings</span>
-<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>nano<span class="w"> </span>dev-config.yml
-<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
-<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="c1"># 3. Validate configuration</span>
-<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>empathy-framework<span class="w"> </span>validate<span class="w"> </span>dev-config.yml
-<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>
-<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="c1"># 4. Check framework info</span>
-<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>empathy-framework<span class="w"> </span>info<span class="w"> </span>--config<span class="w"> </span>dev-config.yml
-<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>
-<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a><span class="c1"># 5. Run your application</span>
-<a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>python<span class="w"> </span>my_app.py
-<a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a>
-<a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a><span class="c1"># 6. View metrics</span>
-<a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>empathy-framework<span class="w"> </span>metrics<span class="w"> </span>show<span class="w"> </span>my_user
-<a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a>
-<a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a><span class="c1"># 7. List saved states</span>
-<a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a>empathy-framework<span class="w"> </span>state<span class="w"> </span>list
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="c1"># 1. Initialize project</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>empathy-framework<span class="w"> </span>init<span class="w"> </span>--format<span class="w"> </span>yaml<span class="w"> </span>--output<span class="w"> </span>dev-config.yml
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>
+<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="c1"># 2. Edit dev-config.yml to customize settings</span>
+<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a>nano<span class="w"> </span>dev-config.yml
+<a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>
+<a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a><span class="c1"># 3. Validate configuration</span>
+<a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a>empathy-framework<span class="w"> </span>validate<span class="w"> </span>dev-config.yml
+<a id="__codelineno-26-9" name="__codelineno-26-9" href="#__codelineno-26-9"></a>
+<a id="__codelineno-26-10" name="__codelineno-26-10" href="#__codelineno-26-10"></a><span class="c1"># 4. Check framework info</span>
+<a id="__codelineno-26-11" name="__codelineno-26-11" href="#__codelineno-26-11"></a>empathy-framework<span class="w"> </span>info<span class="w"> </span>--config<span class="w"> </span>dev-config.yml
+<a id="__codelineno-26-12" name="__codelineno-26-12" href="#__codelineno-26-12"></a>
+<a id="__codelineno-26-13" name="__codelineno-26-13" href="#__codelineno-26-13"></a><span class="c1"># 5. Run your application</span>
+<a id="__codelineno-26-14" name="__codelineno-26-14" href="#__codelineno-26-14"></a>python<span class="w"> </span>my_app.py
+<a id="__codelineno-26-15" name="__codelineno-26-15" href="#__codelineno-26-15"></a>
+<a id="__codelineno-26-16" name="__codelineno-26-16" href="#__codelineno-26-16"></a><span class="c1"># 6. View metrics</span>
+<a id="__codelineno-26-17" name="__codelineno-26-17" href="#__codelineno-26-17"></a>empathy-framework<span class="w"> </span>metrics<span class="w"> </span>show<span class="w"> </span>my_user
+<a id="__codelineno-26-18" name="__codelineno-26-18" href="#__codelineno-26-18"></a>
+<a id="__codelineno-26-19" name="__codelineno-26-19" href="#__codelineno-26-19"></a><span class="c1"># 7. List saved states</span>
+<a id="__codelineno-26-20" name="__codelineno-26-20" href="#__codelineno-26-20"></a>empathy-framework<span class="w"> </span>state<span class="w"> </span>list
 </code></pre></div>
 <h3 id="production-deployment">Production Deployment<a class="headerlink" href="#production-deployment" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># 1. Create production config</span>
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>empathy-framework<span class="w"> </span>init<span class="w"> </span>--format<span class="w"> </span>yaml<span class="w"> </span>--output<span class="w"> </span>prod-config.yml
-<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
-<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="c1"># 2. Set production values via environment variables</span>
-<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_USER_ID</span><span class="o">=</span>prod_system
-<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_TARGET_LEVEL</span><span class="o">=</span><span class="m">5</span>
-<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_PERSISTENCE_BACKEND</span><span class="o">=</span>sqlite
-<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_METRICS_ENABLED</span><span class="o">=</span><span class="nb">true</span>
-<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>
-<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="c1"># 3. Validate combined config (file + env)</span>
-<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>empathy-framework<span class="w"> </span>validate<span class="w"> </span>prod-config.yml
-<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>
-<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="c1"># 4. Deploy application with config</span>
-<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a>python<span class="w"> </span>-m<span class="w"> </span>my_app<span class="w"> </span>--config<span class="w"> </span>prod-config.yml
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="c1"># 1. Create production config</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>empathy-framework<span class="w"> </span>init<span class="w"> </span>--format<span class="w"> </span>yaml<span class="w"> </span>--output<span class="w"> </span>prod-config.yml
+<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>
+<a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="c1"># 2. Set production values via environment variables</span>
+<a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_USER_ID</span><span class="o">=</span>prod_system
+<a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_TARGET_LEVEL</span><span class="o">=</span><span class="m">5</span>
+<a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_PERSISTENCE_BACKEND</span><span class="o">=</span>sqlite
+<a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_METRICS_ENABLED</span><span class="o">=</span><span class="nb">true</span>
+<a id="__codelineno-27-9" name="__codelineno-27-9" href="#__codelineno-27-9"></a>
+<a id="__codelineno-27-10" name="__codelineno-27-10" href="#__codelineno-27-10"></a><span class="c1"># 3. Validate combined config (file + env)</span>
+<a id="__codelineno-27-11" name="__codelineno-27-11" href="#__codelineno-27-11"></a>empathy-framework<span class="w"> </span>validate<span class="w"> </span>prod-config.yml
+<a id="__codelineno-27-12" name="__codelineno-27-12" href="#__codelineno-27-12"></a>
+<a id="__codelineno-27-13" name="__codelineno-27-13" href="#__codelineno-27-13"></a><span class="c1"># 4. Deploy application with config</span>
+<a id="__codelineno-27-14" name="__codelineno-27-14" href="#__codelineno-27-14"></a>python<span class="w"> </span>-m<span class="w"> </span>my_app<span class="w"> </span>--config<span class="w"> </span>prod-config.yml
 </code></pre></div>
 <h3 id="pattern-library-management">Pattern Library Management<a class="headerlink" href="#pattern-library-management" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># 1. Export patterns from development to JSON (for version control)</span>
-<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>empathy-framework<span class="w"> </span>patterns<span class="w"> </span><span class="nb">export</span><span class="w"> </span>dev_patterns.db<span class="w"> </span>dev_patterns.json<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">  </span>--input-format<span class="w"> </span>sqlite<span class="w"> </span>--output-format<span class="w"> </span>json
-<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>
-<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="c1"># 2. Commit to git</span>
-<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>git<span class="w"> </span>add<span class="w"> </span>dev_patterns.json
-<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Update pattern library&quot;</span>
-<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>
-<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="c1"># 3. On production, import patterns to SQLite</span>
-<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>empathy-framework<span class="w"> </span>patterns<span class="w"> </span><span class="nb">export</span><span class="w"> </span>dev_patterns.json<span class="w"> </span>prod_patterns.db<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="w">  </span>--input-format<span class="w"> </span>json<span class="w"> </span>--output-format<span class="w"> </span>sqlite
-<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a>
-<a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="c1"># 4. List patterns to verify</span>
-<a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>empathy-framework<span class="w"> </span>patterns<span class="w"> </span>list<span class="w"> </span>prod_patterns.db<span class="w"> </span>--format<span class="w"> </span>sqlite
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="c1"># 1. Export patterns from development to JSON (for version control)</span>
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>empathy-framework<span class="w"> </span>patterns<span class="w"> </span><span class="nb">export</span><span class="w"> </span>dev_patterns.db<span class="w"> </span>dev_patterns.json<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="w">  </span>--input-format<span class="w"> </span>sqlite<span class="w"> </span>--output-format<span class="w"> </span>json
+<a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>
+<a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a><span class="c1"># 2. Commit to git</span>
+<a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a>git<span class="w"> </span>add<span class="w"> </span>dev_patterns.json
+<a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Update pattern library&quot;</span>
+<a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a>
+<a id="__codelineno-28-9" name="__codelineno-28-9" href="#__codelineno-28-9"></a><span class="c1"># 3. On production, import patterns to SQLite</span>
+<a id="__codelineno-28-10" name="__codelineno-28-10" href="#__codelineno-28-10"></a>empathy-framework<span class="w"> </span>patterns<span class="w"> </span><span class="nb">export</span><span class="w"> </span>dev_patterns.json<span class="w"> </span>prod_patterns.db<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-28-11" name="__codelineno-28-11" href="#__codelineno-28-11"></a><span class="w">  </span>--input-format<span class="w"> </span>json<span class="w"> </span>--output-format<span class="w"> </span>sqlite
+<a id="__codelineno-28-12" name="__codelineno-28-12" href="#__codelineno-28-12"></a>
+<a id="__codelineno-28-13" name="__codelineno-28-13" href="#__codelineno-28-13"></a><span class="c1"># 4. List patterns to verify</span>
+<a id="__codelineno-28-14" name="__codelineno-28-14" href="#__codelineno-28-14"></a>empathy-framework<span class="w"> </span>patterns<span class="w"> </span>list<span class="w"> </span>prod_patterns.db<span class="w"> </span>--format<span class="w"> </span>sqlite
 </code></pre></div>
 <hr />
 <h2 id="configuration-file-reference">Configuration File Reference<a class="headerlink" href="#configuration-file-reference" title="Permanent link">&para;</a></h2>
 <h3 id="yaml-example">YAML Example<a class="headerlink" href="#yaml-example" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># Core settings</span>
-<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="nt">user_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;alice&quot;</span>
-<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="nt">target_level</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
-<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="nt">confidence_threshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
-<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>
-<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="c1"># Trust settings</span>
-<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="nt">trust_building_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.05</span>
-<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="nt">trust_erosion_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.10</span>
-<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>
-<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="c1"># Persistence</span>
-<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="nt">persistence_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a><span class="nt">persistence_backend</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sqlite&quot;</span>
-<a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a><span class="nt">persistence_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./empathy_data&quot;</span>
-<a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a>
-<a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a><span class="c1"># State management</span>
-<a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a><span class="nt">state_persistence</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a><span class="nt">state_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./empathy_state&quot;</span>
-<a id="__codelineno-20-18" name="__codelineno-20-18" href="#__codelineno-20-18"></a>
-<a id="__codelineno-20-19" name="__codelineno-20-19" href="#__codelineno-20-19"></a><span class="c1"># Metrics</span>
-<a id="__codelineno-20-20" name="__codelineno-20-20" href="#__codelineno-20-20"></a><span class="nt">metrics_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-20-21" name="__codelineno-20-21" href="#__codelineno-20-21"></a><span class="nt">metrics_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./metrics.db&quot;</span>
-<a id="__codelineno-20-22" name="__codelineno-20-22" href="#__codelineno-20-22"></a>
-<a id="__codelineno-20-23" name="__codelineno-20-23" href="#__codelineno-20-23"></a><span class="c1"># Logging</span>
-<a id="__codelineno-20-24" name="__codelineno-20-24" href="#__codelineno-20-24"></a><span class="nt">log_level</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;INFO&quot;</span>
-<a id="__codelineno-20-25" name="__codelineno-20-25" href="#__codelineno-20-25"></a><span class="nt">log_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
-<a id="__codelineno-20-26" name="__codelineno-20-26" href="#__codelineno-20-26"></a><span class="nt">structured_logging</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-20-27" name="__codelineno-20-27" href="#__codelineno-20-27"></a>
-<a id="__codelineno-20-28" name="__codelineno-20-28" href="#__codelineno-20-28"></a><span class="c1"># Pattern library</span>
-<a id="__codelineno-20-29" name="__codelineno-20-29" href="#__codelineno-20-29"></a><span class="nt">pattern_library_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-20-30" name="__codelineno-20-30" href="#__codelineno-20-30"></a><span class="nt">pattern_sharing</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-20-31" name="__codelineno-20-31" href="#__codelineno-20-31"></a><span class="nt">pattern_confidence_threshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.3</span>
-<a id="__codelineno-20-32" name="__codelineno-20-32" href="#__codelineno-20-32"></a>
-<a id="__codelineno-20-33" name="__codelineno-20-33" href="#__codelineno-20-33"></a><span class="c1"># Advanced</span>
-<a id="__codelineno-20-34" name="__codelineno-20-34" href="#__codelineno-20-34"></a><span class="nt">async_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-20-35" name="__codelineno-20-35" href="#__codelineno-20-35"></a><span class="nt">feedback_loop_monitoring</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-20-36" name="__codelineno-20-36" href="#__codelineno-20-36"></a><span class="nt">leverage_point_analysis</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="c1"># Core settings</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="nt">user_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;alice&quot;</span>
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="nt">target_level</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="nt">confidence_threshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
+<a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>
+<a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a><span class="c1"># Trust settings</span>
+<a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a><span class="nt">trust_building_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.05</span>
+<a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a><span class="nt">trust_erosion_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.10</span>
+<a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a>
+<a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a><span class="c1"># Persistence</span>
+<a id="__codelineno-29-11" name="__codelineno-29-11" href="#__codelineno-29-11"></a><span class="nt">persistence_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-29-12" name="__codelineno-29-12" href="#__codelineno-29-12"></a><span class="nt">persistence_backend</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sqlite&quot;</span>
+<a id="__codelineno-29-13" name="__codelineno-29-13" href="#__codelineno-29-13"></a><span class="nt">persistence_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./empathy_data&quot;</span>
+<a id="__codelineno-29-14" name="__codelineno-29-14" href="#__codelineno-29-14"></a>
+<a id="__codelineno-29-15" name="__codelineno-29-15" href="#__codelineno-29-15"></a><span class="c1"># State management</span>
+<a id="__codelineno-29-16" name="__codelineno-29-16" href="#__codelineno-29-16"></a><span class="nt">state_persistence</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-29-17" name="__codelineno-29-17" href="#__codelineno-29-17"></a><span class="nt">state_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./empathy_state&quot;</span>
+<a id="__codelineno-29-18" name="__codelineno-29-18" href="#__codelineno-29-18"></a>
+<a id="__codelineno-29-19" name="__codelineno-29-19" href="#__codelineno-29-19"></a><span class="c1"># Metrics</span>
+<a id="__codelineno-29-20" name="__codelineno-29-20" href="#__codelineno-29-20"></a><span class="nt">metrics_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-29-21" name="__codelineno-29-21" href="#__codelineno-29-21"></a><span class="nt">metrics_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./metrics.db&quot;</span>
+<a id="__codelineno-29-22" name="__codelineno-29-22" href="#__codelineno-29-22"></a>
+<a id="__codelineno-29-23" name="__codelineno-29-23" href="#__codelineno-29-23"></a><span class="c1"># Logging</span>
+<a id="__codelineno-29-24" name="__codelineno-29-24" href="#__codelineno-29-24"></a><span class="nt">log_level</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;INFO&quot;</span>
+<a id="__codelineno-29-25" name="__codelineno-29-25" href="#__codelineno-29-25"></a><span class="nt">log_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<a id="__codelineno-29-26" name="__codelineno-29-26" href="#__codelineno-29-26"></a><span class="nt">structured_logging</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-29-27" name="__codelineno-29-27" href="#__codelineno-29-27"></a>
+<a id="__codelineno-29-28" name="__codelineno-29-28" href="#__codelineno-29-28"></a><span class="c1"># Pattern library</span>
+<a id="__codelineno-29-29" name="__codelineno-29-29" href="#__codelineno-29-29"></a><span class="nt">pattern_library_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-29-30" name="__codelineno-29-30" href="#__codelineno-29-30"></a><span class="nt">pattern_sharing</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-29-31" name="__codelineno-29-31" href="#__codelineno-29-31"></a><span class="nt">pattern_confidence_threshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.3</span>
+<a id="__codelineno-29-32" name="__codelineno-29-32" href="#__codelineno-29-32"></a>
+<a id="__codelineno-29-33" name="__codelineno-29-33" href="#__codelineno-29-33"></a><span class="c1"># Advanced</span>
+<a id="__codelineno-29-34" name="__codelineno-29-34" href="#__codelineno-29-34"></a><span class="nt">async_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-29-35" name="__codelineno-29-35" href="#__codelineno-29-35"></a><span class="nt">feedback_loop_monitoring</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-29-36" name="__codelineno-29-36" href="#__codelineno-29-36"></a><span class="nt">leverage_point_analysis</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 <h3 id="json-example">JSON Example<a class="headerlink" href="#json-example" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="p">{</span>
-<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">  </span><span class="nt">&quot;user_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;alice&quot;</span><span class="p">,</span>
-<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="w">  </span><span class="nt">&quot;target_level&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
-<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="w">  </span><span class="nt">&quot;confidence_threshold&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.8</span><span class="p">,</span>
-<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="w">  </span><span class="nt">&quot;persistence_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="w">  </span><span class="nt">&quot;persistence_backend&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sqlite&quot;</span><span class="p">,</span>
-<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="w">  </span><span class="nt">&quot;metrics_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="w">  </span><span class="nt">&quot;pattern_library_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
-<a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="p">{</span>
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="w">  </span><span class="nt">&quot;user_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;alice&quot;</span><span class="p">,</span>
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="w">  </span><span class="nt">&quot;target_level&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="w">  </span><span class="nt">&quot;confidence_threshold&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.8</span><span class="p">,</span>
+<a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a><span class="w">  </span><span class="nt">&quot;persistence_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a><span class="w">  </span><span class="nt">&quot;persistence_backend&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sqlite&quot;</span><span class="p">,</span>
+<a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a><span class="w">  </span><span class="nt">&quot;metrics_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a><span class="w">  </span><span class="nt">&quot;pattern_library_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a><span class="p">}</span>
 </code></pre></div>
 <h3 id="environment-variables">Environment Variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h3>
 <p>All configuration fields can be set via environment variables with the <code>EMPATHY_</code> prefix:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_USER_ID</span><span class="o">=</span>alice
-<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_TARGET_LEVEL</span><span class="o">=</span><span class="m">4</span>
-<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_CONFIDENCE_THRESHOLD</span><span class="o">=</span><span class="m">0</span>.8
-<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_PERSISTENCE_ENABLED</span><span class="o">=</span><span class="nb">true</span>
-<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_PERSISTENCE_BACKEND</span><span class="o">=</span>sqlite
-<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_METRICS_ENABLED</span><span class="o">=</span><span class="nb">true</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_USER_ID</span><span class="o">=</span>alice
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_TARGET_LEVEL</span><span class="o">=</span><span class="m">4</span>
+<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_CONFIDENCE_THRESHOLD</span><span class="o">=</span><span class="m">0</span>.8
+<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_PERSISTENCE_ENABLED</span><span class="o">=</span><span class="nb">true</span>
+<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_PERSISTENCE_BACKEND</span><span class="o">=</span>sqlite
+<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a><span class="nb">export</span><span class="w"> </span><span class="nv">EMPATHY_METRICS_ENABLED</span><span class="o">=</span><span class="nb">true</span>
 </code></pre></div>
 <p>Boolean values can be: <code>true</code>, <code>false</code>, <code>1</code>, <code>0</code>, <code>yes</code>, <code>no</code></p>
 <hr />
 <h2 id="getting-help">Getting Help<a class="headerlink" href="#getting-help" title="Permanent link">&para;</a></h2>
 <p>For more information on any command:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>empathy-framework<span class="w"> </span>--help
-<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>empathy-framework<span class="w"> </span>patterns<span class="w"> </span>--help
-<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>empathy-framework<span class="w"> </span>metrics<span class="w"> </span>--help
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>empathy-framework<span class="w"> </span>--help
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>empathy-framework<span class="w"> </span>patterns<span class="w"> </span>--help
+<a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a>empathy-framework<span class="w"> </span>metrics<span class="w"> </span>--help
 </code></pre></div>
 <p>For bugs and feature requests, visit:
 https://github.com/Deep-Study-AI/Empathy/issues</p>

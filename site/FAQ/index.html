@@ -12,7 +12,7 @@
         <meta name="author" content="Patrick Roebuck">
       
       
-        <link rel="canonical" href="https://smartaimemory.com/FAQ/">
+        <link rel="canonical" href="https://smartaimemory.com/framework-docs/FAQ/">
       
       
         <link rel="prev" href="../api-reference/ai-wizards/">
@@ -3762,7 +3762,7 @@
 - Agent Orchestration Wizard
 - AI Performance Wizard
 - RAG Pattern Wizard</p>
-<p>All wizards undergo continuous testing. Check the <a href="../tests/wizard_outputs/test_report.md">test report</a> for current status.</p>
+<p>All wizards undergo continuous testing. Run <code>pytest tests/</code> to see current status.</p>
 <h3 id="how-do-i-create-a-custom-wizard">How do I create a custom wizard?<a class="headerlink" href="#how-do-i-create-a-custom-wizard" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span> <span class="nn">empathy_llm_toolkit.wizards</span> <span class="kn">import</span> <span class="n">BaseWizard</span><span class="p">,</span> <span class="n">WizardConfig</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
@@ -3936,7 +3936,7 @@ No API key needed - runs entirely on your machine using Ollama or LM Studio.</p>
 - Test coverage expansion
 - Performance optimizations
 - Example code and tutorials</p>
-<p>See <a href="../CONTRIBUTING.md">CONTRIBUTING.md</a> for detailed guidelines.</p>
+<p>See <a href="../contributing/">Contributing</a> for detailed guidelines.</p>
 <hr />
 <h2 id="integration-and-usage">Integration and Usage<a class="headerlink" href="#integration-and-usage" title="Permanent link">&para;</a></h2>
 <h3 id="how-do-i-integrate-this-into-my-cicd-pipeline">How do I integrate this into my CI/CD pipeline?<a class="headerlink" href="#how-do-i-integrate-this-into-my-cicd-pipeline" title="Permanent link">&para;</a></h3>
@@ -3985,7 +3985,7 @@ No API key needed - runs entirely on your machine using Ollama or LM Studio.</p>
 - Similar features to VS Code extension</p>
 <p><strong>Language Server Protocol (LSP):</strong>
 - Works with any LSP-compatible editor (Vim, Emacs, Sublime Text, etc.)
-- See <a href="../examples/coach/lsp/">examples/coach/lsp/</a> for setup</p>
+- Check the <code>examples/</code> directory in the GitHub repository for setup instructions</p>
 <h3 id="how-do-i-use-this-with-docker">How do I use this with Docker?<a class="headerlink" href="#how-do-i-use-this-with-docker" title="Permanent link">&para;</a></h3>
 <p><strong>Dockerfile Example:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">FROM</span><span class="w"> </span><span class="s">python:3.11-slim</span>
