@@ -82,6 +82,16 @@ export default function FrameworkPage() {
               </p>
             </div>
 
+            <div className="bg-[var(--background)] p-6 rounded-lg border-2 border-[var(--primary)] border-opacity-50">
+              <div className="mb-4">
+                <Image src="/images/icons/file-terminal.svg" alt="" width={32} height={32} className="opacity-70" />
+              </div>
+              <h3 className="text-xl font-bold mb-3">Code Health Assistant <span className="text-xs font-normal text-[var(--primary)] ml-2">NEW</span></h3>
+              <p className="text-[var(--text-secondary)]">
+                Automated code quality checks, auto-fix capabilities, and health trend tracking via CLI.
+              </p>
+            </div>
+
             <div className="bg-[var(--background)] p-6 rounded-lg">
               <div className="mb-4">
                 <Image src="/images/icons/square-terminal.svg" alt="" width={32} height={32} className="opacity-70" />
@@ -129,16 +139,6 @@ export default function FrameworkPage() {
               <h3 className="text-xl font-bold mb-3">Enterprise Security</h3>
               <p className="text-[var(--text-secondary)]">
                 Built-in PII scrubbing, audit logging, and compliance controls.
-              </p>
-            </div>
-
-            <div className="bg-[var(--background)] p-6 rounded-lg border-2 border-[var(--primary)] border-opacity-50">
-              <div className="mb-4">
-                <Image src="/images/icons/file-terminal.svg" alt="" width={32} height={32} className="opacity-70" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">Code Health Assistant <span className="text-xs font-normal text-[var(--primary)] ml-2">NEW</span></h3>
-              <p className="text-[var(--text-secondary)]">
-                Automated code quality checks, auto-fix capabilities, and health trend tracking via CLI.
               </p>
             </div>
           </div>
