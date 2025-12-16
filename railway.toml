@@ -1,7 +1,6 @@
 [build]
 builder = "dockerfile"
-dockerfilePath = "Dockerfile"
-watchPatterns = ["website/**"]
+dockerfilePath = "website/Dockerfile"
 
 [deploy]
 restartPolicyType = "ON_FAILURE"
