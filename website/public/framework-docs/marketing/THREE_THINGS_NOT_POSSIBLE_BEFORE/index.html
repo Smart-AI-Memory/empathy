@@ -1958,6 +1958,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#bonus-code-health-assistant-new-in-v22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bonus: Code Health Assistant (New in v2.2)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#try-it-now" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1992,10 +2003,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#three-new-wizards" class="md-nav__link">
+  <a href="#key-wizards-tools" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Three New Wizards
+        Key Wizards &amp; Tools
       
     </span>
   </a>
@@ -2175,40 +2186,59 @@
 </tbody>
 </table>
 <hr />
+<h2 id="bonus-code-health-assistant-new-in-v22">Bonus: Code Health Assistant (New in v2.2)<a class="headerlink" href="#bonus-code-health-assistant-new-in-v22" title="Permanent link">&para;</a></h2>
+<p><strong>Before:</strong> Run ruff. Run black. Run mypy. Run pytest. Run bandit. Check each output separately.</p>
+<p><strong>After:</strong> One command does it all—with auto-fix.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>empathy<span class="w"> </span>health<span class="w">              </span><span class="c1"># Quick check</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>empathy<span class="w"> </span>health<span class="w"> </span>--deep<span class="w">       </span><span class="c1"># Full analysis (+ tests, security, deps)</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>empathy<span class="w"> </span>health<span class="w"> </span>--fix<span class="w">        </span><span class="c1"># Auto-fix safe issues</span>
+</code></pre></div>
+<p>Output:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>📊 Code Health: Good (87/100)
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>🟢 Tests: 142 passed, 0 failed
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>🟡 Lint: 3 warnings (auto-fixable)
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>🟢 Types: No errors
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>[1] Fix 3 auto-fixable issues  [2] See details
+</code></pre></div></p>
+<p><strong>Why it matters:</strong> Health scores you can track over time. Hotspot detection. One command instead of five.</p>
+<hr />
 <h2 id="try-it-now">Try It Now<a class="headerlink" href="#try-it-now" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pip<span class="w"> </span>install<span class="w"> </span>empathy-framework
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>empathy-memory<span class="w"> </span>serve
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>pip<span class="w"> </span>install<span class="w"> </span>empathy-framework
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>empathy<span class="w"> </span>health<span class="w">              </span><span class="c1"># Check your code health</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>empathy-memory<span class="w"> </span>serve<span class="w">        </span><span class="c1"># Start memory server</span>
 </code></pre></div>
 <p><strong>Run the showcase:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>python<span class="w"> </span>examples/persistent_memory_showcase.py
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>python<span class="w"> </span>examples/persistent_memory_showcase.py
 </code></pre></div>
 <hr />
 <h2 id="technical-details">Technical Details<a class="headerlink" href="#technical-details" title="Permanent link">&para;</a></h2>
 <h3 id="memory-architecture">Memory Architecture<a class="headerlink" href="#memory-architecture" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>┌─────────────────────────────────────────────────────────┐
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>│                    Empathy Framework                     │
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>├─────────────────────────────────────────────────────────┤
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>│                                                         │
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>│  ┌─────────────────┐     ┌─────────────────────────┐   │
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>│  │  Git-Based      │     │  Redis (Optional)       │   │
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>│  │  Pattern Storage│     │  Short-Term Memory      │   │
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>│  ├─────────────────┤     ├─────────────────────────┤   │
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>│  │ • Bug patterns  │     │ • Session context       │   │
-<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>│  │ • Debt history  │     │ • Agent coordination    │   │
-<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>│  │ • Team decisions│     │ • Real-time sharing     │   │
-<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>│  │ • Version ctrl  │     │ • Sub-ms queries        │   │
-<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>│  └─────────────────┘     └─────────────────────────┘   │
-<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>│                                                         │
-<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>│  Students: Just git        Enterprise: Full stack       │
-<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>│  Zero infrastructure       Team coordination            │
-<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>│                                                         │
-<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>└─────────────────────────────────────────────────────────┘
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>┌─────────────────────────────────────────────────────────┐
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>│                    Empathy Framework                     │
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>├─────────────────────────────────────────────────────────┤
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>│                                                         │
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>│  ┌─────────────────┐     ┌─────────────────────────┐   │
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>│  │  Git-Based      │     │  Redis (Optional)       │   │
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>│  │  Pattern Storage│     │  Short-Term Memory      │   │
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>│  ├─────────────────┤     ├─────────────────────────┤   │
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>│  │ • Bug patterns  │     │ • Session context       │   │
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>│  │ • Debt history  │     │ • Agent coordination    │   │
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>│  │ • Team decisions│     │ • Real-time sharing     │   │
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>│  │ • Version ctrl  │     │ • Sub-ms queries        │   │
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>│  └─────────────────┘     └─────────────────────────┘   │
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>│                                                         │
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>│  Students: Just git        Enterprise: Full stack       │
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>│  Zero infrastructure       Team coordination            │
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>│                                                         │
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>└─────────────────────────────────────────────────────────┘
 </code></pre></div>
-<h3 id="three-new-wizards">Three New Wizards<a class="headerlink" href="#three-new-wizards" title="Permanent link">&para;</a></h3>
+<h3 id="key-wizards-tools">Key Wizards &amp; Tools<a class="headerlink" href="#key-wizards-tools" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Wizard</th>
+<th>Wizard/Tool</th>
 <th>Level</th>
 <th>Capability</th>
 </tr>
@@ -2228,6 +2258,16 @@
 <td><strong>SecurityLearningWizard</strong></td>
 <td>4</td>
 <td>False positive learning</td>
+</tr>
+<tr>
+<td><strong>CodeHealthAssistant</strong></td>
+<td>-</td>
+<td>Unified health checks, auto-fix</td>
+</tr>
+<tr>
+<td><strong>CodeReviewWizard</strong></td>
+<td>4</td>
+<td>Pattern-based code review</td>
 </tr>
 </tbody>
 </table>

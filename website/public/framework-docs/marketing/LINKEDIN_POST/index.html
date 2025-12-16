@@ -2015,6 +2015,12 @@ Predicts issues 30-90 days ahead. Security vulnerabilities, performance degradat
 Empathy OS manages human↔AI and AI↔AI collaboration. Specialized agents working in concert with trust management, feedback loops, and conflict resolution when agents disagree.</p>
 <p><strong>Performance &amp; Cost</strong>
 Smart model routing: detection models triage, capable models decide. Plus persistent memory eliminates repeated context — no more wasting tokens re-explaining what your AI should already know. Sub-millisecond coordination between agents.</p>
+<p><strong>Code Health Assistant</strong> <em>(New in v2.2)</em>
+One command runs lint, format, type checks, tests, security, and dependency audits. Auto-fix safe issues. Track health scores over time. Find hotspots before they become problems.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>empathy<span class="w"> </span>health<span class="w">              </span><span class="c1"># Quick check</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>empathy<span class="w"> </span>health<span class="w"> </span>--deep<span class="w">       </span><span class="c1"># Full analysis</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>empathy<span class="w"> </span>health<span class="w"> </span>--fix<span class="w">        </span><span class="c1"># Auto-fix issues</span>
+</code></pre></div>
 <hr />
 <h3 id="for-builders">For Builders<a class="headerlink" href="#for-builders" title="Permanent link">&para;</a></h3>
 <p>30+ production wizards included: security, performance, testing, documentation, accessibility, compliance.</p>
@@ -2022,8 +2028,8 @@ Smart model routing: detection models triage, capable models decide. Plus persis
 <p>5-level progression built in — your agents evolve from reactive to anticipatory automatically.</p>
 <hr />
 <h3 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>empathy-framework
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>empathy-memory<span class="w"> </span>serve
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip<span class="w"> </span>install<span class="w"> </span>empathy-framework
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>empathy-memory<span class="w"> </span>serve
 </code></pre></div>
 <p>Two commands. For full features, Redis auto-starts. Long-term pattern storage requires zero infrastructure — it's git-based and lives in your repo.</p>
 <hr />

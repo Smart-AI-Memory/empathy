@@ -2242,6 +2242,56 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#9-pattern-enhancement-wizards-new-in-v214" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Pattern Enhancement Wizards (New in v2.1.4)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Pattern Enhancement Wizards (New in v2.1.4)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#patternretrieverwizard-level-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PatternRetrieverWizard (Level 3)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patternextractionwizard-level-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PatternExtractionWizard (Level 3)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#codereviewwizard-level-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CodeReviewWizard (Level 4)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2642,57 +2692,113 @@
 <li><strong>AI-First Documentation Wizard</strong> - Ensures AI-friendly documentation</li>
 </ol>
 <hr />
+<h3 id="9-pattern-enhancement-wizards-new-in-v214">9. Pattern Enhancement Wizards (New in v2.1.4)<a class="headerlink" href="#9-pattern-enhancement-wizards-new-in-v214" title="Permanent link">&para;</a></h3>
+<p><strong>Wizards that learn from your bug fix history</strong></p>
+<p>These wizards turn your debugging history into preventive intelligence:</p>
+<h4 id="patternretrieverwizard-level-3">PatternRetrieverWizard (Level 3)<a class="headerlink" href="#patternretrieverwizard-level-3" title="Permanent link">&para;</a></h4>
+<p>Searches stored bug patterns to find similar issues and their solutions.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span> <span class="nn">empathy_software_plugin.wizards</span> <span class="kn">import</span> <span class="n">PatternRetrieverWizard</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">wizard</span> <span class="o">=</span> <span class="n">PatternRetrieverWizard</span><span class="p">()</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">wizard</span><span class="o">.</span><span class="n">analyze</span><span class="p">({</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;null reference error&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="mi">5</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="p">})</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;matching_patterns&#39;</span><span class="p">]:</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found: </span><span class="si">{</span><span class="n">pattern</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">pattern</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Fix: </span><span class="si">{</span><span class="n">pattern</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fix_applied&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;N/A&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="patternextractionwizard-level-3">PatternExtractionWizard (Level 3)<a class="headerlink" href="#patternextractionwizard-level-3" title="Permanent link">&para;</a></h4>
+<p>Automatically detects bug fixes in git diffs and suggests pattern storage.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span> <span class="nn">empathy_software_plugin.wizards</span> <span class="kn">import</span> <span class="n">PatternExtractionWizard</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">wizard</span> <span class="o">=</span> <span class="n">PatternExtractionWizard</span><span class="p">()</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">wizard</span><span class="o">.</span><span class="n">analyze</span><span class="p">({</span><span class="s2">&quot;commits&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">})</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;suggested_patterns&#39;</span><span class="p">]:</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detected: </span><span class="si">{</span><span class="n">pattern</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">pattern</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Confidence: </span><span class="si">{</span><span class="n">pattern</span><span class="p">[</span><span class="s1">&#39;confidence&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>    <span class="c1"># Saves pre-filled pattern for later resolution</span>
+</code></pre></div>
+<h4 id="codereviewwizard-level-4">CodeReviewWizard (Level 4)<a class="headerlink" href="#codereviewwizard-level-4" title="Permanent link">&para;</a></h4>
+<p>Reviews code against historical bug patterns - the capstone of pattern learning.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span> <span class="nn">empathy_software_plugin.wizards</span> <span class="kn">import</span> <span class="n">CodeReviewWizard</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">wizard</span> <span class="o">=</span> <span class="n">CodeReviewWizard</span><span class="p">()</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">wizard</span><span class="o">.</span><span class="n">analyze</span><span class="p">({</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;src/api.py&quot;</span><span class="p">,</span> <span class="s2">&quot;src/utils.py&quot;</span><span class="p">],</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    <span class="s2">&quot;severity_threshold&quot;</span><span class="p">:</span> <span class="s2">&quot;warning&quot;</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="p">})</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="k">for</span> <span class="n">finding</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;findings&#39;</span><span class="p">]:</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⚠️  </span><span class="si">{</span><span class="n">finding</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">finding</span><span class="p">[</span><span class="s1">&#39;line&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Pattern: </span><span class="si">{</span><span class="n">finding</span><span class="p">[</span><span class="s1">&#39;pattern_type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Historical: </span><span class="si">{</span><span class="n">finding</span><span class="p">[</span><span class="s1">&#39;historical_cause&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Suggestion: </span><span class="si">{</span><span class="n">finding</span><span class="p">[</span><span class="s1">&#39;suggestion&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>CLI Integration</strong>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Review recent changes</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>empathy<span class="w"> </span>review
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1"># Review staged changes</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>empathy<span class="w"> </span>review<span class="w"> </span>--staged
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="c1"># Review specific files</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>empathy<span class="w"> </span>review<span class="w"> </span>src/api.py<span class="w"> </span>src/utils.py<span class="w"> </span>--severity<span class="w"> </span>warning
+</code></pre></div>
+<hr />
 <h2 id="integration-patterns">Integration Patterns<a class="headerlink" href="#integration-patterns" title="Permanent link">&para;</a></h2>
 <h3 id="sequential-workflow">Sequential Workflow<a class="headerlink" href="#sequential-workflow" title="Permanent link">&para;</a></h3>
 <p>Run wizards in sequence, each building on previous results:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span> <span class="nn">empathy_software_plugin.wizards</span> <span class="kn">import</span> <span class="p">(</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">SecurityAnalysisWizard</span><span class="p">,</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="n">EnhancedTestingWizard</span><span class="p">,</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="n">AdvancedDebuggingWizard</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="p">)</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="k">async</span> <span class="k">def</span> <span class="nf">comprehensive_code_review</span><span class="p">(</span><span class="n">pr_number</span><span class="p">):</span>
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    <span class="c1"># 1. Security scan first</span>
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>    <span class="n">security</span> <span class="o">=</span> <span class="n">SecurityAnalysisWizard</span><span class="p">()</span>
-<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    <span class="n">sec_result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">security</span><span class="o">.</span><span class="n">scan_pull_request</span><span class="p">(</span><span class="n">pr_number</span><span class="p">)</span>
-<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>
-<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>    <span class="k">if</span> <span class="n">sec_result</span><span class="p">[</span><span class="s1">&#39;critical_vulnerabilities&#39;</span><span class="p">]:</span>
-<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;blocked&#39;</span><span class="p">,</span> <span class="s1">&#39;reason&#39;</span><span class="p">:</span> <span class="s1">&#39;security_issues&#39;</span><span class="p">}</span>
-<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>
-<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>    <span class="c1"># 2. Check test coverage</span>
-<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>    <span class="n">testing</span> <span class="o">=</span> <span class="n">EnhancedTestingWizard</span><span class="p">()</span>
-<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>    <span class="n">test_result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">testing</span><span class="o">.</span><span class="n">analyze_pr_coverage</span><span class="p">(</span><span class="n">pr_number</span><span class="p">)</span>
-<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>
-<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>    <span class="c1"># 3. Predict bug risk</span>
-<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a>    <span class="n">debugging</span> <span class="o">=</span> <span class="n">AdvancedDebuggingWizard</span><span class="p">()</span>
-<a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a>    <span class="n">debug_result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">debugging</span><span class="o">.</span><span class="n">predict_bug_risk</span><span class="p">(</span><span class="n">pr_number</span><span class="p">)</span>
-<a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>
-<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a>    <span class="k">return</span> <span class="p">{</span>
-<a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a>        <span class="s1">&#39;security&#39;</span><span class="p">:</span> <span class="n">sec_result</span><span class="p">,</span>
-<a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a>        <span class="s1">&#39;testing&#39;</span><span class="p">:</span> <span class="n">test_result</span><span class="p">,</span>
-<a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a>        <span class="s1">&#39;debugging&#39;</span><span class="p">:</span> <span class="n">debug_result</span><span class="p">,</span>
-<a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a>        <span class="s1">&#39;overall_risk&#39;</span><span class="p">:</span> <span class="n">calculate_overall_risk</span><span class="p">(</span><span class="n">sec_result</span><span class="p">,</span> <span class="n">test_result</span><span class="p">,</span> <span class="n">debug_result</span><span class="p">)</span>
-<a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a>    <span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span> <span class="nn">empathy_software_plugin.wizards</span> <span class="kn">import</span> <span class="p">(</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    <span class="n">SecurityAnalysisWizard</span><span class="p">,</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="n">EnhancedTestingWizard</span><span class="p">,</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="n">AdvancedDebuggingWizard</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="p">)</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="k">async</span> <span class="k">def</span> <span class="nf">comprehensive_code_review</span><span class="p">(</span><span class="n">pr_number</span><span class="p">):</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    <span class="c1"># 1. Security scan first</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>    <span class="n">security</span> <span class="o">=</span> <span class="n">SecurityAnalysisWizard</span><span class="p">()</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>    <span class="n">sec_result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">security</span><span class="o">.</span><span class="n">scan_pull_request</span><span class="p">(</span><span class="n">pr_number</span><span class="p">)</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>    <span class="k">if</span> <span class="n">sec_result</span><span class="p">[</span><span class="s1">&#39;critical_vulnerabilities&#39;</span><span class="p">]:</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;blocked&#39;</span><span class="p">,</span> <span class="s1">&#39;reason&#39;</span><span class="p">:</span> <span class="s1">&#39;security_issues&#39;</span><span class="p">}</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>    <span class="c1"># 2. Check test coverage</span>
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>    <span class="n">testing</span> <span class="o">=</span> <span class="n">EnhancedTestingWizard</span><span class="p">()</span>
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>    <span class="n">test_result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">testing</span><span class="o">.</span><span class="n">analyze_pr_coverage</span><span class="p">(</span><span class="n">pr_number</span><span class="p">)</span>
+<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a>
+<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a>    <span class="c1"># 3. Predict bug risk</span>
+<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a>    <span class="n">debugging</span> <span class="o">=</span> <span class="n">AdvancedDebuggingWizard</span><span class="p">()</span>
+<a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a>    <span class="n">debug_result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">debugging</span><span class="o">.</span><span class="n">predict_bug_risk</span><span class="p">(</span><span class="n">pr_number</span><span class="p">)</span>
+<a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a>
+<a id="__codelineno-12-23" name="__codelineno-12-23" href="#__codelineno-12-23"></a>    <span class="k">return</span> <span class="p">{</span>
+<a id="__codelineno-12-24" name="__codelineno-12-24" href="#__codelineno-12-24"></a>        <span class="s1">&#39;security&#39;</span><span class="p">:</span> <span class="n">sec_result</span><span class="p">,</span>
+<a id="__codelineno-12-25" name="__codelineno-12-25" href="#__codelineno-12-25"></a>        <span class="s1">&#39;testing&#39;</span><span class="p">:</span> <span class="n">test_result</span><span class="p">,</span>
+<a id="__codelineno-12-26" name="__codelineno-12-26" href="#__codelineno-12-26"></a>        <span class="s1">&#39;debugging&#39;</span><span class="p">:</span> <span class="n">debug_result</span><span class="p">,</span>
+<a id="__codelineno-12-27" name="__codelineno-12-27" href="#__codelineno-12-27"></a>        <span class="s1">&#39;overall_risk&#39;</span><span class="p">:</span> <span class="n">calculate_overall_risk</span><span class="p">(</span><span class="n">sec_result</span><span class="p">,</span> <span class="n">test_result</span><span class="p">,</span> <span class="n">debug_result</span><span class="p">)</span>
+<a id="__codelineno-12-28" name="__codelineno-12-28" href="#__codelineno-12-28"></a>    <span class="p">}</span>
 </code></pre></div>
 <h3 id="parallel-workflow">Parallel Workflow<a class="headerlink" href="#parallel-workflow" title="Permanent link">&para;</a></h3>
 <p>Run multiple wizards simultaneously for faster analysis:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">import</span> <span class="nn">asyncio</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="k">async</span> <span class="k">def</span> <span class="nf">parallel_analysis</span><span class="p">(</span><span class="n">codebase_path</span><span class="p">):</span>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    <span class="c1"># Run all wizards in parallel</span>
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
-<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>        <span class="n">SecurityAnalysisWizard</span><span class="p">()</span><span class="o">.</span><span class="n">scan_security</span><span class="p">(</span><span class="n">codebase_path</span><span class="p">),</span>
-<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>        <span class="n">PerformanceProfilingWizard</span><span class="p">()</span><span class="o">.</span><span class="n">analyze_performance</span><span class="p">(</span><span class="n">codebase_path</span><span class="p">),</span>
-<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>        <span class="n">EnhancedTestingWizard</span><span class="p">()</span><span class="o">.</span><span class="n">analyze_testing</span><span class="p">(</span><span class="n">codebase_path</span><span class="p">)</span>
-<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>    <span class="p">)</span>
-<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>
-<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>    <span class="n">security</span><span class="p">,</span> <span class="n">performance</span><span class="p">,</span> <span class="n">testing</span> <span class="o">=</span> <span class="n">results</span>
-<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>
-<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>    <span class="k">return</span> <span class="p">{</span>
-<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>        <span class="s1">&#39;security&#39;</span><span class="p">:</span> <span class="n">security</span><span class="p">,</span>
-<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>        <span class="s1">&#39;performance&#39;</span><span class="p">:</span> <span class="n">performance</span><span class="p">,</span>
-<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>        <span class="s1">&#39;testing&#39;</span><span class="p">:</span> <span class="n">testing</span>
-<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>    <span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">import</span> <span class="nn">asyncio</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="k">async</span> <span class="k">def</span> <span class="nf">parallel_analysis</span><span class="p">(</span><span class="n">codebase_path</span><span class="p">):</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="c1"># Run all wizards in parallel</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>        <span class="n">SecurityAnalysisWizard</span><span class="p">()</span><span class="o">.</span><span class="n">scan_security</span><span class="p">(</span><span class="n">codebase_path</span><span class="p">),</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>        <span class="n">PerformanceProfilingWizard</span><span class="p">()</span><span class="o">.</span><span class="n">analyze_performance</span><span class="p">(</span><span class="n">codebase_path</span><span class="p">),</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>        <span class="n">EnhancedTestingWizard</span><span class="p">()</span><span class="o">.</span><span class="n">analyze_testing</span><span class="p">(</span><span class="n">codebase_path</span><span class="p">)</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>    <span class="p">)</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>    <span class="n">security</span><span class="p">,</span> <span class="n">performance</span><span class="p">,</span> <span class="n">testing</span> <span class="o">=</span> <span class="n">results</span>
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>
+<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>    <span class="k">return</span> <span class="p">{</span>
+<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>        <span class="s1">&#39;security&#39;</span><span class="p">:</span> <span class="n">security</span><span class="p">,</span>
+<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a>        <span class="s1">&#39;performance&#39;</span><span class="p">:</span> <span class="n">performance</span><span class="p">,</span>
+<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a>        <span class="s1">&#39;testing&#39;</span><span class="p">:</span> <span class="n">testing</span>
+<a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a>    <span class="p">}</span>
 </code></pre></div>
 <hr />
 <h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
@@ -2713,38 +2819,38 @@
 </ol>
 <hr />
 <h2 id="example-complete-development-workflow">Example: Complete Development Workflow<a class="headerlink" href="#example-complete-development-workflow" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span> <span class="nn">empathy_software_plugin</span> <span class="kn">import</span> <span class="n">SoftwarePlugin</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="c1"># Initialize plugin with all wizards</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">plugin</span> <span class="o">=</span> <span class="n">SoftwarePlugin</span><span class="p">()</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="k">async</span> <span class="k">def</span> <span class="nf">development_lifecycle</span><span class="p">():</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>    <span class="c1"># 1. During development - Debugging</span>
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>    <span class="n">debug_wizard</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">get_wizard</span><span class="p">(</span><span class="s1">&#39;advanced_debugging&#39;</span><span class="p">)</span>
-<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>    <span class="k">await</span> <span class="n">debug_wizard</span><span class="o">.</span><span class="n">watch_logs</span><span class="p">(</span><span class="s1">&#39;./logs/dev.log&#39;</span><span class="p">)</span>
-<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>
-<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>    <span class="c1"># 2. Before commit - Security &amp; Testing</span>
-<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>    <span class="n">security_wizard</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">get_wizard</span><span class="p">(</span><span class="s1">&#39;security_analysis&#39;</span><span class="p">)</span>
-<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>    <span class="n">testing_wizard</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">get_wizard</span><span class="p">(</span><span class="s1">&#39;enhanced_testing&#39;</span><span class="p">)</span>
-<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>
-<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>    <span class="n">security_result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">security_wizard</span><span class="o">.</span><span class="n">scan_changes</span><span class="p">()</span>
-<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>    <span class="n">testing_result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">testing_wizard</span><span class="o">.</span><span class="n">check_coverage</span><span class="p">()</span>
-<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>
-<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>    <span class="k">if</span> <span class="n">security_result</span><span class="p">[</span><span class="s1">&#39;blocking_issues&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">testing_result</span><span class="p">[</span><span class="s1">&#39;coverage&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">80</span><span class="p">:</span>
-<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;❌ Fix issues before committing&quot;</span><span class="p">)</span>
-<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a>        <span class="k">return</span> <span class="kc">False</span>
-<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a>
-<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>    <span class="c1"># 3. In CI/CD - Performance</span>
-<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a>    <span class="n">perf_wizard</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">get_wizard</span><span class="p">(</span><span class="s1">&#39;performance_profiling&#39;</span><span class="p">)</span>
-<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a>    <span class="n">perf_result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">perf_wizard</span><span class="o">.</span><span class="n">benchmark_changes</span><span class="p">()</span>
-<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a>
-<a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a>    <span class="k">if</span> <span class="n">perf_result</span><span class="p">[</span><span class="s1">&#39;regression_detected&#39;</span><span class="p">]:</span>
-<a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;⚠️  Performance regression detected&quot;</span><span class="p">)</span>
-<a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a>
-<a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a>    <span class="c1"># 4. Post-deployment - Monitor</span>
-<a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a>    <span class="k">await</span> <span class="n">debug_wizard</span><span class="o">.</span><span class="n">monitor_production</span><span class="p">(</span><span class="s1">&#39;./logs/production.log&#39;</span><span class="p">)</span>
-<a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a>
-<a id="__codelineno-10-32" name="__codelineno-10-32" href="#__codelineno-10-32"></a>    <span class="k">return</span> <span class="kc">True</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">from</span> <span class="nn">empathy_software_plugin</span> <span class="kn">import</span> <span class="n">SoftwarePlugin</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="c1"># Initialize plugin with all wizards</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="n">plugin</span> <span class="o">=</span> <span class="n">SoftwarePlugin</span><span class="p">()</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="k">async</span> <span class="k">def</span> <span class="nf">development_lifecycle</span><span class="p">():</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>    <span class="c1"># 1. During development - Debugging</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>    <span class="n">debug_wizard</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">get_wizard</span><span class="p">(</span><span class="s1">&#39;advanced_debugging&#39;</span><span class="p">)</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>    <span class="k">await</span> <span class="n">debug_wizard</span><span class="o">.</span><span class="n">watch_logs</span><span class="p">(</span><span class="s1">&#39;./logs/dev.log&#39;</span><span class="p">)</span>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>    <span class="c1"># 2. Before commit - Security &amp; Testing</span>
+<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>    <span class="n">security_wizard</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">get_wizard</span><span class="p">(</span><span class="s1">&#39;security_analysis&#39;</span><span class="p">)</span>
+<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>    <span class="n">testing_wizard</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">get_wizard</span><span class="p">(</span><span class="s1">&#39;enhanced_testing&#39;</span><span class="p">)</span>
+<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>
+<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a>    <span class="n">security_result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">security_wizard</span><span class="o">.</span><span class="n">scan_changes</span><span class="p">()</span>
+<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a>    <span class="n">testing_result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">testing_wizard</span><span class="o">.</span><span class="n">check_coverage</span><span class="p">()</span>
+<a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a>
+<a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a>    <span class="k">if</span> <span class="n">security_result</span><span class="p">[</span><span class="s1">&#39;blocking_issues&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">testing_result</span><span class="p">[</span><span class="s1">&#39;coverage&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">80</span><span class="p">:</span>
+<a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;❌ Fix issues before committing&quot;</span><span class="p">)</span>
+<a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a>        <span class="k">return</span> <span class="kc">False</span>
+<a id="__codelineno-14-21" name="__codelineno-14-21" href="#__codelineno-14-21"></a>
+<a id="__codelineno-14-22" name="__codelineno-14-22" href="#__codelineno-14-22"></a>    <span class="c1"># 3. In CI/CD - Performance</span>
+<a id="__codelineno-14-23" name="__codelineno-14-23" href="#__codelineno-14-23"></a>    <span class="n">perf_wizard</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">get_wizard</span><span class="p">(</span><span class="s1">&#39;performance_profiling&#39;</span><span class="p">)</span>
+<a id="__codelineno-14-24" name="__codelineno-14-24" href="#__codelineno-14-24"></a>    <span class="n">perf_result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">perf_wizard</span><span class="o">.</span><span class="n">benchmark_changes</span><span class="p">()</span>
+<a id="__codelineno-14-25" name="__codelineno-14-25" href="#__codelineno-14-25"></a>
+<a id="__codelineno-14-26" name="__codelineno-14-26" href="#__codelineno-14-26"></a>    <span class="k">if</span> <span class="n">perf_result</span><span class="p">[</span><span class="s1">&#39;regression_detected&#39;</span><span class="p">]:</span>
+<a id="__codelineno-14-27" name="__codelineno-14-27" href="#__codelineno-14-27"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;⚠️  Performance regression detected&quot;</span><span class="p">)</span>
+<a id="__codelineno-14-28" name="__codelineno-14-28" href="#__codelineno-14-28"></a>
+<a id="__codelineno-14-29" name="__codelineno-14-29" href="#__codelineno-14-29"></a>    <span class="c1"># 4. Post-deployment - Monitor</span>
+<a id="__codelineno-14-30" name="__codelineno-14-30" href="#__codelineno-14-30"></a>    <span class="k">await</span> <span class="n">debug_wizard</span><span class="o">.</span><span class="n">monitor_production</span><span class="p">(</span><span class="s1">&#39;./logs/production.log&#39;</span><span class="p">)</span>
+<a id="__codelineno-14-31" name="__codelineno-14-31" href="#__codelineno-14-31"></a>
+<a id="__codelineno-14-32" name="__codelineno-14-32" href="#__codelineno-14-32"></a>    <span class="k">return</span> <span class="kc">True</span>
 </code></pre></div>
 <hr />
 <h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>

@@ -1892,6 +1892,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#daily-marketing-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📋 Daily Marketing Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#key-messaging" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1952,6 +1963,17 @@
   
     <nav class="md-nav" aria-label="Content Files">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#new-in-v22-code-health-assistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New in v2.2 - Code Health Assistant
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#demo-script" class="md-nav__link">
@@ -2025,6 +2047,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#partnership-outreach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partnership Outreach
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partnership Outreach">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis-partnership-in-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Partnership (In Progress)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#contact" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2059,6 +2109,41 @@
 <p><strong>Status:</strong> ✅ Ready for launch (refreshed December 2025)
 <strong>Target Audience:</strong> Developers, DevOps teams, enterprise teams, CTOs</p>
 <hr />
+<h2 id="daily-marketing-checklist">📋 Daily Marketing Checklist<a class="headerlink" href="#daily-marketing-checklist" title="Permanent link">&para;</a></h2>
+<p><strong>👉 <a href="MARKETING_TODO_30_DAYS/">MARKETING_TODO_30_DAYS.md</a></strong> — Check this daily!</p>
+<p>Sprint: Dec 15, 2025 → Jan 14, 2026</p>
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Focus</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 (Dec 15-21)</td>
+<td>Launch Prep &amp; Redis Warm-Up</td>
+<td>🔄 In Progress</td>
+</tr>
+<tr>
+<td>2 (Dec 22-28)</td>
+<td>Soft Launch (HN, Reddit)</td>
+<td>⏳ Upcoming</td>
+</tr>
+<tr>
+<td>3 (Dec 29-Jan 4)</td>
+<td>Product Hunt Launch</td>
+<td>⏳ Upcoming</td>
+</tr>
+<tr>
+<td>4 (Jan 5-14)</td>
+<td>Partnership &amp; Growth</td>
+<td>⏳ Upcoming</td>
+</tr>
+</tbody>
+</table>
+<hr />
 <h2 id="key-messaging">Key Messaging<a class="headerlink" href="#key-messaging" title="Permanent link">&para;</a></h2>
 <p>All content uses the unified <strong>5 Problems / 6 Solutions</strong> framework:</p>
 <h3 id="the-problem-statement">The Problem Statement<a class="headerlink" href="#the-problem-statement" title="Permanent link">&para;</a></h3>
@@ -2075,13 +2160,14 @@
 <blockquote>
 <p>"Empathy solves all five."</p>
 </blockquote>
-<p><strong>6 Solutions:</strong>
+<p><strong>7 Solutions:</strong>
 1. Memory That Persists (git-based patterns + optional Redis)
 2. Enterprise-Ready (local-first, compliance)
 3. Anticipatory Intelligence (30-90 day predictions)
 4. Build Better Agents (30+ wizards, toolkit)
 5. Human↔AI &amp; AI↔AI Orchestration
-6. Performance &amp; Cost (smart routing + no repeated context)</p>
+6. Performance &amp; Cost (smart routing + no repeated context)
+7. <strong>NEW:</strong> Code Health Assistant (automated checks + auto-fix)</p>
 <h3 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>empathy-framework
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>empathy-memory<span class="w"> </span>serve
@@ -2149,14 +2235,26 @@
 </tr>
 </tbody>
 </table>
+<h3 id="new-in-v22-code-health-assistant">New in v2.2 - Code Health Assistant<a class="headerlink" href="#new-in-v22-code-health-assistant" title="Permanent link">&para;</a></h3>
+<p><strong>One command to check everything:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>empathy<span class="w"> </span>health<span class="w">           </span><span class="c1"># Quick check (lint, format, types)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>empathy<span class="w"> </span>health<span class="w"> </span>--deep<span class="w">    </span><span class="c1"># Full check (+ tests, security, deps)</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>empathy<span class="w"> </span>health<span class="w"> </span>--fix<span class="w">     </span><span class="c1"># Auto-fix safe issues</span>
+</code></pre></div>
+<p><strong>Features:</strong>
+- Weighted health score (0-100)
+- Auto-fix for lint and format issues
+- Trend tracking over time
+- Hotspot detection</p>
 <h3 id="demo-script">Demo Script<a class="headerlink" href="#demo-script" title="Permanent link">&para;</a></h3>
 <p><strong>Interactive showcase of memory-enhanced capabilities:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python<span class="w"> </span>examples/persistent_memory_showcase.py
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>python<span class="w"> </span>examples/persistent_memory_showcase.py
 </code></pre></div>
 <p>Demonstrates:
 1. Bug Pattern Correlation - "This bug looks like one we fixed 3 months ago"
 2. Tech Debt Trajectory - "At current trajectory, debt doubles in 90 days"
-3. Security False Positive Learning - "Suppressing 8 warnings you marked as acceptable"</p>
+3. Security False Positive Learning - "Suppressing 8 warnings you marked as acceptable"
+4. <strong>NEW:</strong> Code Health Check - "87/100 health score, 3 auto-fixable issues"</p>
 <h3 id="archive">Archive<a class="headerlink" href="#archive" title="Permanent link">&para;</a></h3>
 <p>Old v1 content (narrow hospital→deployment focus) preserved in <a href="archive/">archive/</a>.</p>
 <hr />
@@ -2268,12 +2366,44 @@
 </tbody>
 </table>
 <hr />
+<h2 id="partnership-outreach">Partnership Outreach<a class="headerlink" href="#partnership-outreach" title="Permanent link">&para;</a></h2>
+<h3 id="redis-partnership-in-progress">Redis Partnership (In Progress)<a class="headerlink" href="#redis-partnership-in-progress" title="Permanent link">&para;</a></h3>
+<p>We're pursuing a partnership with Redis since our framework uses Redis for real-time AI coordination.</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="REDIS_PARTNERSHIP_PLAN/">REDIS_PARTNERSHIP_PLAN.md</a></td>
+<td>Full strategy, timeline, email templates</td>
+</tr>
+<tr>
+<td><a href="REDIS_SOCIAL_POSTS/">REDIS_SOCIAL_POSTS.md</a></td>
+<td>Twitter, LinkedIn, Reddit posts</td>
+</tr>
+<tr>
+<td><a href="../blog/06-building-ai-memory-with-redis/">../blog/06-building-ai-memory-with-redis.md</a></td>
+<td>Technical blog (warm-up content)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Status:</strong>
+- [x] Partnership plan created
+- [x] Technical blog post written
+- [x] Social media posts drafted
+- [ ] Blog published &amp; shared (Week 1)
+- [ ] Partner application submitted (Week 2)</p>
+<hr />
 <h2 id="contact">Contact<a class="headerlink" href="#contact" title="Permanent link">&para;</a></h2>
 <p><strong>Content:</strong> patrick.roebuck@smartaimemory.com
 <strong>Technical:</strong> https://github.com/Smart-AI-Memory/empathy/issues
 <strong>Business:</strong> admin@smartaimemory.com</p>
 <hr />
-<p><strong>Last Updated:</strong> December 12, 2025</p>
+<p><strong>Last Updated:</strong> December 15, 2025 (v2.2.7)</p>
 
 
 

@@ -1,0 +1,13 @@
+{
+  "bug_id": "bug_20251216_2a6adc3e",
+  "date": "2025-12-16T09:25:47.132171",
+  "file_path": "src/components/Profile.tsx",
+  "error_type": "unknown",
+  "error_message": "ReferenceError: fetchUser is not defined",
+  "root_cause": "",
+  "fix_applied": "",
+  "fix_code": null,
+  "resolution_time_minutes": 0,
+  "resolved_by": "",
+  "status": "investigating"
+}

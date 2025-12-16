@@ -1929,6 +1929,8 @@
 </ol>
 <p><strong>What's included:</strong></p>
 <ul>
+<li><strong>Code Health Assistant</strong> (<code>empathy health</code>) — lint, format, types, tests, security in one command with auto-fix</li>
+<li><strong>Pattern-based code review</strong> (<code>empathy review</code>) — catches bugs before they happen based on your team's history</li>
 <li>Memory Control Panel CLI (<code>empathy-memory serve</code>) and REST API</li>
 <li>30+ production wizards (security, performance, testing, docs, accessibility)</li>
 <li>Agent toolkit to build custom agents that inherit memory and prediction</li>
@@ -1937,7 +1939,9 @@
 </ul>
 <p><strong>Quick start:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>empathy-framework
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>empathy-memory<span class="w"> </span>serve
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>empathy<span class="w"> </span>health<span class="w">              </span><span class="c1"># Check code health</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>empathy<span class="w"> </span>health<span class="w"> </span>--fix<span class="w">        </span><span class="c1"># Auto-fix safe issues</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>empathy-memory<span class="w"> </span>serve<span class="w">        </span><span class="c1"># Start memory server</span>
 </code></pre></div>
 <p>That's it. Redis auto-starts for real-time features, but long-term pattern storage works with just git — no infrastructure needed for students and individual developers.</p>
 <p><strong>Example:</strong></p>
