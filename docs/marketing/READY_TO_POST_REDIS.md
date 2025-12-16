@@ -1,16 +1,9 @@
 # Ready-to-Post: Redis Blog Social Content
 
 **Created:** December 15, 2025
-**Status:** Ready to post once blog is published
+**Status:** Blog live - ready to post
 
----
-
-## STEP 1: Publish Blog First
-
-Before posting, publish the Redis blog to your company blog.
-Blog content: [06-building-ai-memory-with-redis.md](../blog/06-building-ai-memory-with-redis.md)
-
-Replace `[BLOG_LINK]` below with the actual URL after publishing.
+**Blog URL:** https://www.smartaimemory.com/blog/building-ai-memory-with-redis
 
 ---
 
@@ -86,7 +79,7 @@ Redis is fast enough that it doesn't impact AI response latency.
 ### Tweet 7 (Final - Include Link)
 ```
 Full blog post with code examples:
-[BLOG_LINK]
+https://www.smartaimemory.com/blog/building-ai-memory-with-redis
 
 Try it yourself:
 pip install empathy-framework
@@ -143,7 +136,7 @@ Redis isn't just for caching anymore. It's the perfect fit for real-time AI coor
 - Simple enough for quick integration
 - Powerful enough for multi-agent systems
 
-Full technical deep-dive (with code examples): [BLOG_LINK]
+Full technical deep-dive (with code examples): https://www.smartaimemory.com/blog/building-ai-memory-with-redis
 
 ---
 
@@ -162,8 +155,8 @@ What are you building with Redis? I'd love to hear about your use cases.
 
 ## CHECKLIST BEFORE POSTING
 
-- [ ] Blog published and live at [BLOG_LINK]
-- [ ] Replace [BLOG_LINK] in tweets and LinkedIn post
+- [x] Blog published and live at https://www.smartaimemory.com/blog/building-ai-memory-with-redis
+- [x] URLs updated in tweets and LinkedIn post
 - [ ] Follow @Redisinc on Twitter (if not already)
 - [ ] Follow Redis company page on LinkedIn (if not already)
 
