@@ -1,7 +1,8 @@
 [build]
-builder = "dockerfile"
-dockerfilePath = "./Dockerfile"
+builder = "nixpacks"
+buildCommand = "cd website && npm ci && npm run build:railway"
 
 [deploy]
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
+startCommand = "cd website/.next/standalone && node server.js"
