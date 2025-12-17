@@ -1,7 +1,0 @@
-{
-  "buildCommand": "npm run build:railway",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
-  "framework": "nextjs",
-  "regions": ["iad1"]
-}
