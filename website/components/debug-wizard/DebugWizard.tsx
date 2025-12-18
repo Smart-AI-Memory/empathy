@@ -32,8 +32,30 @@ import {
 // Types
 // ============================================================================
 
+interface DetectedError {
+  id: string;
+  file: string;
+  line: number;
+  column?: number;
+  type: 'syntax' | 'null_reference' | 'missing_await' | 'unused_variable' | 'missing_import' | 'type_error' | 'potential_bug';
+  severity: 'error' | 'warning' | 'info';
+  message: string;
+  codeSnippet: string;
+  suggestedFix?: string;
+  fixedCode?: string;
+  autoFixable: boolean;
+}
+
+interface ScanResult {
+  totalFiles: number;
+  filesScanned: number;
+  errors: DetectedError[];
+  warnings: DetectedError[];
+  infos: DetectedError[];
+}
+
 interface WizardState {
-  step: 'input' | 'analyzing' | 'results';
+  step: 'input' | 'scanning' | 'scan_results' | 'analyzing' | 'results';
   error_message: string;
   file_path: string;
   stack_trace: string;
@@ -95,6 +117,189 @@ function groupFilesByDirectory(files: FileInput[]): Map<string, FileInput[]> {
   }
 
   return groups;
+}
+
+// ============================================================================
+// Error Detection Patterns
+// ============================================================================
+
+interface ErrorPattern {
+  type: DetectedError['type'];
+  severity: DetectedError['severity'];
+  pattern: RegExp;
+  message: (match: RegExpMatchArray) => string;
+  suggestedFix?: (match: RegExpMatchArray, line: string) => string;
+  fixedCode?: (match: RegExpMatchArray, line: string) => string;
+  autoFixable: boolean;
+  fileTypes?: string[];
+}
+
+const ERROR_PATTERNS: ErrorPattern[] = [
+  // Missing await on async calls
+  {
+    type: 'missing_await',
+    severity: 'error',
+    pattern: /(?<!await\s+)(?:fetch|axios\.(?:get|post|put|delete|patch)|\.then\(|Promise\.(?:all|race|allSettled))\s*\(/g,
+    message: () => 'Possible missing await on async operation',
+    suggestedFix: () => 'Add "await" before the async call',
+    autoFixable: false,
+    fileTypes: ['.js', '.jsx', '.ts', '.tsx'],
+  },
+  // Null/undefined access risk in JavaScript/TypeScript
+  {
+    type: 'null_reference',
+    severity: 'warning',
+    pattern: /(\w+)\s*\.\s*(\w+)\s*\.\s*(\w+)/g,
+    message: (match) => `Potential null reference: chained access "${match[0]}" - consider optional chaining`,
+    suggestedFix: () => 'Use optional chaining (?.) to prevent null reference errors',
+    autoFixable: true,
+    fixedCode: (match) => match[0].replace(/\./g, '?.'),
+    fileTypes: ['.js', '.jsx', '.ts', '.tsx'],
+  },
+  // Missing Python type hints for function parameters
+  {
+    type: 'type_error',
+    severity: 'info',
+    pattern: /def\s+\w+\s*\(([^)]*[a-zA-Z_]\w*)\s*(?:,|$)/g,
+    message: () => 'Function parameter without type hint',
+    suggestedFix: () => 'Add type hints for better code clarity',
+    autoFixable: false,
+    fileTypes: ['.py'],
+  },
+  // console.log left in code (TypeScript/JavaScript)
+  {
+    type: 'potential_bug',
+    severity: 'warning',
+    pattern: /console\.(log|warn|error|info|debug)\s*\(/g,
+    message: (match) => `console.${match[1]} statement found - consider removing for production`,
+    suggestedFix: () => 'Remove console statements or use a proper logging library',
+    autoFixable: true,
+    fixedCode: () => '// console statement removed',
+    fileTypes: ['.js', '.jsx', '.ts', '.tsx'],
+  },
+  // TODO/FIXME comments
+  {
+    type: 'potential_bug',
+    severity: 'info',
+    pattern: /\/\/\s*(TODO|FIXME|XXX|HACK|BUG):\s*(.+)$/gim,
+    message: (match) => `${match[1]} comment: ${match[2]}`,
+    autoFixable: false,
+  },
+  // Empty catch block
+  {
+    type: 'potential_bug',
+    severity: 'warning',
+    pattern: /catch\s*\([^)]*\)\s*\{\s*\}/g,
+    message: () => 'Empty catch block - errors will be silently swallowed',
+    suggestedFix: () => 'Add error handling or at minimum log the error',
+    autoFixable: false,
+    fileTypes: ['.js', '.jsx', '.ts', '.tsx'],
+  },
+  // Unused variable declarations (simple detection)
+  {
+    type: 'unused_variable',
+    severity: 'warning',
+    pattern: /(?:const|let|var)\s+_(\w+)\s*=/g,
+    message: (match) => `Variable "_${match[1]}" prefixed with underscore suggests it may be unused`,
+    suggestedFix: () => 'Remove the variable if unused or rename if it is used',
+    autoFixable: false,
+    fileTypes: ['.js', '.jsx', '.ts', '.tsx'],
+  },
+  // Python bare except
+  {
+    type: 'potential_bug',
+    severity: 'warning',
+    pattern: /except:\s*$/gm,
+    message: () => 'Bare except clause catches all exceptions including KeyboardInterrupt',
+    suggestedFix: () => 'Use "except Exception:" to catch only exceptions',
+    autoFixable: true,
+    fixedCode: () => 'except Exception:',
+    fileTypes: ['.py'],
+  },
+  // == instead of === in JavaScript
+  {
+    type: 'potential_bug',
+    severity: 'warning',
+    pattern: /(?<![=!<>])([=!])=(?!=)\s*(?:null|undefined|true|false)/g,
+    message: () => 'Using == instead of === for comparison - may cause type coercion issues',
+    suggestedFix: () => 'Use === for strict equality comparison',
+    autoFixable: true,
+    fixedCode: (match) => match[0].replace(/([=!])=/, '$1=='),
+    fileTypes: ['.js', '.jsx', '.ts', '.tsx'],
+  },
+  // Hardcoded URLs/IPs
+  {
+    type: 'potential_bug',
+    severity: 'info',
+    pattern: /['"]https?:\/\/(?:localhost|127\.0\.0\.1|192\.168\.\d+\.\d+)[^'"]*['"]/g,
+    message: () => 'Hardcoded localhost/local IP address found',
+    suggestedFix: () => 'Use environment variables for URLs',
+    autoFixable: false,
+  },
+];
+
+// Scan a single file for errors
+function scanFileForErrors(file: FileInput): DetectedError[] {
+  const errors: DetectedError[] = [];
+  const lines = file.content.split('\n');
+  const extension = '.' + (file.path.split('.').pop() || '').toLowerCase();
+
+  for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+    const line = lines[lineIndex];
+    const lineNumber = lineIndex + 1;
+
+    for (const pattern of ERROR_PATTERNS) {
+      // Skip patterns that don't apply to this file type
+      if (pattern.fileTypes && !pattern.fileTypes.includes(extension)) {
+        continue;
+      }
+
+      // Reset regex lastIndex for global patterns
+      pattern.pattern.lastIndex = 0;
+
+      let match;
+      while ((match = pattern.pattern.exec(line)) !== null) {
+        const id = `${file.path}:${lineNumber}:${match.index}`;
+
+        // Avoid duplicates
+        if (errors.some(e => e.id === id)) continue;
+
+        errors.push({
+          id,
+          file: file.path,
+          line: lineNumber,
+          column: match.index + 1,
+          type: pattern.type,
+          severity: pattern.severity,
+          message: pattern.message(match),
+          codeSnippet: line.trim(),
+          suggestedFix: pattern.suggestedFix?.(match, line),
+          fixedCode: pattern.fixedCode?.(match, line),
+          autoFixable: pattern.autoFixable,
+        });
+      }
+    }
+  }
+
+  return errors;
+}
+
+// Scan all files
+function scanAllFiles(files: FileInput[]): ScanResult {
+  const allErrors: DetectedError[] = [];
+
+  for (const file of files) {
+    const fileErrors = scanFileForErrors(file);
+    allErrors.push(...fileErrors);
+  }
+
+  return {
+    totalFiles: files.length,
+    filesScanned: files.length,
+    errors: allErrors.filter(e => e.severity === 'error'),
+    warnings: allErrors.filter(e => e.severity === 'warning'),
+    infos: allErrors.filter(e => e.severity === 'info'),
+  };
 }
 
 // ============================================================================
@@ -180,6 +385,11 @@ export default function DebugWizard() {
   const [collapsedDirs, setCollapsedDirs] = useState<Set<string>>(new Set());
   const [uploadStats, setUploadStats] = useState<{ total: number; excluded: number } | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [scanResult, setScanResult] = useState<ScanResult | null>(null);
+  const [selectedErrors, setSelectedErrors] = useState<Set<string>>(new Set());
+  const [fixedFiles, setFixedFiles] = useState<Map<string, string>>(new Map());
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const [reviewMode, setReviewMode] = useState<'list' | 'one-by-one'>('list');
 
   const limits = getTierLimits(tier);
   const tierDisplay = getTierDisplay(tier);
@@ -357,12 +567,176 @@ export default function DebugWizard() {
     setError(null);
     setCollapsedDirs(new Set());
     setUploadStats(null);
+    setScanResult(null);
+    setSelectedErrors(new Set());
+    setFixedFiles(new Map());
+    setReviewIndex(0);
+    setReviewMode('list');
   };
 
   const handleCopyFix = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Scan files for errors
+  const handleScanFiles = () => {
+    if (state.files.length === 0) {
+      setError('Please upload files to scan');
+      return;
+    }
+
+    setState((prev) => ({ ...prev, step: 'scanning' }));
+
+    // Simulate scanning delay for UX
+    setTimeout(() => {
+      const result = scanAllFiles(state.files);
+      setScanResult(result);
+      setSelectedErrors(new Set());
+      setFixedFiles(new Map());
+      setReviewIndex(0);
+      setState((prev) => ({ ...prev, step: 'scan_results' }));
+    }, 500);
+  };
+
+  // Toggle error selection
+  const toggleErrorSelection = (errorId: string) => {
+    setSelectedErrors((prev) => {
+      const next = new Set(prev);
+      if (next.has(errorId)) {
+        next.delete(errorId);
+      } else {
+        next.add(errorId);
+      }
+      return next;
+    });
+  };
+
+  // Select all auto-fixable errors
+  const selectAllAutoFixable = () => {
+    if (!scanResult) return;
+    const allErrors = [...scanResult.errors, ...scanResult.warnings, ...scanResult.infos];
+    const autoFixable = allErrors.filter((e) => e.autoFixable).map((e) => e.id);
+    setSelectedErrors(new Set(autoFixable));
+  };
+
+  // Apply fixes to selected errors
+  const applySelectedFixes = () => {
+    if (!scanResult) return;
+
+    const allErrors = [...scanResult.errors, ...scanResult.warnings, ...scanResult.infos];
+    const errorsToFix = allErrors.filter((e) => selectedErrors.has(e.id) && e.autoFixable && e.fixedCode);
+
+    // Group errors by file
+    const errorsByFile = new Map<string, DetectedError[]>();
+    for (const err of errorsToFix) {
+      if (!errorsByFile.has(err.file)) {
+        errorsByFile.set(err.file, []);
+      }
+      errorsByFile.get(err.file)!.push(err);
+    }
+
+    // Apply fixes to each file
+    const newFixedFiles = new Map(fixedFiles);
+    for (const [filePath, errors] of errorsByFile) {
+      const file = state.files.find((f) => f.path === filePath);
+      if (!file) continue;
+
+      const content = newFixedFiles.get(filePath) || file.content;
+      const lines = content.split('\n');
+
+      // Sort errors by line number (descending) to avoid line number shifts
+      const sortedErrors = [...errors].sort((a, b) => b.line - a.line);
+
+      for (const err of sortedErrors) {
+        if (err.fixedCode) {
+          const lineIndex = err.line - 1;
+          if (lineIndex >= 0 && lineIndex < lines.length) {
+            // Simple replacement of the problematic code snippet
+            lines[lineIndex] = lines[lineIndex].replace(err.codeSnippet, err.fixedCode);
+          }
+        }
+      }
+
+      newFixedFiles.set(filePath, lines.join('\n'));
+    }
+
+    setFixedFiles(newFixedFiles);
+
+    // Remove fixed errors from selection
+    const remainingSelected = new Set(selectedErrors);
+    for (const err of errorsToFix) {
+      remainingSelected.delete(err.id);
+    }
+    setSelectedErrors(remainingSelected);
+  };
+
+  // Download fixed files as zip or individual file
+  const downloadFixedFiles = () => {
+    if (fixedFiles.size === 0) {
+      alert('No fixes have been applied yet.');
+      return;
+    }
+
+    if (fixedFiles.size === 1) {
+      // Single file download
+      const [[fileName, content]] = Array.from(fixedFiles.entries());
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName.split('/').pop() || 'fixed_file.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } else {
+      // Multiple files - create a simple text summary
+      let summary = '=== FIXED FILES ===\n\n';
+      for (const [fileName, content] of fixedFiles) {
+        summary += `\n${'='.repeat(60)}\n`;
+        summary += `FILE: ${fileName}\n`;
+        summary += `${'='.repeat(60)}\n\n`;
+        summary += content;
+        summary += '\n\n';
+      }
+
+      const blob = new Blob([summary], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'fixed_files.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  // Send error to AI analysis
+  const sendToAIAnalysis = (detectedError: DetectedError) => {
+    const file = state.files.find((f) => f.path === detectedError.file);
+    setState((prev) => ({
+      ...prev,
+      error_message: detectedError.message,
+      file_path: detectedError.file,
+      line_number: detectedError.line.toString(),
+      code_snippet: detectedError.codeSnippet,
+      step: 'input',
+    }));
+
+    // Auto-fill more context if available
+    if (file) {
+      const lines = file.content.split('\n');
+      const startLine = Math.max(0, detectedError.line - 3);
+      const endLine = Math.min(lines.length, detectedError.line + 3);
+      const context = lines.slice(startLine, endLine).join('\n');
+      setState((prev) => ({
+        ...prev,
+        code_snippet: context,
+      }));
+    }
   };
 
   // Demo fill handlers
@@ -854,22 +1228,57 @@ logger = structlog.get_logger()`,
           </div>
 
           {/* Actions */}
-          <div className="border-t border-gray-200 p-6 flex justify-between items-center">
-            <div className="text-sm text-gray-500">
-              {limits.dailyRequestLimit !== null && (
-                <span>
-                  Daily limit: {limits.dailyRequestLimit} analyses
-                </span>
-              )}
+          <div className="border-t border-gray-200 p-6">
+            {/* Scan Files Action */}
+            {state.files.length > 0 && (
+              <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-blue-900">Auto-Scan for Errors</h4>
+                      <p className="text-sm text-blue-700">
+                        Scan {state.files.length} file{state.files.length !== 1 ? 's' : ''} for common bugs and issues
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleScanFiles}
+                    className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Scan Files
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-between items-center">
+              <div className="text-sm text-gray-500">
+                {limits.dailyRequestLimit !== null && (
+                  <span>
+                    Daily limit: {limits.dailyRequestLimit} analyses
+                  </span>
+                )}
+              </div>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={handleAnalyze}
+                  disabled={!state.error_message.trim()}
+                  className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Analyze Bug
+                </button>
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={handleAnalyze}
-              disabled={!state.error_message.trim()}
-              className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Analyze Bug
-            </button>
           </div>
         </div>
 
@@ -894,6 +1303,387 @@ logger = structlog.get_logger()`,
             </div>
           </div>
         )}
+      </div>
+    );
+  }
+
+  // ============================================================================
+  // Render: Scanning Step
+  // ============================================================================
+
+  if (state.step === 'scanning') {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white border-2 border-gray-200 rounded-lg shadow-lg p-12 text-center">
+          <div className="animate-spin w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full mx-auto mb-6" />
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Scanning your files...</h3>
+          <p className="text-gray-600">Detecting common bugs, issues, and potential improvements</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ============================================================================
+  // Render: Scan Results Step
+  // ============================================================================
+
+  if (state.step === 'scan_results' && scanResult) {
+    const allErrors = [...scanResult.errors, ...scanResult.warnings, ...scanResult.infos];
+    const autoFixableCount = allErrors.filter((e) => e.autoFixable).length;
+    const selectedCount = selectedErrors.size;
+    const currentError = reviewMode === 'one-by-one' ? allErrors[reviewIndex] : null;
+
+    return (
+      <div className="max-w-5xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="bg-white border-2 border-gray-200 rounded-lg shadow-lg">
+          <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-6 rounded-t-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">S</span>
+                <div>
+                  <h2 className="text-2xl font-bold">Scan Complete</h2>
+                  <p className="text-blue-200 text-sm">
+                    Found {allErrors.length} issue{allErrors.length !== 1 ? 's' : ''} in {scanResult.filesScanned} file{scanResult.filesScanned !== 1 ? 's' : ''}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setState((prev) => ({ ...prev, step: 'input' }))}
+                className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm"
+              >
+                Back to Input
+              </button>
+            </div>
+          </div>
+
+          {/* Summary Stats */}
+          <div className="p-6 border-b border-gray-200">
+            <div className="grid grid-cols-4 gap-4">
+              <div className="text-center p-4 bg-red-50 rounded-lg border border-red-200">
+                <p className="text-3xl font-bold text-red-600">{scanResult.errors.length}</p>
+                <p className="text-sm text-red-700">Errors</p>
+              </div>
+              <div className="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                <p className="text-3xl font-bold text-yellow-600">{scanResult.warnings.length}</p>
+                <p className="text-sm text-yellow-700">Warnings</p>
+              </div>
+              <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-3xl font-bold text-blue-600">{scanResult.infos.length}</p>
+                <p className="text-sm text-blue-700">Info</p>
+              </div>
+              <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
+                <p className="text-3xl font-bold text-green-600">{autoFixableCount}</p>
+                <p className="text-sm text-green-700">Auto-fixable</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          {allErrors.length > 0 && (
+            <div className="p-6 border-b border-gray-200 bg-gray-50">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-sm font-medium text-gray-700">Fix Mode:</span>
+                <button
+                  type="button"
+                  onClick={() => setReviewMode('list')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    reviewMode === 'list'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
+                  }`}
+                >
+                  List View
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setReviewMode('one-by-one');
+                    setReviewIndex(0);
+                  }}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    reviewMode === 'one-by-one'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
+                  }`}
+                >
+                  One-by-One Review
+                </button>
+
+                <div className="flex-1" />
+
+                {autoFixableCount > 0 && reviewMode === 'list' && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={selectAllAutoFixable}
+                      className="px-4 py-2 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200"
+                    >
+                      Select All Auto-fixable ({autoFixableCount})
+                    </button>
+                    {selectedCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={applySelectedFixes}
+                        className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 flex items-center gap-2"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Fix Selected ({selectedCount})
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* One-by-One Review Mode */}
+          {reviewMode === 'one-by-one' && currentError && (
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm text-gray-500">
+                  Issue {reviewIndex + 1} of {allErrors.length}
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setReviewIndex(Math.max(0, reviewIndex - 1))}
+                    disabled={reviewIndex === 0}
+                    className="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm disabled:opacity-50"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setReviewIndex(Math.min(allErrors.length - 1, reviewIndex + 1))}
+                    disabled={reviewIndex === allErrors.length - 1}
+                    className="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+
+              <div className={`p-6 rounded-lg border-2 ${
+                currentError.severity === 'error' ? 'bg-red-50 border-red-200' :
+                currentError.severity === 'warning' ? 'bg-yellow-50 border-yellow-200' :
+                'bg-blue-50 border-blue-200'
+              }`}>
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${
+                      currentError.severity === 'error' ? 'bg-red-500 text-white' :
+                      currentError.severity === 'warning' ? 'bg-yellow-500 text-white' :
+                      'bg-blue-500 text-white'
+                    }`}>
+                      {currentError.severity}
+                    </span>
+                    <span className="px-2 py-1 bg-gray-200 rounded text-xs font-medium text-gray-700 capitalize">
+                      {currentError.type.replace('_', ' ')}
+                    </span>
+                  </div>
+                  <span className="text-sm text-gray-500 font-mono">
+                    {currentError.file}:{currentError.line}
+                  </span>
+                </div>
+
+                <h4 className="font-semibold text-gray-900 mb-3">{currentError.message}</h4>
+
+                <div className="mb-4">
+                  <p className="text-xs font-medium text-gray-500 mb-1">Code:</p>
+                  <pre className="bg-gray-900 text-gray-100 p-3 rounded text-sm overflow-x-auto font-mono">
+                    <span className="text-gray-500">{currentError.line}: </span>
+                    {currentError.codeSnippet}
+                  </pre>
+                </div>
+
+                {currentError.suggestedFix && (
+                  <div className="mb-4 p-3 bg-white rounded border border-gray-200">
+                    <p className="text-xs font-medium text-gray-500 mb-1">Suggested Fix:</p>
+                    <p className="text-sm text-gray-700">{currentError.suggestedFix}</p>
+                  </div>
+                )}
+
+                {currentError.fixedCode && (
+                  <div className="mb-4">
+                    <p className="text-xs font-medium text-gray-500 mb-1">Fixed Code:</p>
+                    <pre className="bg-green-900 text-green-100 p-3 rounded text-sm overflow-x-auto font-mono">
+                      {currentError.fixedCode}
+                    </pre>
+                  </div>
+                )}
+
+                <div className="flex gap-3 mt-4">
+                  {currentError.autoFixable && currentError.fixedCode && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        toggleErrorSelection(currentError.id);
+                        applySelectedFixes();
+                        if (reviewIndex < allErrors.length - 1) {
+                          setReviewIndex(reviewIndex + 1);
+                        }
+                      }}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700"
+                    >
+                      Apply Fix & Next
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => sendToAIAnalysis(currentError)}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700"
+                  >
+                    Send to AI Analysis
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (reviewIndex < allErrors.length - 1) {
+                        setReviewIndex(reviewIndex + 1);
+                      }
+                    }}
+                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300"
+                  >
+                    Skip
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* List View Mode */}
+          {reviewMode === 'list' && allErrors.length > 0 && (
+            <div className="p-6 space-y-3 max-h-96 overflow-y-auto">
+              {allErrors.map((err) => (
+                <div
+                  key={err.id}
+                  className={`p-4 rounded-lg border-2 transition-all ${
+                    selectedErrors.has(err.id)
+                      ? 'border-purple-500 bg-purple-50'
+                      : err.severity === 'error' ? 'border-red-200 bg-red-50' :
+                        err.severity === 'warning' ? 'border-yellow-200 bg-yellow-50' :
+                        'border-blue-200 bg-blue-50'
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    {err.autoFixable && (
+                      <input
+                        type="checkbox"
+                        checked={selectedErrors.has(err.id)}
+                        onChange={() => toggleErrorSelection(err.id)}
+                        className="mt-1 w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${
+                          err.severity === 'error' ? 'bg-red-500 text-white' :
+                          err.severity === 'warning' ? 'bg-yellow-500 text-white' :
+                          'bg-blue-500 text-white'
+                        }`}>
+                          {err.severity}
+                        </span>
+                        <span className="px-2 py-0.5 bg-gray-200 rounded text-xs font-medium text-gray-700 capitalize">
+                          {err.type.replace('_', ' ')}
+                        </span>
+                        <span className="text-xs text-gray-500 font-mono truncate">
+                          {err.file}:{err.line}
+                        </span>
+                        {err.autoFixable && (
+                          <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs font-medium">
+                            Auto-fixable
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-700 mb-2">{err.message}</p>
+                      <pre className="bg-gray-900 text-gray-100 p-2 rounded text-xs overflow-x-auto font-mono">
+                        {err.codeSnippet}
+                      </pre>
+                      {err.suggestedFix && (
+                        <p className="text-xs text-gray-500 mt-2">
+                          <strong>Fix:</strong> {err.suggestedFix}
+                        </p>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => sendToAIAnalysis(err)}
+                      className="px-3 py-1.5 bg-purple-100 text-purple-700 rounded text-xs font-medium hover:bg-purple-200"
+                    >
+                      AI Analyze
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* No Issues Found */}
+          {allErrors.length === 0 && (
+            <div className="p-12 text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Issues Found!</h3>
+              <p className="text-gray-600">Your code looks clean. No common bugs or issues detected.</p>
+            </div>
+          )}
+
+          {/* Fixed Files Download */}
+          {fixedFiles.size > 0 && (
+            <div className="p-6 border-t border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-green-900">Fixes Applied</h4>
+                    <p className="text-sm text-green-700">
+                      {fixedFiles.size} file{fixedFiles.size !== 1 ? 's' : ''} modified
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={downloadFixedFiles}
+                  className="px-5 py-2.5 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Download Fixed Files
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Back to Input */}
+        <div className="flex gap-4">
+          <button
+            type="button"
+            onClick={() => setState((prev) => ({ ...prev, step: 'input' }))}
+            className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300"
+          >
+            Back to Input
+          </button>
+          <button
+            type="button"
+            onClick={handleReset}
+            className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700"
+          >
+            Start Fresh
+          </button>
+        </div>
       </div>
     );
   }
