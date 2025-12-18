@@ -448,7 +448,7 @@ export async function POST(request: Request): Promise<Response> {
       file_path,
       stack_trace,
       line_number,
-      code_snippet,
+      code_snippet: _code_snippet,
       correlate_with_history = true,
       file_contents,
     } = body;

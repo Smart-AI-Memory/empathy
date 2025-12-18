@@ -34,7 +34,7 @@ export default function PrivacyPage() {
             <div className="max-w-4xl mx-auto prose prose-lg">
               <h2>1. Introduction</h2>
               <p>
-                Deep Study AI, LLC ("we," "our," or "us") operates smartaimemory.com and the Empathy Framework.
+                Deep Study AI, LLC (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) operates smartaimemory.com and the Empathy Framework.
                 This Privacy Policy explains how we collect, use, disclose, and safeguard your information when
                 you visit our website or use our products.
               </p>
@@ -111,8 +111,8 @@ export default function PrivacyPage() {
 
               <h3>6.2 GitHub</h3>
               <p>
-                Our code is hosted on GitHub. When you interact with our repositories, you're subject
-                to GitHub's privacy policy and terms.
+                Our code is hosted on GitHub. When you interact with our repositories, you&apos;re subject
+                to GitHub&apos;s privacy policy and terms.
               </p>
 
               <h2>7. Data Retention</h2>
@@ -142,7 +142,7 @@ export default function PrivacyPage() {
                 guarantee absolute security.
               </p>
 
-              <h2>10. Children's Privacy</h2>
+              <h2>10. Children&apos;s Privacy</h2>
               <p>
                 Our services are not directed to children under 13. We do not knowingly collect information
                 from children under 13. If you believe we have collected information from a child,
@@ -159,7 +159,7 @@ export default function PrivacyPage() {
               <h2>12. Changes to This Policy</h2>
               <p>
                 We may update this Privacy Policy from time to time. We will notify you of material
-                changes by posting the new policy on this page and updating the "Last updated" date.
+                changes by posting the new policy on this page and updating the &quot;Last updated&quot; date.
               </p>
 
               <h2>13. Contact Us</h2>

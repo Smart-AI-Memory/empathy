@@ -110,7 +110,7 @@ export default function Home() {
             </p>
 
             <div className="max-w-4xl mx-auto grid gap-4">
-              {levels.map((item, index) => (
+              {levels.map((item) => (
                 <div
                   key={item.level}
                   className={`p-6 rounded-lg border-2 transition-all ${

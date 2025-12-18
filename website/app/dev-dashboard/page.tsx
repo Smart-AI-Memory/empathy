@@ -401,9 +401,9 @@ export default function DevDashboard() {
           <div className="mt-12 max-w-3xl mx-auto">
             <blockquote className="text-center">
               <p className="text-lg italic text-[var(--text-secondary)] mb-4">
-                "The framework transformed our development workflow. Instead of discovering issues
+                &quot;The framework transformed our development workflow. Instead of discovering issues
                 weeks later during debugging, the wizards alerted us to emerging problems immediately.
-                We shipped higher quality code, many times faster."
+                We shipped higher quality code, many times faster.&quot;
               </p>
               <footer className="text-sm text-[var(--muted)]">
                 — Development team using Empathy in production

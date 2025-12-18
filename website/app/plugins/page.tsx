@@ -243,7 +243,7 @@ export default function PluginsPage() {
 
             <div className="space-y-6">
               <div className="bg-[var(--border)] bg-opacity-30 p-6 rounded-lg">
-                <h3 className="text-xl font-bold mb-3">What's Included</h3>
+                <h3 className="text-xl font-bold mb-3">What&apos;s Included</h3>
                 <ul className="space-y-2 text-[var(--text-secondary)]">
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--success)]">✓</span>

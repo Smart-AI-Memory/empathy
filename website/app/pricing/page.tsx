@@ -225,7 +225,7 @@ export default function PricingPage() {
               <div className="space-y-6">
                 <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
                   <h3 className="text-xl font-bold mb-3">
-                    What counts as a "developer"?
+                    What counts as a &quot;developer&quot;?
                   </h3>
                   <p className="text-[var(--text-secondary)]">
                     A developer is anyone who uses Empathy in their development environment.
@@ -239,7 +239,7 @@ export default function PricingPage() {
                   </h3>
                   <p className="text-[var(--text-secondary)]">
                     The Free tier operates on an honor system. If your organization has 5 or fewer employees,
-                    you're eligible for free use. If you grow beyond 5 employees, we ask that you upgrade to
+                    you&apos;re eligible for free use. If you grow beyond 5 employees, we ask that you upgrade to
                     the Commercial tier to support continued development.
                   </p>
                 </div>
@@ -276,11 +276,11 @@ export default function PricingPage() {
 
                 <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
                   <h3 className="text-xl font-bold mb-3">
-                    What's the Fair Source License?
+                    What&apos;s the Fair Source License?
                   </h3>
                   <p className="text-[var(--text-secondary)]">
                     The Fair Source License 0.9 provides free use for small teams (≤5 employees) while requiring
-                    commercial licenses for larger organizations. It's source-available, allowing you to read and
+                    commercial licenses for larger organizations. It&apos;s source-available, allowing you to read and
                     modify the code, while supporting sustainable development.
                   </p>
                 </div>

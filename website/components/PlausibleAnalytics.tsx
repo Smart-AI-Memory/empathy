@@ -24,10 +24,17 @@ export default function PlausibleAnalytics() {
   );
 }
 
+// Declare plausible on the window object
+declare global {
+  interface Window {
+    plausible?: (eventName: string, options?: { props?: Record<string, string | number> }) => void;
+  }
+}
+
 // Custom event tracking helper
 export function trackEvent(eventName: string, props?: Record<string, string | number>) {
-  if (typeof window !== 'undefined' && (window as any).plausible) {
-    (window as any).plausible(eventName, { props });
+  if (typeof window !== 'undefined' && window.plausible) {
+    window.plausible(eventName, { props });
   }
 }
 

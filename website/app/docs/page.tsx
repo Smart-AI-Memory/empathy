@@ -52,7 +52,7 @@ export default function DocsRedirectPage() {
         </div>
 
         <div className="mt-12 p-6 bg-[var(--border)] bg-opacity-20 rounded-lg text-left">
-          <h3 className="font-bold mb-3">What's New in the Documentation:</h3>
+          <h3 className="font-bold mb-3">What&apos;s New in the Documentation:</h3>
           <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
             <li className="flex items-start gap-2">
               <span className="text-[var(--success)] mt-1">✓</span>

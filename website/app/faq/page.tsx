@@ -179,7 +179,7 @@ export default function FAQPage() {
                 Still Have Questions?
               </h2>
               <p className="text-xl text-[var(--text-secondary)] mb-8">
-                We're here to help. Reach out to our team or join the community.
+                We&apos;re here to help. Reach out to our team or join the community.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a

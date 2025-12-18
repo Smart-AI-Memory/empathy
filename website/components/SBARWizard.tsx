@@ -54,8 +54,20 @@ interface MedicationResults {
   medications_found: string[];
 }
 
+// Section type including review step
+type SbarSection = keyof SbarData | 'review';
+
 // Step configurations matching original nurse-ai-florence
-const SBAR_STEPS = [
+const SBAR_STEPS: Array<{
+  step: number;
+  section: SbarSection;
+  title: string;
+  prompt: string;
+  placeholder: string;
+  helpText: string;
+  fields: string[];
+  isReviewStep?: boolean;
+}> = [
   {
     step: 1,
     section: 'situation' as keyof SbarData,
@@ -94,7 +106,7 @@ const SBAR_STEPS = [
   },
   {
     step: 5,
-    section: 'review' as any,
+    section: 'review',
     title: 'Review & Enhance',
     prompt: 'Review and enhance your SBAR report with AI',
     placeholder: '',
@@ -106,7 +118,7 @@ const SBAR_STEPS = [
 
 export default function SBARWizard() {
   // Wizard state
-  const [wizardId, setWizardId] = useState<string | null>(null);
+  const [, setWizardId] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -168,7 +180,7 @@ export default function SBARWizard() {
       const data = await response.json();
       setWizardId(data.data?.wizard_session?.wizard_id || data.wizard_id || `local_${Date.now()}`);
       setCurrentStep(1);
-    } catch (err) {
+    } catch {
       // Use local session if API unavailable
       setWizardId(`local_${Date.now()}`);
     } finally {
@@ -243,7 +255,7 @@ export default function SBARWizard() {
         setEnhancementResult(textToEnhance);
         setShowEnhancementModal(true);
       }
-    } catch (err) {
+    } catch {
       setError('AI enhancement unavailable');
     } finally {
       setIsEnhancing(false);
@@ -275,7 +287,7 @@ export default function SBARWizard() {
       const data = await response.json();
       setSuggestedPriority(data.suggested_priority || 'routine');
       setPriorityReasoning(data.reasoning || 'Based on clinical assessment');
-    } catch (err) {
+    } catch {
       // Demo fallback
       const hasUrgent = formData.assessment.toLowerCase().includes('pain') ||
                         formData.assessment.toLowerCase().includes('distress');
@@ -299,7 +311,7 @@ export default function SBARWizard() {
 
       const data = await response.json();
       setMedicationResults(data);
-    } catch (err) {
+    } catch {
       // Demo fallback
       setMedicationResults({
         has_interactions: false,
@@ -354,7 +366,7 @@ export default function SBARWizard() {
       const data = await response.json();
       setFinalReport(data.sbar_report);
       setIsCompleted(true);
-    } catch (err) {
+    } catch {
       setError('Failed to generate report');
     } finally {
       setIsLoading(false);

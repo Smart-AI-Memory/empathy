@@ -26,6 +26,7 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
   }
 
   try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const msg: any = {
       to: options.to,
       from: options.from || process.env.SENDGRID_FROM_EMAIL,

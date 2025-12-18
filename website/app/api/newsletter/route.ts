@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Handle OPTIONS for CORS if needed
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 204,
     headers: {

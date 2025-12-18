@@ -119,7 +119,31 @@ export function generateMetadata(config?: SEOConfig): Metadata {
   };
 }
 
-export function generateStructuredData(type: 'organization' | 'product' | 'article' | 'faq', data?: any) {
+interface ProductData {
+  name?: string;
+  description?: string;
+  url?: string;
+  price?: string;
+  rating?: string;
+  ratingCount?: string;
+}
+
+interface ArticleData {
+  title?: string;
+  description?: string;
+  image?: string;
+  author?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+}
+
+interface FAQData {
+  questions?: Array<{ question: string; answer: string }>;
+}
+
+type StructuredData = ProductData | ArticleData | FAQData | undefined;
+
+export function generateStructuredData(type: 'organization' | 'product' | 'article' | 'faq', data?: StructuredData) {
   switch (type) {
     case 'organization':
       return {
@@ -141,42 +165,45 @@ export function generateStructuredData(type: 'organization' | 'product' | 'artic
         },
       };
 
-    case 'product':
+    case 'product': {
+      const productData = data as ProductData | undefined;
       return {
         '@context': 'https://schema.org',
         '@type': 'SoftwareApplication',
-        name: data?.name || 'Empathy',
+        name: productData?.name || 'Empathy',
         applicationCategory: 'DeveloperApplication',
         operatingSystem: 'Cross-platform',
-        description: data?.description || 'A 5-level maturity model for AI-human collaboration',
-        url: data?.url || `${defaultMetadata.url}/framework`,
+        description: productData?.description || 'A 5-level maturity model for AI-human collaboration',
+        url: productData?.url || `${defaultMetadata.url}/framework`,
         author: {
           '@type': 'Organization',
           name: 'Deep Study AI, LLC',
         },
         offers: {
           '@type': 'Offer',
-          price: data?.price || '0',
+          price: productData?.price || '0',
           priceCurrency: 'USD',
           availability: 'https://schema.org/InStock',
         },
         aggregateRating: {
           '@type': 'AggregateRating',
-          ratingValue: data?.rating || '5',
-          ratingCount: data?.ratingCount || '1',
+          ratingValue: productData?.rating || '5',
+          ratingCount: productData?.ratingCount || '1',
         },
       };
+    }
 
-    case 'article':
+    case 'article': {
+      const articleData = data as ArticleData | undefined;
       return {
         '@context': 'https://schema.org',
         '@type': 'Article',
-        headline: data?.title,
-        description: data?.description,
-        image: data?.image || defaultMetadata.image,
+        headline: articleData?.title,
+        description: articleData?.description,
+        image: articleData?.image || defaultMetadata.image,
         author: {
           '@type': 'Organization',
-          name: data?.author || 'Deep Study AI, LLC',
+          name: articleData?.author || 'Deep Study AI, LLC',
         },
         publisher: {
           '@type': 'Organization',
@@ -186,15 +213,17 @@ export function generateStructuredData(type: 'organization' | 'product' | 'artic
             url: `${defaultMetadata.url}/logo.png`,
           },
         },
-        datePublished: data?.publishedTime,
-        dateModified: data?.modifiedTime || data?.publishedTime,
+        datePublished: articleData?.publishedTime,
+        dateModified: articleData?.modifiedTime || articleData?.publishedTime,
       };
+    }
 
-    case 'faq':
+    case 'faq': {
+      const faqData = data as FAQData | undefined;
       return {
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
-        mainEntity: (data?.questions || []).map((q: { question: string; answer: string }) => ({
+        mainEntity: (faqData?.questions || []).map((q) => ({
           '@type': 'Question',
           name: q.question,
           acceptedAnswer: {
@@ -203,6 +232,7 @@ export function generateStructuredData(type: 'organization' | 'product' | 'artic
           },
         })),
       };
+    }
 
     default:
       return null;

@@ -25,6 +25,7 @@ export default function WizardPlayground({ category }: WizardPlaygroundProps) {
   // Fetch wizards on component mount
   useEffect(() => {
     fetchWizards();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
 
   const fetchWizards = async () => {

@@ -35,7 +35,7 @@ export default function TermsPage() {
               <h2>1. Agreement to Terms</h2>
               <p>
                 By accessing our website at smartaimemory.com or using the Empathy Framework
-                ("Services"), you agree to be bound by these Terms of Service and our Privacy Policy.
+                (&quot;Services&quot;), you agree to be bound by these Terms of Service and our Privacy Policy.
                 If you disagree with any part of these terms, you may not access our Services.
               </p>
 
@@ -112,9 +112,9 @@ export default function TermsPage() {
 
               <h2>7. Disclaimers and Limitations</h2>
 
-              <h3>7.1 "As Is" Provision</h3>
+              <h3>7.1 &quot;As Is&quot; Provision</h3>
               <p>
-                Our Services are provided "AS IS" and "AS AVAILABLE" without warranties of any kind,
+                Our Services are provided &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; without warranties of any kind,
                 either express or implied, including but not limited to:
               </p>
               <ul>
