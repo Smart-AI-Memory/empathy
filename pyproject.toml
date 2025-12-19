@@ -182,6 +182,7 @@ all = [
     "coverage>=7.0,<8.0",
     "bandit>=1.7,<2.0",
     "pre-commit>=3.0,<4.0",
+    "httpx>=0.27.0,<1.0.0",  # For API testing
     # Security constraint overrides for transitive dependencies
     "urllib3>=2.3.0,<3.0.0",  # CVE fix: GHSA-gm62, GHSA-2xpw
     "aiohttp>=3.10.0,<4.0.0",  # CVE fix: multiple CVEs
