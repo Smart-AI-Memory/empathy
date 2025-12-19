@@ -23,6 +23,7 @@ from empathy_os.memory import (
 
 from .levels import EmpathyLevel
 from .providers import AnthropicProvider, BaseLLMProvider, LocalProvider, OpenAIProvider
+from .routing import ModelRouter
 from .state import CollaborationState, UserPattern
 
 logger = logging.getLogger(__name__)
@@ -66,6 +67,24 @@ class EmpathyLLM:
         ...     user_input="My email is john@example.com"
         ... )
         >>> # PII automatically scrubbed, request logged
+
+    Example with Model Routing (Cost Optimization):
+        >>> llm = EmpathyLLM(
+        ...     provider="anthropic",
+        ...     enable_model_routing=True  # Enable smart model selection
+        ... )
+        >>> # Simple task -> uses Haiku (cheap)
+        >>> response = await llm.interact(
+        ...     user_id="dev",
+        ...     user_input="Summarize this function",
+        ...     task_type="summarize"
+        ... )
+        >>> # Complex task -> uses Opus (premium)
+        >>> response = await llm.interact(
+        ...     user_id="dev",
+        ...     user_input="Design the architecture",
+        ...     task_type="architectural_decision"
+        ... )
     """
 
     def __init__(
@@ -79,6 +98,7 @@ class EmpathyLLM:
         project_root: str | None = None,
         enable_security: bool = False,
         security_config: dict | None = None,
+        enable_model_routing: bool = False,
         **kwargs,
     ):
         """
@@ -88,7 +108,7 @@ class EmpathyLLM:
             provider: "anthropic", "openai", or "local"
             target_level: Target empathy level (1-5)
             api_key: API key for provider (if needed)
-            model: Specific model to use
+            model: Specific model to use (overrides routing if set)
             pattern_library: Shared pattern library (Level 5)
             claude_memory_config: Configuration for Claude memory integration (v1.8.0+)
             project_root: Project root directory for loading .claude/CLAUDE.md
@@ -100,17 +120,31 @@ class EmpathyLLM:
                 - enable_name_detection: Enable name PII detection (default: False)
                 - enable_audit_logging: Enable audit logging (default: True)
                 - enable_console_logging: Log to console for debugging (default: False)
+            enable_model_routing: Enable smart model routing for cost optimization.
+                When enabled, uses ModelRouter to select appropriate model tier:
+                - CHEAP (Haiku): summarize, classify, triage tasks
+                - CAPABLE (Sonnet): code generation, bug fixes, security review
+                - PREMIUM (Opus): coordination, synthesis, architectural decisions
             **kwargs: Provider-specific options
         """
         self.target_level = target_level
         self.pattern_library = pattern_library or {}
         self.project_root = project_root
+        self._provider_name = provider
+        self._explicit_model = model  # Track if user explicitly set a model
 
         # Initialize provider
         self.provider = self._create_provider(provider, api_key, model, **kwargs)
 
         # Track collaboration states for different users
         self.states: dict[str, CollaborationState] = {}
+
+        # Initialize model routing for cost optimization
+        self.enable_model_routing = enable_model_routing
+        self.model_router: ModelRouter | None = None
+        if enable_model_routing:
+            self.model_router = ModelRouter(default_provider=provider)
+            logger.info(f"Model routing enabled for provider: {provider}")
 
         # Initialize Claude memory integration (v1.8.0+)
         self.claude_memory_config = claude_memory_config
@@ -138,7 +172,8 @@ class EmpathyLLM:
 
         logger.info(
             f"EmpathyLLM initialized: provider={provider}, target_level={target_level}, "
-            f"security={'enabled' if enable_security else 'disabled'}"
+            f"security={'enabled' if enable_security else 'disabled'}, "
+            f"model_routing={'enabled' if enable_model_routing else 'disabled'}"
         )
 
     def _initialize_security(self):
@@ -264,6 +299,7 @@ Follow the instructions from CLAUDE.md files above, then apply the Empathy Frame
         user_input: str,
         context: dict[str, Any] | None = None,
         force_level: int | None = None,
+        task_type: str | None = None,
     ) -> dict[str, Any]:
         """
         Main interaction method.
@@ -276,18 +312,26 @@ Follow the instructions from CLAUDE.md files above, then apply the Empathy Frame
             3. LLM Interaction: Process sanitized input
             4. Audit Logging: Log request details for compliance
 
+        Model Routing (if enable_model_routing=True):
+            Routes to appropriate model based on task_type:
+            - CHEAP (Haiku): summarize, classify, triage, match_pattern
+            - CAPABLE (Sonnet): generate_code, fix_bug, review_security, write_tests
+            - PREMIUM (Opus): coordinate, synthesize_results, architectural_decision
+
         Args:
             user_id: Unique user identifier
             user_input: User's input/question
             context: Optional context dictionary
             force_level: Force specific level (for testing/demos)
+            task_type: Type of task for model routing (e.g., "summarize", "fix_bug").
+                If not provided with routing enabled, defaults to "capable" tier.
 
         Returns:
             Dictionary with:
                 - content: LLM response
                 - level_used: Which empathy level was used
                 - proactive: Whether action was proactive
-                - metadata: Additional information
+                - metadata: Additional information (includes routed_model if routing enabled)
                 - security: Security details (if enabled)
 
         Raises:
@@ -296,6 +340,26 @@ Follow the instructions from CLAUDE.md files above, then apply the Empathy Frame
         start_time = time.time()
         state = self._get_or_create_state(user_id)
         context = context or {}
+
+        # Model routing: determine which model to use for this request
+        routed_model: str | None = None
+        routing_metadata: dict[str, Any] = {}
+
+        if self.enable_model_routing and self.model_router and not self._explicit_model:
+            # Route based on task_type (default to "generate_code" if not specified)
+            effective_task = task_type or "generate_code"
+            routed_model = self.model_router.route(effective_task, self._provider_name)
+            tier = self.model_router.get_tier(effective_task)
+
+            routing_metadata = {
+                "model_routing_enabled": True,
+                "task_type": effective_task,
+                "routed_model": routed_model,
+                "routed_tier": tier.value,
+            }
+            logger.info(
+                f"Model routing: task={effective_task} -> model={routed_model} (tier={tier.value})"
+            )
 
         # Initialize security tracking
         pii_detections: list[dict] = []
@@ -355,16 +419,17 @@ Follow the instructions from CLAUDE.md files above, then apply the Empathy Frame
 
         # Phase 3: Security Pipeline (Step 3 - LLM Interaction with sanitized input)
         # Route to appropriate level handler using sanitized input
+        # Pass routed_model for cost-optimized model selection
         if level == 1:
-            result = await self._level_1_reactive(sanitized_input, state, context)
+            result = await self._level_1_reactive(sanitized_input, state, context, routed_model)
         elif level == 2:
-            result = await self._level_2_guided(sanitized_input, state, context)
+            result = await self._level_2_guided(sanitized_input, state, context, routed_model)
         elif level == 3:
-            result = await self._level_3_proactive(sanitized_input, state, context)
+            result = await self._level_3_proactive(sanitized_input, state, context, routed_model)
         elif level == 4:
-            result = await self._level_4_anticipatory(sanitized_input, state, context)
+            result = await self._level_4_anticipatory(sanitized_input, state, context, routed_model)
         elif level == 5:
-            result = await self._level_5_systems(sanitized_input, state, context)
+            result = await self._level_5_systems(sanitized_input, state, context, routed_model)
         else:
             raise ValueError(f"Invalid level: {level}")
 
@@ -378,6 +443,10 @@ Follow the instructions from CLAUDE.md files above, then apply the Empathy Frame
         # Add security metadata to result
         if self.enable_security:
             result["security"] = security_metadata
+
+        # Add model routing metadata to result
+        if routing_metadata:
+            result["metadata"].update(routing_metadata)
 
         # Phase 3: Security Pipeline (Step 4 - Audit Logging)
         if self.enable_security and self.audit_logger:
@@ -411,19 +480,27 @@ Follow the instructions from CLAUDE.md files above, then apply the Empathy Frame
         return result
 
     async def _level_1_reactive(
-        self, user_input: str, state: CollaborationState, context: dict[str, Any]
+        self,
+        user_input: str,
+        state: CollaborationState,
+        context: dict[str, Any],
+        model_override: str | None = None,
     ) -> dict[str, Any]:
         """
         Level 1: Reactive - Simple Q&A
 
         No memory, no patterns, just respond to question.
         """
-        response = await self.provider.generate(
-            messages=[{"role": "user", "content": user_input}],
-            system_prompt=self._build_system_prompt(1),
-            temperature=EmpathyLevel.get_temperature_recommendation(1),
-            max_tokens=EmpathyLevel.get_max_tokens_recommendation(1),
-        )
+        generate_kwargs: dict[str, Any] = {
+            "messages": [{"role": "user", "content": user_input}],
+            "system_prompt": self._build_system_prompt(1),
+            "temperature": EmpathyLevel.get_temperature_recommendation(1),
+            "max_tokens": EmpathyLevel.get_max_tokens_recommendation(1),
+        }
+        if model_override:
+            generate_kwargs["model"] = model_override
+
+        response = await self.provider.generate(**generate_kwargs)
 
         return {
             "content": response.content,
@@ -432,7 +509,11 @@ Follow the instructions from CLAUDE.md files above, then apply the Empathy Frame
         }
 
     async def _level_2_guided(
-        self, user_input: str, state: CollaborationState, context: dict[str, Any]
+        self,
+        user_input: str,
+        state: CollaborationState,
+        context: dict[str, Any],
+        model_override: str | None = None,
     ) -> dict[str, Any]:
         """
         Level 2: Guided - Ask clarifying questions
@@ -443,12 +524,16 @@ Follow the instructions from CLAUDE.md files above, then apply the Empathy Frame
         messages = state.get_conversation_history(max_turns=5)
         messages.append({"role": "user", "content": user_input})
 
-        response = await self.provider.generate(
-            messages=messages,
-            system_prompt=self._build_system_prompt(2),
-            temperature=EmpathyLevel.get_temperature_recommendation(2),
-            max_tokens=EmpathyLevel.get_max_tokens_recommendation(2),
-        )
+        generate_kwargs: dict[str, Any] = {
+            "messages": messages,
+            "system_prompt": self._build_system_prompt(2),
+            "temperature": EmpathyLevel.get_temperature_recommendation(2),
+            "max_tokens": EmpathyLevel.get_max_tokens_recommendation(2),
+        }
+        if model_override:
+            generate_kwargs["model"] = model_override
+
+        response = await self.provider.generate(**generate_kwargs)
 
         return {
             "content": response.content,
@@ -461,7 +546,11 @@ Follow the instructions from CLAUDE.md files above, then apply the Empathy Frame
         }
 
     async def _level_3_proactive(
-        self, user_input: str, state: CollaborationState, context: dict[str, Any]
+        self,
+        user_input: str,
+        state: CollaborationState,
+        context: dict[str, Any],
+        model_override: str | None = None,
     ) -> dict[str, Any]:
         """
         Level 3: Proactive - Act on detected patterns
@@ -503,12 +592,16 @@ Was this helpful? If not, I can adjust my pattern detection.
             # TODO: Run pattern detection in background
             # await self._detect_patterns_async(state)
 
-        response = await self.provider.generate(
-            messages=messages,
-            system_prompt=self._build_system_prompt(3),
-            temperature=EmpathyLevel.get_temperature_recommendation(3),
-            max_tokens=EmpathyLevel.get_max_tokens_recommendation(3),
-        )
+        generate_kwargs: dict[str, Any] = {
+            "messages": messages,
+            "system_prompt": self._build_system_prompt(3),
+            "temperature": EmpathyLevel.get_temperature_recommendation(3),
+            "max_tokens": EmpathyLevel.get_max_tokens_recommendation(3),
+        }
+        if model_override:
+            generate_kwargs["model"] = model_override
+
+        response = await self.provider.generate(**generate_kwargs)
 
         return {
             "content": response.content,
@@ -521,7 +614,11 @@ Was this helpful? If not, I can adjust my pattern detection.
         }
 
     async def _level_4_anticipatory(
-        self, user_input: str, state: CollaborationState, context: dict[str, Any]
+        self,
+        user_input: str,
+        state: CollaborationState,
+        context: dict[str, Any],
+        model_override: str | None = None,
     ) -> dict[str, Any]:
         """
         Level 4: Anticipatory - Predict future needs
@@ -555,12 +652,16 @@ Use anticipatory format:
         messages = state.get_conversation_history(max_turns=15)
         messages.append({"role": "user", "content": trajectory_prompt})
 
-        response = await self.provider.generate(
-            messages=messages,
-            system_prompt=self._build_system_prompt(4),
-            temperature=EmpathyLevel.get_temperature_recommendation(4),
-            max_tokens=EmpathyLevel.get_max_tokens_recommendation(4),
-        )
+        generate_kwargs: dict[str, Any] = {
+            "messages": messages,
+            "system_prompt": self._build_system_prompt(4),
+            "temperature": EmpathyLevel.get_temperature_recommendation(4),
+            "max_tokens": EmpathyLevel.get_max_tokens_recommendation(4),
+        }
+        if model_override:
+            generate_kwargs["model"] = model_override
+
+        response = await self.provider.generate(**generate_kwargs)
 
         return {
             "content": response.content,
@@ -574,7 +675,11 @@ Use anticipatory format:
         }
 
     async def _level_5_systems(
-        self, user_input: str, state: CollaborationState, context: dict[str, Any]
+        self,
+        user_input: str,
+        state: CollaborationState,
+        context: dict[str, Any],
+        model_override: str | None = None,
     ) -> dict[str, Any]:
         """
         Level 5: Systems - Cross-domain pattern learning
@@ -601,12 +706,16 @@ TASK:
         messages = state.get_conversation_history(max_turns=20)
         messages.append({"role": "user", "content": prompt})
 
-        response = await self.provider.generate(
-            messages=messages,
-            system_prompt=self._build_system_prompt(5),
-            temperature=EmpathyLevel.get_temperature_recommendation(5),
-            max_tokens=EmpathyLevel.get_max_tokens_recommendation(5),
-        )
+        generate_kwargs: dict[str, Any] = {
+            "messages": messages,
+            "system_prompt": self._build_system_prompt(5),
+            "temperature": EmpathyLevel.get_temperature_recommendation(5),
+            "max_tokens": EmpathyLevel.get_max_tokens_recommendation(5),
+        }
+        if model_override:
+            generate_kwargs["model"] = model_override
+
+        response = await self.provider.generate(**generate_kwargs)
 
         return {
             "content": response.content,

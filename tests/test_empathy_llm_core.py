@@ -689,3 +689,181 @@ async def test_level_5_systems_pattern_library_in_prompt(mock_provider):
 
         # Pattern library should be in the prompt
         assert "test_pattern" in last_message or str(pattern_lib) in last_message
+
+
+# ============================================================================
+# Model Routing Integration Tests
+# ============================================================================
+
+
+def test_empathy_llm_initialization_with_model_routing():
+    """Test EmpathyLLM initialization with model routing enabled"""
+    with patch("empathy_llm_toolkit.core.AnthropicProvider"):
+        llm = EmpathyLLM(
+            provider="anthropic",
+            target_level=3,
+            api_key="test-key",
+            enable_model_routing=True,
+        )
+
+        assert llm.enable_model_routing is True
+        assert llm.model_router is not None
+
+
+def test_empathy_llm_initialization_without_model_routing():
+    """Test EmpathyLLM initialization with model routing disabled (default)"""
+    with patch("empathy_llm_toolkit.core.AnthropicProvider"):
+        llm = EmpathyLLM(provider="anthropic", target_level=3, api_key="test-key")
+
+        assert llm.enable_model_routing is False
+        assert llm.model_router is None
+
+
+def test_empathy_llm_explicit_model_overrides_routing():
+    """Test that explicit model parameter disables routing"""
+    with patch("empathy_llm_toolkit.core.AnthropicProvider"):
+        llm = EmpathyLLM(
+            provider="anthropic",
+            target_level=3,
+            api_key="test-key",
+            model="claude-3-opus-20240229",  # Explicit model
+            enable_model_routing=True,
+        )
+
+        # Routing is enabled but explicit model should override
+        assert llm.enable_model_routing is True
+        assert llm._explicit_model == "claude-3-opus-20240229"
+
+
+@pytest.mark.asyncio
+async def test_interact_with_task_type_routes_model(mock_provider):
+    """Test that task_type parameter routes to appropriate model"""
+    with patch("empathy_llm_toolkit.core.AnthropicProvider", return_value=mock_provider):
+        llm = EmpathyLLM(
+            provider="anthropic",
+            target_level=3,
+            enable_model_routing=True,
+        )
+
+        # Summarize task should route to cheap model (Haiku)
+        result = await llm.interact(
+            user_id="test_user",
+            user_input="Summarize this code",
+            task_type="summarize",
+            force_level=1,
+        )
+
+        # Check routing metadata
+        assert "model_routing_enabled" in result["metadata"]
+        assert result["metadata"]["model_routing_enabled"] is True
+        assert result["metadata"]["task_type"] == "summarize"
+        assert result["metadata"]["routed_tier"] == "cheap"
+        assert "haiku" in result["metadata"]["routed_model"].lower()
+
+
+@pytest.mark.asyncio
+async def test_interact_with_fix_bug_routes_to_capable(mock_provider):
+    """Test that fix_bug task routes to capable tier (Sonnet)"""
+    with patch("empathy_llm_toolkit.core.AnthropicProvider", return_value=mock_provider):
+        llm = EmpathyLLM(
+            provider="anthropic",
+            target_level=3,
+            enable_model_routing=True,
+        )
+
+        result = await llm.interact(
+            user_id="test_user",
+            user_input="Fix this bug",
+            task_type="fix_bug",
+            force_level=1,
+        )
+
+        assert result["metadata"]["routed_tier"] == "capable"
+        assert "sonnet" in result["metadata"]["routed_model"].lower()
+
+
+@pytest.mark.asyncio
+async def test_interact_with_coordinate_routes_to_premium(mock_provider):
+    """Test that coordinate task routes to premium tier (Opus)"""
+    with patch("empathy_llm_toolkit.core.AnthropicProvider", return_value=mock_provider):
+        llm = EmpathyLLM(
+            provider="anthropic",
+            target_level=3,
+            enable_model_routing=True,
+        )
+
+        result = await llm.interact(
+            user_id="test_user",
+            user_input="Coordinate this complex task",
+            task_type="coordinate",
+            force_level=1,
+        )
+
+        assert result["metadata"]["routed_tier"] == "premium"
+        assert "opus" in result["metadata"]["routed_model"].lower()
+
+
+@pytest.mark.asyncio
+async def test_interact_passes_routed_model_to_provider(mock_provider):
+    """Test that routed model is passed to provider.generate()"""
+    with patch("empathy_llm_toolkit.core.AnthropicProvider", return_value=mock_provider):
+        llm = EmpathyLLM(
+            provider="anthropic",
+            target_level=3,
+            enable_model_routing=True,
+        )
+
+        await llm.interact(
+            user_id="test_user",
+            user_input="Summarize this",
+            task_type="summarize",
+            force_level=1,
+        )
+
+        # Verify model was passed to generate()
+        call_kwargs = mock_provider.generate.call_args[1]
+        assert "model" in call_kwargs
+        assert "haiku" in call_kwargs["model"].lower()
+
+
+@pytest.mark.asyncio
+async def test_interact_without_routing_no_metadata(mock_provider):
+    """Test that without routing enabled, no routing metadata is added"""
+    with patch("empathy_llm_toolkit.core.AnthropicProvider", return_value=mock_provider):
+        llm = EmpathyLLM(
+            provider="anthropic",
+            target_level=3,
+            enable_model_routing=False,  # Disabled
+        )
+
+        result = await llm.interact(
+            user_id="test_user",
+            user_input="Test",
+            task_type="summarize",  # task_type is ignored when routing disabled
+            force_level=1,
+        )
+
+        # No routing metadata should be present
+        assert "model_routing_enabled" not in result["metadata"]
+        assert "routed_tier" not in result["metadata"]
+
+
+@pytest.mark.asyncio
+async def test_interact_default_task_type(mock_provider):
+    """Test that default task_type is used when not specified"""
+    with patch("empathy_llm_toolkit.core.AnthropicProvider", return_value=mock_provider):
+        llm = EmpathyLLM(
+            provider="anthropic",
+            target_level=3,
+            enable_model_routing=True,
+        )
+
+        # No task_type specified - should default to "generate_code" (capable)
+        result = await llm.interact(
+            user_id="test_user",
+            user_input="Help me with code",
+            force_level=1,
+        )
+
+        assert result["metadata"]["task_type"] == "generate_code"
+        assert result["metadata"]["routed_tier"] == "capable"
