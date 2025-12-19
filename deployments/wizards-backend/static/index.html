@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empathy Dev Wizards - AI-Powered Development Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+            min-height: 100vh;
+        }
+        .dashboard-container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        .wizard-btn {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border-left: 4px solid #3b82f6;
+            text-align: center;
+        }
+        .wizard-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        .wizard-btn:active {
+            transform: translateY(0);
+        }
+        .category-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border-radius: 6px;
+            color: white;
+            padding: 0.5rem 1rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+        .badge {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+        }
+        .result-panel {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 1rem;
+            color: #e2e8f0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .result-panel pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .loading {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-lg mb-4 p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">
+                        <i class="fas fa-wand-magic-sparkles text-blue-600 mr-2"></i>
+                        Empathy Dev Wizards
+                    </h1>
+                    <p class="text-gray-600 text-sm">AI-Powered Development Tools</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="/api/docs" class="text-blue-600 hover:text-blue-800 text-sm">
+                        <i class="fas fa-book mr-1"></i> API Docs
+                    </a>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-blue-600">4</div>
+                        <div class="text-xs text-gray-500">Wizards</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Debugging Wizard -->
+        <div class="mb-4">
+            <div class="category-header" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
+                <h2 class="font-bold flex items-center">
+                    <i class="fas fa-bug mr-2"></i>
+                    Memory-Enhanced Debugging
+                </h2>
+            </div>
+            <div class="bg-white rounded-lg shadow p-4">
+                <p class="text-gray-600 text-sm mb-3">
+                    Debug errors with historical pattern matching. The AI remembers past bugs and recommends proven fixes.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Error Message</label>
+                        <textarea id="debugError" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="TypeError: Cannot read property 'map' of undefined"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">File Path</label>
+                        <input type="text" id="debugFile" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="src/components/UserList.tsx">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Stack Trace (optional)</label>
+                    <textarea id="debugStack" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono" placeholder="at UserList (UserList.tsx:42)"></textarea>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="runDebugging()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                        <i class="fas fa-search mr-1"></i> Analyze Error
+                    </button>
+                    <button onclick="runDebuggingDemo()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm">
+                        <i class="fas fa-play mr-1"></i> Demo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Wizard -->
+        <div class="mb-4">
+            <div class="category-header" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                <h2 class="font-bold flex items-center">
+                    <i class="fas fa-shield-alt mr-2"></i>
+                    Security Analysis
+                </h2>
+            </div>
+            <div class="bg-white rounded-lg shadow p-4">
+                <p class="text-gray-600 text-sm mb-3">
+                    Detect OWASP vulnerabilities with exploitability assessment. Focus on real risks, not theoretical ones.
+                </p>
+                <div class="mb-3">
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Code to Scan</label>
+                    <textarea id="securityCode" rows="6" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono" placeholder="# Paste code to scan for security issues"></textarea>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="runSecurity()" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                        <i class="fas fa-lock mr-1"></i> Scan Security
+                    </button>
+                    <button onclick="runSecurityDemo()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm">
+                        <i class="fas fa-play mr-1"></i> Demo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Review Wizard -->
+        <div class="mb-4">
+            <div class="category-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <h2 class="font-bold flex items-center">
+                    <i class="fas fa-code-branch mr-2"></i>
+                    Pattern-Based Code Review
+                </h2>
+            </div>
+            <div class="bg-white rounded-lg shadow p-4">
+                <p class="text-gray-600 text-sm mb-3">
+                    Review code against historical bug patterns. Catch issues before they become production problems.
+                </p>
+                <div class="mb-3">
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Git Diff</label>
+                    <textarea id="reviewDiff" rows="6" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono" placeholder="Paste git diff here..."></textarea>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="runCodeReview()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                        <i class="fas fa-search-plus mr-1"></i> Review Code
+                    </button>
+                    <button onclick="runCodeReviewDemo()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm">
+                        <i class="fas fa-play mr-1"></i> Demo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Inspection Pipeline -->
+        <div class="mb-4">
+            <div class="category-header" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+                <h2 class="font-bold flex items-center">
+                    <i class="fas fa-microscope mr-2"></i>
+                    Code Inspection Pipeline
+                </h2>
+            </div>
+            <div class="bg-white rounded-lg shadow p-4">
+                <p class="text-gray-600 text-sm mb-3">
+                    Unified code analysis: lint, security, tech debt, and test quality in one command. SARIF output for CI/CD.
+                </p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
+                    <div class="text-center p-2 bg-gray-50 rounded">
+                        <i class="fas fa-code text-blue-500"></i>
+                        <div class="text-xs text-gray-600">Lint</div>
+                    </div>
+                    <div class="text-center p-2 bg-gray-50 rounded">
+                        <i class="fas fa-shield text-yellow-500"></i>
+                        <div class="text-xs text-gray-600">Security</div>
+                    </div>
+                    <div class="text-center p-2 bg-gray-50 rounded">
+                        <i class="fas fa-clock text-orange-500"></i>
+                        <div class="text-xs text-gray-600">Tech Debt</div>
+                    </div>
+                    <div class="text-center p-2 bg-gray-50 rounded">
+                        <i class="fas fa-vial text-green-500"></i>
+                        <div class="text-xs text-gray-600">Test Quality</div>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="runInspectDemo()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                        <i class="fas fa-play mr-1"></i> See Demo Output
+                    </button>
+                    <a href="/api/docs#/Code%20Inspection" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm inline-flex items-center">
+                        <i class="fas fa-book mr-1"></i> API Reference
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Panel -->
+        <div id="resultsContainer" class="mb-4 hidden">
+            <div class="bg-gray-800 rounded-lg shadow-lg">
+                <div class="flex items-center justify-between px-4 py-2 border-b border-gray-700">
+                    <span class="text-white font-medium text-sm">
+                        <i class="fas fa-terminal mr-2"></i>Results
+                    </span>
+                    <button onclick="closeResults()" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="resultsPanel" class="result-panel">
+                    <pre id="resultsContent">Loading...</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-white rounded-lg shadow-lg p-4 text-center text-sm">
+            <p class="text-gray-600">
+                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                Level 4+ AI Wizards with Historical Pattern Matching
+            </p>
+            <p class="text-xs text-gray-500 mt-1">
+                <a href="https://smartaimemory.com" class="text-blue-600 hover:underline">Smart AI Memory</a> |
+                <a href="https://pypi.org/project/empathy-framework/" class="text-blue-600 hover:underline">PyPI</a> |
+                v2.2.9
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '';
+
+        function showResults(data) {
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            document.getElementById('resultsContent').textContent = JSON.stringify(data, null, 2);
+        }
+
+        function closeResults() {
+            document.getElementById('resultsContainer').classList.add('hidden');
+        }
+
+        function showLoading() {
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            document.getElementById('resultsContent').innerHTML = '<span class="loading">Analyzing...</span>';
+        }
+
+        async function runDebugging() {
+            const error = document.getElementById('debugError').value;
+            const file = document.getElementById('debugFile').value;
+            const stack = document.getElementById('debugStack').value;
+
+            if (!error) {
+                alert('Please enter an error message');
+                return;
+            }
+
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/wizards/debugging/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        error_message: error,
+                        file_path: file || 'unknown',
+                        stack_trace: stack,
+                        correlate_with_history: true
+                    })
+                });
+                const data = await response.json();
+                showResults(data);
+            } catch (e) {
+                showResults({ error: e.message });
+            }
+        }
+
+        async function runDebuggingDemo() {
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/wizards/debugging/demo`);
+                const data = await response.json();
+                showResults(data);
+            } catch (e) {
+                showResults({ error: e.message });
+            }
+        }
+
+        async function runSecurity() {
+            const code = document.getElementById('securityCode').value;
+
+            if (!code) {
+                alert('Please paste some code to scan');
+                return;
+            }
+
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/wizards/security/scan-snippet`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        code: code,
+                        language: 'python',
+                        filename: 'snippet.py'
+                    })
+                });
+                const data = await response.json();
+                showResults(data);
+            } catch (e) {
+                showResults({ error: e.message });
+            }
+        }
+
+        async function runSecurityDemo() {
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/wizards/security/demo`);
+                const data = await response.json();
+                showResults(data);
+            } catch (e) {
+                showResults({ error: e.message });
+            }
+        }
+
+        async function runCodeReview() {
+            const diff = document.getElementById('reviewDiff').value;
+
+            if (!diff) {
+                alert('Please paste a git diff to review');
+                return;
+            }
+
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/wizards/code-review/review-diff`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        diff: diff,
+                        severity_threshold: 'info'
+                    })
+                });
+                const data = await response.json();
+                showResults(data);
+            } catch (e) {
+                showResults({ error: e.message });
+            }
+        }
+
+        async function runCodeReviewDemo() {
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/wizards/code-review/demo`);
+                const data = await response.json();
+                showResults(data);
+            } catch (e) {
+                showResults({ error: e.message });
+            }
+        }
+
+        async function runInspectDemo() {
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/wizards/inspect/demo`);
+                const data = await response.json();
+                showResults(data);
+            } catch (e) {
+                showResults({ error: e.message });
+            }
+        }
+    </script>
+</body>
+</html>

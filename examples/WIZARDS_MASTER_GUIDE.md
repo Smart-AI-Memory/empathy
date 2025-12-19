@@ -580,10 +580,8 @@ context = {
 ## Support
 
 **Questions or Issues:**
-- GitHub Issues: https://github.com/your-org/empathy-framework/issues
-- Security: security-team@company.com
-- HIPAA Compliance: hipaa-officer@company.com
-- General: empathy-framework@company.com
+- GitHub Issues: https://github.com/Smart-AI-Memory/empathy-framework/issues
+- Email: admin@smartaimemory.com
 
 **Version History:**
 - v1.8.0-alpha: Initial wizard collection (44 wizards)

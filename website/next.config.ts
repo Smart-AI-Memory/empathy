@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  outputFileTracingRoot: path.join(__dirname, './'),
   eslint: {
     // Only run ESLint on these directories during production builds
     dirs: ['app'],

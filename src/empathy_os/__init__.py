@@ -36,21 +36,24 @@ from .exceptions import (
     ValidationError,
 )
 from .feedback_loops import FeedbackLoopDetector
-from .levels import Level1Reactive, Level2Guided, Level3Proactive, Level4Anticipatory, Level5Systems
+from .levels import (
+    Level1Reactive,
+    Level2Guided,
+    Level3Proactive,
+    Level4Anticipatory,
+    Level5Systems,
+)
 from .leverage_points import LeveragePointAnalyzer
 from .logging_config import LoggingConfig, get_logger
 
 # Memory module (unified short-term + long-term + security)
-from .memory import (
-    # Short-term (Redis)
+from .memory import (  # Short-term (Redis); Security - Audit; Claude Memory; Security - PII; Security - Secrets; Long-term (Persistent); Unified Memory Interface (recommended); Configuration
     AccessTier,
     AgentCredentials,
     AuditEvent,
-    # Security - Audit
     AuditLogger,
     Classification,
     ClassificationRules,
-    # Claude Memory
     ClaudeMemoryConfig,
     ClaudeMemoryLoader,
     ConflictContext,
@@ -62,14 +65,11 @@ from .memory import (
     PatternMetadata,
     PIIDetection,
     PIIPattern,
-    # Security - PII
     PIIScrubber,
     RedisShortTermMemory,
     SecretDetection,
-    # Security - Secrets
     SecretsDetector,
     SecretType,
-    # Long-term (Persistent)
     SecureMemDocsIntegration,
     SecurePattern,
     SecurityError,
@@ -77,9 +77,7 @@ from .memory import (
     Severity,
     StagedPattern,
     TTLStrategy,
-    # Unified Memory Interface (recommended)
     UnifiedMemory,
-    # Configuration
     check_redis_connection,
     detect_secrets,
     get_railway_redis,

@@ -1,0 +1,18 @@
+{
+  "pattern_id": "recurring_null_reference",
+  "pattern_type": "recurring_finding",
+  "code": "null_reference",
+  "occurrence_count": 3,
+  "affected_files": [
+    "src/components/UserList.tsx",
+    "src/utils/helpers.ts",
+    "src/components/Dashboard.tsx"
+  ],
+  "severity": "high",
+  "description": "Unresolved bug: null_reference",
+  "category": "debugging",
+  "tool": "memory_debugging",
+  "confidence": 0.3,
+  "stored_at": "2025-12-18T14:27:17.656914",
+  "execution_id": "insp_20251218_142123_9a0a23f9"
+}

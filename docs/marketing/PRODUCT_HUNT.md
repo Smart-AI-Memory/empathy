@@ -107,63 +107,58 @@ Two commands to get started: `pip install empathy-framework` and `empathy-memory
 
 ---
 
-## First Comment Template
+## First Comment (FINAL - v2.2.10)
 
 **Title:** Hey Product Hunt! Here's why I built this.
 
-**Content:**
+---
 
-I've been building AI tools for healthcare and software development for years. The biggest frustration? Every session starts from zero.
+I've been building AI tools for healthcare and software development. The frustration that drove me crazy? **Every AI session starts from zero.**
 
-Your AI doesn't remember the architecture decisions from yesterday. It doesn't know your team's coding patterns. It can't coordinate with other agents. It just waits for you to find problems instead of preventing them.
+Your AI doesn't remember yesterday's architecture decisions. It doesn't know your team's bug patterns. When you fix a bug, that knowledge evaporates. Next month, someone hits the same issue and starts from scratch.
 
-So I built Empathy Framework to fix that.
+**So I built Empathy Framework.**
 
-**The five problems we solve:**
+### What makes it different
 
-1. **Stateless** — AI forgets everything between sessions
-   → Dual-layer memory: Redis short-term + pattern storage long-term
+**1. Memory that persists** — Git-based pattern storage means your AI learns across sessions. "This error looks like bug #247 from 3 months ago—here's what fixed it."
 
-2. **Cloud-dependent** — Your data leaves your infrastructure
-   → Local-first. Nothing goes to external servers.
+**2. Code inspection that correlates** — New in v2.2.10: `empathy-inspect` runs lint, security, tests, and tech debt analysis in one command. But here's the key—it correlates findings across tools. Security issue in a file with poor test coverage? Priority boost.
 
-3. **Isolated** — AI can't coordinate
-   → Empathy OS for multi-agent orchestration
+**3. Your data stays local** — Nothing leaves your infrastructure. Built-in PII scrubbing and audit logging. HIPAA/GDPR/SOC2 patterns included.
 
-4. **Reactive** — AI waits for problems
-   → Anticipatory intelligence predicts 30-90 days ahead
+**4. Predictions, not reactions** — Anticipates issues 30-90 days ahead based on patterns in your codebase.
 
-5. **Expensive** — Every query costs the same, tokens wasted re-explaining context
-   → Smart routing + persistent memory: no more re-teaching your AI
-
-**Try it now:**
+### Try it now
 
 ```bash
 pip install empathy-framework
-empathy-memory serve
+empathy-inspect .              # Unified code analysis
+empathy-inspect . --format html  # Beautiful dashboard report
 ```
 
-Two commands. Redis starts, API server runs, memory system ready.
+One command → health score, prioritized findings, GitHub Actions integration via SARIF.
 
-**What's included:**
-- Code Health Assistant with auto-fix (`empathy health --fix`)
-- Pattern-based code review (`empathy review`)
-- 30+ production wizards (security, performance, testing, docs)
-- Agent toolkit to build your own
-- Healthcare suite with HIPAA compliance
-- Works with Claude, GPT-4, Ollama
+### What's included
 
-**Fair Source licensed:**
-- Free for students, educators, teams ≤5
-- $99/dev/year commercial
-- Auto-converts to Apache 2.0 in 2029
+- **Code Inspection Pipeline** — Lint, security, tech debt, test quality in parallel
+- **Memory-Enhanced Debugging** — "This looks like a bug we fixed before"
+- **30+ Production Wizards** — Security, performance, testing, docs
+- **Works with Claude, GPT-4, Ollama** — Or your own models
 
-**I'd love your feedback on:**
-1. What memory/coordination features would help your team?
-2. How should this integrate with your workflow?
-3. What wizards should we add next?
+### Pricing
 
-Happy to answer any questions!
+- **Free** for students, educators, teams ≤5
+- **$99/dev/year** commercial
+- **Apache 2.0** auto-conversion in 2029
+
+### I'd love feedback on:
+
+1. What patterns should the memory system learn from your codebase?
+2. CI/CD integration priorities? (GitHub Actions works now, GitLab/Azure next?)
+3. What wizards should we build next?
+
+Happy to answer questions! 🚀
 
 ---
 

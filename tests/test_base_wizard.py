@@ -13,7 +13,12 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from coach_wizards.base_wizard import BaseCoachWizard, WizardIssue, WizardPrediction, WizardResult
+from coach_wizards.base_wizard import (
+    BaseCoachWizard,
+    WizardIssue,
+    WizardPrediction,
+    WizardResult,
+)
 
 
 class ConcreteWizard(BaseCoachWizard):

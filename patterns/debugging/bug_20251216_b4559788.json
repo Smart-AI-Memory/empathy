@@ -9,5 +9,6 @@
   "fix_code": null,
   "resolution_time_minutes": 0,
   "resolved_by": "",
-  "status": "investigating"
+  "status": "investigating",
+  "demo": true
 }

@@ -5,6 +5,93 @@ All notable changes to the Empathy Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.10] - 2025-12-18
+
+### Added
+
+**Dev Wizards Web Backend**
+- New FastAPI backend for wizards.smartaimemory.com deployment
+- API endpoints for Memory-Enhanced Debugging, Security Analysis, Code Review, and Code Inspection
+- Interactive dashboard UI with demo capabilities
+- Railway deployment configuration (railway.toml, nixpacks.toml)
+
+### Fixed
+- PyPI documentation now reflects current README and features
+
+---
+
+## [2.2.9] - 2025-12-18
+
+### Added
+
+**Code Inspection Pipeline**
+- **`empathy-inspect` CLI** - Unified code inspection command combining lint, security, tests, and tech debt analysis
+  - `empathy-inspect .` - Inspect current directory with default settings
+  - `empathy-inspect . --format sarif` - Output SARIF 2.1.0 for GitHub Actions/GitLab/Azure DevOps
+  - `empathy-inspect . --format html` - Generate visual dashboard report
+  - `empathy-inspect . --staged` - Inspect only git-staged changes
+  - `empathy-inspect . --fix` - Auto-fix safe issues (formatting, imports)
+
+**SARIF 2.1.0 Output Format**
+- Industry-standard static analysis format for CI/CD integration
+- GitHub code scanning annotations on pull requests
+- Compatible with GitLab, Azure DevOps, Bitbucket, and other SARIF-compliant platforms
+- Proper severity mapping: critical/high → error, medium → warning, low/info → note
+
+**HTML Dashboard Reports**
+- Professional visual reports for stakeholders
+- Color-coded health score gauge (green/yellow/red)
+- Six category breakdown cards (Lint, Security, Tests, Tech Debt, Code Review, Debugging)
+- Sortable findings table with severity and priority
+- Prioritized recommendations section
+- Export-ready for sprint reviews and security audits
+
+**Baseline/Suppression System**
+- **Inline suppressions** for surgical control:
+  - `# empathy:disable RULE reason="..."` - Suppress for current line
+  - `# empathy:disable-next-line RULE` - Suppress for next line
+  - `# empathy:disable-file RULE` - Suppress for entire file
+- **JSON baseline file** (`.empathy-baseline.json`) for project-wide policies:
+  - Rule-level suppressions with reasons
+  - File-level suppressions for legacy code
+  - TTL-based expiring suppressions with `expires_at`
+- **CLI commands**:
+  - `--no-baseline` - Show all findings (for audits)
+  - `--baseline-init` - Create empty baseline file
+  - `--baseline-cleanup` - Remove expired suppressions
+
+**Language-Aware Code Review**
+- Integration with CrossLanguagePatternLibrary for intelligent pattern matching
+- Language-specific analysis for Python, JavaScript/TypeScript, Rust, Go, Java
+- Cross-language insights: "This Python None check is like the JavaScript undefined bug you fixed"
+- No false positives from applying wrong-language patterns
+
+### Changed
+
+**Five-Phase Pipeline Architecture**
+1. **Static Analysis** (Parallel) - Lint, security, tech debt, test quality run simultaneously
+2. **Dynamic Analysis** (Conditional) - Code review, debugging only if Phase 1 finds triggers
+3. **Cross-Analysis** (Sequential) - Correlate findings across tools for priority boosting
+4. **Learning** (Optional) - Extract patterns for future inspections
+5. **Reporting** (Always) - Unified health score and recommendations
+
+**VCS Flexibility**
+- Optimized for GitHub but works with GitLab, Bitbucket, Azure DevOps, self-hosted Git
+- Git-native pattern storage in `patterns/` directory
+- SARIF output compatible with any CI/CD platform supporting the standard
+
+### Fixed
+- Marked 5 demo bug patterns from 2025-12-16 with `demo: true` field
+- Type errors in baseline.py stats dictionary and suppression entry typing
+- Type cast for suppressed count in reporting.py
+
+### Documentation
+- Updated [CLI_GUIDE.md](docs/CLI_GUIDE.md) with full `empathy-inspect` documentation
+- Updated [README.md](README.md) with Code Inspection Pipeline section
+- Created blog post draft: `drafts/blog-code-inspection-pipeline.md`
+
+---
+
 ## [2.2.7] - 2025-12-15
 
 ### Fixed

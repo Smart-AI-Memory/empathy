@@ -10,7 +10,9 @@ import tempfile
 
 import pytest
 
-from empathy_software_plugin.wizards.enhanced_testing_wizard import EnhancedTestingWizard
+from empathy_software_plugin.wizards.enhanced_testing_wizard import (
+    EnhancedTestingWizard,
+)
 
 
 class TestEnhancedTestingWizard:

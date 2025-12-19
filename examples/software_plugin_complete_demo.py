@@ -79,7 +79,9 @@ async def run_complete_analysis():
         print("PHASE 1: TESTING ANALYSIS")
         print("=" * 70)
 
-        from empathy_software_plugin.wizards.enhanced_testing_wizard import EnhancedTestingWizard
+        from empathy_software_plugin.wizards.enhanced_testing_wizard import (
+            EnhancedTestingWizard,
+        )
 
         testing_wizard = EnhancedTestingWizard()
 
@@ -107,7 +109,9 @@ async def run_complete_analysis():
         print("PHASE 2: SECURITY ANALYSIS")
         print("=" * 70)
 
-        from empathy_software_plugin.wizards.security_analysis_wizard import SecurityAnalysisWizard
+        from empathy_software_plugin.wizards.security_analysis_wizard import (
+            SecurityAnalysisWizard,
+        )
 
         security_wizard = SecurityAnalysisWizard()
 

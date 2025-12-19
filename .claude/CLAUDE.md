@@ -386,10 +386,10 @@ result = storage.store_pattern(
 
 ## 📞 Project Contacts
 
-**Security Questions:** security-team@company.com
-**HIPAA Compliance:** hipaa-officer@company.com
-**Code Review:** tech-lead@company.com
-**General:** empathy-framework@company.com
+**Security Questions:** admin@smartaimemory.com
+**HIPAA Compliance:** admin@smartaimemory.com
+**Code Review:** admin@smartaimemory.com
+**General:** admin@smartaimemory.com
 
 ---
 

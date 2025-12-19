@@ -1,0 +1,25 @@
+{
+  "pattern_id": "recurring_FORMAT",
+  "pattern_type": "recurring_finding",
+  "code": "FORMAT",
+  "occurrence_count": 13,
+  "affected_files": [
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/agents/code_inspection/handoffs.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/agents/code_inspection/nodes/cross_analysis.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/agents/code_inspection/state.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/agents/code_inspection/nodes/dynamic_analysis.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/agents/code_inspection/adapters/debugging_adapter.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/agents/code_inspection/nodes/reporting.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/agents/code_inspection/routing.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/agents/code_inspection/adapters/test_quality_adapter.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/agents/code_inspection/adapters/tech_debt_adapter.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/agents/code_inspection/adapters/code_health_adapter.py"
+  ],
+  "severity": "medium",
+  "description": "File needs reformatting",
+  "category": "format",
+  "tool": "code_health",
+  "confidence": 1.0,
+  "stored_at": "2025-12-18T14:16:42.830219",
+  "execution_id": "insp_20251218_141640_218eb55d"
+}

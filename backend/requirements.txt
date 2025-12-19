@@ -6,7 +6,7 @@ uvicorn[standard]==0.34.0
 python-multipart==0.0.20
 
 # Security and authentication
-python-jose[cryptography]==3.4.0
+PyJWT[crypto]>=2.8.0  # Replaces python-jose - uses cryptography backend
 passlib[bcrypt]==1.7.4
 python-dotenv==1.0.0
 

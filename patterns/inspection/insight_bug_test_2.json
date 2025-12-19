@@ -1,0 +1,20 @@
+{
+  "pattern_id": "insight_bug_test_2",
+  "pattern_type": "cross_tool_insight",
+  "insight_type": "bugs_inform_tests",
+  "source_tools": [
+    "memory_debugging",
+    "test_quality"
+  ],
+  "description": "Historical unknown bugs suggest testing gaps",
+  "recommendations": [
+    "Add tests for unknown scenarios in affected files",
+    "Consider edge cases that triggered historical bugs"
+  ],
+  "affected_files": [
+    "src/components/Profile.tsx"
+  ],
+  "confidence": 0.9,
+  "stored_at": "2025-12-18T14:34:47.101151",
+  "execution_id": "insp_20251218_142854_39f9774e"
+}

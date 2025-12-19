@@ -1,0 +1,16 @@
+{
+  "pattern_id": "recurring_F541",
+  "pattern_type": "recurring_finding",
+  "code": "F541",
+  "occurrence_count": 5,
+  "affected_files": [
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/agents/code_inspection/nodes/reporting.py"
+  ],
+  "severity": "high",
+  "description": "f-string without any placeholders",
+  "category": "lint",
+  "tool": "code_health",
+  "confidence": 0.5,
+  "stored_at": "2025-12-18T14:03:03.868558",
+  "execution_id": "insp_20251218_140301_06c77b71"
+}

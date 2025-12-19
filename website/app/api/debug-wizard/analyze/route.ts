@@ -487,11 +487,11 @@ function calculateMemoryBenefit(
 }
 
 /**
- * Generate a unique bug ID
+ * Generate a unique bug ID using cryptographically secure random
  */
 function generateBugId(): string {
   const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-  const hash = Math.random().toString(36).substring(2, 10);
+  const hash = crypto.randomUUID().substring(0, 8);
   return `bug_${date}_${hash}`;
 }
 
@@ -507,7 +507,6 @@ export async function POST(request: Request): Promise<Response> {
       file_path,
       stack_trace,
       line_number,
-      code_snippet: _code_snippet,
       correlate_with_history = true,
       file_contents,
     } = body;

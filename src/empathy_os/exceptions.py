@@ -41,7 +41,7 @@ class PatternNotFoundError(EmpathyFrameworkError):
         - No patterns match query criteria
     """
 
-    def __init__(self, pattern_id: str, message: str = None):
+    def __init__(self, pattern_id: str, message: str | None = None):
         self.pattern_id = pattern_id
         if message is None:
             message = f"Pattern not found: {pattern_id}"
@@ -57,7 +57,7 @@ class TrustThresholdError(EmpathyFrameworkError):
         - Erosion loop detected
     """
 
-    def __init__(self, current_trust: float, required_trust: float, message: str = None):
+    def __init__(self, current_trust: float, required_trust: float, message: str | None = None):
         self.current_trust = current_trust
         self.required_trust = required_trust
         if message is None:
@@ -74,7 +74,7 @@ class ConfidenceThresholdError(EmpathyFrameworkError):
         - Prediction uncertainty too high
     """
 
-    def __init__(self, confidence: float, threshold: float, message: str = None):
+    def __init__(self, confidence: float, threshold: float, message: str | None = None):
         self.confidence = confidence
         self.threshold = threshold
         if message is None:
@@ -92,7 +92,7 @@ class EmpathyLevelError(EmpathyFrameworkError):
         - Cannot regress to lower level
     """
 
-    def __init__(self, level: int, message: str = None):
+    def __init__(self, level: int, message: str | None = None):
         self.level = level
         if message is None:
             message = f"Invalid empathy level: {level}"

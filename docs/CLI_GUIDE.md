@@ -647,6 +647,237 @@ Boolean values can be: `true`, `false`, `1`, `0`, `yes`, `no`
 
 ---
 
+### Code Inspection Pipeline (New in v2.2.9)
+
+The `empathy-inspect` command provides a unified code inspection pipeline that combines multiple static analysis tools with cross-tool intelligence and pattern learning.
+
+#### Basic Usage
+
+```bash
+# Inspect current directory
+empathy-inspect .
+
+# Inspect specific path
+empathy-inspect ./src
+
+# Quick mode (skip slow checks)
+empathy-inspect . --quick
+
+# Verbose output
+empathy-inspect . --verbose
+```
+
+#### Output Formats
+
+```bash
+# Terminal output (default)
+empathy-inspect .
+
+# JSON output
+empathy-inspect . --format json
+
+# Markdown report
+empathy-inspect . --format markdown
+
+# SARIF for GitHub Actions
+empathy-inspect . --format sarif
+
+# HTML dashboard
+empathy-inspect . --format html
+
+# Save report to file
+empathy-inspect . --format html --output report.html
+```
+
+**SARIF Integration (GitHub Actions example):**
+
+SARIF is an industry standard supported by GitHub, GitLab, Azure DevOps, Bitbucket, and other CI/CD platforms. While optimized for GitHub, the same output works with any SARIF-compliant system.
+
+```yaml
+# .github/workflows/code-quality.yml
+- name: Run Empathy Inspect
+  run: empathy-inspect . --format sarif --output results.sarif
+
+- name: Upload SARIF
+  uses: github/codeql-action/upload-sarif@v2
+  with:
+    sarif_file: results.sarif
+```
+
+#### Target Modes
+
+```bash
+# Inspect all files (default)
+empathy-inspect .
+
+# Only staged git changes
+empathy-inspect . --staged
+
+# Only changed files vs HEAD
+empathy-inspect . --changed
+
+# Exclude patterns
+empathy-inspect . --exclude "**/*.test.py" --exclude "**/migrations/*"
+```
+
+#### Auto-Fix
+
+```bash
+# Auto-fix safe issues (formatting, imports)
+empathy-inspect . --fix
+```
+
+#### Baseline & Suppression System
+
+Manage false positives and known issues without cluttering your codebase:
+
+```bash
+# Initialize baseline file
+empathy-inspect . --baseline-init
+
+# Run inspection (baseline filtering enabled by default)
+empathy-inspect .
+
+# Show all findings including suppressed
+empathy-inspect . --no-baseline
+
+# Clean up expired suppressions
+empathy-inspect . --baseline-cleanup
+```
+
+**Inline Suppressions:**
+
+```python
+# Suppress a specific rule on this line
+eval(user_input)  # empathy:disable S307 reason="Input is validated"
+
+# Suppress a rule on the next line
+# empathy:disable-next-line W291 reason="Intentional whitespace"
+result = calculate()
+
+# Suppress a rule for entire file (must be in first 10 lines)
+# empathy:disable-file B001 reason="Legacy code, refactoring planned"
+```
+
+**Baseline File (`.empathy-baseline.json`):**
+
+```json
+{
+  "version": "1.0",
+  "suppressions": {
+    "project": [
+      {
+        "rule_code": "W291",
+        "reason": "Formatting handled by pre-commit",
+        "expires_at": "2025-03-01T00:00:00"
+      }
+    ],
+    "files": {
+      "src/legacy/old_module.py": [
+        {
+          "rule_code": "B001",
+          "reason": "Legacy code, will refactor in Q2"
+        }
+      ]
+    },
+    "rules": {
+      "E501": {
+        "reason": "Line length handled by formatter"
+      }
+    }
+  }
+}
+```
+
+#### Parallel Execution
+
+```bash
+# Run Phase 1 tools in parallel (default)
+empathy-inspect .
+
+# Disable parallel execution
+empathy-inspect . --no-parallel
+```
+
+#### Pattern Learning
+
+```bash
+# Enable pattern learning (default)
+empathy-inspect .
+
+# Disable pattern learning
+empathy-inspect . --no-learning
+```
+
+#### Example Output
+
+```
+============================================================
+  CODE INSPECTION REPORT
+============================================================
+
+  Health Score: 87/100 (B) - PASS
+
+  CATEGORY SCORES:
+    Lint               92/100  [PASS]
+    Security           85/100  [PASS]
+    Tests              88/100  [PASS]
+    Debt               82/100  [WARN]
+    Review             90/100  [PASS]
+
+  FINDINGS: 12 total (3 suppressed)
+    HIGH       1
+    MEDIUM     8
+    LOW        3
+
+  BLOCKING ISSUES (1):
+    [HIGH] src/api/client.py
+      Potential SQL injection in query parameter...
+
+  RECOMMENDATIONS:
+    1. [HIGH] Address 1 high-severity findings
+    2. [LOW] Auto-fix 5 issues with `empathy-inspect --fix`
+
+============================================================
+  Duration: 2341ms
+  Execution ID: insp_20251218_143022_a1b2c3d4
+============================================================
+```
+
+#### Pipeline Phases
+
+The inspection pipeline runs in 5 phases:
+
+| Phase | Tools | Mode |
+|-------|-------|------|
+| 1. Static Analysis | Lint, Security, Tech Debt, Test Quality | Parallel |
+| 2. Dynamic Analysis | Code Review, Advanced Debugging | Conditional |
+| 3. Cross-Analysis | Correlate findings across tools | Sequential |
+| 4. Learning | Extract patterns for future use | Optional |
+| 5. Reporting | Generate unified report | Always |
+
+#### Language-Aware Analysis
+
+The code review automatically detects file languages and applies appropriate patterns:
+
+| Extension | Language |
+|-----------|----------|
+| `.py` | Python |
+| `.js`, `.jsx` | JavaScript |
+| `.ts`, `.tsx` | TypeScript |
+| `.rs` | Rust |
+| `.go` | Go |
+| `.java` | Java |
+| `.rb` | Ruby |
+| `.c`, `.h` | C |
+| `.cpp`, `.hpp` | C++ |
+| `.cs` | C# |
+| `.swift` | Swift |
+| `.php` | PHP |
+| `.kt` | Kotlin |
+
+---
+
 ## Getting Help
 
 For more information on any command:

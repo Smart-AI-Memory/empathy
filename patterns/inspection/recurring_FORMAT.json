@@ -1,0 +1,23 @@
+{
+  "pattern_id": "recurring_FORMAT",
+  "pattern_type": "recurring_finding",
+  "code": "FORMAT",
+  "occurrence_count": 8,
+  "affected_files": [
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/agents/code_inspection/adapters/code_review_adapter.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/examples/ai_wizards/tests/test_ai_wizards.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/tests/test_all_wizards.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/tests/test_book_production/test_learning.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/tests/test_security_scan.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/empathy_software_plugin/cli.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/tests/test_wizard_site_comprehensive.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/empathy_software_plugin/wizards/code_review_wizard.py"
+  ],
+  "severity": "medium",
+  "description": "File needs reformatting",
+  "category": "format",
+  "tool": "code_health",
+  "confidence": 0.8,
+  "stored_at": "2025-12-18T14:34:47.099731",
+  "execution_id": "insp_20251218_142854_39f9774e"
+}

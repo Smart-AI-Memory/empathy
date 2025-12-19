@@ -1,0 +1,14 @@
+# Empathy Dev Wizards Backend
+# Railway deployment dependencies
+
+# Web framework
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.0.0
+
+# File handling
+python-multipart>=0.0.9
+aiofiles>=24.0.0
+
+# Empathy Framework with all features
+empathy-framework[full]>=2.2.9

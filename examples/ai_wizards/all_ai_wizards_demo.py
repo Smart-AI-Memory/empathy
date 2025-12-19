@@ -32,17 +32,33 @@ from pathlib import Path
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from empathy_software_plugin.wizards.advanced_debugging_wizard import AdvancedDebuggingWizard
-from empathy_software_plugin.wizards.agent_orchestration_wizard import AgentOrchestrationWizard
-from empathy_software_plugin.wizards.ai_collaboration_wizard import AICollaborationWizard
+from empathy_software_plugin.wizards.advanced_debugging_wizard import (
+    AdvancedDebuggingWizard,
+)
+from empathy_software_plugin.wizards.agent_orchestration_wizard import (
+    AgentOrchestrationWizard,
+)
+from empathy_software_plugin.wizards.ai_collaboration_wizard import (
+    AICollaborationWizard,
+)
 from empathy_software_plugin.wizards.ai_context_wizard import AIContextWizard
-from empathy_software_plugin.wizards.ai_documentation_wizard import AIDocumentationWizard
-from empathy_software_plugin.wizards.enhanced_testing_wizard import EnhancedTestingWizard
+from empathy_software_plugin.wizards.ai_documentation_wizard import (
+    AIDocumentationWizard,
+)
+from empathy_software_plugin.wizards.enhanced_testing_wizard import (
+    EnhancedTestingWizard,
+)
 from empathy_software_plugin.wizards.multi_model_wizard import MultiModelWizard
-from empathy_software_plugin.wizards.performance_profiling_wizard import PerformanceProfilingWizard
-from empathy_software_plugin.wizards.prompt_engineering_wizard import PromptEngineeringWizard
+from empathy_software_plugin.wizards.performance_profiling_wizard import (
+    PerformanceProfilingWizard,
+)
+from empathy_software_plugin.wizards.prompt_engineering_wizard import (
+    PromptEngineeringWizard,
+)
 from empathy_software_plugin.wizards.rag_pattern_wizard import RAGPatternWizard
-from empathy_software_plugin.wizards.security_analysis_wizard import SecurityAnalysisWizard
+from empathy_software_plugin.wizards.security_analysis_wizard import (
+    SecurityAnalysisWizard,
+)
 from empathy_software_plugin.wizards.testing_wizard import TestingWizard
 
 
