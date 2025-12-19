@@ -16,7 +16,10 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-import httpx
+import pytest
+
+# Skip entire module if httpx is not available
+httpx = pytest.importorskip("httpx", reason="httpx required for wizard output tests")
 
 # Output directory
 OUTPUT_DIR = Path(__file__).parent / "wizard_outputs"
