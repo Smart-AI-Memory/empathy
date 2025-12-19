@@ -41,7 +41,9 @@ from coach_wizards.testing_wizard import TestingWizard  # noqa: E402
 # Import wizard implementations
 from empathy_llm_toolkit import EmpathyLLM  # noqa: E402
 from empathy_llm_toolkit.wizards.accounting_wizard import AccountingWizard  # noqa: E402
-from empathy_llm_toolkit.wizards.customer_support_wizard import CustomerSupportWizard  # noqa: E402
+from empathy_llm_toolkit.wizards.customer_support_wizard import (  # noqa: E402
+    CustomerSupportWizard,
+)
 from empathy_llm_toolkit.wizards.education_wizard import EducationWizard  # noqa: E402
 from empathy_llm_toolkit.wizards.finance_wizard import FinanceWizard  # noqa: E402
 from empathy_llm_toolkit.wizards.government_wizard import GovernmentWizard  # noqa: E402
@@ -52,8 +54,12 @@ from empathy_llm_toolkit.wizards.hr_wizard import HRWizard  # noqa: E402
 from empathy_llm_toolkit.wizards.insurance_wizard import InsuranceWizard  # noqa: E402
 from empathy_llm_toolkit.wizards.legal_wizard import LegalWizard  # noqa: E402
 from empathy_llm_toolkit.wizards.logistics_wizard import LogisticsWizard  # noqa: E402
-from empathy_llm_toolkit.wizards.manufacturing_wizard import ManufacturingWizard  # noqa: E402
-from empathy_llm_toolkit.wizards.real_estate_wizard import RealEstateWizard  # noqa: E402
+from empathy_llm_toolkit.wizards.manufacturing_wizard import (  # noqa: E402
+    ManufacturingWizard,
+)
+from empathy_llm_toolkit.wizards.real_estate_wizard import (  # noqa: E402
+    RealEstateWizard,
+)
 from empathy_llm_toolkit.wizards.research_wizard import ResearchWizard  # noqa: E402
 from empathy_llm_toolkit.wizards.retail_wizard import RetailWizard  # noqa: E402
 from empathy_llm_toolkit.wizards.sales_wizard import SalesWizard  # noqa: E402
@@ -67,7 +73,9 @@ from empathy_software_plugin.wizards.agent_orchestration_wizard import (  # noqa
 from empathy_software_plugin.wizards.ai_collaboration_wizard import (  # noqa: E402
     AICollaborationWizard,
 )
-from empathy_software_plugin.wizards.ai_context_wizard import AIContextWindowWizard  # noqa: E402
+from empathy_software_plugin.wizards.ai_context_wizard import (  # noqa: E402
+    AIContextWindowWizard,
+)
 from empathy_software_plugin.wizards.ai_documentation_wizard import (  # noqa: E402
     AIDocumentationWizard,
 )
@@ -76,14 +84,18 @@ from empathy_software_plugin.wizards.enhanced_testing_wizard import (  # noqa: E
 )
 
 # AI wizards (12 total)
-from empathy_software_plugin.wizards.multi_model_wizard import MultiModelWizard  # noqa: E402
+from empathy_software_plugin.wizards.multi_model_wizard import (  # noqa: E402
+    MultiModelWizard,
+)
 from empathy_software_plugin.wizards.performance_profiling_wizard import (  # noqa: E402
     PerformanceProfilingWizard as AIPerformanceWizard,
 )
 from empathy_software_plugin.wizards.prompt_engineering_wizard import (  # noqa: E402
     PromptEngineeringWizard,
 )
-from empathy_software_plugin.wizards.rag_pattern_wizard import RAGPatternWizard  # noqa: E402
+from empathy_software_plugin.wizards.rag_pattern_wizard import (  # noqa: E402
+    RAGPatternWizard,
+)
 from empathy_software_plugin.wizards.security_analysis_wizard import (  # noqa: E402
     SecurityAnalysisWizard,
 )

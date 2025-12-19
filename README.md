@@ -19,6 +19,7 @@ empathy-memory serve
 - **Dual-layer architecture** — Redis for millisecond short-term ops, pattern storage for long-term knowledge
 - **AI that learns across sessions** — Patterns discovered today inform decisions tomorrow
 - **Cross-team knowledge sharing** — What one agent learns, all agents can use
+- **Git-native storage** — Optimized for GitHub, works with any VCS (GitLab, Bitbucket, Azure DevOps, self-hosted)
 
 ### Enterprise-Ready
 - **Your data stays local** — Nothing leaves your infrastructure
@@ -146,6 +147,48 @@ empathy-memory patterns
 The API server runs at `http://localhost:8765` with endpoints for status, stats, patterns, and Redis control.
 
 **VS Code Extension:** A visual panel for monitoring memory is available in `vscode-memory-panel/`.
+
+## Code Inspection Pipeline (New in v2.2.9)
+
+Unified code quality with cross-tool intelligence:
+
+```bash
+# Run inspection
+empathy-inspect .
+
+# Multiple output formats
+empathy-inspect . --format json       # For CI/CD
+empathy-inspect . --format sarif      # For GitHub Actions
+empathy-inspect . --format html       # Visual dashboard
+
+# Filter targets
+empathy-inspect . --staged            # Only staged changes
+empathy-inspect . --changed           # Only modified files
+
+# Auto-fix safe issues
+empathy-inspect . --fix
+
+# Suppress false positives
+empathy-inspect . --baseline-init     # Create baseline file
+empathy-inspect . --no-baseline       # Show all findings
+```
+
+**Pipeline phases:**
+1. Static Analysis (parallel) — Lint, security, debt, test quality
+2. Dynamic Analysis (conditional) — Code review, debugging
+3. Cross-Analysis — Correlate findings across tools
+4. Learning — Extract patterns for future use
+5. Reporting — Unified health score
+
+**GitHub Actions SARIF integration:**
+```yaml
+- run: empathy-inspect . --format sarif --output results.sarif
+- uses: github/codeql-action/upload-sarif@v2
+  with:
+    sarif_file: results.sarif
+```
+
+[Full documentation →](docs/CLI_GUIDE.md#code-inspection-pipeline-new-in-v229)
 
 ## License
 

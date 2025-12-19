@@ -1,0 +1,16 @@
+{
+  "pattern_id": "recurring_bug_20250822_def456",
+  "pattern_type": "recurring_finding",
+  "code": "bug_20250822_def456",
+  "occurrence_count": 710,
+  "affected_files": [
+    ""
+  ],
+  "severity": "medium",
+  "description": "Potential null/undefined reference (historical: bug_20250822_def456)",
+  "category": "review",
+  "tool": "code_review",
+  "confidence": 1.0,
+  "stored_at": "2025-12-18T14:34:47.100664",
+  "execution_id": "insp_20251218_142854_39f9774e"
+}

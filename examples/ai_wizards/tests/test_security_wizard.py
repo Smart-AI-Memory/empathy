@@ -10,7 +10,9 @@ import tempfile
 
 import pytest
 
-from empathy_software_plugin.wizards.security_analysis_wizard import SecurityAnalysisWizard
+from empathy_software_plugin.wizards.security_analysis_wizard import (
+    SecurityAnalysisWizard,
+)
 
 
 class TestSecurityAnalysisWizard:
@@ -509,7 +511,9 @@ class TestOWASPPatternDetector:
     @pytest.mark.asyncio
     async def test_sql_injection_patterns(self):
         """Test SQL injection pattern detection"""
-        from empathy_software_plugin.wizards.security.owasp_patterns import OWASPPatternDetector
+        from empathy_software_plugin.wizards.security.owasp_patterns import (
+            OWASPPatternDetector,
+        )
 
         detector = OWASPPatternDetector()
 
@@ -532,7 +536,9 @@ def vulnerable2(search):
     @pytest.mark.asyncio
     async def test_hardcoded_secret_patterns(self):
         """Test hardcoded secret detection"""
-        from empathy_software_plugin.wizards.security.owasp_patterns import OWASPPatternDetector
+        from empathy_software_plugin.wizards.security.owasp_patterns import (
+            OWASPPatternDetector,
+        )
 
         detector = OWASPPatternDetector()
 
@@ -559,7 +565,9 @@ class TestExploitAnalyzer:
     @pytest.mark.asyncio
     async def test_exploit_likelihood_calculation(self):
         """Test exploit likelihood calculation"""
-        from empathy_software_plugin.wizards.security.exploit_analyzer import ExploitAnalyzer
+        from empathy_software_plugin.wizards.security.exploit_analyzer import (
+            ExploitAnalyzer,
+        )
 
         analyzer = ExploitAnalyzer()
 
@@ -587,7 +595,9 @@ class TestExploitAnalyzer:
     @pytest.mark.asyncio
     async def test_internal_vs_public_accessibility(self):
         """Test accessibility impact on exploitability"""
-        from empathy_software_plugin.wizards.security.exploit_analyzer import ExploitAnalyzer
+        from empathy_software_plugin.wizards.security.exploit_analyzer import (
+            ExploitAnalyzer,
+        )
 
         analyzer = ExploitAnalyzer()
 

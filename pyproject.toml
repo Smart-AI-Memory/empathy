@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "empathy-framework"
-version = "2.2.7"
-description = "AI collaboration framework with persistent memory, anticipatory intelligence, and multi-agent orchestration"
+version = "2.2.10"
+description = "AI collaboration framework with persistent memory, anticipatory intelligence, code inspection, and multi-agent orchestration"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.10"
 license = {file = "LICENSE"}
@@ -24,7 +24,13 @@ keywords = [
     "llm",
     "claude",
     "memdocs",
-    "level-5-ai"
+    "level-5-ai",
+    "code-inspection",
+    "static-analysis",
+    "code-quality",
+    "sarif",
+    "github-actions",
+    "developer-tools"
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -82,8 +88,10 @@ software = [
 
 # Backend API server (optional)
 backend = [
-    "fastapi>=0.100.0,<1.0.0",
+    "fastapi>=0.109.1,<1.0.0",  # CVE fix: PYSEC-2024-38
     "uvicorn>=0.20.0,<1.0.0",
+    "starlette>=0.40.0,<1.0.0",  # CVE fix: GHSA-f96h, GHSA-2c2j
+    "PyJWT[crypto]>=2.8.0",  # JWT auth - uses cryptography (no ecdsa CVE)
 ]
 
 # LSP server for editor integration (optional)
@@ -111,7 +119,7 @@ dev = [
     "pytest>=7.0,<9.0",
     "pytest-asyncio>=0.21,<1.0",
     "pytest-cov>=4.0,<5.0",
-    "black>=23.0,<25.0",
+    "black>=24.3.0,<26.0",  # CVE fix: PYSEC-2024-48
     "mypy>=1.0,<2.0",
     "ruff>=0.1,<1.0",
     "coverage>=7.0,<8.0",
@@ -150,8 +158,9 @@ all = [
     "python-docx>=0.8.11,<1.0.0",
     "pyyaml>=6.0,<7.0",
     # Backend
-    "fastapi>=0.100.0,<1.0.0",
+    "fastapi>=0.109.1,<1.0.0",  # CVE fix
     "uvicorn>=0.20.0,<1.0.0",
+    "starlette>=0.40.0,<1.0.0",  # CVE fix
     # LSP
     "pygls>=1.0.0,<2.0.0",
     "lsprotocol>=2023.0.0,<2024.0.0",
@@ -167,18 +176,24 @@ all = [
     "pytest>=7.0,<9.0",
     "pytest-asyncio>=0.21,<1.0",
     "pytest-cov>=4.0,<5.0",
-    "black>=23.0,<25.0",
+    "black>=24.3.0,<26.0",  # CVE fix
     "mypy>=1.0,<2.0",
     "ruff>=0.1,<1.0",
     "coverage>=7.0,<8.0",
     "bandit>=1.7,<2.0",
     "pre-commit>=3.0,<4.0",
+    # Security constraint overrides for transitive dependencies
+    "urllib3>=2.3.0,<3.0.0",  # CVE fix: GHSA-gm62, GHSA-2xpw
+    "aiohttp>=3.10.0,<4.0.0",  # CVE fix: multiple CVEs
+    "filelock>=3.16.0,<4.0.0",  # CVE fix: GHSA-w853
 ]
 
 [project.scripts]
 empathy = "empathy_os.cli:main"
 empathy-scan = "empathy_software_plugin.cli:scan_command"
 empathy-memory = "empathy_os.memory.control_panel:main"
+empathy-inspect = "empathy_software_plugin.cli.inspect:main"
+empathy-sync-claude = "empathy_llm_toolkit.cli.sync_claude:main"
 
 [project.urls]
 Homepage = "https://www.smartaimemory.com"

@@ -13,7 +13,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from .emergence import EmergenceDetector
 from .exceptions import ValidationError
@@ -240,7 +240,7 @@ class EmpathyOS:
         """
         return self.memory.recall_pattern(pattern_id)
 
-    def stash(self, key: str, value: any, ttl_seconds: int = 3600) -> bool:
+    def stash(self, key: str, value: Any, ttl_seconds: int = 3600) -> bool:
         """
         Store data in short-term memory with TTL.
 
@@ -256,7 +256,7 @@ class EmpathyOS:
         """
         return self.memory.stash(key, value, ttl_seconds)
 
-    def retrieve(self, key: str) -> any:
+    def retrieve(self, key: str) -> Any:
         """
         Retrieve data from short-term memory.
 

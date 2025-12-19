@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -100,11 +101,13 @@ export default async function BlogPostPage({ params }: PageProps) {
 
               {/* Cover Image */}
               {post.coverImage && (
-                <div className="mb-12">
-                  <img
+                <div className="mb-12 relative aspect-video">
+                  <Image
                     src={post.coverImage}
                     alt={post.title}
-                    className="w-full rounded-lg"
+                    fill
+                    className="object-cover rounded-lg"
+                    priority
                   />
                 </div>
               )}

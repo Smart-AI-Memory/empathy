@@ -581,7 +581,10 @@ class TestPipelineIntegration:
 
     def test_pipeline_with_learning_config(self):
         """Test pipeline initialization with learning config"""
-        from agents.book_production.pipeline import BookProductionPipeline, PipelineConfig
+        from agents.book_production.pipeline import (
+            BookProductionPipeline,
+            PipelineConfig,
+        )
 
         config = PipelineConfig(
             enable_sbar_handoffs=True,
@@ -600,7 +603,10 @@ class TestPipelineIntegration:
 
     def test_pipeline_without_learning(self):
         """Test pipeline with learning system disabled"""
-        from agents.book_production.pipeline import BookProductionPipeline, PipelineConfig
+        from agents.book_production.pipeline import (
+            BookProductionPipeline,
+            PipelineConfig,
+        )
 
         config = PipelineConfig(
             enable_sbar_handoffs=False,

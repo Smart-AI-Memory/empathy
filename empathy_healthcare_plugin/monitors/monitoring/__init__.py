@@ -18,7 +18,12 @@ from .protocol_loader import (
     ProtocolLoader,
     load_protocol,
 )
-from .sensor_parsers import VitalSignReading, VitalSignType, normalize_vitals, parse_sensor_data
+from .sensor_parsers import (
+    VitalSignReading,
+    VitalSignType,
+    normalize_vitals,
+    parse_sensor_data,
+)
 from .trajectory_analyzer import TrajectoryAnalyzer, TrajectoryPrediction, VitalTrend
 
 __all__ = [

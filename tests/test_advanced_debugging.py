@@ -9,7 +9,9 @@ import json
 
 import pytest
 
-from empathy_software_plugin.wizards.advanced_debugging_wizard import AdvancedDebuggingWizard
+from empathy_software_plugin.wizards.advanced_debugging_wizard import (
+    AdvancedDebuggingWizard,
+)
 from empathy_software_plugin.wizards.debugging import (
     BugRisk,
     BugRiskAnalyzer,

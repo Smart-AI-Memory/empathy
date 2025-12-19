@@ -1,0 +1,18 @@
+{
+  "pattern_id": "recurring_B112",
+  "pattern_type": "recurring_finding",
+  "code": "B112",
+  "occurrence_count": 3,
+  "affected_files": [
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/agents/code_inspection/adapters/security_adapter.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/agents/code_inspection/adapters/tech_debt_adapter.py",
+    "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/agents/code_inspection/adapters/test_quality_adapter.py"
+  ],
+  "severity": "medium",
+  "description": "Try, Except, Continue detected.",
+  "category": "security",
+  "tool": "code_health",
+  "confidence": 0.3,
+  "stored_at": "2025-12-18T14:56:09.532796",
+  "execution_id": "insp_20251218_145600_e1ab97e6"
+}

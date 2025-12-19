@@ -532,9 +532,9 @@ export PYTHONPATH=/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src:
 
 ## Support
 
-- **Documentation**: http://localhost:8000/docs
-- **Issues**: GitHub repository
-- **Email**: empathy-framework@company.com
+- **Documentation**: https://smartaimemory.com/docs
+- **Issues**: https://github.com/Smart-AI-Memory/empathy-framework/issues
+- **Email**: admin@smartaimemory.com
 
 ## License
 

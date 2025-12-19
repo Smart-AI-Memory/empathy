@@ -20,17 +20,20 @@ Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
-from .base import AgentConfig, BaseAgent, MemDocsConfig, OpusAgent, RedisConfig, SonnetAgent
+from .base import (
+    AgentConfig,
+    BaseAgent,
+    MemDocsConfig,
+    OpusAgent,
+    RedisConfig,
+    SonnetAgent,
+)
 from .editor_agent import EditorAgent
-from .learning import (
-    # Pattern Extraction
+from .learning import (  # Pattern Extraction; Feedback Loop; Quality Gap Detection; SBAR Handoffs
     ExtractedPattern,
-    # Feedback Loop
     FeedbackEntry,
     FeedbackLoop,
-    # Quality Gap Detection
     GapSeverity,
-    # SBAR Handoffs
     HandoffType,
     PatternExtractor,
     QualityGap,

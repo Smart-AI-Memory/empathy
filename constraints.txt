@@ -1,0 +1,18 @@
+# Security Constraints File
+# Usage: pip install -c constraints.txt -e .[all]
+#
+# This file enforces minimum secure versions for transitive dependencies
+# that have known CVEs. Updated: 2025-12-18
+
+# Direct CVE fixes
+aiohttp>=3.10.0          # CVE: PYSEC-2024-24, PYSEC-2024-26, GHSA-7gpw, GHSA-5m98, GHSA-8495, GHSA-9548
+black>=24.3.0            # CVE: PYSEC-2024-48
+fastapi>=0.109.1         # CVE: PYSEC-2024-38
+starlette>=0.40.0        # CVE: GHSA-f96h, GHSA-2c2j
+filelock>=3.16.0         # CVE: GHSA-w853-jp5j-5j7f
+urllib3>=2.3.0           # CVE: GHSA-gm62, GHSA-2xpw
+
+# JWT - Use PyJWT with cryptography backend (replaces python-jose + ecdsa)
+# This eliminates the ecdsa CVE (GHSA-wj6h-64fc-37mp) by not using ecdsa at all
+PyJWT[crypto]>=2.8.0     # Secure JWT library using cryptography
+cryptography>=42.0.0     # Well-audited crypto library

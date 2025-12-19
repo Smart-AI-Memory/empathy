@@ -1,0 +1,16 @@
+{
+  "pattern_id": "recurring_TODO",
+  "pattern_type": "recurring_finding",
+  "code": "TODO",
+  "occurrence_count": 20,
+  "affected_files": [
+    ""
+  ],
+  "severity": "medium",
+  "description": "# Use temporary directory for test logs",
+  "category": "debt",
+  "tool": "tech_debt",
+  "confidence": 1.0,
+  "stored_at": "2025-12-18T14:34:47.100025",
+  "execution_id": "insp_20251218_142854_39f9774e"
+}

@@ -90,7 +90,9 @@ async def demo_basic_analysis():
     print("DEMO 1: Basic Linter Analysis")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.advanced_debugging_wizard import AdvancedDebuggingWizard
+    from empathy_software_plugin.wizards.advanced_debugging_wizard import (
+        AdvancedDebuggingWizard,
+    )
 
     wizard = AdvancedDebuggingWizard()
 
@@ -126,7 +128,9 @@ async def demo_risk_analysis():
     print("DEMO 2: Level 4 - Risk Analysis & Predictions")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.advanced_debugging_wizard import AdvancedDebuggingWizard
+    from empathy_software_plugin.wizards.advanced_debugging_wizard import (
+        AdvancedDebuggingWizard,
+    )
 
     wizard = AdvancedDebuggingWizard()
 
@@ -164,7 +168,9 @@ async def demo_cross_language_patterns():
     print("DEMO 3: Level 5 - Cross-Language Pattern Learning")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.debugging.language_patterns import get_pattern_library
+    from empathy_software_plugin.wizards.debugging.language_patterns import (
+        get_pattern_library,
+    )
 
     pattern_lib = get_pattern_library()
 
@@ -200,7 +206,9 @@ async def demo_fixability_analysis():
     print("DEMO 4: Fixability Analysis")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.advanced_debugging_wizard import AdvancedDebuggingWizard
+    from empathy_software_plugin.wizards.advanced_debugging_wizard import (
+        AdvancedDebuggingWizard,
+    )
 
     wizard = AdvancedDebuggingWizard()
 
@@ -230,7 +238,9 @@ async def demo_complete_workflow():
     print("DEMO 5: Complete Workflow (Dry Run)")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.advanced_debugging_wizard import AdvancedDebuggingWizard
+    from empathy_software_plugin.wizards.advanced_debugging_wizard import (
+        AdvancedDebuggingWizard,
+    )
 
     wizard = AdvancedDebuggingWizard()
 

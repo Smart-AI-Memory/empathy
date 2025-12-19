@@ -107,7 +107,9 @@ class CodeAnalysisWizard:
 
         # Check analyzer module
         try:
-            from services.analyzers.multi_layer_analyzer import MultiLayerAnalyzer  # noqa: F401
+            from services.analyzers.multi_layer_analyzer import (  # noqa: F401
+                MultiLayerAnalyzer,
+            )
 
             self.print_success("Multi-layer analyzer available")
         except ImportError:

@@ -10,7 +10,12 @@ Licensed under Fair Source 0.9
 import pytest
 
 from examples.coach import Coach, WizardTask
-from examples.coach.wizards import APIWizard, ComplianceWizard, DatabaseWizard, PerformanceWizard
+from examples.coach.wizards import (
+    APIWizard,
+    ComplianceWizard,
+    DatabaseWizard,
+    PerformanceWizard,
+)
 
 
 class TestNewWizardRouting:

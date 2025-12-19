@@ -42,7 +42,7 @@ Empathy uses a three-tier memory system, each optimized for different use cases:
 
 **What it is:** Git-based persistent storage for patterns, decisions, and context that should survive across sessions, projects, and even team members.
 
-**Where it lives:** Your repository. Your infrastructure. Version-controlled alongside your code.
+**Where it lives:** Your repository. Your infrastructure. Version-controlled alongside your code. While optimized for GitHub (where most teams host their code), MemDocs works with any Git-compatible system—GitLab, Bitbucket, Azure DevOps, or self-hosted Git servers.
 
 **Key properties:**
 - **User-controlled** - You decide what gets stored

@@ -129,7 +129,7 @@ def render_sidebar():
         )
 
         st.markdown("---")
-        st.markdown("*Empathy Framework v2.2.7*\n\n" "Copyright 2025 Smart AI Memory, LLC")
+        st.markdown("*Empathy Framework v2.2.7*\n\nCopyright 2025 Smart AI Memory, LLC")
 
         return deployment_mode, (
             pattern_path if deployment_mode == "Local" else "./patterns/debugging"
@@ -268,7 +268,7 @@ def render_results(results: dict):
                 cause_text = cause.get("cause", "Unknown")
                 check_text = cause.get("check", "")
                 st.markdown(
-                    f"- **{cause_text}** ({likelihood:.0%} likelihood)\n" f"  - Check: {check_text}"
+                    f"- **{cause_text}** ({likelihood:.0%} likelihood)\n  - Check: {check_text}"
                 )
 
     # Historical Matches

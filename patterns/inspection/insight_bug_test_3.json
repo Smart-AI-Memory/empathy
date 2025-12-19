@@ -1,0 +1,20 @@
+{
+  "pattern_id": "insight_bug_test_3",
+  "pattern_type": "cross_tool_insight",
+  "insight_type": "bugs_inform_tests",
+  "source_tools": [
+    "memory_debugging",
+    "test_quality"
+  ],
+  "description": "Historical import_error bugs suggest testing gaps",
+  "recommendations": [
+    "Add tests for import_error scenarios in affected files",
+    "Consider edge cases that triggered historical bugs"
+  ],
+  "affected_files": [
+    "scripts/data_analysis.py"
+  ],
+  "confidence": 0.9,
+  "stored_at": "2025-12-18T14:34:47.101224",
+  "execution_id": "insp_20251218_142854_39f9774e"
+}

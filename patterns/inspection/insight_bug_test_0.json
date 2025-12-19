@@ -1,0 +1,21 @@
+{
+  "pattern_id": "insight_bug_test_0",
+  "pattern_type": "cross_tool_insight",
+  "insight_type": "bugs_inform_tests",
+  "source_tools": [
+    "memory_debugging",
+    "test_quality"
+  ],
+  "description": "Historical null_reference bugs suggest testing gaps",
+  "recommendations": [
+    "Add tests for null_reference scenarios in affected files",
+    "Consider edge cases that triggered historical bugs"
+  ],
+  "affected_files": [
+    "src/components/UserList.tsx",
+    "src/utils/helpers.ts"
+  ],
+  "confidence": 0.9,
+  "stored_at": "2025-12-18T14:34:47.100994",
+  "execution_id": "insp_20251218_142854_39f9774e"
+}

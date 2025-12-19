@@ -91,9 +91,7 @@ from .long_term import (
     SecurePattern,
     SecurityError,
 )
-from .long_term import (
-    PermissionError as MemoryPermissionError,
-)
+from .long_term import PermissionError as MemoryPermissionError
 
 # Redis Bootstrap
 from .redis_bootstrap import (
@@ -105,16 +103,13 @@ from .redis_bootstrap import (
 )
 
 # Security components
-from .security import (
+from .security import (  # Audit Logging; PII Scrubbing; Secrets Detection
     AuditEvent,
-    # Audit Logging
     AuditLogger,
     PIIDetection,
     PIIPattern,
-    # PII Scrubbing
     PIIScrubber,
     SecretDetection,
-    # Secrets Detection
     SecretsDetector,
     SecretType,
     SecurityViolation,
@@ -128,6 +123,12 @@ from .short_term import (
     RedisShortTermMemory,
     StagedPattern,
     TTLStrategy,
+)
+
+# Conversation Summary Index
+from .summary_index import (
+    AgentContext,
+    ConversationSummaryIndex,
 )
 
 # Unified memory interface
@@ -191,4 +192,7 @@ __all__ = [
     "AuditLogger",
     "AuditEvent",
     "SecurityViolation",
+    # Conversation Summary Index
+    "ConversationSummaryIndex",
+    "AgentContext",
 ]

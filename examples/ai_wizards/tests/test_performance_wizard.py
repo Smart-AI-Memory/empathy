@@ -9,7 +9,9 @@ import json
 
 import pytest
 
-from empathy_software_plugin.wizards.performance_profiling_wizard import PerformanceProfilingWizard
+from empathy_software_plugin.wizards.performance_profiling_wizard import (
+    PerformanceProfilingWizard,
+)
 
 
 class TestPerformanceProfilingWizard:
@@ -499,7 +501,9 @@ class TestBottleneckDetector:
         from empathy_software_plugin.wizards.performance.bottleneck_detector import (
             BottleneckDetector,
         )
-        from empathy_software_plugin.wizards.performance.profiler_parsers import FunctionProfile
+        from empathy_software_plugin.wizards.performance.profiler_parsers import (
+            FunctionProfile,
+        )
 
         detector = BottleneckDetector()
 

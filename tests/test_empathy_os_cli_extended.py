@@ -21,7 +21,14 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from empathy_os import EmpathyConfig, Pattern, PatternLibrary
-from empathy_os.cli import cmd_export, cmd_import, cmd_inspect, cmd_run, cmd_wizard, main
+from empathy_os.cli import (
+    cmd_export,
+    cmd_import,
+    cmd_inspect,
+    cmd_run,
+    cmd_wizard,
+    main,
+)
 from empathy_os.core import CollaborationState
 from empathy_os.persistence import MetricsCollector, PatternPersistence, StateManager
 

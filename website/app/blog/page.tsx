@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { generateMetadata } from '@/lib/metadata';
@@ -58,11 +59,12 @@ export default function BlogPage() {
                   >
                     <div className="flex flex-col md:flex-row gap-6">
                       {post.coverImage && (
-                        <div className="md:w-1/3">
-                          <img
+                        <div className="md:w-1/3 relative h-48">
+                          <Image
                             src={post.coverImage}
                             alt={post.title}
-                            className="w-full h-48 object-cover rounded-lg"
+                            fill
+                            className="object-cover rounded-lg"
                           />
                         </div>
                       )}

@@ -660,7 +660,7 @@ class AuditLogger:
             >>> # Find patterns with high PII counts (nested filter)
             >>> events = logger.query(security__pii_detected__gt=5)
         """
-        results = []
+        results: list[dict[str, object]] = []
 
         try:
             if not self.log_path.exists():
@@ -762,21 +762,25 @@ class AuditLogger:
         """
         violations = self.query(event_type="security_violation", user_id=user_id)
 
-        summary = {
-            "total_violations": len(violations),
-            "by_type": {},
-            "by_severity": {},
-            "by_user": {},
-        }
+        by_type: dict[str, int] = {}
+        by_severity: dict[str, int] = {}
+        by_user: dict[str, int] = {}
 
         for violation in violations:
-            vtype = violation.get("violation", {}).get("type", "unknown")
-            severity = violation.get("violation", {}).get("severity", "unknown")
-            vid = violation.get("user_id", "unknown")
+            vtype = str(violation.get("violation", {}).get("type", "unknown"))
+            severity = str(violation.get("violation", {}).get("severity", "unknown"))
+            vid = str(violation.get("user_id", "unknown"))
 
-            summary["by_type"][vtype] = summary["by_type"].get(vtype, 0) + 1
-            summary["by_severity"][severity] = summary["by_severity"].get(severity, 0) + 1
-            summary["by_user"][vid] = summary["by_user"].get(vid, 0) + 1
+            by_type[vtype] = by_type.get(vtype, 0) + 1
+            by_severity[severity] = by_severity.get(severity, 0) + 1
+            by_user[vid] = by_user.get(vid, 0) + 1
+
+        summary: dict[str, int | dict[str, int]] = {
+            "total_violations": len(violations),
+            "by_type": by_type,
+            "by_severity": by_severity,
+            "by_user": by_user,
+        }
 
         return summary
 

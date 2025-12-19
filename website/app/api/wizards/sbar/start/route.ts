@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
+import { randomUUID } from 'crypto';
 import { storeWizardSession, type WizardSession } from '@/lib/redis';
 
 export async function POST() {
   try {
-    const wizardId = `wizard_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const wizardId = `wizard_${randomUUID()}`;
     const now = new Date();
     const expiresAt = new Date(now.getTime() + 60 * 60 * 1000); // 1 hour expiry
 

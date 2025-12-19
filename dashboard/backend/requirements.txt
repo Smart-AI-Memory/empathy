@@ -17,7 +17,7 @@ python-cors==1.0.0
 websockets==12.0
 
 # Authentication (JWT)
-python-jose[cryptography]==3.4.0
+PyJWT[crypto]>=2.8.0  # Replaces python-jose - uses cryptography backend
 passlib[bcrypt]==1.7.4
 
 # Structured logging

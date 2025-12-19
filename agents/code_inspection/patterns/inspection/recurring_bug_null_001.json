@@ -1,0 +1,16 @@
+{
+  "pattern_id": "recurring_bug_null_001",
+  "pattern_type": "recurring_finding",
+  "code": "bug_null_001",
+  "occurrence_count": 57,
+  "affected_files": [
+    ""
+  ],
+  "severity": "medium",
+  "description": "Potential null/undefined reference (historical: bug_null_001)",
+  "category": "review",
+  "tool": "code_review",
+  "confidence": 1.0,
+  "stored_at": "2025-12-18T14:09:01.235863",
+  "execution_id": "insp_20251218_140852_9d09aaa9"
+}
