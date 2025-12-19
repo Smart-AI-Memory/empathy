@@ -1,0 +1,56 @@
+name: Production Smoke Tests
+
+on:
+  # Run after pushes to main (Vercel auto-deploys)
+  push:
+    branches:
+      - main
+    paths:
+      - 'website/**'
+      - 'tests/test_production_smoke.py'
+
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      production_url:
+        description: 'Production URL to test'
+        required: false
+        default: 'https://empathy-framework.vercel.app'
+
+  # Run daily to catch any issues
+  schedule:
+    - cron: '0 9 * * *'  # 9 AM UTC daily
+
+jobs:
+  smoke-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install httpx pytest
+
+      - name: Wait for Vercel deployment
+        if: github.event_name == 'push'
+        run: |
+          echo "Waiting 90 seconds for Vercel deployment to complete..."
+          sleep 90
+
+      - name: Run smoke tests
+        env:
+          PRODUCTION_URL: ${{ github.event.inputs.production_url || 'https://empathy-framework.vercel.app' }}
+        run: |
+          python -m pytest tests/test_production_smoke.py -v --tb=short
+
+      - name: Report test results
+        if: failure()
+        run: |
+          echo "::error::Production smoke tests failed! Check https://empathy-framework.vercel.app"
