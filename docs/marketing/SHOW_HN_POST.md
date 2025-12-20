@@ -1,75 +1,91 @@
-# Show HN: Empathy Framework – AI collaboration with persistent memory
+# Show HN: Empathy Framework v2.3 – Persistent AI memory + 80% cost savings
 
-**Title:** Empathy Framework – AI collaboration with persistent memory and multi-agent orchestration
+**Title:** Empathy Framework v2.3 – Persistent AI memory + smart model routing (80% cost savings)
 
-**URL:** https://github.com/Smart-AI-Memory/empathy
+**URL:** https://github.com/Smart-AI-Memory/empathy-framework
 
 ---
 
-I've been building AI tools for healthcare and software development. The biggest frustration? Every AI session starts from zero. No memory of what you worked on yesterday, no patterns learned across projects, no coordination between agents.
+I've been building AI tools and got tired of two problems: every session starts from zero, and I was paying Opus prices for simple tasks.
 
-So I built the Empathy Framework.
+So I built Empathy Framework. v2.3 just shipped with major cost optimization.
 
-**The five problems it solves:**
+**The 80% cost savings:**
 
-1. **Stateless** — AI forgets everything between sessions. Empathy has dual-layer memory: git-based pattern storage for long-term knowledge (no infrastructure required), optional Redis for real-time coordination.
+New ModelRouter automatically picks the right model tier:
 
-2. **Cloud-dependent** — Your code goes to someone else's servers. Empathy runs entirely local-first. Memory lives in your repo, version-controlled like code.
+```python
+from empathy_llm_toolkit import EmpathyLLM
 
-3. **Isolated** — AI tools can't coordinate. Empathy has built-in multi-agent orchestration (Empathy OS) for human↔AI and AI↔AI collaboration.
+llm = EmpathyLLM(provider="anthropic", enable_model_routing=True)
 
-4. **Reactive** — AI waits for you to find problems. Empathy predicts issues 30-90 days ahead using pattern analysis.
+# Summaries → Haiku ($0.25/M tokens)
+# Code gen → Sonnet ($3/M tokens)
+# Architecture → Opus ($15/M tokens)
+```
 
-5. **Expensive** — Every query costs the same, and you waste tokens re-explaining context. Empathy routes smartly (cheap models detect, capable models decide) AND eliminates repeated context — no more re-teaching your AI what it should already know.
+Real numbers: $4.05/task → $0.83/task. That's 80% savings by just using the right model for each task.
+
+**The memory problem:**
+
+AI forgets everything between sessions. Tell it you prefer type hints? Gone next time. Empathy adds persistent memory:
+
+```python
+llm = EmpathyLLM(provider="anthropic", memory_enabled=True)
+
+await llm.interact(
+    user_id="me",
+    user_input="I prefer Python with type hints"
+)
+# Survives across sessions
+```
+
+**New in v2.3:**
+
+1. **ModelRouter** — Automatic Haiku/Sonnet/Opus selection based on task complexity
+2. **`empathy sync-claude`** — Sync learned patterns to Claude Code's `.claude/rules/` directory
+3. **Debug Wizard** — Web UI at empathy-framework.vercel.app/tools/debug-wizard that remembers past bugs
+
+**How the memory works:**
+
+- Git-based pattern storage (no infrastructure needed)
+- Optional Redis for real-time coordination
+- Bug patterns, security decisions, coding preferences all persist
 
 **What's included:**
 
-- **Code Health Assistant** (`empathy health`) — lint, format, types, tests, security in one command with auto-fix
-- **Pattern-based code review** (`empathy review`) — catches bugs before they happen based on your team's history
-- Memory Control Panel CLI (`empathy-memory serve`) and REST API
-- 30+ production wizards (security, performance, testing, docs, accessibility)
-- Agent toolkit to build custom agents that inherit memory and prediction
-- Healthcare suite with HIPAA-compliant patterns (SBAR, SOAP notes)
-- Works with Claude, GPT-4, Ollama, or your own models
+- `empathy-inspect` — unified code inspection (lint, security, tests, tech debt)
+- SARIF output for GitHub/GitLab code scanning
+- HTML dashboard reports
+- 30+ production wizards (security, performance, testing, docs)
+- Works with Claude, GPT-4, or Ollama
 
 **Quick start:**
 
 ```bash
 pip install empathy-framework
-empathy health              # Check code health
-empathy health --fix        # Auto-fix safe issues
-empathy-memory serve        # Start memory server
 ```
-
-That's it. Redis auto-starts for real-time features, but long-term pattern storage works with just git — no infrastructure needed for students and individual developers.
-
-**Example:**
 
 ```python
-from empathy_os import EmpathyOS
-
-os = EmpathyOS()
-
-result = await os.collaborate(
-    "Review this deployment pipeline for problems",
-    context={"code": pipeline_code}
+llm = EmpathyLLM(
+    provider="anthropic",
+    memory_enabled=True,
+    enable_model_routing=True
 )
 
-print(result.current_issues)      # What's wrong now
-print(result.predicted_issues)    # What will break in 30-90 days
-print(result.prevention_steps)    # How to prevent it
+await llm.interact(user_id="dev", user_input="Review this code")
 ```
 
-**Licensing:**
-
-Fair Source 0.9 — Free for students, educators, and teams ≤5 employees. Commercial license $99/dev/year. Auto-converts to Apache 2.0 on January 1, 2029.
+**Licensing:** Fair Source 0.9 — Free for students and teams ≤5. $99/dev/year commercial. Auto-converts to Apache 2.0 on Jan 1, 2029.
 
 **What I'm looking for:**
 
-- Feedback on the memory architecture (git-based patterns + optional Redis)
-- Ideas for cross-domain pattern transfer (healthcare insights → software)
-- Integration suggestions (CI/CD, IDE, pre-commit hooks?)
+- Feedback on the model routing approach
+- Ideas for other cost optimizations
+- Integration suggestions (CI/CD, pre-commit hooks?)
 
-GitHub: https://github.com/Smart-AI-Memory/empathy
+GitHub: https://github.com/Smart-AI-Memory/empathy-framework
 
-Happy to answer questions about the architecture or use cases.
+Live demo: https://empathy-framework.vercel.app/tools/debug-wizard
+
+Happy to answer questions.

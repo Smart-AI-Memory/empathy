@@ -1,103 +1,41 @@
-# LinkedIn Announcement: Empathy Framework
+# LinkedIn Announcement: Empathy Framework v2.3
 
-## The AI collaboration framework that predicts problems before they happen
+## Just shipped: AI that remembers you AND costs 80% less
 
-Today's AI tools are brilliant but broken for enterprise use.
+Every AI conversation starts from scratch. Preferences forgotten. Context lost.
 
-They're **stateless** — forgetting everything between sessions.
-They're **cloud-dependent** — your proprietary code leaves your infrastructure.
-They're **isolated** — unable to coordinate with other agents or teams.
-They're **reactive** — waiting for problems instead of preventing them.
-They're **expensive** — every query costs the same, regardless of complexity.
+And you're paying Opus prices ($15/M tokens) for tasks Haiku could handle ($0.25/M).
 
-I built the Empathy Framework to solve all five.
+I built Empathy Framework to fix both. v2.3 just shipped.
 
 ---
 
-### What Makes Empathy Different
+**What's new:**
 
-**Memory That Persists**
-Dual-layer architecture: git-based pattern storage for long-term knowledge (version-controlled, no infrastructure required), optional Redis for real-time multi-agent coordination. What one agent learns today informs decisions tomorrow. Works anywhere — students use just git, enterprises add Redis for team coordination.
+**1. Smart Model Routing (80% savings)**
+Auto-picks Haiku/Sonnet/Opus based on task complexity.
+Real numbers: $4.05/task → $0.83/task
 
-**Enterprise-Ready**
-Your data stays local. Nothing leaves your infrastructure. Built-in compliance patterns for HIPAA, GDPR, and SOC2. Full audit trail — every action logged, exportable, searchable.
+**2. Persistent Memory**
+Preferences survive across sessions. Bug patterns accumulate. Your AI actually learns.
 
-**Anticipatory Intelligence**
-Predicts issues 30-90 days ahead. Security vulnerabilities, performance degradation, compliance gaps — caught before they become urgent. Prevention over reaction.
+**3. Claude Code Integration**
+`empathy sync-claude` syncs patterns to `.claude/rules/` — Claude Code loads your team's history at session start.
 
-**Multi-Agent Orchestration**
-Empathy OS manages human↔AI and AI↔AI collaboration. Specialized agents working in concert with trust management, feedback loops, and conflict resolution when agents disagree.
+---
 
-**Performance & Cost**
-Smart model routing: detection models triage, capable models decide. Plus persistent memory eliminates repeated context — no more wasting tokens re-explaining what your AI should already know. Sub-millisecond coordination between agents.
+**Quick start:**
 
-**Code Health Assistant** *(New in v2.2)*
-One command runs lint, format, type checks, tests, security, and dependency audits. Auto-fix safe issues. Track health scores over time. Find hotspots before they become problems.
-
-```bash
-empathy health              # Quick check
-empathy health --deep       # Full analysis
-empathy health --fix        # Auto-fix issues
 ```
-
----
-
-### For Builders
-
-30+ production wizards included: security, performance, testing, documentation, accessibility, compliance.
-
-Agent toolkit to build custom agents that inherit memory, trust, and anticipatory capabilities.
-
-5-level progression built in — your agents evolve from reactive to anticipatory automatically.
-
----
-
-### Quick Start
-
-```bash
 pip install empathy-framework
-empathy-memory serve
 ```
 
-Two commands. For full features, Redis auto-starts. Long-term pattern storage requires zero infrastructure — it's git-based and lives in your repo.
-
 ---
 
-### Pricing
+**Links:**
+- GitHub: github.com/Smart-AI-Memory/empathy-framework
+- Live Demo: empathy-framework.vercel.app/tools/debug-wizard
 
-| Tier | Price | Includes |
-|------|-------|----------|
-| **Free** | $0 | Students, educators, teams ≤5 employees |
-| **Commercial** | $99/dev/year | Full framework, priority support |
-| **Enterprise** | Contact us | Custom deployment, SLA, training |
+What would you build with an AI that remembers—and costs 80% less?
 
-Fair Source 0.9 licensed — auto-converts to Apache 2.0 on January 1, 2029.
-
----
-
-### Use Case: AI Nurse Florence
-
-We built Florence, a healthcare assistant, on Empathy Framework:
-- HIPAA-compliant memory with encrypted pattern storage
-- Clinical protocol support (SBAR, SOAP notes)
-- Enterprise-grade privacy controls
-
-It demonstrates what's possible when AI has persistent memory and compliance built in.
-
----
-
-### Get Started
-
-**Install:** `pip install empathy-framework`
-
-**GitHub:** https://github.com/Smart-AI-Memory/empathy
-
-**Contact:** patrick.roebuck@smartaimemory.com
-
-I'd welcome your feedback on the approach. What would make this useful for your team?
-
----
-
-*Built by [Smart AI Memory](https://smartaimemory.com)*
-
-#AI #DevOps #EnterpriseAI #ArtificialIntelligence #SoftwareEngineering #MachineLearning #AIOrchestration #DeveloperTools #OpenSource
+#AI #Python #Claude #DevTools #CostOptimization

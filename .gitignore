@@ -129,3 +129,6 @@ patterns/tech_debt_demo/
 
 # Consolidated wizards (working directory)
 wizards_consolidated/
+
+# Marketing drafts (internal only)
+docs/marketing/drafts/
