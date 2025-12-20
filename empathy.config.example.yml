@@ -1,18 +1,127 @@
 # Empathy Framework Configuration Example
 # Copy to .empathy.yml or empathy.config.yml and customize
 
-# Core Settings
+# =============================================================================
+# CORE SETTINGS
+# =============================================================================
+
 user_id: "alice"
 target_level: 4  # 1-5: Reactive, Guided, Proactive, Anticipatory, Systems
 confidence_threshold: 0.75  # 0.0-1.0
 
+# =============================================================================
+# MODEL ROUTING (NEW in v2.3)
+# =============================================================================
+
+# Smart model routing for cost optimization
+model_routing:
+  enabled: true
+  provider: "anthropic"  # anthropic, openai, ollama
+
+  # Model assignments per tier
+  models:
+    cheap: "claude-3-haiku-20240307"      # Summaries, classification, triage
+    capable: "claude-sonnet-4-20250514"   # Code gen, bug fixes, reviews
+    premium: "claude-opus-4-20250514"     # Architecture, synthesis, coordination
+
+  # Task-to-tier mapping overrides (optional)
+  task_overrides:
+    summarize: "cheap"
+    classify: "cheap"
+    triage: "cheap"
+    generate_code: "capable"
+    fix_bug: "capable"
+    review_security: "capable"
+    write_tests: "capable"
+    architectural_decision: "premium"
+    coordinate: "premium"
+
+# =============================================================================
+# CLAUDE CODE INTEGRATION (NEW in v2.3)
+# =============================================================================
+
+claude_sync:
+  enabled: true
+  watch: false                    # Auto-sync on pattern changes
+  watch_interval: 30              # Seconds between checks (if watch: true)
+  output_dir: ".claude/rules/empathy"
+
+  # What to sync
+  sync_patterns:
+    debugging: true               # Bug patterns → bug-patterns.md
+    security: true                # Security decisions → security-decisions.md
+    tech_debt: true               # Tech debt → tech-debt-hotspots.md
+    inspection: true              # Coding patterns → coding-patterns.md
+
+# =============================================================================
+# CODE INSPECTION
+# =============================================================================
+
+inspection:
+  parallel: true                  # Run Phase 1 tools in parallel
+  learning: true                  # Enable pattern learning
+
+  # Default output format
+  format: "terminal"              # terminal, json, markdown, sarif, html
+
+  # Exclusions (glob patterns)
+  exclude:
+    - "**/__pycache__/**"
+    - "**/node_modules/**"
+    - "**/.venv/**"
+    - "**/dist/**"
+    - "**/build/**"
+
+  # Baseline suppressions file
+  baseline_file: ".empathy-baseline.json"
+
+# =============================================================================
+# CODE HEALTH
+# =============================================================================
+
+health:
+  # Which checks to run
+  checks:
+    lint: true
+    format: true
+    types: true
+    tests: true
+    security: true
+    deps: true
+
+  # Auto-fix settings
+  auto_fix:
+    enabled: false                # Set true for automated pipelines
+    safe_only: true               # Only fix safe issues (formatting, imports)
+
+  # Trend tracking
+  trends:
+    enabled: true
+    days: 30                      # Days of history to track
+
+# =============================================================================
+# CODE REVIEW
+# =============================================================================
+
+review:
+  severity_threshold: "info"      # info, warning, error
+  patterns_dir: "./patterns"
+
+  # Pre-commit integration
+  fail_on_match: false            # Exit non-zero if patterns match
+  staged_only: true               # Only review staged changes
+
+# =============================================================================
+# MEMORY & PATTERNS
+# =============================================================================
+
 # Trust Settings
-trust_building_rate: 0.05  # How fast trust builds (per success)
-trust_erosion_rate: 0.10   # How fast trust erodes (per failure)
+trust_building_rate: 0.05         # How fast trust builds (per success)
+trust_erosion_rate: 0.10          # How fast trust erodes (per failure)
 
 # Persistence Settings
 persistence_enabled: true
-persistence_backend: "sqlite"  # Options: sqlite, json, none
+persistence_backend: "sqlite"     # sqlite, json, none
 persistence_path: "./empathy_data"
 
 # State Management
@@ -23,23 +132,46 @@ state_path: "./empathy_state"
 metrics_enabled: true
 metrics_path: "./metrics.db"
 
-# Logging Settings
-log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
-log_file: null  # Optional: path to log file
-structured_logging: true
-
 # Pattern Library Settings
 pattern_library_enabled: true
 pattern_sharing: true
 pattern_confidence_threshold: 0.3  # Minimum confidence to use pattern
 
-# Advanced Settings
+# Pattern storage locations
+patterns:
+  base_dir: "./patterns"
+  classifications:
+    public: "./patterns/public"
+    internal: "./patterns/internal"
+    sensitive: "./patterns/sensitive"  # Encrypted
+
+# =============================================================================
+# LOGGING
+# =============================================================================
+
+log_level: "INFO"                 # DEBUG, INFO, WARNING, ERROR, CRITICAL
+log_file: null                    # Optional: path to log file
+structured_logging: true
+
+# =============================================================================
+# ADVANCED SETTINGS
+# =============================================================================
+
 async_enabled: true
 feedback_loop_monitoring: true
 leverage_point_analysis: true
 
-# Custom Metadata (optional)
+# Redis (for real-time multi-agent coordination)
+redis:
+  enabled: false                  # Set true if using Redis
+  url: "redis://localhost:6379"
+  prefix: "empathy:"
+
+# =============================================================================
+# CUSTOM METADATA
+# =============================================================================
+
 metadata:
   organization: "ACME Corp"
-  environment: "production"
+  environment: "development"      # development, staging, production
   version: "1.0.0"

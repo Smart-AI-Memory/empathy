@@ -24,11 +24,14 @@ nav:
       - How to Read This Book: guides/how-to-read-this-book.md
       - Preface: guides/preface.md
       - Foreword by Claude: guides/foreword.md
+      - Appendix - CLI Reference: CLI_CHEATSHEET.md
   - Getting Started:
       - Installation: getting-started/installation.md
       - Prerequisites: guides/prerequisites.md
       - Quick Start: getting-started/quickstart.md
       - Configuration: getting-started/configuration.md
+      - CLI Guide: CLI_GUIDE.md
+      - CLI Cheatsheet: CLI_CHEATSHEET.md
   - Philosophy:
       - Multi-Agent Coordination: guides/multi-agent-philosophy.md
       - The Empathy Philosophy: EMPATHY_PHILOSOPHY.md

@@ -878,15 +878,142 @@ The code review automatically detects file languages and applies appropriate pat
 
 ---
 
+---
+
+### Claude Code Integration (New in v2.3.0)
+
+Sync learned patterns to Claude Code's native rules directory:
+
+```bash
+# One-time sync
+empathy-sync-claude
+
+# Watch for changes and auto-sync
+empathy-sync-claude --watch
+
+# Preview without writing
+empathy-sync-claude --dry-run
+
+# Verbose output
+empathy-sync-claude --verbose
+```
+
+**Output structure:**
+
+```
+.claude/rules/empathy/
+├── bug-patterns.md          # From patterns/debugging/
+├── security-decisions.md    # From patterns/security/
+├── tech-debt-hotspots.md    # From patterns/tech_debt/
+└── coding-patterns.md       # From patterns/inspection/
+```
+
+Claude Code automatically loads these rules at session start, giving it access to your team's bug history, security decisions, and coding patterns.
+
+---
+
+## Quick Reference (Cheatsheet)
+
+### Core Commands
+
+```bash
+# Code Health
+empathy health                    # Quick health check
+empathy health --deep             # Comprehensive analysis
+empathy health --fix              # Auto-fix safe issues
+empathy health --check lint       # Run specific check
+
+# Code Review
+empathy review                    # Review recent changes
+empathy review --staged           # Staged changes only
+
+# Code Inspection
+empathy-inspect .                 # Inspect current directory
+empathy-inspect . --fix           # Auto-fix formatting/imports
+empathy-inspect . --format sarif  # SARIF for GitHub Actions
+empathy-inspect . --format html   # HTML dashboard
+```
+
+### Memory & Patterns
+
+```bash
+# Memory Control Panel
+empathy-memory serve              # Start Redis + API (recommended)
+empathy-memory status             # Show memory status
+empathy-memory patterns           # List stored patterns
+
+# Pattern Management
+empathy patterns list             # List patterns
+empathy patterns resolve <id>     # Mark bug as resolved
+
+# Claude Code Sync
+empathy-sync-claude               # Sync to .claude/rules/empathy/
+empathy-sync-claude --watch       # Auto-sync on changes
+```
+
+### Quick Workflows
+
+```bash
+# Morning check
+empathy health --deep && empathy status
+
+# Before commit
+empathy review --staged && empathy-inspect . --staged --quick
+
+# Fix everything
+empathy health --fix && empathy-inspect . --fix
+
+# Sync to Claude Code
+empathy-sync-claude --verbose
+```
+
+### CI/CD Integration
+
+**GitHub Actions (SARIF):**
+```yaml
+- name: Run Empathy Inspect
+  run: empathy-inspect . --format sarif -o results.sarif
+
+- name: Upload SARIF
+  uses: github/codeql-action/upload-sarif@v2
+  with:
+    sarif_file: results.sarif
+```
+
+**Pre-commit Hook:**
+```yaml
+repos:
+  - repo: local
+    hooks:
+      - id: empathy-review
+        name: Pattern-based review
+        entry: empathy review --staged --severity error
+        language: system
+        pass_filenames: false
+```
+
+### Environment Variables
+
+```bash
+ANTHROPIC_API_KEY=sk-...          # Claude API key
+EMPATHY_CONFIG=./config.yaml      # Custom config path
+EMPATHY_LOG_LEVEL=DEBUG           # Logging level
+REDIS_URL=redis://localhost:6379  # Redis connection
+```
+
+---
+
 ## Getting Help
 
 For more information on any command:
 
 ```bash
-empathy-framework --help
-empathy-framework patterns --help
-empathy-framework metrics --help
+empathy --help
+empathy <command> --help
+empathy-inspect --help
+empathy-memory --help
+empathy-sync-claude --help
 ```
 
 For bugs and feature requests, visit:
-https://github.com/Deep-Study-AI/Empathy/issues
+https://github.com/Smart-AI-Memory/empathy-framework/issues
