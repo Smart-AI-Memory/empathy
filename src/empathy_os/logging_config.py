@@ -121,13 +121,13 @@ def create_logger(
         if log_dir:
             log_dir_path = Path(log_dir)
             log_dir_path.mkdir(parents=True, exist_ok=True)
-            log_file = log_dir_path / f"{name.replace('.', '_')}.log"
+            log_file_path = log_dir_path / f"{name.replace('.', '_')}.log"
         else:
-            log_file = Path(log_file)
-            log_file.parent.mkdir(parents=True, exist_ok=True)
+            log_file_path = Path(log_file)  # type: ignore[arg-type]
+            log_file_path.parent.mkdir(parents=True, exist_ok=True)
 
         file_handler = logging.handlers.RotatingFileHandler(
-            str(log_file),
+            str(log_file_path),
             maxBytes=max_bytes,
             backupCount=backup_count,
         )
@@ -144,6 +144,10 @@ class LoggingConfig:
 
     _configured = False
     _loggers: dict[str, logging.Logger] = {}
+    _level: int = logging.INFO
+    _log_dir: str | None = None
+    _use_color: bool = True
+    _include_context: bool = False
 
     @classmethod
     def configure(

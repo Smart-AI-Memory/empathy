@@ -16,11 +16,7 @@ import structlog
 # Add parent directory to path to import empathy_os
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "src"))
 
-from empathy_os.memory.control_panel import (
-    ControlPanelConfig,
-    MemoryControlPanel,
-    MemoryStats,
-)
+from empathy_os.memory.control_panel import ControlPanelConfig, MemoryControlPanel, MemoryStats
 
 from ..config import Settings, get_settings
 

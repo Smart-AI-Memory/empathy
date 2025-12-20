@@ -35,12 +35,7 @@ from .learning import (
 )
 from .research_agent import ResearchAgent
 from .reviewer_agent import ReviewerAgent
-from .state import (
-    AgentPhase,
-    Chapter,
-    ChapterSpec,
-    create_initial_state,
-)
+from .state import AgentPhase, Chapter, ChapterSpec, create_initial_state
 from .writer_agent import WriterAgent
 
 logger = logging.getLogger(__name__)

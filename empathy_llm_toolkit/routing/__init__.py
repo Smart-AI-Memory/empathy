@@ -23,11 +23,7 @@ Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
-from .model_router import (
-    ModelRouter,
-    ModelTier,
-    TaskRouting,
-)
+from .model_router import ModelRouter, ModelTier, TaskRouting
 
 __all__ = [
     "ModelRouter",

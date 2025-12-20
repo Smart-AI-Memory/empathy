@@ -51,9 +51,7 @@ class TestQualityAdapter:
 
         try:
             # Import here to handle optional dependency
-            from empathy_software_plugin.wizards.testing.quality_analyzer import (
-                TestQualityAnalyzer,
-            )
+            from empathy_software_plugin.wizards.testing.quality_analyzer import TestQualityAnalyzer
 
             analyzer = TestQualityAnalyzer()
 

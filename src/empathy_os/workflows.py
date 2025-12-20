@@ -15,15 +15,16 @@ import json
 import subprocess
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 from empathy_os.logging_config import get_logger
 
 logger = get_logger(__name__)
 
 
-def _load_patterns(patterns_dir: str = "./patterns") -> dict:
+def _load_patterns(patterns_dir: str = "./patterns") -> dict[str, list]:
     """Load patterns from the patterns directory."""
-    patterns = {"debugging": [], "security": [], "tech_debt": [], "inspection": []}
+    patterns: dict[str, list] = {"debugging": [], "security": [], "tech_debt": [], "inspection": []}
 
     patterns_path = Path(patterns_dir)
     if not patterns_path.exists():
@@ -42,13 +43,14 @@ def _load_patterns(patterns_dir: str = "./patterns") -> dict:
     return patterns
 
 
-def _load_stats(empathy_dir: str = ".empathy") -> dict:
+def _load_stats(empathy_dir: str = ".empathy") -> dict[str, Any]:
     """Load usage statistics."""
     stats_file = Path(empathy_dir) / "stats.json"
     if stats_file.exists():
         try:
             with open(stats_file) as f:
-                return json.load(f)
+                result: dict[str, Any] = json.load(f)
+                return result
         except (OSError, json.JSONDecodeError):
             pass
     return {"commands": {}, "last_session": None, "patterns_learned": 0}
@@ -346,7 +348,9 @@ def ship_workflow(
         print("5. Syncing patterns to Claude Code...")
         # Import here to avoid circular imports
         try:
-            from empathy_llm_toolkit.cli.sync_claude import sync_patterns_to_claude
+            from empathy_llm_toolkit.cli.sync_claude import (
+                sync_patterns_to_claude,
+            )  # type: ignore[attr-defined]
 
             result = sync_patterns_to_claude(
                 patterns_dir=patterns_dir, output_dir=".claude/rules/empathy"
@@ -594,7 +598,7 @@ def learn_workflow(
 
     # Load existing patterns and merge
     debugging_file = patterns_path / "debugging.json"
-    existing = {"patterns": []}
+    existing: dict[str, Any] = {"patterns": []}
 
     if debugging_file.exists():
         try:
@@ -622,7 +626,7 @@ def learn_workflow(
 
     if learned:
         print("\nBug types discovered:")
-        types = {}
+        types: dict[str, int] = {}
         for p in learned:
             t = p["bug_type"]
             types[t] = types.get(t, 0) + 1

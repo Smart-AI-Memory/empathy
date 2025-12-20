@@ -15,9 +15,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from empathy_healthcare_plugin.monitors.clinical_protocol_monitor import (
-    ClinicalProtocolMonitor,
-)
+from empathy_healthcare_plugin.monitors.clinical_protocol_monitor import ClinicalProtocolMonitor
 from empathy_healthcare_plugin.monitors.monitoring.protocol_checker import (
     ComplianceStatus,
     CriterionResult,

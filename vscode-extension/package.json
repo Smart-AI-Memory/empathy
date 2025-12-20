@@ -1,0 +1,279 @@
+{
+  "name": "empathy-framework",
+  "displayName": "Empathy Framework",
+  "description": "AI-powered code health, pattern learning, and cost optimization for VS Code. Learn bug patterns from git history, track API costs, sync to Claude Code.",
+  "version": "0.1.0",
+  "publisher": "smart-ai-memory",
+  "license": "SEE LICENSE IN LICENSE",
+  "icon": "images/icon.png",
+  "homepage": "https://www.smartaimemory.com",
+  "bugs": {
+    "url": "https://github.com/Smart-AI-Memory/empathy-framework/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Smart-AI-Memory/empathy-framework"
+  },
+  "galleryBanner": {
+    "color": "#6366f1",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Linters",
+    "Machine Learning",
+    "Other"
+  ],
+  "keywords": [
+    "empathy",
+    "ai",
+    "patterns",
+    "health",
+    "cost-optimization"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "empathy.morning",
+        "title": "Empathy: Morning Briefing",
+        "icon": "$(calendar)"
+      },
+      {
+        "command": "empathy.ship",
+        "title": "Empathy: Pre-Ship Check",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "empathy.fixAll",
+        "title": "Empathy: Fix All Issues",
+        "icon": "$(tools)"
+      },
+      {
+        "command": "empathy.learn",
+        "title": "Empathy: Learn Patterns",
+        "icon": "$(mortar-board)"
+      },
+      {
+        "command": "empathy.costs",
+        "title": "Empathy: View API Costs",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "empathy.dashboard",
+        "title": "Empathy: Open Dashboard",
+        "icon": "$(dashboard)"
+      },
+      {
+        "command": "empathy.syncClaude",
+        "title": "Empathy: Sync to Claude Code",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "empathy.status",
+        "title": "Empathy: Show Status",
+        "icon": "$(info)"
+      },
+      {
+        "command": "empathy.refreshHealth",
+        "title": "Empathy: Refresh Health",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "empathy.runScan",
+        "title": "Empathy: Run Health Scan",
+        "icon": "$(search)"
+      },
+      {
+        "command": "empathy.fixLint",
+        "title": "Empathy: Fix Lint Issues",
+        "icon": "$(lightbulb)"
+      },
+      {
+        "command": "empathy.fixFormat",
+        "title": "Empathy: Fix Format Issues",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "empathy.runTests",
+        "title": "Empathy: Run Tests",
+        "icon": "$(beaker)"
+      },
+      {
+        "command": "empathy.viewDetails",
+        "title": "View Details",
+        "icon": "$(info)"
+      },
+      {
+        "command": "empathy.openFile",
+        "title": "Open File",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "empathy.ignoreIssue",
+        "title": "Ignore Issue",
+        "icon": "$(eye-closed)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "empathy-explorer",
+          "title": "Empathy",
+          "icon": "$(pulse)"
+        }
+      ]
+    },
+    "views": {
+      "empathy-explorer": [
+        {
+          "id": "empathy-patterns",
+          "name": "Patterns"
+        },
+        {
+          "id": "empathy-health",
+          "name": "Health"
+        },
+        {
+          "id": "empathy-costs",
+          "name": "Costs"
+        }
+      ]
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "empathy.morning",
+          "when": "true"
+        },
+        {
+          "command": "empathy.ship",
+          "when": "true"
+        },
+        {
+          "command": "empathy.viewDetails",
+          "when": "false"
+        },
+        {
+          "command": "empathy.openFile",
+          "when": "false"
+        },
+        {
+          "command": "empathy.ignoreIssue",
+          "when": "false"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "empathy.refreshHealth",
+          "when": "view == empathy-health",
+          "group": "navigation"
+        },
+        {
+          "command": "empathy.runScan",
+          "when": "view == empathy-health",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "empathy.fixLint",
+          "when": "view == empathy-health && viewItem == lint",
+          "group": "inline"
+        },
+        {
+          "command": "empathy.fixFormat",
+          "when": "view == empathy-health && viewItem == format",
+          "group": "inline"
+        },
+        {
+          "command": "empathy.runTests",
+          "when": "view == empathy-health && viewItem == tests",
+          "group": "inline"
+        },
+        {
+          "command": "empathy.viewDetails",
+          "when": "view == empathy-health",
+          "group": "1_actions"
+        },
+        {
+          "command": "empathy.openFile",
+          "when": "view == empathy-health && viewItem =~ /file|issue/",
+          "group": "1_actions"
+        },
+        {
+          "command": "empathy.ignoreIssue",
+          "when": "view == empathy-health && viewItem =~ /issue/",
+          "group": "2_manage"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Empathy Framework",
+      "properties": {
+        "empathy.patternsDir": {
+          "type": "string",
+          "default": "./patterns",
+          "description": "Path to patterns directory"
+        },
+        "empathy.empathyDir": {
+          "type": "string",
+          "default": ".empathy",
+          "description": "Path to empathy data directory"
+        },
+        "empathy.pythonPath": {
+          "type": "string",
+          "default": "python",
+          "description": "Path to Python executable"
+        },
+        "empathy.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Empathy status in status bar"
+        },
+        "empathy.autoRefresh": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-refresh pattern data"
+        },
+        "empathy.refreshInterval": {
+          "type": "number",
+          "default": 300,
+          "description": "Refresh interval in seconds"
+        },
+        "empathy.autoScanOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically run health scan when files are saved"
+        },
+        "empathy.scanDebounceMs": {
+          "type": "number",
+          "default": 2000,
+          "description": "Debounce time in milliseconds for auto-scan on save"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.55.0",
+    "typescript": "^5.3.0",
+    "@vscode/vsce": "^2.22.0"
+  }
+}

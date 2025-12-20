@@ -24,17 +24,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from empathy_llm_toolkit.config.unified import (
-    MemDocsConfig as UnifiedMemDocsConfig,
-)
-from empathy_llm_toolkit.config.unified import (
-    RedisConfig as UnifiedRedisConfig,
-)
-
 # Import unified configuration (preferred)
-from empathy_llm_toolkit.config.unified import (
-    UnifiedAgentConfig,
-)
+from empathy_llm_toolkit.config.unified import MemDocsConfig as UnifiedMemDocsConfig
+from empathy_llm_toolkit.config.unified import RedisConfig as UnifiedRedisConfig
+from empathy_llm_toolkit.config.unified import UnifiedAgentConfig
 
 logger = logging.getLogger(__name__)
 

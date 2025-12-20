@@ -9,11 +9,7 @@ Licensed under Fair Source 0.9
 
 import pytest
 
-from empathy_llm_toolkit.security.pii_scrubber import (
-    PIIDetection,
-    PIIPattern,
-    PIIScrubber,
-)
+from empathy_llm_toolkit.security.pii_scrubber import PIIDetection, PIIPattern, PIIScrubber
 
 
 class TestPIIDetection:

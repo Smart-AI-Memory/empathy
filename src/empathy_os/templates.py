@@ -14,9 +14,10 @@ Licensed under Fair Source License 0.9
 """
 
 from pathlib import Path
+from typing import Any
 
 # Template definitions
-TEMPLATES = {
+TEMPLATES: dict[str, dict[str, Any]] = {
     "minimal": {
         "name": "Minimal",
         "description": "Just the Empathy config files - add to existing project",
@@ -660,7 +661,10 @@ def scaffold_project(
 
     # Create files
     created_files = []
-    for file_path, content in template["files"].items():
+    files = template["files"]
+    if not isinstance(files, dict):
+        return {"success": False, "error": "Invalid template structure"}
+    for file_path, content in files.items():
         # Replace placeholders in path
         actual_path = file_path.replace("{{project_name}}", project_name)
 

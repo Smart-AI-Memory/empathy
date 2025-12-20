@@ -28,7 +28,7 @@ class PluginMetadata:
     author: str
     license: str
     requires_core_version: str  # Minimum core framework version
-    dependencies: list[str] = None  # Additional package dependencies
+    dependencies: list[str] | None = None  # Additional package dependencies
 
 
 class BaseWizard(ABC):
@@ -343,7 +343,8 @@ class BasePlugin(ABC):
 
         # Create temporary instance to get metadata
         # (wizards should be lightweight to construct)
-        temp_instance = wizard_class()
+        # Subclasses provide their own defaults for name, domain, empathy_level
+        temp_instance = wizard_class()  # type: ignore[call-arg]
 
         return {
             "id": wizard_id,

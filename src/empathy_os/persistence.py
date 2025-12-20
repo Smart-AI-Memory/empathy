@@ -14,6 +14,7 @@ import json
 import sqlite3
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 from .core import CollaborationState
 from .pattern_library import Pattern, PatternLibrary
@@ -41,8 +42,9 @@ class PatternPersistence:
             >>> library = PatternLibrary()
             >>> PatternPersistence.save_to_json(library, "patterns.json")
         """
-        data = {
-            "patterns": [],
+        patterns_list: list[dict[str, Any]] = []
+        data: dict[str, Any] = {
+            "patterns": patterns_list,
             "agent_contributions": library.agent_contributions,
             "metadata": {
                 "saved_at": datetime.now().isoformat(),
@@ -53,7 +55,7 @@ class PatternPersistence:
 
         # Serialize each pattern
         for _pattern_id, pattern in library.patterns.items():
-            data["patterns"].append(
+            patterns_list.append(
                 {
                     "id": pattern.id,
                     "agent_id": pattern.agent_id,

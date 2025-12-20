@@ -14,11 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from empathy_llm_toolkit.security.audit_logger import (
-    AuditEvent,
-    AuditLogger,
-    SecurityViolation,
-)
+from empathy_llm_toolkit.security.audit_logger import AuditEvent, AuditLogger, SecurityViolation
 
 
 class TestAuditEvent:

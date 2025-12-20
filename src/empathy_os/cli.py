@@ -21,6 +21,7 @@ from importlib.metadata import version as get_version
 from empathy_os import EmpathyConfig, EmpathyOS, load_config
 from empathy_os.cost_tracker import cmd_costs
 from empathy_os.dashboard import cmd_dashboard
+from empathy_os.discovery import show_tip_if_available
 from empathy_os.logging_config import get_logger
 from empathy_os.pattern_library import PatternLibrary
 from empathy_os.persistence import MetricsCollector, PatternPersistence, StateManager
@@ -28,6 +29,245 @@ from empathy_os.templates import cmd_new
 from empathy_os.workflows import cmd_fix_all, cmd_learn, cmd_morning, cmd_ship
 
 logger = get_logger(__name__)
+
+
+# =============================================================================
+# CHEATSHEET DATA - Quick reference for all commands
+# =============================================================================
+
+CHEATSHEET = {
+    "Getting Started": [
+        ("empathy init", "Create a new config file"),
+        ("empathy wizard", "Interactive setup wizard"),
+        ("empathy run", "Interactive REPL mode"),
+    ],
+    "Daily Workflow": [
+        ("empathy morning", "Start-of-day briefing"),
+        ("empathy status", "What needs attention now"),
+        ("empathy ship", "Pre-commit validation"),
+    ],
+    "Code Quality": [
+        ("empathy health", "Quick health check"),
+        ("empathy health --deep", "Comprehensive check"),
+        ("empathy health --fix", "Auto-fix issues"),
+        ("empathy fix-all", "Fix all lint/format issues"),
+    ],
+    "Pattern Learning": [
+        ("empathy learn --analyze 20", "Learn from last 20 commits"),
+        ("empathy sync-claude", "Sync patterns to Claude Code"),
+        ("empathy inspect patterns", "View learned patterns"),
+    ],
+    "Code Review": [
+        ("empathy review", "Review recent changes"),
+        ("empathy review --staged", "Review staged changes only"),
+    ],
+    "Memory & State": [
+        ("empathy inspect state", "View saved states"),
+        ("empathy inspect metrics --user-id X", "View user metrics"),
+        ("empathy export patterns.json", "Export patterns"),
+    ],
+    "Advanced": [
+        ("empathy costs", "View API cost tracking"),
+        ("empathy dashboard", "Launch visual dashboard"),
+        ("empathy frameworks", "List agent frameworks"),
+        ("empathy new <template>", "Create project from template"),
+    ],
+}
+
+EXPLAIN_CONTENT = {
+    "morning": """
+HOW 'empathy morning' WORKS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+This command aggregates multiple data sources to give you a prioritized
+start-of-day briefing:
+
+1. PATTERNS ANALYSIS
+   Reads ./patterns/*.json to find:
+   - Unresolved bugs (status: investigating)
+   - Recent security decisions
+   - Tech debt trends
+
+2. GIT CONTEXT
+   Checks your recent git activity:
+   - Commits from yesterday
+   - Uncommitted changes
+   - Branch status
+
+3. HEALTH SNAPSHOT
+   Runs quick health checks:
+   - Lint issues count
+   - Type errors
+   - Test status
+
+4. PRIORITY SCORING
+   Items are scored and sorted by:
+   - Age (older = higher priority)
+   - Severity (critical > high > medium)
+   - Your recent activity patterns
+
+TIPS:
+• Run this first thing each day
+• Use 'empathy morning --verbose' for details
+• Pair with 'empathy status --select N' to dive deeper
+""",
+    "ship": """
+HOW 'empathy ship' WORKS:
+━━━━━━━━━━━━━━━━━━━━━━━━━
+Pre-commit validation pipeline that ensures code quality before shipping:
+
+1. HEALTH CHECKS
+   - Runs lint checks (ruff/flake8)
+   - Validates types (mypy/pyright)
+   - Checks formatting (black/prettier)
+
+2. PATTERN REVIEW
+   - Compares changes against known bug patterns
+   - Flags code that matches historical issues
+   - Suggests fixes based on past resolutions
+
+3. SECURITY SCAN
+   - Checks for hardcoded secrets
+   - Validates against security patterns
+   - Reports potential vulnerabilities
+
+4. PATTERN SYNC (optional)
+   - Updates Claude Code rules
+   - Syncs new patterns discovered
+   - Skip with --skip-sync
+
+EXIT CODES:
+• 0 = All checks passed, safe to commit
+• 1 = Issues found, review before committing
+
+TIPS:
+• Add to pre-commit hook: empathy ship --skip-sync
+• Use 'empathy ship --verbose' to see all checks
+""",
+    "learn": """
+HOW 'empathy learn' WORKS:
+━━━━━━━━━━━━━━━━━━━━━━━━━
+Extracts patterns from your git history to teach Claude about your codebase:
+
+1. COMMIT ANALYSIS
+   Parses commit messages looking for:
+   - fix: Bug fixes → debugging.json
+   - security: decisions → security.json
+   - TODO/FIXME in code → tech_debt.json
+
+2. DIFF INSPECTION
+   Analyzes code changes to:
+   - Identify affected files
+   - Extract error types
+   - Record fix patterns
+
+3. PATTERN STORAGE
+   Saves to ./patterns/:
+   - debugging.json: Bug patterns
+   - security.json: Security decisions
+   - tech_debt.json: Technical debt
+   - inspection.json: Code review findings
+
+4. SUMMARY GENERATION
+   Creates .claude/patterns_summary.md:
+   - Human-readable pattern overview
+   - Loaded by Claude Code automatically
+
+USAGE EXAMPLES:
+• empathy learn --analyze 10    # Last 10 commits
+• empathy learn --analyze 100   # Deeper history
+• empathy sync-claude           # Apply patterns to Claude
+
+TIPS:
+• Run weekly to keep patterns current
+• Use good commit messages (fix:, feat:, etc.)
+• Check ./patterns/ to see what was learned
+""",
+    "health": """
+HOW 'empathy health' WORKS:
+━━━━━━━━━━━━━━━━━━━━━━━━━
+Code health dashboard that runs multiple quality checks:
+
+1. QUICK MODE (default)
+   Fast checks that run in seconds:
+   - Lint: ruff check or flake8
+   - Format: black --check or prettier
+   - Basic type checking
+
+2. DEEP MODE (--deep)
+   Comprehensive checks (slower):
+   - Full type analysis (mypy --strict)
+   - Test suite execution
+   - Security scanning
+   - Dependency audit
+
+3. SCORING
+   Health score 0-100 based on:
+   - Lint issues (×2 penalty each)
+   - Type errors (×5 penalty each)
+   - Test failures (×10 penalty each)
+   - Security issues (×20 penalty each)
+
+4. AUTO-FIX (--fix)
+   Can automatically fix:
+   - Formatting issues
+   - Import sorting
+   - Simple lint errors
+
+USAGE:
+• empathy health              # Quick check
+• empathy health --deep       # Full check
+• empathy health --fix        # Auto-fix issues
+• empathy health --trends 30  # 30-day trend
+
+TIPS:
+• Run quick checks before commits
+• Run deep checks in CI/CD
+• Track trends to catch regressions
+""",
+    "sync-claude": """
+HOW 'empathy sync-claude' WORKS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Converts learned patterns into Claude Code rules:
+
+1. READS PATTERNS
+   Loads from ./patterns/:
+   - debugging.json → Bug fix patterns
+   - security.json → Security decisions
+   - tech_debt.json → Known debt items
+
+2. GENERATES RULES
+   Creates .claude/rules/empathy/:
+   - debugging.md
+   - security.md
+   - tech_debt.md
+
+3. CLAUDE CODE INTEGRATION
+   Rules are automatically loaded when:
+   - Claude Code starts in this directory
+   - Combined with CLAUDE.md instructions
+
+HOW CLAUDE USES THESE:
+• Sees historical bugs before suggesting code
+• Knows about accepted security patterns
+• Understands existing tech debt
+
+FILE STRUCTURE:
+./patterns/             # Your pattern storage
+  debugging.json
+  security.json
+.claude/
+  CLAUDE.md             # Project instructions
+  rules/
+    empathy/            # Generated rules
+      debugging.md
+      security.md
+
+TIPS:
+• Run after 'empathy learn'
+• Commit .claude/rules/ to share with team
+• Weekly sync keeps Claude current
+""",
+}
 
 
 def cmd_version(args):
@@ -41,6 +281,315 @@ def cmd_version(args):
     logger.info("Copyright 2025 Smart-AI-Memory")
     logger.info("Licensed under Fair Source License 0.9")
     logger.info("\n✨ Built with Claude Code + MemDocs + VS Code transformative stack")
+
+
+def cmd_cheatsheet(args):
+    """Display quick reference cheatsheet for all commands."""
+    category = getattr(args, "category", None)
+    compact = getattr(args, "compact", False)
+
+    print()
+    print("=" * 60)
+    print("  EMPATHY FRAMEWORK - QUICK REFERENCE")
+    print("=" * 60)
+
+    if category:
+        # Show specific category
+        category_title = category.replace("-", " ").title()
+        if category_title in CHEATSHEET:
+            print(f"\n  {category_title}")
+            print("  " + "-" * 40)
+            for cmd, desc in CHEATSHEET[category_title]:
+                if compact:
+                    print(f"  {cmd}")
+                else:
+                    print(f"  {cmd:35} {desc}")
+        else:
+            print(f"\n  Unknown category: {category}")
+            print("  Available: " + ", ".join(k.lower().replace(" ", "-") for k in CHEATSHEET))
+    else:
+        # Show all categories
+        for cat_name, commands in CHEATSHEET.items():
+            print(f"\n  {cat_name}")
+            print("  " + "-" * 40)
+            for cmd, desc in commands:
+                if compact:
+                    print(f"  {cmd}")
+                else:
+                    print(f"  {cmd:35} {desc}")
+
+    print()
+    print("-" * 60)
+    print("  Use: empathy <command> --explain  for detailed explanation")
+    print("  Use: empathy onboard              for interactive tutorial")
+    print("=" * 60)
+    print()
+
+
+def cmd_onboard(args):
+    """Interactive onboarding tutorial for new users."""
+    from empathy_os.discovery import get_engine
+
+    step = getattr(args, "step", None)
+    reset = getattr(args, "reset", False)
+
+    engine = get_engine()
+    stats = engine.get_stats()
+
+    if reset:
+        # Reset onboarding progress
+        engine.state["onboarding_step"] = 0
+        engine.state["onboarding_completed"] = []
+        engine._save()
+        print("Onboarding progress reset.")
+        return
+
+    # Define onboarding steps
+    steps = [
+        {
+            "title": "Welcome to Empathy Framework",
+            "content": """
+Welcome! Empathy Framework helps you build AI systems with 5 levels
+of sophistication, from reactive responses to anticipatory assistance.
+
+This tutorial will walk you through the key features.
+
+Let's check your current setup first...
+""",
+            "check": lambda: True,
+            "action": None,
+        },
+        {
+            "title": "Step 1: Initialize Your Project",
+            "content": """
+First, let's create a configuration file for your project.
+
+Run: empathy init
+
+This creates empathy.config.yaml with sensible defaults.
+Alternatively, use 'empathy wizard' for an interactive setup.
+""",
+            "check": lambda: _file_exists("empathy.config.yaml")
+            or _file_exists("empathy.config.yml"),
+            "action": "empathy init",
+        },
+        {
+            "title": "Step 2: Learn From Your History",
+            "content": """
+Empathy can learn patterns from your git commit history.
+This teaches Claude about your codebase's patterns and past bugs.
+
+Run: empathy learn --analyze 10
+
+This analyzes the last 10 commits and extracts:
+- Bug fix patterns
+- Security decisions
+- Technical debt markers
+""",
+            "check": lambda: _file_exists("patterns/debugging.json"),
+            "action": "empathy learn --analyze 10",
+        },
+        {
+            "title": "Step 3: Sync Patterns to Claude",
+            "content": """
+Now let's share what we learned with Claude Code.
+
+Run: empathy sync-claude
+
+This creates .claude/rules/empathy/ with markdown rules
+that Claude Code automatically loads when you work in this directory.
+""",
+            "check": lambda: _file_exists(".claude/rules/empathy/debugging.md"),
+            "action": "empathy sync-claude",
+        },
+        {
+            "title": "Step 4: Check Code Health",
+            "content": """
+Let's run a quick health check on your codebase.
+
+Run: empathy health
+
+This checks:
+- Linting issues
+- Type errors
+- Formatting problems
+
+Try 'empathy health --fix' to auto-fix what's possible.
+""",
+            "check": lambda: stats.get("command_counts", {}).get("health", 0) > 0,
+            "action": "empathy health",
+        },
+        {
+            "title": "Step 5: Daily Workflow",
+            "content": """
+You're almost there! Here's your recommended daily workflow:
+
+MORNING:
+  empathy morning     - Get your priority briefing
+
+BEFORE COMMITS:
+  empathy ship        - Validate before committing
+
+WEEKLY:
+  empathy learn       - Update patterns from new commits
+  empathy sync-claude - Keep Claude current
+
+You've completed the basics! Run 'empathy cheatsheet' anytime
+for a quick reference of all commands.
+""",
+            "check": lambda: True,
+            "action": None,
+        },
+    ]
+
+    # Determine current step
+    current_step = engine.state.get("onboarding_step", 0)
+    if step is not None:
+        current_step = max(0, min(step - 1, len(steps) - 1))
+
+    step_data = steps[current_step]
+
+    # Display header
+    print()
+    print("=" * 60)
+    print(f"  ONBOARDING ({current_step + 1}/{len(steps)})")
+    print("=" * 60)
+    print()
+    print(f"  {step_data['title']}")
+    print("  " + "-" * 50)
+    print(step_data["content"])
+
+    # Check if step is completed
+    if step_data["check"]():
+        if current_step < len(steps) - 1:
+            print("  [DONE] This step is complete!")
+            print()
+            print(f"  Continue with: empathy onboard --step {current_step + 2}")
+            # Auto-advance
+            engine.state["onboarding_step"] = current_step + 1
+            engine._save()
+        else:
+            print("  Congratulations! You've completed the onboarding!")
+            print()
+            _show_achievements(engine)
+    else:
+        if step_data["action"]:
+            print(f"  NEXT: Run '{step_data['action']}'")
+            print("        Then run 'empathy onboard' to continue")
+
+    print()
+    print("-" * 60)
+    print(f"  Progress: {'*' * (current_step + 1)}{'.' * (len(steps) - current_step - 1)}")
+    print("=" * 60)
+    print()
+
+
+def _file_exists(path: str) -> bool:
+    """Check if a file exists."""
+    from pathlib import Path
+
+    return Path(path).exists()
+
+
+def _show_achievements(engine) -> None:
+    """Show user achievements based on usage."""
+    stats = engine.get_stats()
+
+    achievements = []
+    total_cmds = stats.get("total_commands", 0)
+    cmd_counts = stats.get("command_counts", {})
+
+    # Check achievements
+    if total_cmds >= 1:
+        achievements.append(("First Steps", "Ran your first command"))
+    if total_cmds >= 10:
+        achievements.append(("Getting Started", "Ran 10+ commands"))
+    if total_cmds >= 50:
+        achievements.append(("Power User", "Ran 50+ commands"))
+    if total_cmds >= 100:
+        achievements.append(("Expert", "Ran 100+ commands"))
+
+    if cmd_counts.get("learn", 0) >= 1:
+        achievements.append(("Pattern Learner", "Learned from git history"))
+    if cmd_counts.get("sync-claude", 0) >= 1:
+        achievements.append(("Claude Whisperer", "Synced patterns to Claude"))
+    if cmd_counts.get("morning", 0) >= 5:
+        achievements.append(("Early Bird", "Used morning briefing 5+ times"))
+    if cmd_counts.get("ship", 0) >= 10:
+        achievements.append(("Quality Shipper", "Used pre-commit checks 10+ times"))
+    if cmd_counts.get("health", 0) >= 1 and cmd_counts.get("fix-all", 0) >= 1:
+        achievements.append(("Code Doctor", "Used health checks and fixes"))
+
+    if stats.get("patterns_learned", 0) >= 10:
+        achievements.append(("Pattern Master", "Learned 10+ patterns"))
+
+    if stats.get("days_active", 0) >= 7:
+        achievements.append(("Week Warrior", "Active for 7+ days"))
+    if stats.get("days_active", 0) >= 30:
+        achievements.append(("Monthly Maven", "Active for 30+ days"))
+
+    if achievements:
+        print("  ACHIEVEMENTS UNLOCKED")
+        print("  " + "-" * 30)
+        for name, desc in achievements:
+            print(f"  * {name}: {desc}")
+        print()
+
+
+def cmd_explain(args):
+    """Show detailed explanation for a command."""
+    command = args.command
+
+    if command in EXPLAIN_CONTENT:
+        print(EXPLAIN_CONTENT[command])
+    else:
+        available = ", ".join(EXPLAIN_CONTENT.keys())
+        print(f"\nNo detailed explanation available for '{command}'")
+        print(f"Available: {available}")
+        print("\nTry: empathy cheatsheet  for a quick reference")
+        print()
+
+
+def cmd_achievements(args):
+    """Show user achievements and progress."""
+    from empathy_os.discovery import get_engine
+
+    engine = get_engine()
+    stats = engine.get_stats()
+
+    print()
+    print("=" * 60)
+    print("  YOUR EMPATHY FRAMEWORK JOURNEY")
+    print("=" * 60)
+    print()
+
+    # Stats summary
+    print("  STATISTICS")
+    print("  " + "-" * 40)
+    print(f"  Total commands run:    {stats.get('total_commands', 0)}")
+    print(f"  Days active:           {stats.get('days_active', 0)}")
+    print(f"  Patterns learned:      {stats.get('patterns_learned', 0)}")
+    print(
+        f"  Tips discovered:       {stats.get('tips_shown', 0)}/{stats.get('tips_remaining', 0) + stats.get('tips_shown', 0)}"
+    )
+    print()
+
+    # Command breakdown
+    cmd_counts = stats.get("command_counts", {})
+    if cmd_counts:
+        print("  COMMAND USAGE")
+        print("  " + "-" * 40)
+        sorted_cmds = sorted(cmd_counts.items(), key=lambda x: x[1], reverse=True)
+        for cmd, count in sorted_cmds[:10]:
+            bar = "*" * min(count, 20)
+            print(f"  {cmd:15} {count:4} {bar}")
+        print()
+
+    # Achievements
+    _show_achievements(engine)
+
+    print("=" * 60)
+    print()
 
 
 def cmd_init(args):
@@ -930,6 +1479,144 @@ llm_provider: "{llm_provider}"
     print("\nHappy empathizing! 🧠✨\n")
 
 
+def cmd_sync_claude(args):
+    """Sync patterns to Claude Code rules directory."""
+    import json as json_mod
+    from pathlib import Path
+
+    patterns_dir = Path(args.patterns_dir)
+    output_dir = Path(args.output_dir)
+
+    print("=" * 60)
+    print("  SYNC PATTERNS TO CLAUDE CODE")
+    print("=" * 60 + "\n")
+
+    if not patterns_dir.exists():
+        print(f"✗ Patterns directory not found: {patterns_dir}")
+        print("  Run 'empathy learn --analyze 20' first to learn patterns")
+        return 1
+
+    # Create output directory
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    synced_count = 0
+    pattern_files = ["debugging.json", "security.json", "tech_debt.json", "inspection.json"]
+
+    for pattern_file in pattern_files:
+        source_path = patterns_dir / pattern_file
+        if not source_path.exists():
+            continue
+
+        try:
+            with open(source_path) as f:
+                data = json_mod.load(f)
+
+            patterns = data.get("patterns", data.get("items", []))
+            if not patterns:
+                continue
+
+            # Generate markdown rule file
+            category = pattern_file.replace(".json", "")
+            rule_content = _generate_claude_rule(category, patterns)
+
+            # Write rule file
+            rule_file = output_dir / f"{category}.md"
+            with open(rule_file, "w") as f:
+                f.write(rule_content)
+
+            print(f"  ✓ {category}: {len(patterns)} patterns → {rule_file}")
+            synced_count += len(patterns)
+
+        except (json_mod.JSONDecodeError, OSError) as e:
+            print(f"  ✗ Failed to process {pattern_file}: {e}")
+
+    print(f"\n{'─' * 60}")
+    print(f"  Total: {synced_count} patterns synced to {output_dir}")
+    print("=" * 60 + "\n")
+
+    if synced_count == 0:
+        print("No patterns to sync. Run 'empathy learn' first.")
+        return 1
+
+    return 0
+
+
+def _generate_claude_rule(category: str, patterns: list) -> str:
+    """Generate a Claude Code rule file from patterns."""
+    lines = [
+        f"# {category.replace('_', ' ').title()} Patterns",
+        "",
+        "Auto-generated from Empathy Framework learned patterns.",
+        f"Total patterns: {len(patterns)}",
+        "",
+        "---",
+        "",
+    ]
+
+    if category == "debugging":
+        lines.extend(
+            [
+                "## Bug Fix Patterns",
+                "",
+                "When debugging similar issues, consider these historical fixes:",
+                "",
+            ]
+        )
+        for p in patterns[:20]:  # Limit to 20 most recent
+            bug_type = p.get("bug_type", "unknown")
+            root_cause = p.get("root_cause", "Unknown")
+            fix = p.get("fix", "See commit history")
+            files = p.get("files_affected", [])
+
+            lines.append(f"### {bug_type}")
+            lines.append(f"- **Root cause**: {root_cause}")
+            lines.append(f"- **Fix**: {fix}")
+            if files:
+                lines.append(f"- **Files**: {', '.join(files[:3])}")
+            lines.append("")
+
+    elif category == "security":
+        lines.extend(
+            [
+                "## Security Decisions",
+                "",
+                "Previously reviewed security items:",
+                "",
+            ]
+        )
+        for p in patterns[:20]:
+            decision = p.get("decision", "unknown")
+            reason = p.get("reason", "")
+            lines.append(f"- **{p.get('type', 'unknown')}**: {decision}")
+            if reason:
+                lines.append(f"  - Reason: {reason}")
+            lines.append("")
+
+    elif category == "tech_debt":
+        lines.extend(
+            [
+                "## Tech Debt Tracking",
+                "",
+                "Known technical debt items:",
+                "",
+            ]
+        )
+        for p in patterns[:20]:
+            lines.append(f"- {p.get('description', str(p))}")
+
+    else:
+        lines.extend(
+            [
+                f"## {category.title()} Items",
+                "",
+            ]
+        )
+        for p in patterns[:20]:
+            lines.append(f"- {p.get('description', str(p)[:100])}")
+
+    return "\n".join(lines)
+
+
 def cmd_frameworks(args):
     """List and manage agent frameworks."""
     import json as json_mod
@@ -1341,15 +2028,80 @@ def main():
     parser_frameworks.add_argument("--json", action="store_true", help="Output as JSON")
     parser_frameworks.set_defaults(func=cmd_frameworks)
 
+    # Sync-claude command (sync patterns to Claude Code)
+    parser_sync_claude = subparsers.add_parser(
+        "sync-claude", help="Sync learned patterns to Claude Code rules"
+    )
+    parser_sync_claude.add_argument(
+        "--patterns-dir", default="./patterns", help="Path to patterns directory"
+    )
+    parser_sync_claude.add_argument(
+        "--output-dir",
+        default=".claude/rules/empathy",
+        help="Output directory for Claude rules (default: .claude/rules/empathy)",
+    )
+    parser_sync_claude.set_defaults(func=cmd_sync_claude)
+
+    # =========================================================================
+    # USER EXPERIENCE COMMANDS (v2.5+)
+    # =========================================================================
+
+    # Cheatsheet command (quick reference)
+    parser_cheatsheet = subparsers.add_parser("cheatsheet", help="Quick reference of all commands")
+    parser_cheatsheet.add_argument(
+        "category",
+        nargs="?",
+        help="Category to show (getting-started, daily-workflow, code-quality, etc.)",
+    )
+    parser_cheatsheet.add_argument(
+        "--compact", action="store_true", help="Show commands only without descriptions"
+    )
+    parser_cheatsheet.set_defaults(func=cmd_cheatsheet)
+
+    # Onboard command (interactive tutorial)
+    parser_onboard = subparsers.add_parser(
+        "onboard", help="Interactive onboarding tutorial for new users"
+    )
+    parser_onboard.add_argument("--step", type=int, help="Jump to a specific step (1-5)")
+    parser_onboard.add_argument("--reset", action="store_true", help="Reset onboarding progress")
+    parser_onboard.set_defaults(func=cmd_onboard)
+
+    # Explain command (detailed command explanations)
+    parser_explain = subparsers.add_parser(
+        "explain", help="Get detailed explanation of how a command works"
+    )
+    parser_explain.add_argument(
+        "command",
+        choices=["morning", "ship", "learn", "health", "sync-claude"],
+        help="Command to explain",
+    )
+    parser_explain.set_defaults(func=cmd_explain)
+
+    # Achievements command (progress tracking)
+    parser_achievements = subparsers.add_parser(
+        "achievements", help="View your usage statistics and achievements"
+    )
+    parser_achievements.set_defaults(func=cmd_achievements)
+
     # Parse arguments
     args = parser.parse_args()
 
     # Execute command
     if hasattr(args, "func"):
-        args.func(args)
+        result = args.func(args)
+
+        # Show progressive discovery tips after command execution
+        if args.command and args.command not in ("dashboard", "run"):
+            try:
+                show_tip_if_available(args.command)
+            except Exception:
+                pass  # Don't fail on discovery errors
+
+        return result if result is not None else 0
     else:
         parser.print_help()
+        return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main() or 0)

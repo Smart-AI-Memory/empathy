@@ -9,12 +9,7 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from empathy_os import (
-    ConflictResolver,
-    Pattern,
-    ResolutionStrategy,
-    TeamPriorities,
-)
+from empathy_os import ConflictResolver, Pattern, ResolutionStrategy, TeamPriorities
 
 
 class TestConflictResolver:

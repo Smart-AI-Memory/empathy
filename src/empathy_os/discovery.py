@@ -207,7 +207,8 @@ class DiscoveryEngine:
             # Check condition-based tips
             elif "condition" in tip_config:
                 try:
-                    if tip_config["condition"](self.state):
+                    condition = tip_config["condition"]
+                    if callable(condition) and condition(self.state):
                         should_show = True
                 except Exception:
                     pass
@@ -221,8 +222,12 @@ class DiscoveryEngine:
                     }
                 )
 
-        # Sort by priority and limit
-        tips_to_show.sort(key=lambda x: x["priority"])
+        # Sort by priority and limit - ensure we get an int for sorting
+        def get_priority(x: dict) -> int:
+            p = x.get("priority", 3)
+            return int(p) if isinstance(p, int | float | str) else 3
+
+        tips_to_show.sort(key=get_priority)
         return tips_to_show[:max_tips]
 
     def mark_shown(self, tip_id: str) -> None:

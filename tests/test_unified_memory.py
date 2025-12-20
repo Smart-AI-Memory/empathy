@@ -22,11 +22,7 @@ from unittest.mock import Mock, patch
 from empathy_os.memory.long_term import Classification
 from empathy_os.memory.redis_bootstrap import RedisStartMethod, RedisStatus
 from empathy_os.memory.short_term import AccessTier
-from empathy_os.memory.unified import (
-    Environment,
-    MemoryConfig,
-    UnifiedMemory,
-)
+from empathy_os.memory.unified import Environment, MemoryConfig, UnifiedMemory
 
 
 class TestEnvironment:
@@ -149,6 +145,53 @@ class TestUnifiedMemoryInit:
             creds = memory.credentials
             assert creds.agent_id == "test_user"
             assert creds.tier == AccessTier.CONTRIBUTOR
+
+    def test_get_backend_status(self):
+        """Test get_backend_status returns expected structure"""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            config = MemoryConfig(storage_dir=tmpdir, redis_mock=True)
+            memory = UnifiedMemory(user_id="test_user", config=config)
+
+            status = memory.get_backend_status()
+
+            # Check top-level keys
+            assert "environment" in status
+            assert "initialized" in status
+            assert "short_term" in status
+            assert "long_term" in status
+
+            # Check environment
+            assert status["environment"] == "development"
+            assert status["initialized"] is True
+
+            # Check short-term status structure
+            assert "available" in status["short_term"]
+            assert "mock" in status["short_term"]
+            assert "method" in status["short_term"]
+            assert status["short_term"]["mock"] is True
+            assert status["short_term"]["method"] == "mock"
+
+            # Check long-term status structure
+            assert "available" in status["long_term"]
+            assert "storage_dir" in status["long_term"]
+            assert "encryption_enabled" in status["long_term"]
+            assert status["long_term"]["available"] is True
+            assert status["long_term"]["storage_dir"] == tmpdir
+
+    def test_get_backend_status_production_env(self):
+        """Test get_backend_status with production environment"""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            config = MemoryConfig(
+                storage_dir=tmpdir,
+                redis_mock=True,
+                environment=Environment.PRODUCTION,
+                encryption_enabled=True,
+            )
+            memory = UnifiedMemory(user_id="prod_user", config=config)
+
+            status = memory.get_backend_status()
+            assert status["environment"] == "production"
+            assert status["long_term"]["encryption_enabled"] is True
 
 
 class TestUnifiedMemoryBackendInit:

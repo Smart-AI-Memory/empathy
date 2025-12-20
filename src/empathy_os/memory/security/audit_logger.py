@@ -809,7 +809,7 @@ class AuditLogger:
         # Query all events in period
         all_events = self.query(start_date=start_date, end_date=end_date, limit=100000)
 
-        report = {
+        report: dict[str, Any] = {
             "period": {
                 "start": start_date.isoformat() if start_date else "all_time",
                 "end": end_date.isoformat() if end_date else "now",

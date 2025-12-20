@@ -13,15 +13,9 @@ import tempfile
 
 import pytest
 
-from empathy_software_plugin.wizards.enhanced_testing_wizard import (
-    EnhancedTestingWizard,
-)
-from empathy_software_plugin.wizards.performance_profiling_wizard import (
-    PerformanceProfilingWizard,
-)
-from empathy_software_plugin.wizards.security_analysis_wizard import (
-    SecurityAnalysisWizard,
-)
+from empathy_software_plugin.wizards.enhanced_testing_wizard import EnhancedTestingWizard
+from empathy_software_plugin.wizards.performance_profiling_wizard import PerformanceProfilingWizard
+from empathy_software_plugin.wizards.security_analysis_wizard import SecurityAnalysisWizard
 
 
 class TestSoftwarePluginIntegration:

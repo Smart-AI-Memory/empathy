@@ -187,9 +187,7 @@ class HaystackAdapter(BaseAdapter):
         )
 
         if self.provider == "anthropic":
-            from haystack_integrations.components.generators.anthropic import (
-                AnthropicChatGenerator,
-            )
+            from haystack_integrations.components.generators.anthropic import AnthropicChatGenerator
 
             return AnthropicChatGenerator(
                 model=model_id,

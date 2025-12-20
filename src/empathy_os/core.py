@@ -20,12 +20,7 @@ from .exceptions import ValidationError
 from .feedback_loops import FeedbackLoopDetector
 from .leverage_points import LeveragePoint, LeveragePointAnalyzer
 from .memory import Classification, UnifiedMemory
-from .redis_memory import (
-    AccessTier,
-    AgentCredentials,
-    RedisShortTermMemory,
-    StagedPattern,
-)
+from .redis_memory import AccessTier, AgentCredentials, RedisShortTermMemory, StagedPattern
 
 if TYPE_CHECKING:
     from .pattern_library import PatternLibrary
@@ -888,9 +883,10 @@ class EmpathyOS:
             "confidence": pattern["confidence"],
         }
 
-    def _is_safe_to_execute(self, action: dict) -> bool:
+    def _is_safe_to_execute(self, action: dict[str, Any]) -> bool:
         """Safety check for proactive actions"""
-        return action.get("confidence", 0) > 0.8
+        confidence: float = action.get("confidence", 0)
+        return confidence > 0.8
 
     async def _execute_proactive_actions(self, actions: list[dict]) -> list[dict]:
         """

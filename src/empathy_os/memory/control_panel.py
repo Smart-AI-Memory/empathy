@@ -349,39 +349,35 @@ class MemoryControlPanel:
         status = self.status()
         stats = self.get_statistics()
 
-        health = {
+        checks: list[dict[str, str]] = []
+        recommendations: list[str] = []
+        health: dict[str, Any] = {
             "overall": "healthy",
-            "checks": [],
-            "recommendations": [],
+            "checks": checks,
+            "recommendations": recommendations,
         }
 
         # Check Redis
         if status["redis"]["status"] == "running":
-            health["checks"].append(
-                {"name": "redis", "status": "pass", "message": "Redis is running"}
-            )
+            checks.append({"name": "redis", "status": "pass", "message": "Redis is running"})
         else:
-            health["checks"].append(
-                {"name": "redis", "status": "warn", "message": "Redis not running"}
-            )
-            health["recommendations"].append("Start Redis for multi-agent coordination")
+            checks.append({"name": "redis", "status": "warn", "message": "Redis not running"})
+            recommendations.append("Start Redis for multi-agent coordination")
             health["overall"] = "degraded"
 
         # Check long-term storage
         if status["long_term"]["status"] == "available":
-            health["checks"].append(
-                {"name": "long_term", "status": "pass", "message": "Storage available"}
-            )
+            checks.append({"name": "long_term", "status": "pass", "message": "Storage available"})
         else:
-            health["checks"].append(
+            checks.append(
                 {"name": "long_term", "status": "warn", "message": "Storage not initialized"}
             )
-            health["recommendations"].append("Initialize long-term storage directory")
+            recommendations.append("Initialize long-term storage directory")
             health["overall"] = "degraded"
 
         # Check pattern count
         if stats.patterns_total > 0:
-            health["checks"].append(
+            checks.append(
                 {
                     "name": "patterns",
                     "status": "pass",
@@ -389,23 +385,23 @@ class MemoryControlPanel:
                 }
             )
         else:
-            health["checks"].append(
+            checks.append(
                 {"name": "patterns", "status": "info", "message": "No patterns stored yet"}
             )
 
         # Check encryption
         if stats.patterns_sensitive > 0 and stats.patterns_encrypted < stats.patterns_sensitive:
-            health["checks"].append(
+            checks.append(
                 {
                     "name": "encryption",
                     "status": "fail",
                     "message": "Some sensitive patterns are not encrypted",
                 }
             )
-            health["recommendations"].append("Enable encryption for sensitive patterns")
+            recommendations.append("Enable encryption for sensitive patterns")
             health["overall"] = "unhealthy"
         elif stats.patterns_sensitive > 0:
-            health["checks"].append(
+            checks.append(
                 {
                     "name": "encryption",
                     "status": "pass",
@@ -537,7 +533,7 @@ def print_health(panel: MemoryControlPanel):
 class MemoryAPIHandler(BaseHTTPRequestHandler):
     """HTTP request handler for Memory Control Panel API."""
 
-    panel: MemoryControlPanel = None  # Set by server
+    panel: MemoryControlPanel | None = None  # Set by server
 
     def log_message(self, format, *args):
         """Override to use structlog instead of stderr."""

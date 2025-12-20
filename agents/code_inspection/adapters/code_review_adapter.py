@@ -102,9 +102,7 @@ class CodeReviewAdapter:
 
         try:
             # Import here to handle optional dependency
-            from empathy_software_plugin.wizards.code_review_wizard import (
-                CodeReviewWizard,
-            )
+            from empathy_software_plugin.wizards.code_review_wizard import CodeReviewWizard
 
             wizard = CodeReviewWizard(patterns_dir=str(self.project_root / "patterns"))
 

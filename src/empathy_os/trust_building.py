@@ -174,11 +174,12 @@ class TrustBuildingBehaviors:
         """
         logger.info(f"Clarifying ambiguous instruction: {instruction}")
 
-        clarification = {
+        clarifying_questions: list[dict[str, str]] = []
+        clarification: dict[str, Any] = {
             "original_instruction": instruction,
             "status": "needs_clarification",
             "ambiguities_detected": detected_ambiguities,
-            "clarifying_questions": [],
+            "clarifying_questions": clarifying_questions,
             "reasoning": (
                 "Detected ambiguities in instruction. Clarifying before acting "
                 "to prevent wasted effort or incorrect execution."
@@ -189,7 +190,7 @@ class TrustBuildingBehaviors:
         # Generate specific clarifying questions
         for ambiguity in detected_ambiguities:
             question = self._generate_clarifying_question(instruction, ambiguity, context)
-            clarification["clarifying_questions"].append(question)
+            clarifying_questions.append(question)
 
         # Record trust signal
         self._record_trust_signal(
@@ -236,9 +237,10 @@ class TrustBuildingBehaviors:
 
         stress_level = self._assess_stress_level(stress_indicators)
 
-        support = {
+        offered_support: list[dict[str, Any]] = []
+        support: dict[str, Any] = {
             "stress_assessment": {"level": stress_level, "indicators": stress_indicators},
-            "offered_support": [],
+            "offered_support": offered_support,
             "reasoning": (
                 f"Detected {stress_level} stress. Volunteering structural support "
                 "to reduce cognitive load and provide actionable scaffolding."
@@ -249,7 +251,7 @@ class TrustBuildingBehaviors:
         # Offer appropriate scaffolding based on stress level
         if stress_level in ["high", "critical"]:
             if "prioritization" in available_scaffolding:
-                support["offered_support"].append(
+                offered_support.append(
                     {
                         "type": "prioritization",
                         "description": "Help prioritize tasks using urgency-importance matrix",
@@ -258,7 +260,7 @@ class TrustBuildingBehaviors:
                 )
 
             if "breakdown" in available_scaffolding:
-                support["offered_support"].append(
+                offered_support.append(
                     {
                         "type": "task_breakdown",
                         "description": "Break overwhelming tasks into smaller, manageable steps",
@@ -267,7 +269,7 @@ class TrustBuildingBehaviors:
                 )
 
         if "templates" in available_scaffolding:
-            support["offered_support"].append(
+            offered_support.append(
                 {
                     "type": "templates",
                     "description": "Provide templates to reduce creation effort",
@@ -314,9 +316,10 @@ class TrustBuildingBehaviors:
 
         struggle_type = self._classify_struggle(struggle_indicators)
 
-        offer = {
+        help_offered: list[dict[str, str]] = []
+        offer: dict[str, Any] = {
             "struggle_assessment": {"type": struggle_type, "indicators": struggle_indicators},
-            "help_offered": [],
+            "help_offered": help_offered,
             "tone": "supportive_not_condescending",
             "reasoning": (
                 f"Detected {struggle_type} struggle pattern. Offering relevant help "
@@ -328,21 +331,17 @@ class TrustBuildingBehaviors:
         # Offer appropriate help based on struggle type
         if struggle_type == "comprehension":
             if "explanation" in available_help:
-                offer["help_offered"].append(
+                help_offered.append(
                     {"type": "explanation", "description": "Provide clearer explanation of concept"}
                 )
             if "examples" in available_help:
-                offer["help_offered"].append(
-                    {"type": "examples", "description": "Show concrete examples"}
-                )
+                help_offered.append({"type": "examples", "description": "Show concrete examples"})
 
         elif struggle_type == "execution":
             if "debugging" in available_help:
-                offer["help_offered"].append(
-                    {"type": "debugging", "description": "Help debug the issue"}
-                )
+                help_offered.append({"type": "debugging", "description": "Help debug the issue"})
             if "guidance" in available_help:
-                offer["help_offered"].append(
+                help_offered.append(
                     {"type": "step_by_step", "description": "Provide step-by-step guidance"}
                 )
 
@@ -455,16 +454,18 @@ class TrustBuildingBehaviors:
         """Extract technical notes"""
         return [f"Data structure: {type(data).__name__}"]
 
-    def _extract_immediate_actions(self, data: dict) -> list[str]:
+    def _extract_immediate_actions(self, data: dict[str, Any]) -> list[str]:
         """Extract immediate actions"""
         if "actions" in data:
-            return data["actions"][:5]
+            actions: list[str] = data["actions"][:5]
+            return actions
         return ["Review data and determine next steps"]
 
-    def _extract_priorities(self, data: dict) -> list[str]:
+    def _extract_priorities(self, data: dict[str, Any]) -> list[str]:
         """Extract priorities"""
         if "priorities" in data:
-            return data["priorities"]
+            priorities: list[str] = data["priorities"]
+            return priorities
         return []
 
     def _generate_clarifying_question(

@@ -25,9 +25,19 @@ from typing import Any
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from empathy_os.logging_config import get_logger
-from empathy_os.plugins import get_global_registry
+from empathy_os.plugins import get_global_registry as _get_global_registry
 
 logger = get_logger(__name__)
+
+
+def get_global_registry():
+    """Get the global plugin registry.
+
+    This wrapper exists so tests can patch this function at the module level
+    via `empathy_software_plugin.cli.get_global_registry`.
+    """
+    return _get_global_registry()
+
 
 # Initialize colorama for cross-platform ANSI color support (especially Windows)
 try:

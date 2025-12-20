@@ -150,7 +150,7 @@ class EmpathyConfig:
             >>> config = EmpathyConfig.from_env()
             >>> print(config.user_id)  # "alice"
         """
-        data = {}
+        data: dict[str, Any] = {}
 
         # Get all environment variables with prefix
         for key, value in os.environ.items():

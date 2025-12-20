@@ -5,6 +5,55 @@ All notable changes to the Empathy Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2025-12-20
+
+### Added
+
+**Power User Workflows**
+- **`empathy morning`** - Start-of-day briefing with patterns learned, tech debt trends, and suggested focus areas
+- **`empathy ship`** - Pre-commit validation pipeline (lint, format, types, git status, Claude sync)
+- **`empathy fix-all`** - Auto-fix all lint and format issues with ruff, black, and isort
+- **`empathy learn`** - Extract bug patterns from git history automatically
+
+**Cost Optimization Dashboard**
+- **`empathy costs`** - View API cost tracking and savings from ModelRouter
+- Daily/weekly cost breakdown by model tier and task type
+- Automatic savings calculation vs always-using-premium baseline
+- Integration with dashboard and VS Code extension
+
+**Project Scaffolding**
+- **`empathy new <template> <name>`** - Create new projects from templates
+- Templates available: `minimal`, `python-cli`, `python-fastapi`, `python-agent`
+- Pre-configured empathy.config.yml and .claude/CLAUDE.md included
+
+**Progressive Feature Discovery**
+- Context-aware tips shown after command execution
+- Tips trigger based on usage patterns (e.g., "After 10 inspects, try sync-claude")
+- Maximum 2 tips at a time to avoid overwhelming users
+- Tracks command usage and patterns learned
+
+**Visual Dashboard**
+- **`empathy dashboard`** - Launch web-based dashboard in browser
+- Pattern browser with bug types and resolution status
+- Cost savings visualization
+- Quick command reference
+- Dark mode support (respects system preference)
+
+**VS Code Extension** (`vscode-extension/`)
+- Status bar showing patterns count and cost savings
+- Command palette integration for all empathy commands
+- Sidebar with Patterns, Health, and Costs tree views
+- Auto-refresh of pattern data
+- Settings for customization
+
+### Changed
+
+- CLI now returns proper exit codes for scripting integration
+- Improved terminal output formatting across all commands
+- Discovery tips integrated into CLI post-command hooks
+
+---
+
 ## [2.4.0] - 2025-12-20
 
 ### Added

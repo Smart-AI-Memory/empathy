@@ -8,12 +8,7 @@ Author: Empathy Framework Team
 Version: 1.8.0-beta
 """
 
-from empathy_llm_toolkit.security import (
-    SecretsDetector,
-    SecretType,
-    Severity,
-    detect_secrets,
-)
+from empathy_llm_toolkit.security import SecretsDetector, SecretType, Severity, detect_secrets
 
 
 def example_1_basic_detection():

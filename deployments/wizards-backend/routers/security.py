@@ -46,9 +46,7 @@ async def scan_security(request: SecurityScanRequest):
     - Level 4 predictions about imminent risks
     """
     try:
-        from empathy_software_plugin.wizards.security_analysis_wizard import (
-            SecurityAnalysisWizard,
-        )
+        from empathy_software_plugin.wizards.security_analysis_wizard import SecurityAnalysisWizard
 
         wizard = SecurityAnalysisWizard()
 
@@ -85,12 +83,8 @@ async def scan_snippet(request: CodeSnippetRequest):
     Useful for code review or paste-and-check workflows.
     """
     try:
-        from empathy_software_plugin.wizards.security.exploit_analyzer import (
-            ExploitAnalyzer,
-        )
-        from empathy_software_plugin.wizards.security.owasp_patterns import (
-            OWASPPatternDetector,
-        )
+        from empathy_software_plugin.wizards.security.exploit_analyzer import ExploitAnalyzer
+        from empathy_software_plugin.wizards.security.owasp_patterns import OWASPPatternDetector
 
         detector = OWASPPatternDetector()
         analyzer = ExploitAnalyzer()

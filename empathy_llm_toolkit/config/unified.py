@@ -158,7 +158,8 @@ class UnifiedAgentConfig(BaseModel):
         }
 
         return models.get(self.provider, {}).get(
-            self.model_tier, "claude-sonnet-4-20250514"  # Fallback
+            self.model_tier,
+            "claude-sonnet-4-20250514",  # Fallback
         )
 
     def for_book_production(self) -> "BookProductionConfig":

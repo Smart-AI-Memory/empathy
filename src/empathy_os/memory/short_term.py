@@ -236,10 +236,13 @@ class RedisShortTermMemory:
             if key in self._mock_storage:
                 value, expires = self._mock_storage[key]
                 if expires is None or datetime.now().timestamp() < expires:
-                    return value
+                    return str(value) if value is not None else None
                 del self._mock_storage[key]
             return None
-        return self._client.get(key)
+        if self._client is None:
+            return None
+        result = self._client.get(key)
+        return str(result) if result else None
 
     def _set(self, key: str, value: str, ttl: int | None = None) -> bool:
         """Set value in Redis or mock"""
@@ -247,9 +250,13 @@ class RedisShortTermMemory:
             expires = datetime.now().timestamp() + ttl if ttl else None
             self._mock_storage[key] = (value, expires)
             return True
+        if self._client is None:
+            return False
         if ttl:
-            return self._client.setex(key, ttl, value)
-        return self._client.set(key, value)
+            self._client.setex(key, ttl, value)
+            return True
+        result = self._client.set(key, value)
+        return bool(result)
 
     def _delete(self, key: str) -> bool:
         """Delete key from Redis or mock"""
@@ -257,6 +264,8 @@ class RedisShortTermMemory:
             if key in self._mock_storage:
                 del self._mock_storage[key]
                 return True
+            return False
+        if self._client is None:
             return False
         return self._client.delete(key) > 0
 
@@ -266,7 +275,10 @@ class RedisShortTermMemory:
             import fnmatch
 
             return [k for k in self._mock_storage.keys() if fnmatch.fnmatch(k, pattern)]
-        return self._client.keys(pattern)
+        if self._client is None:
+            return []
+        keys = self._client.keys(pattern)
+        return [k.decode() if isinstance(k, bytes) else str(k) for k in keys]
 
     # === Working Memory (Stash/Retrieve) ===
 
@@ -742,7 +754,8 @@ class RedisShortTermMemory:
         if raw is None:
             return None
 
-        return json.loads(raw)
+        result: dict = json.loads(raw)
+        return result
 
     # === Health Check ===
 
@@ -755,8 +768,10 @@ class RedisShortTermMemory:
         """
         if self.use_mock:
             return True
+        if self._client is None:
+            return False
         try:
-            return self._client.ping()
+            return bool(self._client.ping())
         except Exception:
             return False
 
@@ -782,6 +797,8 @@ class RedisShortTermMemory:
                 ),
             }
 
+        if self._client is None:
+            return {"mode": "disconnected", "error": "No Redis client"}
         info = self._client.info("memory")
         return {
             "mode": "redis",

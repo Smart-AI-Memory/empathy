@@ -34,9 +34,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from empathy_software_plugin.wizards.memory_enhanced_debugging_wizard import (
     MemoryEnhancedDebuggingWizard,
 )
-from empathy_software_plugin.wizards.security_learning_wizard import (
-    SecurityLearningWizard,
-)
+from empathy_software_plugin.wizards.security_learning_wizard import SecurityLearningWizard
 from empathy_software_plugin.wizards.tech_debt_wizard import TechDebtWizard
 
 # ============================================================================

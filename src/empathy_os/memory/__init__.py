@@ -60,25 +60,13 @@ Licensed under Fair Source 0.9
 
 # Short-term memory (Redis)
 # Claude Memory integration
-from .claude_memory import (
-    ClaudeMemoryConfig,
-    ClaudeMemoryLoader,
-)
+from .claude_memory import ClaudeMemoryConfig, ClaudeMemoryLoader
 
 # Memory configuration
-from .config import (
-    check_redis_connection,
-    get_railway_redis,
-    get_redis_config,
-    get_redis_memory,
-)
+from .config import check_redis_connection, get_railway_redis, get_redis_config, get_redis_memory
 
 # Control Panel
-from .control_panel import (
-    ControlPanelConfig,
-    MemoryControlPanel,
-    MemoryStats,
-)
+from .control_panel import ControlPanelConfig, MemoryControlPanel, MemoryStats
 
 # Long-term memory (Persistent patterns)
 from .long_term import (
@@ -126,17 +114,10 @@ from .short_term import (
 )
 
 # Conversation Summary Index
-from .summary_index import (
-    AgentContext,
-    ConversationSummaryIndex,
-)
+from .summary_index import AgentContext, ConversationSummaryIndex
 
 # Unified memory interface
-from .unified import (
-    Environment,
-    MemoryConfig,
-    UnifiedMemory,
-)
+from .unified import Environment, MemoryConfig, UnifiedMemory
 
 __all__ = [
     # Unified Memory Interface (recommended)

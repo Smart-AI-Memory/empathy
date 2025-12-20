@@ -24,10 +24,7 @@ from empathy_llm_toolkit.agent_factory.base import (
     BaseWorkflow,
     WorkflowConfig,
 )
-from empathy_llm_toolkit.agent_factory.decorators import (
-    log_performance,
-    safe_agent_operation,
-)
+from empathy_llm_toolkit.agent_factory.decorators import log_performance, safe_agent_operation
 
 logger = logging.getLogger(__name__)
 

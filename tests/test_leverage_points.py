@@ -5,11 +5,7 @@ Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
-from empathy_os.leverage_points import (
-    LeverageLevel,
-    LeveragePoint,
-    LeveragePointAnalyzer,
-)
+from empathy_os.leverage_points import LeverageLevel, LeveragePoint, LeveragePointAnalyzer
 
 
 class TestLeverageLevel:

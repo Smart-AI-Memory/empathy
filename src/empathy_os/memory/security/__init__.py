@@ -12,13 +12,7 @@ Licensed under Fair Source 0.9
 
 from .audit_logger import AuditEvent, AuditLogger, SecurityViolation
 from .pii_scrubber import PIIDetection, PIIPattern, PIIScrubber
-from .secrets_detector import (
-    SecretDetection,
-    SecretsDetector,
-    SecretType,
-    Severity,
-    detect_secrets,
-)
+from .secrets_detector import SecretDetection, SecretsDetector, SecretType, Severity, detect_secrets
 
 __all__ = [
     # PII Scrubbing

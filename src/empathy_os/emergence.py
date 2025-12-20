@@ -248,7 +248,7 @@ class EmergenceDetector:
         cv = std_dev / mean  # Coefficient of variation
 
         # Convert to consistency score (inverse of variation)
-        consistency = max(0.0, 1.0 - min(cv, 1.0))
+        consistency: float = max(0.0, 1.0 - min(cv, 1.0))
         return consistency
 
     def _analyze_communication_patterns(

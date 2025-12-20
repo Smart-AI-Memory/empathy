@@ -51,10 +51,7 @@ class TestFramework:
 
     def test_get_recommended_framework(self):
         """Test framework recommendations."""
-        from empathy_llm_toolkit.agent_factory.framework import (
-            Framework,
-            get_recommended_framework,
-        )
+        from empathy_llm_toolkit.agent_factory.framework import Framework, get_recommended_framework
 
         # Native should always be available as fallback
         rec = get_recommended_framework("general")
@@ -62,10 +59,7 @@ class TestFramework:
 
     def test_get_framework_info(self):
         """Test framework info retrieval."""
-        from empathy_llm_toolkit.agent_factory.framework import (
-            Framework,
-            get_framework_info,
-        )
+        from empathy_llm_toolkit.agent_factory.framework import Framework, get_framework_info
 
         info = get_framework_info(Framework.NATIVE)
         assert "name" in info
@@ -92,11 +86,7 @@ class TestAgentConfig:
 
     def test_agent_config_custom(self):
         """Test AgentConfig with custom values."""
-        from empathy_llm_toolkit.agent_factory.base import (
-            AgentCapability,
-            AgentConfig,
-            AgentRole,
-        )
+        from empathy_llm_toolkit.agent_factory.base import AgentCapability, AgentConfig, AgentRole
 
         config = AgentConfig(
             name="researcher",
@@ -139,10 +129,7 @@ class TestNativeAdapter:
     def test_native_adapter_create_workflow(self):
         """Test creating a workflow with native adapter."""
         from empathy_llm_toolkit.agent_factory.adapters.native import NativeAdapter
-        from empathy_llm_toolkit.agent_factory.base import (
-            AgentConfig,
-            WorkflowConfig,
-        )
+        from empathy_llm_toolkit.agent_factory.base import AgentConfig, WorkflowConfig
 
         adapter = NativeAdapter()
 
@@ -376,9 +363,7 @@ class TestLangGraphAdapter:
 
     def test_langgraph_available(self):
         """Test LangGraph availability check."""
-        from empathy_llm_toolkit.agent_factory.adapters.langgraph_adapter import (
-            _check_langgraph,
-        )
+        from empathy_llm_toolkit.agent_factory.adapters.langgraph_adapter import _check_langgraph
 
         # Just verify it returns a boolean
         result = _check_langgraph()

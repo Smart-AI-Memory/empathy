@@ -236,6 +236,55 @@ class UnifiedMemory:
         """Get agent credentials for short-term memory operations."""
         return AgentCredentials(agent_id=self.user_id, tier=self.access_tier)
 
+    def get_backend_status(self) -> dict[str, Any]:
+        """
+        Get the current status of all memory backends.
+
+        Returns a structured dict suitable for health checks, debugging,
+        and dashboard display. Can be serialized to JSON.
+
+        Returns:
+            dict with keys:
+                - environment: Current environment (development/staging/production)
+                - short_term: Status of Redis-based short-term memory
+                - long_term: Status of persistent long-term memory
+                - initialized: Whether backends have been initialized
+
+        Example:
+            >>> memory = UnifiedMemory(user_id="agent")
+            >>> status = memory.get_backend_status()
+            >>> print(status["short_term"]["available"])
+            True
+        """
+        short_term_status: dict[str, Any] = {
+            "available": False,
+            "mock": True,
+            "method": "unknown",
+            "message": "Not initialized",
+        }
+
+        if self._redis_status:
+            short_term_status = {
+                "available": self._redis_status.available,
+                "mock": not self._redis_status.available
+                or self._redis_status.method == RedisStartMethod.MOCK,
+                "method": self._redis_status.method.value,
+                "message": self._redis_status.message,
+            }
+
+        long_term_status: dict[str, Any] = {
+            "available": self._long_term is not None,
+            "storage_dir": self.config.storage_dir,
+            "encryption_enabled": self.config.encryption_enabled,
+        }
+
+        return {
+            "environment": self.config.environment.value,
+            "initialized": self._initialized,
+            "short_term": short_term_status,
+            "long_term": long_term_status,
+        }
+
     # =========================================================================
     # SHORT-TERM MEMORY OPERATIONS
     # =========================================================================
@@ -452,7 +501,7 @@ class UnifiedMemory:
 
         # Note: Full search implementation depends on storage backend
         # For now, return patterns matching type/classification
-        patterns = []
+        patterns: list[dict[str, Any]] = []
         # This would be implemented based on the storage backend
         return patterns
 
@@ -553,7 +602,7 @@ class UnifiedMemory:
         Returns:
             Status of each memory backend
         """
-        redis_info = {
+        redis_info: dict[str, Any] = {
             "available": self.has_short_term,
             "mock_mode": not self.using_real_redis,
         }

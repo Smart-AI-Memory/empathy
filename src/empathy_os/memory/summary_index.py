@@ -162,7 +162,9 @@ class ConversationSummaryIndex:
             expires = time.time() + self._ttl
             self._memory._mock_storage[key] = (existing, expires)
             return True
-        return bool(self._memory._client.hset(key, mapping=mapping))
+        if self._memory._client is None:
+            return False
+        return bool(self._memory._client.hset(key, mapping=mapping))  # type: ignore[arg-type]
 
     def _hget(self, key: str, field: str) -> str | None:
         """Get single hash field."""
@@ -175,7 +177,10 @@ class ConversationSummaryIndex:
                 if isinstance(data, dict):
                     return data.get(field)
             return None
-        return self._memory._client.hget(key, field)
+        if self._memory._client is None:
+            return None
+        result = self._memory._client.hget(key, field)
+        return str(result) if result else None
 
     def _hgetall(self, key: str) -> dict[str, str]:
         """Get all hash fields."""
@@ -188,8 +193,10 @@ class ConversationSummaryIndex:
                 if isinstance(data, dict):
                     return data
             return {}
+        if self._memory._client is None:
+            return {}
         result = self._memory._client.hgetall(key)
-        return result if result else {}
+        return dict(result) if result else {}
 
     def _zadd(self, key: str, score: float, member: str) -> bool:
         """Add to sorted set with score."""
@@ -206,6 +213,8 @@ class ConversationSummaryIndex:
             expires = time.time() + self._ttl
             self._memory._mock_storage[key] = (data, expires)
             return True
+        if self._memory._client is None:
+            return False
         return bool(self._memory._client.zadd(key, {member: score}))
 
     def _zrevrange(self, key: str, start: int, stop: int) -> list[str]:
@@ -221,8 +230,10 @@ class ConversationSummaryIndex:
                     members = [m for _, m in data[start : stop + 1]]
                     return members
             return []
+        if self._memory._client is None:
+            return []
         result = self._memory._client.zrevrange(key, start, stop)
-        return result if result else []
+        return list(result) if result else []
 
     def _sadd(self, key: str, *members: str) -> int:
         """Add members to set."""
@@ -240,7 +251,9 @@ class ConversationSummaryIndex:
             expires = time.time() + self._ttl
             self._memory._mock_storage[key] = (data, expires)
             return added
-        return self._memory._client.sadd(key, *members)
+        if self._memory._client is None:
+            return 0
+        return int(self._memory._client.sadd(key, *members))
 
     def _smembers(self, key: str) -> set[str]:
         """Get all members of set."""
@@ -253,8 +266,10 @@ class ConversationSummaryIndex:
                 if isinstance(data, set):
                     return data
             return set()
+        if self._memory._client is None:
+            return set()
         result = self._memory._client.smembers(key)
-        return result if result else set()
+        return set(result) if result else set()
 
     def _expire(self, key: str, seconds: int) -> bool:
         """Set key expiration."""
@@ -264,7 +279,9 @@ class ConversationSummaryIndex:
                 self._memory._mock_storage[key] = (data, time.time() + seconds)
                 return True
             return False
-        return self._memory._client.expire(key, seconds)
+        if self._memory._client is None:
+            return False
+        return bool(self._memory._client.expire(key, seconds))
 
     # === Public API ===
 
@@ -530,7 +547,7 @@ class ConversationSummaryIndex:
                     data, expires = self._memory._mock_storage[topic_key]
                     if isinstance(data, set):
                         data.discard(session_id)
-            else:
+            elif self._memory._client is not None:
                 self._memory._client.srem(topic_key, session_id)
 
         # Delete summary and timeline

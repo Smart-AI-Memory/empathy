@@ -48,9 +48,7 @@ class TechDebtAdapter:
 
         try:
             # Import here to handle optional dependency
-            from empathy_software_plugin.wizards.tech_debt_wizard import (
-                TechDebtWizard,
-            )
+            from empathy_software_plugin.wizards.tech_debt_wizard import TechDebtWizard
 
             wizard = TechDebtWizard()
 

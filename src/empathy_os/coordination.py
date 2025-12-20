@@ -477,11 +477,12 @@ class AgentCoordinator:
             "context": task.context,
         }
 
-        return self.memory.stash(
+        result = self.memory.stash(
             f"task:{self.team_id}:{task.task_id}",
             task_data,
             self._credentials,
         )
+        return bool(result)
 
     def get_pending_tasks(self, task_type: str | None = None) -> list[AgentTask]:
         """
@@ -630,7 +631,7 @@ class AgentCoordinator:
         """
         self._active_agents[agent_id] = datetime.now()
 
-        return self.memory.stash(
+        result = self.memory.stash(
             f"agent:{self.team_id}:{agent_id}",
             {
                 "agent_id": agent_id,
@@ -640,6 +641,7 @@ class AgentCoordinator:
             },
             self._credentials,
         )
+        return bool(result)
 
     def heartbeat(self, agent_id: str) -> bool:
         """
@@ -653,11 +655,12 @@ class AgentCoordinator:
         """
         self._active_agents[agent_id] = datetime.now()
 
-        return self.memory.send_signal(
+        result = self.memory.send_signal(
             signal_type="heartbeat",
             data={"agent_id": agent_id, "timestamp": datetime.now().isoformat()},
             credentials=self._credentials,
         )
+        return bool(result)
 
     def get_active_agents(self, timeout_seconds: int = 300) -> list[str]:
         """
@@ -689,11 +692,12 @@ class AgentCoordinator:
         Returns:
             True if broadcast sent
         """
-        return self.memory.send_signal(
+        result = self.memory.send_signal(
             signal_type=message_type,
             data={"team_id": self.team_id, **data},
             credentials=self._credentials,
         )
+        return bool(result)
 
     def aggregate_results(self, task_type: str | None = None) -> dict[str, Any]:
         """
@@ -711,7 +715,7 @@ class AgentCoordinator:
             signal_type="task_completed",
         )
 
-        results = {
+        results: dict[str, Any] = {
             "total_completed": 0,
             "by_agent": {},
             "by_type": {},
@@ -798,11 +802,12 @@ class TeamSession:
         from .redis_memory import AccessTier, AgentCredentials
 
         agent_creds = AgentCredentials(agent_id=agent_id, tier=AccessTier.CONTRIBUTOR)
-        return self.memory.join_session(self.session_id, agent_creds)
+        return bool(self.memory.join_session(self.session_id, agent_creds))
 
     def get_info(self) -> dict[str, Any] | None:
         """Get session info including participants."""
-        return self.memory.get_session(self.session_id, self._credentials)
+        result = self.memory.get_session(self.session_id, self._credentials)
+        return dict(result) if result else None
 
     def share(self, key: str, data: Any) -> bool:
         """
@@ -815,10 +820,12 @@ class TeamSession:
         Returns:
             True if shared successfully
         """
-        return self.memory.stash(
-            f"session:{self.session_id}:{key}",
-            data,
-            self._credentials,
+        return bool(
+            self.memory.stash(
+                f"session:{self.session_id}:{key}",
+                data,
+                self._credentials,
+            )
         )
 
     def get(self, key: str) -> Any | None:
@@ -847,10 +854,12 @@ class TeamSession:
         Returns:
             True if sent
         """
-        return self.memory.send_signal(
-            signal_type=signal_type,
-            data={"session_id": self.session_id, **data},
-            credentials=self._credentials,
+        return bool(
+            self.memory.send_signal(
+                signal_type=signal_type,
+                data={"session_id": self.session_id, **data},
+                credentials=self._credentials,
+            )
         )
 
     def get_signals(self, signal_type: str | None = None) -> list[dict]:
@@ -863,4 +872,5 @@ class TeamSession:
         Returns:
             List of signals
         """
-        return self.memory.receive_signals(self._credentials, signal_type=signal_type)
+        result = self.memory.receive_signals(self._credentials, signal_type=signal_type)
+        return list(result) if result else []

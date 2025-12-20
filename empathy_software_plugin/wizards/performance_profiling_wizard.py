@@ -19,10 +19,7 @@ from .performance.profiler_parsers import (
     SimpleJSONProfilerParser,
     parse_profiler_output,
 )
-from .performance.trajectory_analyzer import (
-    PerformanceTrajectoryAnalyzer,
-    TrajectoryPrediction,
-)
+from .performance.trajectory_analyzer import PerformanceTrajectoryAnalyzer, TrajectoryPrediction
 
 logger = logging.getLogger(__name__)
 

@@ -17,6 +17,7 @@ Licensed under Fair Source License 0.9
 import json
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 # Pricing per million tokens (as of December 2024)
 MODEL_PRICING = {
@@ -100,7 +101,7 @@ class CostTracker:
         Returns:
             Cost in USD
         """
-        pricing = MODEL_PRICING.get(model, MODEL_PRICING.get("capable"))
+        pricing = MODEL_PRICING.get(model) or MODEL_PRICING["capable"]
         input_cost = (input_tokens / 1_000_000) * pricing["input"]
         output_cost = (output_tokens / 1_000_000) * pricing["output"]
         return input_cost + output_cost
@@ -193,7 +194,7 @@ class CostTracker:
         cutoff = datetime.now() - timedelta(days=days)
         cutoff_str = cutoff.strftime("%Y-%m-%d")
 
-        totals = {
+        totals: dict[str, Any] = {
             "days": days,
             "requests": 0,
             "input_tokens": 0,
@@ -305,20 +306,22 @@ class CostTracker:
 
         return "\n".join(lines)
 
-    def get_today(self) -> dict:
+    def get_today(self) -> dict[str, int | float]:
         """Get today's cost summary."""
         today = datetime.now().strftime("%Y-%m-%d")
-        return self.data.get("daily_totals", {}).get(
-            today,
-            {
-                "requests": 0,
-                "input_tokens": 0,
-                "output_tokens": 0,
-                "actual_cost": 0,
-                "baseline_cost": 0,
-                "savings": 0,
-            },
-        )
+        daily_totals = self.data.get("daily_totals", {})
+        default: dict[str, int | float] = {
+            "requests": 0,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "actual_cost": 0,
+            "baseline_cost": 0,
+            "savings": 0,
+        }
+        if isinstance(daily_totals, dict) and today in daily_totals:
+            result = daily_totals[today]
+            return result if isinstance(result, dict) else default
+        return default
 
 
 def cmd_costs(args):

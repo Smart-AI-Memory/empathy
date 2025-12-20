@@ -261,9 +261,7 @@ class ModelRouter:
         tier = self._get_tier(task_type)
 
         if provider not in self.MODELS:
-            raise ValueError(
-                f"Unknown provider: {provider}. " f"Available: {list(self.MODELS.keys())}"
-            )
+            raise ValueError(f"Unknown provider: {provider}. Available: {list(self.MODELS.keys())}")
 
         config = self.MODELS[provider].get(tier.value)
         if not config:

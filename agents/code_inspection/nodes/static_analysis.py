@@ -18,12 +18,7 @@ import asyncio
 import logging
 from datetime import datetime
 
-from ..adapters import (
-    CodeHealthAdapter,
-    SecurityAdapter,
-    TechDebtAdapter,
-    TestQualityAdapter,
-)
+from ..adapters import CodeHealthAdapter, SecurityAdapter, TechDebtAdapter, TestQualityAdapter
 from ..state import CodeInspectionState, InspectionPhase, add_audit_entry
 
 logger = logging.getLogger(__name__)

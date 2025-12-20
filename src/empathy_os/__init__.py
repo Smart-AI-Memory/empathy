@@ -4,6 +4,54 @@ Empathy Framework - AI-Human Collaboration Library
 A five-level maturity model for building AI systems that progress from
 reactive responses to anticipatory problem prevention.
 
+QUICK START:
+    from empathy_os import EmpathyOS
+
+    # Create an EmpathyOS instance
+    empathy = EmpathyOS(user_id="developer@company.com")
+
+    # Use Level 4 (Anticipatory) for predictions
+    response = empathy.level_4_anticipatory(
+        user_input="How do I optimize database queries?",
+        context={"domain": "software"},
+        history=[]
+    )
+
+    print(f"Response: {response['response']}")
+    print(f"Predictions: {response.get('predictions', [])}")
+
+    # Store patterns in memory
+    empathy.stash("session_context", {"topic": "database optimization"})
+    empathy.persist_pattern(
+        content="Query optimization technique",
+        pattern_type="technique"
+    )
+
+MEMORY OPERATIONS:
+    from empathy_os import UnifiedMemory, Classification
+
+    # Initialize unified memory (auto-detects environment)
+    memory = UnifiedMemory(user_id="agent@company.com")
+
+    # Short-term (Redis-backed, TTL-based)
+    memory.stash("working_data", {"status": "processing"})
+    data = memory.retrieve("working_data")
+
+    # Long-term (persistent, classified)
+    result = memory.persist_pattern(
+        content="Optimization algorithm for X",
+        pattern_type="algorithm",
+        classification=Classification.INTERNAL,
+    )
+    pattern = memory.recall_pattern(result["pattern_id"])
+
+KEY EXPORTS:
+    - EmpathyOS: Main orchestration class
+    - UnifiedMemory: Two-tier memory (short + long term)
+    - MemoryConfig, Environment: Memory configuration
+    - Classification, AccessTier: Security/access enums
+    - Level1-5 classes: Empathy level implementations
+
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
@@ -36,13 +84,7 @@ from .exceptions import (
     ValidationError,
 )
 from .feedback_loops import FeedbackLoopDetector
-from .levels import (
-    Level1Reactive,
-    Level2Guided,
-    Level3Proactive,
-    Level4Anticipatory,
-    Level5Systems,
-)
+from .levels import Level1Reactive, Level2Guided, Level3Proactive, Level4Anticipatory, Level5Systems
 from .leverage_points import LeveragePointAnalyzer
 from .logging_config import LoggingConfig, get_logger
 

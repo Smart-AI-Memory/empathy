@@ -17,12 +17,7 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Any
 
-from ..state import (
-    CodeInspectionState,
-    CrossToolInsight,
-    InspectionPhase,
-    add_audit_entry,
-)
+from ..state import CodeInspectionState, CrossToolInsight, InspectionPhase, add_audit_entry
 
 logger = logging.getLogger(__name__)
 

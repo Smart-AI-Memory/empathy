@@ -20,13 +20,19 @@ from urllib.parse import urlparse
 # Try to import optional dependencies
 try:
     from empathy_os.cost_tracker import CostTracker
+
+    HAS_COST_TRACKER = True
 except ImportError:
-    CostTracker = None
+    CostTracker = None  # type: ignore[misc, assignment]
+    HAS_COST_TRACKER = False
 
 try:
     from empathy_os.discovery import DiscoveryEngine
+
+    HAS_DISCOVERY = True
 except ImportError:
-    DiscoveryEngine = None
+    DiscoveryEngine = None  # type: ignore[misc, assignment]
+    HAS_DISCOVERY = False
 
 
 class DashboardHandler(http.server.BaseHTTPRequestHandler):
@@ -73,7 +79,7 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
 
     def _serve_costs(self):
         """Serve cost data as JSON."""
-        if CostTracker:
+        if HAS_COST_TRACKER and CostTracker is not None:
             tracker = CostTracker(self.empathy_dir)
             data = tracker.get_summary(30)
         else:
@@ -82,7 +88,7 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
 
     def _serve_stats(self):
         """Serve discovery stats as JSON."""
-        if DiscoveryEngine:
+        if HAS_DISCOVERY and DiscoveryEngine is not None:
             engine = DiscoveryEngine(self.empathy_dir)
             data = engine.get_stats()
         else:
@@ -141,7 +147,7 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
 
         # Get cost summary
         cost_summary = {"savings": 0, "savings_percent": 0, "requests": 0}
-        if CostTracker:
+        if CostTracker is not None:
             try:
                 tracker = CostTracker(self.empathy_dir)
                 cost_summary = tracker.get_summary(30)

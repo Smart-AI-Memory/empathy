@@ -18,12 +18,7 @@ from datetime import datetime
 
 import pytest
 
-from empathy_llm_toolkit.state import (
-    CollaborationState,
-    Interaction,
-    PatternType,
-    UserPattern,
-)
+from empathy_llm_toolkit.state import CollaborationState, Interaction, PatternType, UserPattern
 
 
 class TestUserPattern:

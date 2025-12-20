@@ -80,9 +80,7 @@ async def demo_basic_scanning():
     print("DEMO 1: Basic Security Vulnerability Scanning")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.security_analysis_wizard import (
-        SecurityAnalysisWizard,
-    )
+    from empathy_software_plugin.wizards.security_analysis_wizard import SecurityAnalysisWizard
 
     wizard = SecurityAnalysisWizard()
 
@@ -128,9 +126,7 @@ async def demo_exploitability():
     print("DEMO 2: Level 4 - Exploitability Assessment")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.security_analysis_wizard import (
-        SecurityAnalysisWizard,
-    )
+    from empathy_software_plugin.wizards.security_analysis_wizard import SecurityAnalysisWizard
 
     wizard = SecurityAnalysisWizard()
 
@@ -183,9 +179,7 @@ async def demo_predictions():
     print("DEMO 3: Level 4 - Security Predictions")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.security_analysis_wizard import (
-        SecurityAnalysisWizard,
-    )
+    from empathy_software_plugin.wizards.security_analysis_wizard import SecurityAnalysisWizard
 
     wizard = SecurityAnalysisWizard()
 
@@ -238,9 +232,7 @@ async def demo_recommendations():
     print("DEMO 4: Actionable Security Recommendations")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.security_analysis_wizard import (
-        SecurityAnalysisWizard,
-    )
+    from empathy_software_plugin.wizards.security_analysis_wizard import SecurityAnalysisWizard
 
     wizard = SecurityAnalysisWizard()
 

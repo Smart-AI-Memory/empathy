@@ -74,9 +74,7 @@ async def demo_basic_analysis():
     print("DEMO 1: Basic Test Coverage & Quality Analysis")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.enhanced_testing_wizard import (
-        EnhancedTestingWizard,
-    )
+    from empathy_software_plugin.wizards.enhanced_testing_wizard import EnhancedTestingWizard
 
     wizard = EnhancedTestingWizard()
 
@@ -118,9 +116,7 @@ async def demo_risk_analysis():
     print("DEMO 2: Level 4 - Bug Risk Prediction for Untested Code")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.enhanced_testing_wizard import (
-        EnhancedTestingWizard,
-    )
+    from empathy_software_plugin.wizards.enhanced_testing_wizard import EnhancedTestingWizard
 
     wizard = EnhancedTestingWizard()
 
@@ -163,9 +159,7 @@ async def demo_smart_suggestions():
     print("DEMO 3: Smart Test Suggestions Based on Risk")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.enhanced_testing_wizard import (
-        EnhancedTestingWizard,
-    )
+    from empathy_software_plugin.wizards.enhanced_testing_wizard import EnhancedTestingWizard
 
     wizard = EnhancedTestingWizard()
 
@@ -199,9 +193,7 @@ async def demo_predictions():
     print("DEMO 4: Level 4 - Production Bug Predictions")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.enhanced_testing_wizard import (
-        EnhancedTestingWizard,
-    )
+    from empathy_software_plugin.wizards.enhanced_testing_wizard import EnhancedTestingWizard
 
     wizard = EnhancedTestingWizard()
 
@@ -249,9 +241,7 @@ async def demo_recommendations():
     print("DEMO 5: Actionable Recommendations")
     print("=" * 70)
 
-    from empathy_software_plugin.wizards.enhanced_testing_wizard import (
-        EnhancedTestingWizard,
-    )
+    from empathy_software_plugin.wizards.enhanced_testing_wizard import EnhancedTestingWizard
 
     wizard = EnhancedTestingWizard()
 

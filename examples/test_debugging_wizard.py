@@ -28,9 +28,7 @@ sys.path.insert(0, str(project_root / "src"))
 sys.path.insert(0, str(project_root / "empathy_software_plugin"))
 
 # Now import the wizard (after sys.path setup)
-from wizards.memory_enhanced_debugging_wizard import (  # noqa: E402
-    MemoryEnhancedDebuggingWizard,
-)
+from wizards.memory_enhanced_debugging_wizard import MemoryEnhancedDebuggingWizard  # noqa: E402
 
 
 def print_section(title: str, char: str = "=") -> None:

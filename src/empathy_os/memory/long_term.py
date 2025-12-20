@@ -337,7 +337,7 @@ class MemDocsStorage:
                 return None
 
             with open(pattern_file, encoding="utf-8") as f:
-                pattern_data = json.load(f)
+                pattern_data: dict[str, Any] = json.load(f)
 
             logger.debug("pattern_retrieved", pattern_id=pattern_id)
             return pattern_data
@@ -470,12 +470,11 @@ class SecureMemDocsIntegration:
 
         # Initialize encryption
         self.encryption_enabled = enable_encryption and HAS_ENCRYPTION
+        self.encryption_manager: EncryptionManager | None = None
         if self.encryption_enabled:
             self.encryption_manager = EncryptionManager(master_key)
-        else:
-            self.encryption_manager = None
-            if enable_encryption:
-                logger.warning("encryption_disabled", reason="cryptography library not available")
+        elif enable_encryption:
+            logger.warning("encryption_disabled", reason="cryptography library not available")
 
         # Initialize storage backend
         self.storage = MemDocsStorage(storage_dir)
@@ -639,7 +638,7 @@ class SecureMemDocsIntegration:
             final_content = sanitized_content
             encrypted = False
 
-            if rules.encryption_required and self.encryption_enabled:
+            if rules.encryption_required and self.encryption_enabled and self.encryption_manager:
                 final_content = self.encryption_manager.encrypt(sanitized_content)
                 encrypted = True
                 logger.info("pattern_encrypted", classification=classification.value)
@@ -832,7 +831,8 @@ class SecureMemDocsIntegration:
                     logger.error("decryption_required_but_unavailable", pattern_id=pattern_id)
                     raise SecurityError("Encryption not available for decryption")
 
-                content = self.encryption_manager.decrypt(content)
+                if self.encryption_manager:
+                    content = self.encryption_manager.decrypt(content)
                 logger.debug("pattern_decrypted", pattern_id=pattern_id)
 
             # Step 4: Check retention policy
@@ -1001,7 +1001,7 @@ class SecureMemDocsIntegration:
         # SENSITIVE: Require explicit permission
         # Simplified: Only pattern creator has access
         if classification == Classification.SENSITIVE:
-            created_by = metadata.get("created_by", "")
+            created_by = str(metadata.get("created_by", ""))
             granted = user_id == created_by
 
             logger.debug(
@@ -1011,7 +1011,7 @@ class SecureMemDocsIntegration:
                 granted=granted,
             )
 
-            return granted
+            return bool(granted)
 
         # Default deny
         return False
@@ -1159,7 +1159,7 @@ class SecureMemDocsIntegration:
         """
         all_patterns = self.storage.list_patterns()
 
-        stats = {
+        stats: dict[str, Any] = {
             "total_patterns": len(all_patterns),
             "by_classification": {
                 "PUBLIC": 0,
