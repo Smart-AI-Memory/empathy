@@ -17,18 +17,52 @@ Licensed under Fair Source 0.9
 import json
 import logging
 import os
+import warnings
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from empathy_llm_toolkit.config.unified import (
+    MemDocsConfig as UnifiedMemDocsConfig,
+)
+from empathy_llm_toolkit.config.unified import (
+    RedisConfig as UnifiedRedisConfig,
+)
+
+# Import unified configuration (preferred)
+from empathy_llm_toolkit.config.unified import (
+    UnifiedAgentConfig,
+)
+
 logger = logging.getLogger(__name__)
+
+
+# =============================================================================
+# Legacy Configuration (Deprecated - use unified config instead)
+# =============================================================================
 
 
 @dataclass
 class AgentConfig:
-    """Configuration for a book production agent"""
+    """
+    Legacy configuration for book production agent.
+
+    DEPRECATED: Use UnifiedAgentConfig or BookProductionConfig instead.
+    This class is maintained for backward compatibility.
+
+    Migration example:
+        # Old way
+        config = AgentConfig(model="claude-opus-4-20250514")
+
+        # New way
+        from empathy_llm_toolkit.config import UnifiedAgentConfig, ModelTier
+        config = UnifiedAgentConfig(
+            name="writer",
+            model_tier=ModelTier.PREMIUM
+        )
+    """
 
     model: str = "claude-sonnet-4-20250514"
     max_tokens: int = 8000
@@ -37,10 +71,43 @@ class AgentConfig:
     retry_attempts: int = 3
     retry_delay: float = 1.0
 
+    def __post_init__(self):
+        warnings.warn(
+            "AgentConfig is deprecated. Use UnifiedAgentConfig from "
+            "empathy_llm_toolkit.config instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+    def to_unified(self, name: str = "book_agent") -> UnifiedAgentConfig:
+        """Convert to UnifiedAgentConfig."""
+        # Determine tier from model name
+        if "opus" in self.model.lower():
+            tier = "premium"
+        elif "haiku" in self.model.lower():
+            tier = "cheap"
+        else:
+            tier = "capable"
+
+        return UnifiedAgentConfig(
+            name=name,
+            model_tier=tier,
+            model_override=self.model,
+            max_tokens=self.max_tokens,
+            temperature=self.temperature,
+            timeout=self.timeout,
+            retry_attempts=self.retry_attempts,
+            retry_delay=self.retry_delay,
+        )
+
 
 @dataclass
 class MemDocsConfig:
-    """Configuration for MemDocs integration"""
+    """
+    Legacy MemDocs configuration.
+
+    DEPRECATED: Use empathy_llm_toolkit.config.MemDocsConfig instead.
+    """
 
     enabled: bool = True
     project: str = "book-production"
@@ -53,10 +120,22 @@ class MemDocsConfig:
         }
     )
 
+    def to_unified(self) -> UnifiedMemDocsConfig:
+        """Convert to unified MemDocsConfig."""
+        return UnifiedMemDocsConfig(
+            enabled=self.enabled,
+            project=self.project,
+            collections=self.collections,
+        )
+
 
 @dataclass
 class RedisConfig:
-    """Configuration for Redis state management"""
+    """
+    Legacy Redis configuration.
+
+    DEPRECATED: Use empathy_llm_toolkit.config.RedisConfig instead.
+    """
 
     enabled: bool = True
     host: str = "localhost"
@@ -64,6 +143,17 @@ class RedisConfig:
     db: int = 0
     prefix: str = "book_production"
     ttl: int = 86400  # 24 hours
+
+    def to_unified(self) -> UnifiedRedisConfig:
+        """Convert to unified RedisConfig."""
+        return UnifiedRedisConfig(
+            enabled=self.enabled,
+            host=self.host,
+            port=self.port,
+            db=self.db,
+            prefix=self.prefix,
+            ttl=self.ttl,
+        )
 
 
 class BaseAgent(ABC):

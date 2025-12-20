@@ -429,8 +429,8 @@ Current issues: Low consistency, missing security checks, variable output format
 ALL_WIZARDS = DOMAIN_WIZARDS + SOFTWARE_WIZARDS + AI_WIZARDS
 
 
-async def test_wizard(client: httpx.AsyncClient, wizard: dict) -> dict:
-    """Test a single wizard and return results"""
+async def _test_single_wizard(client: httpx.AsyncClient, wizard: dict) -> dict:
+    """Test a single wizard and return results (internal helper, not a pytest test)"""
     wizard_id = wizard["id"]
     sample_input = wizard.get("sample_input", f"Sample input for {wizard['name']} testing.")
 
@@ -579,7 +579,7 @@ async def _run_single_test(client, wizard, index, total, results, summary):
 
     print(f"[{index}/{total}] {priority_icon} {wizard['name']}...", end=" ", flush=True)
 
-    result = await test_wizard(client, wizard)
+    result = await _test_single_wizard(client, wizard)
     results.append(result)
 
     if result["success"]:

@@ -5,6 +5,78 @@ All notable changes to the Empathy Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2025-12-20
+
+### Added
+
+**Agent Factory - Universal Multi-Framework Agent System**
+- **AgentFactory** - Create agents using any supported framework with a unified API
+  - `AgentFactory(framework="native")` - Built-in Empathy agents (no dependencies)
+  - `AgentFactory(framework="langchain")` - LangChain chains and agents
+  - `AgentFactory(framework="langgraph")` - LangGraph stateful workflows
+  - Auto-detection of installed frameworks with intelligent fallbacks
+
+- **Framework Adapters** - Pluggable adapters for each framework:
+  - `NativeAdapter` - Zero-dependency agents with EmpathyLLM integration
+  - `LangChainAdapter` - Full LangChain compatibility with tools and chains
+  - `LangGraphAdapter` - Stateful multi-step workflows with cycles
+  - `WizardAdapter` - Bridge existing wizards to Agent Factory interface
+
+- **UnifiedAgentConfig** (Pydantic) - Single source of truth for configuration:
+  - Model tier routing (cheap/capable/premium)
+  - Provider abstraction (anthropic/openai/local)
+  - Empathy level integration (1-5)
+  - Feature flags for memory, pattern learning, cost tracking
+  - Framework-specific options
+
+- **Agent Decorators** - Standardized cross-cutting concerns:
+  - `@safe_agent_operation` - Error handling with audit trail
+  - `@retry_on_failure` - Exponential backoff retry logic
+  - `@log_performance` - Performance monitoring with thresholds
+  - `@validate_input` - Input validation for required fields
+  - `@with_cost_tracking` - Token usage and cost monitoring
+  - `@graceful_degradation` - Fallback values on failure
+
+- **BaseAgent Protocol** - Common interface for all agents:
+  - `invoke(input_data, context)` - Single invocation
+  - `stream(input_data, context)` - Streaming responses
+  - Conversation history with memory support
+  - Model tier-based routing
+
+- **Workflow Support** - Multi-agent orchestration:
+  - Sequential, parallel, and graph execution modes
+  - State management with checkpointing
+  - Cross-agent result passing
+
+### Changed
+
+- **agents/book_production/base.py** - Now imports from unified config
+  - Deprecated legacy `AgentConfig` in favor of `UnifiedAgentConfig`
+  - Added migration path with `to_unified()` method
+  - Backward compatible with existing code
+
+### Fixed
+
+- **Wizard Integration Tests** - Added `skip_if_server_unavailable` fixture
+  - Tests now skip gracefully when wizard server isn't running
+  - Prevents false failures in CI environments
+  - Reduced integration test failures from 73 to 22
+
+- **Type Annotations** - Complete mypy compliance for agent_factory module
+  - Fixed Optional types in factory.py
+  - Added proper async iterator annotations
+  - Resolved LangChain API compatibility issues
+  - All 102 original agent_factory errors resolved
+
+### Documentation
+
+- **AGENT_IMPROVEMENT_RECOMMENDATIONS.md** - Comprehensive evaluation of existing agents
+  - SOLID principles assessment for each agent type
+  - Clean code analysis with specific recommendations
+  - Appendix A: Best practices checklist
+
+---
+
 ## [2.3.0] - 2025-12-19
 
 ### Added

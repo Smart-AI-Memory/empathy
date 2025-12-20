@@ -430,6 +430,25 @@ ALL_WIZARDS = DOMAIN_WIZARDS + SOFTWARE_WIZARDS + AI_WIZARDS
 # ============================================================================
 
 
+def _check_server_available(url: str) -> bool:
+    """Check if the wizard server is running."""
+    try:
+        import socket
+        from urllib.parse import urlparse
+
+        parsed = urlparse(url)
+        host = parsed.hostname or "localhost"
+        port = parsed.port or 8001
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(1)
+        result = sock.connect_ex((host, port))
+        sock.close()
+        return result == 0
+    except Exception:
+        return False
+
+
 @pytest.fixture
 def api_base_url():
     """Base URL for wizard API"""
@@ -442,8 +461,18 @@ def wizard_registry():
     return ALL_WIZARDS
 
 
+@pytest.fixture(autouse=True)
+def skip_if_server_unavailable(api_base_url):
+    """Skip integration tests if wizard server is not running."""
+    if not _check_server_available(api_base_url):
+        pytest.skip(
+            f"Wizard server not running at {api_base_url}. "
+            "Start with: cd wizard_api && uvicorn main:app --port 8001"
+        )
+
+
 # ============================================================================
-# API TESTS
+# API TESTS - Integration tests requiring running server
 # ============================================================================
 
 

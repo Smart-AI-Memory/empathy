@@ -1,0 +1,142 @@
+{
+  "patterns": [
+    {
+      "pattern_id": "bug_20251219_848e6c8a",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "fix: Improve text contrast in debug wizard header",
+      "fix": "See commit 848e6c8a",
+      "resolved_by": "@geneai",
+      "resolved_at": "2025-12-19",
+      "files_affected": [
+        "website/app/tools/debug-wizard/page.tsx",
+        "website/components/debug-wizard/DebugWizard.tsx"
+      ],
+      "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20251218_fa236623",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "feat: Add Redis integration with environment-aware key prefixing",
+      "fix": "See commit fa236623",
+      "resolved_by": "@geneai",
+      "resolved_at": "2025-12-18",
+      "files_affected": [
+        "website/app/api/debug-wizard/analyze/route.ts",
+        "website/app/api/debug-wizard/resolve/route.ts",
+        "website/app/api/debug-wizard/stats/route.ts"
+      ],
+      "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20251217_450f5972",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "feat: Add autonomous error scanning and repair to Debug Wizard",
+      "fix": "See commit 450f5972",
+      "resolved_by": "@geneai",
+      "resolved_at": "2025-12-17",
+      "files_affected": [
+        "website/components/debug-wizard/DebugWizard.tsx"
+      ],
+      "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20251217_d92de34f",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "feat: Improved DebugWizard UX with card-based file selection",
+      "fix": "See commit d92de34f",
+      "resolved_by": "@geneai",
+      "resolved_at": "2025-12-17",
+      "files_affected": [
+        "website/components/debug-wizard/DebugWizard.tsx"
+      ],
+      "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20251217_17526090",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "feat: Enhanced DebugWizard with folder selection and tree view",
+      "fix": "See commit 17526090",
+      "resolved_by": "@geneai",
+      "resolved_at": "2025-12-17",
+      "files_affected": [
+        "website/components/debug-wizard/DebugWizard.tsx"
+      ],
+      "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20251217_f669fb6a",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "fix: Make GitHub Issues link clickable in FAQ page",
+      "fix": "See commit f669fb6a",
+      "resolved_by": "@geneai",
+      "resolved_at": "2025-12-17",
+      "files_affected": [
+        "website/app/faq/page.tsx"
+      ],
+      "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20251217_8d974c1a",
+      "bug_type": "type_mismatch",
+      "status": "resolved",
+      "root_cause": "fix: Resolve all ESLint errors and improve type safety",
+      "fix": "See commit 8d974c1a",
+      "resolved_by": "@geneai",
+      "resolved_at": "2025-12-17",
+      "files_affected": [
+        "site/search/search_index.json",
+        "site/sitemap.xml",
+        "site/sitemap.xml.gz"
+      ],
+      "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20251217_99335a29",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "fix: Fix ESLint errors - escape apostrophes and quotes in JSX",
+      "fix": "See commit 99335a29",
+      "resolved_by": "@geneai",
+      "resolved_at": "2025-12-17",
+      "files_affected": [
+        "website/app/api/debug-wizard/analyze/route.ts",
+        "website/app/api/og/route.tsx",
+        "website/app/blog/page.tsx"
+      ],
+      "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20251217_5179994c",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "fix: Remove missing icon references from webmanifest",
+      "fix": "See commit 5179994c",
+      "resolved_by": "@geneai",
+      "resolved_at": "2025-12-17",
+      "files_affected": [
+        "website/public/site.webmanifest"
+      ],
+      "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20251217_4c6069af",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "feat: Add drag-and-drop file upload to debug wizard",
+      "fix": "See commit 4c6069af",
+      "resolved_by": "@geneai",
+      "resolved_at": "2025-12-17",
+      "files_affected": [
+        "website/components/debug-wizard/DebugWizard.tsx"
+      ],
+      "source": "git_history"
+    }
+  ],
+  "last_updated": "2025-12-20T01:09:45.906901"
+}

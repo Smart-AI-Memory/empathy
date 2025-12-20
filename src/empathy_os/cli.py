@@ -7,6 +7,7 @@ Provides CLI commands for:
 - Exporting/importing patterns (empathy export/import)
 - Interactive setup wizard (empathy wizard)
 - Configuration management
+- Power user workflows: morning, ship, fix-all, learn (v2.4+)
 
 Copyright 2025 Smart-AI-Memory
 Licensed under Fair Source License 0.9
@@ -18,9 +19,13 @@ import time
 from importlib.metadata import version as get_version
 
 from empathy_os import EmpathyConfig, EmpathyOS, load_config
+from empathy_os.cost_tracker import cmd_costs
+from empathy_os.dashboard import cmd_dashboard
 from empathy_os.logging_config import get_logger
 from empathy_os.pattern_library import PatternLibrary
 from empathy_os.persistence import MetricsCollector, PatternPersistence, StateManager
+from empathy_os.templates import cmd_new
+from empathy_os.workflows import cmd_fix_all, cmd_learn, cmd_morning, cmd_ship
 
 logger = get_logger(__name__)
 
@@ -925,6 +930,84 @@ llm_provider: "{llm_provider}"
     print("\nHappy empathizing! 🧠✨\n")
 
 
+def cmd_frameworks(args):
+    """List and manage agent frameworks."""
+    import json as json_mod
+
+    try:
+        from empathy_llm_toolkit.agent_factory import AgentFactory
+        from empathy_llm_toolkit.agent_factory.framework import (
+            get_framework_info,
+            get_recommended_framework,
+        )
+    except ImportError:
+        print("Agent Factory not available. Install empathy-framework with all dependencies.")
+        return 1
+
+    show_all = getattr(args, "all", False)
+    recommend_use_case = getattr(args, "recommend", None)
+    output_json = getattr(args, "json", False)
+
+    if recommend_use_case:
+        # Recommend a framework
+        recommended = get_recommended_framework(recommend_use_case)
+        info = get_framework_info(recommended)
+
+        if output_json:
+            print(
+                json_mod.dumps(
+                    {"use_case": recommend_use_case, "recommended": recommended.value, **info},
+                    indent=2,
+                )
+            )
+        else:
+            print(f"\nRecommended framework for '{recommend_use_case}': {info['name']}")
+            print(f"  Best for: {', '.join(info['best_for'])}")
+            if info.get("install_command"):
+                print(f"  Install: {info['install_command']}")
+            print()
+        return 0
+
+    # List frameworks
+    frameworks = AgentFactory.list_frameworks(installed_only=not show_all)
+
+    if output_json:
+        print(
+            json_mod.dumps(
+                [
+                    {
+                        "id": f["framework"].value,
+                        "name": f["name"],
+                        "installed": f["installed"],
+                        "best_for": f["best_for"],
+                        "install_command": f.get("install_command"),
+                    }
+                    for f in frameworks
+                ],
+                indent=2,
+            )
+        )
+    else:
+        print("\n" + "=" * 60)
+        print("  AGENT FRAMEWORKS")
+        print("=" * 60 + "\n")
+
+        for f in frameworks:
+            status = "INSTALLED" if f["installed"] else "not installed"
+            print(f"  {f['name']:20} [{status}]")
+            print(f"    Best for: {', '.join(f['best_for'][:3])}")
+            if not f["installed"] and f.get("install_command"):
+                print(f"    Install:  {f['install_command']}")
+            print()
+
+        print("-" * 60)
+        print("  Use: empathy frameworks --recommend <use_case>")
+        print("  Use cases: general, rag, multi_agent, code_analysis")
+        print("=" * 60 + "\n")
+
+    return 0
+
+
 def main():
     """Main CLI entry point"""
     parser = argparse.ArgumentParser(
@@ -1147,6 +1230,116 @@ def main():
     )
     parser_health.add_argument("--json", action="store_true", help="Output as JSON")
     parser_health.set_defaults(func=cmd_health)
+
+    # =========================================================================
+    # POWER USER WORKFLOWS (v2.4+)
+    # =========================================================================
+
+    # Morning command (start-of-day briefing)
+    parser_morning = subparsers.add_parser(
+        "morning", help="Start-of-day briefing with patterns, debt, and focus areas"
+    )
+    parser_morning.add_argument(
+        "--patterns-dir", default="./patterns", help="Path to patterns directory"
+    )
+    parser_morning.add_argument("--project-root", default=".", help="Project root directory")
+    parser_morning.add_argument("--verbose", "-v", action="store_true", help="Show detailed output")
+    parser_morning.set_defaults(func=cmd_morning)
+
+    # Ship command (pre-commit validation)
+    parser_ship = subparsers.add_parser("ship", help="Pre-commit validation pipeline")
+    parser_ship.add_argument(
+        "--patterns-dir", default="./patterns", help="Path to patterns directory"
+    )
+    parser_ship.add_argument("--project-root", default=".", help="Project root directory")
+    parser_ship.add_argument(
+        "--skip-sync", action="store_true", help="Skip syncing patterns to Claude"
+    )
+    parser_ship.add_argument("--verbose", "-v", action="store_true", help="Show detailed output")
+    parser_ship.set_defaults(func=cmd_ship)
+
+    # Fix-all command (auto-fix everything)
+    parser_fix_all = subparsers.add_parser(
+        "fix-all", help="Auto-fix all fixable lint and format issues"
+    )
+    parser_fix_all.add_argument("--project-root", default=".", help="Project root directory")
+    parser_fix_all.add_argument(
+        "--dry-run", action="store_true", help="Show what would be fixed without applying"
+    )
+    parser_fix_all.add_argument("--verbose", "-v", action="store_true", help="Show detailed output")
+    parser_fix_all.set_defaults(func=cmd_fix_all)
+
+    # Learn command (pattern learning from git history)
+    parser_learn = subparsers.add_parser(
+        "learn", help="Learn patterns from git history and bug fixes"
+    )
+    parser_learn.add_argument(
+        "--patterns-dir", default="./patterns", help="Path to patterns directory"
+    )
+    parser_learn.add_argument(
+        "--analyze", type=int, metavar="N", help="Analyze last N commits (default: 10)"
+    )
+    parser_learn.add_argument(
+        "--watch", action="store_true", help="Watch for new commits (not yet implemented)"
+    )
+    parser_learn.add_argument("--verbose", "-v", action="store_true", help="Show detailed output")
+    parser_learn.set_defaults(func=cmd_learn)
+
+    # Costs command (cost tracking dashboard)
+    parser_costs = subparsers.add_parser(
+        "costs", help="View API cost tracking and savings from model routing"
+    )
+    parser_costs.add_argument(
+        "--days", type=int, default=7, help="Number of days to include (default: 7)"
+    )
+    parser_costs.add_argument("--empathy-dir", default=".empathy", help="Empathy data directory")
+    parser_costs.add_argument("--json", action="store_true", help="Output as JSON")
+    parser_costs.set_defaults(func=cmd_costs)
+
+    # New command (project scaffolding)
+    parser_new = subparsers.add_parser("new", help="Create a new project from a template")
+    parser_new.add_argument(
+        "template",
+        nargs="?",
+        help="Template name (minimal, python-cli, python-fastapi, python-agent)",
+    )
+    parser_new.add_argument("name", nargs="?", help="Project name")
+    parser_new.add_argument("--output", "-o", help="Output directory (default: ./<project-name>)")
+    parser_new.add_argument("--force", "-f", action="store_true", help="Overwrite existing files")
+    parser_new.add_argument("--list", "-l", action="store_true", help="List available templates")
+    parser_new.set_defaults(func=cmd_new)
+
+    # Dashboard command (visual web interface)
+    parser_dashboard = subparsers.add_parser("dashboard", help="Launch visual dashboard in browser")
+    parser_dashboard.add_argument(
+        "--port", type=int, default=8765, help="Port to run on (default: 8765)"
+    )
+    parser_dashboard.add_argument(
+        "--patterns-dir", default="./patterns", help="Path to patterns directory"
+    )
+    parser_dashboard.add_argument(
+        "--empathy-dir", default=".empathy", help="Empathy data directory"
+    )
+    parser_dashboard.add_argument(
+        "--no-browser", action="store_true", help="Don't open browser automatically"
+    )
+    parser_dashboard.set_defaults(func=cmd_dashboard)
+
+    # Frameworks command (agent framework management)
+    parser_frameworks = subparsers.add_parser(
+        "frameworks",
+        help="List and manage agent frameworks (LangChain, LangGraph, AutoGen, Haystack)",
+    )
+    parser_frameworks.add_argument(
+        "--all", action="store_true", help="Show all frameworks including uninstalled"
+    )
+    parser_frameworks.add_argument(
+        "--recommend",
+        metavar="USE_CASE",
+        help="Recommend framework for use case (general, rag, multi_agent, code_analysis)",
+    )
+    parser_frameworks.add_argument("--json", action="store_true", help="Output as JSON")
+    parser_frameworks.set_defaults(func=cmd_frameworks)
 
     # Parse arguments
     args = parser.parse_args()

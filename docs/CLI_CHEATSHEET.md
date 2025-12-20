@@ -196,24 +196,104 @@ REDIS_URL=redis://localhost:6379  # Redis connection
 
 ---
 
-## Quick Workflows
+## Power User Workflows (v2.4+)
 
-### Morning Check
+One-command workflows for daily productivity.
+
+### Morning Briefing
+
+```bash
+empathy morning                   # Start-of-day briefing
+empathy morning --verbose         # Detailed output
+```
+
+Shows: patterns learned, tech debt trend, quick health check, suggested focus.
+
+### Pre-Ship Checklist
+
+```bash
+empathy ship                      # Full pre-commit validation
+empathy ship --skip-sync          # Skip Claude sync
+empathy ship --verbose            # Detailed output
+```
+
+Runs: lint, format, types, git status, Claude sync.
+
+### Fix Everything
+
+```bash
+empathy fix-all                   # Auto-fix lint + format
+empathy fix-all --dry-run         # Preview without applying
+empathy fix-all --verbose         # Show details
+```
+
+Runs: ruff --fix, ruff format, isort.
+
+### Pattern Learning
+
+```bash
+empathy learn                     # Analyze last 10 commits
+empathy learn --analyze 50        # Analyze last 50 commits
+empathy learn --verbose           # Show each pattern found
+```
+
+Extracts bug fix patterns from git history.
+
+### Cost Tracking
+
+```bash
+empathy costs                     # Show 7-day cost report
+empathy costs --days 30           # Show 30-day report
+empathy costs --json              # JSON output
+```
+
+Shows: API costs, savings from model routing, tier breakdown.
+
+### Project Templates
+
+```bash
+empathy new --list                # List available templates
+empathy new minimal my-project    # Add Empathy to existing project
+empathy new python-cli my-tool    # CLI tool scaffold
+empathy new python-fastapi my-api # FastAPI scaffold
+empathy new python-agent my-agent # AI agent scaffold
+```
+
+### Visual Dashboard
+
+```bash
+empathy dashboard                 # Launch web dashboard
+empathy dashboard --port 9000     # Custom port
+empathy dashboard --no-browser    # Don't open browser
+```
+
+Opens: http://localhost:8765 with patterns, costs, health.
+
+### Agent Frameworks
+
+```bash
+empathy frameworks                # List installed frameworks
+empathy frameworks --all          # Show all frameworks
+empathy frameworks --recommend rag  # Recommend framework for use case
+empathy frameworks --json         # JSON output
+```
+
+Supports: Native, LangChain, LangGraph, AutoGen, Haystack.
+
+---
+
+## Classic Workflows
+
+### Morning Check (manual)
 
 ```bash
 empathy health --deep && empathy status
 ```
 
-### Before Commit
+### Before Commit (manual)
 
 ```bash
 empathy review --staged && empathy-inspect . --staged --quick
-```
-
-### Fix Everything
-
-```bash
-empathy health --fix && empathy-inspect . --fix
 ```
 
 ### Sync to Claude Code
@@ -236,4 +316,4 @@ empathy-sync-claude --help        # Claude sync help
 
 ---
 
-*Empathy Framework v2.3.0 | [GitHub](https://github.com/Smart-AI-Memory/empathy-framework) | [Docs](https://www.smartaimemory.com/docs)*
+*Empathy Framework v2.4.0 | [GitHub](https://github.com/Smart-AI-Memory/empathy-framework) | [Docs](https://www.smartaimemory.com/docs)*

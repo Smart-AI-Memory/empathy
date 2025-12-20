@@ -114,10 +114,10 @@ class BaseWizard:
         level = empathy_level if empathy_level is not None else self.config.default_empathy_level
 
         self.logger.info(
-            "processing_request",
-            wizard=self.config.name,
-            user_id=user_id,
-            empathy_level=level,
+            "processing_request: wizard=%s user_id=%s empathy_level=%s",
+            self.config.name,
+            user_id,
+            level,
         )
 
         # Build system prompt with domain knowledge

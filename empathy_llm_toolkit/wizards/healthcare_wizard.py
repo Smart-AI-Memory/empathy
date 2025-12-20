@@ -281,7 +281,7 @@ Remember: Patient safety and privacy are paramount. All interactions are logged 
         Returns:
             Dict with compliance checks and recommendations
         """
-        status = {
+        status: dict[str, Any] = {
             "compliant": True,
             "checks": {},
             "recommendations": [],

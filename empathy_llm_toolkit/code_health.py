@@ -833,9 +833,9 @@ class HealthCheckRunner:
 class AutoFixer:
     """Apply automatic fixes to code health issues."""
 
-    def __init__(self, config: dict | None = None):
+    def __init__(self, config: dict[str, Any] | None = None):
         """Initialize the auto-fixer."""
-        self.config = config or DEFAULT_CONFIG.get("auto_fix", {})
+        self.config: dict[str, Any] = config or DEFAULT_CONFIG.get("auto_fix", {})  # type: ignore[assignment]
         self.safe_fixes = self.config.get("safe_fixes", True)
         self.prompt_fixes = self.config.get("prompt_fixes", True)
 
@@ -861,9 +861,9 @@ class AutoFixer:
         safe_codes = ["FORMAT", "W291", "W292", "W293", "I001"]  # Whitespace, imports
         return issue.code in safe_codes or issue.category == CheckCategory.FORMAT
 
-    async def fix_all(self, report: HealthReport, interactive: bool = False) -> dict:
+    async def fix_all(self, report: HealthReport, interactive: bool = False) -> dict[str, Any]:
         """Apply all safe fixes, optionally prompt for others."""
-        results = {
+        results: dict[str, Any] = {
             "fixed": [],
             "skipped": [],
             "failed": [],
@@ -886,9 +886,9 @@ class AutoFixer:
 
         return results
 
-    async def fix_category(self, report: HealthReport, category: CheckCategory) -> dict:
+    async def fix_category(self, report: HealthReport, category: CheckCategory) -> dict[str, Any]:
         """Fix issues in a specific category."""
-        results = {
+        results: dict[str, Any] = {
             "fixed": [],
             "skipped": [],
             "failed": [],
@@ -960,9 +960,9 @@ class HealthTrendTracker:
 
         filepath.write_text(json.dumps(history, indent=2))
 
-    def get_trends(self, days: int = 30) -> dict:
+    def get_trends(self, days: int = 30) -> dict[str, Any]:
         """Analyze health trends over time."""
-        trends = {
+        trends: dict[str, Any] = {
             "period_days": days,
             "data_points": [],
             "average_score": 0,

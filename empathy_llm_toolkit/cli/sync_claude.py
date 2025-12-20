@@ -51,7 +51,7 @@ def load_patterns_from_directory(pattern_dir: Path, pattern_type: str) -> list[d
     Returns:
         List of pattern dictionaries
     """
-    patterns = []
+    patterns: list[dict[str, Any]] = []
 
     if not pattern_dir.exists():
         return patterns
@@ -286,7 +286,7 @@ def sync_patterns(
     patterns_dir = project_root / "patterns"
     output_dir = project_root / CLAUDE_RULES_DIR
 
-    results = {
+    results: dict[str, Any] = {
         "synced": [],
         "skipped": [],
         "errors": [],

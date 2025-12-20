@@ -39,6 +39,7 @@ nav:
       - Unified Memory System: guides/unified-memory-system.md
       - Short-Term Memory: guides/short-term-memory-implementation.md
       - Practical Patterns: guides/practical-patterns.md
+      - Agent Factory: guides/agent-factory.md
       - Short-Term Memory Reference: SHORT_TERM_MEMORY.md
       - Glossary: guides/glossary.md
   - Examples:
