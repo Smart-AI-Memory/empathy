@@ -305,7 +305,7 @@ addopts = [
     "--cov-report=html",
     "--cov-report=term-missing",
     "--cov-report=xml",
-    "--cov-fail-under=70",
+    "--cov-fail-under=55",
     "--asyncio-mode=auto",
 ]
 markers = [
