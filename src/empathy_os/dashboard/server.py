@@ -34,6 +34,15 @@ except ImportError:
     DiscoveryEngine = None  # type: ignore[misc, assignment]
     HAS_DISCOVERY = False
 
+try:
+    from empathy_os.workflows import get_workflow_stats, list_workflows
+
+    HAS_WORKFLOWS = True
+except ImportError:
+    get_workflow_stats = None  # type: ignore[misc, assignment]
+    list_workflows = None  # type: ignore[misc, assignment]
+    HAS_WORKFLOWS = False
+
 
 class DashboardHandler(http.server.BaseHTTPRequestHandler):
     """HTTP request handler for the dashboard."""
@@ -60,6 +69,8 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             self._serve_stats()
         elif path == "/api/health":
             self._serve_health()
+        elif path == "/api/workflows":
+            self._serve_workflows()
         else:
             self.send_error(404, "Not Found")
 
@@ -99,6 +110,17 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         """Serve health check."""
         self._send_json({"status": "healthy", "timestamp": datetime.now().isoformat()})
 
+    def _serve_workflows(self):
+        """Serve workflow stats as JSON."""
+        if HAS_WORKFLOWS and get_workflow_stats is not None:
+            data = get_workflow_stats()
+            # Add available workflows
+            if list_workflows is not None:
+                data["available_workflows"] = list_workflows()
+        else:
+            data = {"error": "Workflows not available"}
+        self._send_json(data)
+
     def _send_json(self, data):
         """Send JSON response."""
         content = json.dumps(data, indent=2, default=str)
@@ -137,13 +159,25 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         """Generate the dashboard HTML page."""
         patterns = self._load_patterns()
 
-        # Count patterns
-        bug_count = len(patterns.get("debugging", {}).get("patterns", []))
-        security_count = len(patterns.get("security", {}).get("decisions", []))
+        # Count patterns (handle both dict and list formats)
+        debugging_data = patterns.get("debugging", {})
+        if isinstance(debugging_data, dict):
+            bug_count = len(debugging_data.get("patterns", []))
+        else:
+            bug_count = len(debugging_data) if isinstance(debugging_data, list) else 0
+
+        security_data = patterns.get("security", {})
+        if isinstance(security_data, dict):
+            security_count = len(security_data.get("decisions", []))
+        else:
+            security_count = len(security_data) if isinstance(security_data, list) else 0
+
         debt_items = 0
-        snapshots = patterns.get("tech_debt", {}).get("snapshots", [])
-        if snapshots:
-            debt_items = snapshots[-1].get("total_items", 0)
+        tech_debt_data = patterns.get("tech_debt", {})
+        if isinstance(tech_debt_data, dict):
+            snapshots = tech_debt_data.get("snapshots", [])
+            if snapshots:
+                debt_items = snapshots[-1].get("total_items", 0)
 
         # Get cost summary
         cost_summary = {"savings": 0, "savings_percent": 0, "requests": 0}
@@ -151,6 +185,21 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             try:
                 tracker = CostTracker(self.empathy_dir)
                 cost_summary = tracker.get_summary(30)
+            except Exception:
+                pass
+
+        # Get workflow stats
+        workflow_stats = {
+            "total_runs": 0,
+            "by_workflow": {},
+            "by_tier": {"cheap": 0, "capable": 0, "premium": 0},
+            "recent_runs": [],
+            "total_savings": 0.0,
+            "avg_savings_percent": 0.0,
+        }
+        if HAS_WORKFLOWS and get_workflow_stats is not None:
+            try:
+                workflow_stats = get_workflow_stats()
             except Exception:
                 pass
 
@@ -311,6 +360,101 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             font-size: 0.875rem;
         }}
 
+        .workflow-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }}
+
+        .workflow-card {{
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }}
+
+        .workflow-card h3 {{
+            font-size: 0.875rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }}
+
+        .workflow-card .runs {{
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }}
+
+        .workflow-card .savings {{
+            font-size: 0.875rem;
+            color: var(--success);
+        }}
+
+        .tier-bar {{
+            display: flex;
+            height: 24px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }}
+
+        .tier-bar .tier {{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: white;
+        }}
+
+        .tier-bar .cheap {{ background: #10b981; }}
+        .tier-bar .capable {{ background: #3b82f6; }}
+        .tier-bar .premium {{ background: #8b5cf6; }}
+
+        .recent-run {{
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--bg);
+        }}
+
+        .recent-run:last-child {{
+            border-bottom: none;
+        }}
+
+        .recent-run .name {{
+            font-weight: 500;
+            min-width: 100px;
+        }}
+
+        .recent-run .provider {{
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: var(--bg);
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+        }}
+
+        .recent-run .result {{
+            margin-left: auto;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }}
+
+        .recent-run .savings-badge {{
+            font-size: 0.75rem;
+            color: var(--success);
+            font-weight: 500;
+        }}
+
+        .recent-run .time {{
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }}
+
         footer {{
             text-align: center;
             color: var(--text-muted);
@@ -354,10 +498,16 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
                 <div class="label">tracked</div>
             </div>
 
+            <div class="card">
+                <h2>Workflow Runs</h2>
+                <div class="value">{workflow_stats.get("total_runs", 0)}</div>
+                <div class="label">{workflow_stats.get("avg_savings_percent", 0):.0f}% avg savings</div>
+            </div>
+
             <div class="card success">
-                <h2>Cost Savings (30d)</h2>
-                <div class="value">{cost_summary.get("savings_percent", 0):.0f}%</div>
-                <div class="label">${cost_summary.get("savings", 0):.2f} saved</div>
+                <h2>Total Savings</h2>
+                <div class="value">${workflow_stats.get("total_savings", 0) + cost_summary.get("savings", 0):.2f}</div>
+                <div class="label">workflows + API</div>
             </div>
         </div>
 
@@ -376,6 +526,19 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
                     {self._render_bug_table(patterns)}
                 </tbody>
             </table>
+        </div>
+
+        <div class="section">
+            <h2>Multi-Model Workflows</h2>
+            <div class="workflow-grid">
+                {self._render_workflow_cards(workflow_stats)}
+            </div>
+
+            <h3 style="margin-bottom: 0.5rem; font-size: 1rem;">Model Tier Usage</h3>
+            {self._render_tier_bar(workflow_stats)}
+
+            <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1rem;">Recent Runs</h3>
+            {self._render_recent_runs(workflow_stats)}
         </div>
 
         <div class="section">
@@ -406,7 +569,13 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
 
     def _render_bug_table(self, patterns: dict) -> str:
         """Render bug patterns as table rows."""
-        bugs = patterns.get("debugging", {}).get("patterns", [])
+        debugging_data = patterns.get("debugging", {})
+        if isinstance(debugging_data, dict):
+            bugs = debugging_data.get("patterns", [])
+        elif isinstance(debugging_data, list):
+            bugs = debugging_data
+        else:
+            bugs = []
         if not bugs:
             return (
                 '<tr><td colspan="4">No patterns yet. Run "empathy learn" to get started.</td></tr>'
@@ -427,6 +596,91 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             )
 
         return "".join(rows)
+
+    def _render_workflow_cards(self, workflow_stats: dict) -> str:
+        """Render workflow stat cards."""
+        by_workflow = workflow_stats.get("by_workflow", {})
+
+        if not by_workflow:
+            return '<div class="workflow-card"><p style="color: var(--text-muted);">No workflow runs yet. Try: empathy workflow run research</p></div>'
+
+        cards = []
+        for name, stats in by_workflow.items():
+            runs = stats.get("runs", 0)
+            savings = stats.get("savings", 0)
+            cards.append(
+                f"""
+                <div class="workflow-card">
+                    <h3>{name}</h3>
+                    <div class="runs">{runs}</div>
+                    <div class="savings">${savings:.4f} saved</div>
+                </div>
+            """
+            )
+
+        return "".join(cards)
+
+    def _render_tier_bar(self, workflow_stats: dict) -> str:
+        """Render model tier usage bar."""
+        by_tier = workflow_stats.get("by_tier", {})
+        total = sum(by_tier.values())
+
+        if total == 0:
+            return '<div class="tier-bar"><div class="tier" style="width: 100%; background: var(--bg); color: var(--text-muted);">No data yet</div></div>'
+
+        cheap_pct = (by_tier.get("cheap", 0) / total) * 100 if total > 0 else 0
+        capable_pct = (by_tier.get("capable", 0) / total) * 100 if total > 0 else 0
+        premium_pct = (by_tier.get("premium", 0) / total) * 100 if total > 0 else 0
+
+        return f"""
+            <div class="tier-bar">
+                <div class="tier cheap" style="width: {cheap_pct}%;">{cheap_pct:.0f}% cheap</div>
+                <div class="tier capable" style="width: {capable_pct}%;">{capable_pct:.0f}% capable</div>
+                <div class="tier premium" style="width: {premium_pct}%;">{premium_pct:.0f}% premium</div>
+            </div>
+            <div style="display: flex; gap: 1rem; font-size: 0.75rem; color: var(--text-muted);">
+                <span>Cheap (Haiku/GPT-mini): ${by_tier.get("cheap", 0):.4f}</span>
+                <span>Capable (Sonnet/GPT-4o): ${by_tier.get("capable", 0):.4f}</span>
+                <span>Premium (Opus/GPT-5): ${by_tier.get("premium", 0):.4f}</span>
+            </div>
+        """
+
+    def _render_recent_runs(self, workflow_stats: dict) -> str:
+        """Render recent workflow runs."""
+        recent_runs = workflow_stats.get("recent_runs", [])
+
+        if not recent_runs:
+            return '<p style="color: var(--text-muted);">No recent workflow runs.</p>'
+
+        runs_html = []
+        for run in recent_runs[:5]:  # Show last 5
+            name = run.get("workflow", "unknown")
+            provider = run.get("provider", "unknown")
+            success = run.get("success", False)
+            savings_pct = run.get("savings_percent", 0)
+            started = run.get("started_at", "")
+
+            # Format time
+            time_str = started[:16].replace("T", " ") if started else "-"
+
+            status_icon = "&#10003;" if success else "&#10007;"
+            status_color = "var(--success)" if success else "var(--danger)"
+
+            runs_html.append(
+                f"""
+                <div class="recent-run">
+                    <span style="color: {status_color};">{status_icon}</span>
+                    <span class="name">{name}</span>
+                    <span class="provider">{provider}</span>
+                    <span class="result">
+                        <span class="savings-badge">{savings_pct:.0f}% saved</span>
+                        <span class="time">{time_str}</span>
+                    </span>
+                </div>
+            """
+            )
+
+        return "".join(runs_html)
 
 
 class ThreadedHTTPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):

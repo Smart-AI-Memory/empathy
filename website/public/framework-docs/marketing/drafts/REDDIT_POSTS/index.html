@@ -681,6 +681,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../CLI_CHEATSHEET/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix - CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -841,6 +869,62 @@
     
   
     Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../CLI_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../CLI_CHEATSHEET/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix - CLI Reference
   
 
     
@@ -1103,6 +1187,34 @@
     
   
     Practical Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/agent-factory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Factory
   
 
     
@@ -1947,7 +2059,7 @@
 <h1 id="reddit-posts-ready-to-copypaste">Reddit Posts - Ready to Copy/Paste<a class="headerlink" href="#reddit-posts-ready-to-copypaste" title="Permanent link">&para;</a></h1>
 <hr />
 <h2 id="rclaudeai">r/ClaudeAI<a class="headerlink" href="#rclaudeai" title="Permanent link">&para;</a></h2>
-<p><strong>Title:</strong> I built a persistent memory layer for Claude - open source</p>
+<p><strong>Title:</strong> I built a persistent memory layer for Claude + smart model routing (80% cost savings)</p>
 <p><strong>Body:</strong></p>
 <p>Every Claude conversation starts fresh. I wanted my dev assistant to remember my preferences across sessions, so I built <a href="https://github.com/Smart-AI-Memory/empathy-framework">Empathy Framework</a>.</p>
 <p>Quick example:</p>
@@ -1962,36 +2074,46 @@
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">)</span>
 </code></pre></div>
 <p>Next session, Claude remembers.</p>
+<p><strong>v2.3 just shipped with ModelRouter</strong> - automatically picks Haiku/Sonnet/Opus based on task complexity. Real savings: $4.05 → $0.83 per complex task (80% reduction).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">llm</span> <span class="o">=</span> <span class="n">EmpathyLLM</span><span class="p">(</span><span class="n">provider</span><span class="o">=</span><span class="s2">&quot;anthropic&quot;</span><span class="p">,</span> <span class="n">enable_model_routing</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">await</span> <span class="n">llm</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;dev&quot;</span><span class="p">,</span> <span class="n">user_input</span><span class="o">=</span><span class="s2">&quot;Summarize this&quot;</span><span class="p">,</span> <span class="n">task_type</span><span class="o">=</span><span class="s2">&quot;summarize&quot;</span><span class="p">)</span>  <span class="c1"># → Haiku</span>
+</code></pre></div>
 <p><strong>Features:</strong>
 - Cross-session memory persistence
 - Per-user isolation
 - Privacy controls (clear/forget)
-- Five "empathy levels" from reactive to anticipatory</p>
-<p>Just hit PyPI: <code>pip install empathy-framework</code></p>
-<p>Working on getting it into the Anthropic Cookbook. Happy to answer questions.</p>
+- Five "empathy levels" from reactive to anticipatory
+- <strong>NEW:</strong> Smart model routing (80% cost savings)</p>
+<p>On PyPI: <code>pip install empathy-framework</code></p>
+<p>Happy to answer questions.</p>
 <hr />
 <h2 id="rpython">r/Python<a class="headerlink" href="#rpython" title="Permanent link">&para;</a></h2>
-<p><strong>Title:</strong> empathy-framework: Add persistent memory to LLMs in Python</p>
+<p><strong>Title:</strong> empathy-framework v2.3: Persistent LLM memory + smart model routing (80% cost savings)</p>
 <p><strong>Body:</strong></p>
-<p>Released v2.2.7 of <a href="https://pypi.org/project/empathy-framework/">empathy-framework</a> - a Python library that adds persistent, cross-session memory to LLM interactions.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">empathy_llm_toolkit</span> <span class="kn">import</span> <span class="n">EmpathyLLM</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">llm</span> <span class="o">=</span> <span class="n">EmpathyLLM</span><span class="p">(</span><span class="n">provider</span><span class="o">=</span><span class="s2">&quot;anthropic&quot;</span><span class="p">,</span> <span class="n">memory_enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># Memory survives across sessions</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">await</span> <span class="n">llm</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;user123&quot;</span><span class="p">,</span> <span class="n">user_input</span><span class="o">=</span><span class="s2">&quot;Remember I prefer async/await&quot;</span><span class="p">)</span>
+<p>Just released v2.3 of <a href="https://pypi.org/project/empathy-framework/">empathy-framework</a> - a Python library that adds persistent memory to LLM interactions, plus automatic model routing for cost optimization.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span> <span class="nn">empathy_llm_toolkit</span> <span class="kn">import</span> <span class="n">EmpathyLLM</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">llm</span> <span class="o">=</span> <span class="n">EmpathyLLM</span><span class="p">(</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">provider</span><span class="o">=</span><span class="s2">&quot;anthropic&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">memory_enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">enable_model_routing</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># NEW in v2.3</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">)</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1"># Memory survives across sessions</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="k">await</span> <span class="n">llm</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;user123&quot;</span><span class="p">,</span> <span class="n">user_input</span><span class="o">=</span><span class="s2">&quot;Remember I prefer async/await&quot;</span><span class="p">)</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="c1"># Automatic model selection based on task</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="k">await</span> <span class="n">llm</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;user123&quot;</span><span class="p">,</span> <span class="n">user_input</span><span class="o">=</span><span class="s2">&quot;Summarize this&quot;</span><span class="p">,</span> <span class="n">task_type</span><span class="o">=</span><span class="s2">&quot;summarize&quot;</span><span class="p">)</span>  <span class="c1"># → Haiku</span>
 </code></pre></div>
-<p><strong>Why I built it:</strong></p>
-<p>Most LLM APIs are stateless. Great for simple queries, but if you're building:
-- Dev assistants that learn your style
-- Customer support with history
-- Personal tools that adapt</p>
-<p>...you need persistent context.</p>
-<p><strong>Features:</strong>
+<p><strong>What's new in v2.3:</strong>
+- <strong>ModelRouter</strong>: Auto-picks Haiku/Sonnet/Opus based on task complexity
+- Real cost savings: $4.05 → $0.83 per complex task (80% reduction)</p>
+<p><strong>Core features:</strong>
 - Works with Claude, OpenAI, local models
 - Per-user memory isolation
 - Privacy controls built in
-- Async-first design</p>
+- Async-first design
+- Five "empathy levels" from reactive to anticipatory</p>
 <p>GitHub: https://github.com/Smart-AI-Memory/empathy-framework</p>
 <p>Feedback welcome. What use cases would you want memory for?</p>
 <hr />
@@ -2000,12 +2122,12 @@
 <p><strong>Body:</strong></p>
 <p>Built <a href="https://github.com/Smart-AI-Memory/empathy-framework">Empathy Framework</a> to give LLMs persistent memory across sessions.</p>
 <p>Originally for Claude, but the architecture is provider-agnostic. Working on local model support.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span> <span class="nn">empathy_llm_toolkit</span> <span class="kn">import</span> <span class="n">EmpathyLLM</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">llm</span> <span class="o">=</span> <span class="n">EmpathyLLM</span><span class="p">(</span><span class="n">provider</span><span class="o">=</span><span class="s2">&quot;anthropic&quot;</span><span class="p">,</span> <span class="n">memory_enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># Preferences persist</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="k">await</span> <span class="n">llm</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">user_input</span><span class="o">=</span><span class="s2">&quot;I use vim keybindings&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span> <span class="nn">empathy_llm_toolkit</span> <span class="kn">import</span> <span class="n">EmpathyLLM</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">llm</span> <span class="o">=</span> <span class="n">EmpathyLLM</span><span class="p">(</span><span class="n">provider</span><span class="o">=</span><span class="s2">&quot;anthropic&quot;</span><span class="p">,</span> <span class="n">memory_enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># Preferences persist</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="k">await</span> <span class="n">llm</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">user_input</span><span class="o">=</span><span class="s2">&quot;I use vim keybindings&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>The memory layer stores user context separately from the model, so it should work with any backend that accepts a system prompt.</p>
 <p>Currently on PyPI: <code>pip install empathy-framework</code></p>

@@ -18,10 +18,16 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
 
     private _view?: vscode.WebviewView;
     private _extensionUri: vscode.Uri;
+    private _context: vscode.ExtensionContext;
     private _fileWatcher?: vscode.FileSystemWatcher;
+    private _workflowHistory: Map<string, string> = new Map();
 
-    constructor(extensionUri: vscode.Uri) {
+    constructor(extensionUri: vscode.Uri, context: vscode.ExtensionContext) {
         this._extensionUri = extensionUri;
+        this._context = context;
+        // Load workflow history from globalState
+        const saved = context.globalState.get<Record<string, string>>('workflowHistory', {});
+        this._workflowHistory = new Map(Object.entries(saved));
     }
 
     public resolveWebviewView(
@@ -86,6 +92,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 case 'getActiveFile':
                     this._sendActiveFile(message.workflow);
                     break;
+                case 'openWebDashboard':
+                    vscode.commands.executeCommand('empathy.openWebDashboard');
+                    break;
             }
         });
 
@@ -140,11 +149,59 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         const patternsDir = path.join(workspaceFolder, config.get<string>('patternsDir', './patterns'));
         const empathyDir = path.join(workspaceFolder, config.get<string>('empathyDir', '.empathy'));
 
+        const errors: Record<string, string> = {};
+
+        // Load patterns with error handling
+        let patterns: PatternData[] = [];
+        try {
+            patterns = this._loadPatterns(patternsDir);
+        } catch (e) {
+            errors.patterns = `Failed to load patterns: ${e}`;
+        }
+
+        // Load health with error handling
+        let health: HealthData | null = null;
+        try {
+            health = this._loadHealth(empathyDir, patternsDir);
+        } catch (e) {
+            errors.health = `Failed to load health: ${e}`;
+        }
+
+        // Fetch costs with error handling
+        let costs = this._getEmptyCostData();
+        try {
+            costs = await this._fetchCostsFromCLI();
+        } catch (e) {
+            errors.costs = `Failed to load costs: ${e}`;
+        }
+
+        // Load workflows with error handling
+        let workflows: WorkflowData = {
+            totalRuns: 0,
+            successfulRuns: 0,
+            totalCost: 0,
+            totalSavings: 0,
+            recentRuns: [],
+            byWorkflow: {}
+        };
+        try {
+            workflows = this._loadWorkflows(empathyDir);
+        } catch (e) {
+            errors.workflows = `Failed to load workflows: ${e}`;
+        }
+
         const data = {
-            patterns: this._loadPatterns(patternsDir),
-            health: this._loadHealth(empathyDir, patternsDir),
-            costs: this._loadCosts(empathyDir),
-            workflows: this._loadWorkflows(empathyDir),
+            patterns,
+            patternsEmpty: patterns.length === 0,
+            health,
+            healthEmpty: !health || health.score === undefined,
+            costs,
+            costsEmpty: costs.totalCost === 0 && costs.requests === 0,
+            workflows,
+            workflowsEmpty: workflows.totalRuns === 0,
+            errors,
+            hasErrors: Object.keys(errors).length > 0,
+            workflowLastInputs: Object.fromEntries(this._workflowHistory),
         };
 
         this._view.webview.postMessage({ type: 'update', data });
@@ -237,25 +294,91 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         return health;
     }
 
-    private _loadCosts(empathyDir: string): CostData {
-        const costs: CostData = {
+    private _getEmptyCostData(): CostData {
+        return {
             totalCost: 0,
             totalSavings: 0,
+            savingsPercent: 0,
             requests: 0,
+            baselineCost: 0,
             dailyCosts: [],
             byProvider: {},
         };
+    }
+
+    /**
+     * Fetch costs from telemetry CLI (preferred method).
+     * Falls back to file-based loading if CLI fails.
+     */
+    private async _fetchCostsFromCLI(): Promise<CostData> {
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+        if (!workspaceFolder) {
+            return this._getEmptyCostData();
+        }
+
+        const config = vscode.workspace.getConfiguration('empathy');
+        const pythonPath = config.get<string>('pythonPath', 'python');
+        const empathyDir = path.join(workspaceFolder, config.get<string>('empathyDir', '.empathy'));
+
+        return new Promise((resolve) => {
+            const proc = cp.spawn(pythonPath, [
+                '-m', 'empathy_os.models.cli', 'telemetry', '--costs', '-f', 'json', '-d', '30'
+            ], { cwd: workspaceFolder });
+
+            let stdout = '';
+            let stderr = '';
+            proc.stdout.on('data', (data: Buffer) => { stdout += data.toString(); });
+            proc.stderr.on('data', (data: Buffer) => { stderr += data.toString(); });
+
+            proc.on('close', (code) => {
+                if (code === 0 && stdout) {
+                    try {
+                        const data: TelemetryCostData = JSON.parse(stdout.trim());
+                        resolve({
+                            totalCost: data.total_actual_cost || 0,
+                            totalSavings: data.total_savings || 0,
+                            savingsPercent: data.savings_percent || 0,
+                            requests: data.workflow_count || 0,
+                            baselineCost: data.total_baseline_cost || 0,
+                            dailyCosts: [],
+                            byProvider: {},
+                        });
+                    } catch {
+                        // JSON parse failed, fall back to file
+                        resolve(this._loadCostsFromFile(empathyDir));
+                    }
+                } else {
+                    // CLI failed, fall back to file-based loading
+                    resolve(this._loadCostsFromFile(empathyDir));
+                }
+            });
+
+            // Timeout after 5 seconds
+            setTimeout(() => {
+                proc.kill();
+                resolve(this._loadCostsFromFile(empathyDir));
+            }, 5000);
+        });
+    }
+
+    /**
+     * Load costs from .empathy/costs.json file (fallback method).
+     */
+    private _loadCostsFromFile(empathyDir: string): CostData {
+        const costs: CostData = this._getEmptyCostData();
 
         try {
             const costsFile = path.join(empathyDir, 'costs.json');
             if (fs.existsSync(costsFile)) {
                 const data = JSON.parse(fs.readFileSync(costsFile, 'utf8'));
+                let baselineCost = 0;
 
                 for (const [dateStr, daily] of Object.entries(data.daily_totals || {})) {
                     const d = daily as any;
                     costs.totalCost += d.actual_cost || 0;
                     costs.totalSavings += d.savings || 0;
                     costs.requests += d.requests || 0;
+                    baselineCost += d.baseline_cost || 0;
 
                     costs.dailyCosts.push({
                         date: dateStr,
@@ -263,6 +386,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                         savings: d.savings || 0,
                     });
                 }
+
+                costs.baselineCost = baselineCost;
+                costs.savingsPercent = baselineCost > 0 ? Math.round((costs.totalSavings / baselineCost) * 100) : 0;
 
                 // By provider
                 for (const [provider, providerData] of Object.entries(data.by_provider || {})) {
@@ -415,17 +541,39 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
     }
 
     private async _fixIssue(issueType: string) {
-        switch (issueType) {
-            case 'lint':
-                vscode.commands.executeCommand('empathy.fixLint');
-                break;
-            case 'format':
-                vscode.commands.executeCommand('empathy.fixFormat');
-                break;
-            case 'all':
-                vscode.commands.executeCommand('empathy.fixAll');
-                break;
+        const commandMap: Record<string, string> = {
+            'lint': 'empathy.fixLint',
+            'format': 'empathy.fixFormat',
+            'tests': 'empathy.runTests',
+            'security': 'empathy.runScan',
+            'all': 'empathy.fixAll'
+        };
+
+        const cmd = commandMap[issueType];
+        if (cmd) {
+            await vscode.commands.executeCommand(cmd);
+            // Auto-refresh dashboard data after fix completes
+            // Add a short delay to let the fix command finish writing files
+            setTimeout(() => this._updateData(), 1000);
         }
+    }
+
+    /**
+     * Save workflow input to history for persistence.
+     */
+    private async _saveWorkflowInput(workflowId: string, input: string): Promise<void> {
+        this._workflowHistory.set(workflowId, input);
+        await this._context.globalState.update(
+            'workflowHistory',
+            Object.fromEntries(this._workflowHistory)
+        );
+    }
+
+    /**
+     * Get last input for a workflow.
+     */
+    private _getLastWorkflowInput(workflowId: string): string | undefined {
+        return this._workflowHistory.get(workflowId);
     }
 
     private async _runWorkflow(workflowName: string, input?: string) {
@@ -433,6 +581,11 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         if (!workspaceFolder) {
             vscode.window.showErrorMessage('No workspace folder open');
             return;
+        }
+
+        // Save input to history for persistence
+        if (input) {
+            await this._saveWorkflowInput(workflowName, input);
         }
 
         // Send "running" state to webview
@@ -751,8 +904,32 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 20px;
-            opacity: 0.5;
+            padding: 24px;
+            opacity: 0.7;
+        }
+        .empty-state .icon {
+            font-size: 32px;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .empty-state .hint {
+            font-size: 11px;
+            opacity: 0.6;
+            margin-top: 4px;
+        }
+
+        /* Error Banner */
+        #error-banner {
+            background: var(--vscode-inputValidation-errorBackground);
+            border: 1px solid var(--vscode-inputValidation-errorBorder);
+            padding: 8px;
+            margin: 8px 0;
+            border-radius: 4px;
+            font-size: 11px;
+            display: none;
+        }
+        #error-banner .error-item {
+            margin: 4px 0;
         }
 
         /* Progress Bars */
@@ -902,6 +1079,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
 
     <!-- Power Tab -->
     <div id="tab-power" class="tab-content active">
+        <div id="error-banner"></div>
         <div class="card">
             <div class="card-title">Quick Actions</div>
             <div class="actions-grid workflow-grid">
@@ -1057,7 +1235,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         </div>
 
         <div style="margin-top: 12px; text-align: center;">
-            <button class="btn" data-cmd="dashboard" style="opacity: 0.7; font-size: 10px;">Open Web Dashboard</button>
+            <button class="btn" id="open-web-dashboard" style="opacity: 0.7; font-size: 10px;">&#x1F310; Open Full Web Dashboard</button>
         </div>
     </div>
 
@@ -1222,6 +1400,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         // Store original button content for restoration
         const workflowButtonState = new Map();
         let currentWorkflow = null;
+        let workflowLastInputs = {}; // Persisted workflow inputs
 
         // Workflow input configuration - defines input type and UI for each workflow
         const workflowConfig = {
@@ -1287,6 +1466,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             const pathField = document.getElementById('workflow-path');
             const textField = document.getElementById('workflow-input');
 
+            // Get last input for this workflow (if any)
+            const lastInput = workflowLastInputs[currentWorkflow] || '';
+
             // Hide all first
             textInput.style.display = 'none';
             fileInput.style.display = 'none';
@@ -1295,18 +1477,26 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             if (type === 'text') {
                 textInput.style.display = 'block';
                 textField.placeholder = config.placeholder || 'Enter your query...';
-                textField.value = '';
+                textField.value = lastInput; // Pre-populate with last input
                 textField.focus();
             } else if (type === 'file' || type === 'folder') {
                 fileInput.style.display = 'block';
                 pathField.placeholder = config.placeholder || 'Click Browse...';
-                pathField.value = '';
+                pathField.value = lastInput; // Pre-populate with last input
                 // If hybrid (allowText), make editable
                 pathField.readOnly = !config.allowText;
-                // Request active file for pre-population
-                vscode.postMessage({ type: 'getActiveFile', workflow: currentWorkflow });
+                // Request active file for pre-population only if no history
+                if (!lastInput) {
+                    vscode.postMessage({ type: 'getActiveFile', workflow: currentWorkflow });
+                }
             } else if (type === 'dropdown') {
                 dropdownInput.style.display = 'block';
+                // Pre-populate dropdown if we have history
+                if (lastInput) {
+                    selectedDropdownValue = lastInput;
+                    const selectBtn = document.getElementById('workflow-select-btn');
+                    selectBtn.textContent = lastInput;
+                }
             }
         }
 
@@ -1474,12 +1664,27 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             });
         }
 
+        // Open Web Dashboard button
+        const openWebDashboardBtn = document.getElementById('open-web-dashboard');
+        if (openWebDashboardBtn) {
+            openWebDashboardBtn.addEventListener('click', function() {
+                vscode.postMessage({ type: 'openWebDashboard' });
+            });
+        }
+
         // Handle data updates
         window.addEventListener('message', event => {
             const message = event.data;
             if (message.type === 'update') {
                 updateHealth(message.data.health);
-                updateWorkflows(message.data.workflows);
+                updateWorkflows(message.data.workflows, message.data.workflowsEmpty);
+                updateCosts(message.data.costs, message.data.costsEmpty);
+                // Store workflow history for pre-population
+                if (message.data.workflowLastInputs) {
+                    workflowLastInputs = message.data.workflowLastInputs;
+                }
+                // Show error banner if there are errors
+                showErrorBanner(message.data.errors);
             } else if (message.type === 'costsData') {
                 updateCostsPanel(message.data);
             } else if (message.type === 'workflowStatus') {
@@ -1616,28 +1821,37 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         }
 
         function updateHealth(health) {
+            // Guard against null health data
+            if (!health) {
+                document.getElementById('health-score').textContent = '--';
+                document.getElementById('power-patterns').textContent = '--';
+                document.getElementById('power-health').textContent = '--';
+                return;
+            }
+
             const scoreEl = document.getElementById('health-score');
-            scoreEl.textContent = health.score + '%';
-            scoreEl.className = 'score-circle ' + (health.score >= 80 ? 'good' : health.score >= 50 ? 'warning' : 'bad');
+            const score = health.score || 0;
+            scoreEl.textContent = score + '%';
+            scoreEl.className = 'score-circle ' + (score >= 80 ? 'good' : score >= 50 ? 'warning' : 'bad');
 
             // Update tree items with icons and values
-            updateTreeItem('patterns', health.patterns, health.patterns > 0);
-            updateTreeItem('lint', health.lint.errors + ' errors', health.lint.errors === 0);
-            updateTreeItem('types', health.types.errors + ' errors', health.types.errors === 0);
+            updateTreeItem('patterns', health.patterns || 0, (health.patterns || 0) > 0);
+            updateTreeItem('lint', (health.lint?.errors || 0) + ' errors', (health.lint?.errors || 0) === 0);
+            updateTreeItem('types', (health.types?.errors || 0) + ' errors', (health.types?.errors || 0) === 0);
             updateTreeItem('security', (health.security?.high || 0) + ' high', (health.security?.high || 0) === 0);
-            updateTreeItem('tests', health.tests.passed + '/' + health.tests.total, health.tests.failed === 0);
+            updateTreeItem('tests', (health.tests?.passed || 0) + '/' + (health.tests?.total || 0), (health.tests?.failed || 0) === 0);
             document.getElementById('metric-debt').textContent = (health.techDebt?.total || 0) + ' items';
 
-            const coverage = health.tests.coverage || 0;
+            const coverage = health.tests?.coverage || 0;
             document.getElementById('coverage-bar').style.width = coverage + '%';
             document.getElementById('coverage-bar').className = 'progress-fill ' + (coverage >= 70 ? 'success' : coverage >= 50 ? 'warning' : 'error');
             document.getElementById('coverage-value').textContent = coverage + '%';
 
             // Update Power tab stats
-            document.getElementById('power-patterns').textContent = health.patterns;
+            document.getElementById('power-patterns').textContent = health.patterns || 0;
             const powerHealthEl = document.getElementById('power-health');
-            powerHealthEl.textContent = health.score + '%';
-            powerHealthEl.className = 'metric-value ' + (health.score >= 80 ? 'success' : health.score >= 50 ? 'warning' : 'error');
+            powerHealthEl.textContent = score + '%';
+            powerHealthEl.className = 'metric-value ' + (score >= 80 ? 'success' : score >= 50 ? 'warning' : 'error');
         }
 
         function updateTreeItem(id, value, isOk) {
@@ -1650,21 +1864,32 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             }
         }
 
-        function updateWorkflows(workflows) {
-            // Update Power tab stats from workflow data
-            if (workflows.costs) {
-                document.getElementById('power-savings').textContent = '$' + (workflows.costs.totalSavings || 0).toFixed(2);
-                document.getElementById('power-requests').textContent = workflows.costs.requests || 0;
+        function updateWorkflows(workflows, isEmpty) {
+            // Guard against null workflows data
+            if (!workflows) {
+                document.getElementById('wf-runs').textContent = '0';
+                document.getElementById('wf-success').textContent = '0%';
+                document.getElementById('wf-cost').textContent = '$0.00';
+                document.getElementById('wf-savings').textContent = '$0.00';
+                return;
             }
 
-            document.getElementById('wf-runs').textContent = workflows.totalRuns;
+            document.getElementById('wf-runs').textContent = workflows.totalRuns || 0;
             document.getElementById('wf-success').textContent = workflows.totalRuns > 0 ? Math.round((workflows.successfulRuns / workflows.totalRuns) * 100) + '%' : '0%';
             document.getElementById('wf-cost').textContent = '$' + workflows.totalCost.toFixed(4);
             document.getElementById('wf-savings').textContent = '$' + workflows.totalSavings.toFixed(4);
 
             const list = document.getElementById('workflows-list');
-            if (workflows.recentRuns.length === 0) {
-                list.innerHTML = '<div class="empty-state">No workflow runs yet</div>';
+
+            // Check for empty state
+            if (isEmpty || workflows.recentRuns.length === 0) {
+                list.innerHTML = \`
+                    <div class="empty-state">
+                        <span class="icon">&#x1F4E6;</span>
+                        <p>No workflow runs yet</p>
+                        <p class="hint">Run a workflow from the Power tab to get started</p>
+                    </div>
+                \`;
                 return;
             }
 
@@ -1678,6 +1903,36 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     <span class="badge \${run.success ? 'success' : 'error'}">\${run.success ? 'OK' : 'Failed'}</span>
                 </div>
             \`).join('');
+        }
+
+        function updateCosts(costs, isEmpty) {
+            // Update Power tab cost stats
+            const savings = costs?.totalSavings || 0;
+            const requests = costs?.requests || 0;
+
+            document.getElementById('power-savings').textContent = '$' + savings.toFixed(2);
+            document.getElementById('power-requests').textContent = requests;
+
+            // Update savings color based on value
+            const savingsEl = document.getElementById('power-savings');
+            if (savingsEl) {
+                savingsEl.className = 'metric-value ' + (savings > 0 ? 'success' : '');
+            }
+        }
+
+        function showErrorBanner(errors) {
+            const banner = document.getElementById('error-banner');
+            if (!banner) return;
+
+            if (!errors || Object.keys(errors).length === 0) {
+                banner.style.display = 'none';
+                return;
+            }
+
+            banner.innerHTML = Object.entries(errors)
+                .map(([key, msg]) => '<div class="error-item">&#x26A0; ' + key + ': ' + msg + '</div>')
+                .join('');
+            banner.style.display = 'block';
         }
 
         // Request initial data
@@ -1718,9 +1973,21 @@ interface HealthData {
 interface CostData {
     totalCost: number;
     totalSavings: number;
+    savingsPercent: number;
     requests: number;
+    baselineCost: number;
     dailyCosts: Array<{ date: string; cost: number; savings: number }>;
     byProvider: Record<string, { requests: number; cost: number }>;
+}
+
+// Response shape from `python -m empathy_os.models.cli telemetry --costs -f json`
+interface TelemetryCostData {
+    workflow_count: number;
+    total_actual_cost: number;
+    total_baseline_cost: number;
+    total_savings: number;
+    savings_percent: number;
+    avg_cost_per_workflow: number;
 }
 
 interface WorkflowData {

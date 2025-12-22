@@ -16,8 +16,11 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install pre-commit
-      run: pip install pre-commit
+    - name: Install dependencies
+      run: |
+        pip install pre-commit
+        # Install package for local hooks (pattern-summary, etc.)
+        pip install -e .[dev,software]
 
     - name: Run pre-commit hooks
       run: pre-commit run --all-files --show-diff-on-failure

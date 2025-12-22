@@ -28,6 +28,15 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 
+# Import from unified registry
+from empathy_os.models import MODEL_REGISTRY, ModelInfo
+from empathy_os.models.tasks import (
+    CAPABLE_TASKS,
+    CHEAP_TASKS,
+    PREMIUM_TASKS,
+    get_tier_for_task,
+)
+
 
 class ModelTier(Enum):
     """
@@ -45,13 +54,29 @@ class ModelTier(Enum):
 
 @dataclass
 class ModelConfig:
-    """Configuration for a model in a tier."""
+    """
+    Configuration for a model in a tier.
+
+    Note: This class is kept for backward compatibility. New code should
+    use empathy_os.models.ModelInfo from the unified registry.
+    """
 
     model_id: str
     cost_per_1k_input: float
     cost_per_1k_output: float
     max_tokens: int = 4096
     supports_tools: bool = True
+
+    @classmethod
+    def from_model_info(cls, info: ModelInfo) -> "ModelConfig":
+        """Create ModelConfig from unified ModelInfo."""
+        return cls(
+            model_id=info.id,
+            cost_per_1k_input=info.cost_per_1k_input,
+            cost_per_1k_output=info.cost_per_1k_output,
+            max_tokens=info.max_tokens,
+            supports_tools=info.supports_tools,
+        )
 
 
 class TaskRouting:
@@ -62,52 +87,15 @@ class TaskRouting:
     - Complexity requirements
     - Cost sensitivity
     - Quality needs
+
+    Note: Task definitions are sourced from empathy_os.models.tasks
+    for consistency across the framework.
     """
 
-    # Tasks that can use cheap models
-    CHEAP_TASKS = frozenset(
-        [
-            "summarize",
-            "classify",
-            "triage",
-            "match_pattern",
-            "extract_topics",
-            "lint_check",
-            "format_code",
-            "simple_qa",
-            "categorize",
-        ]
-    )
-
-    # Tasks that need capable models
-    CAPABLE_TASKS = frozenset(
-        [
-            "generate_code",
-            "fix_bug",
-            "review_security",
-            "analyze_performance",
-            "write_tests",
-            "refactor",
-            "explain_code",
-            "document_code",
-            "analyze_error",
-            "suggest_fix",
-        ]
-    )
-
-    # Tasks that require premium models
-    PREMIUM_TASKS = frozenset(
-        [
-            "coordinate",
-            "synthesize_results",
-            "architectural_decision",
-            "novel_problem",
-            "final_review",
-            "complex_reasoning",
-            "multi_step_planning",
-            "critical_decision",
-        ]
-    )
+    # Tasks imported from shared module
+    CHEAP_TASKS = CHEAP_TASKS
+    CAPABLE_TASKS = CAPABLE_TASKS
+    PREMIUM_TASKS = PREMIUM_TASKS
 
     @classmethod
     def get_tier(cls, task_type: str) -> ModelTier:
@@ -120,15 +108,10 @@ class TaskRouting:
         Returns:
             ModelTier for the task
         """
-        task_lower = task_type.lower().replace("-", "_").replace(" ", "_")
-
-        if task_lower in cls.CHEAP_TASKS:
-            return ModelTier.CHEAP
-        elif task_lower in cls.PREMIUM_TASKS:
-            return ModelTier.PREMIUM
-        else:
-            # Default to capable for unknown tasks
-            return ModelTier.CAPABLE
+        # Delegate to shared module
+        tier = get_tier_for_task(task_type)
+        # Convert from registry ModelTier to local ModelTier
+        return ModelTier(tier.value)
 
 
 class ModelRouter:
@@ -137,6 +120,9 @@ class ModelRouter:
 
     Routes tasks to appropriate model tiers based on complexity and
     cost requirements. Supports Anthropic, OpenAI, and Ollama providers.
+
+    Model configurations are sourced from the unified registry at
+    empathy_os.models.MODEL_REGISTRY.
 
     Example:
         >>> router = ModelRouter()
@@ -154,70 +140,18 @@ class ModelRouter:
         >>> router.add_task_routing("my_task", ModelTier.PREMIUM)
     """
 
-    # Model configurations by provider and tier
-    MODELS: dict[str, dict[str, ModelConfig]] = {
-        "anthropic": {
-            "cheap": ModelConfig(
-                model_id="claude-3-5-haiku-20241022",
-                cost_per_1k_input=0.00025,
-                cost_per_1k_output=0.00125,
-                max_tokens=4096,
-            ),
-            "capable": ModelConfig(
-                model_id="claude-sonnet-4-20250514",
-                cost_per_1k_input=0.003,
-                cost_per_1k_output=0.015,
-                max_tokens=8192,
-            ),
-            "premium": ModelConfig(
-                model_id="claude-opus-4-20250514",
-                cost_per_1k_input=0.015,
-                cost_per_1k_output=0.075,
-                max_tokens=8192,
-            ),
-        },
-        "openai": {
-            "cheap": ModelConfig(
-                model_id="gpt-4o-mini",
-                cost_per_1k_input=0.00015,
-                cost_per_1k_output=0.0006,
-                max_tokens=4096,
-            ),
-            "capable": ModelConfig(
-                model_id="gpt-4o",
-                cost_per_1k_input=0.0025,
-                cost_per_1k_output=0.01,
-                max_tokens=4096,
-            ),
-            "premium": ModelConfig(
-                model_id="o1",
-                cost_per_1k_input=0.015,
-                cost_per_1k_output=0.06,
-                max_tokens=32768,
-                supports_tools=False,  # o1 doesn't support tools yet
-            ),
-        },
-        "ollama": {
-            "cheap": ModelConfig(
-                model_id="llama3.2:3b",
-                cost_per_1k_input=0.0,  # Local, no API cost
-                cost_per_1k_output=0.0,
-                max_tokens=4096,
-            ),
-            "capable": ModelConfig(
-                model_id="llama3.1:70b",
-                cost_per_1k_input=0.0,
-                cost_per_1k_output=0.0,
-                max_tokens=4096,
-            ),
-            "premium": ModelConfig(
-                model_id="llama3.1:405b",
-                cost_per_1k_input=0.0,
-                cost_per_1k_output=0.0,
-                max_tokens=4096,
-            ),
-        },
-    }
+    # MODELS is now sourced from the unified registry
+    # This is built lazily and cached at the class level for backward compatibility
+    MODELS: dict[str, dict[str, ModelConfig]] = {}  # Populated in _ensure_models_loaded
+
+    @classmethod
+    def _ensure_models_loaded(cls) -> None:
+        """Ensure MODELS is populated from registry (called lazily)."""
+        if not cls.MODELS:
+            for provider, tiers in MODEL_REGISTRY.items():
+                cls.MODELS[provider] = {}
+                for tier, info in tiers.items():
+                    cls.MODELS[provider][tier] = ModelConfig.from_model_info(info)
 
     def __init__(
         self,
@@ -228,9 +162,12 @@ class ModelRouter:
         Initialize the model router.
 
         Args:
-            default_provider: Default provider (anthropic, openai, ollama)
+            default_provider: Default provider (anthropic, openai, ollama, hybrid)
             custom_routing: Custom task type to tier mappings
         """
+        # Ensure class-level MODELS is populated from registry
+        self._ensure_models_loaded()
+
         self._default_provider = default_provider
         self._custom_routing: dict[str, ModelTier] = custom_routing or {}
 
@@ -384,6 +321,7 @@ class ModelRouter:
     @classmethod
     def get_supported_providers(cls) -> list[str]:
         """Get list of supported providers."""
+        cls._ensure_models_loaded()
         return list(cls.MODELS.keys())
 
     @classmethod

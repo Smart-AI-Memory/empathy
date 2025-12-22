@@ -90,7 +90,7 @@ class TestModelRouter:
     def test_route_premium_task(self, router):
         """Test routing premium task to premium model."""
         model = router.route("coordinate")
-        assert model == "claude-opus-4-20250514"
+        assert model == "claude-opus-4-5-20251101"  # Opus 4.5
 
     def test_route_with_openai_provider(self, router):
         """Test routing with OpenAI provider."""
@@ -127,8 +127,8 @@ class TestModelRouter:
         """Test cost estimation for cheap tier."""
         cost = router.estimate_cost("summarize", input_tokens=10000, output_tokens=2000)
 
-        # Haiku: $0.25/M input, $1.25/M output
-        expected = (10000 / 1000) * 0.00025 + (2000 / 1000) * 0.00125
+        # Haiku 3.5: $0.80/M input, $4.00/M output (unified registry pricing)
+        expected = (10000 / 1000) * 0.0008 + (2000 / 1000) * 0.004
         assert cost == pytest.approx(expected, rel=0.01)
 
     def test_estimate_cost_capable(self, router):
@@ -166,7 +166,7 @@ class TestModelRouter:
         assert tier == ModelTier.PREMIUM
 
         model = router.route("my_special_task")
-        assert model == "claude-opus-4-20250514"
+        assert model == "claude-opus-4-5-20251101"  # Opus 4.5
 
     def test_add_task_routing(self, router):
         """Test adding custom routing dynamically."""

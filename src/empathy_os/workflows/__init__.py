@@ -53,6 +53,11 @@ from .refactor_plan import RefactorPlanWorkflow
 from .release_prep import ReleasePreparationWorkflow
 from .research_synthesis import ResearchSynthesisWorkflow
 from .security_audit import SecurityAuditWorkflow
+from .step_config import (
+    WorkflowStepConfig,
+    steps_from_tier_map,
+    validate_step_config,
+)
 from .test_gen import TestGenerationWorkflow
 
 # Re-export CLI commands from the workflows.py module
@@ -152,6 +157,10 @@ __all__ = [
     "WorkflowStage",
     "CostReport",
     "WorkflowResult",
+    # Step configuration (new)
+    "WorkflowStepConfig",
+    "validate_step_config",
+    "steps_from_tier_map",
     # Configuration
     "WorkflowConfig",
     "ModelConfig",

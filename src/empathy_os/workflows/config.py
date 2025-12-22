@@ -13,6 +13,9 @@ Configuration priority (highest to lowest):
 3. Config file (.empathy/workflows.yaml)
 4. Built-in defaults
 
+Model configurations are sourced from the unified registry at
+empathy_os.models.MODEL_REGISTRY.
+
 Copyright 2025 Smart-AI-Memory
 Licensed under Fair Source License 0.9
 """
@@ -20,9 +23,12 @@ Licensed under Fair Source License 0.9
 import json
 import os
 from dataclasses import dataclass, field
-from enum import Enum
 from pathlib import Path
 from typing import Any
+
+# Import from unified registry
+from empathy_os.models import MODEL_REGISTRY, ModelInfo
+from empathy_os.models.registry import ModelProvider, ModelTier
 
 # Try to import yaml, fall back gracefully
 try:
@@ -33,26 +39,25 @@ except ImportError:
     YAML_AVAILABLE = False
 
 
-class ModelTier(Enum):
-    """Model tier for cost optimization."""
-
-    CHEAP = "cheap"
-    CAPABLE = "capable"
-    PREMIUM = "premium"
-
-
-class ModelProvider(Enum):
-    """Supported model providers."""
-
-    ANTHROPIC = "anthropic"
-    OPENAI = "openai"
-    OLLAMA = "ollama"
-    CUSTOM = "custom"
+# Re-export for backward compatibility
+__all__ = [
+    "ModelTier",
+    "ModelProvider",
+    "ModelConfig",
+    "WorkflowConfig",
+    "DEFAULT_MODELS",
+    "get_model",
+]
 
 
 @dataclass
 class ModelConfig:
-    """Configuration for a specific model."""
+    """
+    Configuration for a specific model.
+
+    Note: This class is kept for backward compatibility. New code should
+    use empathy_os.models.ModelInfo from the unified registry.
+    """
 
     name: str
     provider: str
@@ -62,6 +67,20 @@ class ModelConfig:
     max_tokens: int = 4096
     supports_vision: bool = False
     supports_tools: bool = True
+
+    @classmethod
+    def from_model_info(cls, info: ModelInfo) -> "ModelConfig":
+        """Create ModelConfig from unified ModelInfo."""
+        return cls(
+            name=info.id,
+            provider=info.provider,
+            tier=info.tier,
+            input_cost_per_million=info.input_cost_per_million,
+            output_cost_per_million=info.output_cost_per_million,
+            max_tokens=info.max_tokens,
+            supports_vision=info.supports_vision,
+            supports_tools=info.supports_tools,
+        )
 
 
 @dataclass
@@ -217,120 +236,45 @@ class WorkflowConfig:
                 json.dump(data, f, indent=2)
 
 
-# Default built-in model configurations
-DEFAULT_MODELS: dict[str, dict[str, ModelConfig]] = {
-    "anthropic": {
-        "cheap": ModelConfig(
-            name="claude-3-5-haiku-20241022",
-            provider="anthropic",
-            tier="cheap",
-            input_cost_per_million=0.80,
-            output_cost_per_million=4.00,
-            max_tokens=8192,
-        ),
-        "capable": ModelConfig(
-            name="claude-sonnet-4-20250514",
-            provider="anthropic",
-            tier="capable",
-            input_cost_per_million=3.00,
-            output_cost_per_million=15.00,
-            max_tokens=8192,
-            supports_vision=True,
-        ),
-        "premium": ModelConfig(
-            name="claude-opus-4-5-20251101",
-            provider="anthropic",
-            tier="premium",
-            input_cost_per_million=15.00,
-            output_cost_per_million=75.00,
-            max_tokens=8192,
-            supports_vision=True,
-        ),
-    },
-    "openai": {
-        "cheap": ModelConfig(
-            name="gpt-4o-mini",
-            provider="openai",
-            tier="cheap",
-            input_cost_per_million=0.15,
-            output_cost_per_million=0.60,
-            max_tokens=4096,
-        ),
-        "capable": ModelConfig(
-            name="gpt-4o",
-            provider="openai",
-            tier="capable",
-            input_cost_per_million=2.50,
-            output_cost_per_million=10.00,
-            max_tokens=4096,
-            supports_vision=True,
-        ),
-        "premium": ModelConfig(
-            name="gpt-5.2",
-            provider="openai",
-            tier="premium",
-            input_cost_per_million=15.00,
-            output_cost_per_million=60.00,
-            max_tokens=8192,
-            supports_vision=True,
-        ),
-    },
-    "ollama": {
-        "cheap": ModelConfig(
-            name="llama3.2:3b",
-            provider="ollama",
-            tier="cheap",
-            input_cost_per_million=0.0,
-            output_cost_per_million=0.0,
-            max_tokens=4096,
-        ),
-        "capable": ModelConfig(
-            name="llama3.2:latest",
-            provider="ollama",
-            tier="capable",
-            input_cost_per_million=0.0,
-            output_cost_per_million=0.0,
-            max_tokens=4096,
-        ),
-        "premium": ModelConfig(
-            name="llama3.2:latest",
-            provider="ollama",
-            tier="premium",
-            input_cost_per_million=0.0,
-            output_cost_per_million=0.0,
-            max_tokens=4096,
-        ),
-    },
-    # Hybrid: Mix best models from different providers
-    "hybrid": {
-        "cheap": ModelConfig(
-            name="gpt-4o-mini",  # OpenAI - cheapest per token
-            provider="openai",
-            tier="cheap",
-            input_cost_per_million=0.15,
-            output_cost_per_million=0.60,
-            max_tokens=4096,
-        ),
-        "capable": ModelConfig(
-            name="claude-sonnet-4-20250514",  # Anthropic - best code/reasoning
-            provider="anthropic",
-            tier="capable",
-            input_cost_per_million=3.00,
-            output_cost_per_million=15.00,
-            max_tokens=8192,
-            supports_vision=True,
-        ),
-        "premium": ModelConfig(
-            name="claude-opus-4-5-20251101",  # Anthropic - best overall
-            provider="anthropic",
-            tier="premium",
-            input_cost_per_million=15.00,
-            output_cost_per_million=75.00,
-            max_tokens=8192,
-            supports_vision=True,
-        ),
-    },
-}
+# =============================================================================
+# DEFAULT_MODELS - Built from unified registry
+# =============================================================================
+# This is now populated from empathy_os.models.MODEL_REGISTRY for consistency
+# across the framework.
+
+
+def _build_default_models() -> dict[str, dict[str, ModelConfig]]:
+    """Build DEFAULT_MODELS from the unified registry."""
+    result: dict[str, dict[str, ModelConfig]] = {}
+    for provider, tiers in MODEL_REGISTRY.items():
+        result[provider] = {}
+        for tier, info in tiers.items():
+            result[provider][tier] = ModelConfig.from_model_info(info)
+    return result
+
+
+# Lazy initialization - built on first access
+_default_models_cache: dict[str, dict[str, ModelConfig]] | None = None
+
+
+def _get_default_models() -> dict[str, dict[str, ModelConfig]]:
+    """Get DEFAULT_MODELS, building from registry if needed."""
+    global _default_models_cache
+    if _default_models_cache is None:
+        _default_models_cache = _build_default_models()
+    return _default_models_cache
+
+
+# For backward compatibility, DEFAULT_MODELS is now a property-like access
+# Users should access via get_default_models() or directly use MODEL_REGISTRY
+DEFAULT_MODELS: dict[str, dict[str, ModelConfig]] = {}  # Populated below
+
+
+def _ensure_default_models() -> None:
+    """Ensure DEFAULT_MODELS is populated."""
+    global DEFAULT_MODELS
+    if not DEFAULT_MODELS:
+        DEFAULT_MODELS.update(_get_default_models())
 
 
 def get_model(provider: str, tier: str, config: WorkflowConfig | None = None) -> str:
@@ -338,13 +282,16 @@ def get_model(provider: str, tier: str, config: WorkflowConfig | None = None) ->
     Get the model name for a provider/tier combination.
 
     Args:
-        provider: Model provider (anthropic, openai, ollama)
+        provider: Model provider (anthropic, openai, ollama, hybrid)
         tier: Model tier (cheap, capable, premium)
         config: Optional WorkflowConfig for custom overrides
 
     Returns:
         Model name string
     """
+    # Ensure DEFAULT_MODELS is populated from registry
+    _ensure_default_models()
+
     # Check config overrides first
     if config:
         custom = config.get_model_for_tier(provider, tier)

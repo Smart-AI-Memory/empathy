@@ -681,6 +681,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../CLI_CHEATSHEET/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix - CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -841,6 +869,62 @@
     
   
     Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../CLI_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../CLI_CHEATSHEET/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix - CLI Reference
   
 
     
@@ -1103,6 +1187,34 @@
     
   
     Practical Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/agent-factory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Factory
   
 
     
@@ -1906,19 +2018,19 @@
 <h1 id="twitterx-thread-ready-to-post">Twitter/X Thread - Ready to Post<a class="headerlink" href="#twitterx-thread-ready-to-post" title="Permanent link">&para;</a></h1>
 <p>Copy each numbered item as a separate tweet.</p>
 <hr />
-<p><strong>1/7</strong>
-What if Claude remembered your preferences across sessions?</p>
-<p>I built @empathy_framework to give LLMs persistent memory.</p>
+<p><strong>1/8</strong>
+What if Claude remembered your preferences across sessions—and cost 80% less?</p>
+<p>Just shipped empathy-framework v2.3 with smart model routing.</p>
 <p>pip install empathy-framework</p>
 <p>🧵</p>
 <hr />
-<p><strong>2/7</strong>
+<p><strong>2/8</strong>
 The problem: Every Claude conversation starts fresh.</p>
 <p>Tell it you prefer concise code? Forgotten next session.</p>
-<p>Working on a project? Context lost.</p>
+<p>And you're paying Opus prices for simple tasks.</p>
 <hr />
-<p><strong>3/7</strong>
-The fix:</p>
+<p><strong>3/8</strong>
+The fix - persistent memory:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">empathy_llm_toolkit</span> <span class="kn">import</span> <span class="n">EmpathyLLM</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">llm</span> <span class="o">=</span> <span class="n">EmpathyLLM</span><span class="p">(</span>
@@ -1933,14 +2045,27 @@ The fix:</p>
 </code></pre></div>
 <p>That preference now survives.</p>
 <hr />
-<p><strong>4/7</strong>
+<p><strong>4/8</strong>
+NEW in v2.3 - ModelRouter:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">llm</span> <span class="o">=</span> <span class="n">EmpathyLLM</span><span class="p">(</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">provider</span><span class="o">=</span><span class="s2">&quot;anthropic&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">enable_model_routing</span><span class="o">=</span><span class="kc">True</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">)</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># Summarize → Haiku ($0.25/M)</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># Code gen → Sonnet ($3/M)</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># Architecture → Opus ($15/M)</span>
+</code></pre></div>
+<p>Real savings: $4.05 → $0.83 per task (80%)</p>
+<hr />
+<p><strong>5/8</strong>
 It tracks:
 → User preferences
 → Project context
 → Conversation patterns</p>
 <p>Each user gets isolated memory. Privacy controls built in.</p>
 <hr />
-<p><strong>5/7</strong>
+<p><strong>6/8</strong>
 Five empathy levels:</p>
 <ol>
 <li>Reactive (standard)</li>
@@ -1950,42 +2075,41 @@ Five empathy levels:</p>
 <li>Collaborative (full partnership)</li>
 </ol>
 <hr />
-<p><strong>6/7</strong>
+<p><strong>7/8</strong>
 Now on PyPI:</p>
 <p>pip install empathy-framework</p>
 <p>GitHub: github.com/Smart-AI-Memory/empathy-framework</p>
 <p>Docs: smartaimemory.com/docs</p>
 <hr />
-<p><strong>7/7</strong>
-Working on getting this into the @AnthropicAI cookbook.</p>
-<p>What would you build with an AI that remembers you?</p>
+<p><strong>8/8</strong>
+What would you build with an AI that remembers you—and costs 80% less?</p>
 <hr />
 <h1 id="alt-shorter-4-tweet-version">Alt: Shorter 4-tweet version<a class="headerlink" href="#alt-shorter-4-tweet-version" title="Permanent link">&para;</a></h1>
 <p><strong>1/4</strong>
-What if Claude remembered you across sessions?</p>
-<p>Built empathy-framework to add persistent memory to LLMs.</p>
+What if Claude remembered you across sessions—and cost 80% less?</p>
+<p>Just shipped empathy-framework v2.3 with smart model routing.</p>
 <p>pip install empathy-framework</p>
 <hr />
 <p><strong>2/4</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">llm</span> <span class="o">=</span> <span class="n">EmpathyLLM</span><span class="p">(</span><span class="n">provider</span><span class="o">=</span><span class="s2">&quot;anthropic&quot;</span><span class="p">,</span> <span class="n">memory_enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">await</span> <span class="n">llm</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;you&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">user_input</span><span class="o">=</span><span class="s2">&quot;I prefer concise answers&quot;</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">llm</span> <span class="o">=</span> <span class="n">EmpathyLLM</span><span class="p">(</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">provider</span><span class="o">=</span><span class="s2">&quot;anthropic&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">memory_enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">enable_model_routing</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># NEW!</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="p">)</span>
 </code></pre></div></p>
-<p>Next session? Still remembered.</p>
+<p>Memory persists. Costs drop 80%.</p>
 <hr />
 <p><strong>3/4</strong>
 Features:
 → Cross-session persistence
 → Per-user isolation
 → Privacy controls
-→ Five "empathy levels"</p>
+→ Five "empathy levels"
+→ NEW: Smart model routing (Haiku/Sonnet/Opus auto-selection)</p>
 <hr />
 <p><strong>4/4</strong>
 GitHub: github.com/Smart-AI-Memory/empathy-framework</p>
-<p>What would you build with an AI that remembers?</p>
+<p>What would you build with an AI that remembers—and costs 80% less?</p>
 
 
 

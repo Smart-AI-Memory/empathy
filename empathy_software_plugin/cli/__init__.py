@@ -17,6 +17,7 @@ core implementation in the shared registry module.
 
 import importlib.util
 import os
+from typing import Any
 
 from .inspect import main as inspect_main
 
@@ -43,8 +44,6 @@ print_summary = None  # type: ignore[assignment]
 parse_ai_calls = None  # type: ignore[assignment]
 parse_git_history = None  # type: ignore[assignment]
 prepare_wizard_context = None  # type: ignore[assignment]
-get_global_registry = None  # type: ignore[assignment]
-_cli_module = None  # Reference to loaded cli.py module
 
 
 if os.path.exists(_cli_module_path):
@@ -72,37 +71,6 @@ if os.path.exists(_cli_module_path):
         parse_ai_calls = _cli_module.parse_ai_calls
         parse_git_history = _cli_module.parse_git_history
         prepare_wizard_context = _cli_module.prepare_wizard_context
-        # Re-export get_global_registry from cli.py so patches work correctly
-        get_global_registry = _cli_module.get_global_registry
-
-        # CRITICAL: For patches to work, we need to make the cli.py module's
-        # functions point to THIS module's versions.
-        # This allows tests to patch empathy_software_plugin.cli.{function}
-        # and have it affect calls from main() and other functions.
-        import sys
-
-        _this_module = sys.modules[__name__]
-
-        def _patchable_get_global_registry():
-            """Wrapper that calls whatever is currently bound to this module's get_global_registry."""
-            return _this_module.get_global_registry()
-
-        async def _patchable_analyze_project(*args, **kwargs):
-            """Wrapper that calls whatever is currently bound to this module's analyze_project."""
-            return await _this_module.analyze_project(*args, **kwargs)
-
-        def _patchable_list_wizards(*args, **kwargs):
-            """Wrapper that calls whatever is currently bound to this module's list_wizards."""
-            return _this_module.list_wizards(*args, **kwargs)
-
-        def _patchable_wizard_info(*args, **kwargs):
-            """Wrapper that calls whatever is currently bound to this module's wizard_info."""
-            return _this_module.wizard_info(*args, **kwargs)
-
-        _cli_module.get_global_registry = _patchable_get_global_registry  # type: ignore[attr-defined]
-        _cli_module.analyze_project = _patchable_analyze_project  # type: ignore[attr-defined]
-        _cli_module.list_wizards = _patchable_list_wizards  # type: ignore[attr-defined]
-        _cli_module.wizard_info = _patchable_wizard_info  # type: ignore[attr-defined]
 
 
 def get_logger():
@@ -114,6 +82,19 @@ def get_logger():
     """
 
     return logger
+
+
+def get_global_registry() -> Any:
+    """Return the global plugin registry used by the software plugin.
+
+    The concrete implementation lives in the core plugin registry
+    module. We import lazily to avoid import cycles and to keep this
+    function easy to patch in tests via ``unittest.mock.patch``.
+    """
+
+    from empathy_os.plugins.registry import get_global_registry as _get_global_registry
+
+    return _get_global_registry()
 
 
 __all__ = [

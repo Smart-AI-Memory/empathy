@@ -15,6 +15,10 @@
         <link rel="canonical" href="https://smartaimemory.com/framework-docs/CLI_GUIDE/">
       
       
+        <link rel="prev" href="../getting-started/configuration/">
+      
+      
+        <link rel="next" href="../CLI_CHEATSHEET/">
       
       
         
@@ -25,7 +29,7 @@
     
     
       
-        <title>Empathy Framework CLI Guide - Empathy Framework</title>
+        <title>CLI Guide - Empathy Framework</title>
       
     
     
@@ -114,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Empathy Framework CLI Guide
+              CLI Guide
             
           </span>
         </div>
@@ -283,10 +287,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../getting-started/installation/" class="md-tabs__link">
           
   
@@ -681,6 +687,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CLI_CHEATSHEET/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix - CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -692,28 +726,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
             
   
   
@@ -731,7 +768,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -841,6 +878,791 @@
     
   
     Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Init
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#info" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Info
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-library-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern Library Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern Library Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#list-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#export-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Export Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metrics-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metrics Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Metrics Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#show-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Show Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-management-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Management Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="State Management Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#list-saved-states" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List Saved States
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-enhancement-commands-new-in-v214" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern Enhancement Commands (New in v2.1.4)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern Enhancement Commands (New in v2.1.4)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resolve-investigating-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolve Investigating Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-based-code-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern-Based Code Review
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#session-status-assistant-new-in-v215" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session Status Assistant (New in v2.1.5)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session Status Assistant (New in v2.1.5)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-project-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check Project Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#priority-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Priority System
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interactive-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#code-health-assistant-new-in-v220" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Code Health Assistant (New in v2.2.0)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Code Health Assistant (New in v2.2.0)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quick-health-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Health Check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comprehensive-health-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comprehensive Health Check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#specific-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Specific Check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#auto-fix-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-Fix Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detail-levels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detail Levels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#health-trends" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Health Trends
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#json-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#development-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#production-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Production Deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-library-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern Library Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-file-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration File Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration File Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yaml-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YAML Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#json-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment Variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#code-inspection-pipeline-new-in-v229" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Code Inspection Pipeline (New in v2.2.9)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Code Inspection Pipeline (New in v2.2.9)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output Formats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Target Modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#auto-fix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-Fix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#baseline-suppression-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Baseline &amp; Suppression System
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parallel-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parallel Execution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern Learning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pipeline-phases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline Phases
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#language-aware-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Language-Aware Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#claude-code-integration-new-in-v230" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Claude Code Integration (New in v2.3.0)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference-cheatsheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Reference (Cheatsheet)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Reference (Cheatsheet)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory &amp; Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Workflows
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cicd-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI/CD Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environment-variables_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment Variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-help" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Getting Help
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CLI_CHEATSHEET/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix - CLI Reference
   
 
     
@@ -1103,6 +1925,34 @@
     
   
     Practical Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/agent-factory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Factory
   
 
     
@@ -2347,6 +3197,216 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#code-inspection-pipeline-new-in-v229" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Code Inspection Pipeline (New in v2.2.9)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Code Inspection Pipeline (New in v2.2.9)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output Formats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Target Modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#auto-fix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-Fix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#baseline-suppression-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Baseline &amp; Suppression System
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parallel-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parallel Execution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern Learning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pipeline-phases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline Phases
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#language-aware-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Language-Aware Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#claude-code-integration-new-in-v230" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Claude Code Integration (New in v2.3.0)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference-cheatsheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Reference (Cheatsheet)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Reference (Cheatsheet)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory &amp; Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Workflows
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cicd-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI/CD Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environment-variables_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment Variables
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2900,14 +3960,375 @@
 </code></pre></div>
 <p>Boolean values can be: <code>true</code>, <code>false</code>, <code>1</code>, <code>0</code>, <code>yes</code>, <code>no</code></p>
 <hr />
+<h3 id="code-inspection-pipeline-new-in-v229">Code Inspection Pipeline (New in v2.2.9)<a class="headerlink" href="#code-inspection-pipeline-new-in-v229" title="Permanent link">&para;</a></h3>
+<p>The <code>empathy-inspect</code> command provides a unified code inspection pipeline that combines multiple static analysis tools with cross-tool intelligence and pattern learning.</p>
+<h4 id="basic-usage">Basic Usage<a class="headerlink" href="#basic-usage" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a><span class="c1"># Inspect current directory</span>
+<a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a>empathy-inspect<span class="w"> </span>.
+<a id="__codelineno-46-3" name="__codelineno-46-3" href="#__codelineno-46-3"></a>
+<a id="__codelineno-46-4" name="__codelineno-46-4" href="#__codelineno-46-4"></a><span class="c1"># Inspect specific path</span>
+<a id="__codelineno-46-5" name="__codelineno-46-5" href="#__codelineno-46-5"></a>empathy-inspect<span class="w"> </span>./src
+<a id="__codelineno-46-6" name="__codelineno-46-6" href="#__codelineno-46-6"></a>
+<a id="__codelineno-46-7" name="__codelineno-46-7" href="#__codelineno-46-7"></a><span class="c1"># Quick mode (skip slow checks)</span>
+<a id="__codelineno-46-8" name="__codelineno-46-8" href="#__codelineno-46-8"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--quick
+<a id="__codelineno-46-9" name="__codelineno-46-9" href="#__codelineno-46-9"></a>
+<a id="__codelineno-46-10" name="__codelineno-46-10" href="#__codelineno-46-10"></a><span class="c1"># Verbose output</span>
+<a id="__codelineno-46-11" name="__codelineno-46-11" href="#__codelineno-46-11"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--verbose
+</code></pre></div>
+<h4 id="output-formats">Output Formats<a class="headerlink" href="#output-formats" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a><span class="c1"># Terminal output (default)</span>
+<a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a>empathy-inspect<span class="w"> </span>.
+<a id="__codelineno-47-3" name="__codelineno-47-3" href="#__codelineno-47-3"></a>
+<a id="__codelineno-47-4" name="__codelineno-47-4" href="#__codelineno-47-4"></a><span class="c1"># JSON output</span>
+<a id="__codelineno-47-5" name="__codelineno-47-5" href="#__codelineno-47-5"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--format<span class="w"> </span>json
+<a id="__codelineno-47-6" name="__codelineno-47-6" href="#__codelineno-47-6"></a>
+<a id="__codelineno-47-7" name="__codelineno-47-7" href="#__codelineno-47-7"></a><span class="c1"># Markdown report</span>
+<a id="__codelineno-47-8" name="__codelineno-47-8" href="#__codelineno-47-8"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--format<span class="w"> </span>markdown
+<a id="__codelineno-47-9" name="__codelineno-47-9" href="#__codelineno-47-9"></a>
+<a id="__codelineno-47-10" name="__codelineno-47-10" href="#__codelineno-47-10"></a><span class="c1"># SARIF for GitHub Actions</span>
+<a id="__codelineno-47-11" name="__codelineno-47-11" href="#__codelineno-47-11"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--format<span class="w"> </span>sarif
+<a id="__codelineno-47-12" name="__codelineno-47-12" href="#__codelineno-47-12"></a>
+<a id="__codelineno-47-13" name="__codelineno-47-13" href="#__codelineno-47-13"></a><span class="c1"># HTML dashboard</span>
+<a id="__codelineno-47-14" name="__codelineno-47-14" href="#__codelineno-47-14"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--format<span class="w"> </span>html
+<a id="__codelineno-47-15" name="__codelineno-47-15" href="#__codelineno-47-15"></a>
+<a id="__codelineno-47-16" name="__codelineno-47-16" href="#__codelineno-47-16"></a><span class="c1"># Save report to file</span>
+<a id="__codelineno-47-17" name="__codelineno-47-17" href="#__codelineno-47-17"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--format<span class="w"> </span>html<span class="w"> </span>--output<span class="w"> </span>report.html
+</code></pre></div>
+<p><strong>SARIF Integration (GitHub Actions example):</strong></p>
+<p>SARIF is an industry standard supported by GitHub, GitLab, Azure DevOps, Bitbucket, and other CI/CD platforms. While optimized for GitHub, the same output works with any SARIF-compliant system.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a><span class="c1"># .github/workflows/code-quality.yml</span>
+<a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run Empathy Inspect</span>
+<a id="__codelineno-48-3" name="__codelineno-48-3" href="#__codelineno-48-3"></a><span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">empathy-inspect . --format sarif --output results.sarif</span>
+<a id="__codelineno-48-4" name="__codelineno-48-4" href="#__codelineno-48-4"></a>
+<a id="__codelineno-48-5" name="__codelineno-48-5" href="#__codelineno-48-5"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upload SARIF</span>
+<a id="__codelineno-48-6" name="__codelineno-48-6" href="#__codelineno-48-6"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">github/codeql-action/upload-sarif@v2</span>
+<a id="__codelineno-48-7" name="__codelineno-48-7" href="#__codelineno-48-7"></a><span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<a id="__codelineno-48-8" name="__codelineno-48-8" href="#__codelineno-48-8"></a><span class="w">    </span><span class="nt">sarif_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">results.sarif</span>
+</code></pre></div>
+<h4 id="target-modes">Target Modes<a class="headerlink" href="#target-modes" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a><span class="c1"># Inspect all files (default)</span>
+<a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a>empathy-inspect<span class="w"> </span>.
+<a id="__codelineno-49-3" name="__codelineno-49-3" href="#__codelineno-49-3"></a>
+<a id="__codelineno-49-4" name="__codelineno-49-4" href="#__codelineno-49-4"></a><span class="c1"># Only staged git changes</span>
+<a id="__codelineno-49-5" name="__codelineno-49-5" href="#__codelineno-49-5"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--staged
+<a id="__codelineno-49-6" name="__codelineno-49-6" href="#__codelineno-49-6"></a>
+<a id="__codelineno-49-7" name="__codelineno-49-7" href="#__codelineno-49-7"></a><span class="c1"># Only changed files vs HEAD</span>
+<a id="__codelineno-49-8" name="__codelineno-49-8" href="#__codelineno-49-8"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--changed
+<a id="__codelineno-49-9" name="__codelineno-49-9" href="#__codelineno-49-9"></a>
+<a id="__codelineno-49-10" name="__codelineno-49-10" href="#__codelineno-49-10"></a><span class="c1"># Exclude patterns</span>
+<a id="__codelineno-49-11" name="__codelineno-49-11" href="#__codelineno-49-11"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--exclude<span class="w"> </span><span class="s2">&quot;**/*.test.py&quot;</span><span class="w"> </span>--exclude<span class="w"> </span><span class="s2">&quot;**/migrations/*&quot;</span>
+</code></pre></div>
+<h4 id="auto-fix">Auto-Fix<a class="headerlink" href="#auto-fix" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a><span class="c1"># Auto-fix safe issues (formatting, imports)</span>
+<a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--fix
+</code></pre></div>
+<h4 id="baseline-suppression-system">Baseline &amp; Suppression System<a class="headerlink" href="#baseline-suppression-system" title="Permanent link">&para;</a></h4>
+<p>Manage false positives and known issues without cluttering your codebase:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a><span class="c1"># Initialize baseline file</span>
+<a id="__codelineno-51-2" name="__codelineno-51-2" href="#__codelineno-51-2"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--baseline-init
+<a id="__codelineno-51-3" name="__codelineno-51-3" href="#__codelineno-51-3"></a>
+<a id="__codelineno-51-4" name="__codelineno-51-4" href="#__codelineno-51-4"></a><span class="c1"># Run inspection (baseline filtering enabled by default)</span>
+<a id="__codelineno-51-5" name="__codelineno-51-5" href="#__codelineno-51-5"></a>empathy-inspect<span class="w"> </span>.
+<a id="__codelineno-51-6" name="__codelineno-51-6" href="#__codelineno-51-6"></a>
+<a id="__codelineno-51-7" name="__codelineno-51-7" href="#__codelineno-51-7"></a><span class="c1"># Show all findings including suppressed</span>
+<a id="__codelineno-51-8" name="__codelineno-51-8" href="#__codelineno-51-8"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--no-baseline
+<a id="__codelineno-51-9" name="__codelineno-51-9" href="#__codelineno-51-9"></a>
+<a id="__codelineno-51-10" name="__codelineno-51-10" href="#__codelineno-51-10"></a><span class="c1"># Clean up expired suppressions</span>
+<a id="__codelineno-51-11" name="__codelineno-51-11" href="#__codelineno-51-11"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--baseline-cleanup
+</code></pre></div>
+<p><strong>Inline Suppressions:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a><span class="c1"># Suppress a specific rule on this line</span>
+<a id="__codelineno-52-2" name="__codelineno-52-2" href="#__codelineno-52-2"></a><span class="nb">eval</span><span class="p">(</span><span class="n">user_input</span><span class="p">)</span>  <span class="c1"># empathy:disable S307 reason=&quot;Input is validated&quot;</span>
+<a id="__codelineno-52-3" name="__codelineno-52-3" href="#__codelineno-52-3"></a>
+<a id="__codelineno-52-4" name="__codelineno-52-4" href="#__codelineno-52-4"></a><span class="c1"># Suppress a rule on the next line</span>
+<a id="__codelineno-52-5" name="__codelineno-52-5" href="#__codelineno-52-5"></a><span class="c1"># empathy:disable-next-line W291 reason=&quot;Intentional whitespace&quot;</span>
+<a id="__codelineno-52-6" name="__codelineno-52-6" href="#__codelineno-52-6"></a><span class="n">result</span> <span class="o">=</span> <span class="n">calculate</span><span class="p">()</span>
+<a id="__codelineno-52-7" name="__codelineno-52-7" href="#__codelineno-52-7"></a>
+<a id="__codelineno-52-8" name="__codelineno-52-8" href="#__codelineno-52-8"></a><span class="c1"># Suppress a rule for entire file (must be in first 10 lines)</span>
+<a id="__codelineno-52-9" name="__codelineno-52-9" href="#__codelineno-52-9"></a><span class="c1"># empathy:disable-file B001 reason=&quot;Legacy code, refactoring planned&quot;</span>
+</code></pre></div>
+<p><strong>Baseline File (<code>.empathy-baseline.json</code>):</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a><span class="p">{</span>
+<a id="__codelineno-53-2" name="__codelineno-53-2" href="#__codelineno-53-2"></a><span class="w">  </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<a id="__codelineno-53-3" name="__codelineno-53-3" href="#__codelineno-53-3"></a><span class="w">  </span><span class="nt">&quot;suppressions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-53-4" name="__codelineno-53-4" href="#__codelineno-53-4"></a><span class="w">    </span><span class="nt">&quot;project&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-53-5" name="__codelineno-53-5" href="#__codelineno-53-5"></a><span class="w">      </span><span class="p">{</span>
+<a id="__codelineno-53-6" name="__codelineno-53-6" href="#__codelineno-53-6"></a><span class="w">        </span><span class="nt">&quot;rule_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;W291&quot;</span><span class="p">,</span>
+<a id="__codelineno-53-7" name="__codelineno-53-7" href="#__codelineno-53-7"></a><span class="w">        </span><span class="nt">&quot;reason&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Formatting handled by pre-commit&quot;</span><span class="p">,</span>
+<a id="__codelineno-53-8" name="__codelineno-53-8" href="#__codelineno-53-8"></a><span class="w">        </span><span class="nt">&quot;expires_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-03-01T00:00:00&quot;</span>
+<a id="__codelineno-53-9" name="__codelineno-53-9" href="#__codelineno-53-9"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-53-10" name="__codelineno-53-10" href="#__codelineno-53-10"></a><span class="w">    </span><span class="p">],</span>
+<a id="__codelineno-53-11" name="__codelineno-53-11" href="#__codelineno-53-11"></a><span class="w">    </span><span class="nt">&quot;files&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-53-12" name="__codelineno-53-12" href="#__codelineno-53-12"></a><span class="w">      </span><span class="nt">&quot;src/legacy/old_module.py&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-53-13" name="__codelineno-53-13" href="#__codelineno-53-13"></a><span class="w">        </span><span class="p">{</span>
+<a id="__codelineno-53-14" name="__codelineno-53-14" href="#__codelineno-53-14"></a><span class="w">          </span><span class="nt">&quot;rule_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B001&quot;</span><span class="p">,</span>
+<a id="__codelineno-53-15" name="__codelineno-53-15" href="#__codelineno-53-15"></a><span class="w">          </span><span class="nt">&quot;reason&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Legacy code, will refactor in Q2&quot;</span>
+<a id="__codelineno-53-16" name="__codelineno-53-16" href="#__codelineno-53-16"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-53-17" name="__codelineno-53-17" href="#__codelineno-53-17"></a><span class="w">      </span><span class="p">]</span>
+<a id="__codelineno-53-18" name="__codelineno-53-18" href="#__codelineno-53-18"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-53-19" name="__codelineno-53-19" href="#__codelineno-53-19"></a><span class="w">    </span><span class="nt">&quot;rules&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-53-20" name="__codelineno-53-20" href="#__codelineno-53-20"></a><span class="w">      </span><span class="nt">&quot;E501&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-53-21" name="__codelineno-53-21" href="#__codelineno-53-21"></a><span class="w">        </span><span class="nt">&quot;reason&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Line length handled by formatter&quot;</span>
+<a id="__codelineno-53-22" name="__codelineno-53-22" href="#__codelineno-53-22"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-53-23" name="__codelineno-53-23" href="#__codelineno-53-23"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-53-24" name="__codelineno-53-24" href="#__codelineno-53-24"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-53-25" name="__codelineno-53-25" href="#__codelineno-53-25"></a><span class="p">}</span>
+</code></pre></div>
+<h4 id="parallel-execution">Parallel Execution<a class="headerlink" href="#parallel-execution" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a><span class="c1"># Run Phase 1 tools in parallel (default)</span>
+<a id="__codelineno-54-2" name="__codelineno-54-2" href="#__codelineno-54-2"></a>empathy-inspect<span class="w"> </span>.
+<a id="__codelineno-54-3" name="__codelineno-54-3" href="#__codelineno-54-3"></a>
+<a id="__codelineno-54-4" name="__codelineno-54-4" href="#__codelineno-54-4"></a><span class="c1"># Disable parallel execution</span>
+<a id="__codelineno-54-5" name="__codelineno-54-5" href="#__codelineno-54-5"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--no-parallel
+</code></pre></div>
+<h4 id="pattern-learning">Pattern Learning<a class="headerlink" href="#pattern-learning" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a><span class="c1"># Enable pattern learning (default)</span>
+<a id="__codelineno-55-2" name="__codelineno-55-2" href="#__codelineno-55-2"></a>empathy-inspect<span class="w"> </span>.
+<a id="__codelineno-55-3" name="__codelineno-55-3" href="#__codelineno-55-3"></a>
+<a id="__codelineno-55-4" name="__codelineno-55-4" href="#__codelineno-55-4"></a><span class="c1"># Disable pattern learning</span>
+<a id="__codelineno-55-5" name="__codelineno-55-5" href="#__codelineno-55-5"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--no-learning
+</code></pre></div>
+<h4 id="example-output">Example Output<a class="headerlink" href="#example-output" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-56-1" name="__codelineno-56-1" href="#__codelineno-56-1"></a>============================================================
+<a id="__codelineno-56-2" name="__codelineno-56-2" href="#__codelineno-56-2"></a>  CODE INSPECTION REPORT
+<a id="__codelineno-56-3" name="__codelineno-56-3" href="#__codelineno-56-3"></a>============================================================
+<a id="__codelineno-56-4" name="__codelineno-56-4" href="#__codelineno-56-4"></a>
+<a id="__codelineno-56-5" name="__codelineno-56-5" href="#__codelineno-56-5"></a>  Health Score: 87/100 (B) - PASS
+<a id="__codelineno-56-6" name="__codelineno-56-6" href="#__codelineno-56-6"></a>
+<a id="__codelineno-56-7" name="__codelineno-56-7" href="#__codelineno-56-7"></a>  CATEGORY SCORES:
+<a id="__codelineno-56-8" name="__codelineno-56-8" href="#__codelineno-56-8"></a>    Lint               92/100  [PASS]
+<a id="__codelineno-56-9" name="__codelineno-56-9" href="#__codelineno-56-9"></a>    Security           85/100  [PASS]
+<a id="__codelineno-56-10" name="__codelineno-56-10" href="#__codelineno-56-10"></a>    Tests              88/100  [PASS]
+<a id="__codelineno-56-11" name="__codelineno-56-11" href="#__codelineno-56-11"></a>    Debt               82/100  [WARN]
+<a id="__codelineno-56-12" name="__codelineno-56-12" href="#__codelineno-56-12"></a>    Review             90/100  [PASS]
+<a id="__codelineno-56-13" name="__codelineno-56-13" href="#__codelineno-56-13"></a>
+<a id="__codelineno-56-14" name="__codelineno-56-14" href="#__codelineno-56-14"></a>  FINDINGS: 12 total (3 suppressed)
+<a id="__codelineno-56-15" name="__codelineno-56-15" href="#__codelineno-56-15"></a>    HIGH       1
+<a id="__codelineno-56-16" name="__codelineno-56-16" href="#__codelineno-56-16"></a>    MEDIUM     8
+<a id="__codelineno-56-17" name="__codelineno-56-17" href="#__codelineno-56-17"></a>    LOW        3
+<a id="__codelineno-56-18" name="__codelineno-56-18" href="#__codelineno-56-18"></a>
+<a id="__codelineno-56-19" name="__codelineno-56-19" href="#__codelineno-56-19"></a>  BLOCKING ISSUES (1):
+<a id="__codelineno-56-20" name="__codelineno-56-20" href="#__codelineno-56-20"></a>    [HIGH] src/api/client.py
+<a id="__codelineno-56-21" name="__codelineno-56-21" href="#__codelineno-56-21"></a>      Potential SQL injection in query parameter...
+<a id="__codelineno-56-22" name="__codelineno-56-22" href="#__codelineno-56-22"></a>
+<a id="__codelineno-56-23" name="__codelineno-56-23" href="#__codelineno-56-23"></a>  RECOMMENDATIONS:
+<a id="__codelineno-56-24" name="__codelineno-56-24" href="#__codelineno-56-24"></a>    1. [HIGH] Address 1 high-severity findings
+<a id="__codelineno-56-25" name="__codelineno-56-25" href="#__codelineno-56-25"></a>    2. [LOW] Auto-fix 5 issues with `empathy-inspect --fix`
+<a id="__codelineno-56-26" name="__codelineno-56-26" href="#__codelineno-56-26"></a>
+<a id="__codelineno-56-27" name="__codelineno-56-27" href="#__codelineno-56-27"></a>============================================================
+<a id="__codelineno-56-28" name="__codelineno-56-28" href="#__codelineno-56-28"></a>  Duration: 2341ms
+<a id="__codelineno-56-29" name="__codelineno-56-29" href="#__codelineno-56-29"></a>  Execution ID: insp_20251218_143022_a1b2c3d4
+<a id="__codelineno-56-30" name="__codelineno-56-30" href="#__codelineno-56-30"></a>============================================================
+</code></pre></div>
+<h4 id="pipeline-phases">Pipeline Phases<a class="headerlink" href="#pipeline-phases" title="Permanent link">&para;</a></h4>
+<p>The inspection pipeline runs in 5 phases:</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Tools</th>
+<th>Mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Static Analysis</td>
+<td>Lint, Security, Tech Debt, Test Quality</td>
+<td>Parallel</td>
+</tr>
+<tr>
+<td>2. Dynamic Analysis</td>
+<td>Code Review, Advanced Debugging</td>
+<td>Conditional</td>
+</tr>
+<tr>
+<td>3. Cross-Analysis</td>
+<td>Correlate findings across tools</td>
+<td>Sequential</td>
+</tr>
+<tr>
+<td>4. Learning</td>
+<td>Extract patterns for future use</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>5. Reporting</td>
+<td>Generate unified report</td>
+<td>Always</td>
+</tr>
+</tbody>
+</table>
+<h4 id="language-aware-analysis">Language-Aware Analysis<a class="headerlink" href="#language-aware-analysis" title="Permanent link">&para;</a></h4>
+<p>The code review automatically detects file languages and applies appropriate patterns:</p>
+<table>
+<thead>
+<tr>
+<th>Extension</th>
+<th>Language</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.py</code></td>
+<td>Python</td>
+</tr>
+<tr>
+<td><code>.js</code>, <code>.jsx</code></td>
+<td>JavaScript</td>
+</tr>
+<tr>
+<td><code>.ts</code>, <code>.tsx</code></td>
+<td>TypeScript</td>
+</tr>
+<tr>
+<td><code>.rs</code></td>
+<td>Rust</td>
+</tr>
+<tr>
+<td><code>.go</code></td>
+<td>Go</td>
+</tr>
+<tr>
+<td><code>.java</code></td>
+<td>Java</td>
+</tr>
+<tr>
+<td><code>.rb</code></td>
+<td>Ruby</td>
+</tr>
+<tr>
+<td><code>.c</code>, <code>.h</code></td>
+<td>C</td>
+</tr>
+<tr>
+<td><code>.cpp</code>, <code>.hpp</code></td>
+<td>C++</td>
+</tr>
+<tr>
+<td><code>.cs</code></td>
+<td>C#</td>
+</tr>
+<tr>
+<td><code>.swift</code></td>
+<td>Swift</td>
+</tr>
+<tr>
+<td><code>.php</code></td>
+<td>PHP</td>
+</tr>
+<tr>
+<td><code>.kt</code></td>
+<td>Kotlin</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<hr />
+<h3 id="claude-code-integration-new-in-v230">Claude Code Integration (New in v2.3.0)<a class="headerlink" href="#claude-code-integration-new-in-v230" title="Permanent link">&para;</a></h3>
+<p>Sync learned patterns to Claude Code's native rules directory:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-57-1" name="__codelineno-57-1" href="#__codelineno-57-1"></a><span class="c1"># One-time sync</span>
+<a id="__codelineno-57-2" name="__codelineno-57-2" href="#__codelineno-57-2"></a>empathy-sync-claude
+<a id="__codelineno-57-3" name="__codelineno-57-3" href="#__codelineno-57-3"></a>
+<a id="__codelineno-57-4" name="__codelineno-57-4" href="#__codelineno-57-4"></a><span class="c1"># Watch for changes and auto-sync</span>
+<a id="__codelineno-57-5" name="__codelineno-57-5" href="#__codelineno-57-5"></a>empathy-sync-claude<span class="w"> </span>--watch
+<a id="__codelineno-57-6" name="__codelineno-57-6" href="#__codelineno-57-6"></a>
+<a id="__codelineno-57-7" name="__codelineno-57-7" href="#__codelineno-57-7"></a><span class="c1"># Preview without writing</span>
+<a id="__codelineno-57-8" name="__codelineno-57-8" href="#__codelineno-57-8"></a>empathy-sync-claude<span class="w"> </span>--dry-run
+<a id="__codelineno-57-9" name="__codelineno-57-9" href="#__codelineno-57-9"></a>
+<a id="__codelineno-57-10" name="__codelineno-57-10" href="#__codelineno-57-10"></a><span class="c1"># Verbose output</span>
+<a id="__codelineno-57-11" name="__codelineno-57-11" href="#__codelineno-57-11"></a>empathy-sync-claude<span class="w"> </span>--verbose
+</code></pre></div>
+<p><strong>Output structure:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-58-1" name="__codelineno-58-1" href="#__codelineno-58-1"></a>.claude/rules/empathy/
+<a id="__codelineno-58-2" name="__codelineno-58-2" href="#__codelineno-58-2"></a>├── bug-patterns.md          # From patterns/debugging/
+<a id="__codelineno-58-3" name="__codelineno-58-3" href="#__codelineno-58-3"></a>├── security-decisions.md    # From patterns/security/
+<a id="__codelineno-58-4" name="__codelineno-58-4" href="#__codelineno-58-4"></a>├── tech-debt-hotspots.md    # From patterns/tech_debt/
+<a id="__codelineno-58-5" name="__codelineno-58-5" href="#__codelineno-58-5"></a>└── coding-patterns.md       # From patterns/inspection/
+</code></pre></div>
+<p>Claude Code automatically loads these rules at session start, giving it access to your team's bug history, security decisions, and coding patterns.</p>
+<hr />
+<h2 id="quick-reference-cheatsheet">Quick Reference (Cheatsheet)<a class="headerlink" href="#quick-reference-cheatsheet" title="Permanent link">&para;</a></h2>
+<h3 id="core-commands">Core Commands<a class="headerlink" href="#core-commands" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-59-1" name="__codelineno-59-1" href="#__codelineno-59-1"></a><span class="c1"># Code Health</span>
+<a id="__codelineno-59-2" name="__codelineno-59-2" href="#__codelineno-59-2"></a>empathy<span class="w"> </span>health<span class="w">                    </span><span class="c1"># Quick health check</span>
+<a id="__codelineno-59-3" name="__codelineno-59-3" href="#__codelineno-59-3"></a>empathy<span class="w"> </span>health<span class="w"> </span>--deep<span class="w">             </span><span class="c1"># Comprehensive analysis</span>
+<a id="__codelineno-59-4" name="__codelineno-59-4" href="#__codelineno-59-4"></a>empathy<span class="w"> </span>health<span class="w"> </span>--fix<span class="w">              </span><span class="c1"># Auto-fix safe issues</span>
+<a id="__codelineno-59-5" name="__codelineno-59-5" href="#__codelineno-59-5"></a>empathy<span class="w"> </span>health<span class="w"> </span>--check<span class="w"> </span>lint<span class="w">       </span><span class="c1"># Run specific check</span>
+<a id="__codelineno-59-6" name="__codelineno-59-6" href="#__codelineno-59-6"></a>
+<a id="__codelineno-59-7" name="__codelineno-59-7" href="#__codelineno-59-7"></a><span class="c1"># Code Review</span>
+<a id="__codelineno-59-8" name="__codelineno-59-8" href="#__codelineno-59-8"></a>empathy<span class="w"> </span>review<span class="w">                    </span><span class="c1"># Review recent changes</span>
+<a id="__codelineno-59-9" name="__codelineno-59-9" href="#__codelineno-59-9"></a>empathy<span class="w"> </span>review<span class="w"> </span>--staged<span class="w">           </span><span class="c1"># Staged changes only</span>
+<a id="__codelineno-59-10" name="__codelineno-59-10" href="#__codelineno-59-10"></a>
+<a id="__codelineno-59-11" name="__codelineno-59-11" href="#__codelineno-59-11"></a><span class="c1"># Code Inspection</span>
+<a id="__codelineno-59-12" name="__codelineno-59-12" href="#__codelineno-59-12"></a>empathy-inspect<span class="w"> </span>.<span class="w">                 </span><span class="c1"># Inspect current directory</span>
+<a id="__codelineno-59-13" name="__codelineno-59-13" href="#__codelineno-59-13"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--fix<span class="w">           </span><span class="c1"># Auto-fix formatting/imports</span>
+<a id="__codelineno-59-14" name="__codelineno-59-14" href="#__codelineno-59-14"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--format<span class="w"> </span>sarif<span class="w">  </span><span class="c1"># SARIF for GitHub Actions</span>
+<a id="__codelineno-59-15" name="__codelineno-59-15" href="#__codelineno-59-15"></a>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--format<span class="w"> </span>html<span class="w">   </span><span class="c1"># HTML dashboard</span>
+</code></pre></div>
+<h3 id="memory-patterns">Memory &amp; Patterns<a class="headerlink" href="#memory-patterns" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-60-1" name="__codelineno-60-1" href="#__codelineno-60-1"></a><span class="c1"># Memory Control Panel</span>
+<a id="__codelineno-60-2" name="__codelineno-60-2" href="#__codelineno-60-2"></a>empathy-memory<span class="w"> </span>serve<span class="w">              </span><span class="c1"># Start Redis + API (recommended)</span>
+<a id="__codelineno-60-3" name="__codelineno-60-3" href="#__codelineno-60-3"></a>empathy-memory<span class="w"> </span>status<span class="w">             </span><span class="c1"># Show memory status</span>
+<a id="__codelineno-60-4" name="__codelineno-60-4" href="#__codelineno-60-4"></a>empathy-memory<span class="w"> </span>patterns<span class="w">           </span><span class="c1"># List stored patterns</span>
+<a id="__codelineno-60-5" name="__codelineno-60-5" href="#__codelineno-60-5"></a>
+<a id="__codelineno-60-6" name="__codelineno-60-6" href="#__codelineno-60-6"></a><span class="c1"># Pattern Management</span>
+<a id="__codelineno-60-7" name="__codelineno-60-7" href="#__codelineno-60-7"></a>empathy<span class="w"> </span>patterns<span class="w"> </span>list<span class="w">             </span><span class="c1"># List patterns</span>
+<a id="__codelineno-60-8" name="__codelineno-60-8" href="#__codelineno-60-8"></a>empathy<span class="w"> </span>patterns<span class="w"> </span>resolve<span class="w"> </span>&lt;id&gt;<span class="w">     </span><span class="c1"># Mark bug as resolved</span>
+<a id="__codelineno-60-9" name="__codelineno-60-9" href="#__codelineno-60-9"></a>
+<a id="__codelineno-60-10" name="__codelineno-60-10" href="#__codelineno-60-10"></a><span class="c1"># Claude Code Sync</span>
+<a id="__codelineno-60-11" name="__codelineno-60-11" href="#__codelineno-60-11"></a>empathy-sync-claude<span class="w">               </span><span class="c1"># Sync to .claude/rules/empathy/</span>
+<a id="__codelineno-60-12" name="__codelineno-60-12" href="#__codelineno-60-12"></a>empathy-sync-claude<span class="w"> </span>--watch<span class="w">       </span><span class="c1"># Auto-sync on changes</span>
+</code></pre></div>
+<h3 id="quick-workflows">Quick Workflows<a class="headerlink" href="#quick-workflows" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-61-1" name="__codelineno-61-1" href="#__codelineno-61-1"></a><span class="c1"># Morning check</span>
+<a id="__codelineno-61-2" name="__codelineno-61-2" href="#__codelineno-61-2"></a>empathy<span class="w"> </span>health<span class="w"> </span>--deep<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>empathy<span class="w"> </span>status
+<a id="__codelineno-61-3" name="__codelineno-61-3" href="#__codelineno-61-3"></a>
+<a id="__codelineno-61-4" name="__codelineno-61-4" href="#__codelineno-61-4"></a><span class="c1"># Before commit</span>
+<a id="__codelineno-61-5" name="__codelineno-61-5" href="#__codelineno-61-5"></a>empathy<span class="w"> </span>review<span class="w"> </span>--staged<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--staged<span class="w"> </span>--quick
+<a id="__codelineno-61-6" name="__codelineno-61-6" href="#__codelineno-61-6"></a>
+<a id="__codelineno-61-7" name="__codelineno-61-7" href="#__codelineno-61-7"></a><span class="c1"># Fix everything</span>
+<a id="__codelineno-61-8" name="__codelineno-61-8" href="#__codelineno-61-8"></a>empathy<span class="w"> </span>health<span class="w"> </span>--fix<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>empathy-inspect<span class="w"> </span>.<span class="w"> </span>--fix
+<a id="__codelineno-61-9" name="__codelineno-61-9" href="#__codelineno-61-9"></a>
+<a id="__codelineno-61-10" name="__codelineno-61-10" href="#__codelineno-61-10"></a><span class="c1"># Sync to Claude Code</span>
+<a id="__codelineno-61-11" name="__codelineno-61-11" href="#__codelineno-61-11"></a>empathy-sync-claude<span class="w"> </span>--verbose
+</code></pre></div>
+<h3 id="cicd-integration">CI/CD Integration<a class="headerlink" href="#cicd-integration" title="Permanent link">&para;</a></h3>
+<p><strong>GitHub Actions (SARIF):</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-62-1" name="__codelineno-62-1" href="#__codelineno-62-1"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run Empathy Inspect</span>
+<a id="__codelineno-62-2" name="__codelineno-62-2" href="#__codelineno-62-2"></a><span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">empathy-inspect . --format sarif -o results.sarif</span>
+<a id="__codelineno-62-3" name="__codelineno-62-3" href="#__codelineno-62-3"></a>
+<a id="__codelineno-62-4" name="__codelineno-62-4" href="#__codelineno-62-4"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upload SARIF</span>
+<a id="__codelineno-62-5" name="__codelineno-62-5" href="#__codelineno-62-5"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">github/codeql-action/upload-sarif@v2</span>
+<a id="__codelineno-62-6" name="__codelineno-62-6" href="#__codelineno-62-6"></a><span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<a id="__codelineno-62-7" name="__codelineno-62-7" href="#__codelineno-62-7"></a><span class="w">    </span><span class="nt">sarif_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">results.sarif</span>
+</code></pre></div></p>
+<p><strong>Pre-commit Hook:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-63-1" name="__codelineno-63-1" href="#__codelineno-63-1"></a><span class="nt">repos</span><span class="p">:</span>
+<a id="__codelineno-63-2" name="__codelineno-63-2" href="#__codelineno-63-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
+<a id="__codelineno-63-3" name="__codelineno-63-3" href="#__codelineno-63-3"></a><span class="w">    </span><span class="nt">hooks</span><span class="p">:</span>
+<a id="__codelineno-63-4" name="__codelineno-63-4" href="#__codelineno-63-4"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">empathy-review</span>
+<a id="__codelineno-63-5" name="__codelineno-63-5" href="#__codelineno-63-5"></a><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pattern-based review</span>
+<a id="__codelineno-63-6" name="__codelineno-63-6" href="#__codelineno-63-6"></a><span class="w">        </span><span class="nt">entry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">empathy review --staged --severity error</span>
+<a id="__codelineno-63-7" name="__codelineno-63-7" href="#__codelineno-63-7"></a><span class="w">        </span><span class="nt">language</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">system</span>
+<a id="__codelineno-63-8" name="__codelineno-63-8" href="#__codelineno-63-8"></a><span class="w">        </span><span class="nt">pass_filenames</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</code></pre></div></p>
+<h3 id="environment-variables_1">Environment Variables<a class="headerlink" href="#environment-variables_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-64-1" name="__codelineno-64-1" href="#__codelineno-64-1"></a><span class="nv">ANTHROPIC_API_KEY</span><span class="o">=</span>sk-...<span class="w">          </span><span class="c1"># Claude API key</span>
+<a id="__codelineno-64-2" name="__codelineno-64-2" href="#__codelineno-64-2"></a><span class="nv">EMPATHY_CONFIG</span><span class="o">=</span>./config.yaml<span class="w">      </span><span class="c1"># Custom config path</span>
+<a id="__codelineno-64-3" name="__codelineno-64-3" href="#__codelineno-64-3"></a><span class="nv">EMPATHY_LOG_LEVEL</span><span class="o">=</span>DEBUG<span class="w">           </span><span class="c1"># Logging level</span>
+<a id="__codelineno-64-4" name="__codelineno-64-4" href="#__codelineno-64-4"></a><span class="nv">REDIS_URL</span><span class="o">=</span>redis://localhost:6379<span class="w">  </span><span class="c1"># Redis connection</span>
+</code></pre></div>
+<hr />
 <h2 id="getting-help">Getting Help<a class="headerlink" href="#getting-help" title="Permanent link">&para;</a></h2>
 <p>For more information on any command:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a>empathy-framework<span class="w"> </span>--help
-<a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a>empathy-framework<span class="w"> </span>patterns<span class="w"> </span>--help
-<a id="__codelineno-46-3" name="__codelineno-46-3" href="#__codelineno-46-3"></a>empathy-framework<span class="w"> </span>metrics<span class="w"> </span>--help
+<div class="highlight"><pre><span></span><code><a id="__codelineno-65-1" name="__codelineno-65-1" href="#__codelineno-65-1"></a>empathy<span class="w"> </span>--help
+<a id="__codelineno-65-2" name="__codelineno-65-2" href="#__codelineno-65-2"></a>empathy<span class="w"> </span>&lt;command&gt;<span class="w"> </span>--help
+<a id="__codelineno-65-3" name="__codelineno-65-3" href="#__codelineno-65-3"></a>empathy-inspect<span class="w"> </span>--help
+<a id="__codelineno-65-4" name="__codelineno-65-4" href="#__codelineno-65-4"></a>empathy-memory<span class="w"> </span>--help
+<a id="__codelineno-65-5" name="__codelineno-65-5" href="#__codelineno-65-5"></a>empathy-sync-claude<span class="w"> </span>--help
 </code></pre></div>
 <p>For bugs and feature requests, visit:
-https://github.com/Deep-Study-AI/Empathy/issues</p>
+https://github.com/Smart-AI-Memory/empathy-framework/issues</p>
 
 
 

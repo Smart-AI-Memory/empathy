@@ -681,6 +681,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../CLI_CHEATSHEET/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix - CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -841,6 +869,62 @@
     
   
     Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../CLI_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../CLI_CHEATSHEET/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix - CLI Reference
   
 
     
@@ -1103,6 +1187,34 @@
     
   
     Practical Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/agent-factory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Factory
   
 
     
@@ -1969,6 +2081,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#new-in-v23-smart-model-routing-80-cost-savings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NEW in v2.3: Smart Model Routing (80% Cost Savings)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#get-started" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2001,7 +2124,7 @@
 
 <h1 id="give-claude-persistent-memory-in-10-lines-of-python">Give Claude Persistent Memory in 10 Lines of Python<a class="headerlink" href="#give-claude-persistent-memory-in-10-lines-of-python" title="Permanent link">&para;</a></h1>
 <p>Every conversation with Claude starts from scratch. Tell it you prefer concise code examples, and next session? It's forgotten.</p>
-<p>Here's how to fix that.</p>
+<p>Here's how to fix that—plus save 80% on API costs.</p>
 <h2 id="the-problem">The Problem<a class="headerlink" href="#the-problem" title="Permanent link">&para;</a></h2>
 <p>Claude's API is stateless. Each request is independent. For simple Q&amp;A, that's fine. But for:</p>
 <ul>
@@ -2111,15 +2234,35 @@
 <li><strong>Security noise reduction</strong>: 84% (81 → 13 findings after learning)</li>
 <li><strong>Tech debt tracking</strong>: Trajectory predicts 2x growth in 170 days</li>
 </ul>
+<h2 id="new-in-v23-smart-model-routing-80-cost-savings">NEW in v2.3: Smart Model Routing (80% Cost Savings)<a class="headerlink" href="#new-in-v23-smart-model-routing-80-cost-savings" title="Permanent link">&para;</a></h2>
+<p>Why pay Opus prices for simple tasks? The new ModelRouter automatically picks the right model:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">llm</span> <span class="o">=</span> <span class="n">EmpathyLLM</span><span class="p">(</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">provider</span><span class="o">=</span><span class="s2">&quot;anthropic&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">enable_model_routing</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># NEW!</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">)</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># Summarization → Haiku ($0.25/M tokens)</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="k">await</span> <span class="n">llm</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;dev&quot;</span><span class="p">,</span> <span class="n">user_input</span><span class="o">=</span><span class="s2">&quot;Summarize this&quot;</span><span class="p">,</span> <span class="n">task_type</span><span class="o">=</span><span class="s2">&quot;summarize&quot;</span><span class="p">)</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># Code generation → Sonnet ($3/M tokens)</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="k">await</span> <span class="n">llm</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;dev&quot;</span><span class="p">,</span> <span class="n">user_input</span><span class="o">=</span><span class="s2">&quot;Write a function&quot;</span><span class="p">,</span> <span class="n">task_type</span><span class="o">=</span><span class="s2">&quot;generate_code&quot;</span><span class="p">)</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="c1"># Architecture → Opus ($15/M tokens)</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="k">await</span> <span class="n">llm</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;dev&quot;</span><span class="p">,</span> <span class="n">user_input</span><span class="o">=</span><span class="s2">&quot;Design the system&quot;</span><span class="p">,</span> <span class="n">task_type</span><span class="o">=</span><span class="s2">&quot;architectural_decision&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Cost comparison on real workload:</strong>
+- Without routing (all Opus): $4.05/complex task
+- With routing (tiered): $0.83/complex task
+- <strong>Savings: 80%</strong></p>
 <h2 id="get-started">Get Started<a class="headerlink" href="#get-started" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>pip<span class="w"> </span>install<span class="w"> </span>empathy-framework
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>pip<span class="w"> </span>install<span class="w"> </span>empathy-framework
 </code></pre></div>
 <p><strong>Resources:</strong>
-- <a href="https://github.com/Smart-AI-Memory/empathy-framework">GitHub</a> - 500+ downloads day 1
+- <a href="https://github.com/Smart-AI-Memory/empathy-framework">GitHub</a>
 - <a href="https://www.smartaimemory.com/docs">Documentation</a>
 - <a href="https://www.smartaimemory.com/tools/debug-wizard">Live Demo</a></p>
 <hr />
-<p><em>What would you build with an AI that remembers? Drop a comment below.</em></p>
+<p><em>What would you build with an AI that remembers—and costs 80% less? Drop a comment below.</em></p>
 
 
 

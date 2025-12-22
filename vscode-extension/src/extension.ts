@@ -16,14 +16,14 @@ import * as vscode from 'vscode';
 import * as cp from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
+import { PowerPanel } from './panels/PowerPanel';
+import { EmpathyDashboardProvider } from './panels/EmpathyDashboardPanel';
 
 // Status bar item
 let statusBarItem: vscode.StatusBarItem;
 
-// Tree view providers
-let patternsProvider: PatternsTreeProvider;
+// Health provider (used for diagnostics)
 let healthProvider: HealthTreeProvider;
-let costsProvider: CostsTreeProvider;
 
 // Refresh timer
 let refreshTimer: NodeJS.Timeout | undefined;
@@ -52,20 +52,17 @@ export function activate(context: vscode.ExtensionContext) {
     diagnosticCollection = vscode.languages.createDiagnosticCollection('empathy');
     context.subscriptions.push(diagnosticCollection);
 
-    // Create tree view providers
-    patternsProvider = new PatternsTreeProvider();
+    // Create health provider (for diagnostics support)
     healthProvider = new HealthTreeProvider(diagnosticCollection);
-    costsProvider = new CostsTreeProvider();
 
-    // Register tree views
-    const healthTreeView = vscode.window.createTreeView('empathy-health', {
-        treeDataProvider: healthProvider,
-        showCollapseAll: true,
-    });
-    context.subscriptions.push(healthTreeView);
-
-    vscode.window.registerTreeDataProvider('empathy-patterns', patternsProvider);
-    vscode.window.registerTreeDataProvider('empathy-costs', costsProvider);
+    // Register dashboard webview provider (with context for persistence)
+    const dashboardProvider = new EmpathyDashboardProvider(context.extensionUri, context);
+    context.subscriptions.push(
+        vscode.window.registerWebviewViewProvider(
+            EmpathyDashboardProvider.viewType,
+            dashboardProvider
+        )
+    );
 
     // Register commands - existing
     const commands = [
@@ -86,6 +83,7 @@ export function activate(context: vscode.ExtensionContext) {
         { name: 'empathy.viewDetails', handler: cmdViewDetails },
         { name: 'empathy.openFile', handler: cmdOpenFile },
         { name: 'empathy.ignoreIssue', handler: cmdIgnoreIssue },
+        { name: 'empathy.openWebDashboard', handler: cmdOpenWebDashboard },
     ];
 
     for (const cmd of commands) {
@@ -93,6 +91,13 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.commands.registerCommand(cmd.name, cmd.handler)
         );
     }
+
+    // Register Power Panel command (needs extensionUri)
+    context.subscriptions.push(
+        vscode.commands.registerCommand('empathy.openPowerPanel', () => {
+            PowerPanel.createOrShow(context.extensionUri);
+        })
+    );
 
     // Initialize
     updateStatusBar();
@@ -411,6 +416,54 @@ async function cmdIgnoreIssue(item?: HealthItem) {
     );
 }
 
+// Open Full Web Dashboard
+async function cmdOpenWebDashboard() {
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    if (!workspaceFolder) {
+        vscode.window.showErrorMessage('No workspace folder open');
+        return;
+    }
+
+    const config = vscode.workspace.getConfiguration('empathy');
+    const pythonPath = config.get<string>('pythonPath', 'python');
+
+    // Check if dashboard server is already running
+    try {
+        const http = await import('http');
+        const isRunning = await new Promise<boolean>((resolve) => {
+            const req = http.request(
+                { host: 'localhost', port: 8765, path: '/api/health', timeout: 1000 },
+                (res) => resolve(res.statusCode === 200)
+            );
+            req.on('error', () => resolve(false));
+            req.on('timeout', () => { req.destroy(); resolve(false); });
+            req.end();
+        });
+
+        if (isRunning) {
+            vscode.env.openExternal(vscode.Uri.parse('http://localhost:8765'));
+            return;
+        }
+    } catch {
+        // Server not running, continue to start it
+    }
+
+    // Start the dashboard server
+    vscode.window.showInformationMessage('Starting Empathy Web Dashboard...');
+
+    const proc = cp.spawn(pythonPath, ['-m', 'empathy_os.cli', 'dashboard', '--no-browser'], {
+        cwd: workspaceFolder.uri.fsPath,
+        detached: true,
+        stdio: 'ignore'
+    });
+    proc.unref();
+
+    // Wait for server to start, then open browser
+    setTimeout(() => {
+        vscode.env.openExternal(vscode.Uri.parse('http://localhost:8765'));
+    }, 2500);
+}
+
 // ============================================================================
 // Empathy Command Runner
 // ============================================================================
@@ -613,94 +666,14 @@ function startAutoRefresh(context: vscode.ExtensionContext): void {
     if (autoRefresh && interval > 0) {
         refreshTimer = setInterval(() => {
             updateStatusBar();
-            patternsProvider.refresh();
             healthProvider.refresh();
-            costsProvider.refresh();
         }, interval);
     }
 }
 
 // ============================================================================
-// Tree View Providers
+// Health Provider (for diagnostics)
 // ============================================================================
-
-class PatternsTreeProvider implements vscode.TreeDataProvider<PatternItem> {
-    private _onDidChangeTreeData = new vscode.EventEmitter<PatternItem | undefined>();
-    readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
-
-    refresh(): void {
-        this._onDidChangeTreeData.fire(undefined);
-    }
-
-    getTreeItem(element: PatternItem): vscode.TreeItem {
-        return element;
-    }
-
-    async getChildren(element?: PatternItem): Promise<PatternItem[]> {
-        if (element) {
-            return [];
-        }
-
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-        if (!workspaceFolder) {
-            return [new PatternItem('No workspace', '', 'none')];
-        }
-
-        const config = vscode.workspace.getConfiguration('empathy');
-        const patternsDir = path.join(
-            workspaceFolder,
-            config.get<string>('patternsDir', './patterns')
-        );
-
-        const items: PatternItem[] = [];
-
-        try {
-            const debuggingFile = path.join(patternsDir, 'debugging.json');
-            if (fs.existsSync(debuggingFile)) {
-                const data = JSON.parse(fs.readFileSync(debuggingFile, 'utf8'));
-                const patterns = data.patterns || [];
-
-                for (const p of patterns.slice(-10)) {
-                    const status = p.status === 'resolved' ? 'resolved' : 'investigating';
-                    items.push(
-                        new PatternItem(
-                            p.bug_type || 'unknown',
-                            p.root_cause?.slice(0, 50) || '',
-                            status
-                        )
-                    );
-                }
-            }
-        } catch {
-            return [new PatternItem('Error loading patterns', '', 'none')];
-        }
-
-        if (items.length === 0) {
-            return [new PatternItem('No patterns yet', 'Run "empathy learn"', 'none')];
-        }
-
-        return items;
-    }
-}
-
-class PatternItem extends vscode.TreeItem {
-    constructor(
-        public readonly label: string,
-        public readonly description: string,
-        public readonly status: string
-    ) {
-        super(label, vscode.TreeItemCollapsibleState.None);
-        this.tooltip = `${label}: ${description}`;
-
-        if (status === 'resolved') {
-            this.iconPath = new vscode.ThemeIcon('check', new vscode.ThemeColor('testing.iconPassed'));
-        } else if (status === 'investigating') {
-            this.iconPath = new vscode.ThemeIcon('search', new vscode.ThemeColor('testing.iconQueued'));
-        } else {
-            this.iconPath = new vscode.ThemeIcon('circle-outline');
-        }
-    }
-}
 
 class HealthTreeProvider implements vscode.TreeDataProvider<HealthItem> {
     private _onDidChangeTreeData = new vscode.EventEmitter<HealthItem | undefined>();
@@ -1057,69 +1030,6 @@ class HealthItem extends vscode.TreeItem {
             default:
                 this.iconPath = new vscode.ThemeIcon('question');
         }
-    }
-}
-
-class CostsTreeProvider implements vscode.TreeDataProvider<CostItem> {
-    private _onDidChangeTreeData = new vscode.EventEmitter<CostItem | undefined>();
-    readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
-
-    refresh(): void {
-        this._onDidChangeTreeData.fire(undefined);
-    }
-
-    getTreeItem(element: CostItem): vscode.TreeItem {
-        return element;
-    }
-
-    async getChildren(): Promise<CostItem[]> {
-        const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-        if (!workspaceFolder) {
-            return [new CostItem('No workspace', '$0.00')];
-        }
-
-        const config = vscode.workspace.getConfiguration('empathy');
-        const empathyDir = path.join(
-            workspaceFolder,
-            config.get<string>('empathyDir', '.empathy')
-        );
-
-        try {
-            const costsFile = path.join(empathyDir, 'costs.json');
-            if (!fs.existsSync(costsFile)) {
-                return [new CostItem('No cost data', 'Run API calls to track')];
-            }
-
-            const data = JSON.parse(fs.readFileSync(costsFile, 'utf8'));
-            let totalCost = 0;
-            let totalSavings = 0;
-            let requests = 0;
-
-            for (const daily of Object.values(data.daily_totals || {})) {
-                totalCost += (daily as any).actual_cost || 0;
-                totalSavings += (daily as any).savings || 0;
-                requests += (daily as any).requests || 0;
-            }
-
-            return [
-                new CostItem('Requests', requests.toString()),
-                new CostItem('Actual Cost', `$${totalCost.toFixed(4)}`),
-                new CostItem('Savings', `$${totalSavings.toFixed(4)}`),
-            ];
-        } catch {
-            return [new CostItem('Error loading costs', '')];
-        }
-    }
-}
-
-class CostItem extends vscode.TreeItem {
-    constructor(
-        public readonly label: string,
-        public readonly value: string
-    ) {
-        super(label, vscode.TreeItemCollapsibleState.None);
-        this.description = value;
-        this.iconPath = new vscode.ThemeIcon('graph');
     }
 }
 

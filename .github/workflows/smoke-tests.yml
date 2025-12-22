@@ -48,7 +48,8 @@ jobs:
         env:
           PRODUCTION_URL: ${{ github.event.inputs.production_url || 'https://empathy-framework.vercel.app' }}
         run: |
-          python -m pytest tests/test_production_smoke.py -v --tb=short
+          # Disable coverage plugin to avoid pytest-cov dependency
+          python -m pytest tests/test_production_smoke.py -v --tb=short -p no:cov --override-ini="addopts="
 
       - name: Report test results
         if: failure()

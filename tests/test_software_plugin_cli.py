@@ -13,7 +13,6 @@ Copyright 2025 Smart-AI-Memory
 Licensed under Fair Source License 0.9
 """
 
-import asyncio
 import json
 import sys
 from unittest.mock import AsyncMock, Mock, patch
@@ -575,7 +574,7 @@ def test_print_summary_with_patterns(capsys):
 @pytest.mark.asyncio
 async def test_analyze_project_no_plugin():
     """Test analyze_project when software plugin not found"""
-    with patch("empathy_software_plugin.cli.get_global_registry") as mock_registry:
+    with patch("empathy_os.plugins.get_global_registry") as mock_registry:
         mock_registry.return_value.get_plugin.return_value = None
 
         await analyze_project("/test/path")
@@ -598,7 +597,7 @@ async def test_analyze_project_success(tmp_path):
     mock_wizard_class.return_value = mock_wizard
     mock_plugin.get_wizard.return_value = mock_wizard_class
 
-    with patch("empathy_software_plugin.cli.get_global_registry") as mock_registry:
+    with patch("empathy_os.plugins.get_global_registry") as mock_registry:
         mock_registry.return_value.get_plugin.return_value = mock_plugin
 
         await analyze_project(str(tmp_path), wizard_names=["prompt_engineering"])
@@ -622,7 +621,7 @@ async def test_analyze_project_json_output(tmp_path, capsys):
     mock_wizard_class.return_value = mock_wizard
     mock_plugin.get_wizard.return_value = mock_wizard_class
 
-    with patch("empathy_software_plugin.cli.get_global_registry") as mock_registry:
+    with patch("empathy_os.plugins.get_global_registry") as mock_registry:
         mock_registry.return_value.get_plugin.return_value = mock_plugin
 
         await analyze_project(
@@ -650,7 +649,7 @@ async def test_analyze_project_wizard_not_found(tmp_path, capsys):
     mock_plugin = Mock()
     mock_plugin.get_wizard.return_value = None
 
-    with patch("empathy_software_plugin.cli.get_global_registry") as mock_registry:
+    with patch("empathy_os.plugins.get_global_registry") as mock_registry:
         mock_registry.return_value.get_plugin.return_value = mock_plugin
 
         await analyze_project(str(tmp_path), wizard_names=["nonexistent"])
@@ -669,7 +668,7 @@ async def test_analyze_project_wizard_error(tmp_path, capsys):
     mock_wizard_class.return_value = mock_wizard
     mock_plugin.get_wizard.return_value = mock_wizard_class
 
-    with patch("empathy_software_plugin.cli.get_global_registry") as mock_registry:
+    with patch("empathy_os.plugins.get_global_registry") as mock_registry:
         mock_registry.return_value.get_plugin.return_value = mock_plugin
 
         await analyze_project(str(tmp_path), wizard_names=["security"])
@@ -699,7 +698,7 @@ async def test_analyze_project_verbose_mode(tmp_path, capsys):
     (tmp_path / "test.py").write_text("import openai")
     (tmp_path / "README.md").write_text("docs")
 
-    with patch("empathy_software_plugin.cli.get_global_registry") as mock_registry:
+    with patch("empathy_os.plugins.get_global_registry") as mock_registry:
         mock_registry.return_value.get_plugin.return_value = mock_plugin
 
         await analyze_project(
@@ -728,7 +727,7 @@ async def test_analyze_project_default_wizards(tmp_path):
     mock_wizard_class.return_value = mock_wizard
     mock_plugin.get_wizard.return_value = mock_wizard_class
 
-    with patch("empathy_software_plugin.cli.get_global_registry") as mock_registry:
+    with patch("empathy_os.plugins.get_global_registry") as mock_registry:
         mock_registry.return_value.get_plugin.return_value = mock_plugin
 
         await analyze_project(str(tmp_path))  # No wizard_names
@@ -768,7 +767,7 @@ def test_list_wizards_success(capsys):
         },
     ]
 
-    with patch("empathy_software_plugin.cli.get_global_registry") as mock_registry:
+    with patch("empathy_os.plugins.get_global_registry") as mock_registry:
         mock_registry.return_value.get_plugin.return_value = mock_plugin
 
         list_wizards()
@@ -782,7 +781,7 @@ def test_list_wizards_success(capsys):
 
 def test_list_wizards_no_plugin(capsys):
     """Test list_wizards when plugin not found"""
-    with patch("empathy_software_plugin.cli.get_global_registry") as mock_registry:
+    with patch("empathy_os.plugins.get_global_registry") as mock_registry:
         mock_registry.return_value.get_plugin.return_value = None
 
         list_wizards()
@@ -808,7 +807,7 @@ def test_wizard_info_success(capsys):
         "required_context": ["code_files", "dependencies"],
     }
 
-    with patch("empathy_software_plugin.cli.get_global_registry") as mock_registry:
+    with patch("empathy_os.plugins.get_global_registry") as mock_registry:
         mock_registry.return_value.get_plugin.return_value = mock_plugin
 
         wizard_info("security")
@@ -825,7 +824,7 @@ def test_wizard_info_not_found(capsys):
     mock_plugin = Mock()
     mock_plugin.get_wizard_info.return_value = None
 
-    with patch("empathy_software_plugin.cli.get_global_registry") as mock_registry:
+    with patch("empathy_os.plugins.get_global_registry") as mock_registry:
         mock_registry.return_value.get_plugin.return_value = mock_plugin
 
         wizard_info("nonexistent")
@@ -837,7 +836,7 @@ def test_wizard_info_not_found(capsys):
 
 def test_wizard_info_no_plugin(capsys):
     """Test wizard_info when plugin not found"""
-    with patch("empathy_software_plugin.cli.get_global_registry") as mock_registry:
+    with patch("empathy_os.plugins.get_global_registry") as mock_registry:
         mock_registry.return_value.get_plugin.return_value = None
 
         wizard_info("security")
@@ -1032,24 +1031,38 @@ def test_main_no_command():
         main()
 
 
-def test_main_analyze_command(tmp_path):
+def test_main_analyze_command(tmp_path, capsys):
     """Test main() with analyze command"""
     with patch.object(
         sys,
         "argv",
         ["empathy-software", "analyze", str(tmp_path)],
     ):
-        with patch("empathy_software_plugin.cli.analyze_project") as mock_analyze:
-            mock_analyze.return_value = asyncio.Future()
-            mock_analyze.return_value.set_result(0)
+        with patch("empathy_os.plugins.get_global_registry") as mock_reg:
+            mock_plugin = Mock()
+            mock_wizard_class = Mock()
+            mock_wizard = Mock()
+            mock_wizard.analyze = AsyncMock(
+                return_value={
+                    "issues": [],
+                    "predictions": [],
+                    "recommendations": [],
+                    "confidence": 0.9,
+                }
+            )
+            mock_wizard_class.return_value = mock_wizard
+            mock_plugin.get_wizard.return_value = mock_wizard_class
+            mock_plugin.list_wizards.return_value = ["prompt_engineering"]
+            mock_plugin.get_wizard_info.return_value = {
+                "id": "prompt_engineering",
+                "name": "Test Wizard",
+            }
+            mock_reg.return_value.get_plugin.return_value = mock_plugin
 
-            with patch("empathy_software_plugin.cli.get_global_registry") as mock_reg:
-                mock_plugin = Mock()
-                mock_reg.return_value.get_plugin.return_value = mock_plugin
-
-                main()
-                # analyze_project was called
-                assert mock_analyze.called
+            main()
+            # Verify analyze ran by checking output
+            captured = capsys.readouterr()
+            assert "Empathy Framework" in captured.out or "Analysis" in captured.out
 
 
 def test_main_analyze_with_wizards(tmp_path):
@@ -1075,7 +1088,7 @@ def test_main_analyze_with_wizards(tmp_path):
             "empathy_software_plugin.cli.analyze_project",
             side_effect=mock_analyze_project,
         ):
-            with patch("empathy_software_plugin.cli.get_global_registry"):
+            with patch("empathy_os.plugins.get_global_registry"):
                 main()
                 # Should complete successfully
 
@@ -1096,7 +1109,7 @@ def test_main_analyze_verbose():
             "empathy_software_plugin.cli.analyze_project",
             side_effect=mock_analyze_project,
         ):
-            with patch("empathy_software_plugin.cli.get_global_registry"):
+            with patch("empathy_os.plugins.get_global_registry"):
                 main()
 
 
@@ -1116,30 +1129,56 @@ def test_main_analyze_json_output():
             "empathy_software_plugin.cli.analyze_project",
             side_effect=mock_analyze_project,
         ):
-            with patch("empathy_software_plugin.cli.get_global_registry"):
+            with patch("empathy_os.plugins.get_global_registry"):
                 main()
 
 
-def test_main_list_wizards_command():
+def test_main_list_wizards_command(capsys):
     """Test main() with list-wizards command"""
     with patch.object(sys, "argv", ["empathy-software", "list-wizards"]):
-        with patch("empathy_software_plugin.cli.list_wizards") as mock_list:
-            mock_list.return_value = 0
+        with patch("empathy_os.plugins.get_global_registry") as mock_reg:
+            mock_plugin = Mock()
+            mock_plugin.list_wizards.return_value = ["security", "performance"]
+            mock_plugin.get_wizard_info.side_effect = lambda w: {
+                "id": w,
+                "name": f"{w.title()} Wizard",
+                "description": f"Test {w} wizard",
+                "domain": "software",
+                "empathy_level": 3,
+                "category": "analysis",
+                "required_context": [],
+            }
+            mock_reg.return_value.get_plugin.return_value = mock_plugin
 
             main()
 
-            mock_list.assert_called_once()
+            # Verify wizard list was displayed
+            captured = capsys.readouterr()
+            assert "security" in captured.out.lower() or "Available" in captured.out
 
 
-def test_main_wizard_info_command():
+def test_main_wizard_info_command(capsys):
     """Test main() with wizard-info command"""
     with patch.object(sys, "argv", ["empathy-software", "wizard-info", "security"]):
-        with patch("empathy_software_plugin.cli.wizard_info") as mock_info:
-            mock_info.return_value = 0
+        with patch("empathy_os.plugins.get_global_registry") as mock_reg:
+            mock_plugin = Mock()
+            mock_plugin.get_wizard_info.return_value = {
+                "id": "security",
+                "name": "Security Wizard",
+                "description": "Analyzes code for security issues",
+                "domain": "software",
+                "empathy_level": 4,
+                "category": "security",
+                "capabilities": ["vuln_scan", "auth_check"],
+                "required_context": ["code_files"],
+            }
+            mock_reg.return_value.get_plugin.return_value = mock_plugin
 
             main()
 
-            mock_info.assert_called_once_with("security")
+            # Verify wizard info was displayed
+            captured = capsys.readouterr()
+            assert "security" in captured.out.lower() or "Wizard" in captured.out
 
 
 # ============================================================================
@@ -1227,7 +1266,7 @@ async def test_analyze_project_multiple_wizards(tmp_path):
 
     mock_plugin.get_wizard = get_wizard
 
-    with patch("empathy_software_plugin.cli.get_global_registry") as mock_registry:
+    with patch("empathy_os.plugins.get_global_registry") as mock_registry:
         mock_registry.return_value.get_plugin.return_value = mock_plugin
 
         await analyze_project(

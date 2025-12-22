@@ -6,6 +6,12 @@ A cost-optimized pipeline for research and analysis tasks:
 2. Sonnet: Identify patterns across summaries
 3. Opus: Synthesize final insights (conditional on complexity)
 
+Integration with empathy_os.models:
+- Supports LLMExecutor for unified execution (optional)
+- WorkflowStepConfig for declarative step definitions
+- Automatic telemetry emission when executor is used
+- Falls back to direct API calls when executor not provided
+
 Copyright 2025 Smart-AI-Memory
 Licensed under Fair Source License 0.9
 """
@@ -14,6 +20,37 @@ import os
 from typing import Any
 
 from .base import PROVIDER_MODELS, BaseWorkflow, ModelProvider, ModelTier
+from .step_config import WorkflowStepConfig
+
+# Step configurations for executor-based execution
+SUMMARIZE_STEP = WorkflowStepConfig(
+    name="summarize",
+    task_type="summarize",  # Routes to cheap tier
+    description="Summarize each source document",
+    max_tokens=2048,
+)
+
+ANALYZE_STEP = WorkflowStepConfig(
+    name="analyze",
+    task_type="analyze_patterns",  # Routes to capable tier
+    description="Identify patterns across summaries",
+    max_tokens=2048,
+)
+
+SYNTHESIZE_STEP = WorkflowStepConfig(
+    name="synthesize",
+    task_type="complex_reasoning",  # Routes to premium tier
+    description="Synthesize final insights",
+    max_tokens=4096,
+)
+
+SYNTHESIZE_STEP_CAPABLE = WorkflowStepConfig(
+    name="synthesize",
+    task_type="generate_content",  # Routes to capable tier
+    tier_hint="capable",  # Force capable tier
+    description="Synthesize final insights (lower complexity)",
+    max_tokens=4096,
+)
 
 
 class ResearchSynthesisWorkflow(BaseWorkflow):
@@ -24,12 +61,28 @@ class ResearchSynthesisWorkflow(BaseWorkflow):
     pattern analysis, and optionally premium models for final synthesis
     when the analysis reveals high complexity.
 
-    Usage:
+    Usage (legacy - direct API calls):
         workflow = ResearchSynthesisWorkflow()
         result = await workflow.execute(
             sources=["doc1.md", "doc2.md"],
             question="What are the key patterns?"
         )
+
+    Usage (executor-based - unified execution with telemetry):
+        from empathy_os.models import MockLLMExecutor
+
+        executor = MockLLMExecutor()  # or EmpathyLLMExecutor for real calls
+        workflow = ResearchSynthesisWorkflow(executor=executor)
+        result = await workflow.execute(
+            sources=["doc1.md", "doc2.md"],
+            question="What are the key patterns?"
+        )
+
+    When using executor:
+    - Automatic task-based routing via WorkflowStepConfig
+    - Automatic telemetry emission (LLMCallRecord per call)
+    - Automatic workflow telemetry (WorkflowRunRecord at end)
+    - Fallback and retry policies applied automatically
     """
 
     name = "research"
@@ -107,6 +160,47 @@ class ResearchSynthesisWorkflow(BaseWorkflow):
 
         except Exception as e:
             return f"Error calling LLM: {e}", 0, 0
+
+    async def _call_with_step(
+        self,
+        step: WorkflowStepConfig,
+        system: str,
+        user_message: str,
+    ) -> tuple[str, int, int]:
+        """
+        Make an LLM call using WorkflowStepConfig and executor (if available).
+
+        This is the recommended approach for new workflows. It provides:
+        - Automatic task-based routing
+        - Automatic telemetry emission
+        - Fallback and retry policies
+
+        If no executor is configured, falls back to direct API call.
+
+        Args:
+            step: WorkflowStepConfig defining the step
+            system: System prompt
+            user_message: User message
+
+        Returns:
+            (response_text, input_tokens, output_tokens)
+        """
+        if self._executor is not None:
+            # Use executor-based execution with telemetry
+            prompt = f"{system}\n\n{user_message}" if system else user_message
+            content, input_tokens, output_tokens, _cost = await self.run_step_with_executor(
+                step=step,
+                prompt=prompt,
+                system=system,
+            )
+            return content, input_tokens, output_tokens
+        else:
+            # Fall back to direct API call
+            tier_value = step.effective_tier
+            tier = ModelTier(tier_value)
+            return await self._call_llm(
+                tier, system, user_message, max_tokens=step.max_tokens or 4096
+            )
 
     def should_skip_stage(self, stage_name: str, input_data: Any) -> tuple[bool, str | None]:
         """Skip premium synthesis if complexity is low."""

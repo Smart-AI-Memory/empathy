@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import WizardPlayground from '@/components/WizardPlayground';
+import CostSavingsCard from '@/components/CostSavingsCard';
 
 export default function DevDashboard() {
   return (
@@ -67,6 +68,16 @@ export default function DevDashboard() {
               <div className="text-3xl font-bold text-[var(--secondary)] mb-2">10x</div>
               <div className="text-sm text-[var(--text-secondary)]">Faster Development</div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Cost Savings Section */}
+      <section className="py-12 bg-[var(--border)] bg-opacity-20">
+        <div className="container">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold text-center mb-6">API Cost Tracking</h2>
+            <CostSavingsCard />
           </div>
         </div>
       </section>

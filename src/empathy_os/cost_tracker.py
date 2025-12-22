@@ -10,6 +10,8 @@ Features:
 - Generate weekly/monthly reports
 - Integrate with `empathy costs` and `empathy morning` commands
 
+Model pricing is sourced from empathy_os.models.MODEL_REGISTRY.
+
 Copyright 2025 Smart-AI-Memory
 Licensed under Fair Source License 0.9
 """
@@ -19,26 +21,43 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-# Pricing per million tokens (as of December 2024)
-MODEL_PRICING = {
-    # Anthropic Claude models
-    "claude-3-haiku-20240307": {"input": 0.25, "output": 1.25},
-    "claude-3-5-haiku-20241022": {"input": 0.80, "output": 4.00},
-    "claude-3-5-sonnet-20241022": {"input": 3.00, "output": 15.00},
-    "claude-sonnet-4-20250514": {"input": 3.00, "output": 15.00},
-    "claude-opus-4-20250514": {"input": 15.00, "output": 75.00},
-    # Tier aliases (for backward compatibility)
-    "cheap": {"input": 0.25, "output": 1.25},
-    "capable": {"input": 3.00, "output": 15.00},
-    "premium": {"input": 15.00, "output": 75.00},
-    # OpenAI models (for comparison)
-    "gpt-4o": {"input": 2.50, "output": 10.00},
-    "gpt-4o-mini": {"input": 0.15, "output": 0.60},
-    "gpt-4-turbo": {"input": 10.00, "output": 30.00},
-}
+# Import pricing from unified registry
+from empathy_os.models import MODEL_REGISTRY
+from empathy_os.models.registry import TIER_PRICING
+
+
+def _build_model_pricing() -> dict[str, dict[str, float]]:
+    """Build MODEL_PRICING from unified registry."""
+    pricing: dict[str, dict[str, float]] = {}
+
+    # Add all models from registry
+    for provider_models in MODEL_REGISTRY.values():
+        for model_info in provider_models.values():
+            pricing[model_info.id] = {
+                "input": model_info.input_cost_per_million,
+                "output": model_info.output_cost_per_million,
+            }
+
+    # Add tier aliases from registry
+    pricing.update(TIER_PRICING)
+
+    # Add legacy model names for backward compatibility
+    legacy_models = {
+        "claude-3-haiku-20240307": {"input": 0.25, "output": 1.25},
+        "claude-3-5-sonnet-20241022": {"input": 3.00, "output": 15.00},
+        "claude-opus-4-20250514": {"input": 15.00, "output": 75.00},
+        "gpt-4-turbo": {"input": 10.00, "output": 30.00},
+    }
+    pricing.update(legacy_models)
+
+    return pricing
+
+
+# Pricing per million tokens - sourced from unified registry
+MODEL_PRICING = _build_model_pricing()
 
 # Default premium model for baseline comparison
-BASELINE_MODEL = "claude-opus-4-20250514"
+BASELINE_MODEL = "claude-opus-4-5-20251101"
 
 
 class CostTracker:

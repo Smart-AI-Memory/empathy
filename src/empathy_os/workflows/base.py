@@ -4,6 +4,12 @@ Base Workflow Class for Multi-Model Pipelines
 Provides a framework for creating cost-optimized workflows that
 route tasks to the appropriate model tier.
 
+Integration with empathy_os.models:
+- Uses unified ModelTier/ModelProvider from empathy_os.models
+- Supports LLMExecutor for abstracted LLM calls
+- Supports TelemetryBackend for telemetry storage
+- WorkflowStepConfig for declarative step definitions
+
 Copyright 2025 Smart-AI-Memory
 Licensed under Fair Source License 0.9
 """
@@ -11,6 +17,7 @@ Licensed under Fair Source License 0.9
 from __future__ import annotations
 
 import json
+import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -19,20 +26,44 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from empathy_os.cost_tracker import MODEL_PRICING, CostTracker
+from empathy_os.models import (
+    ExecutionContext,
+    LLMCallRecord,
+    LLMExecutor,
+    TelemetryBackend,
+    WorkflowRunRecord,
+    WorkflowStageRecord,
+    get_telemetry_store,
+)
+from empathy_os.models import (
+    ModelProvider as UnifiedModelProvider,
+)
+
+# Import unified types from empathy_os.models
+from empathy_os.models import (
+    ModelTier as UnifiedModelTier,
+)
 
 if TYPE_CHECKING:
     from .config import WorkflowConfig
+    from .step_config import WorkflowStepConfig
 
 # Default path for workflow run history
 WORKFLOW_HISTORY_FILE = ".empathy/workflow_runs.json"
 
 
+# Local enums for backward compatibility
+# New code should use empathy_os.models.ModelTier/ModelProvider
 class ModelTier(Enum):
     """Model tier for cost optimization."""
 
     CHEAP = "cheap"  # Haiku/GPT-4o-mini - $0.25-1.25/M tokens
     CAPABLE = "capable"  # Sonnet/GPT-4o - $3-15/M tokens
     PREMIUM = "premium"  # Opus/o1 - $15-75/M tokens
+
+    def to_unified(self) -> UnifiedModelTier:
+        """Convert to unified ModelTier from empathy_os.models."""
+        return UnifiedModelTier(self.value)
 
 
 class ModelProvider(Enum):
@@ -43,6 +74,10 @@ class ModelProvider(Enum):
     OLLAMA = "ollama"
     HYBRID = "hybrid"  # Mix of best models from different providers
     CUSTOM = "custom"  # User-defined custom models
+
+    def to_unified(self) -> UnifiedModelProvider:
+        """Convert to unified ModelProvider from empathy_os.models."""
+        return UnifiedModelProvider(self.value)
 
 
 # Model mappings by provider and tier
@@ -288,6 +323,8 @@ class BaseWorkflow(ABC):
         cost_tracker: CostTracker | None = None,
         provider: ModelProvider | str | None = None,
         config: WorkflowConfig | None = None,
+        executor: LLMExecutor | None = None,
+        telemetry_backend: TelemetryBackend | None = None,
     ):
         """
         Initialize workflow with optional cost tracker, provider, and config.
@@ -298,11 +335,20 @@ class BaseWorkflow(ABC):
                      If None, uses config or defaults to anthropic.
             config: WorkflowConfig for model customization. If None, loads from
                    .empathy/workflows.yaml or uses defaults.
+            executor: LLMExecutor for abstracted LLM calls (optional).
+                     If provided, enables unified execution with telemetry.
+            telemetry_backend: TelemetryBackend for storing telemetry records.
+                     Defaults to TelemetryStore (JSONL file backend).
         """
         from .config import WorkflowConfig
 
         self.cost_tracker = cost_tracker or CostTracker()
         self._stages_run: list[WorkflowStage] = []
+
+        # New: LLMExecutor support
+        self._executor = executor
+        self._telemetry_backend = telemetry_backend or get_telemetry_store()
+        self._run_id: str | None = None  # Set at start of execute()
 
         # Load config if not provided
         self._config = config or WorkflowConfig.load()
@@ -429,6 +475,9 @@ class BaseWorkflow(ABC):
         Returns:
             WorkflowResult with stages, output, and cost report
         """
+        # Set run ID for telemetry correlation
+        self._run_id = str(uuid.uuid4())
+
         started_at = datetime.now()
         self._stages_run = []
         current_data = kwargs
@@ -516,6 +565,9 @@ class BaseWorkflow(ABC):
         except Exception:
             pass  # Don't fail workflow if history save fails
 
+        # Emit workflow telemetry to backend
+        self._emit_workflow_telemetry(result)
+
         return result
 
     def describe(self) -> str:
@@ -533,3 +585,199 @@ class BaseWorkflow(ABC):
             lines.append(f"  {stage_name}: {tier.value} ({model})")
 
         return "\n".join(lines)
+
+    # =========================================================================
+    # New infrastructure methods (Phase 4)
+    # =========================================================================
+
+    def _create_execution_context(
+        self,
+        step_name: str,
+        task_type: str,
+        user_id: str | None = None,
+        session_id: str | None = None,
+    ) -> ExecutionContext:
+        """
+        Create an ExecutionContext for a step execution.
+
+        Args:
+            step_name: Name of the workflow step
+            task_type: Task type for routing
+            user_id: Optional user ID
+            session_id: Optional session ID
+
+        Returns:
+            ExecutionContext populated with workflow info
+        """
+        return ExecutionContext(
+            workflow_name=self.name,
+            step_name=step_name,
+            user_id=user_id,
+            session_id=session_id,
+            extra={
+                "task_type": task_type,
+                "run_id": self._run_id,
+                "provider": self._provider_str,
+            },
+        )
+
+    def _emit_call_telemetry(
+        self,
+        step_name: str,
+        task_type: str,
+        tier: str,
+        model_id: str,
+        input_tokens: int,
+        output_tokens: int,
+        cost: float,
+        latency_ms: int,
+        success: bool = True,
+        error_message: str | None = None,
+        fallback_used: bool = False,
+    ) -> None:
+        """
+        Emit an LLMCallRecord to the telemetry backend.
+
+        Args:
+            step_name: Name of the workflow step
+            task_type: Task type used for routing
+            tier: Model tier used
+            model_id: Model ID used
+            input_tokens: Input token count
+            output_tokens: Output token count
+            cost: Estimated cost
+            latency_ms: Latency in milliseconds
+            success: Whether the call succeeded
+            error_message: Error message if failed
+            fallback_used: Whether fallback was used
+        """
+        record = LLMCallRecord(
+            call_id=str(uuid.uuid4()),
+            timestamp=datetime.now().isoformat(),
+            workflow_name=self.name,
+            step_name=step_name,
+            task_type=task_type,
+            provider=self._provider_str,
+            tier=tier,
+            model_id=model_id,
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            estimated_cost=cost,
+            latency_ms=latency_ms,
+            success=success,
+            error_message=error_message,
+            fallback_used=fallback_used,
+            metadata={"run_id": self._run_id},
+        )
+        try:
+            self._telemetry_backend.log_call(record)
+        except Exception:
+            pass  # Don't fail workflow if telemetry fails
+
+    def _emit_workflow_telemetry(self, result: WorkflowResult) -> None:
+        """
+        Emit a WorkflowRunRecord to the telemetry backend.
+
+        Args:
+            result: The workflow result to record
+        """
+        # Build stage records
+        stages = [
+            WorkflowStageRecord(
+                stage_name=s.name,
+                tier=s.tier.value,
+                model_id=self.get_model_for_tier(s.tier),
+                input_tokens=s.input_tokens,
+                output_tokens=s.output_tokens,
+                cost=s.cost,
+                latency_ms=s.duration_ms,
+                success=not s.skipped and result.error is None,
+                skipped=s.skipped,
+                skip_reason=s.skip_reason,
+            )
+            for s in result.stages
+        ]
+
+        record = WorkflowRunRecord(
+            run_id=self._run_id or str(uuid.uuid4()),
+            workflow_name=self.name,
+            started_at=result.started_at.isoformat(),
+            completed_at=result.completed_at.isoformat(),
+            stages=stages,
+            total_input_tokens=sum(s.input_tokens for s in result.stages if not s.skipped),
+            total_output_tokens=sum(s.output_tokens for s in result.stages if not s.skipped),
+            total_cost=result.cost_report.total_cost,
+            baseline_cost=result.cost_report.baseline_cost,
+            savings=result.cost_report.savings,
+            savings_percent=result.cost_report.savings_percent,
+            total_duration_ms=result.total_duration_ms,
+            success=result.success,
+            error=result.error,
+            providers_used=[self._provider_str],
+            tiers_used=list(result.cost_report.by_tier.keys()),
+        )
+        try:
+            self._telemetry_backend.log_workflow(record)
+        except Exception:
+            pass  # Don't fail workflow if telemetry fails
+
+    async def run_step_with_executor(
+        self,
+        step: WorkflowStepConfig,
+        prompt: str,
+        system: str | None = None,
+        **kwargs: Any,
+    ) -> tuple[str, int, int, float]:
+        """
+        Run a workflow step using the LLMExecutor (if configured).
+
+        This method provides a unified interface for executing steps with
+        automatic routing, telemetry, and cost tracking.
+
+        Args:
+            step: WorkflowStepConfig defining the step
+            prompt: The prompt to send
+            system: Optional system prompt
+            **kwargs: Additional arguments passed to executor
+
+        Returns:
+            Tuple of (content, input_tokens, output_tokens, cost)
+
+        Raises:
+            ValueError: If no executor is configured
+        """
+        if self._executor is None:
+            raise ValueError(
+                "No LLMExecutor configured. Pass executor= to __init__ or use run_stage() instead."
+            )
+
+        context = self._create_execution_context(
+            step_name=step.name,
+            task_type=step.task_type,
+        )
+
+        start_time = datetime.now()
+        response = await self._executor.run(
+            task_type=step.task_type,
+            prompt=prompt,
+            system=system,
+            context=context,
+            **kwargs,
+        )
+        end_time = datetime.now()
+        latency_ms = int((end_time - start_time).total_seconds() * 1000)
+
+        # Emit telemetry
+        self._emit_call_telemetry(
+            step_name=step.name,
+            task_type=step.task_type,
+            tier=response.tier_used.value,
+            model_id=response.model_used,
+            input_tokens=response.input_tokens,
+            output_tokens=response.output_tokens,
+            cost=response.cost,
+            latency_ms=latency_ms,
+            success=True,
+        )
+
+        return response.content, response.input_tokens, response.output_tokens, response.cost
