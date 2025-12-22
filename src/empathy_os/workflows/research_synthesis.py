@@ -358,6 +358,8 @@ Provide a structured analysis."""
     async def _synthesize(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
         """
         Synthesize final insights from patterns.
+
+        Supports XML-enhanced prompts when enabled in workflow config.
         """
         _patterns = input_data.get("patterns", [])  # noqa: F841 - reserved for future use
         complexity = input_data.get("complexity", 0.5)
@@ -369,7 +371,40 @@ Provide a structured analysis."""
         if research_summary:
             analysis = research_summary
 
-        system = """You are an expert synthesizer. Based on the analysis provided:
+        # Build input payload
+        input_payload = f"""Research question: {question}
+
+Analysis to synthesize:
+{analysis}
+
+Complexity level: {complexity:.2f}"""
+
+        # Check if XML prompts are enabled
+        if self._is_xml_enabled():
+            user_message = self._render_xml_prompt(
+                role="expert research synthesizer",
+                goal="Synthesize analysis into comprehensive answer with key insights",
+                instructions=[
+                    "Provide a comprehensive answer to the research question",
+                    "Highlight key insights and takeaways",
+                    "Note any caveats or areas needing further research",
+                    "Structure your response clearly with sections if appropriate",
+                    "Provide 1-2 concrete next steps or decisions",
+                ],
+                constraints=[
+                    "Be thorough, insightful, and actionable",
+                    "Focus on practical implications",
+                    "3-5 paragraphs for main answer",
+                ],
+                input_type="research_analysis",
+                input_payload=input_payload,
+                extra={
+                    "complexity_score": complexity,
+                },
+            )
+            system = None
+        else:
+            system = """You are an expert synthesizer. Based on the analysis provided:
 1. Provide a comprehensive answer to the research question
 2. Highlight key insights and takeaways
 3. Note any caveats or areas needing further research
@@ -377,18 +412,16 @@ Provide a structured analysis."""
 
 Be thorough, insightful, and actionable."""
 
-        user_message = f"""Research question: {question}
-
-Analysis to synthesize:
-{analysis}
-
-Complexity level: {complexity:.2f}
+            user_message = f"""{input_payload}
 
 Provide a comprehensive synthesis and answer."""
 
         response, input_tokens, output_tokens = await self._call_llm(
-            tier, system, user_message, max_tokens=4096
+            tier, system or "", user_message, max_tokens=4096
         )
+
+        # Parse XML response if enforcement is enabled
+        parsed_data = self._parse_xml_response(response)
 
         synthesis = {
             "answer": response,
@@ -397,5 +430,22 @@ Provide a comprehensive synthesis and answer."""
             "model_tier_used": tier.value,
             "complexity_score": complexity,
         }
+
+        # Merge parsed XML data if available
+        if parsed_data.get("xml_parsed"):
+            synthesis.update(
+                {
+                    "xml_parsed": True,
+                    "summary": parsed_data.get("summary"),
+                    "findings": parsed_data.get("findings", []),
+                    "checklist": parsed_data.get("checklist", []),
+                }
+            )
+            # Extract key insights from parsed response
+            extra = parsed_data.get("_parsed_response")
+            if extra and hasattr(extra, "extra"):
+                key_insights = extra.extra.get("key_insights", [])
+                if key_insights:
+                    synthesis["key_insights"] = key_insights
 
         return synthesis, input_tokens, output_tokens

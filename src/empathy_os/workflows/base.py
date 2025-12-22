@@ -25,6 +25,14 @@ from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+# Load .env file for API keys if python-dotenv is available
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    pass  # python-dotenv not installed, rely on environment variables
+
 from empathy_os.cost_tracker import MODEL_PRICING, CostTracker
 from empathy_os.models import (
     ExecutionContext,
@@ -145,6 +153,7 @@ class WorkflowResult:
     started_at: datetime
     completed_at: datetime
     total_duration_ms: int
+    provider: str = "unknown"
     error: str | None = None
 
 
@@ -174,7 +183,7 @@ def _save_workflow_run(
     history = _load_workflow_history(history_file)
 
     # Create run record
-    run = {
+    run: dict = {
         "workflow": workflow_name,
         "provider": provider,
         "success": result.success,
@@ -197,6 +206,14 @@ def _save_workflow_run(
         ],
         "error": result.error,
     }
+
+    # Extract XML-parsed fields from final_output if present
+    if isinstance(result.final_output, dict):
+        if result.final_output.get("xml_parsed"):
+            run["xml_parsed"] = True
+            run["summary"] = result.final_output.get("summary")
+            run["findings"] = result.final_output.get("findings", [])
+            run["checklist"] = result.final_output.get("checklist", [])
 
     # Add to history and trim
     history.append(run)
@@ -547,6 +564,7 @@ class BaseWorkflow(ABC):
                 final_output = stage.result
                 break
 
+        provider_str = getattr(self, "_provider_str", "unknown")
         result = WorkflowResult(
             success=error is None,
             stages=self._stages_run,
@@ -555,12 +573,12 @@ class BaseWorkflow(ABC):
             started_at=started_at,
             completed_at=completed_at,
             total_duration_ms=total_duration_ms,
+            provider=provider_str,
             error=error,
         )
 
         # Save to workflow history for dashboard
         try:
-            provider_str = getattr(self, "_provider_str", "unknown")
             _save_workflow_run(self.name, provider_str, result)
         except Exception:
             pass  # Don't fail workflow if history save fails
@@ -781,3 +799,147 @@ class BaseWorkflow(ABC):
         )
 
         return response.content, response.input_tokens, response.output_tokens, response.cost
+
+    # =========================================================================
+    # XML Prompt Integration (Phase 4)
+    # =========================================================================
+
+    def _get_xml_config(self) -> dict[str, Any]:
+        """
+        Get XML prompt configuration for this workflow.
+
+        Returns:
+            Dictionary with XML configuration settings.
+        """
+        if self._config is None:
+            return {}
+        return self._config.get_xml_config_for_workflow(self.name)
+
+    def _is_xml_enabled(self) -> bool:
+        """Check if XML prompts are enabled for this workflow."""
+        config = self._get_xml_config()
+        return config.get("enabled", False)
+
+    def _render_xml_prompt(
+        self,
+        role: str,
+        goal: str,
+        instructions: list[str],
+        constraints: list[str],
+        input_type: str,
+        input_payload: str,
+        extra: dict[str, Any] | None = None,
+    ) -> str:
+        """
+        Render a prompt using XML template if enabled.
+
+        Args:
+            role: The role for the AI (e.g., "security analyst").
+            goal: The primary objective.
+            instructions: Step-by-step instructions.
+            constraints: Rules and guidelines.
+            input_type: Type of input ("code", "diff", "document").
+            input_payload: The content to process.
+            extra: Additional context data.
+
+        Returns:
+            Rendered prompt string (XML if enabled, plain text otherwise).
+        """
+        from empathy_os.prompts import PromptContext, XmlPromptTemplate, get_template
+
+        config = self._get_xml_config()
+
+        if not config.get("enabled", False):
+            # Fall back to plain text
+            return self._render_plain_prompt(
+                role, goal, instructions, constraints, input_type, input_payload
+            )
+
+        # Create context
+        context = PromptContext(
+            role=role,
+            goal=goal,
+            instructions=instructions,
+            constraints=constraints,
+            input_type=input_type,
+            input_payload=input_payload,
+            extra=extra or {},
+        )
+
+        # Get template
+        template_name = config.get("template_name", self.name)
+        template = get_template(template_name)
+
+        if template is None:
+            # Create a basic XML template if no built-in found
+            template = XmlPromptTemplate(
+                name=self.name,
+                schema_version=config.get("schema_version", "1.0"),
+            )
+
+        return template.render(context)
+
+    def _render_plain_prompt(
+        self,
+        role: str,
+        goal: str,
+        instructions: list[str],
+        constraints: list[str],
+        input_type: str,
+        input_payload: str,
+    ) -> str:
+        """Render a plain text prompt (fallback when XML is disabled)."""
+        parts = [f"You are a {role}.", "", f"Goal: {goal}", ""]
+
+        if instructions:
+            parts.append("Instructions:")
+            for i, inst in enumerate(instructions, 1):
+                parts.append(f"{i}. {inst}")
+            parts.append("")
+
+        if constraints:
+            parts.append("Guidelines:")
+            for constraint in constraints:
+                parts.append(f"- {constraint}")
+            parts.append("")
+
+        if input_payload:
+            parts.append(f"Input ({input_type}):")
+            parts.append(input_payload)
+
+        return "\n".join(parts)
+
+    def _parse_xml_response(self, response: str) -> dict[str, Any]:
+        """
+        Parse an XML response if XML enforcement is enabled.
+
+        Args:
+            response: The LLM response text.
+
+        Returns:
+            Dictionary with parsed fields or raw response data.
+        """
+        from empathy_os.prompts import XmlResponseParser
+
+        config = self._get_xml_config()
+
+        if not config.get("enforce_response_xml", False):
+            # No parsing needed, return as-is
+            return {
+                "_parsed_response": None,
+                "_raw": response,
+            }
+
+        fallback = config.get("fallback_on_parse_error", True)
+        parser = XmlResponseParser(fallback_on_error=fallback)
+        parsed = parser.parse(response)
+
+        return {
+            "_parsed_response": parsed,
+            "_raw": response,
+            "summary": parsed.summary,
+            "findings": [f.to_dict() for f in parsed.findings],
+            "checklist": parsed.checklist,
+            "xml_parsed": parsed.success,
+            "parse_errors": parsed.errors,
+        }

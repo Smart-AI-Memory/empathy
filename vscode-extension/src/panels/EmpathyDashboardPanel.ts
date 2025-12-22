@@ -303,6 +303,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             baselineCost: 0,
             dailyCosts: [],
             byProvider: {},
+            byTier: undefined,
         };
     }
 
@@ -442,6 +443,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             let totalSavings = 0;
             let totalCost = 0;
             let baselineCost = 0;
+            const byTier: Record<string, { requests: number; savings: number; cost: number }> = {};
 
             const cutoff = new Date();
             cutoff.setDate(cutoff.getDate() - 7);
@@ -458,13 +460,34 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
 
             const savingsPercent = baselineCost > 0 ? Math.round((totalSavings / baselineCost) * 100) : 0;
 
+            // 7-day tier breakdown based on per-request data
+            const cutoffIso = cutoff.toISOString();
+            for (const req of requests as any[]) {
+                if (!req || typeof req.timestamp !== 'string') {
+                    continue;
+                }
+                if (req.timestamp < cutoffIso) {
+                    // Only count requests in the same 7-day window
+                    continue;
+                }
+
+                const tier = (req.tier as string) || 'capable';
+                if (!byTier[tier]) {
+                    byTier[tier] = { requests: 0, savings: 0, cost: 0 };
+                }
+                byTier[tier].requests += 1;
+                byTier[tier].savings += req.savings || 0;
+                byTier[tier].cost += req.actual_cost || 0;
+            }
+
             this._view.webview.postMessage({
                 type: 'costsData',
                 data: {
                     requests,
                     totalSavings,
                     totalCost,
-                    savingsPercent
+                    savingsPercent,
+                    byTier
                 }
             });
         } catch {
@@ -506,13 +529,23 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     workflows.byWorkflow[wfName].savings += run.savings || 0;
                 }
 
-                workflows.recentRuns = runs.slice(-10).reverse().map(r => ({
-                    workflow: r.workflow || 'unknown',
-                    success: r.success || false,
-                    cost: r.cost || 0,
-                    savings: r.savings || 0,
-                    timestamp: r.started_at || '',
-                }));
+                workflows.recentRuns = runs.slice(-10).reverse().map(r => {
+                    const run: WorkflowRunData = {
+                        workflow: r.workflow || 'unknown',
+                        success: r.success || false,
+                        cost: r.cost || 0,
+                        savings: r.savings || 0,
+                        timestamp: r.started_at || '',
+                    };
+                    // Include XML-parsed fields if available
+                    if (r.xml_parsed) {
+                        run.xml_parsed = true;
+                        run.summary = r.summary;
+                        run.findings = r.findings || [];
+                        run.checklist = r.checklist || [];
+                    }
+                    return run;
+                });
             }
         } catch { /* ignore */ }
 
@@ -608,11 +641,16 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             'release-prep': 'version'
         };
         const inputKey = inputKeys[workflowName] || 'query';
-        const inputJson = input ? JSON.stringify({ [inputKey]: input }) : '';
-        const escapedJson = inputJson.replace(/'/g, "'\\''"); // Escape single quotes for shell
-        const command = `python -m empathy_os.cli workflow run ${workflowName}${input ? ` --input '${escapedJson}'` : ''}`;
 
-        cp.exec(command, { cwd: workspaceFolder, maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
+        // Build arguments as array for safe execution (no shell interpolation)
+        const args = ['-m', 'empathy_os.cli', 'workflow', 'run', workflowName];
+        if (input) {
+            const inputJson = JSON.stringify({ [inputKey]: input });
+            args.push('--input', inputJson);
+        }
+
+        // Use execFile with array arguments to prevent command injection
+        cp.execFile('python', args, { cwd: workspaceFolder, maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
             const output = stdout || stderr || (error ? error.message : 'No output');
             const success = !error;
 
@@ -868,6 +906,22 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         .list-item-title { font-weight: 500; }
         .list-item-desc { font-size: 10px; opacity: 0.7; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+        /* XML-Enhanced Workflow Display */
+        .xml-enhanced { border-left: 2px solid var(--vscode-charts-blue); }
+        .xml-badge { font-size: 9px; padding: 1px 4px; background: var(--vscode-charts-blue); color: white; border-radius: 3px; margin-left: 4px; }
+        .xml-summary { font-size: 10px; margin-top: 4px; padding: 4px; background: var(--vscode-editor-background); border-radius: 3px; color: var(--vscode-foreground); opacity: 0.9; }
+        .findings-list { margin-top: 4px; }
+        .finding-item { display: flex; align-items: center; gap: 4px; font-size: 10px; padding: 2px 0; }
+        .severity-badge { font-size: 8px; padding: 1px 4px; border-radius: 2px; font-weight: bold; }
+        .severity-badge.critical { background: #ff4444; color: white; }
+        .severity-badge.high { background: #ff8800; color: white; }
+        .severity-badge.medium { background: #ffcc00; color: black; }
+        .severity-badge.low { background: #44aa44; color: white; }
+        .severity-badge.info { background: #4488cc; color: white; }
+        .finding-title { opacity: 0.9; }
+        .checklist-list { margin-top: 4px; }
+        .checklist-item { font-size: 10px; opacity: 0.8; padding: 1px 0; }
+
         /* Buttons */
         .btn {
             padding: 6px 12px;
@@ -1110,7 +1164,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             </div>
         </div>
 
-        <div class="card" style="margin-top: 12px">
+    <div class="card" style="margin-top: 12px">
             <div class="card-title">Quick Stats</div>
             <div class="metrics-grid">
                 <div class="metric">
@@ -1128,6 +1182,80 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 <div class="metric">
                     <div class="metric-value" id="power-requests">--</div>
                     <div class="metric-label">Requests</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cost Simulator (Beta) -->
+        <div class="card" style="margin-top: 12px">
+            <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Cost Simulator <span style="font-size: 9px; color: #a855f7; font-weight: normal; opacity: 0.9;">(Beta)</span></span>
+                <span style="font-size: 10px; opacity: 0.7;">Estimate costs by provider & tier mix</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 3fr; gap: 10px; margin-top: 8px;">
+                <!-- Controls -->
+                <div>
+                    <div style="margin-bottom: 8px;">
+                        <div style="font-size: 11px; margin-bottom: 4px; opacity: 0.8;">Provider preset</div>
+                        <select id="sim-provider" style="width: 100%; padding: 6px 8px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 4px; font-size: 11px;">
+                            <option value="hybrid">Hybrid (recommended)</option>
+                            <option value="anthropic">Anthropic only</option>
+                            <option value="openai">OpenAI only</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 8px;">
+                        <div style="font-size: 11px; margin-bottom: 4px; opacity: 0.8;">Scenario</div>
+                        <select id="sim-scenario" style="width: 100%; padding: 6px 8px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 4px; font-size: 11px;">
+                            <option value="default">Typical week</option>
+                            <option value="heavy">Heavy experimentation</option>
+                            <option value="light">Light usage</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 8px;">
+                        <div style="font-size: 11px; margin-bottom: 4px; opacity: 0.8;">Tier mix override</div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; font-size: 10px;">
+                            <label>Cheap
+                                <input id="sim-cheap" type="number" min="0" max="100" step="5" value="50" style="width: 100%; margin-top: 2px; padding: 4px 6px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 3px; font-size: 10px;" />
+                            </label>
+                            <label>Capable
+                                <input id="sim-capable" type="number" min="0" max="100" step="5" value="40" style="width: 100%; margin-top: 2px; padding: 4px 6px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 3px; font-size: 10px;" />
+                            </label>
+                            <label>Premium
+                                <input id="sim-premium" type="number" min="0" max="100" step="5" value="10" style="width: 100%; margin-top: 2px; padding: 4px 6px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 3px; font-size: 10px;" />
+                            </label>
+                        </div>
+                        <div id="sim-mix-warning" style="margin-top: 2px; font-size: 9px; color: var(--vscode-inputValidation-warningForeground); display: none;">Percentages will be normalized to 100%.</div>
+                    </div>
+
+                    <button class="btn" id="sim-recalc" style="width: 100%; margin-top: 4px; font-size: 10px;">Recalculate</button>
+                </div>
+
+                <!-- Results -->
+                <div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center; margin-bottom: 8px;">
+                        <div>
+                            <div style="font-size: 14px; font-weight: 600;" id="sim-actual">$0.00</div>
+                            <div style="font-size: 10px; opacity: 0.7;">Scenario cost</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 600;" id="sim-baseline">$0.00</div>
+                            <div style="font-size: 10px; opacity: 0.7;">All-premium baseline</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 600; color: var(--vscode-charts-green);" id="sim-savings">$0.00</div>
+                            <div style="font-size: 10px; opacity: 0.7;">Saved vs baseline</div>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 10px; opacity: 0.8; margin-bottom: 4px;">By tier (scenario)</div>
+                    <div id="sim-tier-breakdown" style="font-size: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;"></div>
+
+                    <div style="font-size: 9px; opacity: 0.7; margin-top: 6px;">
+                        Simulated costs use static pricing aligned with Empathy tiers and assume ~1K tokens per request.
+                    </div>
                 </div>
             </div>
         </div>
@@ -1893,17 +2021,165 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 return;
             }
 
-            list.innerHTML = workflows.recentRuns.slice(0, 5).map(run => \`
-                <div class="list-item">
+            list.innerHTML = workflows.recentRuns.slice(0, 5).map(run => {
+                // Build XML summary section if available
+                let xmlSection = '';
+                if (run.xml_parsed && run.summary) {
+                    xmlSection = \`<div class="xml-summary">\${run.summary}</div>\`;
+                }
+                // Build findings section if available
+                let findingsSection = '';
+                if (run.xml_parsed && run.findings && run.findings.length > 0) {
+                    const findingsHtml = run.findings.slice(0, 3).map(f => \`
+                        <div class="finding-item \${f.severity}">
+                            <span class="severity-badge \${f.severity}">\${f.severity.toUpperCase()}</span>
+                            <span class="finding-title">\${f.title}</span>
+                        </div>
+                    \`).join('');
+                    findingsSection = \`<div class="findings-list">\${findingsHtml}</div>\`;
+                }
+                // Build checklist section if available
+                let checklistSection = '';
+                if (run.xml_parsed && run.checklist && run.checklist.length > 0) {
+                    const checklistHtml = run.checklist.slice(0, 3).map(item => \`
+                        <div class="checklist-item">&#x25A1; \${item}</div>
+                    \`).join('');
+                    checklistSection = \`<div class="checklist-list">\${checklistHtml}</div>\`;
+                }
+
+                return \`
+                <div class="list-item \${run.xml_parsed ? 'xml-enhanced' : ''}">
                     <span class="list-item-icon">\${run.success ? '&#x2714;' : '&#x2718;'}</span>
                     <div class="list-item-content">
-                        <div class="list-item-title">\${run.workflow}</div>
+                        <div class="list-item-title">\${run.workflow}\${run.xml_parsed ? ' <span class="xml-badge">XML</span>' : ''}</div>
                         <div class="list-item-desc">Saved $\${run.savings.toFixed(4)}</div>
+                        \${xmlSection}
+                        \${findingsSection}
+                        \${checklistSection}
                     </div>
                     <span class="badge \${run.success ? 'success' : 'error'}">\${run.success ? 'OK' : 'Failed'}</span>
                 </div>
-            \`).join('');
+            \`;
+            }).join('');
         }
+
+        // --- Cost Simulator (Beta) ---
+
+        // Static per-request costs aligned with tiers (rough approximations)
+        const SIM_TIER_PRICING = {
+            anthropic: { cheap: 0.001, capable: 0.004, premium: 0.012 },
+            openai: { cheap: 0.0005, capable: 0.003, premium: 0.01 },
+            hybrid: { cheap: 0.0007, capable: 0.0035, premium: 0.011 }
+        };
+
+        // Scenario presets: total requests per week
+        const SIM_SCENARIOS = {
+            default: 200,
+            heavy: 600,
+            light: 60
+        };
+
+        function normalizeMix(cheap, capable, premium) {
+            const total = cheap + capable + premium;
+            if (!total || total <= 0) {
+                return { cheap: 0.5, capable: 0.4, premium: 0.1 };
+            }
+            return {
+                cheap: cheap / total,
+                capable: capable / total,
+                premium: premium / total
+            };
+        }
+
+        function runSimulator() {
+            const providerSelect = document.getElementById('sim-provider');
+            const scenarioSelect = document.getElementById('sim-scenario');
+            const cheapInput = document.getElementById('sim-cheap');
+            const capableInput = document.getElementById('sim-capable');
+            const premiumInput = document.getElementById('sim-premium');
+            const mixWarning = document.getElementById('sim-mix-warning');
+
+            if (!providerSelect || !scenarioSelect || !cheapInput || !capableInput || !premiumInput) {
+                return;
+            }
+
+            const provider = providerSelect.value || 'hybrid';
+            const scenario = scenarioSelect.value || 'default';
+
+            const cheapPct = parseFloat(cheapInput.value) || 0;
+            const capablePct = parseFloat(capableInput.value) || 0;
+            const premiumPct = parseFloat(premiumInput.value) || 0;
+
+            const sum = cheapPct + capablePct + premiumPct;
+            if (mixWarning) {
+                mixWarning.style.display = sum > 100.5 || sum < 99.5 ? 'block' : 'none';
+            }
+
+            const mix = normalizeMix(cheapPct, capablePct, premiumPct);
+            const totalRequests = SIM_SCENARIOS[scenario] || SIM_SCENARIOS.default;
+
+            const pricing = SIM_TIER_PRICING[provider] || SIM_TIER_PRICING.hybrid;
+
+            const cheapReq = totalRequests * mix.cheap;
+            const capableReq = totalRequests * mix.capable;
+            const premiumReq = totalRequests * mix.premium;
+
+            const cheapCost = cheapReq * pricing.cheap;
+            const capableCost = capableReq * pricing.capable;
+            const premiumCost = premiumReq * pricing.premium;
+
+            const actualCost = cheapCost + capableCost + premiumCost;
+
+            // Baseline: all-premium at same total requests with provider's premium pricing
+            const baselineCost = totalRequests * pricing.premium;
+            const savings = baselineCost - actualCost;
+
+            // Update summary
+            const actualEl = document.getElementById('sim-actual');
+            const baselineEl = document.getElementById('sim-baseline');
+            const savingsEl = document.getElementById('sim-savings');
+
+            if (actualEl) actualEl.textContent = '$' + actualCost.toFixed(2);
+            if (baselineEl) baselineEl.textContent = '$' + baselineCost.toFixed(2);
+            if (savingsEl) savingsEl.textContent = '$' + Math.max(0, savings).toFixed(2);
+
+            // Tier breakdown
+            const tierEl = document.getElementById('sim-tier-breakdown');
+            if (tierEl) {
+                tierEl.innerHTML = [
+                    { key: 'cheap', label: 'Cheap', req: cheapReq, cost: cheapCost, color: '#22c55e' },
+                    { key: 'capable', label: 'Capable', req: capableReq, cost: capableCost, color: '#3b82f6' },
+                    { key: 'premium', label: 'Premium', req: premiumReq, cost: premiumCost, color: '#a855f7' }
+                ].map(t => {
+                    return '<div style="padding: 4px 6px; border: 1px solid var(--border); border-radius: 3px;">' +
+                        '<div style="display: flex; justify-content: space-between; align-items: center;">' +
+                            '<span style="color: ' + t.color + '; font-weight: 600;">' + t.label + '</span>' +
+                            '<span style="opacity: 0.7;">' + Math.round((t.req || 0)) + ' req</span>' +
+                        '</div>' +
+                        '<div style="font-size: 10px; opacity: 0.8; margin-top: 2px;">$' + (t.cost || 0).toFixed(2) + '</div>' +
+                    '</div>';
+                }).join('');
+            }
+        }
+
+        const simRecalcBtn = document.getElementById('sim-recalc');
+        if (simRecalcBtn) {
+            simRecalcBtn.addEventListener('click', function() {
+                runSimulator();
+            });
+        }
+
+        ['sim-provider', 'sim-scenario', 'sim-cheap', 'sim-capable', 'sim-premium'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('change', function() {
+                    runSimulator();
+                });
+            }
+        });
+
+        // Run once on initial load
+        setTimeout(runSimulator, 0);
 
         function updateCosts(costs, isEmpty) {
             // Update Power tab cost stats
@@ -1978,6 +2254,8 @@ interface CostData {
     baselineCost: number;
     dailyCosts: Array<{ date: string; cost: number; savings: number }>;
     byProvider: Record<string, { requests: number; cost: number }>;
+    // 7-day breakdown of requests and savings by tier (cheap/capable/premium)
+    byTier?: Record<string, { requests: number; savings: number; cost: number }>;
 }
 
 // Response shape from `python -m empathy_os.models.cli telemetry --costs -f json`
@@ -1990,12 +2268,35 @@ interface TelemetryCostData {
     avg_cost_per_workflow: number;
 }
 
+// XML-enhanced finding from parsed response
+interface XmlFinding {
+    severity: string;
+    title: string;
+    location: string | null;
+    details: string;
+    fix: string;
+}
+
+// Workflow run that may include XML-parsed data
+interface WorkflowRunData {
+    workflow: string;
+    success: boolean;
+    cost: number;
+    savings: number;
+    timestamp: string;
+    // XML-enhanced fields (optional)
+    xml_parsed?: boolean;
+    summary?: string;
+    findings?: XmlFinding[];
+    checklist?: string[];
+}
+
 interface WorkflowData {
     totalRuns: number;
     successfulRuns: number;
     totalCost: number;
     totalSavings: number;
-    recentRuns: Array<{ workflow: string; success: boolean; cost: number; savings: number; timestamp: string }>;
+    recentRuns: WorkflowRunData[];
     byWorkflow: Record<string, { runs: number; cost: number; savings: number }>;
 }
 

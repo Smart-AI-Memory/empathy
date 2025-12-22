@@ -94,11 +94,17 @@ logger = logging.getLogger(__name__)
 
 # Initialize shared LLM instance for domain wizards
 def get_llm_instance():
-    """Get or create EmpathyLLM instance"""
+    """Get or create EmpathyLLM instance.
+
+    Raises:
+        ValueError: If ANTHROPIC_API_KEY environment variable is not set.
+    """
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
-        logger.warning("ANTHROPIC_API_KEY not set - domain wizards will use demo mode")
-        api_key = "demo_key"
+        raise ValueError(
+            "ANTHROPIC_API_KEY environment variable is required. "
+            "Set it in your .env file or environment before starting the API."
+        )
 
     return EmpathyLLM(
         provider="anthropic", api_key=api_key, enable_security=True, enable_audit_logging=True

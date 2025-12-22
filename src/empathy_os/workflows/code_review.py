@@ -257,12 +257,49 @@ Code to review:
         )
 
     async def _architect_review(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """Deep architectural review."""
+        """
+        Deep architectural review.
+
+        Supports XML-enhanced prompts when enabled in workflow config.
+        """
         code_to_review = input_data.get("code_to_review", "")
         scan_results = input_data.get("scan_results", "")
         classification = input_data.get("classification", "")
 
-        system = """You are a senior software architect. Provide a comprehensive review:
+        # Build input payload
+        input_payload = f"""Classification: {classification}
+
+Security Scan Results:
+{scan_results[:2000]}
+
+Code:
+{code_to_review[:4000]}"""
+
+        # Check if XML prompts are enabled
+        if self._is_xml_enabled():
+            user_message = self._render_xml_prompt(
+                role="senior software architect",
+                goal="Perform comprehensive code review with architectural assessment",
+                instructions=[
+                    "Assess design patterns used (or missing)",
+                    "Evaluate SOLID principles compliance",
+                    "Check separation of concerns",
+                    "Analyze coupling and cohesion",
+                    "Provide specific improvement recommendations with examples",
+                    "Suggest refactoring and testing improvements",
+                    "Provide verdict: approve, approve_with_suggestions, request_changes, or reject",
+                ],
+                constraints=[
+                    "Be specific and actionable",
+                    "Reference file locations where possible",
+                    "Prioritize issues by impact",
+                ],
+                input_type="code",
+                input_payload=input_payload,
+            )
+            system = None
+        else:
+            system = """You are a senior software architect. Provide a comprehensive review:
 
 1. ARCHITECTURAL ASSESSMENT:
    - Design patterns used (or missing)
@@ -283,34 +320,54 @@ Code to review:
 
 Provide actionable, specific feedback."""
 
-        user_message = f"""Perform an architectural review:
+            user_message = f"""Perform an architectural review:
 
-Classification: {classification}
-
-Security Scan Results:
-{scan_results[:2000]}
-
-Code:
-{code_to_review[:4000]}"""
+{input_payload}"""
 
         response, input_tokens, output_tokens = await self._call_llm(
-            tier, system, user_message, max_tokens=3000
+            tier, system or "", user_message, max_tokens=3000
         )
 
-        # Determine verdict from response
+        # Parse XML response if enforcement is enabled
+        parsed_data = self._parse_xml_response(response)
+
+        # Determine verdict from response or parsed data
         verdict = "approve_with_suggestions"
-        if "REQUEST_CHANGES" in response.upper() or "REJECT" in response.upper():
-            verdict = "request_changes"
-        elif "APPROVE" in response.upper() and "SUGGESTIONS" not in response.upper():
-            verdict = "approve"
+        if parsed_data.get("xml_parsed"):
+            extra = parsed_data.get("_parsed_response")
+            if extra and hasattr(extra, "extra"):
+                parsed_verdict = extra.extra.get("verdict", "").lower()
+                if parsed_verdict in [
+                    "approve",
+                    "approve_with_suggestions",
+                    "request_changes",
+                    "reject",
+                ]:
+                    verdict = parsed_verdict
 
-        return (
-            {
-                "architectural_review": response,
-                "verdict": verdict,
-                "recommendations": [],
-                "model_tier_used": tier.value,
-            },
-            input_tokens,
-            output_tokens,
-        )
+        if verdict == "approve_with_suggestions":
+            # Fall back to text parsing
+            if "REQUEST_CHANGES" in response.upper() or "REJECT" in response.upper():
+                verdict = "request_changes"
+            elif "APPROVE" in response.upper() and "SUGGESTIONS" not in response.upper():
+                verdict = "approve"
+
+        result = {
+            "architectural_review": response,
+            "verdict": verdict,
+            "recommendations": [],
+            "model_tier_used": tier.value,
+        }
+
+        # Merge parsed XML data if available
+        if parsed_data.get("xml_parsed"):
+            result.update(
+                {
+                    "xml_parsed": True,
+                    "summary": parsed_data.get("summary"),
+                    "findings": parsed_data.get("findings", []),
+                    "checklist": parsed_data.get("checklist", []),
+                }
+            )
+
+        return (result, input_tokens, output_tokens)

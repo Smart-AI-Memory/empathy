@@ -471,6 +471,7 @@ def main():
 
         print("\nTest Generation Results")
         print("=" * 50)
+        print(f"Provider: {result.provider}")
         print(f"Success: {result.success}")
         print(f"Tests Generated: {result.final_output.get('total_tests', 0)}")
         print("\nCost Report:")

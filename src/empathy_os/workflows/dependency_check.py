@@ -377,6 +377,7 @@ def main():
 
         print("\nDependency Check Results")
         print("=" * 50)
+        print(f"Provider: {result.provider}")
         print(f"Success: {result.success}")
 
         report = result.final_output.get("report", {})

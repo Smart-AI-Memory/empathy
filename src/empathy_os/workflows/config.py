@@ -85,7 +85,7 @@ class ModelConfig:
 
 @dataclass
 class WorkflowConfig:
-    """Configuration for workflow model selection."""
+    """Configuration for workflow model selection and XML prompts."""
 
     # Default provider for all workflows
     default_provider: str = "anthropic"
@@ -98,6 +98,12 @@ class WorkflowConfig:
 
     # Model pricing overrides
     pricing_overrides: dict[str, dict[str, float]] = field(default_factory=dict)
+
+    # XML prompt configuration - global defaults
+    xml_prompt_defaults: dict[str, Any] = field(default_factory=dict)
+
+    # Per-workflow XML prompt configuration overrides
+    workflow_xml_configs: dict[str, dict[str, Any]] = field(default_factory=dict)
 
     @classmethod
     def load(cls, config_path: str | Path | None = None) -> "WorkflowConfig":
@@ -141,6 +147,8 @@ class WorkflowConfig:
             workflow_providers=config_data.get("workflow_providers", {}),
             custom_models=config_data.get("custom_models", {}),
             pricing_overrides=config_data.get("pricing_overrides", {}),
+            xml_prompt_defaults=config_data.get("xml_prompt_defaults", {}),
+            workflow_xml_configs=config_data.get("workflow_xml_configs", {}),
         )
 
     @staticmethod
@@ -214,6 +222,40 @@ class WorkflowConfig:
         """Get custom pricing for a model, or None for default."""
         return self.pricing_overrides.get(model)
 
+    def get_xml_config_for_workflow(self, workflow_name: str) -> dict[str, Any]:
+        """
+        Get XML prompt configuration for a specific workflow.
+
+        Merges global defaults with workflow-specific overrides.
+
+        Args:
+            workflow_name: The workflow name (e.g., "security-audit").
+
+        Returns:
+            Dictionary with XML prompt configuration.
+        """
+        # Start with defaults
+        config = dict(self.xml_prompt_defaults)
+
+        # Apply workflow-specific overrides
+        if workflow_name in self.workflow_xml_configs:
+            config.update(self.workflow_xml_configs[workflow_name])
+
+        return config
+
+    def is_xml_enabled_for_workflow(self, workflow_name: str) -> bool:
+        """
+        Check if XML prompts are enabled for a workflow.
+
+        Args:
+            workflow_name: The workflow name.
+
+        Returns:
+            True if XML prompts are enabled.
+        """
+        config = self.get_xml_config_for_workflow(workflow_name)
+        return config.get("enabled", False)
+
     def save(self, path: str | Path) -> None:
         """Save configuration to file."""
         path = Path(path)
@@ -222,6 +264,8 @@ class WorkflowConfig:
             "workflow_providers": self.workflow_providers,
             "custom_models": self.custom_models,
             "pricing_overrides": self.pricing_overrides,
+            "xml_prompt_defaults": self.xml_prompt_defaults,
+            "workflow_xml_configs": self.workflow_xml_configs,
         }
 
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -369,6 +413,34 @@ pricing_overrides:
   my-custom-model:
     input: 1.00
     output: 5.00
+
+# =============================================================================
+# XML PROMPT CONFIGURATION
+# =============================================================================
+# Enable structured XML prompts for consistent LLM interactions.
+# XML prompts improve parsing reliability for dashboards and automation.
+
+# Global defaults for all workflows
+xml_prompt_defaults:
+  enabled: false          # Set to true to enable XML prompts globally
+  schema_version: "1.0"   # XML schema version
+  enforce_response_xml: false  # Require XML in responses
+  fallback_on_parse_error: true  # Fall back to raw text if XML fails
+
+# Per-workflow XML configuration (overrides defaults)
+workflow_xml_configs:
+  security-audit:
+    enabled: true
+    enforce_response_xml: true
+    template_name: "security-audit"
+  code-review:
+    enabled: true
+    enforce_response_xml: true
+    template_name: "code-review"
+  research:
+    enabled: true
+    enforce_response_xml: false  # More flexible for research
+    template_name: "research"
 
 # =============================================================================
 # ENVIRONMENT VARIABLE OVERRIDES

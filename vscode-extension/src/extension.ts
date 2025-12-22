@@ -25,6 +25,9 @@ let statusBarItem: vscode.StatusBarItem;
 // Health provider (used for diagnostics)
 let healthProvider: HealthTreeProvider;
 
+// Extension path (for accessing bundled scripts)
+let extensionPath: string;
+
 // Refresh timer
 let refreshTimer: NodeJS.Timeout | undefined;
 
@@ -39,6 +42,9 @@ let fileWatcher: vscode.FileSystemWatcher | undefined;
  */
 export function activate(context: vscode.ExtensionContext) {
     console.log('Empathy Framework extension activated');
+
+    // Store extension path for accessing bundled scripts
+    extensionPath = context.extensionPath;
 
     // Create status bar
     statusBarItem = vscode.window.createStatusBarItem(
@@ -227,7 +233,7 @@ async function cmdRunScan() {
             cancellable: false,
         },
         async () => {
-            // Run actual health checks via Python script
+            // Run actual health checks via bundled Python script
             const config = vscode.workspace.getConfiguration('empathy');
             const pythonPath = config.get<string>('pythonPath', 'python');
             const empathyDir = path.join(workspaceFolder, config.get<string>('empathyDir', '.empathy'));
@@ -237,40 +243,12 @@ async function cmdRunScan() {
                 fs.mkdirSync(empathyDir, { recursive: true });
             }
 
-            // Run health check script inline
-            const healthScript = `
-import json, subprocess, sys
-from datetime import datetime
-
-lint_errors = 0
-try:
-    r = subprocess.run([sys.executable, '-m', 'ruff', 'check', 'src/', '--statistics'], capture_output=True, text=True, cwd='${workspaceFolder.replace(/'/g, "\\'")}')
-    lint_errors = r.stdout.count('error') if r.returncode != 0 else 0
-except: pass
-
-type_errors = 0
-try:
-    r = subprocess.run([sys.executable, '-m', 'mypy', 'src/empathy_os', '--ignore-missing-imports'], capture_output=True, text=True, cwd='${workspaceFolder.replace(/'/g, "\\'")}')
-    type_errors = r.stdout.count('error:')
-except: pass
-
-test_count = 0
-try:
-    r = subprocess.run([sys.executable, '-m', 'pytest', 'tests/', '--co', '-q'], capture_output=True, text=True, cwd='${workspaceFolder.replace(/'/g, "\\'")}')
-    for line in r.stdout.split('\\n'):
-        if 'collected' in line:
-            for p in line.split():
-                if p.isdigit(): test_count = int(p); break
-except: pass
-
-score = max(0, min(100, int(100 - lint_errors*2 - type_errors*0.5)))
-health = {'score': score, 'lint': {'errors': lint_errors, 'warnings': 0}, 'types': {'errors': type_errors}, 'security': {'high': 0, 'medium': 0, 'low': 0}, 'tests': {'passed': test_count, 'failed': 0, 'total': test_count, 'coverage': 15}, 'tech_debt': {'total': 0, 'todos': 0, 'fixmes': 0, 'hacks': 0}, 'timestamp': datetime.now().isoformat()}
-with open('${empathyDir.replace(/'/g, "\\'")}/health.json', 'w') as f: json.dump(health, f)
-print('OK')
-`;
+            // Path to bundled health scan script (safe - no shell interpolation)
+            const healthScriptPath = path.join(extensionPath, 'scripts', 'health_scan.py');
 
             return new Promise<void>((resolve) => {
-                cp.exec(`${pythonPath} -c "${healthScript.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`,
+                // Use execFile with array arguments to prevent command injection
+                cp.execFile(pythonPath, [healthScriptPath, workspaceFolder, empathyDir],
                     { cwd: workspaceFolder, timeout: 60000 },
                     (error) => {
                         healthProvider.refresh();
@@ -486,20 +464,22 @@ async function runEmpathyCommand(
         return;
     }
 
-    const fullCommand = `${pythonPath} -m empathy_os.cli ${command}`;
+    // Build arguments as array for safe execution (no shell interpolation)
+    const args = ['-m', 'empathy_os.cli', ...command.split(/\s+/)];
 
     if (options.background) {
-        cp.exec(fullCommand, { cwd: workspaceFolder });
+        // Use execFile with array arguments to prevent command injection
+        cp.execFile(pythonPath, args, { cwd: workspaceFolder });
         return;
     }
 
-    // Show in terminal
+    // Show in terminal (terminal.sendText is safe - no shell injection risk)
     const terminal = vscode.window.createTerminal({
         name: `Empathy: ${title}`,
         cwd: workspaceFolder,
     });
     terminal.show();
-    terminal.sendText(fullCommand);
+    terminal.sendText(`${pythonPath} -m empathy_os.cli ${command}`);
 }
 
 async function runEmpathyCommandSilent(command: string): Promise<string> {
@@ -513,8 +493,11 @@ async function runEmpathyCommandSilent(command: string): Promise<string> {
             return;
         }
 
-        const fullCommand = `${pythonPath} -m empathy_os.cli ${command}`;
-        cp.exec(fullCommand, { cwd: workspaceFolder }, (error, stdout, stderr) => {
+        // Build arguments as array for safe execution (no shell interpolation)
+        const args = ['-m', 'empathy_os.cli', ...command.split(/\s+/)];
+
+        // Use execFile with array arguments to prevent command injection
+        cp.execFile(pythonPath, args, { cwd: workspaceFolder }, (error, stdout, stderr) => {
             if (error) {
                 reject(error);
             } else {

@@ -27,6 +27,8 @@ Activity bar icon opens three views:
 - **Patterns**: Browse learned bug patterns
 - **Health**: Code health status
 - **Costs**: API usage and savings
+	- The **By tier (7 days)** breakdown is documented in `../docs/dashboard-costs-by-tier.md`.
+	- The **Cost Simulator (beta)** card lets you experiment with different provider presets and tier mixes to estimate weekly costs and savings.
 
 ## Requirements
 

@@ -410,6 +410,8 @@ class SecurityAuditWorkflow(BaseWorkflow):
 
         Creates actionable remediation steps prioritized by
         severity and grouped by OWASP category.
+
+        Supports XML-enhanced prompts when enabled in workflow config.
         """
         assessment = input_data.get("assessment", {})
         critical = assessment.get("critical_findings", [])
@@ -427,7 +429,46 @@ class SecurityAuditWorkflow(BaseWorkflow):
                 f"HIGH: {f.get('type')} in {f.get('file')}:{f.get('line')} - {f.get('owasp')}"
             )
 
-        system = """You are a security expert specializing in application security and OWASP vulnerabilities.
+        # Build input payload for prompt
+        input_payload = f"""Target: {target or 'codebase'}
+
+Findings:
+{chr(10).join(findings_summary) if findings_summary else 'No critical or high findings'}
+
+Risk Score: {assessment.get('risk_score', 0)}/100
+Risk Level: {assessment.get('risk_level', 'unknown')}
+
+Severity Breakdown: {json.dumps(assessment.get('severity_breakdown', {}), indent=2)}"""
+
+        # Check if XML prompts are enabled
+        if self._is_xml_enabled():
+            # Use XML-enhanced prompt
+            user_message = self._render_xml_prompt(
+                role="application security engineer",
+                goal="Generate a comprehensive remediation plan for security vulnerabilities",
+                instructions=[
+                    "Explain each vulnerability and its potential impact",
+                    "Provide specific remediation steps with code examples",
+                    "Suggest preventive measures to avoid similar issues",
+                    "Reference relevant OWASP guidelines",
+                    "Prioritize by severity (critical first, then high)",
+                ],
+                constraints=[
+                    "Be specific and actionable",
+                    "Include code examples where helpful",
+                    "Group fixes by severity",
+                ],
+                input_type="security_findings",
+                input_payload=input_payload,
+                extra={
+                    "risk_score": assessment.get("risk_score", 0),
+                    "risk_level": assessment.get("risk_level", "unknown"),
+                },
+            )
+            system = None  # XML prompt includes all context
+        else:
+            # Use legacy plain text prompts
+            system = """You are a security expert specializing in application security and OWASP vulnerabilities.
 Generate a comprehensive remediation plan for the security findings.
 
 For each finding:
@@ -439,35 +480,39 @@ For each finding:
 Prioritize by severity (critical first, then high).
 Be specific and actionable."""
 
-        user_message = f"""Generate a remediation plan for these security findings:
+            user_message = f"""Generate a remediation plan for these security findings:
 
-Target: {target or 'codebase'}
-
-Findings:
-{chr(10).join(findings_summary) if findings_summary else 'No critical or high findings'}
-
-Risk Score: {assessment.get('risk_score', 0)}/100
-Risk Level: {assessment.get('risk_level', 'unknown')}
-
-Severity Breakdown: {json.dumps(assessment.get('severity_breakdown', {}), indent=2)}
+{input_payload}
 
 Provide a detailed remediation plan with specific fixes."""
 
         response, input_tokens, output_tokens = await self._call_llm(
-            tier, system, user_message, max_tokens=3000
+            tier, system or "", user_message, max_tokens=3000
         )
 
-        return (
-            {
-                "remediation_plan": response,
-                "remediation_count": len(critical) + len(high),
-                "risk_score": assessment.get("risk_score", 0),
-                "risk_level": assessment.get("risk_level", "unknown"),
-                "model_tier_used": tier.value,
-            },
-            input_tokens,
-            output_tokens,
-        )
+        # Parse XML response if enforcement is enabled
+        parsed_data = self._parse_xml_response(response)
+
+        result = {
+            "remediation_plan": response,
+            "remediation_count": len(critical) + len(high),
+            "risk_score": assessment.get("risk_score", 0),
+            "risk_level": assessment.get("risk_level", "unknown"),
+            "model_tier_used": tier.value,
+        }
+
+        # Merge parsed XML data if available
+        if parsed_data.get("xml_parsed"):
+            result.update(
+                {
+                    "xml_parsed": True,
+                    "summary": parsed_data.get("summary"),
+                    "findings": parsed_data.get("findings", []),
+                    "checklist": parsed_data.get("checklist", []),
+                }
+            )
+
+        return (result, input_tokens, output_tokens)
 
     def _get_remediation_action(self, finding: dict) -> str:
         """Generate specific remediation action for a finding."""
@@ -492,6 +537,7 @@ def main():
 
         print("\nSecurity Audit Results")
         print("=" * 50)
+        print(f"Provider: {result.provider}")
         print(f"Success: {result.success}")
 
         assessment = result.final_output.get("assessment", {})

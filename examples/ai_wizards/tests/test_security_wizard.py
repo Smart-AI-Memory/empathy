@@ -1,6 +1,22 @@
 """
 Tests for Security Analysis Wizard
 
+SECURITY NOTICE: This file contains INTENTIONALLY VULNERABLE code patterns
+for testing the Security Analysis Wizard's detection capabilities.
+These patterns include:
+- SQL injection vulnerabilities
+- Command injection (os.system, subprocess.call with shell=True)
+- Weak cryptography (MD5, SHA1)
+- Hardcoded credentials
+- XSS patterns
+
+DO NOT use these code patterns in production. They exist solely for:
+1. Validating that the Security Wizard correctly detects vulnerabilities
+2. Providing regression tests for security pattern detection
+3. Educational purposes to demonstrate security anti-patterns
+
+If a security scanner flags this file, it is working correctly!
+
 Copyright 2025 Deep Study AI, LLC
 Licensed under Fair Source 0.9
 """

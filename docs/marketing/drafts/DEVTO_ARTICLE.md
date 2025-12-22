@@ -1,8 +1,8 @@
 ---
-title: Give Claude Persistent Memory in 10 Lines of Python
+title: Give Claude Persistent Memory in 10 Lines of Python (Now with 80% Cost Savings)
 published: false
-description: How to make Claude remember your preferences across sessions using the Empathy Framework
-tags: python, ai, claude, anthropic
+description: How to make Claude remember your preferences across sessions using the Empathy Framework v3.0.0
+tags: python, ai, claude, anthropic, openai
 cover_image:
 ---
 
@@ -10,7 +10,7 @@ cover_image:
 
 Every conversation with Claude starts from scratch. Tell it you prefer concise code examples, and next session? It's forgotten.
 
-Here's how to fix that—plus save 80% on API costs.
+Here's how to fix that—plus save 80% on API costs with v3.0.0's multi-provider system.
 
 ## The Problem
 
@@ -28,7 +28,7 @@ Claude's API is stateless. Each request is independent. For simple Q&A, that's f
 from empathy_llm_toolkit import EmpathyLLM
 
 llm = EmpathyLLM(
-    provider="anthropic",
+    provider="anthropic",  # or "openai", "ollama", "hybrid"
     api_key="your-key",
     memory_enabled=True
 )
@@ -41,6 +41,27 @@ response = await llm.interact(
 ```
 
 That's it. Next time this user connects—even days later—Claude remembers.
+
+## New in v3.0.0: Multi-Provider Support
+
+Choose your provider—or mix them:
+
+```bash
+# Check available providers (auto-detects API keys)
+python -m empathy_os.models.cli provider status
+
+# Switch providers
+python -m empathy_os.models.cli provider set openai
+
+# Enable hybrid mode (best model from each provider)
+python -m empathy_os.models.cli provider set hybrid
+```
+
+Supported providers:
+- **Anthropic** — Claude (Haiku/Sonnet/Opus)
+- **OpenAI** — GPT (GPT-4o-mini/GPT-4o/o1)
+- **Ollama** — Local models (Llama 3.2)
+- **Hybrid** — Best of each provider per tier
 
 ## Real-World Example: Debugging Wizard
 
@@ -113,23 +134,25 @@ On a real codebase (364 debt items, 81 security findings):
 - **Security noise reduction**: 84% (81 → 13 findings after learning)
 - **Tech debt tracking**: Trajectory predicts 2x growth in 170 days
 
-## NEW in v2.3: Smart Model Routing (80% Cost Savings)
+## v3.0.0: Smart Model Routing (80% Cost Savings)
 
-Why pay Opus prices for simple tasks? The new ModelRouter automatically picks the right model:
+Why pay Opus prices for simple tasks? The ModelRouter automatically picks the right model across any provider.
+
+*API users save money. Subscription users (Max/Pro) preserve their premium model quota for complex tasks.*
 
 ```python
 llm = EmpathyLLM(
-    provider="anthropic",
-    enable_model_routing=True  # NEW!
+    provider="anthropic",  # or "openai", "ollama", "hybrid"
+    enable_model_routing=True
 )
 
-# Summarization → Haiku ($0.25/M tokens)
+# Summarization → Haiku/GPT-4o-mini ($0.25/M tokens)
 await llm.interact(user_id="dev", user_input="Summarize this", task_type="summarize")
 
-# Code generation → Sonnet ($3/M tokens)
+# Code generation → Sonnet/GPT-4o ($3/M tokens)
 await llm.interact(user_id="dev", user_input="Write a function", task_type="generate_code")
 
-# Architecture → Opus ($15/M tokens)
+# Architecture → Opus/o1 ($15/M tokens)
 await llm.interact(user_id="dev", user_input="Design the system", task_type="architectural_decision")
 ```
 
@@ -138,6 +161,25 @@ await llm.interact(user_id="dev", user_input="Design the system", task_type="arc
 - With routing (tiered): $0.83/complex task
 - **Savings: 80%**
 
+## v3.0.0: VSCode Dashboard
+
+The biggest addition in v3.0.0 is a complete VSCode Dashboard with **10 integrated workflows**:
+
+1. **Research Synthesis** — Deep dive research with citations
+2. **Code Review** — Comprehensive PR analysis
+3. **Debug Assistant** — Smart error diagnosis
+4. **Refactor Advisor** — Code improvement suggestions
+5. **Test Generator** — Automated test creation
+6. **Documentation Writer** — Auto-generate docs
+7. **Security Scanner** — Vulnerability detection
+8. **Performance Analyzer** — Bottleneck identification
+9. **Explain Code** — Code explanation for onboarding
+10. **Morning Briefing** — Daily project status report
+
+Plus **6 Quick Action commands** for common tasks.
+
+All with real-time cost tracking showing your savings.
+
 ## Get Started
 
 ```bash
@@ -145,6 +187,7 @@ pip install empathy-framework
 ```
 
 **Resources:**
+- **PyPI:** 3,400+ monthly downloads
 - [GitHub](https://github.com/Smart-AI-Memory/empathy-framework)
 - [Documentation](https://www.smartaimemory.com/docs)
 - [Live Demo](https://www.smartaimemory.com/tools/debug-wizard)

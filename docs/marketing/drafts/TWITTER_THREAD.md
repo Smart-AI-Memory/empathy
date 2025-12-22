@@ -4,10 +4,10 @@ Copy each numbered item as a separate tweet.
 
 ---
 
-**1/8**
+**1/9**
 What if Claude remembered your preferences across sessions—and cost 80% less?
 
-Just shipped empathy-framework v2.3 with smart model routing.
+Just shipped empathy-framework v3.0.0 with multi-provider support + VSCode Dashboard.
 
 pip install empathy-framework
 
@@ -15,7 +15,7 @@ pip install empathy-framework
 
 ---
 
-**2/8**
+**2/9**
 The problem: Every Claude conversation starts fresh.
 
 Tell it you prefer concise code? Forgotten next session.
@@ -24,7 +24,7 @@ And you're paying Opus prices for simple tasks.
 
 ---
 
-**3/8**
+**3/9**
 The fix - persistent memory:
 
 ```python
@@ -45,46 +45,70 @@ That preference now survives.
 
 ---
 
-**4/8**
-NEW in v2.3 - ModelRouter:
+**4/9**
+NEW in v3.0.0 - Multi-Provider System:
 
-```python
-llm = EmpathyLLM(
-    provider="anthropic",
-    enable_model_routing=True
-)
+→ Anthropic (Claude)
+→ OpenAI (GPT-4o)
+→ Ollama (local models)
+→ Hybrid (best of each)
 
-# Summarize → Haiku ($0.25/M)
-# Code gen → Sonnet ($3/M)
-# Architecture → Opus ($15/M)
+Auto-detects API keys. No config needed.
+
+```bash
+python -m empathy_os.models.cli provider status
 ```
-
-Real savings: $4.05 → $0.83 per task (80%)
 
 ---
 
-**5/8**
-It tracks:
+**5/9**
+Smart routing picks the right model:
+
+```python
+llm = EmpathyLLM(
+    provider="hybrid",
+    enable_model_routing=True
+)
+
+# Summarize → Haiku/GPT-4o-mini
+# Code gen → Sonnet/GPT-4o
+# Architecture → Opus/o1
+```
+
+Savings: 80% on API costs (or preserve quota on Max/Pro)
+
+---
+
+**6/9**
+NEW: VSCode Dashboard with 10 workflows:
+
+1. Research Synthesis
+2. Code Review
+3. Debug Assistant
+4. Refactor Advisor
+5. Test Generator
+6. Documentation Writer
+7. Security Scanner
+8. Performance Analyzer
+9. Explain Code
+10. Morning Briefing
+
++ 6 Quick Action commands
+
+---
+
+**7/9**
+Memory tracks:
 → User preferences
 → Project context
 → Conversation patterns
+→ Bug fix history
 
 Each user gets isolated memory. Privacy controls built in.
 
 ---
 
-**6/8**
-Five empathy levels:
-
-1. Reactive (standard)
-2. Informed (uses preferences)
-3. Predictive (anticipates needs)
-4. Anticipatory (proactive suggestions)
-5. Collaborative (full partnership)
-
----
-
-**7/8**
+**8/9**
 Now on PyPI:
 
 pip install empathy-framework
@@ -95,46 +119,63 @@ Docs: smartaimemory.com/docs
 
 ---
 
-**8/8**
-What would you build with an AI that remembers you—and costs 80% less?
+**9/9**
+What would you build with an AI that:
+→ Remembers you across sessions
+→ Works with Claude, GPT, or local models
+→ Saves 80% on API (or preserves Max/Pro quota)
+
+3,400+ monthly PyPI downloads
+
+Drop a comment 👇
 
 ---
 
-# Alt: Shorter 4-tweet version
+# Alt: Shorter 5-tweet version
 
-**1/4**
+**1/5**
 What if Claude remembered you across sessions—and cost 80% less?
 
-Just shipped empathy-framework v2.3 with smart model routing.
+Just shipped empathy-framework v3.0.0 with multi-provider support.
 
 pip install empathy-framework
 
 ---
 
-**2/4**
+**2/5**
 ```python
 llm = EmpathyLLM(
-    provider="anthropic",
+    provider="hybrid",  # Anthropic, OpenAI, Ollama
     memory_enabled=True,
-    enable_model_routing=True  # NEW!
+    enable_model_routing=True
 )
 ```
 
-Memory persists. Costs drop 80%.
+Memory persists. API costs drop 80%.
 
 ---
 
-**3/4**
-Features:
-→ Cross-session persistence
-→ Per-user isolation
-→ Privacy controls
-→ Five "empathy levels"
-→ NEW: Smart model routing (Haiku/Sonnet/Opus auto-selection)
+**3/5**
+v3.0.0 highlights:
+→ Multi-provider: Claude, GPT, Ollama, Hybrid
+→ Auto-detects API keys
+→ VSCode Dashboard: 10 workflows + 6 quick actions
+→ Smart tier routing
+→ Real-time cost tracking
 
 ---
 
-**4/4**
+**4/5**
+VSCode Dashboard workflows:
+Research • Code Review • Debug • Refactor • Test Gen • Docs • Security • Performance • Explain Code • Morning Briefing
+
+All with cost savings visibility.
+
+---
+
+**5/5**
 GitHub: github.com/Smart-AI-Memory/empathy-framework
+
+3,400+ monthly PyPI downloads
 
 What would you build with an AI that remembers—and costs 80% less?

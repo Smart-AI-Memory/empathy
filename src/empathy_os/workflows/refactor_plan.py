@@ -391,6 +391,7 @@ def main():
 
         print("\nRefactor Plan Results")
         print("=" * 50)
+        print(f"Provider: {result.provider}")
         print(f"Success: {result.success}")
 
         summary = result.final_output.get("summary", {})

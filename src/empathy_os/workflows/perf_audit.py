@@ -429,6 +429,7 @@ def main():
 
         print("\nPerformance Audit Results")
         print("=" * 50)
+        print(f"Provider: {result.provider}")
         print(f"Success: {result.success}")
 
         output = result.final_output

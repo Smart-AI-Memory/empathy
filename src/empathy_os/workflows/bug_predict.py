@@ -429,6 +429,7 @@ def main():
 
         print("\nBug Prediction Results")
         print("=" * 50)
+        print(f"Provider: {result.provider}")
         print(f"Success: {result.success}")
         print(f"Risk Score: {result.final_output.get('overall_risk_score', 0)}")
         print(f"Recommendations: {result.final_output.get('recommendation_count', 0)}")

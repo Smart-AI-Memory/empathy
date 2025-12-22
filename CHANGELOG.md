@@ -5,6 +5,73 @@ All notable changes to the Empathy Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.1] - 2025-12-22
+
+### Added
+
+**XML-Enhanced Prompts System**
+- Structured XML prompt templates for consistent LLM interactions
+- Built-in templates: `security-audit`, `code-review`, `research`, `bug-analysis`
+- `XmlPromptTemplate` and `PlainTextPromptTemplate` classes for flexible rendering
+- `XmlResponseParser` with automatic XML extraction from markdown code blocks
+- `PromptContext` dataclass with factory methods for common workflows
+- Per-workflow XML configuration via `.empathy/workflows.yaml`
+- Fallback to plain text when XML parsing fails (configurable)
+
+**VSCode Dashboard Enhancements**
+- 10 integrated workflows: Research, Code Review, Debug, Refactor, Test Generation, Documentation, Security Scan, Performance, Explain Code, Morning Briefing
+- Workflow input history persistence across sessions
+- File/folder picker integration for workflow inputs
+- Cost fetching from telemetry CLI with fallback
+- Error banner for improved debugging visibility
+
+### Fixed
+
+**Security Vulnerabilities (HIGH Priority)**
+- Fixed command injection in VSCode extension `EmpathyDashboardPanel.ts`
+- Fixed command injection in `extension.ts` runEmpathyCommand functions
+- Replaced vulnerable `cp.exec()` with safe `cp.execFile()` using array arguments
+- Created `health_scan.py` helper script to eliminate inline code execution
+- Removed insecure `demo_key` fallback in `wizard_api.py`
+
+**Security Hardening**
+- Updated `.gitignore` to cover nested `.env` files (`**/.env`, `**/tests/.env`)
+- Added security notice documentation to test fixtures with intentional vulnerabilities
+
+### Changed
+
+- Workflows now show provider name in output
+- Workflows auto-load `.env` files for API key configuration
+
+---
+
+## [3.0.0] - 2025-12-22
+
+### Added
+
+**Multi-Model Provider System**
+- Provider configuration: Anthropic, OpenAI, Ollama, Hybrid
+- Auto-detection of API keys from environment and `.env` files
+- CLI commands: `python -m empathy_os.models.cli provider`
+- Single, hybrid, and custom provider modes
+
+**Smart Tier Routing (80-96% Cost Savings)**
+- Cheap tier: GPT-4o-mini/Haiku for summarization
+- Capable tier: GPT-4o/Sonnet for bug fixing, code review
+- Premium tier: o1/Opus for architecture decisions
+
+**VSCode Dashboard - Complete Overhaul**
+- 6 Quick Action commands for common tasks
+- Real-time health score, costs, and workflow monitoring
+
+### Changed
+
+- README refresh with "Become a Power User" 5-level progression
+- Comprehensive CLI reference
+- Updated comparison table
+
+---
+
 ## [2.5.0] - 2025-12-20
 
 ### Added

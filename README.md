@@ -12,11 +12,13 @@
 pip install empathy-framework[full]
 ```
 
-## What's New in v3.0.0
+## What's New in v3.0.1
 
+- **XML-Enhanced Prompts** — Structured prompts for consistent, parseable LLM responses
 - **Multi-Model Provider System** — Choose Anthropic, OpenAI, Ollama, or Hybrid mode
 - **80-96% Cost Savings** — Smart tier routing: cheap models detect, best models decide
-- **VSCode Dashboard** — Real-time health, costs, and workflow monitoring
+- **VSCode Dashboard** — 10 integrated workflows with input history persistence
+- **Security Hardening** — Fixed command injection vulnerabilities in VSCode extension
 - **Provider Auto-Detection** — Automatically configures based on your API keys
 
 ---
@@ -108,6 +110,7 @@ Install the Empathy VSCode extension for:
 - **Real-time Dashboard** — Health score, costs, patterns
 - **One-Click Workflows** — Research, code review, debugging
 - **Visual Cost Tracking** — See savings in real-time
+    - See also: `docs/dashboard-costs-by-tier.md` for interpreting the **By tier (7 days)** cost breakdown.
 
 ### Level 5: Custom Agents
 ```python
@@ -163,6 +166,43 @@ empathy-inspect .                     # Run full inspection
 empathy-inspect . --format sarif      # GitHub Actions format
 empathy-inspect . --fix               # Auto-fix safe issues
 empathy-inspect . --staged            # Only staged changes
+```
+
+---
+
+## XML-Enhanced Prompts
+
+Enable structured XML prompts for consistent, parseable LLM responses:
+
+```yaml
+# .empathy/workflows.yaml
+xml_prompt_defaults:
+  enabled: false  # Set true to enable globally
+
+workflow_xml_configs:
+  security-audit:
+    enabled: true
+    enforce_response_xml: true
+    template_name: "security-audit"
+  code-review:
+    enabled: true
+    template_name: "code-review"
+```
+
+Built-in templates: `security-audit`, `code-review`, `research`, `bug-analysis`
+
+```python
+from empathy_os.prompts import get_template, XmlResponseParser, PromptContext
+
+# Use a built-in template
+template = get_template("security-audit")
+context = PromptContext.for_security_audit(code="def foo(): pass")
+prompt = template.render(context)
+
+# Parse XML responses
+parser = XmlResponseParser(fallback_on_error=True)
+result = parser.parse(llm_response)
+print(result.summary, result.findings, result.checklist)
 ```
 
 ---
