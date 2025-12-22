@@ -26,7 +26,18 @@ from empathy_os.logging_config import get_logger
 from empathy_os.pattern_library import PatternLibrary
 from empathy_os.persistence import MetricsCollector, PatternPersistence, StateManager
 from empathy_os.templates import cmd_new
-from empathy_os.workflows import cmd_fix_all, cmd_learn, cmd_morning, cmd_ship
+from empathy_os.workflows import (
+    WorkflowConfig,
+    cmd_fix_all,
+    cmd_learn,
+    cmd_morning,
+    cmd_ship,
+    create_example_config,
+    get_workflow,
+)
+from empathy_os.workflows import (
+    list_workflows as get_workflow_list,
+)
 
 logger = get_logger(__name__)
 
@@ -70,6 +81,7 @@ CHEATSHEET = {
         ("empathy costs", "View API cost tracking"),
         ("empathy dashboard", "Launch visual dashboard"),
         ("empathy frameworks", "List agent frameworks"),
+        ("empathy workflow list", "List multi-model workflows"),
         ("empathy new <template>", "Create project from template"),
     ],
 }
@@ -1617,6 +1629,235 @@ def _generate_claude_rule(category: str, patterns: list) -> str:
     return "\n".join(lines)
 
 
+def _extract_workflow_content(final_output):
+    """
+    Extract readable content from workflow final_output.
+
+    Workflows return their results in various formats - this extracts
+    the actual content users want to see.
+    """
+    if final_output is None:
+        return None
+
+    # If it's already a string, return it
+    if isinstance(final_output, str):
+        return final_output
+
+    # If it's a dict, try to extract meaningful content
+    if isinstance(final_output, dict):
+        # Common keys that contain the main output
+        content_keys = [
+            "answer",
+            "synthesis",
+            "result",
+            "output",
+            "content",
+            "report",
+            "summary",
+            "analysis",
+            "review",
+            "documentation",
+            "response",
+            "recommendations",
+            "findings",
+            "tests",
+            "plan",
+        ]
+        for key in content_keys:
+            if key in final_output and final_output[key]:
+                val = final_output[key]
+                if isinstance(val, str):
+                    return val
+                elif isinstance(val, dict):
+                    # Recursively extract
+                    return _extract_workflow_content(val)
+
+        # If no common key found, try to format the dict nicely
+        # Look for any string value that's substantial
+        for _key, val in final_output.items():
+            if isinstance(val, str) and len(val) > 100:
+                return val
+
+        # Last resort: return a formatted version
+        import json
+
+        return json.dumps(final_output, indent=2)
+
+    # For lists or other types, convert to string
+    return str(final_output)
+
+
+def cmd_workflow(args):
+    """Multi-model workflow management and execution."""
+    import asyncio
+    import json as json_mod
+
+    action = args.action
+
+    if action == "list":
+        # List available workflows
+        workflows = get_workflow_list()
+
+        if args.json:
+            print(json_mod.dumps(workflows, indent=2))
+        else:
+            print("\n" + "=" * 60)
+            print("  MULTI-MODEL WORKFLOWS")
+            print("=" * 60 + "\n")
+
+            for wf in workflows:
+                print(f"  {wf['name']:15} {wf['description']}")
+                stages = " → ".join(f"{s}({wf['tier_map'][s]})" for s in wf["stages"])
+                print(f"    Stages: {stages}")
+                print()
+
+            print("-" * 60)
+            print("  Use: empathy workflow describe <name>")
+            print("  Use: empathy workflow run <name> [--input JSON]")
+            print("=" * 60 + "\n")
+
+    elif action == "describe":
+        # Describe a specific workflow
+        name = args.name
+        if not name:
+            print("Error: workflow name required")
+            print("Usage: empathy workflow describe <name>")
+            return 1
+
+        try:
+            workflow_cls = get_workflow(name)
+            provider = getattr(args, "provider", None)
+            workflow = workflow_cls(provider=provider)
+
+            # Get actual provider from workflow (may come from config)
+            actual_provider = getattr(workflow, "_provider_str", provider or "anthropic")
+
+            if args.json:
+                info = {
+                    "name": workflow.name,
+                    "description": workflow.description,
+                    "provider": actual_provider,
+                    "stages": workflow.stages,
+                    "tier_map": {k: v.value for k, v in workflow.tier_map.items()},
+                    "models": {
+                        stage: workflow.get_model_for_tier(workflow.tier_map[stage])
+                        for stage in workflow.stages
+                    },
+                }
+                print(json_mod.dumps(info, indent=2))
+            else:
+                print(f"Provider: {actual_provider}")
+                print(workflow.describe())
+
+        except KeyError as e:
+            print(f"Error: {e}")
+            return 1
+
+    elif action == "run":
+        # Run a workflow
+        name = args.name
+        if not name:
+            print("Error: workflow name required")
+            print('Usage: empathy workflow run <name> --input \'{"key": "value"}\'')
+            return 1
+
+        try:
+            workflow_cls = get_workflow(name)
+
+            # Get provider (default to anthropic)
+            provider = getattr(args, "provider", "anthropic")
+            workflow = workflow_cls(provider=provider)
+
+            # Parse input
+            input_data = {}
+            if args.input:
+                input_data = json_mod.loads(args.input)
+
+            print(f"\n Running workflow: {name} (provider: {provider})")
+            print("=" * 50)
+
+            # Execute workflow
+            result = asyncio.run(workflow.execute(**input_data))
+
+            # Extract the actual content from final_output
+            output_content = _extract_workflow_content(result.final_output)
+
+            if args.json:
+                # JSON output includes both content and metadata
+                output = {
+                    "success": result.success,
+                    "output": output_content,
+                    "cost": result.cost_report.total_cost,
+                    "savings": result.cost_report.savings,
+                    "duration_ms": result.total_duration_ms,
+                    "error": result.error,
+                }
+                print(json_mod.dumps(output, indent=2))
+            else:
+                # Display the actual results - this is what users want to see
+                if result.success:
+                    if output_content:
+                        print(f"\n{output_content}\n")
+                    else:
+                        print("\n✓ Workflow completed successfully.\n")
+
+                    # Brief footer with timing (detailed costs available via 'empathy costs')
+                    print("-" * 50)
+                    print(
+                        f"Completed in {result.total_duration_ms}ms | Cost: ${result.cost_report.total_cost:.4f} (saved ${result.cost_report.savings:.4f})"
+                    )
+                else:
+                    print(f"\n✗ Workflow failed: {result.error}\n")
+
+        except KeyError as e:
+            print(f"Error: {e}")
+            return 1
+        except json_mod.JSONDecodeError as e:
+            print(f"Error parsing input JSON: {e}")
+            return 1
+
+    elif action == "config":
+        # Generate or show workflow configuration
+        from pathlib import Path
+
+        config_path = Path(".empathy/workflows.yaml")
+
+        if config_path.exists() and not getattr(args, "force", False):
+            print(f"Config already exists: {config_path}")
+            print("Use --force to overwrite")
+            print("\nCurrent configuration:")
+            print("-" * 40)
+            config = WorkflowConfig.load()
+            print(f"  Default provider: {config.default_provider}")
+            if config.workflow_providers:
+                print("  Workflow providers:")
+                for wf, prov in config.workflow_providers.items():
+                    print(f"    {wf}: {prov}")
+            if config.custom_models:
+                print("  Custom models configured")
+            return 0
+
+        # Create config directory and file
+        config_path.parent.mkdir(parents=True, exist_ok=True)
+        config_path.write_text(create_example_config())
+        print(f"✓ Created workflow config: {config_path}")
+        print("\nEdit this file to customize:")
+        print("  - Default provider (anthropic, openai, ollama)")
+        print("  - Per-workflow provider overrides")
+        print("  - Custom model mappings")
+        print("  - Model pricing")
+        print("\nOr use environment variables:")
+        print("  EMPATHY_WORKFLOW_PROVIDER=openai")
+        print("  EMPATHY_MODEL_PREMIUM=gpt-5.2")
+
+    else:
+        print(f"Unknown action: {action}")
+        print("Available: list, describe, run, config")
+        return 1
+
+    return 0
+
+
 def cmd_frameworks(args):
     """List and manage agent frameworks."""
     import json as json_mod
@@ -2027,6 +2268,41 @@ def main():
     )
     parser_frameworks.add_argument("--json", action="store_true", help="Output as JSON")
     parser_frameworks.set_defaults(func=cmd_frameworks)
+
+    # Workflow command (multi-model workflow management)
+    parser_workflow = subparsers.add_parser(
+        "workflow",
+        help="Multi-model workflows for cost-optimized task pipelines",
+    )
+    parser_workflow.add_argument(
+        "action",
+        choices=["list", "describe", "run", "config"],
+        help="Action: list, describe, run, or config",
+    )
+    parser_workflow.add_argument(
+        "name",
+        nargs="?",
+        help="Workflow name (for describe/run)",
+    )
+    parser_workflow.add_argument(
+        "--input",
+        "-i",
+        help="JSON input data for workflow execution",
+    )
+    parser_workflow.add_argument(
+        "--provider",
+        "-p",
+        choices=["anthropic", "openai", "ollama", "hybrid"],
+        default=None,  # None means use config
+        help="Model provider: anthropic, openai, ollama, or hybrid (mix of best models)",
+    )
+    parser_workflow.add_argument(
+        "--force",
+        action="store_true",
+        help="Force overwrite existing config file",
+    )
+    parser_workflow.add_argument("--json", action="store_true", help="Output as JSON")
+    parser_workflow.set_defaults(func=cmd_workflow)
 
     # Sync-claude command (sync patterns to Claude Code)
     parser_sync_claude = subparsers.add_parser(

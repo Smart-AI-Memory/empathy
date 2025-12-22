@@ -118,6 +118,18 @@
         "command": "empathy.ignoreIssue",
         "title": "Ignore Issue",
         "icon": "$(eye-closed)"
+      },
+      {
+        "command": "empathy.openPowerPanel",
+        "title": "Empathy: Power Panel",
+        "icon": "$(zap)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "empathy.openPowerPanel",
+        "key": "ctrl+shift+e p",
+        "mac": "cmd+shift+e p"
       }
     ],
     "viewsContainers": {
@@ -132,16 +144,9 @@
     "views": {
       "empathy-explorer": [
         {
-          "id": "empathy-patterns",
-          "name": "Patterns"
-        },
-        {
-          "id": "empathy-health",
-          "name": "Health"
-        },
-        {
-          "id": "empathy-costs",
-          "name": "Costs"
+          "type": "webview",
+          "id": "empathy-dashboard",
+          "name": "Dashboard"
         }
       ]
     },
@@ -168,50 +173,8 @@
           "when": "false"
         }
       ],
-      "view/title": [
-        {
-          "command": "empathy.refreshHealth",
-          "when": "view == empathy-health",
-          "group": "navigation"
-        },
-        {
-          "command": "empathy.runScan",
-          "when": "view == empathy-health",
-          "group": "navigation"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "empathy.fixLint",
-          "when": "view == empathy-health && viewItem == lint",
-          "group": "inline"
-        },
-        {
-          "command": "empathy.fixFormat",
-          "when": "view == empathy-health && viewItem == format",
-          "group": "inline"
-        },
-        {
-          "command": "empathy.runTests",
-          "when": "view == empathy-health && viewItem == tests",
-          "group": "inline"
-        },
-        {
-          "command": "empathy.viewDetails",
-          "when": "view == empathy-health",
-          "group": "1_actions"
-        },
-        {
-          "command": "empathy.openFile",
-          "when": "view == empathy-health && viewItem =~ /file|issue/",
-          "group": "1_actions"
-        },
-        {
-          "command": "empathy.ignoreIssue",
-          "when": "view == empathy-health && viewItem =~ /issue/",
-          "group": "2_manage"
-        }
-      ]
+      "view/title": [],
+      "view/item/context": []
     },
     "configuration": {
       "title": "Empathy Framework",
