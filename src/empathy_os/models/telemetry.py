@@ -254,7 +254,7 @@ class TelemetryStore:
         Returns:
             List of LLMCallRecord
         """
-        records = []
+        records: list[LLMCallRecord] = []
         if not self.calls_file.exists():
             return records
 
@@ -301,7 +301,7 @@ class TelemetryStore:
         Returns:
             List of WorkflowRunRecord
         """
-        records = []
+        records: list[WorkflowRunRecord] = []
         if not self.workflows_file.exists():
             return records
 

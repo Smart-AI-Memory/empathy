@@ -103,6 +103,8 @@ class SecurityAuditWorkflow(BaseWorkflow):
         self,
         patterns_dir: str = "./patterns",
         skip_remediate_if_clean: bool = True,
+        use_crew_for_remediation: bool = False,
+        crew_config: dict | None = None,
         **kwargs: Any,
     ):
         """
@@ -111,11 +113,15 @@ class SecurityAuditWorkflow(BaseWorkflow):
         Args:
             patterns_dir: Directory containing security decisions
             skip_remediate_if_clean: Skip remediation if no high/critical findings
+            use_crew_for_remediation: Use SecurityAuditCrew for enhanced remediation
+            crew_config: Configuration dict for SecurityAuditCrew
             **kwargs: Additional arguments passed to BaseWorkflow
         """
         super().__init__(**kwargs)
         self.patterns_dir = patterns_dir
         self.skip_remediate_if_clean = skip_remediate_if_clean
+        self.use_crew_for_remediation = use_crew_for_remediation
+        self.crew_config = crew_config or {}
         self._has_critical: bool = False
         self._team_decisions: dict[str, dict] = {}
         self._client = None
@@ -335,12 +341,12 @@ class SecurityAuditWorkflow(BaseWorkflow):
         """Generate analysis context for a finding."""
         vuln_type = finding.get("type", "")
         analyses = {
-            "sql_injection": "Potential SQL injection. Verify if user input is properly parameterized.",
-            "xss": "Potential XSS vulnerability. Check if output is properly escaped.",
-            "hardcoded_secret": "Hardcoded credential detected. Should use environment variables or secrets manager.",
-            "insecure_random": "Insecure random number generation. Use secrets module for security-sensitive operations.",
-            "path_traversal": "Potential path traversal. Validate and sanitize file paths.",
-            "command_injection": "Potential command injection. Avoid shell=True and use argument lists.",
+            "sql_injection": "Potential SQL injection. Verify parameterized input.",
+            "xss": "Potential XSS vulnerability. Check output escaping.",
+            "hardcoded_secret": "Hardcoded credential. Use env vars or secrets manager.",
+            "insecure_random": "Insecure random. Use secrets module instead.",
+            "path_traversal": "Potential path traversal. Validate file paths.",
+            "command_injection": "Potential command injection. Avoid shell=True.",
         }
         return analyses.get(vuln_type, "Review for security implications.")
 
@@ -406,17 +412,33 @@ class SecurityAuditWorkflow(BaseWorkflow):
 
     async def _remediate(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
         """
-        Generate remediation plan for security issues using LLM.
+        Generate remediation plan for security issues.
 
         Creates actionable remediation steps prioritized by
         severity and grouped by OWASP category.
 
+        When use_crew_for_remediation=True, uses SecurityAuditCrew's
+        Remediation Expert agent for enhanced recommendations.
+
         Supports XML-enhanced prompts when enabled in workflow config.
         """
+        from .security_adapters import (
+            _check_crew_available,
+        )
+
         assessment = input_data.get("assessment", {})
         critical = assessment.get("critical_findings", [])
         high = assessment.get("high_findings", [])
-        target = input_data.get("target", "")
+        target = input_data.get("target", input_data.get("path", ""))
+
+        crew_remediation = None
+        crew_enhanced = False
+
+        # Try crew-based remediation first if enabled
+        if self.use_crew_for_remediation and _check_crew_available():
+            crew_remediation = await self._get_crew_remediation(target, critical + high, assessment)
+            if crew_remediation:
+                crew_enhanced = True
 
         # Build findings summary for LLM
         findings_summary = []
@@ -468,7 +490,7 @@ Severity Breakdown: {json.dumps(assessment.get('severity_breakdown', {}), indent
             system = None  # XML prompt includes all context
         else:
             # Use legacy plain text prompts
-            system = """You are a security expert specializing in application security and OWASP vulnerabilities.
+            system = """You are a security expert in application security and OWASP.
 Generate a comprehensive remediation plan for the security findings.
 
 For each finding:
@@ -493,13 +515,23 @@ Provide a detailed remediation plan with specific fixes."""
         # Parse XML response if enforcement is enabled
         parsed_data = self._parse_xml_response(response)
 
+        # Merge crew remediation if available
+        if crew_enhanced and crew_remediation:
+            response = self._merge_crew_remediation(response, crew_remediation)
+
         result = {
             "remediation_plan": response,
             "remediation_count": len(critical) + len(high),
             "risk_score": assessment.get("risk_score", 0),
             "risk_level": assessment.get("risk_level", "unknown"),
             "model_tier_used": tier.value,
+            "crew_enhanced": crew_enhanced,
         }
+
+        # Add crew-specific fields if enhanced
+        if crew_enhanced and crew_remediation:
+            result["crew_findings"] = crew_remediation.get("findings", [])
+            result["crew_agents_used"] = crew_remediation.get("agents_used", [])
 
         # Merge parsed XML data if available
         if parsed_data.get("xml_parsed"):
@@ -514,17 +546,103 @@ Provide a detailed remediation plan with specific fixes."""
 
         return (result, input_tokens, output_tokens)
 
+    async def _get_crew_remediation(
+        self, target: str, findings: list, assessment: dict
+    ) -> dict | None:
+        """
+        Get remediation recommendations from SecurityAuditCrew.
+
+        Args:
+            target: Path to codebase
+            findings: List of findings needing remediation
+            assessment: Current assessment dict
+
+        Returns:
+            Crew results dict or None if failed
+        """
+        try:
+            from empathy_llm_toolkit.agent_factory.crews import (
+                SecurityAuditConfig,
+                SecurityAuditCrew,
+            )
+
+            from .security_adapters import (
+                crew_report_to_workflow_format,
+                workflow_findings_to_crew_format,
+            )
+
+            # Configure crew for focused remediation
+            config = SecurityAuditConfig(
+                scan_depth="quick",  # Skip deep scan, focus on remediation
+                **self.crew_config,
+            )
+            crew = SecurityAuditCrew(config=config)
+
+            # Convert findings to crew format for context
+            crew_findings = workflow_findings_to_crew_format(findings)
+
+            # Run audit with remediation focus
+            context = {
+                "focus_areas": ["remediation"],
+                "existing_findings": crew_findings,
+                "skip_detection": True,  # We already have findings
+                "risk_score": assessment.get("risk_score", 0),
+            }
+
+            report = await crew.audit(target, context=context)
+
+            if report:
+                return crew_report_to_workflow_format(report)
+            return None
+
+        except Exception as e:
+            import logging
+
+            logging.getLogger(__name__).warning(f"Crew remediation failed: {e}")
+            return None
+
+    def _merge_crew_remediation(self, llm_response: str, crew_remediation: dict) -> str:
+        """
+        Merge crew remediation recommendations with LLM response.
+
+        Args:
+            llm_response: LLM-generated remediation plan
+            crew_remediation: Crew results in workflow format
+
+        Returns:
+            Merged response with crew enhancements
+        """
+        crew_findings = crew_remediation.get("findings", [])
+
+        if not crew_findings:
+            return llm_response
+
+        crew_section = "\n\n## Enhanced Remediation (SecurityAuditCrew)\n\n"
+        crew_section += f"**Agents Used**: {', '.join(crew_remediation.get('agents_used', []))}\n\n"
+
+        for finding in crew_findings:
+            if finding.get("remediation"):
+                crew_section += f"### {finding.get('title', 'Finding')}\n"
+                crew_section += f"**Severity**: {finding.get('severity', 'unknown').upper()}\n"
+                if finding.get("cwe_id"):
+                    crew_section += f"**CWE**: {finding.get('cwe_id')}\n"
+                if finding.get("cvss_score"):
+                    crew_section += f"**CVSS Score**: {finding.get('cvss_score')}\n"
+                crew_section += f"\n**Remediation**:\n{finding.get('remediation')}\n\n"
+
+        return llm_response + crew_section
+
     def _get_remediation_action(self, finding: dict) -> str:
         """Generate specific remediation action for a finding."""
         actions = {
-            "sql_injection": "Use parameterized queries or ORM methods. Never interpolate user input into SQL.",
-            "xss": "Use framework's auto-escaping. Sanitize user input before rendering.",
-            "hardcoded_secret": "Move to environment variables or use a secrets manager like AWS Secrets Manager.",
-            "insecure_random": "Replace with secrets.token_hex() or secrets.randbelow() for security operations.",
-            "path_traversal": "Use os.path.realpath() and validate paths are within allowed directories.",
-            "command_injection": "Use subprocess with shell=False and pass arguments as a list.",
+            "sql_injection": "Use parameterized queries or ORM. Never interpolate user input.",
+            "xss": "Use framework's auto-escaping. Sanitize user input.",
+            "hardcoded_secret": "Move to env vars or use a secrets manager.",
+            "insecure_random": "Use secrets.token_hex() or secrets.randbelow().",
+            "path_traversal": "Use os.path.realpath() and validate paths.",
+            "command_injection": "Use subprocess with shell=False and argument lists.",
         }
-        return actions.get(finding.get("type", ""), "Review and apply security best practices.")
+        return actions.get(finding.get("type", ""), "Apply security best practices.")
 
 
 def main():
@@ -549,9 +667,9 @@ def main():
 
         print("\nCost Report:")
         print(f"  Total Cost: ${result.cost_report.total_cost:.4f}")
-        print(
-            f"  Savings: ${result.cost_report.savings:.4f} ({result.cost_report.savings_percent:.1f}%)"
-        )
+        savings = result.cost_report.savings
+        pct = result.cost_report.savings_percent
+        print(f"  Savings: ${savings:.4f} ({pct:.1f}%)")
 
     asyncio.run(run())
 

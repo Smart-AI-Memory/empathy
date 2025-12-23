@@ -51,10 +51,14 @@ export default function DevDashboard() {
       {/* Stats Overview */}
       <section className="py-12">
         <div className="container">
-          <div className="grid md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-5 gap-4 max-w-6xl mx-auto">
             <div className="bg-[var(--background)] border-2 border-[var(--border)] p-6 rounded-lg text-center">
-              <div className="text-3xl font-bold text-[var(--primary)] mb-2">16+</div>
+              <div className="text-3xl font-bold text-[var(--primary)] mb-2">17+</div>
               <div className="text-sm text-[var(--text-secondary)]">Software Wizards</div>
+            </div>
+            <div className="bg-[var(--background)] border-2 border-purple-400 p-6 rounded-lg text-center">
+              <div className="text-3xl font-bold text-purple-500 mb-2">Smart</div>
+              <div className="text-sm text-[var(--text-secondary)]">Auto-Routing</div>
             </div>
             <div className="bg-[var(--background)] border-2 border-[var(--border)] p-6 rounded-lg text-center">
               <div className="text-3xl font-bold text-[var(--success)] mb-2">Level 4</div>
@@ -91,6 +95,143 @@ export default function DevDashboard() {
             Level 4 Anticipatory Intelligence in action.
           </p>
           <WizardPlayground category="software" />
+        </div>
+      </section>
+
+      {/* NEW: Intelligent Coordination System (v3.1.0) */}
+      <section className="py-12 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/10 dark:to-indigo-900/10">
+        <div className="container">
+          <div className="text-center mb-8">
+            <span className="inline-block px-3 py-1 bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-sm font-bold rounded-full mb-4">
+              NEW in v3.1.0
+            </span>
+            <h2 className="text-3xl font-bold mb-4">Intelligent Wizard Coordination</h2>
+            <p className="text-[var(--text-secondary)] max-w-2xl mx-auto">
+              Wizards now work together with shared intelligence, automatic routing, and cross-wizard learning.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {/* Smart Router */}
+            <div className="bg-[var(--background)] p-6 rounded-lg border-2 border-purple-300 dark:border-purple-700 shadow-lg">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">🧭</span>
+                </div>
+                <h3 className="text-lg font-bold">Smart Router</h3>
+              </div>
+              <p className="text-sm text-[var(--text-secondary)] mb-4">
+                Just describe what you need in natural language. The router automatically dispatches to the right wizard(s).
+              </p>
+              <div className="bg-[var(--border)] bg-opacity-30 rounded p-3 mb-4">
+                <code className="text-xs text-purple-600 dark:text-purple-400">
+                  &quot;Fix security issues in auth.py&quot;<br/>
+                  → Routes to: SecurityWizard + CodeReview
+                </code>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Natural language understanding</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Multi-wizard dispatch</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Context-aware suggestions</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Memory Graph */}
+            <div className="bg-[var(--background)] p-6 rounded-lg border-2 border-indigo-300 dark:border-indigo-700 shadow-lg">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">🧠</span>
+                </div>
+                <h3 className="text-lg font-bold">Memory Graph</h3>
+              </div>
+              <p className="text-sm text-[var(--text-secondary)] mb-4">
+                Cross-wizard intelligence sharing. Findings from one wizard inform all others.
+              </p>
+              <div className="bg-[var(--border)] bg-opacity-30 rounded p-3 mb-4">
+                <code className="text-xs text-indigo-600 dark:text-indigo-400">
+                  SecurityWizard finds SQLi → BugPredict<br/>
+                  knows to watch for similar patterns
+                </code>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Knowledge persistence</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Pattern similarity detection</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Cross-wizard learning</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Auto-Chaining */}
+            <div className="bg-[var(--background)] p-6 rounded-lg border-2 border-blue-300 dark:border-blue-700 shadow-lg">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">⛓️</span>
+                </div>
+                <h3 className="text-lg font-bold">Auto-Chaining</h3>
+              </div>
+              <p className="text-sm text-[var(--text-secondary)] mb-4">
+                Wizards automatically trigger related wizards based on findings and configurable rules.
+              </p>
+              <div className="bg-[var(--border)] bg-opacity-30 rounded p-3 mb-4">
+                <code className="text-xs text-blue-600 dark:text-blue-400">
+                  SecurityAudit (high severity) →<br/>
+                  auto-triggers DependencyCheck
+                </code>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Configurable triggers</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Pre-built templates</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Approval workflows</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Code Example */}
+          <div className="mt-8 max-w-3xl mx-auto">
+            <div className="bg-gray-900 rounded-lg p-6 shadow-xl">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <span className="ml-4 text-gray-400 text-sm">smart_routing.py</span>
+              </div>
+              <pre className="text-sm text-gray-100 overflow-x-auto"><code>{`from empathy_os.routing import SmartRouter, quick_route
+
+# Natural language wizard dispatch
+router = SmartRouter()
+decision = router.route_sync("Fix security issues in auth.py")
+
+print(f"Primary: {decision.primary_wizard}")  # security-audit
+print(f"Chain: {decision.suggested_chain}")   # [security-audit, dependency-check]
+print(f"Confidence: {decision.confidence}")   # 0.92`}</code></pre>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -275,27 +416,34 @@ export default function DevDashboard() {
               </div>
             </div>
 
-            {/* Prompt Engineering */}
-            <div className="bg-[var(--background)] p-6 rounded-lg border-2 border-[var(--border)] hover:border-[var(--primary)] transition-all">
+            {/* Prompt Engineering - ENHANCED */}
+            <div className="bg-[var(--background)] p-6 rounded-lg border-2 border-green-400 dark:border-green-600 hover:border-green-500 transition-all relative">
+              <span className="absolute -top-2 -right-2 px-2 py-0.5 bg-green-500 text-white text-xs font-bold rounded-full">
+                ENHANCED
+              </span>
               <div className="flex items-center gap-3 mb-4">
                 <div className="text-3xl">💡</div>
                 <h3 className="text-lg font-bold">Prompt Engineering</h3>
               </div>
               <p className="text-sm text-[var(--text-secondary)] mb-4">
-                Optimizes prompts for maximum effectiveness with LLMs and AI models.
+                Analyze, generate, and optimize prompts with token reduction and chain-of-thought scaffolding.
               </p>
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-xs">
                   <span className="text-[var(--success)]">✓</span>
-                  <span>Prompt optimization</span>
+                  <span>Prompt analysis & scoring</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <span className="text-[var(--success)]">✓</span>
-                  <span>Template generation</span>
+                  <span>Token optimization (save 20%+)</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <span className="text-[var(--success)]">✓</span>
-                  <span>Best practice validation</span>
+                  <span>Chain-of-thought scaffolding</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-[var(--success)]">✓</span>
+                  <span>Few-shot example generation</span>
                 </div>
               </div>
             </div>

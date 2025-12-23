@@ -532,6 +532,91 @@ async def development_lifecycle():
 
 ---
 
+## Smart Routing and Intelligence (New in v3.1.0)
+
+### Smart Router
+
+Route natural language requests to the appropriate wizard automatically:
+
+```python
+from empathy_os.routing import SmartRouter
+
+router = SmartRouter()
+
+# Natural language routing
+decision = router.route_sync("Fix the security issue in auth.py")
+print(f"Primary: {decision.primary_wizard}")  # → security-audit
+print(f"Secondary: {decision.secondary_wizards}")  # → [code-review]
+
+# File-based suggestions
+suggestions = router.suggest_for_file("requirements.txt")  # → [dependency-check]
+
+# Error-based suggestions
+suggestions = router.suggest_for_error("NullReferenceException")  # → [bug-predict]
+```
+
+### Memory Graph
+
+Cross-wizard knowledge sharing - findings connected across sessions:
+
+```python
+from empathy_os.memory import MemoryGraph, EdgeType
+
+graph = MemoryGraph()
+
+# Add findings
+bug_id = graph.add_finding(
+    wizard="bug-predict",
+    finding={"type": "bug", "name": "Null reference", "severity": "high"}
+)
+
+# Find similar issues
+similar = graph.find_similar({"name": "Null reference error"})
+
+# Traverse relationships
+fixes = graph.find_related(bug_id, edge_types=[EdgeType.FIXED_BY])
+```
+
+### Auto-Chaining
+
+Wizards trigger related wizards based on findings:
+
+```yaml
+# .empathy/wizard_chains.yaml
+chains:
+  security-audit:
+    triggers:
+      - condition: "high_severity_count > 0"
+        next: dependency-check
+```
+
+Pre-built templates: `full-security-review`, `pre-release`, `code-quality`, `bug-fix-pipeline`
+
+### Prompt Engineering Wizard
+
+Analyze and optimize prompts:
+
+```python
+from coach_wizards import PromptEngineeringWizard
+
+wizard = PromptEngineeringWizard()
+
+# Analyze
+analysis = wizard.analyze_prompt("Fix this bug")
+# analysis.overall_score = 0.13
+
+# Generate optimized prompt
+prompt = wizard.generate_prompt(
+    task="Review for security",
+    role="a security engineer"
+)
+
+# Reduce token costs
+result = wizard.optimize_tokens(verbose_prompt)
+```
+
+---
+
 ## See Also
 
 - [AI Development Wizards](../AI_DEVELOPMENT_WIZARDS.md) - Detailed AI wizard documentation

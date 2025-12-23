@@ -15,10 +15,11 @@ Licensed under Fair Source License 0.9
 """
 
 import json
+import os
 from pathlib import Path
 from typing import Any
 
-from .base import BaseWorkflow, ModelTier
+from .base import PROVIDER_MODELS, BaseWorkflow, ModelProvider, ModelTier
 
 
 class TestGenerationWorkflow(BaseWorkflow):
@@ -58,7 +59,56 @@ class TestGenerationWorkflow(BaseWorkflow):
         self.min_tests_for_review = min_tests_for_review
         self._test_count: int = 0
         self._bug_hotspots: list[str] = []
+        self._client = None
+        self._api_key = os.getenv("ANTHROPIC_API_KEY")
         self._load_bug_hotspots()
+
+    def _get_client(self):
+        """Lazy-load the Anthropic client."""
+        if self._client is None and self._api_key:
+            try:
+                import anthropic
+
+                self._client = anthropic.Anthropic(api_key=self._api_key)
+            except ImportError:
+                pass
+        return self._client
+
+    def _get_model_for_tier(self, tier: ModelTier) -> str:
+        """Get the model name for a given tier."""
+        provider = ModelProvider.ANTHROPIC
+        return PROVIDER_MODELS.get(provider, {}).get(tier, "claude-sonnet-4-20250514")
+
+    async def _call_llm(
+        self, tier: ModelTier, system: str, user_message: str, max_tokens: int = 4096
+    ) -> tuple[str, int, int]:
+        """Make an actual LLM call using the Anthropic API."""
+        client = self._get_client()
+        if not client:
+            return (
+                "[Simulated - set ANTHROPIC_API_KEY for real results]",
+                len(user_message) // 4,
+                100,
+            )
+
+        model = self._get_model_for_tier(tier)
+
+        try:
+            response = client.messages.create(
+                model=model,
+                max_tokens=max_tokens,
+                system=system,
+                messages=[{"role": "user", "content": user_message}],
+            )
+
+            content = response.content[0].text if response.content else ""
+            input_tokens = response.usage.input_tokens
+            output_tokens = response.usage.output_tokens
+
+            return content, input_tokens, output_tokens
+
+        except Exception as e:
+            return f"Error calling LLM: {e}", 0, 0
 
     def _load_bug_hotspots(self) -> None:
         """Load files with historical bugs from pattern library."""
@@ -416,49 +466,107 @@ class Test{name}:
 
     async def _review(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
         """
-        Review and improve generated tests.
+        Review and improve generated tests using LLM.
 
         Quality review of generated tests, removing duplicates
         and improving test coverage.
+
+        Supports XML-enhanced prompts when enabled in workflow config.
         """
         generated_tests = input_data.get("generated_tests", [])
+        target = input_data.get("target", "")
 
-        reviewed: list[dict] = []
+        # Build test summary for LLM
+        test_summary = []
         for test_file in generated_tests:
-            reviewed_tests = []
-            seen_targets = set()
-
             for test in test_file.get("tests", []):
-                target = test["target"]
-                if target not in seen_targets:
-                    seen_targets.add(target)
-                    test["reviewed"] = True
-                    test["quality_score"] = 0.8  # Simulated quality score
-                    reviewed_tests.append(test)
+                test_summary.append(
+                    f"- {test_file.get('source_file')}: {test.get('name', 'unnamed')} "
+                    f"({test.get('type', 'unit')})"
+                )
 
-            reviewed.append(
+        total_tests = sum(len(tf.get("tests", [])) for tf in generated_tests)
+
+        # Build input payload for prompt
+        input_payload = f"""Target: {target or 'codebase'}
+
+Total Tests Generated: {total_tests}
+Files Covered: {len(generated_tests)}
+
+Tests Summary:
+{chr(10).join(test_summary[:30]) if test_summary else 'No tests generated'}"""
+
+        # Check if XML prompts are enabled
+        if self._is_xml_enabled():
+            # Use XML-enhanced prompt
+            user_message = self._render_xml_prompt(
+                role="QA engineer specializing in test quality",
+                goal="Review and improve the generated test suite",
+                instructions=[
+                    "Identify duplicate or redundant tests",
+                    "Suggest improvements to test coverage",
+                    "Review edge cases and error handling",
+                    "Rate overall test quality",
+                    "Recommend additional tests for untested paths",
+                ],
+                constraints=[
+                    "Focus on high-value test improvements",
+                    "Identify missing edge cases",
+                    "Suggest specific test scenarios to add",
+                ],
+                input_type="generated_tests",
+                input_payload=input_payload,
+                extra={
+                    "total_tests": total_tests,
+                    "files_covered": len(generated_tests),
+                },
+            )
+            system = None  # XML prompt includes all context
+        else:
+            # Use legacy plain text prompts
+            system = """You are a QA engineer specializing in test quality.
+Review the generated tests and provide improvement recommendations.
+
+Focus on:
+1. Test coverage gaps
+2. Edge case handling
+3. Duplicate test detection
+4. Code quality improvements
+
+Provide actionable feedback."""
+
+            user_message = f"""Review these generated tests:
+
+{input_payload}
+
+Provide quality assessment and improvement recommendations."""
+
+        response, input_tokens, output_tokens = await self._call_llm(
+            tier, system or "", user_message, max_tokens=3000
+        )
+
+        # Parse XML response if enforcement is enabled
+        parsed_data = self._parse_xml_response(response)
+
+        result = {
+            "review_feedback": response,
+            "total_tests": total_tests,
+            "files_covered": len(generated_tests),
+            "model_tier_used": tier.value,
+        }
+
+        # Merge parsed XML data if available
+        if parsed_data.get("xml_parsed"):
+            result.update(
                 {
-                    "source_file": test_file["source_file"],
-                    "test_file": test_file["test_file"],
-                    "tests": reviewed_tests,
-                    "test_count": len(reviewed_tests),
+                    "xml_parsed": True,
+                    "summary": parsed_data.get("summary"),
+                    "findings": parsed_data.get("findings", []),
+                    "checklist": parsed_data.get("checklist", []),
                 }
             )
 
-        total_reviewed = sum(r["test_count"] for r in reviewed)
-
-        input_tokens = len(str(input_data)) // 4
-        output_tokens = len(str(reviewed)) // 4
-
-        return (
-            {
-                "reviewed_tests": reviewed,
-                "total_tests": total_reviewed,
-                "model_tier_used": tier.value,
-            },
-            input_tokens,
-            output_tokens,
-        )
+        return (result, input_tokens, output_tokens)
 
 
 def main():
@@ -476,9 +584,9 @@ def main():
         print(f"Tests Generated: {result.final_output.get('total_tests', 0)}")
         print("\nCost Report:")
         print(f"  Total Cost: ${result.cost_report.total_cost:.4f}")
-        print(
-            f"  Savings: ${result.cost_report.savings:.4f} ({result.cost_report.savings_percent:.1f}%)"
-        )
+        savings = result.cost_report.savings
+        pct = result.cost_report.savings_percent
+        print(f"  Savings: ${savings:.4f} ({pct:.1f}%)")
 
     asyncio.run(run())
 

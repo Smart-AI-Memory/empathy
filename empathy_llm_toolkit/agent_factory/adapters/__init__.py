@@ -20,6 +20,7 @@ _langchain_adapter = None
 _langgraph_adapter = None
 _autogen_adapter = None
 _haystack_adapter = None
+_crewai_adapter = None
 
 
 def get_langchain_adapter():
@@ -62,6 +63,16 @@ def get_haystack_adapter():
     return _haystack_adapter
 
 
+def get_crewai_adapter():
+    """Get CrewAI adapter (lazy import)."""
+    global _crewai_adapter
+    if _crewai_adapter is None:
+        from empathy_llm_toolkit.agent_factory.adapters.crewai_adapter import CrewAIAdapter
+
+        _crewai_adapter = CrewAIAdapter
+    return _crewai_adapter
+
+
 __all__ = [
     "NativeAdapter",
     "WizardAdapter",
@@ -71,4 +82,5 @@ __all__ = [
     "get_langgraph_adapter",
     "get_autogen_adapter",
     "get_haystack_adapter",
+    "get_crewai_adapter",
 ]

@@ -220,12 +220,52 @@ Source content for reference:
         )
 
     async def _polish(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """Final review and consistency polish."""
+        """
+        Final review and consistency polish using LLM.
+
+        Supports XML-enhanced prompts when enabled in workflow config.
+        """
         draft_document = input_data.get("draft_document", "")
         doc_type = input_data.get("doc_type", "general")
         audience = input_data.get("audience", "developers")
 
-        system = """You are a senior technical editor. Polish and improve the documentation:
+        # Build input payload for prompt
+        input_payload = f"""Document Type: {doc_type}
+Target Audience: {audience}
+
+Draft:
+{draft_document}"""
+
+        # Check if XML prompts are enabled
+        if self._is_xml_enabled():
+            # Use XML-enhanced prompt
+            user_message = self._render_xml_prompt(
+                role="senior technical editor",
+                goal="Polish and improve the documentation for consistency and quality",
+                instructions=[
+                    "Standardize terminology and formatting",
+                    "Improve clarity and flow",
+                    "Add missing cross-references",
+                    "Fix grammatical issues",
+                    "Identify gaps and add helpful notes",
+                    "Ensure examples are complete and accurate",
+                ],
+                constraints=[
+                    "Maintain the original structure and intent",
+                    "Keep content appropriate for the target audience",
+                    "Preserve code examples while improving explanations",
+                ],
+                input_type="documentation_draft",
+                input_payload=input_payload,
+                extra={
+                    "doc_type": doc_type,
+                    "audience": audience,
+                },
+            )
+            system = None  # XML prompt includes all context
+        else:
+            # Use legacy plain text prompts
+            system = """You are a senior technical editor. Polish and improve the documentation:
 
 1. CONSISTENCY:
    - Standardize terminology
@@ -244,25 +284,33 @@ Source content for reference:
 
 Return the polished document with improvements noted at the end."""
 
-        user_message = f"""Polish this documentation:
+            user_message = f"""Polish this documentation:
 
-Document Type: {doc_type}
-Target Audience: {audience}
-
-Draft:
-{draft_document}"""
+{input_payload}"""
 
         response, input_tokens, output_tokens = await self._call_llm(
-            tier, system, user_message, max_tokens=5000
+            tier, system or "", user_message, max_tokens=5000
         )
 
-        return (
-            {
-                "document": response,
-                "doc_type": doc_type,
-                "audience": audience,
-                "model_tier_used": tier.value,
-            },
-            input_tokens,
-            output_tokens,
-        )
+        # Parse XML response if enforcement is enabled
+        parsed_data = self._parse_xml_response(response)
+
+        result = {
+            "document": response,
+            "doc_type": doc_type,
+            "audience": audience,
+            "model_tier_used": tier.value,
+        }
+
+        # Merge parsed XML data if available
+        if parsed_data.get("xml_parsed"):
+            result.update(
+                {
+                    "xml_parsed": True,
+                    "summary": parsed_data.get("summary"),
+                    "findings": parsed_data.get("findings", []),
+                    "checklist": parsed_data.get("checklist", []),
+                }
+            )
+
+        return (result, input_tokens, output_tokens)

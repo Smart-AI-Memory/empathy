@@ -40,6 +40,11 @@ nav:
       - Short-Term Memory: guides/short-term-memory-implementation.md
       - Practical Patterns: guides/practical-patterns.md
       - Agent Factory: guides/agent-factory.md
+      - Intelligence System:
+          - Smart Router: guides/smart-router.md
+          - Memory Graph: guides/memory-graph.md
+          - Auto-Chaining: guides/auto-chaining.md
+      - Resilience Patterns: guides/resilience-patterns.md
       - Short-Term Memory Reference: SHORT_TERM_MEMORY.md
       - Glossary: guides/glossary.md
   - Examples:

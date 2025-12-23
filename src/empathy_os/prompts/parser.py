@@ -228,9 +228,10 @@ class XmlResponseParser:
 
     def _parse_finding(self, element: ET.Element) -> Finding:
         """Parse a single finding element."""
+        title = self._extract_text(element, "title") or element.get("title") or ""
         return Finding(
-            severity=element.get("severity", "medium"),
-            title=self._extract_text(element, "title") or element.get("title", ""),
+            severity=element.get("severity") or "medium",
+            title=title,
             location=self._extract_text(element, "location"),
             details=self._extract_text(element, "details") or "",
             fix=self._extract_text(element, "fix") or "",

@@ -1,6 +1,6 @@
 # Empathy Framework API Reference
 
-**Version:** 1.0.0
+**Version:** 3.1.0
 **License:** Fair Source 0.9
 **Copyright:** 2025 Smart AI Memory, LLC
 
@@ -13,6 +13,16 @@
   - [EmpathyLLM](#empathyllm)
   - [CollaborationState](#collaborationstate)
   - [EmpathyLevel](#empathylevel)
+- [Intelligence System](#intelligence-system)
+  - [SmartRouter](#smartrouter)
+  - [MemoryGraph](#memorygraph)
+  - [ChainExecutor](#chainexecutor)
+- [Resilience Patterns](#resilience-patterns)
+  - [retry](#retry-decorator)
+  - [circuit_breaker](#circuit-breaker-decorator)
+  - [timeout](#timeout-decorator)
+  - [fallback](#fallback-decorator)
+  - [HealthCheck](#healthcheck)
 - [LLM Providers](#llm-providers)
   - [AnthropicProvider](#anthropicprovider)
   - [OpenAIProvider](#openaiprovider)
@@ -23,6 +33,7 @@
   - [BaseCoachWizard](#basecoachwizard)
   - [SecurityWizard](#securitywizard)
   - [PerformanceWizard](#performancewizard)
+  - [PromptEngineeringWizard](#promptengineeringwizard)
   - [All Available Wizards](#all-available-wizards)
 - [Plugin System](#plugin-system)
   - [BasePlugin](#baseplugin)
@@ -357,6 +368,250 @@ def get_max_tokens_recommendation(level: int) -> int
 ```
 
 Returns recommended max_tokens for the level.
+
+---
+
+## Intelligence System
+
+### SmartRouter
+
+Routes developer requests to appropriate wizard(s) using natural language understanding.
+
+```python
+from empathy_os.routing import SmartRouter
+
+router = SmartRouter()
+```
+
+#### Methods
+
+| Method | Parameters | Returns | Description |
+|--------|------------|---------|-------------|
+| `route_sync()` | `request: str, context: dict = None` | `RoutingDecision` | Synchronously route a request |
+| `route()` | `request: str, context: dict = None` | `RoutingDecision` | Async version of route_sync |
+| `suggest_for_file()` | `file_path: str` | `List[str]` | Get wizard suggestions for a file |
+| `suggest_for_error()` | `error_message: str` | `List[str]` | Get wizard suggestions for an error |
+| `list_wizards()` | None | `List[WizardInfo]` | List all registered wizards |
+
+#### RoutingDecision
+
+```python
+@dataclass
+class RoutingDecision:
+    primary_wizard: str          # Best matching wizard
+    secondary_wizards: List[str] # Related wizards
+    confidence: float            # 0.0-1.0 match confidence
+    reasoning: str               # Why this routing was chosen
+    suggested_chain: List[str]   # Recommended execution order
+    context: Dict                # Preserved context
+```
+
+### MemoryGraph
+
+Knowledge graph for cross-wizard intelligence sharing.
+
+```python
+from empathy_os.memory import MemoryGraph, NodeType, EdgeType
+
+graph = MemoryGraph(path="patterns/memory_graph.json")
+```
+
+#### Methods
+
+| Method | Parameters | Returns | Description |
+|--------|------------|---------|-------------|
+| `add_finding()` | `wizard: str, finding: dict` | `str` | Add a node, returns node ID |
+| `add_edge()` | `from_id: str, to_id: str, edge_type: EdgeType` | `str` | Connect nodes, returns edge ID |
+| `find_related()` | `node_id: str, edge_types: List[EdgeType]` | `List[Node]` | Find connected nodes |
+| `find_similar()` | `finding: dict, threshold: float = 0.8` | `List[Node]` | Find similar nodes |
+| `get_statistics()` | None | `Dict` | Graph stats (nodes, edges, by type) |
+
+#### Edge Types
+
+```python
+class EdgeType(Enum):
+    CAUSES = "causes"
+    FIXED_BY = "fixed_by"
+    SIMILAR_TO = "similar_to"
+    AFFECTS = "affects"
+    CONTAINS = "contains"
+    DEPENDS_ON = "depends_on"
+    TESTED_BY = "tested_by"
+```
+
+### ChainExecutor
+
+Executes wizard chains and manages auto-chaining rules.
+
+```python
+from empathy_os.routing import ChainExecutor
+
+executor = ChainExecutor(config_path=".empathy/wizard_chains.yaml")
+```
+
+#### Methods
+
+| Method | Parameters | Returns | Description |
+|--------|------------|---------|-------------|
+| `get_triggered_chains()` | `wizard: str, result: dict` | `List[ChainTrigger]` | Get chains triggered by result |
+| `get_template()` | `name: str` | `ChainTemplate` | Get a pre-defined template |
+| `list_templates()` | None | `List[str]` | List available templates |
+| `should_auto_execute()` | `trigger: ChainTrigger` | `bool` | Check if chain runs without approval |
+
+---
+
+## Resilience Patterns
+
+Production-ready patterns for fault tolerance. Import from `empathy_os.resilience`.
+
+### retry decorator
+
+Retry failed operations with exponential backoff.
+
+```python
+from empathy_os.resilience import retry, RetryConfig
+
+@retry(max_attempts=3, initial_delay=1.0, backoff_factor=2.0, jitter=True)
+async def flaky_operation():
+    ...
+```
+
+#### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `max_attempts` | `int` | `3` | Maximum retry attempts |
+| `initial_delay` | `float` | `1.0` | Initial delay in seconds |
+| `backoff_factor` | `float` | `2.0` | Multiply delay by this each retry |
+| `max_delay` | `float` | `60.0` | Maximum delay cap |
+| `jitter` | `bool` | `True` | Add randomness to prevent thundering herd |
+| `retryable_exceptions` | `Tuple[Type]` | `(Exception,)` | Which exceptions trigger retry |
+
+### circuit_breaker decorator
+
+Prevent cascading failures by failing fast when a service is down.
+
+```python
+from empathy_os.resilience import circuit_breaker, get_circuit_breaker, CircuitOpenError
+
+@circuit_breaker(name="api", failure_threshold=5, reset_timeout=60.0)
+async def external_call():
+    ...
+
+# Check state
+cb = get_circuit_breaker("api")
+print(cb.state)  # CircuitState.CLOSED, OPEN, or HALF_OPEN
+```
+
+#### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `name` | `str` | Function name | Circuit breaker identifier |
+| `failure_threshold` | `int` | `5` | Failures before opening |
+| `reset_timeout` | `float` | `60.0` | Seconds before trying recovery |
+| `half_open_max_calls` | `int` | `3` | Successes needed to close |
+| `excluded_exceptions` | `Tuple[Type]` | `()` | Exceptions that don't count as failures |
+| `fallback` | `Callable` | `None` | Function to call when circuit is open |
+
+#### Circuit States
+
+- **CLOSED**: Normal operation, calls pass through
+- **OPEN**: Failures exceeded threshold, calls fail immediately with `CircuitOpenError`
+- **HALF_OPEN**: Testing if service recovered, limited calls allowed
+
+### timeout decorator
+
+Prevent operations from hanging indefinitely.
+
+```python
+from empathy_os.resilience import timeout, with_timeout, ResilienceTimeoutError
+
+@timeout(30.0)
+async def slow_operation():
+    ...
+
+# With fallback
+@timeout(5.0, fallback=lambda: "default")
+async def quick_lookup():
+    ...
+
+# One-off usage
+result = await with_timeout(coro, timeout_seconds=10.0, fallback_value="default")
+```
+
+#### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `seconds` | `float` | Required | Timeout in seconds |
+| `fallback` | `Callable` | `None` | Return value on timeout |
+
+### fallback decorator
+
+Graceful degradation when primary operations fail.
+
+```python
+from empathy_os.resilience import fallback, Fallback
+
+@fallback(fallback_func=get_cached, default="unavailable")
+async def get_live_data():
+    ...
+
+# Chain multiple fallbacks
+fb = Fallback(name="data", default_value="offline")
+fb.add(primary_source)
+fb.add(backup_source)
+fb.add(cache_source)
+result = await fb.execute()
+```
+
+### HealthCheck
+
+Monitor system component health.
+
+```python
+from empathy_os.resilience import HealthCheck, HealthStatus
+
+health = HealthCheck(version="3.1.0")
+
+@health.register("database", timeout=5.0)
+async def check_db():
+    return await db.ping()
+
+# Run all checks
+status = await health.run_all()
+print(status.to_dict())
+```
+
+#### HealthCheck.register() Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `name` | `str` | Required | Check identifier |
+| `timeout` | `float` | `10.0` | Max time for check |
+| `critical` | `bool` | `False` | If True, failure = system unhealthy |
+
+#### Return Values
+
+Health check functions can return:
+- `True` → Healthy
+- `False` → Unhealthy
+- `dict` with `{"healthy": bool, ...}` → Status with details
+
+#### SystemHealth
+
+```python
+@dataclass
+class SystemHealth:
+    status: HealthStatus      # HEALTHY, DEGRADED, UNHEALTHY, UNKNOWN
+    checks: List[HealthCheckResult]
+    version: str
+    uptime_seconds: float
+    timestamp: datetime
+
+    def to_dict() -> Dict  # JSON-serializable output
+```
 
 ---
 

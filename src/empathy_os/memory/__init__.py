@@ -68,6 +68,10 @@ from .config import check_redis_connection, get_railway_redis, get_redis_config,
 # Control Panel
 from .control_panel import ControlPanelConfig, MemoryControlPanel, MemoryStats
 
+# Memory Graph (Cross-Wizard Intelligence)
+from .edges import REVERSE_EDGE_TYPES, WIZARD_EDGE_PATTERNS, Edge, EdgeType
+from .graph import MemoryGraph
+
 # Long-term memory (Persistent patterns)
 from .long_term import (
     Classification,
@@ -80,6 +84,14 @@ from .long_term import (
     SecurityError,
 )
 from .long_term import PermissionError as MemoryPermissionError
+from .nodes import (
+    BugNode,
+    Node,
+    NodeType,
+    PatternNode,
+    PerformanceNode,
+    VulnerabilityNode,
+)
 
 # Redis Bootstrap
 from .redis_bootstrap import (
@@ -176,4 +188,16 @@ __all__ = [
     # Conversation Summary Index
     "ConversationSummaryIndex",
     "AgentContext",
+    # Memory Graph (Cross-Wizard Intelligence)
+    "MemoryGraph",
+    "Node",
+    "NodeType",
+    "BugNode",
+    "VulnerabilityNode",
+    "PerformanceNode",
+    "PatternNode",
+    "Edge",
+    "EdgeType",
+    "REVERSE_EDGE_TYPES",
+    "WIZARD_EDGE_PATTERNS",
 ]

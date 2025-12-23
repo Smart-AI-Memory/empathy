@@ -1,5 +1,5 @@
 """
-Coach Wizards - 16 Specialized Software Development Wizards
+Coach Wizards - 17 Specialized Software Development Wizards
 
 Level 4 Anticipatory Empathy for software development using the Empathy Framework.
 
@@ -19,6 +19,7 @@ from .migration_wizard import MigrationWizard
 from .monitoring_wizard import MonitoringWizard
 from .observability_wizard import ObservabilityWizard
 from .performance_wizard import PerformanceWizard
+from .prompt_engineering_wizard import PromptEngineeringWizard
 from .refactoring_wizard import RefactoringWizard
 from .scaling_wizard import ScalingWizard
 from .security_wizard import SecurityWizard
@@ -41,4 +42,5 @@ __all__ = [
     "MigrationWizard",
     "MonitoringWizard",
     "LocalizationWizard",
+    "PromptEngineeringWizard",
 ]

@@ -75,6 +75,11 @@ agents = [
     "langgraph>=0.1.0,<0.2.0",
 ]
 
+# CrewAI for role-based multi-agent systems
+crewai = [
+    "crewai>=0.1.0,<1.0.0",
+]
+
 # Plugin-specific dependencies
 healthcare = [
     "python-docx>=0.8.11,<1.0.0",

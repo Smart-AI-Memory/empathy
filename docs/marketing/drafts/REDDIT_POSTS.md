@@ -4,7 +4,7 @@
 
 ## r/ClaudeAI
 
-**Title:** I built a persistent memory layer for Claude + multi-provider smart routing (80% cost savings)
+**Title:** I built a persistent memory layer for Claude + XML-Enhanced Prompts for structured responses (v3.0.1)
 
 **Body:**
 
@@ -26,7 +26,7 @@ await llm.interact(
 
 Next session, Claude remembers.
 
-**v3.0.0 just shipped with Multi-Provider System** - now supports Anthropic, OpenAI, Ollama, and hybrid mode. Auto-detects your API keys and picks the right model for each task.
+**v3.0.1 just shipped with Multi-Provider System + XML-Enhanced Prompts** - now supports Anthropic, OpenAI, Ollama, and hybrid mode. Auto-detects your API keys and picks the right model for each task. New XML prompts return structured, parseable responses for dashboards and automation.
 
 ```python
 llm = EmpathyLLM(provider="hybrid", enable_model_routing=True)
@@ -38,8 +38,9 @@ await llm.interact(user_id="dev", user_input="Summarize this", task_type="summar
 - API users: Direct cost savings
 - Max/Pro subscribers: Preserves your Opus quota for complex tasks
 
-**What's new in v3.0.0:**
+**What's new in v3.0.1:**
 - Multi-provider support (Anthropic, OpenAI, Ollama, Hybrid)
+- XML-Enhanced Prompts for structured LLM responses
 - Auto-detection of API keys from environment/.env files
 - VSCode Dashboard with 10 integrated workflows + 6 quick actions
 - Real-time cost tracking showing your savings
@@ -57,11 +58,11 @@ Happy to answer questions.
 
 ## r/Python
 
-**Title:** empathy-framework v3.0.0: Multi-provider LLM memory + VSCode Dashboard (80% cost savings)
+**Title:** empathy-framework v3.0.1: Multi-provider LLM memory + XML-Enhanced Prompts + VSCode Dashboard
 
 **Body:**
 
-Just released v3.0.0 of [empathy-framework](https://pypi.org/project/empathy-framework/) - a Python library that adds persistent memory to LLM interactions, plus multi-provider smart routing for cost optimization.
+Just released v3.0.1 of [empathy-framework](https://pypi.org/project/empathy-framework/) - a Python library that adds persistent memory to LLM interactions, plus multi-provider smart routing and XML-Enhanced Prompts for structured responses.
 
 ```python
 from empathy_llm_toolkit import EmpathyLLM
@@ -79,8 +80,9 @@ await llm.interact(user_id="user123", user_input="Remember I prefer async/await"
 await llm.interact(user_id="user123", user_input="Summarize this", task_type="summarize")  # → Haiku/GPT-4o-mini
 ```
 
-**What's new in v3.0.0:**
+**What's new in v3.0.1:**
 - **Multi-Provider System**: Anthropic, OpenAI, Ollama, Hybrid mode
+- **XML-Enhanced Prompts**: Structured, parseable LLM responses for automation
 - **Auto-detection**: Finds API keys from environment and .env files
 - **Smart Routing**: Auto-picks Haiku/Sonnet/Opus (or GPT equivalents) based on task
 - **VSCode Dashboard**: 10 integrated workflows + 6 quick action commands
@@ -115,13 +117,13 @@ Feedback welcome. What use cases would you want memory for?
 
 ## r/LocalLLaMA
 
-**Title:** Cross-session memory layer for LLMs - now with native Ollama support (v3.0.0)
+**Title:** Cross-session memory layer for LLMs - now with native Ollama support (v3.0.1)
 
 **Body:**
 
 Built [Empathy Framework](https://github.com/Smart-AI-Memory/empathy-framework) to give LLMs persistent memory across sessions.
 
-**v3.0.0 adds native Ollama support!**
+**v3.0.1 adds native Ollama support + XML-Enhanced Prompts!**
 
 ```python
 from empathy_llm_toolkit import EmpathyLLM

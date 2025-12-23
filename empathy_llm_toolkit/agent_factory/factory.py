@@ -107,6 +107,7 @@ class AgentFactory:
         from empathy_llm_toolkit.agent_factory.adapters import (
             NativeAdapter,
             get_autogen_adapter,
+            get_crewai_adapter,
             get_haystack_adapter,
             get_langchain_adapter,
             get_langgraph_adapter,
@@ -129,6 +130,10 @@ class AgentFactory:
 
         elif self.framework == Framework.HAYSTACK:
             adapter_class = get_haystack_adapter()
+            return adapter_class(self.provider, self.api_key)  # type: ignore[no-any-return]
+
+        elif self.framework == Framework.CREWAI:
+            adapter_class = get_crewai_adapter()
             return adapter_class(self.provider, self.api_key)  # type: ignore[no-any-return]
 
         else:
@@ -158,6 +163,16 @@ class AgentFactory:
         memory_enabled: bool = True,
         memory_type: str = "conversation",
         framework_options: dict | None = None,
+        # Resilience options
+        resilience_enabled: bool = False,
+        circuit_breaker_threshold: int = 3,
+        retry_max_attempts: int = 2,
+        timeout_seconds: float = 30.0,
+        # Memory Graph options
+        memory_graph_enabled: bool = False,
+        memory_graph_path: str = "patterns/memory_graph.json",
+        store_findings: bool = True,
+        query_similar: bool = True,
     ) -> BaseAgent:
         """
         Create an agent using the configured framework.
@@ -179,6 +194,14 @@ class AgentFactory:
             memory_enabled: Enable conversation memory
             memory_type: Type of memory (conversation, summary, vector)
             framework_options: Framework-specific options
+            resilience_enabled: Enable resilience patterns (circuit breaker, retry, timeout)
+            circuit_breaker_threshold: Number of failures before circuit opens
+            retry_max_attempts: Maximum retry attempts
+            timeout_seconds: Timeout for agent invocations
+            memory_graph_enabled: Enable Memory Graph integration
+            memory_graph_path: Path to memory graph JSON file
+            store_findings: Store agent findings in memory graph
+            query_similar: Query similar findings before invocation
 
         Returns:
             Agent implementing BaseAgent interface
@@ -208,10 +231,62 @@ class AgentFactory:
             memory_enabled=memory_enabled,
             memory_type=memory_type,
             framework_options=framework_options or {},
+            # Resilience
+            resilience_enabled=resilience_enabled,
+            circuit_breaker_threshold=circuit_breaker_threshold,
+            retry_max_attempts=retry_max_attempts,
+            timeout_seconds=timeout_seconds,
+            # Memory Graph
+            memory_graph_enabled=memory_graph_enabled,
+            memory_graph_path=memory_graph_path,
+            store_findings=store_findings,
+            query_similar=query_similar,
         )
 
         # Create agent
         agent = self._adapter.create_agent(config)
+
+        # Apply Memory Graph wrapper (if enabled)
+        if memory_graph_enabled:
+            try:
+                from empathy_llm_toolkit.agent_factory.memory_integration import MemoryAwareAgent
+
+                agent = MemoryAwareAgent(
+                    agent,
+                    graph_path=memory_graph_path,
+                    store_findings=store_findings,
+                    query_similar=query_similar,
+                )
+            except ImportError:
+                import logging
+
+                logging.getLogger(__name__).warning(
+                    "Memory integration not available, memory_graph_enabled ignored"
+                )
+
+        # Apply Resilience wrapper (if enabled) - outermost wrapper
+        if resilience_enabled:
+            try:
+                from empathy_llm_toolkit.agent_factory.resilient import (
+                    ResilienceConfig,
+                    ResilientAgent,
+                )
+
+                resilience_config = ResilienceConfig(
+                    enable_circuit_breaker=True,
+                    failure_threshold=circuit_breaker_threshold,
+                    enable_retry=True,
+                    max_attempts=retry_max_attempts,
+                    enable_timeout=True,
+                    timeout_seconds=timeout_seconds,
+                )
+                agent = ResilientAgent(agent, resilience_config)
+            except ImportError:
+                import logging
+
+                logging.getLogger(__name__).warning(
+                    "Resilience module not available, resilience_enabled ignored"
+                )
 
         # Track for reuse
         self._agents[name] = agent
@@ -308,6 +383,7 @@ class AgentFactory:
             Framework.LANGGRAPH,
             Framework.AUTOGEN,
             Framework.HAYSTACK,
+            Framework.CREWAI,
         ]
 
         if installed_only:

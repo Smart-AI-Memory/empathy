@@ -117,11 +117,17 @@ class ConfigValidator:
             if field_name in self.WORKFLOW_SCHEMA:
                 spec = self.WORKFLOW_SCHEMA[field_name]
                 expected_type = spec.get("type")
-                if expected_type and not isinstance(value, expected_type):
-                    result.add_error(
-                        field_name,
-                        f"Expected {expected_type.__name__}, got {type(value).__name__}",
+                if expected_type is not None:
+                    # Cast to type for isinstance check
+                    type_cls = (
+                        expected_type if isinstance(expected_type, type) else type(expected_type)
                     )
+                    if not isinstance(value, type_cls):
+                        type_name = getattr(type_cls, "__name__", str(type_cls))
+                        result.add_error(
+                            field_name,
+                            f"Expected {type_name}, got {type(value).__name__}",
+                        )
 
         # Validate default_provider
         if "default_provider" in config:
@@ -180,15 +186,17 @@ class ConfigValidator:
                         f"{path}.{field_name}", f"Expected integer, got {type(value).__name__}"
                     )
                 else:
-                    if "min" in spec and value < spec["min"]:
+                    min_val = spec.get("min")
+                    max_val = spec.get("max")
+                    if isinstance(min_val, int | float) and value < min_val:
                         result.add_error(
                             f"{path}.{field_name}",
-                            f"Value {value} below minimum {spec['min']}",
+                            f"Value {value} below minimum {min_val}",
                         )
-                    if "max" in spec and value > spec["max"]:
+                    if isinstance(max_val, int | float) and value > max_val:
                         result.add_error(
                             f"{path}.{field_name}",
-                            f"Value {value} above maximum {spec['max']}",
+                            f"Value {value} above maximum {max_val}",
                         )
 
     def validate_provider_tier(self, provider: str, tier: str) -> ValidationResult:

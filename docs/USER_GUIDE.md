@@ -2,7 +2,7 @@
 
 **Transform your development workflow with Level 4 Anticipatory AI collaboration**
 
-**Version:** 1.0.0
+**Version:** 3.1.0
 **License:** Fair Source 0.9
 **Copyright:** 2025 Smart AI Memory, LLC
 
@@ -15,11 +15,12 @@
 3. [The Five Levels Explained](#the-five-levels-explained)
 4. [Getting Started](#getting-started)
 5. [Wizard Catalog](#wizard-catalog)
-6. [Configuration Guide](#configuration-guide)
-7. [Best Practices](#best-practices)
-8. [Integration Examples](#integration-examples)
-9. [Troubleshooting](#troubleshooting)
-10. [Advanced Topics](#advanced-topics)
+6. [Smart Routing and Intelligence](#smart-routing-and-intelligence)
+7. [Configuration Guide](#configuration-guide)
+8. [Best Practices](#best-practices)
+9. [Integration Examples](#integration-examples)
+10. [Troubleshooting](#troubleshooting)
+11. [Advanced Topics](#advanced-topics)
 
 ---
 
@@ -995,6 +996,305 @@ result = wizard.run_full_analysis(
 - Outdated documentation
 - Unclear examples
 - Poor API documentation
+
+---
+
+## Smart Routing and Intelligence
+
+### Overview
+
+Version 3.1.0 introduces intelligent routing and cross-wizard learning:
+
+- **Smart Router** — Natural language wizard dispatch
+- **Memory Graph** — Cross-wizard knowledge sharing
+- **Auto-Chaining** — Wizards trigger related wizards
+- **Prompt Engineering Wizard** — Optimize prompts and reduce costs
+
+### Smart Router
+
+Route requests using natural language instead of knowing wizard names:
+
+```python
+from empathy_os.routing import SmartRouter
+
+router = SmartRouter()
+
+# Natural language routing
+decision = router.route_sync("Fix the security issue in auth.py")
+print(f"Primary: {decision.primary_wizard}")      # → security-audit
+print(f"Secondary: {decision.secondary_wizards}")  # → [code-review]
+print(f"Confidence: {decision.confidence}")
+
+# File-based suggestions
+suggestions = router.suggest_for_file("requirements.txt")
+
+# Error-based suggestions
+suggestions = router.suggest_for_error("NullReferenceException")
+```
+
+### Memory Graph
+
+Connect findings across wizards and sessions:
+
+```python
+from empathy_os.memory import MemoryGraph, EdgeType
+
+graph = MemoryGraph()
+
+# Add findings from any wizard
+bug_id = graph.add_finding(
+    wizard="bug-predict",
+    finding={
+        "type": "bug",
+        "name": "Null reference in auth.py:42",
+        "severity": "high"
+    }
+)
+
+# Connect related findings
+fix_id = graph.add_finding(wizard="code-review", finding={"type": "fix", "name": "Add null check"})
+graph.add_edge(bug_id, fix_id, EdgeType.FIXED_BY)
+
+# Find similar issues
+similar = graph.find_similar({"name": "Null reference error"})
+
+# Traverse relationships
+fixes = graph.find_related(bug_id, edge_types=[EdgeType.FIXED_BY])
+
+# Get statistics
+stats = graph.get_statistics()
+```
+
+### Auto-Chaining
+
+Configure wizards to trigger related wizards automatically:
+
+```yaml
+# .empathy/wizard_chains.yaml
+chains:
+  security-audit:
+    auto_chain: true
+    triggers:
+      - condition: "high_severity_count > 0"
+        next: dependency-check
+        approval_required: false
+      - condition: "vulnerability_type == 'injection'"
+        next: code-review
+        approval_required: true
+
+  bug-predict:
+    triggers:
+      - condition: "risk_score > 0.7"
+        next: test-gen
+
+templates:
+  full-security-review:
+    steps: [security-audit, dependency-check, code-review]
+  pre-release:
+    steps: [test-gen, security-audit, release-prep]
+```
+
+```python
+from empathy_os.routing import ChainExecutor
+
+executor = ChainExecutor()
+
+# Check what chains would trigger
+result = {"high_severity_count": 5}
+triggers = executor.get_triggered_chains("security-audit", result)
+
+# Get a pre-built template
+template = executor.get_template("full-security-review")
+```
+
+### Prompt Engineering Wizard
+
+Analyze, generate, and optimize prompts:
+
+```python
+from coach_wizards import PromptEngineeringWizard
+
+wizard = PromptEngineeringWizard()
+
+# Analyze existing prompts
+analysis = wizard.analyze_prompt("Fix this bug")
+print(f"Score: {analysis.overall_score}")  # → 0.13 (poor)
+print(f"Issues: {analysis.issues}")        # → ["Missing role", "No output format"]
+
+# Generate optimized prompts
+prompt = wizard.generate_prompt(
+    task="Review code for security vulnerabilities",
+    role="a senior security engineer",
+    constraints=["Focus on OWASP top 10"],
+    output_format="JSON with severity and recommendation"
+)
+
+# Optimize tokens (reduce costs)
+result = wizard.optimize_tokens(verbose_prompt)
+print(f"Reduced: {result.token_reduction:.0%}")
+
+# Add chain-of-thought scaffolding
+enhanced = wizard.add_chain_of_thought(prompt, "debug")
+```
+
+### Resilience Patterns
+
+Production-ready patterns for fault tolerance and reliability:
+
+#### Retry with Exponential Backoff
+
+```python
+from empathy_os.resilience import retry, RetryConfig
+
+@retry(max_attempts=3, initial_delay=1.0, backoff_factor=2.0)
+async def call_external_api():
+    response = await api.get("/data")
+    return response.json()
+
+# Custom configuration
+config = RetryConfig(
+    max_attempts=5,
+    initial_delay=0.5,
+    backoff_factor=2.0,
+    max_delay=30.0,
+    jitter=True  # Add randomness to prevent thundering herd
+)
+```
+
+#### Circuit Breaker
+
+Prevent cascading failures by stopping calls to failing services:
+
+```python
+from empathy_os.resilience import circuit_breaker, get_circuit_breaker, CircuitOpenError
+
+@circuit_breaker(
+    name="external_api",
+    failure_threshold=5,    # Open after 5 failures
+    reset_timeout=60.0,     # Try again after 60s
+    half_open_max_calls=3   # 3 successes to fully close
+)
+async def call_external_api():
+    return await api.get("/data")
+
+# With fallback for when circuit is open
+@circuit_breaker(name="api", failure_threshold=3, fallback=lambda: {"status": "degraded"})
+async def get_status():
+    return await api.get("/status")
+
+# Check circuit state
+cb = get_circuit_breaker("external_api")
+print(f"State: {cb.state}")  # CLOSED, OPEN, or HALF_OPEN
+print(f"Stats: {cb.get_stats()}")
+```
+
+#### Timeout
+
+Prevent hanging operations:
+
+```python
+from empathy_os.resilience import timeout, with_timeout, ResilienceTimeoutError
+
+@timeout(30.0)  # 30 second timeout
+async def slow_operation():
+    return await long_running_task()
+
+# With fallback value
+@timeout(5.0, fallback=lambda: "default")
+async def quick_lookup():
+    return await cache.get("key")
+
+# One-off timeout
+result = await with_timeout(
+    some_coroutine(),
+    timeout_seconds=10.0,
+    fallback_value="timeout_default"
+)
+```
+
+#### Fallback Chain
+
+Graceful degradation with multiple fallback options:
+
+```python
+from empathy_os.resilience import Fallback, fallback
+
+# Decorator approach
+@fallback(fallback_func=get_cached_data, default="No data available")
+async def get_live_data():
+    return await api.get("/live")
+
+# Chain multiple fallbacks
+fb = Fallback(name="data_source", default_value="offline_mode")
+
+@fb.add
+async def primary_api():
+    return await api1.get("/data")
+
+@fb.add
+async def backup_api():
+    return await api2.get("/data")
+
+@fb.add
+async def local_cache():
+    return cache.get("data")
+
+result = await fb.execute()  # Tries each in order
+```
+
+#### Health Checks
+
+Monitor system component health:
+
+```python
+from empathy_os.resilience import HealthCheck, HealthStatus
+
+health = HealthCheck(version="3.1.0")
+
+@health.register("database", timeout=5.0)
+async def check_database():
+    await db.ping()
+    return True  # Healthy
+
+@health.register("cache", timeout=2.0)
+async def check_cache():
+    return {
+        "healthy": redis.ping(),
+        "connections": redis.info()["connected_clients"],
+        "memory_mb": redis.info()["used_memory_mb"]
+    }
+
+@health.register("external_api", timeout=10.0)
+async def check_external_api():
+    response = await api.get("/health")
+    return response.status_code == 200
+
+# Run all checks
+system_health = await health.run_all()
+print(f"Status: {system_health.status}")  # HEALTHY, DEGRADED, UNHEALTHY
+print(f"Uptime: {system_health.uptime_seconds}s")
+
+# Serialize for API response
+return system_health.to_dict()
+```
+
+#### Combining Patterns
+
+Stack decorators for robust services:
+
+```python
+from empathy_os.resilience import retry, circuit_breaker, timeout, fallback
+
+async def cached_fallback():
+    return cache.get("last_known_good")
+
+@circuit_breaker(name="api", failure_threshold=5)
+@retry(max_attempts=3, initial_delay=0.5)
+@timeout(10.0)
+@fallback(cached_fallback)
+async def reliable_api_call():
+    return await external_api.get("/data")
+```
 
 ---
 

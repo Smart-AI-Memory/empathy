@@ -12,8 +12,21 @@
 pip install empathy-framework[full]
 ```
 
-## What's New in v3.0.1
+## What's New in v3.1.0
 
+### Agent Intelligence System
+- **Smart Router** — Natural language wizard dispatch: "Fix security in auth.py" → routes to SecurityWizard
+- **Memory Graph** — Cross-wizard knowledge sharing: bugs, fixes, and patterns connected across sessions
+- **Auto-Chaining** — Wizards automatically trigger related wizards based on findings
+- **Prompt Engineering Wizard** — Analyze, generate, and optimize prompts with token cost savings
+
+### Resilience Patterns
+- **Retry with Backoff** — Automatic retries with exponential backoff and jitter
+- **Circuit Breaker** — Prevent cascading failures (CLOSED → OPEN → HALF_OPEN states)
+- **Timeout & Fallback** — Graceful degradation with configurable fallbacks
+- **Health Checks** — Monitor system components with configurable thresholds
+
+### Previous (v3.0.x)
 - **XML-Enhanced Prompts** — Structured prompts for consistent, parseable LLM responses
 - **Multi-Model Provider System** — Choose Anthropic, OpenAI, Ollama, or Hybrid mode
 - **80-96% Cost Savings** — Smart tier routing: cheap models detect, best models decide
@@ -189,7 +202,7 @@ workflow_xml_configs:
     template_name: "code-review"
 ```
 
-Built-in templates: `security-audit`, `code-review`, `research`, `bug-analysis`
+Built-in templates: `security-audit`, `code-review`, `research`, `bug-analysis`, `perf-audit`, `refactor-plan`, `test-gen`, `doc-gen`, `release-prep`, `dependency-check`
 
 ```python
 from empathy_os.prompts import get_template, XmlResponseParser, PromptContext
@@ -203,6 +216,140 @@ prompt = template.render(context)
 parser = XmlResponseParser(fallback_on_error=True)
 result = parser.parse(llm_response)
 print(result.summary, result.findings, result.checklist)
+```
+
+---
+
+## Smart Router
+
+Route natural language requests to the right wizard automatically:
+
+```python
+from empathy_os.routing import SmartRouter
+
+router = SmartRouter()
+
+# Natural language routing
+decision = router.route_sync("Fix the security vulnerability in auth.py")
+print(f"Primary: {decision.primary_wizard}")      # → security-audit
+print(f"Also consider: {decision.secondary_wizards}")  # → [code-review]
+print(f"Confidence: {decision.confidence}")
+
+# File-based suggestions
+suggestions = router.suggest_for_file("requirements.txt")  # → [dependency-check]
+
+# Error-based suggestions
+suggestions = router.suggest_for_error("NullReferenceException")  # → [bug-predict, test-gen]
+```
+
+---
+
+## Memory Graph
+
+Cross-wizard knowledge sharing - wizards learn from each other:
+
+```python
+from empathy_os.memory import MemoryGraph, EdgeType
+
+graph = MemoryGraph()
+
+# Add findings from any wizard
+bug_id = graph.add_finding(
+    wizard="bug-predict",
+    finding={
+        "type": "bug",
+        "name": "Null reference in auth.py:42",
+        "severity": "high"
+    }
+)
+
+# Connect related findings
+fix_id = graph.add_finding(wizard="code-review", finding={"type": "fix", "name": "Add null check"})
+graph.add_edge(bug_id, fix_id, EdgeType.FIXED_BY)
+
+# Find similar past issues
+similar = graph.find_similar({"name": "Null reference error"})
+
+# Traverse relationships
+related_fixes = graph.find_related(bug_id, edge_types=[EdgeType.FIXED_BY])
+```
+
+---
+
+## Auto-Chaining
+
+Wizards automatically trigger related wizards based on findings:
+
+```yaml
+# .empathy/wizard_chains.yaml
+chains:
+  security-audit:
+    auto_chain: true
+    triggers:
+      - condition: "high_severity_count > 0"
+        next: dependency-check
+        approval_required: false
+      - condition: "vulnerability_type == 'injection'"
+        next: code-review
+        approval_required: true
+
+  bug-predict:
+    triggers:
+      - condition: "risk_score > 0.7"
+        next: test-gen
+
+templates:
+  full-security-review:
+    steps: [security-audit, dependency-check, code-review]
+  pre-release:
+    steps: [test-gen, security-audit, release-prep]
+```
+
+```python
+from empathy_os.routing import ChainExecutor
+
+executor = ChainExecutor()
+
+# Check what chains would trigger
+result = {"high_severity_count": 5}
+triggers = executor.get_triggered_chains("security-audit", result)
+# → [ChainTrigger(next="dependency-check"), ...]
+
+# Execute a template
+template = executor.get_template("full-security-review")
+# → ["security-audit", "dependency-check", "code-review"]
+```
+
+---
+
+## Prompt Engineering Wizard
+
+Analyze, generate, and optimize prompts:
+
+```python
+from coach_wizards import PromptEngineeringWizard
+
+wizard = PromptEngineeringWizard()
+
+# Analyze existing prompts
+analysis = wizard.analyze_prompt("Fix this bug")
+print(f"Score: {analysis.overall_score}")  # → 0.13 (poor)
+print(f"Issues: {analysis.issues}")        # → ["Missing role", "No output format"]
+
+# Generate optimized prompts
+prompt = wizard.generate_prompt(
+    task="Review code for security vulnerabilities",
+    role="a senior security engineer",
+    constraints=["Focus on OWASP top 10"],
+    output_format="JSON with severity and recommendation"
+)
+
+# Optimize tokens (reduce costs)
+result = wizard.optimize_tokens(verbose_prompt)
+print(f"Reduced: {result.token_reduction:.0%}")  # → 20% reduction
+
+# Add chain-of-thought scaffolding
+enhanced = wizard.add_chain_of_thought(prompt, "debug")
 ```
 
 ---
@@ -233,9 +380,13 @@ cd empathy-framework && pip install -e .[dev]
 | Component | Description |
 |-----------|-------------|
 | **Empathy OS** | Core engine for human↔AI and AI↔AI collaboration |
+| **Smart Router** | Natural language wizard dispatch with LLM classification |
+| **Memory Graph** | Cross-wizard knowledge sharing (bugs, fixes, patterns) |
+| **Auto-Chaining** | Wizards trigger related wizards based on findings |
 | **Multi-Model Router** | Smart routing across providers and tiers |
 | **Memory System** | Redis short-term + encrypted long-term patterns |
-| **30+ Production Wizards** | Security, performance, testing, docs, compliance |
+| **17 Coach Wizards** | Security, performance, testing, docs, prompt engineering |
+| **10 Cost-Optimized Workflows** | Multi-tier pipelines with XML prompts |
 | **Healthcare Suite** | SBAR, SOAP notes, clinical protocols (HIPAA) |
 | **Code Inspection** | Unified pipeline with SARIF/GitHub Actions support |
 | **VSCode Extension** | Visual dashboard for memory and workflows |

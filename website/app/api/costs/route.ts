@@ -92,7 +92,7 @@ export async function GET(request: Request): Promise<Response> {
     cutoffDate.setDate(cutoffDate.getDate() - days);
     const cutoffStr = cutoffDate.toISOString().split('T')[0];
 
-    let summary = {
+    const summary = {
       total_requests: 0,
       total_savings: 0,
       total_cost: 0,

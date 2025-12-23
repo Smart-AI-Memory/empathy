@@ -46,6 +46,8 @@ class CodeReviewWorkflow(BaseWorkflow):
         self,
         file_threshold: int = 10,
         core_modules: list[str] | None = None,
+        use_crew: bool = False,
+        crew_config: dict | None = None,
         **kwargs: Any,
     ):
         """
@@ -54,6 +56,8 @@ class CodeReviewWorkflow(BaseWorkflow):
         Args:
             file_threshold: Number of files above which premium review is used.
             core_modules: List of module paths considered "core" (trigger premium).
+            use_crew: Enable CodeReviewCrew for comprehensive 5-agent analysis.
+            crew_config: Configuration dict for CodeReviewCrew.
         """
         super().__init__(**kwargs)
         self.file_threshold = file_threshold
@@ -64,10 +68,22 @@ class CodeReviewWorkflow(BaseWorkflow):
             "empathy_os/core.py",
             "empathy_os/security/",
         ]
+        self.use_crew = use_crew
+        self.crew_config = crew_config or {}
         self._needs_architect_review: bool = False
         self._change_type: str = "unknown"
         self._client = None
         self._api_key = os.getenv("ANTHROPIC_API_KEY")
+
+        # Dynamically configure stages based on crew setting
+        if use_crew:
+            self.stages = ["classify", "crew_review", "scan", "architect_review"]
+            self.tier_map = {
+                "classify": ModelTier.CHEAP,
+                "crew_review": ModelTier.PREMIUM,
+                "scan": ModelTier.CAPABLE,
+                "architect_review": ModelTier.PREMIUM,
+            }
 
     def _get_client(self):
         """Lazy-load the Anthropic client."""
@@ -128,6 +144,8 @@ class CodeReviewWorkflow(BaseWorkflow):
         """Execute a code review stage."""
         if stage_name == "classify":
             return await self._classify(input_data, tier)
+        elif stage_name == "crew_review":
+            return await self._crew_review(input_data, tier)
         elif stage_name == "scan":
             return await self._scan(input_data, tier)
         elif stage_name == "architect_review":
@@ -193,10 +211,116 @@ Code:
             output_tokens,
         )
 
+    async def _crew_review(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
+        """
+        Run CodeReviewCrew for comprehensive 5-agent analysis.
+
+        This stage uses the CodeReviewCrew (Review Lead, Security Analyst,
+        Architecture Reviewer, Quality Analyst, Performance Reviewer) for
+        deep code analysis with memory graph integration.
+
+        Falls back gracefully if CodeReviewCrew is not available.
+        """
+        from .code_review_adapters import (
+            _check_crew_available,
+            _get_crew_review,
+            crew_report_to_workflow_format,
+        )
+
+        # Get code to review
+        diff = input_data.get("diff", "") or input_data.get("code_to_review", "")
+        files_changed = input_data.get("files_changed", [])
+
+        # Check if crew is available
+        if not _check_crew_available():
+            return (
+                {
+                    "crew_review": {
+                        "available": False,
+                        "fallback": True,
+                        "reason": "CodeReviewCrew not installed",
+                    },
+                    **input_data,
+                },
+                0,
+                0,
+            )
+
+        # Run CodeReviewCrew
+        report = await _get_crew_review(
+            diff=diff,
+            files_changed=files_changed,
+            config=self.crew_config,
+        )
+
+        if report is None:
+            return (
+                {
+                    "crew_review": {
+                        "available": True,
+                        "fallback": True,
+                        "reason": "CodeReviewCrew review failed or timed out",
+                    },
+                    **input_data,
+                },
+                0,
+                0,
+            )
+
+        # Convert crew report to workflow format
+        crew_results = crew_report_to_workflow_format(report)
+
+        # Update needs_architect_review based on crew findings
+        has_blocking = crew_results.get("has_blocking_issues", False)
+        critical_count = len(crew_results.get("assessment", {}).get("critical_findings", []))
+        high_count = len(crew_results.get("assessment", {}).get("high_findings", []))
+
+        if has_blocking or critical_count > 0 or high_count > 2:
+            self._needs_architect_review = True
+
+        crew_review_result = {
+            "available": True,
+            "fallback": False,
+            "findings": crew_results.get("findings", []),
+            "finding_count": crew_results.get("finding_count", 0),
+            "verdict": crew_results.get("verdict", "approve"),
+            "quality_score": crew_results.get("quality_score", 100),
+            "has_blocking_issues": has_blocking,
+            "critical_count": critical_count,
+            "high_count": high_count,
+            "summary": crew_results.get("summary", ""),
+            "agents_used": crew_results.get("agents_used", []),
+            "memory_graph_hits": crew_results.get("memory_graph_hits", 0),
+            "review_duration_seconds": crew_results.get("review_duration_seconds", 0),
+        }
+
+        # Estimate tokens (crew uses internal LLM calls)
+        input_tokens = len(diff) // 4
+        output_tokens = len(str(crew_review_result)) // 4
+
+        return (
+            {
+                "crew_review": crew_review_result,
+                "needs_architect_review": self._needs_architect_review,
+                **input_data,
+            },
+            input_tokens,
+            output_tokens,
+        )
+
     async def _scan(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """Security scan and bug pattern matching."""
+        """
+        Security scan and bug pattern matching.
+
+        When external_audit_results is provided in input_data (e.g., from
+        SecurityAuditCrew), these findings are merged with the LLM analysis
+        and can trigger architect_review if critical issues are found.
+        """
         code_to_review = input_data.get("code_to_review", input_data.get("diff", ""))
         classification = input_data.get("classification", "")
+
+        # Check for external audit results (e.g., from SecurityAuditCrew)
+        external_audit = input_data.get("external_audit_results")
 
         system = """You are a security and code quality expert. Analyze the code for:
 
@@ -225,10 +349,31 @@ For each issue found, provide:
 
 Be thorough but focused on actionable findings."""
 
+        # If external audit provided, include it in the prompt for context
+        external_context = ""
+        if external_audit:
+            external_summary = external_audit.get("summary", "")
+            external_findings = external_audit.get("findings", [])
+            if external_summary or external_findings:
+                external_context = f"""
+
+## External Security Audit Results
+Summary: {external_summary}
+
+Findings ({len(external_findings)} total):
+"""
+                for finding in external_findings[:10]:  # Top 10
+                    sev = finding.get("severity", "unknown").upper()
+                    title = finding.get("title", "N/A")
+                    desc = finding.get("description", "")[:100]
+                    external_context += f"- [{sev}] {title}: {desc}\n"
+
+                external_context += "\nVerify these findings and identify additional issues."
+
         user_message = f"""Review this code for security and quality issues:
 
 Previous classification: {classification}
-
+{external_context}
 Code to review:
 {code_to_review[:6000]}"""
 
@@ -236,13 +381,24 @@ Code to review:
             tier, system, user_message, max_tokens=2048
         )
 
-        # Check if critical issues found
+        # Check if critical issues found in LLM response
         has_critical = "critical" in response.lower() or "high" in response.lower()
+
+        # Merge external audit findings if provided
+        security_findings = []
+        external_has_critical = False
+
+        if external_audit:
+            merged_response, security_findings, external_has_critical = self._merge_external_audit(
+                response, external_audit
+            )
+            response = merged_response
+            has_critical = has_critical or external_has_critical
 
         return (
             {
                 "scan_results": response,
-                "security_findings": [],  # Parsed from response
+                "security_findings": security_findings,
                 "bug_patterns": [],
                 "quality_issues": [],
                 "has_critical_issues": has_critical,
@@ -251,10 +407,70 @@ Code to review:
                 or has_critical,
                 "code_to_review": code_to_review,
                 "classification": classification,
+                "external_audit_included": external_audit is not None,
+                "external_audit_risk_score": (
+                    external_audit.get("risk_score", 0) if external_audit else 0
+                ),
             },
             input_tokens,
             output_tokens,
         )
+
+    def _merge_external_audit(
+        self, llm_response: str, external_audit: dict
+    ) -> tuple[str, list, bool]:
+        """
+        Merge external SecurityAuditCrew results into scan output.
+
+        Args:
+            llm_response: Response from LLM security scan
+            external_audit: External audit dict (from SecurityAuditCrew.to_dict())
+
+        Returns:
+            Tuple of (merged_response, security_findings, has_critical)
+        """
+        findings = external_audit.get("findings", [])
+        summary = external_audit.get("summary", "")
+        risk_score = external_audit.get("risk_score", 0)
+
+        # Check for critical/high findings
+        has_critical = any(f.get("severity") in ("critical", "high") for f in findings)
+
+        # Build merged response
+        merged_sections = [llm_response]
+
+        if summary or findings:
+            crew_section = "\n\n## SecurityAuditCrew Analysis\n"
+            if summary:
+                crew_section += f"\n{summary}\n"
+
+            crew_section += f"\n**Risk Score**: {risk_score}/100\n"
+
+            if findings:
+                critical = [f for f in findings if f.get("severity") == "critical"]
+                high = [f for f in findings if f.get("severity") == "high"]
+
+                if critical:
+                    crew_section += "\n### Critical Findings\n"
+                    for f in critical:
+                        crew_section += f"- **{f.get('title', 'N/A')}**"
+                        if f.get("file"):
+                            crew_section += f" ({f.get('file')}:{f.get('line', '?')})"
+                        crew_section += f"\n  {f.get('description', '')[:200]}\n"
+                        if f.get("remediation"):
+                            crew_section += f"  *Fix*: {f.get('remediation')[:150]}\n"
+
+                if high:
+                    crew_section += "\n### High Severity Findings\n"
+                    for f in high[:5]:  # Top 5
+                        crew_section += f"- **{f.get('title', 'N/A')}**"
+                        if f.get("file"):
+                            crew_section += f" ({f.get('file')}:{f.get('line', '?')})"
+                        crew_section += f"\n  {f.get('description', '')[:150]}\n"
+
+            merged_sections.append(crew_section)
+
+        return "\n".join(merged_sections), findings, has_critical
 
     async def _architect_review(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
         """
@@ -287,7 +503,7 @@ Code:
                     "Analyze coupling and cohesion",
                     "Provide specific improvement recommendations with examples",
                     "Suggest refactoring and testing improvements",
-                    "Provide verdict: approve, approve_with_suggestions, request_changes, or reject",
+                    "Provide verdict: approve, approve_with_suggestions, or reject",
                 ],
                 constraints=[
                     "Be specific and actionable",

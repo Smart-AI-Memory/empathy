@@ -150,7 +150,7 @@ class ProviderConfig:
                 available_providers=available,
             )
 
-    def get_model_for_tier(self, tier: str | ModelTier) -> ModelInfo:
+    def get_model_for_tier(self, tier: str | ModelTier) -> ModelInfo | None:
         """Get the model to use for a given tier based on current config."""
         tier_str = tier.value if isinstance(tier, ModelTier) else tier
 

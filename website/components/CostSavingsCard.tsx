@@ -70,7 +70,7 @@ export default function CostSavingsCard() {
         } else {
           setError(result.error || 'Failed to load cost data');
         }
-      } catch (err) {
+      } catch {
         setError('Failed to connect to cost tracking API');
       } finally {
         setLoading(false);

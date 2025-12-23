@@ -14,11 +14,12 @@ Licensed under Fair Source License 0.9
 """
 
 import json
+import os
 import re
 from pathlib import Path
 from typing import Any
 
-from .base import BaseWorkflow, ModelTier
+from .base import PROVIDER_MODELS, BaseWorkflow, ModelProvider, ModelTier
 
 # Known vulnerable package patterns (simulated CVE database)
 KNOWN_VULNERABILITIES = {
@@ -57,6 +58,55 @@ class DependencyCheckWorkflow(BaseWorkflow):
             **kwargs: Additional arguments passed to BaseWorkflow
         """
         super().__init__(**kwargs)
+        self._client = None
+        self._api_key = os.getenv("ANTHROPIC_API_KEY")
+
+    def _get_client(self):
+        """Lazy-load the Anthropic client."""
+        if self._client is None and self._api_key:
+            try:
+                import anthropic
+
+                self._client = anthropic.Anthropic(api_key=self._api_key)
+            except ImportError:
+                pass
+        return self._client
+
+    def _get_model_for_tier(self, tier: ModelTier) -> str:
+        """Get the model name for a given tier."""
+        provider = ModelProvider.ANTHROPIC
+        return PROVIDER_MODELS.get(provider, {}).get(tier, "claude-sonnet-4-20250514")
+
+    async def _call_llm(
+        self, tier: ModelTier, system: str, user_message: str, max_tokens: int = 4096
+    ) -> tuple[str, int, int]:
+        """Make an actual LLM call using the Anthropic API."""
+        client = self._get_client()
+        if not client:
+            return (
+                "[Simulated - set ANTHROPIC_API_KEY for real results]",
+                len(user_message) // 4,
+                100,
+            )
+
+        model = self._get_model_for_tier(tier)
+
+        try:
+            response = client.messages.create(
+                model=model,
+                max_tokens=max_tokens,
+                system=system,
+                messages=[{"role": "user", "content": user_message}],
+            )
+
+            content = response.content[0].text if response.content else ""
+            input_tokens = response.usage.input_tokens
+            output_tokens = response.usage.output_tokens
+
+            return content, input_tokens, output_tokens
+
+        except Exception as e:
+            return f"Error calling LLM: {e}", 0, 0
 
     async def run_stage(
         self, stage_name: str, tier: ModelTier, input_data: Any
@@ -289,13 +339,16 @@ class DependencyCheckWorkflow(BaseWorkflow):
 
     async def _report(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
         """
-        Generate risk assessment and recommendations.
+        Generate risk assessment and recommendations using LLM.
 
         Creates actionable report with remediation steps.
+
+        Supports XML-enhanced prompts when enabled in workflow config.
         """
         assessment = input_data.get("assessment", {})
         vulnerabilities = assessment.get("vulnerabilities", [])
         outdated = assessment.get("outdated", [])
+        target = input_data.get("path", "")
 
         # Calculate risk score
         risk_score = (
@@ -312,7 +365,82 @@ class DependencyCheckWorkflow(BaseWorkflow):
             else "high" if risk_score >= 50 else "medium" if risk_score >= 25 else "low"
         )
 
-        # Generate recommendations
+        # Build vulnerability summary for LLM
+        vuln_summary = []
+        for v in vulnerabilities[:15]:
+            vuln_summary.append(
+                f"- {v.get('package')}@{v.get('current_version')}: "
+                f"{v.get('cve')} ({v.get('severity')})"
+            )
+
+        # Build input payload for prompt
+        input_payload = f"""Target: {target or 'codebase'}
+
+Total Dependencies: {input_data.get('total_dependencies', 0)}
+Risk Score: {risk_score}/100
+Risk Level: {risk_level}
+
+Vulnerabilities ({len(vulnerabilities)}):
+{chr(10).join(vuln_summary) if vuln_summary else 'None found'}
+
+Outdated Packages: {len(outdated)}
+
+Severity Summary:
+- Critical: {assessment.get('critical_count', 0)}
+- High: {assessment.get('high_count', 0)}
+- Medium: {assessment.get('medium_count', 0)}"""
+
+        # Check if XML prompts are enabled
+        if self._is_xml_enabled():
+            # Use XML-enhanced prompt
+            user_message = self._render_xml_prompt(
+                role="security engineer specializing in dependency management",
+                goal="Generate a comprehensive dependency security report with remediation steps",
+                instructions=[
+                    "Analyze the vulnerability findings and their severity",
+                    "Prioritize remediation actions by risk level",
+                    "Provide specific upgrade recommendations",
+                    "Identify potential breaking changes from upgrades",
+                    "Suggest a remediation timeline",
+                ],
+                constraints=[
+                    "Focus on actionable recommendations",
+                    "Prioritize critical and high severity issues",
+                    "Include version upgrade targets where possible",
+                ],
+                input_type="dependency_vulnerabilities",
+                input_payload=input_payload,
+                extra={
+                    "risk_score": risk_score,
+                    "risk_level": risk_level,
+                },
+            )
+            system = None  # XML prompt includes all context
+        else:
+            # Use legacy plain text prompts
+            system = """You are a security engineer specializing in dependency management.
+Analyze the vulnerability findings and generate a comprehensive remediation report.
+
+Focus on:
+1. Prioritizing by severity
+2. Specific upgrade recommendations
+3. Potential breaking changes
+4. Remediation timeline"""
+
+            user_message = f"""Generate a dependency security report:
+
+{input_payload}
+
+Provide actionable remediation recommendations."""
+
+        response, input_tokens, output_tokens = await self._call_llm(
+            tier, system or "", user_message, max_tokens=3000
+        )
+
+        # Parse XML response if enforcement is enabled
+        parsed_data = self._parse_xml_response(response)
+
+        # Generate basic recommendations for backwards compatibility
         recommendations: list[dict] = []
 
         for vuln in vulnerabilities:
@@ -340,31 +468,34 @@ class DependencyCheckWorkflow(BaseWorkflow):
         # Sort by priority
         recommendations.sort(key=lambda x: x["priority"])
 
-        report = {
+        result = {
             "risk_score": risk_score,
             "risk_level": risk_level,
             "total_dependencies": input_data.get("total_dependencies", 0),
             "vulnerability_count": len(vulnerabilities),
             "outdated_count": len(outdated),
             "recommendations": recommendations[:20],
+            "security_report": response,
             "summary": {
                 "critical": assessment.get("critical_count", 0),
                 "high": assessment.get("high_count", 0),
                 "medium": assessment.get("medium_count", 0),
             },
+            "model_tier_used": tier.value,
         }
 
-        input_tokens = len(str(input_data)) // 4
-        output_tokens = len(str(report)) // 4
+        # Merge parsed XML data if available
+        if parsed_data.get("xml_parsed"):
+            result.update(
+                {
+                    "xml_parsed": True,
+                    "report_summary": parsed_data.get("summary"),
+                    "findings": parsed_data.get("findings", []),
+                    "checklist": parsed_data.get("checklist", []),
+                }
+            )
 
-        return (
-            {
-                "report": report,
-                "model_tier_used": tier.value,
-            },
-            input_tokens,
-            output_tokens,
-        )
+        return (result, input_tokens, output_tokens)
 
 
 def main():
@@ -389,9 +520,9 @@ def main():
 
         print("\nCost Report:")
         print(f"  Total Cost: ${result.cost_report.total_cost:.4f}")
-        print(
-            f"  Savings: ${result.cost_report.savings:.4f} ({result.cost_report.savings_percent:.1f}%)"
-        )
+        savings = result.cost_report.savings
+        pct = result.cost_report.savings_percent
+        print(f"  Savings: ${savings:.4f} ({pct:.1f}%)")
 
     asyncio.run(run())
 

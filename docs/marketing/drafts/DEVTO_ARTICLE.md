@@ -1,7 +1,7 @@
 ---
 title: Give Claude Persistent Memory in 10 Lines of Python (Now with 80% Cost Savings)
 published: false
-description: How to make Claude remember your preferences across sessions using the Empathy Framework v3.0.0
+description: How to make Claude remember your preferences across sessions using the Empathy Framework v3.0.1
 tags: python, ai, claude, anthropic, openai
 cover_image:
 ---
@@ -42,7 +42,7 @@ response = await llm.interact(
 
 That's it. Next time this user connects—even days later—Claude remembers.
 
-## New in v3.0.0: Multi-Provider Support
+## New in v3.0.1: Multi-Provider Support + XML-Enhanced Prompts
 
 Choose your provider—or mix them:
 
@@ -134,7 +134,7 @@ On a real codebase (364 debt items, 81 security findings):
 - **Security noise reduction**: 84% (81 → 13 findings after learning)
 - **Tech debt tracking**: Trajectory predicts 2x growth in 170 days
 
-## v3.0.0: Smart Model Routing (80% Cost Savings)
+## v3.0.1: Smart Model Routing (80% Cost Savings)
 
 Why pay Opus prices for simple tasks? The ModelRouter automatically picks the right model across any provider.
 
@@ -161,9 +161,9 @@ await llm.interact(user_id="dev", user_input="Design the system", task_type="arc
 - With routing (tiered): $0.83/complex task
 - **Savings: 80%**
 
-## v3.0.0: VSCode Dashboard
+## v3.0.1: VSCode Dashboard + XML-Enhanced Prompts
 
-The biggest addition in v3.0.0 is a complete VSCode Dashboard with **10 integrated workflows**:
+The biggest additions in v3.0.1 include a complete VSCode Dashboard with **10 integrated workflows** and **XML-Enhanced Prompts** for structured, parseable LLM responses:
 
 1. **Research Synthesis** — Deep dive research with citations
 2. **Code Review** — Comprehensive PR analysis

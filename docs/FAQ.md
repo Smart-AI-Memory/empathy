@@ -1,7 +1,7 @@
 # Empathy Framework - Frequently Asked Questions (FAQ)
 
-**Last Updated:** November 2025
-**Version:** 1.0.0
+**Last Updated:** December 2025
+**Version:** 3.1.0
 
 ---
 
@@ -9,6 +9,7 @@
 
 - [General Questions](#general-questions)
 - [Wizards](#wizards)
+- [Smart Routing and Intelligence](#smart-routing-and-intelligence)
 - [Technical Questions](#technical-questions)
 - [Licensing and Pricing](#licensing-and-pricing)
 - [Integration and Usage](#integration-and-usage)
@@ -193,6 +194,98 @@ class MyWizard(BaseWizard):
 ```
 
 See [Creating Custom Wizards](api-reference/wizards.md#creating-custom-wizards) for full documentation.
+
+---
+
+## Smart Routing and Intelligence
+
+### What is the Smart Router?
+
+The Smart Router automatically dispatches your natural language requests to the appropriate wizard(s). Instead of knowing which wizard to use, just describe what you need:
+
+```python
+from empathy_os.routing import SmartRouter
+
+router = SmartRouter()
+decision = router.route_sync("Fix the security issue in auth.py")
+# decision.primary_wizard = "security-audit"
+# decision.secondary_wizards = ["code-review"]
+```
+
+**How it works:**
+1. Uses LLM classification (Haiku tier) to understand your request
+2. Falls back to keyword matching if no API key is set
+3. Suggests secondary wizards for comprehensive analysis
+4. Provides confidence scores for routing decisions
+
+### What is the Memory Graph?
+
+The Memory Graph is a knowledge base that connects findings across all wizards. When one wizard finds a bug, other wizards can see related issues, past fixes, and patterns.
+
+```python
+from empathy_os.memory import MemoryGraph, EdgeType
+
+graph = MemoryGraph()
+
+# Find similar bugs from past sessions
+similar = graph.find_similar({"name": "Null reference error"})
+
+# Traverse relationships
+bug = graph.get_node(bug_id)
+fixes = graph.find_related(bug_id, edge_types=[EdgeType.FIXED_BY])
+```
+
+**Benefits:**
+- Cross-session learning - wizards get smarter over time
+- Relationship tracking - bugs linked to fixes, vulnerabilities to patches
+- Pattern recognition - find similar issues across your codebase
+
+### What is Auto-Chaining?
+
+Auto-Chaining allows wizards to automatically trigger related wizards based on their findings. For example, when Security Audit finds high-severity issues, it can automatically trigger Dependency Check.
+
+Configure in `.empathy/wizard_chains.yaml`:
+
+```yaml
+chains:
+  security-audit:
+    triggers:
+      - condition: "high_severity_count > 0"
+        next: dependency-check
+        approval_required: false
+```
+
+**Pre-built templates:**
+- `full-security-review`: security-audit → dependency-check → code-review
+- `pre-release`: test-gen → security-audit → release-prep
+- `code-quality`: code-review → perf-audit → doc-gen
+- `bug-fix-pipeline`: bug-predict → code-review → test-gen
+
+### What is the Prompt Engineering Wizard?
+
+The Prompt Engineering Wizard helps you craft better prompts for any AI task. It can analyze existing prompts, generate optimized ones, and reduce token costs.
+
+```python
+from coach_wizards import PromptEngineeringWizard
+
+wizard = PromptEngineeringWizard()
+
+# Analyze a prompt
+analysis = wizard.analyze_prompt("Fix this bug")
+# analysis.overall_score = 0.13 (poor)
+# analysis.issues = ["Missing role", "No output format"]
+
+# Generate an optimized prompt
+prompt = wizard.generate_prompt(
+    task="Review code for security",
+    role="a security engineer",
+    output_format="JSON with severity"
+)
+
+# Reduce token costs
+result = wizard.optimize_tokens(verbose_prompt)
+# result.token_reduction = 0.20 (20% savings)
+```
 
 ---
 

@@ -102,6 +102,14 @@ export default function FrameworkPage() {
               </p>
             </div>
 
+            <div className="bg-[var(--background)] p-6 rounded-lg border-2 border-purple-500 border-opacity-50">
+              <div className="mb-4 text-3xl">🧭</div>
+              <h3 className="text-xl font-bold mb-3">Wizard Intelligence <span className="text-xs font-normal text-purple-500 ml-2">v3.1.0</span></h3>
+              <p className="text-[var(--text-secondary)]">
+                Smart Router + Memory Graph + Auto-Chaining. Wizards coordinate automatically with shared learning.
+              </p>
+            </div>
+
             <div className="bg-[var(--background)] p-6 rounded-lg">
               <div className="mb-4">
                 <Image src="/images/icons/square-terminal.svg" alt="" width={32} height={32} className="opacity-70" />
@@ -242,30 +250,30 @@ result = await wizard.analyze({"data": your_data})`}
               </div>
 
               <div>
-                <h3 className="text-2xl font-bold mb-4">Plugin System</h3>
+                <h3 className="text-2xl font-bold mb-4">Intelligence System <span className="text-sm font-normal text-purple-500">v3.1.0</span></h3>
                 <ul className="space-y-3">
                   <li className="flex items-start gap-2">
-                    <span className="text-[var(--secondary)] font-mono text-sm mt-1">PluginRegistry</span>
+                    <span className="text-purple-500 font-mono text-sm mt-1">SmartRouter</span>
                     <span className="text-[var(--text-secondary)] text-sm">
-                      Discover and load plugins
+                      Natural language wizard dispatch
                     </span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[var(--secondary)] font-mono text-sm mt-1">WizardFactory</span>
+                    <span className="text-purple-500 font-mono text-sm mt-1">MemoryGraph</span>
                     <span className="text-[var(--text-secondary)] text-sm">
-                      Create wizard instances
+                      Cross-wizard knowledge sharing
                     </span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[var(--secondary)] font-mono text-sm mt-1">ConfigManager</span>
+                    <span className="text-purple-500 font-mono text-sm mt-1">ChainExecutor</span>
                     <span className="text-[var(--text-secondary)] text-sm">
-                      Plugin configuration and settings
+                      Auto-chaining wizard workflows
                     </span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[var(--secondary)] font-mono text-sm mt-1">HookSystem</span>
+                    <span className="text-purple-500 font-mono text-sm mt-1">WizardRegistry</span>
                     <span className="text-[var(--text-secondary)] text-sm">
-                      Event hooks and callbacks
+                      10+ wizards with domain metadata
                     </span>
                   </li>
                 </ul>

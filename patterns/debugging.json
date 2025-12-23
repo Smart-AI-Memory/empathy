@@ -136,7 +136,22 @@
         "website/components/debug-wizard/DebugWizard.tsx"
       ],
       "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20251222_8edfb707",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "feat: Release v3.0.1 - XML-Enhanced Prompts & Security Fixes",
+      "fix": "See commit 8edfb707",
+      "resolved_by": "@geneai",
+      "resolved_at": "2025-12-22",
+      "files_affected": [
+        ".claude/CLAUDE.md",
+        ".gitignore",
+        "CHANGELOG.md"
+      ],
+      "source": "git_history"
     }
   ],
-  "last_updated": "2025-12-20T01:09:45.906901"
+  "last_updated": "2025-12-22T21:24:19.681593"
 }

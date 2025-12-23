@@ -14,11 +14,13 @@ Copyright 2025 Smart-AI-Memory
 Licensed under Fair Source License 0.9
 """
 
+import json
+import os
 import re
 from pathlib import Path
 from typing import Any
 
-from .base import BaseWorkflow, ModelTier
+from .base import PROVIDER_MODELS, BaseWorkflow, ModelProvider, ModelTier
 
 # Performance anti-patterns to detect
 PERF_PATTERNS = {
@@ -120,6 +122,55 @@ class PerformanceAuditWorkflow(BaseWorkflow):
         super().__init__(**kwargs)
         self.min_hotspots_for_premium = min_hotspots_for_premium
         self._hotspot_count: int = 0
+        self._client = None
+        self._api_key = os.getenv("ANTHROPIC_API_KEY")
+
+    def _get_client(self):
+        """Lazy-load the Anthropic client."""
+        if self._client is None and self._api_key:
+            try:
+                import anthropic
+
+                self._client = anthropic.Anthropic(api_key=self._api_key)
+            except ImportError:
+                pass
+        return self._client
+
+    def _get_model_for_tier(self, tier: ModelTier) -> str:
+        """Get the model name for a given tier."""
+        provider = ModelProvider.ANTHROPIC
+        return PROVIDER_MODELS.get(provider, {}).get(tier, "claude-sonnet-4-20250514")
+
+    async def _call_llm(
+        self, tier: ModelTier, system: str, user_message: str, max_tokens: int = 4096
+    ) -> tuple[str, int, int]:
+        """Make an actual LLM call using the Anthropic API."""
+        client = self._get_client()
+        if not client:
+            return (
+                "[Simulated - set ANTHROPIC_API_KEY for real results]",
+                len(user_message) // 4,
+                100,
+            )
+
+        model = self._get_model_for_tier(tier)
+
+        try:
+            response = client.messages.create(
+                model=model,
+                max_tokens=max_tokens,
+                system=system,
+                messages=[{"role": "user", "content": user_message}],
+            )
+
+            content = response.content[0].text if response.content else ""
+            input_tokens = response.usage.input_tokens
+            output_tokens = response.usage.output_tokens
+
+            return content, input_tokens, output_tokens
+
+        except Exception as e:
+            return f"Error calling LLM: {e}", 0, 0
 
     def should_skip_stage(self, stage_name: str, input_data: Any) -> tuple[bool, str | None]:
         """
@@ -320,69 +371,128 @@ class PerformanceAuditWorkflow(BaseWorkflow):
 
     async def _optimize(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
         """
-        Generate optimization recommendations.
+        Generate optimization recommendations using LLM.
 
         Creates actionable recommendations for performance improvements.
+
+        Supports XML-enhanced prompts when enabled in workflow config.
         """
         hotspot_result = input_data.get("hotspot_result", {})
         hotspots = hotspot_result.get("hotspots", [])
         findings = input_data.get("findings", [])
+        target = input_data.get("target", "")
 
-        recommendations: list[dict] = []
-
-        # Generate recommendations for each hotspot
-        for hotspot in hotspots[:10]:
-            file_path = hotspot.get("file", "")
-            concerns = hotspot.get("concerns", [])
-
-            rec = {
-                "file": file_path,
-                "priority": 1 if hotspot.get("complexity_score", 0) >= 20 else 2,
-                "actions": [],
-            }
-
-            # Add specific recommendations based on concerns
-            for concern in concerns:
-                action = self._get_optimization_action(concern)
-                if action:
-                    rec["actions"].append(action)
-
-            if rec["actions"]:
-                recommendations.append(rec)
+        # Build hotspots summary for LLM
+        hotspots_summary = []
+        for h in hotspots[:10]:
+            hotspots_summary.append(
+                f"- {h.get('file')}: score={h.get('complexity_score', 0)}, "
+                f"concerns={', '.join(h.get('concerns', []))}"
+            )
 
         # Summary of most common issues
         issue_counts: dict[str, int] = {}
         for f in findings:
             t = f.get("type", "unknown")
             issue_counts[t] = issue_counts.get(t, 0) + 1
-
         top_issues = sorted(issue_counts.items(), key=lambda x: -x[1])[:5]
 
-        optimization_result = {
-            "recommendations": recommendations,
-            "recommendation_count": len(recommendations),
+        # Build input payload for prompt
+        input_payload = f"""Target: {target or 'codebase'}
+
+Performance Score: {hotspot_result.get('perf_score', 0)}/100
+Performance Level: {hotspot_result.get('perf_level', 'unknown')}
+
+Hotspots:
+{chr(10).join(hotspots_summary) if hotspots_summary else 'No hotspots identified'}
+
+Top Issues:
+{json.dumps([{"type": t, "count": c} for t, c in top_issues], indent=2)}"""
+
+        # Check if XML prompts are enabled
+        if self._is_xml_enabled():
+            # Use XML-enhanced prompt
+            user_message = self._render_xml_prompt(
+                role="performance engineer specializing in optimization",
+                goal="Generate comprehensive optimization recommendations for performance issues",
+                instructions=[
+                    "Analyze each performance hotspot and its concerns",
+                    "Provide specific optimization strategies with code examples",
+                    "Estimate the impact of each optimization (high/medium/low)",
+                    "Prioritize recommendations by potential performance gain",
+                    "Include before/after code patterns where helpful",
+                ],
+                constraints=[
+                    "Be specific about which files and patterns to optimize",
+                    "Include actionable code changes",
+                    "Focus on high-impact optimizations first",
+                ],
+                input_type="performance_hotspots",
+                input_payload=input_payload,
+                extra={
+                    "perf_score": hotspot_result.get("perf_score", 0),
+                    "hotspot_count": len(hotspots),
+                },
+            )
+            system = None  # XML prompt includes all context
+        else:
+            # Use legacy plain text prompts
+            system = """You are a performance engineer specializing in code optimization.
+Analyze the identified performance hotspots and generate actionable recommendations.
+
+For each hotspot:
+1. Explain why the pattern causes performance issues
+2. Provide specific optimization strategies with code examples
+3. Estimate the impact of the optimization
+
+Prioritize by potential performance gain."""
+
+            user_message = f"""Generate optimization recommendations for these performance issues:
+
+{input_payload}
+
+Provide detailed optimization strategies."""
+
+        response, input_tokens, output_tokens = await self._call_llm(
+            tier, system or "", user_message, max_tokens=3000
+        )
+
+        # Parse XML response if enforcement is enabled
+        parsed_data = self._parse_xml_response(response)
+
+        result = {
+            "optimization_plan": response,
+            "recommendation_count": len(hotspots),
             "top_issues": [{"type": t, "count": c} for t, c in top_issues],
             "perf_score": hotspot_result.get("perf_score", 0),
             "perf_level": hotspot_result.get("perf_level", "unknown"),
             "model_tier_used": tier.value,
         }
 
-        input_tokens = len(str(input_data)) // 4
-        output_tokens = len(str(optimization_result)) // 4
+        # Merge parsed XML data if available
+        if parsed_data.get("xml_parsed"):
+            result.update(
+                {
+                    "xml_parsed": True,
+                    "summary": parsed_data.get("summary"),
+                    "findings": parsed_data.get("findings", []),
+                    "checklist": parsed_data.get("checklist", []),
+                }
+            )
 
-        return optimization_result, input_tokens, output_tokens
+        return (result, input_tokens, output_tokens)
 
     def _get_optimization_action(self, concern: str) -> dict | None:
         """Generate specific optimization action for a concern type."""
         actions = {
             "n_plus_one": {
                 "action": "Batch database queries",
-                "description": "Use prefetch_related/select_related or batch queries instead of querying in a loop",
+                "description": "Use prefetch_related/select_related or batch queries",
                 "estimated_impact": "high",
             },
             "sync_in_async": {
                 "action": "Use async alternatives",
-                "description": "Replace sync operations with async versions (aiohttp, aiofiles, asyncio.sleep)",
+                "description": "Replace sync operations with async versions",
                 "estimated_impact": "high",
             },
             "string_concat_loop": {
@@ -444,9 +554,9 @@ def main():
 
         print("\nCost Report:")
         print(f"  Total Cost: ${result.cost_report.total_cost:.4f}")
-        print(
-            f"  Savings: ${result.cost_report.savings:.4f} ({result.cost_report.savings_percent:.1f}%)"
-        )
+        savings = result.cost_report.savings
+        pct = result.cost_report.savings_percent
+        print(f"  Savings: ${savings:.4f} ({pct:.1f}%)")
 
     asyncio.run(run())
 

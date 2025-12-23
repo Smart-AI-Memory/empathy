@@ -39,6 +39,9 @@ from .base import (
 # New high-value workflows
 from .bug_predict import BugPredictionWorkflow
 from .code_review import CodeReviewWorkflow
+
+# Code review crew integration (v3.1)
+from .code_review_pipeline import CodeReviewPipeline, CodeReviewPipelineResult
 from .config import (
     DEFAULT_MODELS,
     ModelConfig,
@@ -49,9 +52,13 @@ from .config import (
 from .dependency_check import DependencyCheckWorkflow
 from .document_gen import DocumentGenerationWorkflow
 from .perf_audit import PerformanceAuditWorkflow
+from .pr_review import PRReviewResult, PRReviewWorkflow
 from .refactor_plan import RefactorPlanWorkflow
 from .release_prep import ReleasePreparationWorkflow
 from .research_synthesis import ResearchSynthesisWorkflow
+
+# Security crew integration (v3.0)
+from .secure_release import SecureReleasePipeline, SecureReleaseResult
 from .security_audit import SecurityAuditWorkflow
 from .step_config import (
     WorkflowStepConfig,
@@ -105,6 +112,11 @@ WORKFLOW_REGISTRY: dict[str, type[BaseWorkflow]] = {
     # Operational workflows
     "dependency-check": DependencyCheckWorkflow,
     "release-prep": ReleasePreparationWorkflow,
+    # Composite security pipeline (v3.0)
+    "secure-release": SecureReleasePipeline,
+    # Code review crew integration (v3.1)
+    "pro-review": CodeReviewPipeline,
+    "pr-review": PRReviewWorkflow,
 }
 
 
@@ -179,6 +191,14 @@ __all__ = [
     "DependencyCheckWorkflow",
     "ReleasePreparationWorkflow",
     "PerformanceAuditWorkflow",
+    # Security crew integration (v3.0)
+    "SecureReleasePipeline",
+    "SecureReleaseResult",
+    # Code review crew integration (v3.1)
+    "CodeReviewPipeline",
+    "CodeReviewPipelineResult",
+    "PRReviewWorkflow",
+    "PRReviewResult",
     # Registry
     "WORKFLOW_REGISTRY",
     "get_workflow",

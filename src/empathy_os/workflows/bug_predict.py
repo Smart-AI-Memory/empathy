@@ -364,6 +364,8 @@ class BugPredictionWorkflow(BaseWorkflow):
 
         Uses premium tier (or capable if downgraded) to generate
         specific recommendations for addressing predicted bugs.
+
+        Supports XML-enhanced prompts when enabled in workflow config.
         """
         predictions = input_data.get("predictions", [])
         target = input_data.get("target", "")
@@ -379,7 +381,46 @@ class BugPredictionWorkflow(BaseWorkflow):
                     f"- {file_path}: {p.get('pattern')} (severity: {p.get('severity')})"
                 )
 
-        system = """You are a senior software engineer specializing in bug prevention and code quality.
+        # Build input payload
+        input_payload = f"""Target: {target or 'codebase'}
+
+Issues Found:
+{chr(10).join(issues_summary) if issues_summary else 'No specific issues identified'}
+
+Historical Bug Patterns:
+{json.dumps(self._bug_patterns[:5], indent=2) if self._bug_patterns else 'None'}
+
+Risk Score: {input_data.get('overall_risk_score', 0):.2f}"""
+
+        # Check if XML prompts are enabled
+        if self._is_xml_enabled():
+            # Use XML-enhanced prompt
+            user_message = self._render_xml_prompt(
+                role="senior software engineer specializing in bug prevention",
+                goal="Analyze bug-prone patterns and generate actionable recommendations",
+                instructions=[
+                    "Explain why each pattern is risky",
+                    "Provide specific fixes with code examples",
+                    "Suggest preventive measures",
+                    "Reference historical patterns when relevant",
+                    "Prioritize by severity and risk score",
+                ],
+                constraints=[
+                    "Be specific and actionable",
+                    "Include code examples where helpful",
+                    "Group recommendations by priority",
+                ],
+                input_type="bug_patterns",
+                input_payload=input_payload,
+                extra={
+                    "risk_score": input_data.get("overall_risk_score", 0),
+                    "pattern_count": len(issues_summary),
+                },
+            )
+            system = None  # XML prompt includes all context
+        else:
+            # Use legacy plain text prompts
+            system = """You are a senior software engineer specializing in bug prevention.
 Analyze the identified code patterns and generate actionable recommendations.
 
 For each issue:
@@ -389,34 +430,38 @@ For each issue:
 
 Be specific and actionable. Prioritize by severity."""
 
-        user_message = f"""Analyze these bug-prone patterns and provide recommendations:
+            user_message = f"""Analyze these bug-prone patterns and provide recommendations:
 
-Target: {target or 'codebase'}
-
-Issues Found:
-{chr(10).join(issues_summary) if issues_summary else 'No specific issues identified'}
-
-Historical Bug Patterns:
-{json.dumps(self._bug_patterns[:5], indent=2) if self._bug_patterns else 'No historical patterns available'}
-
-Risk Score: {input_data.get('overall_risk_score', 0):.2f}
+{input_payload}
 
 Provide detailed recommendations for preventing bugs."""
 
         response, input_tokens, output_tokens = await self._call_llm(
-            tier, system, user_message, max_tokens=2000
+            tier, system or "", user_message, max_tokens=2000
         )
 
-        return (
-            {
-                "recommendations": response,
-                "recommendation_count": len(top_risks),
-                "model_tier_used": tier.value,
-                "overall_risk_score": input_data.get("overall_risk_score", 0),
-            },
-            input_tokens,
-            output_tokens,
-        )
+        # Parse XML response if enforcement is enabled
+        parsed_data = self._parse_xml_response(response)
+
+        result = {
+            "recommendations": response,
+            "recommendation_count": len(top_risks),
+            "model_tier_used": tier.value,
+            "overall_risk_score": input_data.get("overall_risk_score", 0),
+        }
+
+        # Merge parsed XML data if available
+        if parsed_data.get("xml_parsed"):
+            result.update(
+                {
+                    "xml_parsed": True,
+                    "summary": parsed_data.get("summary"),
+                    "findings": parsed_data.get("findings", []),
+                    "checklist": parsed_data.get("checklist", []),
+                }
+            )
+
+        return (result, input_tokens, output_tokens)
 
 
 def main():
@@ -435,9 +480,9 @@ def main():
         print(f"Recommendations: {result.final_output.get('recommendation_count', 0)}")
         print("\nCost Report:")
         print(f"  Total Cost: ${result.cost_report.total_cost:.4f}")
-        print(
-            f"  Savings: ${result.cost_report.savings:.4f} ({result.cost_report.savings_percent:.1f}%)"
-        )
+        savings = result.cost_report.savings
+        pct = result.cost_report.savings_percent
+        print(f"  Savings: ${savings:.4f} ({pct:.1f}%)")
 
     asyncio.run(run())
 

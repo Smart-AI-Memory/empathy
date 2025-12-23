@@ -15,11 +15,12 @@ Licensed under Fair Source License 0.9
 """
 
 import json
+import os
 import re
 from pathlib import Path
 from typing import Any
 
-from .base import BaseWorkflow, ModelTier
+from .base import PROVIDER_MODELS, BaseWorkflow, ModelProvider, ModelTier
 
 # Debt markers and their severity
 DEBT_MARKERS = {
@@ -70,7 +71,56 @@ class RefactorPlanWorkflow(BaseWorkflow):
         self.min_debt_for_premium = min_debt_for_premium
         self._total_debt: int = 0
         self._debt_history: list[dict] = []
+        self._client = None
+        self._api_key = os.getenv("ANTHROPIC_API_KEY")
         self._load_debt_history()
+
+    def _get_client(self):
+        """Lazy-load the Anthropic client."""
+        if self._client is None and self._api_key:
+            try:
+                import anthropic
+
+                self._client = anthropic.Anthropic(api_key=self._api_key)
+            except ImportError:
+                pass
+        return self._client
+
+    def _get_model_for_tier(self, tier: ModelTier) -> str:
+        """Get the model name for a given tier."""
+        provider = ModelProvider.ANTHROPIC
+        return PROVIDER_MODELS.get(provider, {}).get(tier, "claude-sonnet-4-20250514")
+
+    async def _call_llm(
+        self, tier: ModelTier, system: str, user_message: str, max_tokens: int = 4096
+    ) -> tuple[str, int, int]:
+        """Make an actual LLM call using the Anthropic API."""
+        client = self._get_client()
+        if not client:
+            return (
+                "[Simulated - set ANTHROPIC_API_KEY for real results]",
+                len(user_message) // 4,
+                100,
+            )
+
+        model = self._get_model_for_tier(tier)
+
+        try:
+            response = client.messages.create(
+                model=model,
+                max_tokens=max_tokens,
+                system=system,
+                messages=[{"role": "user", "content": user_message}],
+            )
+
+            content = response.content[0].text if response.content else ""
+            input_tokens = response.usage.input_tokens
+            output_tokens = response.usage.output_tokens
+
+            return content, input_tokens, output_tokens
+
+        except Exception as e:
+            return f"Error calling LLM: {e}", 0, 0
 
     def _load_debt_history(self) -> None:
         """Load tech debt history from pattern library."""
@@ -306,76 +356,116 @@ class RefactorPlanWorkflow(BaseWorkflow):
 
     async def _plan(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
         """
-        Generate prioritized refactoring roadmap.
+        Generate prioritized refactoring roadmap using LLM.
 
         Creates actionable refactoring plan based on priorities.
+
+        Supports XML-enhanced prompts when enabled in workflow config.
         """
         high_priority = input_data.get("high_priority", [])
         medium_priority = input_data.get("medium_priority", [])
         analysis = input_data.get("analysis", {})
+        target = input_data.get("target", "")
 
-        # Generate roadmap phases
-        roadmap: list[dict] = []
-
-        # Phase 1: Critical items
-        if high_priority:
-            phase1_files = list({item["file"] for item in high_priority[:10]})
-            roadmap.append(
-                {
-                    "phase": 1,
-                    "name": "Critical Debt Reduction",
-                    "description": "Address highest priority tech debt items",
-                    "files": phase1_files,
-                    "item_count": len(high_priority),
-                    "estimated_effort": "high",
-                }
+        # Build high priority summary for LLM
+        high_summary = []
+        for item in high_priority[:15]:
+            high_summary.append(
+                f"- {item.get('file')}:{item.get('line')} [{item.get('marker')}] "
+                f"{item.get('message', '')[:50]}"
             )
 
-        # Phase 2: Medium priority
-        if medium_priority:
-            phase2_files = list({item["file"] for item in medium_priority[:10]})
-            roadmap.append(
-                {
-                    "phase": 2,
-                    "name": "Debt Stabilization",
-                    "description": "Address medium priority items to prevent escalation",
-                    "files": phase2_files,
-                    "item_count": len(medium_priority),
-                    "estimated_effort": "medium",
-                }
-            )
+        # Build input payload for prompt
+        input_payload = f"""Target: {target or 'codebase'}
 
-        # Phase 3: Ongoing maintenance
-        roadmap.append(
-            {
-                "phase": 3,
-                "name": "Continuous Improvement",
-                "description": "Address remaining items and prevent new debt",
-                "recommendations": [
-                    "Add pre-commit hooks to catch new TODOs",
-                    "Review debt metrics weekly",
-                    "Allocate 10% of sprint capacity to debt reduction",
+Total Debt Items: {input_data.get('total_debt', 0)}
+Trajectory: {analysis.get('trajectory', 'unknown')}
+Velocity: {analysis.get('velocity', 0)} items/snapshot
+
+High Priority Items ({len(high_priority)}):
+{chr(10).join(high_summary) if high_summary else 'None'}
+
+Medium Priority Items: {len(medium_priority)}
+Hotspot Files: {json.dumps([h.get('file') for h in analysis.get('hotspots', [])[:5]], indent=2)}"""
+
+        # Check if XML prompts are enabled
+        if self._is_xml_enabled():
+            # Use XML-enhanced prompt
+            user_message = self._render_xml_prompt(
+                role="software architect specializing in technical debt management",
+                goal="Generate a prioritized refactoring roadmap to reduce technical debt",
+                instructions=[
+                    "Analyze the debt trajectory and identify root causes",
+                    "Create a phased roadmap with clear milestones",
+                    "Prioritize items by impact and effort",
+                    "Provide specific refactoring strategies for each phase",
+                    "Include prevention measures to stop new debt accumulation",
                 ],
-            }
+                constraints=[
+                    "Be specific about which files to refactor",
+                    "Include effort estimates (high/medium/low)",
+                    "Focus on sustainable debt reduction",
+                ],
+                input_type="tech_debt_analysis",
+                input_payload=input_payload,
+                extra={
+                    "total_debt": input_data.get("total_debt", 0),
+                    "trajectory": analysis.get("trajectory", "unknown"),
+                },
+            )
+            system = None  # XML prompt includes all context
+        else:
+            # Use legacy plain text prompts
+            system = """You are a software architect specializing in technical debt management.
+Create a prioritized refactoring roadmap based on the debt analysis.
+
+For each phase:
+1. Define clear goals and milestones
+2. Prioritize by impact and effort
+3. Provide specific refactoring strategies
+4. Include prevention measures
+
+Be specific and actionable."""
+
+            user_message = f"""Generate a refactoring roadmap for this tech debt:
+
+{input_payload}
+
+Create a phased approach to reduce debt sustainably."""
+
+        response, input_tokens, output_tokens = await self._call_llm(
+            tier, system or "", user_message, max_tokens=3000
         )
+
+        # Parse XML response if enforcement is enabled
+        parsed_data = self._parse_xml_response(response)
 
         # Summary
         summary = {
             "total_debt": input_data.get("total_debt", 0),
             "trajectory": analysis.get("trajectory", "unknown"),
             "high_priority_count": len(high_priority),
-            "phases": len(roadmap),
         }
 
-        input_tokens = len(str(input_data)) // 4
-        output_tokens = len(str(roadmap)) // 4
+        result = {
+            "refactoring_plan": response,
+            "summary": summary,
+            "model_tier_used": tier.value,
+        }
+
+        # Merge parsed XML data if available
+        if parsed_data.get("xml_parsed"):
+            result.update(
+                {
+                    "xml_parsed": True,
+                    "plan_summary": parsed_data.get("summary"),
+                    "findings": parsed_data.get("findings", []),
+                    "checklist": parsed_data.get("checklist", []),
+                }
+            )
 
         return (
-            {
-                "roadmap": roadmap,
-                "summary": summary,
-                "model_tier_used": tier.value,
-            },
+            result,
             input_tokens,
             output_tokens,
         )
@@ -401,9 +491,9 @@ def main():
 
         print("\nCost Report:")
         print(f"  Total Cost: ${result.cost_report.total_cost:.4f}")
-        print(
-            f"  Savings: ${result.cost_report.savings:.4f} ({result.cost_report.savings_percent:.1f}%)"
-        )
+        savings = result.cost_report.savings
+        pct = result.cost_report.savings_percent
+        print(f"  Savings: ${savings:.4f} ({pct:.1f}%)")
 
     asyncio.run(run())
 

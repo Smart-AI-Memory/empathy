@@ -638,7 +638,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             'test-gen': 'target',
             'refactor-plan': 'target',
             'dependency-check': 'scope',
-            'release-prep': 'version'
+            'release-prep': 'version',
+            'pro-review': 'diff',
+            'pr-review': 'target'
         };
         const inputKey = inputKeys[workflowName] || 'query';
 
@@ -1293,9 +1295,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     <span class="action-icon">&#x1F50D;</span>
                     <span>Research Topic</span>
                 </button>
-                <button class="action-btn workflow-btn" data-workflow="code-review">
-                    <span class="action-icon">&#x1F4DD;</span>
-                    <span>Review Code</span>
+                <button class="action-btn workflow-btn" data-workflow="pro-review">
+                    <span class="action-icon">&#x2B50;</span>
+                    <span>Run Analysis</span>
                 </button>
                 <button class="action-btn workflow-btn" data-workflow="doc-gen">
                     <span class="action-icon">&#x1F4DA;</span>
@@ -1327,7 +1329,11 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 </button>
                 <button class="action-btn workflow-btn" data-workflow="release-prep">
                     <span class="action-icon">&#x1F3C1;</span>
-                    <span>Release Prep</span>
+                    <span>Prep Release</span>
+                </button>
+                <button class="action-btn workflow-btn" data-workflow="pr-review">
+                    <span class="action-icon">&#x1F50D;</span>
+                    <span>Review PR</span>
                 </button>
             </div>
         </div>
@@ -1583,6 +1589,17 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 type: 'text',
                 label: 'Enter release version',
                 placeholder: 'e.g., v2.3.0'
+            },
+            'pro-review': {
+                type: 'file',
+                label: 'Select file or paste code diff to review',
+                placeholder: 'Click Browse or paste code diff...',
+                allowText: true
+            },
+            'pr-review': {
+                type: 'folder',
+                label: 'Select folder containing PR changes',
+                placeholder: 'Click Browse to select folder...'
             }
         };
 
@@ -1886,7 +1903,18 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 resultsStatus.style.background = 'rgba(16, 185, 129, 0.2)';
                 resultsStatus.style.color = 'var(--vscode-testing-iconPassed)';
                 resultsStatus.innerHTML = '&#x2714; Complete';
-                resultsContent.textContent = data.output || 'Workflow completed successfully.';
+
+                // Check if output is crew workflow result (has verdict/quality_score)
+                const crewWorkflows = ['pro-review', 'pr-review'];
+                if (crewWorkflows.includes(data.workflow) || data.output.includes('"verdict"') || data.output.includes('"quality_score"')) {
+                    try {
+                        resultsContent.innerHTML = formatCrewOutput(data.output);
+                    } catch (e) {
+                        resultsContent.textContent = data.output || 'Workflow completed successfully.';
+                    }
+                } else {
+                    resultsContent.textContent = data.output || 'Workflow completed successfully.';
+                }
             } else if (data.status === 'error') {
                 resultsStatus.style.display = 'block';
                 resultsStatus.style.background = 'rgba(239, 68, 68, 0.2)';
@@ -1894,6 +1922,168 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 resultsStatus.innerHTML = '&#x2718; Error';
                 resultsContent.textContent = data.output || data.error || 'An error occurred.';
             }
+        }
+
+        // Format crew workflow output with verdict badges, quality scores, etc.
+        function formatCrewOutput(output) {
+            // Try to parse JSON from output
+            let data = null;
+            try {
+                // Try direct JSON parse
+                data = JSON.parse(output);
+            } catch (e) {
+                // Try to extract JSON from output text
+                const jsonMatch = output.match(/\\{[\\s\\S]*\\}/);
+                if (jsonMatch) {
+                    try {
+                        data = JSON.parse(jsonMatch[0]);
+                    } catch (e2) {}
+                }
+            }
+
+            if (!data) {
+                // Return formatted plain text if no JSON found
+                return '<pre style="margin: 0;">' + escapeHtml(output) + '</pre>';
+            }
+
+            const verdictColors = {
+                'approve': { bg: '#22c55e', color: 'white' },
+                'approve_with_suggestions': { bg: '#eab308', color: 'black' },
+                'request_changes': { bg: '#f97316', color: 'white' },
+                'reject': { bg: '#ef4444', color: 'white' }
+            };
+
+            const agentIcons = {
+                'lead': '&#x1F464;',
+                'security': '&#x1F512;',
+                'architecture': '&#x1F3DB;',
+                'quality': '&#x2728;',
+                'performance': '&#x26A1;',
+                'hunter': '&#x1F50D;',
+                'assessor': '&#x1F4CA;',
+                'remediator': '&#x1F6E0;',
+                'compliance': '&#x1F4CB;'
+            };
+
+            const severityColors = {
+                'critical': '#ef4444',
+                'high': '#f97316',
+                'medium': '#eab308',
+                'low': '#22c55e',
+                'info': '#6b7280'
+            };
+
+            let html = '';
+
+            // Verdict badge
+            const verdict = data.verdict || data.go_no_go || '';
+            if (verdict) {
+                const vColors = verdictColors[verdict.toLowerCase()] || { bg: '#6b7280', color: 'white' };
+                html += '<div style="margin-bottom: 12px;">';
+                html += '<span style="display: inline-block; padding: 4px 12px; border-radius: 4px; font-weight: bold; background: ' + vColors.bg + '; color: ' + vColors.color + ';">';
+                html += (verdict === 'approve' ? '&#x2714; ' : verdict === 'reject' ? '&#x2718; ' : '&#x26A0; ');
+                html += verdict.replace(/_/g, ' ').toUpperCase();
+                html += '</span></div>';
+            }
+
+            // Quality score meter
+            const qualityScore = data.quality_score || data.combined_score;
+            if (qualityScore !== undefined) {
+                const scoreColor = qualityScore >= 80 ? '#22c55e' : qualityScore >= 60 ? '#eab308' : '#ef4444';
+                html += '<div style="margin-bottom: 12px;">';
+                html += '<div style="font-size: 10px; opacity: 0.7; margin-bottom: 4px;">Quality Score</div>';
+                html += '<div style="display: flex; align-items: center; gap: 8px;">';
+                html += '<div style="flex: 1; height: 8px; background: var(--vscode-widget-border); border-radius: 4px; overflow: hidden;">';
+                html += '<div style="width: ' + qualityScore + '%; height: 100%; background: ' + scoreColor + ';"></div>';
+                html += '</div>';
+                html += '<span style="font-weight: bold; color: ' + scoreColor + ';">' + Math.round(qualityScore) + '/100</span>';
+                html += '</div></div>';
+            }
+
+            // Agents used badges
+            const agents = data.agents_used || [];
+            if (agents.length > 0) {
+                html += '<div style="margin-bottom: 12px;">';
+                html += '<div style="font-size: 10px; opacity: 0.7; margin-bottom: 4px;">Agents Used</div>';
+                html += '<div style="display: flex; flex-wrap: wrap; gap: 4px;">';
+                agents.forEach(function(agent) {
+                    const icon = agentIcons[agent.toLowerCase()] || '&#x1F916;';
+                    html += '<span style="display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; background: var(--vscode-badge-background); color: var(--vscode-badge-foreground);">';
+                    html += icon + ' ' + agent;
+                    html += '</span>';
+                });
+                html += '</div></div>';
+            }
+
+            // Findings summary
+            const findings = data.findings || data.combined_findings || data.all_findings || [];
+            const criticalCount = data.critical_count || findings.filter(function(f) { return f.severity === 'critical'; }).length;
+            const highCount = data.high_count || findings.filter(function(f) { return f.severity === 'high'; }).length;
+
+            if (findings.length > 0 || criticalCount > 0 || highCount > 0) {
+                html += '<div style="margin-bottom: 12px;">';
+                html += '<div style="font-size: 10px; opacity: 0.7; margin-bottom: 4px;">Findings (' + findings.length + ' total)</div>';
+                html += '<div style="display: flex; gap: 12px; font-size: 11px;">';
+                if (criticalCount > 0) html += '<span style="color: ' + severityColors.critical + ';">&#x2718; ' + criticalCount + ' critical</span>';
+                if (highCount > 0) html += '<span style="color: ' + severityColors.high + ';">&#x26A0; ' + highCount + ' high</span>';
+                html += '</div>';
+
+                // Show top 5 findings
+                if (findings.length > 0) {
+                    html += '<div style="margin-top: 8px; max-height: 150px; overflow-y: auto;">';
+                    findings.slice(0, 5).forEach(function(f) {
+                        const sev = f.severity || 'medium';
+                        const sevColor = severityColors[sev] || severityColors.medium;
+                        html += '<div style="padding: 4px 0; border-bottom: 1px solid var(--vscode-widget-border); font-size: 10px;">';
+                        html += '<span style="color: ' + sevColor + '; font-weight: bold;">[' + sev.toUpperCase() + ']</span> ';
+                        html += escapeHtml(f.title || f.type || 'Issue');
+                        if (f.file) html += ' <span style="opacity: 0.7;">(' + f.file + (f.line ? ':' + f.line : '') + ')</span>';
+                        html += '</div>';
+                    });
+                    if (findings.length > 5) {
+                        html += '<div style="opacity: 0.5; font-size: 10px; padding: 4px 0;">...and ' + (findings.length - 5) + ' more</div>';
+                    }
+                    html += '</div>';
+                }
+                html += '</div>';
+            }
+
+            // Summary text
+            const summary = data.summary;
+            if (summary) {
+                html += '<div style="margin-top: 8px; padding: 8px; background: var(--vscode-editor-background); border-radius: 4px; font-size: 11px;">';
+                html += escapeHtml(summary);
+                html += '</div>';
+            }
+
+            // Blockers
+            const blockers = data.blockers || [];
+            if (blockers.length > 0) {
+                html += '<div style="margin-top: 8px; padding: 8px; background: rgba(239, 68, 68, 0.1); border-radius: 4px; border: 1px solid rgba(239, 68, 68, 0.3);">';
+                html += '<div style="font-weight: bold; color: #ef4444; margin-bottom: 4px;">&#x26D4; Blockers</div>';
+                blockers.forEach(function(b) {
+                    html += '<div style="font-size: 10px;">&#x2022; ' + escapeHtml(b) + '</div>';
+                });
+                html += '</div>';
+            }
+
+            // Duration & cost
+            const duration = data.duration_seconds;
+            const cost = data.cost;
+            if (duration !== undefined || cost !== undefined) {
+                html += '<div style="margin-top: 8px; font-size: 10px; opacity: 0.7;">';
+                if (duration !== undefined) html += 'Duration: ' + duration.toFixed(1) + 's';
+                if (cost !== undefined) html += (duration !== undefined ? ' | ' : '') + 'Cost: $' + cost.toFixed(4);
+                html += '</div>';
+            }
+
+            return html || '<pre style="margin: 0;">' + escapeHtml(output) + '</pre>';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
         }
 
         function updateCostsPanel(data) {

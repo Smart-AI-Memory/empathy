@@ -61,12 +61,17 @@ export default function WorkflowsPage() {
       {/* Hero */}
       <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white pb-12 pt-6">
         <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-2">Workflow Dashboard</h2>
+          <div className="flex items-center gap-3 mb-2">
+            <h2 className="text-3xl font-bold">Workflow Dashboard</h2>
+            <span className="px-2 py-0.5 bg-white/20 text-white text-xs font-bold rounded-full">
+              v3.1.0
+            </span>
+          </div>
           <p className="text-white/80 max-w-2xl">
-            Monitor your multi-model workflows. Track cost savings from intelligent 3-tier
-            routing: cheap models for summarization, capable for analysis, premium for synthesis.
+            Monitor your multi-model workflows with Smart Router intelligence. Track cost savings from intelligent 3-tier
+            routing and auto-chaining wizard workflows.
           </p>
-          <div className="mt-6 flex gap-3">
+          <div className="mt-6 flex flex-wrap gap-3">
             <div className="bg-white/10 rounded-lg px-4 py-2">
               <span className="text-sm text-white/60">Cheap Tier</span>
               <p className="font-semibold">Haiku / GPT-4o-mini</p>
@@ -78,6 +83,10 @@ export default function WorkflowsPage() {
             <div className="bg-white/10 rounded-lg px-4 py-2">
               <span className="text-sm text-white/60">Premium Tier</span>
               <p className="font-semibold">Opus 4.5 / GPT-5.2</p>
+            </div>
+            <div className="bg-white/20 rounded-lg px-4 py-2 border border-white/30">
+              <span className="text-sm text-white/60">NEW: Smart Router</span>
+              <p className="font-semibold">Auto-dispatch + Chaining</p>
             </div>
           </div>
         </div>

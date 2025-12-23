@@ -1,7 +1,7 @@
 # Debugging Patterns
 
 Auto-generated from Empathy Framework learned patterns.
-Total patterns: 10
+Total patterns: 11
 
 ---
 
@@ -58,3 +58,8 @@ When debugging similar issues, consider these historical fixes:
 - **Root cause**: feat: Add drag-and-drop file upload to debug wizard
 - **Fix**: See commit 4c6069af
 - **Files**: website/components/debug-wizard/DebugWizard.tsx
+
+### unknown
+- **Root cause**: feat: Release v3.0.1 - XML-Enhanced Prompts & Security Fixes
+- **Fix**: See commit 8edfb707
+- **Files**: .claude/CLAUDE.md, .gitignore, CHANGELOG.md
