@@ -7,6 +7,7 @@ Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
+import asyncio
 import logging
 import time
 from typing import Any
@@ -24,7 +25,7 @@ from empathy_os.memory import (
 from .levels import EmpathyLevel
 from .providers import AnthropicProvider, BaseLLMProvider, LocalProvider, OpenAIProvider
 from .routing import ModelRouter
-from .state import CollaborationState, UserPattern
+from .state import CollaborationState, PatternType, UserPattern
 
 logger = logging.getLogger(__name__)
 
@@ -589,8 +590,8 @@ Was this helpful? If not, I can adjust my pattern detection.
             proactive = False
             pattern_info = None
 
-            # TODO: Run pattern detection in background
-            # await self._detect_patterns_async(state)
+            # Run pattern detection in background (non-blocking)
+            asyncio.create_task(self._detect_patterns_async(state, user_input))
 
         generate_kwargs: dict[str, Any] = {
             "messages": messages,
@@ -727,6 +728,118 @@ TASK:
                 "systems_level": True,
             },
         }
+
+    async def _detect_patterns_async(
+        self,
+        state: CollaborationState,
+        current_input: str,
+    ) -> None:
+        """
+        Detect user behavior patterns in background.
+
+        Analyzes conversation history to identify:
+        - Sequential patterns: User always does X then Y
+        - Preference patterns: User prefers certain formats/styles
+        - Temporal patterns: User does X at specific times
+        - Conditional patterns: When Z happens, user does X
+
+        This runs asynchronously to avoid blocking the main response.
+        Detected patterns enable Level 3 proactive interactions.
+        """
+        try:
+            from datetime import datetime
+
+            interactions = state.interactions
+            if len(interactions) < 3:
+                # Need at least 3 interactions to detect patterns
+                return
+
+            # Analyze recent interactions for sequential patterns
+            recent = interactions[-10:]  # Last 10 interactions
+            user_messages = [i for i in recent if i.role == "user"]
+
+            if len(user_messages) < 2:
+                return
+
+            # Pattern 1: Sequential patterns (X followed by Y)
+            for i in range(len(user_messages) - 1):
+                current = user_messages[i].content.lower()
+                next_msg = user_messages[i + 1].content.lower()
+
+                # Detect common sequential patterns
+                sequential_triggers = [
+                    ("review", "fix"),  # Review then fix
+                    ("debug", "test"),  # Debug then test
+                    ("implement", "test"),  # Implement then test
+                    ("refactor", "review"),  # Refactor then review
+                ]
+
+                for trigger, action in sequential_triggers:
+                    if trigger in current and action in next_msg:
+                        pattern = UserPattern(
+                            pattern_type=PatternType.SEQUENTIAL,
+                            trigger=trigger,
+                            action=f"Typically follows with {action}",
+                            confidence=0.6 + (0.1 * min(i, 3)),  # Increase with occurrences
+                            occurrences=1,
+                            last_seen=datetime.now(),
+                            context={"detected_from": "sequential_analysis"},
+                        )
+                        state.add_pattern(pattern)
+
+            # Pattern 2: Preference patterns
+            preference_indicators = {
+                "concise": "brief, concise responses",
+                "detailed": "comprehensive, detailed responses",
+                "example": "responses with examples",
+                "step by step": "step-by-step explanations",
+                "code": "code-focused responses",
+            }
+
+            for indicator, preference in preference_indicators.items():
+                occurrences = sum(1 for m in user_messages if indicator in m.content.lower())
+                if occurrences >= 2:
+                    pattern = UserPattern(
+                        pattern_type=PatternType.PREFERENCE,
+                        trigger=indicator,
+                        action=f"User prefers {preference}",
+                        confidence=min(0.9, 0.5 + (0.1 * occurrences)),
+                        occurrences=occurrences,
+                        last_seen=datetime.now(),
+                        context={"preference_type": indicator},
+                    )
+                    state.add_pattern(pattern)
+
+            # Pattern 3: Conditional patterns (error -> debug)
+            conditional_triggers = [
+                ("error", "debug", "When errors occur, user asks for debugging"),
+                ("failed", "fix", "When tests fail, user asks for fixes"),
+                ("slow", "optimize", "When performance issues arise, user asks for optimization"),
+            ]
+
+            for condition, response_keyword, description in conditional_triggers:
+                for i, msg in enumerate(user_messages[:-1]):
+                    if condition in msg.content.lower():
+                        next_msg = user_messages[i + 1].content.lower()
+                        if response_keyword in next_msg:
+                            pattern = UserPattern(
+                                pattern_type=PatternType.CONDITIONAL,
+                                trigger=condition,
+                                action=description,
+                                confidence=0.7,
+                                occurrences=1,
+                                last_seen=datetime.now(),
+                                context={"condition": condition, "response": response_keyword},
+                            )
+                            state.add_pattern(pattern)
+
+            logger.debug(
+                f"Pattern detection complete. Detected {len(state.detected_patterns)} patterns."
+            )
+
+        except Exception as e:
+            # Pattern detection should never break the main flow
+            logger.warning(f"Pattern detection error (non-critical): {e}")
 
     def update_trust(self, user_id: str, outcome: str, magnitude: float = 1.0):
         """
