@@ -198,7 +198,11 @@ all = [
 ]
 
 [project.scripts]
-empathy = "empathy_os.cli:main"
+# Primary unified CLI (Typer-based)
+empathy = "empathy_os.cli_unified:main"
+
+# Legacy entry points (for backwards compatibility)
+empathy-legacy = "empathy_os.cli:main"
 empathy-scan = "empathy_software_plugin.cli:scan_command"
 empathy-memory = "empathy_os.memory.control_panel:main"
 empathy-inspect = "empathy_software_plugin.cli.inspect:main"
