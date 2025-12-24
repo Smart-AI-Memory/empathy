@@ -1,0 +1,4803 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-ready Level 4 Anticipatory Intelligence for AI-human collaboration. Build AI systems that predict problems before they happen.">
+      
+      
+        <meta name="author" content="Patrick Roebuck">
+      
+      
+        <link rel="canonical" href="https://smartaimemory.com/framework-docs/development-logs/COMPREHENSIVE_COMPLETION_PLAN/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/empathy-brain-logo.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Comprehensive Testing & Completion Plan - Empathy Framework</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <!-- Plausible Analytics - Privacy-respecting, no cookies -->
+  <script defer data-domain="smartaimemory.com" src="https://plausible.io/js/script.js"></script>
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#comprehensive-testing-completion-plan" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Empathy Framework" class="md-header__button md-logo" aria-label="Empathy Framework" data-md-component="logo">
+      
+  <img src="../../assets/images/empathy-brain-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Empathy Framework
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Comprehensive Testing &amp; Completion Plan
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Smart-AI-Memory/empathy" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Smart-AI-Memory/empathy
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../tutorials/" class="md-tabs__link">
+          
+  
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../how-to/" class="md-tabs__link">
+          
+  
+  
+  How-to
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../explanation/" class="md-tabs__link">
+          
+  
+  
+  Explanation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
+          
+  
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../contributing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Contributing
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../get-the-book/" class="md-tabs__link">
+          
+  
+  
+  Book
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Empathy Framework" class="md-nav__button md-logo" aria-label="Empathy Framework" data-md-component="logo">
+      
+  <img src="../../assets/images/empathy-brain-logo.png" alt="logo">
+
+    </a>
+    Empathy Framework
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Smart-AI-Memory/empathy" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Smart-AI-Memory/empathy
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/examples/simple-chatbot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Review Assistant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/examples/sbar-clinical-handoff/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SBAR Clinical Handoff
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/examples/multi-agent-team-coordination/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Agent Team
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/examples/adaptive-learning-system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Adaptive Learning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/examples/webhook-event-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Webhook Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-to
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to Guides
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memory System
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Memory System
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/unified-memory-system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unified Memory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/short-term-memory-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Short-Term Memory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/memory-graph/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memory Graph
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Agents
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Agents
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/agent-factory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Factory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/smart-router/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Smart Router
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/auto-chaining/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auto-Chaining
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Integration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/webhook-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Webhooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/security-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/hipaa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HIPAA Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Patterns
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Patterns
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/practical-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Practical Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/resilience-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resilience Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/prerequisites/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prerequisites
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explanation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Explanation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explanation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Philosophy
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Philosophy
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/EMPATHY_PHILOSOPHY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Empathy Philosophy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/multi-agent-philosophy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Agent Philosophy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/HOW_CLAUDE_LEARNS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How Claude Learns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Concepts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/TEACHING_AI_YOUR_PHILOSOPHY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Teaching AI Your Philosophy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/adaptive-learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Adaptive Learning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/COMPARISON/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Integration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/USING_EMPATHY_WITH_LLMS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using with LLMs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/MEMDOCS_EMPATHY_INTEGRATION/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MemDocs Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/EMPATHY_FRAMEWORK_NON_TECHNICAL_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Non-Technical Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/CLI_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/CLI_CHEATSHEET/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Cheatsheet
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/API_REFERENCE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/empathy-os/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EmpathyOS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Config
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pattern-library/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pattern Library
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/multi-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Agent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/llm-toolkit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Toolkit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wizards
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Wizards
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/wizards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Industry Wizards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/software-wizards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Software Wizards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/ai-wizards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Wizards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Help
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Help
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/FAQ/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/TROUBLESHOOTING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/USER_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/SHORT_TERM_MEMORY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Short-Term Memory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Book
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Book
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../get-the-book/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get the Book
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../book-cover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/how-to-read-this-book/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/preface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preface
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/foreword/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foreword by Claude
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#executive-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Executive Summary
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Executive Summary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-state-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-1-complete-software-plugin-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: Complete Software Plugin Components
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1: Complete Software Plugin Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-testing-wizard-subdirectory-2-3-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Testing Wizard Subdirectory (2-3 hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-security-wizard-completion-2-3-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Security Wizard Completion (2-3 hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-integration-demo-2-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Integration Demo (2 hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-2-achieve-80-test-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: Achieve 80%+ Test Coverage
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2: Achieve 80%+ Test Coverage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#coverage-baseline-current-1466" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage Baseline (Current: 14.66%)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#21-core-empathyos-tests-8-10-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Core EmpathyOS Tests (8-10 hours)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.1 Core EmpathyOS Tests (8-10 hours)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#teststest_corepy-expand-from-current-baseline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tests/test_core.py - Expand from current baseline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teststest_persistencepy-expand-storage-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tests/test_persistence.py - Expand storage testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teststest_pattern_librarypy-pattern-detection-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tests/test_pattern_library.py - Pattern detection tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-llm-toolkit-tests-4-5-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 LLM Toolkit Tests (4-5 hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-software-plugin-tests-4-5-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Software Plugin Tests (4-5 hours)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3 Software Plugin Tests (4-5 hours)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#teststest_advanced_debuggingpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tests/test_advanced_debugging.py
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teststest_enhanced_testingpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tests/test_enhanced_testing.py
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teststest_performance_wizardpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tests/test_performance_wizard.py
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teststest_security_wizardpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tests/test_security_wizard.py
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teststest_software_integrationpy-new" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tests/test_software_integration.py - NEW
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-cross-platform-tests-2-3-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Cross-Platform Tests (2-3 hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-edge-cases-error-handling-2-3-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 Edge Cases &amp; Error Handling (2-3 hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-3-documentation-polish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: Documentation &amp; Polish
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3: Documentation &amp; Polish">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-software-plugin-documentation-2-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Software Plugin Documentation (2 hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wizards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wizards
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Wizards">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-advanced-debugging-wizard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Advanced Debugging Wizard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-enhanced-testing-wizard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Enhanced Testing Wizard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-performance-profiling-wizard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Performance Profiling Wizard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-security-analysis-wizard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Security Analysis Wizard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-ai-development-wizards-7-specialized-wizards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. AI Development Wizards (7 specialized wizards)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integration-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integration Examples
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contributing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-4-quality-assurance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: Quality Assurance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 4: Quality Assurance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-full-test-suite-execution-1-hour" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Full Test Suite Execution (1 hour)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-package-build-local-testing-1-hour" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Package Build &amp; Local Testing (1 hour)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-security-scan-30-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Security Scan (30 min)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-pre-commit-hooks-verification-30-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Pre-commit Hooks Verification (30 min)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-5-pypi-publishing-preparation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5: PyPI Publishing Preparation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 5: PyPI Publishing Preparation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-testpypi-upload-1-hour" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 TestPyPI Upload (1 hour)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-production-pypi-checklist-30-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Production PyPI Checklist (30 min)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-github-release-30-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 GitHub Release (30 min)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-included" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 What's Included
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quality-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 Quality Metrics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Quality Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#62-backend-auth-todos-30-min" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Backend Auth TODOs (30 min)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#timeline-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Timeline Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#success-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Success Criteria
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Success Criteria">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#must-have-p0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Must Have (P0)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#should-have-p1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Should Have (P1)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nice-to-have-p2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nice to Have (P2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#execution-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execution Strategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Execution Strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recommended-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended Order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#daily-checkpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Daily Checkpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#git-commit-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Git Commit Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#risk-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Risk Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Risk Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#risks-mitigations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Risks &amp; Mitigations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-launch-roadmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Launch Roadmap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="comprehensive-testing-completion-plan">Comprehensive Testing &amp; Completion Plan<a class="headerlink" href="#comprehensive-testing-completion-plan" title="Permanent link">&para;</a></h1>
+<p><strong>Empathy Framework v1.5.0 - Path to Production</strong></p>
+<p><strong>Goal</strong>: Achieve 80%+ test coverage, complete software plugin, and prepare for PyPI publication</p>
+<p><strong>Current Status</strong>: 494 tests, 14.66% coverage | <strong>Target</strong>: 650+ tests, 80%+ coverage</p>
+<hr />
+<h2 id="executive-summary">Executive Summary<a class="headerlink" href="#executive-summary" title="Permanent link">&para;</a></h2>
+<h3 id="current-state-analysis">Current State Analysis<a class="headerlink" href="#current-state-analysis" title="Permanent link">&para;</a></h3>
+<p>✅ <strong>Completed</strong>:
+- Core framework architecture (EmpathyOS, levels, plugins)
+- LLM toolkit with Claude Sonnet 4.5 &amp; GPT-4 integration
+- 16 Software wizards implemented
+- 18 Healthcare wizards complete
+- PyPI package structure ready (v1.5.0 built)
+- 494 tests passing, 9,581 lines of test code</p>
+<p>🚧 <strong>Needs Completion</strong>:
+- Test coverage: 14.66% → <strong>80%+</strong> (5.5x increase required)
+- Software plugin subdirectories incomplete
+- Integration demos missing
+- Cross-platform verification needed
+- Documentation polish</p>
+<hr />
+<h2 id="phase-1-complete-software-plugin-components">Phase 1: Complete Software Plugin Components<a class="headerlink" href="#phase-1-complete-software-plugin-components" title="Permanent link">&para;</a></h2>
+<p><strong>Time Estimate</strong>: 6-8 hours | <strong>Priority</strong>: P0 (Blocking publication)</p>
+<h3 id="11-testing-wizard-subdirectory-2-3-hours">1.1 Testing Wizard Subdirectory (2-3 hours)<a class="headerlink" href="#11-testing-wizard-subdirectory-2-3-hours" title="Permanent link">&para;</a></h3>
+<p><strong>Files to Create</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>empathy_software_plugin/wizards/testing/
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── coverage_analyzer.py      # Parse coverage reports (pytest-cov, coverage.py)
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── quality_analyzer.py        # Assess test quality (flakiness, assertions)
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>└── test_suggester.py          # Smart test generation suggestions
+</code></pre></div></p>
+<p><strong>coverage_analyzer.py</strong> - 200-250 lines:
+- Parse <code>coverage.xml</code> and <code>htmlcov/</code> output
+- Identify untested critical paths
+- Calculate branch coverage gaps
+- Generate coverage trend analysis</p>
+<p><strong>quality_analyzer.py</strong> - 200-250 lines:
+- Detect flaky tests (timing, randomness issues)
+- Analyze assertion quality
+- Check test isolation
+- Measure test execution time</p>
+<p><strong>test_suggester.py</strong> - 150-200 lines:
+- Suggest tests for uncovered code paths
+- Identify high-risk untested areas
+- Generate test templates
+- Prioritize by risk/impact</p>
+<p><strong>Deliverable</strong>: Enhanced Testing Wizard fully functional with subdirectory support</p>
+<hr />
+<h3 id="12-security-wizard-completion-2-3-hours">1.2 Security Wizard Completion (2-3 hours)<a class="headerlink" href="#12-security-wizard-completion-2-3-hours" title="Permanent link">&para;</a></h3>
+<p><strong>File to Create</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>empathy_software_plugin/wizards/security/
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>└── vulnerability_scanner.py   # Comprehensive vulnerability detection
+</code></pre></div></p>
+<p><strong>vulnerability_scanner.py</strong> - 350-400 lines:
+- Dependency vulnerability scanning (parse <code>pip-audit</code>, <code>safety</code> output)
+- Secret detection (API keys, passwords, tokens in code)
+- Configuration security checks
+- CVE database integration
+- OWASP Top 10 pattern matching
+- Generate CVSS scores with exploitability context</p>
+<p><strong>Integration</strong>:
+- Update <code>security_analysis_wizard.py</code> to use all subdirectory modules
+- Ensure exploit_analyzer and owasp_patterns work together
+- Add comprehensive security reporting</p>
+<p><strong>Deliverable</strong>: Production-ready security wizard with full OWASP coverage</p>
+<hr />
+<h3 id="13-integration-demo-2-hours">1.3 Integration Demo (2 hours)<a class="headerlink" href="#13-integration-demo-2-hours" title="Permanent link">&para;</a></h3>
+<p><strong>File to Create</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>examples/software_plugin_complete_demo.py
+</code></pre></div></p>
+<p><strong>Demo Structure</strong> (300-400 lines):
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="sd">Comprehensive Software Plugin Demonstration</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="sd">Shows all wizards working together on a real project:</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="sd">1. Debugging Wizard - Linting and bug risk analysis</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="sd">2. Testing Wizard - Coverage gaps and quality issues</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="sd">3. Performance Wizard - Bottleneck prediction</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="sd">4. Security Wizard - Vulnerability detection</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="sd">5. AI Wizards - Prompt engineering and context management</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    <span class="c1"># Simulated project with realistic issues</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="n">project</span> <span class="o">=</span> <span class="n">load_sample_project</span><span class="p">()</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>    <span class="c1"># Run all wizards in parallel</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">run_all_wizards</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>    <span class="c1"># Generate integrated report</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>    <span class="n">print_priority_matrix</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>    <span class="n">print_predictions</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>    <span class="n">print_recommendations</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Demonstrates</strong>:
+- ✅ All wizards operational
+- ✅ Level 4 anticipatory predictions
+- ✅ Cross-wizard insights
+- ✅ Prioritized action plan</p>
+<p><strong>Deliverable</strong>: Working demo showing complete plugin capabilities</p>
+<hr />
+<h2 id="phase-2-achieve-80-test-coverage">Phase 2: Achieve 80%+ Test Coverage<a class="headerlink" href="#phase-2-achieve-80-test-coverage" title="Permanent link">&para;</a></h2>
+<p><strong>Time Estimate</strong>: 16-20 hours | <strong>Priority</strong>: P0 (Commercial requirement)</p>
+<h3 id="coverage-baseline-current-1466">Coverage Baseline (Current: 14.66%)<a class="headerlink" href="#coverage-baseline-current-1466" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Current</th>
+<th>Target</th>
+<th>Gap</th>
+<th>Priority</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>src/empathy_os/core.py</strong></td>
+<td>14.96%</td>
+<td>70%</td>
+<td>+55%</td>
+<td>P0 - Critical</td>
+</tr>
+<tr>
+<td><strong>src/empathy_os/persistence.py</strong></td>
+<td>20.15%</td>
+<td>75%</td>
+<td>+55%</td>
+<td>P0 - Critical</td>
+</tr>
+<tr>
+<td><strong>src/empathy_os/pattern_library.py</strong></td>
+<td>20.81%</td>
+<td>70%</td>
+<td>+49%</td>
+<td>P0 - Critical</td>
+</tr>
+<tr>
+<td><strong>src/empathy_os/trust_building.py</strong></td>
+<td>17.77%</td>
+<td>65%</td>
+<td>+47%</td>
+<td>P1 - High</td>
+</tr>
+<tr>
+<td><strong>src/empathy_os/feedback_loops.py</strong></td>
+<td>25.37%</td>
+<td>70%</td>
+<td>+45%</td>
+<td>P1 - High</td>
+</tr>
+<tr>
+<td><strong>src/empathy_os/levels.py</strong></td>
+<td>44.00%</td>
+<td>80%</td>
+<td>+36%</td>
+<td>P2 - Medium</td>
+</tr>
+<tr>
+<td><strong>src/empathy_os/plugins/base.py</strong></td>
+<td>41.89%</td>
+<td>75%</td>
+<td>+33%</td>
+<td>P2 - Medium</td>
+</tr>
+<tr>
+<td><strong>empathy_llm_toolkit/</strong></td>
+<td>~40%</td>
+<td>80%</td>
+<td>+40%</td>
+<td>P0 - Critical</td>
+</tr>
+<tr>
+<td><strong>empathy_software_plugin/</strong></td>
+<td>~35%</td>
+<td>75%</td>
+<td>+40%</td>
+<td>P1 - High</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total Required</strong>: ~156 new test functions (~3,500-4,000 lines of test code)</p>
+<hr />
+<h3 id="21-core-empathyos-tests-8-10-hours">2.1 Core EmpathyOS Tests (8-10 hours)<a class="headerlink" href="#21-core-empathyos-tests-8-10-hours" title="Permanent link">&para;</a></h3>
+<p><strong>Priority Files</strong>:</p>
+<h4 id="teststest_corepy-expand-from-current-baseline"><strong>tests/test_core.py</strong> - Expand from current baseline<a class="headerlink" href="#teststest_corepy-expand-from-current-baseline" title="Permanent link">&para;</a></h4>
+<p><strong>Add</strong> (50-60 new tests):
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Initialization &amp; Configuration</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="o">-</span> <span class="n">test_empathy_os_init_default_config</span><span class="p">()</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="o">-</span> <span class="n">test_empathy_os_init_custom_config</span><span class="p">()</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="o">-</span> <span class="n">test_empathy_os_config_validation</span><span class="p">()</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="o">-</span> <span class="n">test_empathy_os_invalid_config_handling</span><span class="p">()</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># Level System Integration</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="o">-</span> <span class="n">test_level_progression_reactive_to_guided</span><span class="p">()</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="o">-</span> <span class="n">test_level_progression_guided_to_proactive</span><span class="p">()</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="o">-</span> <span class="n">test_level_4_anticipatory_predictions</span><span class="p">()</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="o">-</span> <span class="n">test_level_5_systems_creation</span><span class="p">()</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="o">-</span> <span class="n">test_level_transition_callbacks</span><span class="p">()</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="c1"># Plugin Management</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="o">-</span> <span class="n">test_register_plugin_success</span><span class="p">()</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="o">-</span> <span class="n">test_register_duplicate_plugin_error</span><span class="p">()</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="o">-</span> <span class="n">test_unregister_plugin</span><span class="p">()</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="o">-</span> <span class="n">test_plugin_lifecycle_hooks</span><span class="p">()</span>
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="o">-</span> <span class="n">test_plugin_dependency_resolution</span><span class="p">()</span>
+<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>
+<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="c1"># Collaboration Methods</span>
+<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="o">-</span> <span class="n">test_collaborate_basic_request</span><span class="p">()</span>
+<a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="o">-</span> <span class="n">test_collaborate_with_context</span><span class="p">()</span>
+<a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="o">-</span> <span class="n">test_collaborate_level_detection</span><span class="p">()</span>
+<a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a><span class="o">-</span> <span class="n">test_collaborate_error_handling</span><span class="p">()</span>
+<a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a><span class="o">-</span> <span class="n">test_collaborate_timeout_handling</span><span class="p">()</span>
+<a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a>
+<a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a><span class="c1"># Pattern Detection</span>
+<a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a><span class="o">-</span> <span class="n">test_detect_patterns_single</span><span class="p">()</span>
+<a id="__codelineno-4-30" name="__codelineno-4-30" href="#__codelineno-4-30"></a><span class="o">-</span> <span class="n">test_detect_patterns_multiple</span><span class="p">()</span>
+<a id="__codelineno-4-31" name="__codelineno-4-31" href="#__codelineno-4-31"></a><span class="o">-</span> <span class="n">test_pattern_learning_over_time</span><span class="p">()</span>
+<a id="__codelineno-4-32" name="__codelineno-4-32" href="#__codelineno-4-32"></a><span class="o">-</span> <span class="n">test_pattern_persistence</span><span class="p">()</span>
+<a id="__codelineno-4-33" name="__codelineno-4-33" href="#__codelineno-4-33"></a>
+<a id="__codelineno-4-34" name="__codelineno-4-34" href="#__codelineno-4-34"></a><span class="c1"># Feedback Loops</span>
+<a id="__codelineno-4-35" name="__codelineno-4-35" href="#__codelineno-4-35"></a><span class="o">-</span> <span class="n">test_add_feedback_loop</span><span class="p">()</span>
+<a id="__codelineno-4-36" name="__codelineno-4-36" href="#__codelineno-4-36"></a><span class="o">-</span> <span class="n">test_trigger_feedback_loop</span><span class="p">()</span>
+<a id="__codelineno-4-37" name="__codelineno-4-37" href="#__codelineno-4-37"></a><span class="o">-</span> <span class="n">test_feedback_loop_cascade</span><span class="p">()</span>
+<a id="__codelineno-4-38" name="__codelineno-4-38" href="#__codelineno-4-38"></a><span class="o">-</span> <span class="n">test_feedback_loop_error_recovery</span><span class="p">()</span>
+<a id="__codelineno-4-39" name="__codelineno-4-39" href="#__codelineno-4-39"></a>
+<a id="__codelineno-4-40" name="__codelineno-4-40" href="#__codelineno-4-40"></a><span class="c1"># Trust Building</span>
+<a id="__codelineno-4-41" name="__codelineno-4-41" href="#__codelineno-4-41"></a><span class="o">-</span> <span class="n">test_build_trust_trajectory</span><span class="p">()</span>
+<a id="__codelineno-4-42" name="__codelineno-4-42" href="#__codelineno-4-42"></a><span class="o">-</span> <span class="n">test_trust_metrics_calculation</span><span class="p">()</span>
+<a id="__codelineno-4-43" name="__codelineno-4-43" href="#__codelineno-4-43"></a><span class="o">-</span> <span class="n">test_trust_decay_over_time</span><span class="p">()</span>
+<a id="__codelineno-4-44" name="__codelineno-4-44" href="#__codelineno-4-44"></a><span class="o">-</span> <span class="n">test_calibrated_questions_generation</span><span class="p">()</span>
+<a id="__codelineno-4-45" name="__codelineno-4-45" href="#__codelineno-4-45"></a>
+<a id="__codelineno-4-46" name="__codelineno-4-46" href="#__codelineno-4-46"></a><span class="c1"># Error Scenarios</span>
+<a id="__codelineno-4-47" name="__codelineno-4-47" href="#__codelineno-4-47"></a><span class="o">-</span> <span class="n">test_null_input_handling</span><span class="p">()</span>
+<a id="__codelineno-4-48" name="__codelineno-4-48" href="#__codelineno-4-48"></a><span class="o">-</span> <span class="n">test_invalid_level_request</span><span class="p">()</span>
+<a id="__codelineno-4-49" name="__codelineno-4-49" href="#__codelineno-4-49"></a><span class="o">-</span> <span class="n">test_plugin_crash_isolation</span><span class="p">()</span>
+<a id="__codelineno-4-50" name="__codelineno-4-50" href="#__codelineno-4-50"></a><span class="o">-</span> <span class="n">test_concurrent_request_handling</span><span class="p">()</span>
+<a id="__codelineno-4-51" name="__codelineno-4-51" href="#__codelineno-4-51"></a><span class="o">-</span> <span class="n">test_resource_cleanup_on_error</span><span class="p">()</span>
+<a id="__codelineno-4-52" name="__codelineno-4-52" href="#__codelineno-4-52"></a>
+<a id="__codelineno-4-53" name="__codelineno-4-53" href="#__codelineno-4-53"></a><span class="c1"># Performance</span>
+<a id="__codelineno-4-54" name="__codelineno-4-54" href="#__codelineno-4-54"></a><span class="o">-</span> <span class="n">test_large_context_handling</span><span class="p">()</span>
+<a id="__codelineno-4-55" name="__codelineno-4-55" href="#__codelineno-4-55"></a><span class="o">-</span> <span class="n">test_concurrent_collaboration_requests</span><span class="p">()</span>
+<a id="__codelineno-4-56" name="__codelineno-4-56" href="#__codelineno-4-56"></a><span class="o">-</span> <span class="n">test_memory_usage_under_load</span><span class="p">()</span>
+</code></pre></div></p>
+<hr />
+<h4 id="teststest_persistencepy-expand-storage-testing"><strong>tests/test_persistence.py</strong> - Expand storage testing<a class="headerlink" href="#teststest_persistencepy-expand-storage-testing" title="Permanent link">&para;</a></h4>
+<p><strong>Add</strong> (30-35 new tests):
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># State Persistence</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="o">-</span> <span class="n">test_save_state_to_disk</span><span class="p">()</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="o">-</span> <span class="n">test_load_state_from_disk</span><span class="p">()</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="o">-</span> <span class="n">test_save_state_encryption</span><span class="p">()</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="o">-</span> <span class="n">test_state_versioning</span><span class="p">()</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="o">-</span> <span class="n">test_state_migration_v1_to_v2</span><span class="p">()</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="c1"># Pattern Library Persistence</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="o">-</span> <span class="n">test_save_patterns</span><span class="p">()</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="o">-</span> <span class="n">test_load_patterns</span><span class="p">()</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="o">-</span> <span class="n">test_pattern_deduplication</span><span class="p">()</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="o">-</span> <span class="n">test_pattern_search_indexing</span><span class="p">()</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="c1"># Collaboration History</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="o">-</span> <span class="n">test_save_collaboration_history</span><span class="p">()</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="o">-</span> <span class="n">test_query_history_by_date</span><span class="p">()</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="o">-</span> <span class="n">test_query_history_by_level</span><span class="p">()</span>
+<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="o">-</span> <span class="n">test_history_truncation</span><span class="p">()</span>
+<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="o">-</span> <span class="n">test_history_export</span><span class="p">()</span>
+<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>
+<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="c1"># Error Recovery</span>
+<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="o">-</span> <span class="n">test_corrupted_state_file_recovery</span><span class="p">()</span>
+<a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="o">-</span> <span class="n">test_disk_full_handling</span><span class="p">()</span>
+<a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="o">-</span> <span class="n">test_concurrent_write_protection</span><span class="p">()</span>
+<a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="o">-</span> <span class="n">test_atomic_save_operations</span><span class="p">()</span>
+<a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a>
+<a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a><span class="c1"># Performance</span>
+<a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a><span class="o">-</span> <span class="n">test_large_state_save_performance</span><span class="p">()</span>
+<a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a><span class="o">-</span> <span class="n">test_incremental_save_optimization</span><span class="p">()</span>
+</code></pre></div></p>
+<hr />
+<h4 id="teststest_pattern_librarypy-pattern-detection-tests"><strong>tests/test_pattern_library.py</strong> - Pattern detection tests<a class="headerlink" href="#teststest_pattern_librarypy-pattern-detection-tests" title="Permanent link">&para;</a></h4>
+<p><strong>Add</strong> (25-30 new tests):
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Pattern Learning</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="o">-</span> <span class="n">test_learn_pattern_from_interaction</span><span class="p">()</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="o">-</span> <span class="n">test_pattern_generalization</span><span class="p">()</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="o">-</span> <span class="n">test_pattern_confidence_scoring</span><span class="p">()</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="o">-</span> <span class="n">test_pattern_frequency_tracking</span><span class="p">()</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># Pattern Matching</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="o">-</span> <span class="n">test_match_exact_pattern</span><span class="p">()</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="o">-</span> <span class="n">test_match_fuzzy_pattern</span><span class="p">()</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="o">-</span> <span class="n">test_match_composite_pattern</span><span class="p">()</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="o">-</span> <span class="n">test_match_with_wildcards</span><span class="p">()</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="c1"># Pattern Sharing (Level 5)</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="o">-</span> <span class="n">test_share_pattern_between_instances</span><span class="p">()</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="o">-</span> <span class="n">test_pattern_conflict_resolution</span><span class="p">()</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="o">-</span> <span class="n">test_pattern_merge_strategies</span><span class="p">()</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="o">-</span> <span class="n">test_cross_domain_pattern_transfer</span><span class="p">()</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="c1"># Pattern Evolution</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="o">-</span> <span class="n">test_pattern_refinement_over_time</span><span class="p">()</span>
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="o">-</span> <span class="n">test_outdated_pattern_deprecation</span><span class="p">()</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="o">-</span> <span class="n">test_pattern_version_tracking</span><span class="p">()</span>
+</code></pre></div></p>
+<hr />
+<h3 id="22-llm-toolkit-tests-4-5-hours">2.2 LLM Toolkit Tests (4-5 hours)<a class="headerlink" href="#22-llm-toolkit-tests-4-5-hours" title="Permanent link">&para;</a></h3>
+<p><strong>File</strong>: <code>tests/test_llm_integration.py</code> - Expand coverage</p>
+<p><strong>Add</strong> (40-50 new tests):
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Provider Integration</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="o">-</span> <span class="n">test_anthropic_claude_sonnet_45_basic</span><span class="p">()</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="o">-</span> <span class="n">test_openai_gpt4_basic</span><span class="p">()</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="o">-</span> <span class="n">test_fallback_provider_on_failure</span><span class="p">()</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="o">-</span> <span class="n">test_multi_provider_load_balancing</span><span class="p">()</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1"># Async Operations</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="o">-</span> <span class="n">test_async_single_request</span><span class="p">()</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="o">-</span> <span class="n">test_async_parallel_requests</span><span class="p">()</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="o">-</span> <span class="n">test_async_request_cancellation</span><span class="p">()</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="o">-</span> <span class="n">test_async_timeout_handling</span><span class="p">()</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="c1"># Prompt Caching</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="o">-</span> <span class="n">test_prompt_cache_hit</span><span class="p">()</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="o">-</span> <span class="n">test_prompt_cache_miss</span><span class="p">()</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="o">-</span> <span class="n">test_cache_invalidation</span><span class="p">()</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="o">-</span> <span class="n">test_cache_size_management</span><span class="p">()</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="c1"># Thinking Mode</span>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="o">-</span> <span class="n">test_thinking_mode_enabled</span><span class="p">()</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="o">-</span> <span class="n">test_thinking_mode_output_parsing</span><span class="p">()</span>
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="o">-</span> <span class="n">test_extended_thinking_for_complex_tasks</span><span class="p">()</span>
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="c1"># Error Handling</span>
+<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="o">-</span> <span class="n">test_api_key_missing</span><span class="p">()</span>
+<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a><span class="o">-</span> <span class="n">test_api_key_invalid</span><span class="p">()</span>
+<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a><span class="o">-</span> <span class="n">test_rate_limit_handling</span><span class="p">()</span>
+<a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a><span class="o">-</span> <span class="n">test_network_timeout</span><span class="p">()</span>
+<a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a><span class="o">-</span> <span class="n">test_malformed_response_handling</span><span class="p">()</span>
+<a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a>
+<a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a><span class="c1"># Response Parsing</span>
+<a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a><span class="o">-</span> <span class="n">test_parse_json_response</span><span class="p">()</span>
+<a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a><span class="o">-</span> <span class="n">test_parse_markdown_response</span><span class="p">()</span>
+<a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a><span class="o">-</span> <span class="n">test_parse_code_blocks</span><span class="p">()</span>
+<a id="__codelineno-7-35" name="__codelineno-7-35" href="#__codelineno-7-35"></a><span class="o">-</span> <span class="n">test_extract_structured_data</span><span class="p">()</span>
+<a id="__codelineno-7-36" name="__codelineno-7-36" href="#__codelineno-7-36"></a>
+<a id="__codelineno-7-37" name="__codelineno-7-37" href="#__codelineno-7-37"></a><span class="c1"># Token Management</span>
+<a id="__codelineno-7-38" name="__codelineno-7-38" href="#__codelineno-7-38"></a><span class="o">-</span> <span class="n">test_token_counting</span><span class="p">()</span>
+<a id="__codelineno-7-39" name="__codelineno-7-39" href="#__codelineno-7-39"></a><span class="o">-</span> <span class="n">test_request_trimming_on_limit</span><span class="p">()</span>
+<a id="__codelineno-7-40" name="__codelineno-7-40" href="#__codelineno-7-40"></a><span class="o">-</span> <span class="n">test_context_window_management</span><span class="p">()</span>
+<a id="__codelineno-7-41" name="__codelineno-7-41" href="#__codelineno-7-41"></a>
+<a id="__codelineno-7-42" name="__codelineno-7-42" href="#__codelineno-7-42"></a><span class="c1"># Cost Tracking</span>
+<a id="__codelineno-7-43" name="__codelineno-7-43" href="#__codelineno-7-43"></a><span class="o">-</span> <span class="n">test_track_api_costs</span><span class="p">()</span>
+<a id="__codelineno-7-44" name="__codelineno-7-44" href="#__codelineno-7-44"></a><span class="o">-</span> <span class="n">test_budget_enforcement</span><span class="p">()</span>
+<a id="__codelineno-7-45" name="__codelineno-7-45" href="#__codelineno-7-45"></a><span class="o">-</span> <span class="n">test_cost_optimization_suggestions</span><span class="p">()</span>
+<a id="__codelineno-7-46" name="__codelineno-7-46" href="#__codelineno-7-46"></a>
+<a id="__codelineno-7-47" name="__codelineno-7-47" href="#__codelineno-7-47"></a><span class="c1"># Mocking for Non-LLM Tests</span>
+<a id="__codelineno-7-48" name="__codelineno-7-48" href="#__codelineno-7-48"></a><span class="o">-</span> <span class="n">test_with_mock_provider</span><span class="p">()</span>
+<a id="__codelineno-7-49" name="__codelineno-7-49" href="#__codelineno-7-49"></a><span class="o">-</span> <span class="n">test_deterministic_responses</span><span class="p">()</span>
+</code></pre></div></p>
+<hr />
+<h3 id="23-software-plugin-tests-4-5-hours">2.3 Software Plugin Tests (4-5 hours)<a class="headerlink" href="#23-software-plugin-tests-4-5-hours" title="Permanent link">&para;</a></h3>
+<p><strong>Files to Expand</strong>:</p>
+<h4 id="teststest_advanced_debuggingpy"><strong>tests/test_advanced_debugging.py</strong><a class="headerlink" href="#teststest_advanced_debuggingpy" title="Permanent link">&para;</a></h4>
+<p><strong>Add</strong> (15-20 tests):
+- Linter parser edge cases
+- Cross-language pattern detection
+- Bug risk scoring validation
+- Fix verification tests</p>
+<h4 id="teststest_enhanced_testingpy"><strong>tests/test_enhanced_testing.py</strong><a class="headerlink" href="#teststest_enhanced_testingpy" title="Permanent link">&para;</a></h4>
+<p><strong>Add</strong> (20-25 tests):
+- Coverage analyzer accuracy
+- Test quality metrics
+- Smart suggestion validation
+- Integration with pytest output</p>
+<h4 id="teststest_performance_wizardpy"><strong>tests/test_performance_wizard.py</strong><a class="headerlink" href="#teststest_performance_wizardpy" title="Permanent link">&para;</a></h4>
+<p><strong>Add</strong> (20-25 tests):
+- Profiler parser compatibility (cProfile, py-spy, perf)
+- Bottleneck detection accuracy
+- Trajectory prediction validation
+- Optimization suggestion quality</p>
+<h4 id="teststest_security_wizardpy"><strong>tests/test_security_wizard.py</strong><a class="headerlink" href="#teststest_security_wizardpy" title="Permanent link">&para;</a></h4>
+<p><strong>Add</strong> (25-30 tests):
+- Vulnerability scanner accuracy
+- OWASP Top 10 pattern detection
+- Exploit analyzer logic
+- CVE scoring validation
+- Secret detection tests</p>
+<h4 id="teststest_software_integrationpy-new"><strong>tests/test_software_integration.py</strong> - NEW<a class="headerlink" href="#teststest_software_integrationpy-new" title="Permanent link">&para;</a></h4>
+<p><strong>Add</strong> (30-35 tests):
+- All wizards working together
+- Cross-wizard insights
+- Priority calculation
+- End-to-end workflows</p>
+<hr />
+<h3 id="24-cross-platform-tests-2-3-hours">2.4 Cross-Platform Tests (2-3 hours)<a class="headerlink" href="#24-cross-platform-tests-2-3-hours" title="Permanent link">&para;</a></h3>
+<p><strong>File</strong>: <code>tests/test_platform_compatibility.py</code> - NEW</p>
+<p><strong>Add</strong> (15-20 tests):
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Platform Detection</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="o">-</span> <span class="n">test_detect_macos</span><span class="p">()</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="o">-</span> <span class="n">test_detect_linux</span><span class="p">()</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="o">-</span> <span class="n">test_detect_windows</span><span class="p">()</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="c1"># Path Handling</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="o">-</span> <span class="n">test_path_separator_normalization</span><span class="p">()</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="o">-</span> <span class="n">test_windows_long_path_support</span><span class="p">()</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="o">-</span> <span class="n">test_symlink_handling_cross_platform</span><span class="p">()</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="c1"># File Operations</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="o">-</span> <span class="n">test_atomic_write_windows</span><span class="p">()</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="o">-</span> <span class="n">test_file_locking_linux</span><span class="p">()</span>
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="o">-</span> <span class="n">test_permissions_unix_vs_windows</span><span class="p">()</span>
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="c1"># Process Management</span>
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="o">-</span> <span class="n">test_subprocess_spawn_cross_platform</span><span class="p">()</span>
+<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="o">-</span> <span class="n">test_signal_handling_differences</span><span class="p">()</span>
+<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>
+<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="c1"># Environment Variables</span>
+<a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a><span class="o">-</span> <span class="n">test_env_var_case_sensitivity</span><span class="p">()</span>
+<a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a><span class="o">-</span> <span class="n">test_path_environment_parsing</span><span class="p">()</span>
+<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a>
+<a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a><span class="c1"># Terminal Output</span>
+<a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a><span class="o">-</span> <span class="n">test_ansi_colors_windows_compatibility</span><span class="p">()</span>
+<a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a><span class="o">-</span> <span class="n">test_unicode_support_cross_platform</span><span class="p">()</span>
+</code></pre></div></p>
+<hr />
+<h3 id="25-edge-cases-error-handling-2-3-hours">2.5 Edge Cases &amp; Error Handling (2-3 hours)<a class="headerlink" href="#25-edge-cases-error-handling-2-3-hours" title="Permanent link">&para;</a></h3>
+<p><strong>Expand existing test files with</strong>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Null/Empty Input Handling</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="o">-</span> <span class="n">test_empty_string_input</span><span class="p">()</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="o">-</span> <span class="n">test_none_values</span><span class="p">()</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="o">-</span> <span class="n">test_empty_collections</span><span class="p">()</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="c1"># Boundary Conditions</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="o">-</span> <span class="n">test_max_context_size</span><span class="p">()</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="o">-</span> <span class="n">test_zero_timeout</span><span class="p">()</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="o">-</span> <span class="n">test_negative_values_rejected</span><span class="p">()</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="c1"># Concurrent Operations</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="o">-</span> <span class="n">test_race_condition_prevention</span><span class="p">()</span>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="o">-</span> <span class="n">test_deadlock_prevention</span><span class="p">()</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="o">-</span> <span class="n">test_thread_safety</span><span class="p">()</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a><span class="c1"># Resource Management</span>
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a><span class="o">-</span> <span class="n">test_file_handle_cleanup</span><span class="p">()</span>
+<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a><span class="o">-</span> <span class="n">test_memory_leak_prevention</span><span class="p">()</span>
+<a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a><span class="o">-</span> <span class="n">test_graceful_shutdown</span><span class="p">()</span>
+<a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>
+<a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a><span class="c1"># Unicode &amp; Encoding</span>
+<a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a><span class="o">-</span> <span class="n">test_unicode_handling</span><span class="p">()</span>
+<a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a><span class="o">-</span> <span class="n">test_emoji_in_text</span><span class="p">()</span>
+<a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a><span class="o">-</span> <span class="n">test_mixed_encoding_handling</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<h2 id="phase-3-documentation-polish">Phase 3: Documentation &amp; Polish<a class="headerlink" href="#phase-3-documentation-polish" title="Permanent link">&para;</a></h2>
+<p><strong>Time Estimate</strong>: 4-5 hours | <strong>Priority</strong>: P1</p>
+<h3 id="31-software-plugin-documentation-2-hours">3.1 Software Plugin Documentation (2 hours)<a class="headerlink" href="#31-software-plugin-documentation-2-hours" title="Permanent link">&para;</a></h3>
+<p><strong>File</strong>: <code>empathy_software_plugin/SOFTWARE_PLUGIN_README.md</code> - NEW (500-600 lines)</p>
+<p><strong>Structure</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="gh"># Software Development Plugin</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="gu">## Overview</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>Five production-ready wizards for Level 4 anticipatory development.
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="gu">## Installation</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>```bash
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>pip install empathy-framework[software]
+</code></pre></div></p>
+<h2 id="wizards">Wizards<a class="headerlink" href="#wizards" title="Permanent link">&para;</a></h2>
+<h3 id="1-advanced-debugging-wizard">1. Advanced Debugging Wizard<a class="headerlink" href="#1-advanced-debugging-wizard" title="Permanent link">&para;</a></h3>
+<p><strong>What it does</strong>: Protocol-based linting with cross-language learning
+<strong>Use when</strong>: You have linting errors or want to prevent future bugs</p>
+<p>[Full examples, API reference, configuration options]</p>
+<h3 id="2-enhanced-testing-wizard">2. Enhanced Testing Wizard<a class="headerlink" href="#2-enhanced-testing-wizard" title="Permanent link">&para;</a></h3>
+<p>[Similar detailed sections for each wizard...]</p>
+<h3 id="3-performance-profiling-wizard">3. Performance Profiling Wizard<a class="headerlink" href="#3-performance-profiling-wizard" title="Permanent link">&para;</a></h3>
+<h3 id="4-security-analysis-wizard">4. Security Analysis Wizard<a class="headerlink" href="#4-security-analysis-wizard" title="Permanent link">&para;</a></h3>
+<h3 id="5-ai-development-wizards-7-specialized-wizards">5. AI Development Wizards (7 specialized wizards)<a class="headerlink" href="#5-ai-development-wizards-7-specialized-wizards" title="Permanent link">&para;</a></h3>
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<h2 id="integration-examples">Integration Examples<a class="headerlink" href="#integration-examples" title="Permanent link">&para;</a></h2>
+<h2 id="configuration-guide">Configuration Guide<a class="headerlink" href="#configuration-guide" title="Permanent link">&para;</a></h2>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<h2 id="contributing">Contributing<a class="headerlink" href="#contributing" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>---
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>### 3.2 Main README Updates (1 hour)
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>**File**: `README.md`
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>**Updates**:
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>- ✅ Update test count badge (494 → 650+)
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>- ✅ Update coverage badge (14.7% → 80%+)
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>- ✅ Verify all links work
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>- ✅ Update installation examples
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>- ✅ Add TestPyPI installation instructions
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>- ✅ Refresh feature highlights
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>- ✅ Update comparison table with accurate metrics
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>---
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>
+<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>### 3.3 API Reference Polish (1 hour)
+<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>
+<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a>**File**: `docs/API_REFERENCE.md`
+<a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a>
+<a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a>**Additions**:
+<a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a>- Complete method signatures for all public APIs
+<a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a>- Parameter descriptions with types
+<a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a>- Return value documentation
+<a id="__codelineno-11-26" name="__codelineno-11-26" href="#__codelineno-11-26"></a>- Usage examples for each method
+<a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a>- Common pitfalls section
+<a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a>
+<a id="__codelineno-11-29" name="__codelineno-11-29" href="#__codelineno-11-29"></a>---
+<a id="__codelineno-11-30" name="__codelineno-11-30" href="#__codelineno-11-30"></a>
+<a id="__codelineno-11-31" name="__codelineno-11-31" href="#__codelineno-11-31"></a>### 3.4 CHANGELOG Update (30 min)
+<a id="__codelineno-11-32" name="__codelineno-11-32" href="#__codelineno-11-32"></a>
+<a id="__codelineno-11-33" name="__codelineno-11-33" href="#__codelineno-11-33"></a>**File**: `CHANGELOG.md`
+<a id="__codelineno-11-34" name="__codelineno-11-34" href="#__codelineno-11-34"></a>
+<a id="__codelineno-11-35" name="__codelineno-11-35" href="#__codelineno-11-35"></a>**Add v1.5.0 section**:
+<a id="__codelineno-11-36" name="__codelineno-11-36" href="#__codelineno-11-36"></a>```markdown
+<a id="__codelineno-11-37" name="__codelineno-11-37" href="#__codelineno-11-37"></a>## [1.5.0] - 2025-11-09
+<a id="__codelineno-11-38" name="__codelineno-11-38" href="#__codelineno-11-38"></a>
+<a id="__codelineno-11-39" name="__codelineno-11-39" href="#__codelineno-11-39"></a>### Added
+<a id="__codelineno-11-40" name="__codelineno-11-40" href="#__codelineno-11-40"></a>- ✅ Production-ready PyPI package structure
+<a id="__codelineno-11-41" name="__codelineno-11-41" href="#__codelineno-11-41"></a>- ✅ Comprehensive test suite (650+ tests, 80%+ coverage)
+<a id="__codelineno-11-42" name="__codelineno-11-42" href="#__codelineno-11-42"></a>- ✅ Complete software plugin with 5 wizards
+<a id="__codelineno-11-43" name="__codelineno-11-43" href="#__codelineno-11-43"></a>- ✅ Cross-platform compatibility (Linux, macOS, Windows)
+<a id="__codelineno-11-44" name="__codelineno-11-44" href="#__codelineno-11-44"></a>- ✅ Enhanced security scanning with OWASP Top 10
+<a id="__codelineno-11-45" name="__codelineno-11-45" href="#__codelineno-11-45"></a>- ✅ Performance profiling with trajectory prediction
+<a id="__codelineno-11-46" name="__codelineno-11-46" href="#__codelineno-11-46"></a>- ✅ Testing wizard with smart suggestions
+<a id="__codelineno-11-47" name="__codelineno-11-47" href="#__codelineno-11-47"></a>
+<a id="__codelineno-11-48" name="__codelineno-11-48" href="#__codelineno-11-48"></a>### Changed
+<a id="__codelineno-11-49" name="__codelineno-11-49" href="#__codelineno-11-49"></a>- ⬆️ Rebranded from &quot;Empathy Framework&quot; to &quot;Empathy&quot;
+<a id="__codelineno-11-50" name="__codelineno-11-50" href="#__codelineno-11-50"></a>- ⬆️ Updated to Fair Source 0.9 license
+<a id="__codelineno-11-51" name="__codelineno-11-51" href="#__codelineno-11-51"></a>- ⬆️ Improved test coverage from 14.7% to 80%+
+<a id="__codelineno-11-52" name="__codelineno-11-52" href="#__codelineno-11-52"></a>- ⬆️ Contact email: smartaimemory.com
+<a id="__codelineno-11-53" name="__codelineno-11-53" href="#__codelineno-11-53"></a>
+<a id="__codelineno-11-54" name="__codelineno-11-54" href="#__codelineno-11-54"></a>### Fixed
+<a id="__codelineno-11-55" name="__codelineno-11-55" href="#__codelineno-11-55"></a>- 🐛 Cross-platform path handling
+<a id="__codelineno-11-56" name="__codelineno-11-56" href="#__codelineno-11-56"></a>- 🐛 Async operation edge cases
+<a id="__codelineno-11-57" name="__codelineno-11-57" href="#__codelineno-11-57"></a>- 🐛 Error handling in LLM fallback
+</code></pre></div>
+<hr />
+<h2 id="phase-4-quality-assurance">Phase 4: Quality Assurance<a class="headerlink" href="#phase-4-quality-assurance" title="Permanent link">&para;</a></h2>
+<p><strong>Time Estimate</strong>: 3-4 hours | <strong>Priority</strong>: P0</p>
+<h3 id="41-full-test-suite-execution-1-hour">4.1 Full Test Suite Execution (1 hour)<a class="headerlink" href="#41-full-test-suite-execution-1-hour" title="Permanent link">&para;</a></h3>
+<p><strong>Run on all platforms</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># macOS (primary)</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>pytest<span class="w"> </span>-v<span class="w"> </span>--cov<span class="w"> </span>--cov-report<span class="o">=</span>html
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1"># Linux (Docker)</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>docker<span class="w"> </span>run<span class="w"> </span>-v<span class="w"> </span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>:/app<span class="w"> </span>python:3.11<span class="w"> </span>pytest<span class="w"> </span>-v
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="c1"># Windows (GitHub Actions or VM)</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>pytest<span class="w"> </span>-v<span class="w"> </span>--cov
+</code></pre></div></p>
+<p><strong>Success Criteria</strong>:
+- ✅ All tests pass on all platforms
+- ✅ Coverage ≥ 80% overall
+- ✅ No flaky tests
+- ✅ Execution time &lt; 5 minutes</p>
+<hr />
+<h3 id="42-package-build-local-testing-1-hour">4.2 Package Build &amp; Local Testing (1 hour)<a class="headerlink" href="#42-package-build-local-testing-1-hour" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Clean previous builds</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>rm<span class="w"> </span>-rf<span class="w"> </span>dist/<span class="w"> </span>build/<span class="w"> </span>*.egg-info
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1"># Build fresh</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>python<span class="w"> </span>-m<span class="w"> </span>build
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="c1"># Test installation in clean environment</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>test_env
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="nb">source</span><span class="w"> </span>test_env/bin/activate
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>pip<span class="w"> </span>install<span class="w"> </span>dist/empathy-1.5.0-py3-none-any.whl
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="c1"># Verify imports</span>
+<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;from empathy_os import EmpathyOS; print(&#39;✅ Core import OK&#39;)&quot;</span>
+<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;from empathy_llm_toolkit import LLMClient; print(&#39;✅ LLM toolkit OK&#39;)&quot;</span>
+<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;from empathy_software_plugin import AdvancedDebuggingWizard; print(&#39;✅ Plugin OK&#39;)&quot;</span>
+<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a>
+<a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a><span class="c1"># Test CLI</span>
+<a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a>empathy<span class="w"> </span>--version
+<a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a>empathy-scan<span class="w"> </span>--help
+<a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a>
+<a id="__codelineno-13-21" name="__codelineno-13-21" href="#__codelineno-13-21"></a>deactivate
+<a id="__codelineno-13-22" name="__codelineno-13-22" href="#__codelineno-13-22"></a>rm<span class="w"> </span>-rf<span class="w"> </span>test_env
+</code></pre></div>
+<hr />
+<h3 id="43-security-scan-30-min">4.3 Security Scan (30 min)<a class="headerlink" href="#43-security-scan-30-min" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Dependency vulnerabilities</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>pip<span class="w"> </span>install<span class="w"> </span>safety
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>safety<span class="w"> </span>check<span class="w"> </span>--json
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="c1"># Code security</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>bandit<span class="w"> </span>-r<span class="w"> </span>src/<span class="w"> </span>empathy_llm_toolkit/<span class="w"> </span>empathy_software_plugin/<span class="w"> </span>-f<span class="w"> </span>json<span class="w"> </span>-o<span class="w"> </span>security_report.json
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="c1"># Ensure 0 high/critical vulnerabilities</span>
+</code></pre></div>
+<hr />
+<h3 id="44-pre-commit-hooks-verification-30-min">4.4 Pre-commit Hooks Verification (30 min)<a class="headerlink" href="#44-pre-commit-hooks-verification-30-min" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Install hooks</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>pre-commit<span class="w"> </span>install
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1"># Run all hooks</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="c1"># Should pass: black, ruff, mypy, pytest</span>
+</code></pre></div>
+<hr />
+<h2 id="phase-5-pypi-publishing-preparation">Phase 5: PyPI Publishing Preparation<a class="headerlink" href="#phase-5-pypi-publishing-preparation" title="Permanent link">&para;</a></h2>
+<p><strong>Time Estimate</strong>: 2-3 hours | <strong>Priority</strong>: P0</p>
+<h3 id="51-testpypi-upload-1-hour">5.1 TestPyPI Upload (1 hour)<a class="headerlink" href="#51-testpypi-upload-1-hour" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Upload to TestPyPI</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>twine<span class="w"> </span>upload<span class="w"> </span>--repository<span class="w"> </span>testpypi<span class="w"> </span>dist/*
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="c1"># Test installation from TestPyPI</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>testpypi_env
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="nb">source</span><span class="w"> </span>testpypi_env/bin/activate
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>pip<span class="w"> </span>install<span class="w"> </span>--index-url<span class="w"> </span>https://test.pypi.org/simple/<span class="w"> </span>--extra-index-url<span class="w"> </span>https://pypi.org/simple/<span class="w"> </span>empathy<span class="o">[</span>full<span class="o">]</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="c1"># Run smoke tests</span>
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;from empathy_os import EmpathyOS; os = EmpathyOS(); print(&#39;✅&#39;)&quot;</span>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>deactivate
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>rm<span class="w"> </span>-rf<span class="w"> </span>testpypi_env
+</code></pre></div>
+<p><strong>Success Criteria</strong>:
+- ✅ Package uploads successfully
+- ✅ Installs without errors
+- ✅ All imports work
+- ✅ CLI commands functional</p>
+<hr />
+<h3 id="52-production-pypi-checklist-30-min">5.2 Production PyPI Checklist (30 min)<a class="headerlink" href="#52-production-pypi-checklist-30-min" title="Permanent link">&para;</a></h3>
+<p><strong>Pre-flight checks</strong>:
+- [ ] All tests passing (650+ tests)
+- [ ] Coverage ≥ 80%
+- [ ] Security scan clean (0 high/critical issues)
+- [ ] Package builds successfully
+- [ ] TestPyPI installation verified
+- [ ] README.md accurate
+- [ ] CHANGELOG.md updated
+- [ ] Version number correct (1.5.0)
+- [ ] LICENSE file included
+- [ ] All links in docs working</p>
+<hr />
+<h3 id="53-github-release-30-min">5.3 GitHub Release (30 min)<a class="headerlink" href="#53-github-release-30-min" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Create git tag</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.5.0<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Release v1.5.0: Production-ready with 80%+ test coverage&quot;</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v1.5.0
+</code></pre></div>
+<p><strong>GitHub Release Notes</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="gh"># Empathy v1.5.0 - Production Ready</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="gu">## 🎉 Highlights</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="k">-</span><span class="w"> </span>✅ <span class="gs">**80%+ test coverage**</span> (650+ tests)
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="k">-</span><span class="w"> </span>✅ <span class="gs">**Cross-platform support**</span> (Linux, macOS, Windows)
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="k">-</span><span class="w"> </span>✅ <span class="gs">**Complete software plugin**</span> (5 wizards)
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="k">-</span><span class="w"> </span>✅ <span class="gs">**Production-grade security**</span> (0 vulnerabilities)
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="gu">## 📦 Installation</span>
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>```bash
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>pip install empathy-framework[full]
+</code></pre></div></p>
+<h2 id="whats-included">🔧 What's Included<a class="headerlink" href="#whats-included" title="Permanent link">&para;</a></h2>
+<ul>
+<li>16 software development wizards</li>
+<li>18 healthcare documentation wizards</li>
+<li>LLM toolkit (Claude Sonnet 4.5, GPT-4)</li>
+<li>Pattern library &amp; learning system</li>
+<li>FastAPI backend (optional)</li>
+</ul>
+<h2 id="quality-metrics">📊 Quality Metrics<a class="headerlink" href="#quality-metrics" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Tests</strong>: 650+</li>
+<li><strong>Coverage</strong>: 80%+</li>
+<li><strong>Security</strong>: 0 vulnerabilities</li>
+<li><strong>Platforms</strong>: Linux, macOS, Windows</li>
+</ul>
+<p><a href="CHANGELOG.md">Full changelog</a>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>---
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>## Phase 6: Outstanding TODOs
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>**Time Estimate**: 2-3 hours | **Priority**: P2
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>### 6.1 Compliance Agent TODOs (1-2 hours)
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>**File**: `agents/compliance_anticipation_agent.py`
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>**TODOs to Address**:
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>```python
+<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a># Line 399: Database integration
+<a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a>def _get_last_audit_date(self, facility_id: str) -&gt; datetime:
+<a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>    &quot;&quot;&quot;
+<a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>    TODO: Connect to real database
+<a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a>
+<a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a>    Solution: Add database adapter interface:
+<a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a>    - PostgreSQL adapter
+<a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a>    - SQLite adapter (for testing)
+<a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a>    - Mock adapter (for demos)
+<a id="__codelineno-19-21" name="__codelineno-19-21" href="#__codelineno-19-21"></a>    &quot;&quot;&quot;
+<a id="__codelineno-19-22" name="__codelineno-19-22" href="#__codelineno-19-22"></a>
+<a id="__codelineno-19-23" name="__codelineno-19-23" href="#__codelineno-19-23"></a># Line 585: Compliance data connection
+<a id="__codelineno-19-24" name="__codelineno-19-24" href="#__codelineno-19-24"></a># Line 697: Gap detection system integration
+<a id="__codelineno-19-25" name="__codelineno-19-25" href="#__codelineno-19-25"></a># Line 877: Document storage (S3, SharePoint)
+<a id="__codelineno-19-26" name="__codelineno-19-26" href="#__codelineno-19-26"></a># Line 974: Notification system (email, SMS, Slack)
+<a id="__codelineno-19-27" name="__codelineno-19-27" href="#__codelineno-19-27"></a>
+<a id="__codelineno-19-28" name="__codelineno-19-28" href="#__codelineno-19-28"></a># Strategy: Create adapter pattern
+<a id="__codelineno-19-29" name="__codelineno-19-29" href="#__codelineno-19-29"></a>class ComplianceDataAdapter(Protocol):
+<a id="__codelineno-19-30" name="__codelineno-19-30" href="#__codelineno-19-30"></a>    def get_last_audit_date(self, facility_id: str) -&gt; datetime: ...
+<a id="__codelineno-19-31" name="__codelineno-19-31" href="#__codelineno-19-31"></a>    def get_compliance_status(self, facility_id: str) -&gt; dict: ...
+<a id="__codelineno-19-32" name="__codelineno-19-32" href="#__codelineno-19-32"></a>
+<a id="__codelineno-19-33" name="__codelineno-19-33" href="#__codelineno-19-33"></a># Implement:
+<a id="__codelineno-19-34" name="__codelineno-19-34" href="#__codelineno-19-34"></a>- DatabaseAdapter (real)
+<a id="__codelineno-19-35" name="__codelineno-19-35" href="#__codelineno-19-35"></a>- MockAdapter (for demos/tests)
+<a id="__codelineno-19-36" name="__codelineno-19-36" href="#__codelineno-19-36"></a>- Configuration-based selection
+</code></pre></div></p>
+<hr />
+<h3 id="62-backend-auth-todos-30-min">6.2 Backend Auth TODOs (30 min)<a class="headerlink" href="#62-backend-auth-todos-30-min" title="Permanent link">&para;</a></h3>
+<p><strong>File</strong>: <code>backend/api/auth.py</code></p>
+<p><strong>Note</strong>: Backend is NOT part of PyPI package (excluded in .coveragerc)</p>
+<p><strong>Decision</strong>:
+- ✅ Document TODOs as "integration points"
+- ✅ Provide adapter interfaces
+- ✅ Leave implementation to users (not part of framework)
+- ✅ Add examples in docs</p>
+<hr />
+<h2 id="timeline-summary">Timeline Summary<a class="headerlink" href="#timeline-summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Time</th>
+<th>Priority</th>
+<th>Deliverables</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Phase 1: Complete Software Plugin</strong></td>
+<td>6-8h</td>
+<td>P0</td>
+<td>Testing subdirectory, vulnerability scanner, integration demo</td>
+</tr>
+<tr>
+<td><strong>Phase 2: Achieve 80%+ Coverage</strong></td>
+<td>16-20h</td>
+<td>P0</td>
+<td>650+ tests, 80%+ coverage</td>
+</tr>
+<tr>
+<td><strong>Phase 3: Documentation</strong></td>
+<td>4-5h</td>
+<td>P1</td>
+<td>README, API docs, CHANGELOG</td>
+</tr>
+<tr>
+<td><strong>Phase 4: Quality Assurance</strong></td>
+<td>3-4h</td>
+<td>P0</td>
+<td>Cross-platform tests, security scan</td>
+</tr>
+<tr>
+<td><strong>Phase 5: PyPI Preparation</strong></td>
+<td>2-3h</td>
+<td>P0</td>
+<td>TestPyPI, production upload</td>
+</tr>
+<tr>
+<td><strong>Phase 6: Outstanding TODOs</strong></td>
+<td>2-3h</td>
+<td>P2</td>
+<td>Adapter interfaces, integration points</td>
+</tr>
+<tr>
+<td><strong>TOTAL</strong></td>
+<td><strong>33-43 hours</strong></td>
+<td></td>
+<td><strong>Production-ready v1.5.0</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="success-criteria">Success Criteria<a class="headerlink" href="#success-criteria" title="Permanent link">&para;</a></h2>
+<h3 id="must-have-p0">Must Have (P0)<a class="headerlink" href="#must-have-p0" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ 80%+ test coverage (verified on all platforms)</li>
+<li>✅ All tests passing (650+ tests)</li>
+<li>✅ 0 high/critical security vulnerabilities</li>
+<li>✅ Package builds and installs successfully</li>
+<li>✅ Software plugin fully functional</li>
+<li>✅ Documentation complete and accurate</li>
+<li>✅ TestPyPI verification successful</li>
+</ul>
+<h3 id="should-have-p1">Should Have (P1)<a class="headerlink" href="#should-have-p1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ Cross-platform compatibility verified</li>
+<li>✅ Integration demos working</li>
+<li>✅ API documentation comprehensive</li>
+<li>✅ CHANGELOG up to date</li>
+</ul>
+<h3 id="nice-to-have-p2">Nice to Have (P2)<a class="headerlink" href="#nice-to-have-p2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ TODO adapter interfaces implemented</li>
+<li>✅ Performance benchmarks documented</li>
+<li>✅ Example projects in docs</li>
+</ul>
+<hr />
+<h2 id="execution-strategy">Execution Strategy<a class="headerlink" href="#execution-strategy" title="Permanent link">&para;</a></h2>
+<h3 id="recommended-order">Recommended Order<a class="headerlink" href="#recommended-order" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Start with Phase 2.1-2.3</strong> (Core tests) - Highest impact on coverage</li>
+<li><strong>Complete Phase 1</strong> (Software plugin) - Needed for integration tests</li>
+<li><strong>Finish Phase 2.4-2.5</strong> (Edge cases, cross-platform)</li>
+<li><strong>Execute Phase 4</strong> (QA) - Verify we hit targets</li>
+<li><strong>Polish Phase 3</strong> (Docs) - Final touches</li>
+<li><strong>Ship Phase 5</strong> (PyPI) - Go live</li>
+<li><strong>Clean up Phase 6</strong> (TODOs) - Post-launch</li>
+</ol>
+<h3 id="daily-checkpoints">Daily Checkpoints<a class="headerlink" href="#daily-checkpoints" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Run <code>pytest --cov</code> after each test batch</li>
+<li>Update coverage tracking spreadsheet</li>
+<li>Commit after completing each major section</li>
+<li>Tag milestones (e.g., "coverage-50%", "coverage-70%")</li>
+</ul>
+<h3 id="git-commit-strategy">Git Commit Strategy<a class="headerlink" href="#git-commit-strategy" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># After each phase</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>git<span class="w"> </span>add<span class="w"> </span>.
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;test: Phase 2.1 complete - core EmpathyOS tests (+55 tests, coverage 45%)&quot;</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="c1"># Major milestones</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;milestone: Achieved 80% test coverage (650 tests)&quot;</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;feat: Complete Software Plugin v1.5.0&quot;</span>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;release: Prepare v1.5.0 for PyPI&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="risk-management">Risk Management<a class="headerlink" href="#risk-management" title="Permanent link">&para;</a></h2>
+<h3 id="risks-mitigations">Risks &amp; Mitigations<a class="headerlink" href="#risks-mitigations" title="Permanent link">&para;</a></h3>
+<p><strong>Risk</strong>: Can't reach 80% coverage
+- <strong>Mitigation</strong>: Focus on high-value modules first (core.py, llm toolkit)
+- <strong>Fallback</strong>: Adjust target to 70% with documented plan to reach 80%</p>
+<p><strong>Risk</strong>: Cross-platform tests fail
+- <strong>Mitigation</strong>: Use GitHub Actions matrix testing early
+- <strong>Fallback</strong>: Document platform-specific limitations</p>
+<p><strong>Risk</strong>: PyPI upload issues
+- <strong>Mitigation</strong>: Test thoroughly on TestPyPI first
+- <strong>Fallback</strong>: Manual upload with twine verbose mode</p>
+<p><strong>Risk</strong>: Timeline overruns
+- <strong>Mitigation</strong>: Time-box each phase, prioritize P0 items
+- <strong>Fallback</strong>: Ship with 70% coverage, continue improving post-launch</p>
+<hr />
+<h2 id="post-launch-roadmap">Post-Launch Roadmap<a class="headerlink" href="#post-launch-roadmap" title="Permanent link">&para;</a></h2>
+<p>After v1.5.0 ships:
+1. Monitor PyPI download stats
+2. Collect user feedback
+3. Address bug reports
+4. Continue increasing coverage (80% → 90%)
+5. Add more examples
+6. Write blog posts / tutorials
+7. Submit to publications (Medium, Dev.to)</p>
+<hr />
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>This plan transforms Empathy from 14.66% → 80%+ coverage, completes the software plugin, and prepares for production PyPI launch.</p>
+<p><strong>Total effort</strong>: 33-43 hours over 1-2 weeks</p>
+<p><strong>Outcome</strong>: Production-ready, commercially viable, thoroughly tested framework ready for publication.</p>
+<hr />
+<p><strong>Ready to execute?</strong> Start with Phase 2.1 (Core EmpathyOS tests) for maximum coverage impact.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 Smart-AI-Memory
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/Smart-AI-Memory/empathy" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://pypi.org/project/empathy-framework/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 444.7a20.4 20.4 0 1 1 0-40.7 20.4 20.4 0 1 1 0 40.7M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.6-183.4a20.4 20.4 0 1 1 0 40.8 20.4 20.4 0 1 1 0-40.8"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

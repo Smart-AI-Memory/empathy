@@ -1,0 +1,4941 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-ready Level 4 Anticipatory Intelligence for AI-human collaboration. Build AI systems that predict problems before they happen.">
+      
+      
+        <meta name="author" content="Patrick Roebuck">
+      
+      
+        <link rel="canonical" href="https://smartaimemory.com/framework-docs/guides/MKDOCS_TUTORIAL/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/empathy-brain-logo.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>MkDocs Tutorial - Complete Beginner's Guide - Empathy Framework</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <!-- Plausible Analytics - Privacy-respecting, no cookies -->
+  <script defer data-domain="smartaimemory.com" src="https://plausible.io/js/script.js"></script>
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#mkdocs-tutorial-complete-beginners-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Empathy Framework" class="md-header__button md-logo" aria-label="Empathy Framework" data-md-component="logo">
+      
+  <img src="../../assets/images/empathy-brain-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Empathy Framework
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              MkDocs Tutorial - Complete Beginner's Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Smart-AI-Memory/empathy" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Smart-AI-Memory/empathy
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../tutorials/" class="md-tabs__link">
+          
+  
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../how-to/" class="md-tabs__link">
+          
+  
+  
+  How-to
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../explanation/" class="md-tabs__link">
+          
+  
+  
+  Explanation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
+          
+  
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../contributing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Contributing
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../get-the-book/" class="md-tabs__link">
+          
+  
+  
+  Book
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Empathy Framework" class="md-nav__button md-logo" aria-label="Empathy Framework" data-md-component="logo">
+      
+  <img src="../../assets/images/empathy-brain-logo.png" alt="logo">
+
+    </a>
+    Empathy Framework
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Smart-AI-Memory/empathy" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Smart-AI-Memory/empathy
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/examples/simple-chatbot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Review Assistant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/examples/sbar-clinical-handoff/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SBAR Clinical Handoff
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/examples/multi-agent-team-coordination/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Agent Team
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/examples/adaptive-learning-system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Adaptive Learning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/examples/webhook-event-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Webhook Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-to
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to Guides
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memory System
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Memory System
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/unified-memory-system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unified Memory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/short-term-memory-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Short-Term Memory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/memory-graph/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memory Graph
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Agents
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Agents
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/agent-factory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Factory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/smart-router/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Smart Router
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/auto-chaining/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auto-Chaining
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Integration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/webhook-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Webhooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/security-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/hipaa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HIPAA Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Patterns
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Patterns
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/practical-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Practical Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/resilience-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resilience Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/prerequisites/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prerequisites
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explanation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Explanation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explanation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Philosophy
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Philosophy
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/EMPATHY_PHILOSOPHY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Empathy Philosophy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/multi-agent-philosophy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Agent Philosophy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/HOW_CLAUDE_LEARNS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How Claude Learns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Concepts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/TEACHING_AI_YOUR_PHILOSOPHY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Teaching AI Your Philosophy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/adaptive-learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Adaptive Learning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/COMPARISON/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Integration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/USING_EMPATHY_WITH_LLMS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using with LLMs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/MEMDOCS_EMPATHY_INTEGRATION/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MemDocs Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/EMPATHY_FRAMEWORK_NON_TECHNICAL_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Non-Technical Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/CLI_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/CLI_CHEATSHEET/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Cheatsheet
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/API_REFERENCE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/empathy-os/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EmpathyOS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Config
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pattern-library/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pattern Library
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/multi-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Agent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/llm-toolkit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Toolkit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wizards
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Wizards
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/wizards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Industry Wizards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/software-wizards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Software Wizards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/ai-wizards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Wizards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Help
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Help
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/FAQ/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/TROUBLESHOOTING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/USER_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/SHORT_TERM_MEMORY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Short-Term Memory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Book
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Book
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../get-the-book/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get the Book
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../book-cover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to-read-this-book/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../preface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preface
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../foreword/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foreword by Claude
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-mkdocs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is MkDocs?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation-5-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation (5 minutes)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation (5 minutes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-install-mkdocs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Install MkDocs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-verify-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Verify Installation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start-10-minutes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start (10 minutes)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Start (10 minutes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-your-first-mkdocs-site" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create Your First MkDocs Site
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preview-your-site" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preview Your Site
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-the-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Structure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding the Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-mkdocsyml-file-your-control-panel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The mkdocs.yml File (Your Control Panel)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-by-step-building-empathy-docs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-Step: Building Empathy Docs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step-by-Step: Building Empathy Docs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-configure-mkdocsyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Configure mkdocs.yml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-create-directory-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Create Directory Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-write-the-homepage-docsindexmd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Write the Homepage (docs/index.md)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-minute-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5-Minute Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Features
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#anticipatory-intelligence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧠 Anticipatory Intelligence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#healthcare-ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏥 Healthcare Ready
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-agent-coordination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🤝 Multi-Agent Coordination
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adaptive-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📈 Adaptive Learning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-ecosystem-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔗 Full Ecosystem Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-cases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use Cases
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance Metrics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Performance Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#healthcare-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Healthcare Impact
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#software-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Software Development
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        License
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation Options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#with-llm-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        With LLM Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-healthcare-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        With Healthcare Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-webhooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        With Webhooks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-installation-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full Installation (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#development-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development Installation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Next Steps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#code-blocks-with-syntax-highlighting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Code Blocks with Syntax Highlighting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tabs-for-multiple-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tabs for Multiple Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#auto-generate-api-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-Generate API Documentation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Auto-Generate API Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-mkdocstrings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using mkdocstrings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-the-site" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building the Site
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building the Site">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#development-live-preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development (Live Preview)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#production-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Production Build
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deploying-to-read-the-docs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploying to Read the Docs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deploying to Read the Docs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-create-readthedocsyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Create .readthedocs.yaml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-create-docsrequirementstxt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Create docs/requirements.txt
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-connect-github-to-read-the-docs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Connect GitHub to Read the Docs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Features
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#search" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#versioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Versioning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-domain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Domain
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workflow-for-empathy-framework-docs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workflow for Empathy Framework Docs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Workflow for Empathy Framework Docs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#your-daily-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your Daily Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-new-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating New Pages
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tips-tricks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tips &amp; Tricks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tips &amp; Tricks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tip-1-use-relative-links" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tip 1: Use Relative Links
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tip-2-include-code-from-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tip 2: Include Code from Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tip-3-keyboard-shortcuts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tip 3: Keyboard Shortcuts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tip-4-emojis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tip 4: Emojis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-issues-solutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Issues &amp; Solutions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Issues &amp; Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#issue-address-already-in-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue: "Address already in use"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-module-not-found" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue: "Module not found"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-search-not-working" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue: Search not working
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resources
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Resources">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#official-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Official Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples-to-learn-from" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples to Learn From
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cheat-sheets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cheat Sheets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps-for-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps for You
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Next Steps for You">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#week-1-2-tasks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Week 1-2 Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Questions?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ready-to-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ready to Start!
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="mkdocs-tutorial-complete-beginners-guide">MkDocs Tutorial - Complete Beginner's Guide<a class="headerlink" href="#mkdocs-tutorial-complete-beginners-guide" title="Permanent link">&para;</a></h1>
+<p><strong>For</strong>: Patrick (never used MkDocs before)
+<strong>Goal</strong>: Create professional documentation website for Empathy Framework v1.8.0
+<strong>Time</strong>: 30-45 minutes to get fully productive</p>
+<hr />
+<h2 id="what-is-mkdocs">What is MkDocs?<a class="headerlink" href="#what-is-mkdocs" title="Permanent link">&para;</a></h2>
+<p><strong>MkDocs</strong> is a static site generator specifically designed for project documentation.</p>
+<p><strong>Think of it like</strong>:
+- Write docs in <strong>Markdown</strong> (same as README.md files you're familiar with)
+- MkDocs converts them to a <strong>beautiful website</strong>
+- Automatic <strong>navigation</strong>, <strong>search</strong>, <strong>mobile-responsive</strong>
+- Deploy to <strong>Read the Docs</strong> (free hosting for open source)</p>
+<p><strong>Why MkDocs for Empathy Framework?</strong>
+- ✅ Python-based (fits our ecosystem)
+- ✅ Simple (just write Markdown)
+- ✅ Beautiful (Material theme = modern, professional)
+- ✅ Fast (builds in seconds)
+- ✅ Auto-deploy (GitHub → Read the Docs automatic updates)</p>
+<p><strong>Popular projects using MkDocs</strong>:
+- FastAPI (https://fastapi.tiangolo.com)
+- Django REST framework
+- Pydantic</p>
+<hr />
+<h2 id="installation-5-minutes">Installation (5 minutes)<a class="headerlink" href="#installation-5-minutes" title="Permanent link">&para;</a></h2>
+<h3 id="step-1-install-mkdocs">Step 1: Install MkDocs<a class="headerlink" href="#step-1-install-mkdocs" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Basic MkDocs</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>pip<span class="w"> </span>install<span class="w"> </span>mkdocs
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># MkDocs with Material theme (recommended)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>pip<span class="w"> </span>install<span class="w"> </span>mkdocs-material
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># Auto-generate API docs from docstrings</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>pip<span class="w"> </span>install<span class="w"> </span>mkdocstrings<span class="o">[</span>python<span class="o">]</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1"># All at once</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>pip<span class="w"> </span>install<span class="w"> </span>mkdocs<span class="w"> </span>mkdocs-material<span class="w"> </span>mkdocstrings<span class="o">[</span>python<span class="o">]</span>
+</code></pre></div>
+<h3 id="step-2-verify-installation">Step 2: Verify Installation<a class="headerlink" href="#step-2-verify-installation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>mkdocs<span class="w"> </span>--version
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># Output: mkdocs, version 1.5.3</span>
+</code></pre></div>
+<p>✅ If you see a version number, you're ready!</p>
+<hr />
+<h2 id="quick-start-10-minutes">Quick Start (10 minutes)<a class="headerlink" href="#quick-start-10-minutes" title="Permanent link">&para;</a></h2>
+<h3 id="create-your-first-mkdocs-site">Create Your First MkDocs Site<a class="headerlink" href="#create-your-first-mkdocs-site" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Navigate to your project</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">cd</span><span class="w"> </span>/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Create new MkDocs project</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>mkdocs<span class="w"> </span>new<span class="w"> </span>.
+</code></pre></div>
+<p><strong>What this creates</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Empathy-framework/
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>├── mkdocs.yml          # Configuration file (controls everything)
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>└── docs/               # Your documentation files
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    └── index.md        # Homepage (like README.md)
+</code></pre></div></p>
+<h3 id="preview-your-site">Preview Your Site<a class="headerlink" href="#preview-your-site" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Start live preview server</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>mkdocs<span class="w"> </span>serve
+</code></pre></div>
+<p><strong>Output</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>INFO    -  Building documentation...
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>INFO    -  Cleaning site directory
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>INFO    -  Documentation built in 0.23 seconds
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>INFO    -  [15:30:00] Watching paths for changes: &#39;docs&#39;, &#39;mkdocs.yml&#39;
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>INFO    -  [15:30:00] Serving on http://127.0.0.1:8000/
+</code></pre></div></p>
+<p><strong>Open browser</strong>: http://127.0.0.1:8000</p>
+<p>🎉 You'll see a basic documentation website!</p>
+<p><strong>Key feature</strong>: <strong>Live reload</strong> - Edit any <code>.md</code> file in <code>docs/</code>, save, and the browser auto-refreshes!</p>
+<hr />
+<h2 id="understanding-the-structure">Understanding the Structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
+<h3 id="the-mkdocsyml-file-your-control-panel">The <code>mkdocs.yml</code> File (Your Control Panel)<a class="headerlink" href="#the-mkdocsyml-file-your-control-panel" title="Permanent link">&para;</a></h3>
+<p>This is where ALL configuration happens. Think of it as your website's "settings file".</p>
+<p><strong>Default <code>mkdocs.yml</code></strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">site_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">My Docs</span>
+</code></pre></div></p>
+<p><strong>Basic Empathy Framework <code>mkdocs.yml</code></strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">site_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Empathy Framework</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nt">site_description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Production-ready Level 4 Anticipatory Intelligence</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="nt">site_author</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Patrick Roebuck</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="nt">site_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://empathy-framework.readthedocs.io</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="c1"># Repository</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="nt">repo_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Smart-AI-Memory/empathy</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="nt">repo_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/Smart-AI-Memory/empathy</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="c1"># Navigation</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="nt">nav</span><span class="p">:</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Home</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">index.md</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Getting Started</span><span class="p">:</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Installation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">getting-started/installation.md</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Quick Start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">getting-started/quickstart.md</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Examples</span><span class="p">:</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Simple Chatbot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">examples/simple-chatbot.md</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">SBAR Healthcare</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">examples/sbar-clinical-handoff.md</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="c1"># Theme</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="nt">theme</span><span class="p">:</span>
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">material</span>
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="w">  </span><span class="nt">palette</span><span class="p">:</span>
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="w">    </span><span class="nt">primary</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">indigo</span>
+<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="w">    </span><span class="nt">accent</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">indigo</span>
+</code></pre></div></p>
+<hr />
+<h2 id="step-by-step-building-empathy-docs">Step-by-Step: Building Empathy Docs<a class="headerlink" href="#step-by-step-building-empathy-docs" title="Permanent link">&para;</a></h2>
+<h3 id="step-1-configure-mkdocsyml">Step 1: Configure <code>mkdocs.yml</code><a class="headerlink" href="#step-1-configure-mkdocsyml" title="Permanent link">&para;</a></h3>
+<p>Create this file at the root of your project:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Site Information</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nt">site_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Empathy Framework</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="nt">site_description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Production-ready Level 4 Anticipatory Intelligence for AI-human collaboration</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="nt">site_author</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Patrick Roebuck</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="nt">site_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://empathy-framework.readthedocs.io</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1"># Repository</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="nt">repo_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Smart-AI-Memory/empathy</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="nt">repo_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/Smart-AI-Memory/empathy</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="nt">edit_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">edit/main/docs/</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="c1"># Copyright</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="nt">copyright</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Copyright &amp;copy; 2025 Smart-AI-Memory</span>
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="c1"># Navigation Structure</span>
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="nt">nav</span><span class="p">:</span>
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Home</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">index.md</span>
+<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Getting Started</span><span class="p">:</span>
+<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Installation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">getting-started/installation.md</span>
+<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Quick Start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">getting-started/quickstart.md</span>
+<a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Configuration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">getting-started/configuration.md</span>
+<a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">First Application</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">getting-started/first-application.md</span>
+<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a>
+<a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Concepts</span><span class="p">:</span>
+<a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Empathy Levels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">concepts/empathy-levels.md</span>
+<a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Trust Building</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">concepts/trust-building.md</span>
+<a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Pattern Library</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">concepts/pattern-library.md</span>
+<a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Anticipatory Intelligence</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">concepts/anticipatory-intelligence.md</span>
+<a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a>
+<a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Examples</span><span class="p">:</span>
+<a id="__codelineno-8-31" name="__codelineno-8-31" href="#__codelineno-8-31"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Simple Chatbot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">examples/simple-chatbot.md</span>
+<a id="__codelineno-8-32" name="__codelineno-8-32" href="#__codelineno-8-32"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">SBAR Clinical Handoff</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">examples/sbar-clinical-handoff.md</span>
+<a id="__codelineno-8-33" name="__codelineno-8-33" href="#__codelineno-8-33"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Multi-Agent Coordination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">examples/multi-agent-team-coordination.md</span>
+<a id="__codelineno-8-34" name="__codelineno-8-34" href="#__codelineno-8-34"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Adaptive Learning</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">examples/adaptive-learning-system.md</span>
+<a id="__codelineno-8-35" name="__codelineno-8-35" href="#__codelineno-8-35"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Webhook Integration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">examples/webhook-event-integration.md</span>
+<a id="__codelineno-8-36" name="__codelineno-8-36" href="#__codelineno-8-36"></a>
+<a id="__codelineno-8-37" name="__codelineno-8-37" href="#__codelineno-8-37"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">API Reference</span><span class="p">:</span>
+<a id="__codelineno-8-38" name="__codelineno-8-38" href="#__codelineno-8-38"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">EmpathyOS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-reference/empathy-os.md</span>
+<a id="__codelineno-8-39" name="__codelineno-8-39" href="#__codelineno-8-39"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Configuration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-reference/config.md</span>
+<a id="__codelineno-8-40" name="__codelineno-8-40" href="#__codelineno-8-40"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Persistence</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-reference/persistence.md</span>
+<a id="__codelineno-8-41" name="__codelineno-8-41" href="#__codelineno-8-41"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Events</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-reference/events.md</span>
+<a id="__codelineno-8-42" name="__codelineno-8-42" href="#__codelineno-8-42"></a>
+<a id="__codelineno-8-43" name="__codelineno-8-43" href="#__codelineno-8-43"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Guides</span><span class="p">:</span>
+<a id="__codelineno-8-44" name="__codelineno-8-44" href="#__codelineno-8-44"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Healthcare Applications</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guides/healthcare-applications.md</span>
+<a id="__codelineno-8-45" name="__codelineno-8-45" href="#__codelineno-8-45"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">HIPAA Compliance</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guides/hipaa-compliance.md</span>
+<a id="__codelineno-8-46" name="__codelineno-8-46" href="#__codelineno-8-46"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Multi-Agent Coordination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guides/multi-agent-coordination.md</span>
+<a id="__codelineno-8-47" name="__codelineno-8-47" href="#__codelineno-8-47"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Adaptive Learning</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guides/adaptive-learning.md</span>
+<a id="__codelineno-8-48" name="__codelineno-8-48" href="#__codelineno-8-48"></a>
+<a id="__codelineno-8-49" name="__codelineno-8-49" href="#__codelineno-8-49"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Contributing</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">contributing.md</span>
+<a id="__codelineno-8-50" name="__codelineno-8-50" href="#__codelineno-8-50"></a>
+<a id="__codelineno-8-51" name="__codelineno-8-51" href="#__codelineno-8-51"></a><span class="c1"># Theme Configuration (Material)</span>
+<a id="__codelineno-8-52" name="__codelineno-8-52" href="#__codelineno-8-52"></a><span class="nt">theme</span><span class="p">:</span>
+<a id="__codelineno-8-53" name="__codelineno-8-53" href="#__codelineno-8-53"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">material</span>
+<a id="__codelineno-8-54" name="__codelineno-8-54" href="#__codelineno-8-54"></a>
+<a id="__codelineno-8-55" name="__codelineno-8-55" href="#__codelineno-8-55"></a><span class="w">  </span><span class="c1"># Color scheme</span>
+<a id="__codelineno-8-56" name="__codelineno-8-56" href="#__codelineno-8-56"></a><span class="w">  </span><span class="nt">palette</span><span class="p">:</span>
+<a id="__codelineno-8-57" name="__codelineno-8-57" href="#__codelineno-8-57"></a><span class="w">    </span><span class="c1"># Light mode</span>
+<a id="__codelineno-8-58" name="__codelineno-8-58" href="#__codelineno-8-58"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">media</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;(prefers-color-scheme:</span><span class="nv"> </span><span class="s">light)&quot;</span>
+<a id="__codelineno-8-59" name="__codelineno-8-59" href="#__codelineno-8-59"></a><span class="w">      </span><span class="nt">scheme</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<a id="__codelineno-8-60" name="__codelineno-8-60" href="#__codelineno-8-60"></a><span class="w">      </span><span class="nt">primary</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">indigo</span>
+<a id="__codelineno-8-61" name="__codelineno-8-61" href="#__codelineno-8-61"></a><span class="w">      </span><span class="nt">accent</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">indigo</span>
+<a id="__codelineno-8-62" name="__codelineno-8-62" href="#__codelineno-8-62"></a><span class="w">      </span><span class="nt">toggle</span><span class="p">:</span>
+<a id="__codelineno-8-63" name="__codelineno-8-63" href="#__codelineno-8-63"></a><span class="w">        </span><span class="nt">icon</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">material/brightness-7</span>
+<a id="__codelineno-8-64" name="__codelineno-8-64" href="#__codelineno-8-64"></a><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Switch to dark mode</span>
+<a id="__codelineno-8-65" name="__codelineno-8-65" href="#__codelineno-8-65"></a>
+<a id="__codelineno-8-66" name="__codelineno-8-66" href="#__codelineno-8-66"></a><span class="w">    </span><span class="c1"># Dark mode</span>
+<a id="__codelineno-8-67" name="__codelineno-8-67" href="#__codelineno-8-67"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">media</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;(prefers-color-scheme:</span><span class="nv"> </span><span class="s">dark)&quot;</span>
+<a id="__codelineno-8-68" name="__codelineno-8-68" href="#__codelineno-8-68"></a><span class="w">      </span><span class="nt">scheme</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">slate</span>
+<a id="__codelineno-8-69" name="__codelineno-8-69" href="#__codelineno-8-69"></a><span class="w">      </span><span class="nt">primary</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">indigo</span>
+<a id="__codelineno-8-70" name="__codelineno-8-70" href="#__codelineno-8-70"></a><span class="w">      </span><span class="nt">accent</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">indigo</span>
+<a id="__codelineno-8-71" name="__codelineno-8-71" href="#__codelineno-8-71"></a><span class="w">      </span><span class="nt">toggle</span><span class="p">:</span>
+<a id="__codelineno-8-72" name="__codelineno-8-72" href="#__codelineno-8-72"></a><span class="w">        </span><span class="nt">icon</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">material/brightness-4</span>
+<a id="__codelineno-8-73" name="__codelineno-8-73" href="#__codelineno-8-73"></a><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Switch to light mode</span>
+<a id="__codelineno-8-74" name="__codelineno-8-74" href="#__codelineno-8-74"></a>
+<a id="__codelineno-8-75" name="__codelineno-8-75" href="#__codelineno-8-75"></a><span class="w">  </span><span class="c1"># Features</span>
+<a id="__codelineno-8-76" name="__codelineno-8-76" href="#__codelineno-8-76"></a><span class="w">  </span><span class="nt">features</span><span class="p">:</span>
+<a id="__codelineno-8-77" name="__codelineno-8-77" href="#__codelineno-8-77"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">navigation.instant</span><span class="w">      </span><span class="c1"># Fast page loads</span>
+<a id="__codelineno-8-78" name="__codelineno-8-78" href="#__codelineno-8-78"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">navigation.tracking</span><span class="w">     </span><span class="c1"># URL updates as you scroll</span>
+<a id="__codelineno-8-79" name="__codelineno-8-79" href="#__codelineno-8-79"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">navigation.tabs</span><span class="w">         </span><span class="c1"># Top-level sections as tabs</span>
+<a id="__codelineno-8-80" name="__codelineno-8-80" href="#__codelineno-8-80"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">navigation.sections</span><span class="w">     </span><span class="c1"># Sections in sidebar</span>
+<a id="__codelineno-8-81" name="__codelineno-8-81" href="#__codelineno-8-81"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">navigation.expand</span><span class="w">       </span><span class="c1"># Expand all sections by default</span>
+<a id="__codelineno-8-82" name="__codelineno-8-82" href="#__codelineno-8-82"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">navigation.top</span><span class="w">          </span><span class="c1"># &quot;Back to top&quot; button</span>
+<a id="__codelineno-8-83" name="__codelineno-8-83" href="#__codelineno-8-83"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">search.suggest</span><span class="w">          </span><span class="c1"># Search suggestions</span>
+<a id="__codelineno-8-84" name="__codelineno-8-84" href="#__codelineno-8-84"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">search.highlight</span><span class="w">        </span><span class="c1"># Highlight search terms</span>
+<a id="__codelineno-8-85" name="__codelineno-8-85" href="#__codelineno-8-85"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">content.code.copy</span><span class="w">       </span><span class="c1"># Copy button on code blocks</span>
+<a id="__codelineno-8-86" name="__codelineno-8-86" href="#__codelineno-8-86"></a>
+<a id="__codelineno-8-87" name="__codelineno-8-87" href="#__codelineno-8-87"></a><span class="w">  </span><span class="c1"># Logo and favicon</span>
+<a id="__codelineno-8-88" name="__codelineno-8-88" href="#__codelineno-8-88"></a><span class="w">  </span><span class="nt">icon</span><span class="p">:</span>
+<a id="__codelineno-8-89" name="__codelineno-8-89" href="#__codelineno-8-89"></a><span class="w">    </span><span class="nt">logo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">material/brain</span>
+<a id="__codelineno-8-90" name="__codelineno-8-90" href="#__codelineno-8-90"></a><span class="w">  </span><span class="nt">favicon</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">assets/favicon.png</span>
+<a id="__codelineno-8-91" name="__codelineno-8-91" href="#__codelineno-8-91"></a>
+<a id="__codelineno-8-92" name="__codelineno-8-92" href="#__codelineno-8-92"></a><span class="w">  </span><span class="c1"># Font</span>
+<a id="__codelineno-8-93" name="__codelineno-8-93" href="#__codelineno-8-93"></a><span class="w">  </span><span class="nt">font</span><span class="p">:</span>
+<a id="__codelineno-8-94" name="__codelineno-8-94" href="#__codelineno-8-94"></a><span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Roboto</span>
+<a id="__codelineno-8-95" name="__codelineno-8-95" href="#__codelineno-8-95"></a><span class="w">    </span><span class="nt">code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Roboto Mono</span>
+<a id="__codelineno-8-96" name="__codelineno-8-96" href="#__codelineno-8-96"></a>
+<a id="__codelineno-8-97" name="__codelineno-8-97" href="#__codelineno-8-97"></a><span class="c1"># Plugins</span>
+<a id="__codelineno-8-98" name="__codelineno-8-98" href="#__codelineno-8-98"></a><span class="nt">plugins</span><span class="p">:</span>
+<a id="__codelineno-8-99" name="__codelineno-8-99" href="#__codelineno-8-99"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">search</span><span class="w">                    </span><span class="c1"># Search functionality</span>
+<a id="__codelineno-8-100" name="__codelineno-8-100" href="#__codelineno-8-100"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mkdocstrings</span><span class="p">:</span><span class="w">             </span><span class="c1"># Auto-generate API docs from docstrings</span>
+<a id="__codelineno-8-101" name="__codelineno-8-101" href="#__codelineno-8-101"></a><span class="w">      </span><span class="nt">handlers</span><span class="p">:</span>
+<a id="__codelineno-8-102" name="__codelineno-8-102" href="#__codelineno-8-102"></a><span class="w">        </span><span class="nt">python</span><span class="p">:</span>
+<a id="__codelineno-8-103" name="__codelineno-8-103" href="#__codelineno-8-103"></a><span class="w">          </span><span class="nt">options</span><span class="p">:</span>
+<a id="__codelineno-8-104" name="__codelineno-8-104" href="#__codelineno-8-104"></a><span class="w">            </span><span class="nt">docstring_style</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">google</span>
+<a id="__codelineno-8-105" name="__codelineno-8-105" href="#__codelineno-8-105"></a><span class="w">            </span><span class="nt">show_source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-8-106" name="__codelineno-8-106" href="#__codelineno-8-106"></a><span class="w">            </span><span class="nt">show_root_heading</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-8-107" name="__codelineno-8-107" href="#__codelineno-8-107"></a>
+<a id="__codelineno-8-108" name="__codelineno-8-108" href="#__codelineno-8-108"></a><span class="c1"># Markdown Extensions</span>
+<a id="__codelineno-8-109" name="__codelineno-8-109" href="#__codelineno-8-109"></a><span class="nt">markdown_extensions</span><span class="p">:</span>
+<a id="__codelineno-8-110" name="__codelineno-8-110" href="#__codelineno-8-110"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pymdownx.highlight</span><span class="p">:</span><span class="w">       </span><span class="c1"># Code highlighting</span>
+<a id="__codelineno-8-111" name="__codelineno-8-111" href="#__codelineno-8-111"></a><span class="w">      </span><span class="nt">anchor_linenums</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-8-112" name="__codelineno-8-112" href="#__codelineno-8-112"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pymdownx.superfences</span><span class="w">      </span><span class="c1"># Nested code blocks</span>
+<a id="__codelineno-8-113" name="__codelineno-8-113" href="#__codelineno-8-113"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pymdownx.tabbed</span><span class="p">:</span><span class="w">          </span><span class="c1"># Tabbed content</span>
+<a id="__codelineno-8-114" name="__codelineno-8-114" href="#__codelineno-8-114"></a><span class="w">      </span><span class="nt">alternate_style</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-8-115" name="__codelineno-8-115" href="#__codelineno-8-115"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pymdownx.details</span><span class="w">          </span><span class="c1"># Collapsible sections</span>
+<a id="__codelineno-8-116" name="__codelineno-8-116" href="#__codelineno-8-116"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admonition</span><span class="w">                </span><span class="c1"># Call-out boxes (note, warning, etc.)</span>
+<a id="__codelineno-8-117" name="__codelineno-8-117" href="#__codelineno-8-117"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tables</span><span class="w">                    </span><span class="c1"># Markdown tables</span>
+<a id="__codelineno-8-118" name="__codelineno-8-118" href="#__codelineno-8-118"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">toc</span><span class="p">:</span><span class="w">                      </span><span class="c1"># Table of contents</span>
+<a id="__codelineno-8-119" name="__codelineno-8-119" href="#__codelineno-8-119"></a><span class="w">      </span><span class="nt">permalink</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-8-120" name="__codelineno-8-120" href="#__codelineno-8-120"></a>
+<a id="__codelineno-8-121" name="__codelineno-8-121" href="#__codelineno-8-121"></a><span class="c1"># Extra</span>
+<a id="__codelineno-8-122" name="__codelineno-8-122" href="#__codelineno-8-122"></a><span class="nt">extra</span><span class="p">:</span>
+<a id="__codelineno-8-123" name="__codelineno-8-123" href="#__codelineno-8-123"></a><span class="w">  </span><span class="nt">social</span><span class="p">:</span>
+<a id="__codelineno-8-124" name="__codelineno-8-124" href="#__codelineno-8-124"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">icon</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fontawesome/brands/github</span>
+<a id="__codelineno-8-125" name="__codelineno-8-125" href="#__codelineno-8-125"></a><span class="w">      </span><span class="nt">link</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/Smart-AI-Memory/empathy</span>
+<a id="__codelineno-8-126" name="__codelineno-8-126" href="#__codelineno-8-126"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">icon</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fontawesome/brands/python</span>
+<a id="__codelineno-8-127" name="__codelineno-8-127" href="#__codelineno-8-127"></a><span class="w">      </span><span class="nt">link</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://pypi.org/project/empathy-framework/</span>
+<a id="__codelineno-8-128" name="__codelineno-8-128" href="#__codelineno-8-128"></a>
+<a id="__codelineno-8-129" name="__codelineno-8-129" href="#__codelineno-8-129"></a><span class="w">  </span><span class="nt">version</span><span class="p">:</span>
+<a id="__codelineno-8-130" name="__codelineno-8-130" href="#__codelineno-8-130"></a><span class="w">    </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mike</span>
+</code></pre></div>
+<h3 id="step-2-create-directory-structure">Step 2: Create Directory Structure<a class="headerlink" href="#step-2-create-directory-structure" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>docs/getting-started
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>docs/concepts
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>docs/examples
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>docs/api-reference
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>docs/guides
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>docs/assets
+</code></pre></div>
+<p><strong>Your structure</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>docs/
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>├── index.md                          # Homepage
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>├── getting-started/
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>│   ├── installation.md
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>│   ├── quickstart.md
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>│   ├── configuration.md
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>│   └── first-application.md
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>├── concepts/
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>│   ├── empathy-levels.md
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>│   ├── trust-building.md
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>│   ├── pattern-library.md
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>│   └── anticipatory-intelligence.md
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>├── examples/
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>│   ├── simple-chatbot.md             # Already created!
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>│   ├── sbar-clinical-handoff.md      # Already created!
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>│   ├── multi-agent-team-coordination.md  # Already created!
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>│   ├── adaptive-learning-system.md   # Already created!
+<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>│   └── webhook-event-integration.md  # Already created!
+<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a>├── api-reference/
+<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a>│   ├── empathy-os.md
+<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a>│   ├── config.md
+<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>│   └── persistence.md
+<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a>├── guides/
+<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a>│   ├── healthcare-applications.md
+<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a>│   ├── hipaa-compliance.md
+<a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a>│   └── multi-agent-coordination.md
+<a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a>├── assets/
+<a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a>│   └── favicon.png
+<a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a>└── contributing.md
+</code></pre></div></p>
+<h3 id="step-3-write-the-homepage-docsindexmd">Step 3: Write the Homepage (<code>docs/index.md</code>)<a class="headerlink" href="#step-3-write-the-homepage-docsindexmd" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="gh"># Empathy Framework</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="gs">**Production-ready Level 4 Anticipatory Intelligence for AI-human collaboration**</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>[<span class="nt">![PyPI version</span>](<span class="na">https://badge.fury.io/py/empathy-framework.svg</span>)](https://pypi.org/project/empathy-framework/)
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>[<span class="nt">![Tests</span>](<span class="na">https://github.com/Smart-AI-Memory/empathy/workflows/tests/badge.svg</span>)](https://github.com/Smart-AI-Memory/empathy/actions)
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>---
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="gu">## What is Empathy Framework?</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>The Empathy Framework is a <span class="gs">**5-level maturity model**</span> for AI-human collaboration that progresses from reactive responses (Level 1) to <span class="gs">**Level 4 Anticipatory Intelligence**</span> that predicts problems before they happen.
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="gu">### The 5 Levels</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>| Level | Name | Description | Example |
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>|-------|------|-------------|---------|
+<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>| <span class="gs">**1**</span> | Reactive | Responds only when asked | Basic Q&amp;A chatbot |
+<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>| <span class="gs">**2**</span> | Guided | Asks clarifying questions | Assistant that seeks context |
+<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a>| <span class="gs">**3**</span> | Proactive | Notices patterns, offers improvements | Suggests optimizations |
+<a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a>| <span class="gs">**4**</span> | Anticipatory | <span class="gs">**Predicts problems before they happen**</span> | Warns about deployment risks |
+<a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a>| <span class="gs">**5**</span> | Transformative | Reshapes workflows to prevent entire classes of problems | Creates new protocols |
+<a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a>
+<a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a>---
+<a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a>
+<a id="__codelineno-11-26" name="__codelineno-11-26" href="#__codelineno-11-26"></a><span class="gu">## Quick Start</span>
+<a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a>
+<a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a><span class="gu">### Installation</span>
+<a id="__codelineno-11-29" name="__codelineno-11-29" href="#__codelineno-11-29"></a>
+<a id="__codelineno-11-30" name="__codelineno-11-30" href="#__codelineno-11-30"></a>```bash
+<a id="__codelineno-11-31" name="__codelineno-11-31" href="#__codelineno-11-31"></a>pip install empathy-framework
+</code></pre></div>
+<h3 id="5-minute-example">5-Minute Example<a class="headerlink" href="#5-minute-example" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span> <span class="nn">empathy_os</span> <span class="kn">import</span> <span class="n">EmpathyOS</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="c1"># Create Level 4 (Anticipatory) chatbot</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="n">empathy</span> <span class="o">=</span> <span class="n">EmpathyOS</span><span class="p">(</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>    <span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;user_123&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="n">target_level</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>    <span class="n">confidence_threshold</span><span class="o">=</span><span class="mf">0.75</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="p">)</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="c1"># Interact</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="n">response</span> <span class="o">=</span> <span class="n">empathy</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>    <span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;user_123&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>    <span class="n">user_input</span><span class="o">=</span><span class="s2">&quot;I&#39;m about to deploy this API change to production&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>    <span class="n">context</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;deployment&quot;</span><span class="p">:</span> <span class="s2">&quot;production&quot;</span><span class="p">,</span> <span class="s2">&quot;changes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;auth_refactor&quot;</span><span class="p">]}</span>
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="p">)</span>
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a><span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
+<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a><span class="c1"># Output: &quot;🔮 Prediction: This authentication refactor may break mobile</span>
+<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a><span class="c1">#          app compatibility (uses old auth flow). Recommend deploying</span>
+<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a><span class="c1">#          behind feature flag first. Confidence: 87%&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="key-features">Key Features<a class="headerlink" href="#key-features" title="Permanent link">&para;</a></h2>
+<h3 id="anticipatory-intelligence">🧠 Anticipatory Intelligence<a class="headerlink" href="#anticipatory-intelligence" title="Permanent link">&para;</a></h3>
+<p>Predict problems 30-90 days in advance with Level 4 capabilities.</p>
+<h3 id="healthcare-ready">🏥 Healthcare Ready<a class="headerlink" href="#healthcare-ready" title="Permanent link">&para;</a></h3>
+<p>HIPAA-compliant with clinical protocols (SBAR, TIME, ABCDE). <strong>$2M+ annual value</strong> for 100-bed hospitals.</p>
+<h3 id="multi-agent-coordination">🤝 Multi-Agent Coordination<a class="headerlink" href="#multi-agent-coordination" title="Permanent link">&para;</a></h3>
+<p>Specialized agents work together through shared pattern libraries. <strong>80% faster feature delivery</strong>.</p>
+<h3 id="adaptive-learning">📈 Adaptive Learning<a class="headerlink" href="#adaptive-learning" title="Permanent link">&para;</a></h3>
+<p>System learns YOUR preferences over time. <strong>+28% acceptance rate improvement</strong>.</p>
+<h3 id="full-ecosystem-integration">🔗 Full Ecosystem Integration<a class="headerlink" href="#full-ecosystem-integration" title="Permanent link">&para;</a></h3>
+<p>Webhooks for Slack, GitHub, JIRA, Datadog, and custom services.</p>
+<hr />
+<h2 id="use-cases">Use Cases<a class="headerlink" href="#use-cases" title="Permanent link">&para;</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Software Development</label><label for="__tabbed_1_2">Healthcare</label><label for="__tabbed_1_3">Finance</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<ul>
+<li><strong>Code Review</strong>: Level 4 predictions for merge conflicts</li>
+<li><strong>Security</strong>: Anticipate vulnerabilities before deployment</li>
+<li><strong>Team Coordination</strong>: Multi-agent collaboration</li>
+<li><strong>Performance</strong>: Predict scaling issues</li>
+</ul>
+</div>
+<div class="tabbed-block">
+<ul>
+<li><strong>Patient Handoffs</strong>: Automated SBAR reports (60% time savings)</li>
+<li><strong>Clinical Protocols</strong>: HIPAA-compliant monitoring</li>
+<li><strong>Safety Alerts</strong>: Real-time critical condition detection</li>
+<li><strong>EHR Integration</strong>: Epic, Cerner FHIR support</li>
+</ul>
+</div>
+<div class="tabbed-block">
+<ul>
+<li><strong>Risk Management</strong>: Predict compliance issues</li>
+<li><strong>Trading</strong>: Pattern recognition across markets</li>
+<li><strong>Audit</strong>: Automated anomaly detection</li>
+<li><strong>Reporting</strong>: Anticipatory report generation</li>
+</ul>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><a href="getting-started/installation.md">Getting Started</a></strong>: Install and configure</li>
+<li><strong><a href="examples/simple-chatbot.md">Examples</a></strong>: 5 comprehensive tutorials</li>
+<li><strong><a href="api-reference/empathy-os.md">API Reference</a></strong>: Complete API documentation</li>
+<li><strong><a href="guides/healthcare-applications.md">Guides</a></strong>: Domain-specific guides</li>
+</ul>
+<hr />
+<h2 id="performance-metrics">Performance Metrics<a class="headerlink" href="#performance-metrics" title="Permanent link">&para;</a></h2>
+<h3 id="healthcare-impact">Healthcare Impact<a class="headerlink" href="#healthcare-impact" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Time savings</strong>: 60% reduction in documentation time</li>
+<li><strong>Annual value</strong>: $2M+ for 100-bed hospital</li>
+<li><strong>Safety</strong>: Zero false negatives in critical alerts</li>
+</ul>
+<h3 id="software-development">Software Development<a class="headerlink" href="#software-development" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Feature delivery</strong>: 80% faster (8 days → 4 days)</li>
+<li><strong>Acceptance rate</strong>: +28% improvement with adaptive learning</li>
+<li><strong>Pattern reuse</strong>: 68% across team members</li>
+</ul>
+<hr />
+<h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
+<p><strong>Fair Source License 0.9</strong>
+- ✅ Free for students, educators, teams ≤5 employees
+- 💰 $99/developer/year for teams 6+ employees
+- 🔄 Auto-converts to Apache 2.0 on January 1, 2029</p>
+<hr />
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 4a8 8 0 0 1 8 8 8 8 0 0 1-8 8 8 8 0 0 1-8-8 8 8 0 0 1 8-8m0 2a6 6 0 0 0-6 6 6 6 0 0 0 6 6 6 6 0 0 0 6-6 6 6 0 0 0-6-6m-1 2h1.5v3.78l2.33 2.33-1.06 1.06L14 12.4zM2 18a1 1 0 0 1-1-1 1 1 0 0 1 1-1h3.83c.31.71.71 1.38 1.17 2zm1-5a1 1 0 0 1-1-1 1 1 0 0 1 1-1h2.05L5 12l.05 1zm1-5a1 1 0 0 1-1-1 1 1 0 0 1 1-1h3c-.46.62-.86 1.29-1.17 2z"/></svg></span> <strong>5-Minute Start</strong></p>
+<hr />
+<p>Get up and running in 5 minutes</p>
+<p><a href="getting-started/quickstart.md"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Quick Start</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M352 0c0-17.7-14.3-32-32-32s-32 14.3-32 32v64h-96c-53 0-96 43-96 96v224c0 53 43 96 96 96h256c53 0 96-43 96-96V160c0-53-43-96-96-96h-96zM160 368c0-13.3 10.7-24 24-24h32c13.3 0 24 10.7 24 24s-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24m120 0c0-13.3 10.7-24 24-24h32c13.3 0 24 10.7 24 24s-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24m120 0c0-13.3 10.7-24 24-24h32c13.3 0 24 10.7 24 24s-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24M224 176a48 48 0 1 1 0 96 48 48 0 1 1 0-96m144 48a48 48 0 1 1 96 0 48 48 0 1 1-96 0m-304 0c0-17.7-14.3-32-32-32S0 206.3 0 224v96c0 17.7 14.3 32 32 32s32-14.3 32-32zm544-32c-17.7 0-32 14.3-32 32v96c0 17.7 14.3 32 32 32s32-14.3 32-32v-96c0-17.7-14.3-32-32-32"/></svg></span> <strong>Examples</strong></p>
+<hr />
+<p>5 comprehensive tutorials with working code</p>
+<p><a href="examples/simple-chatbot.md"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> See Examples</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M128 64c0-35.3 28.7-64 64-64h192c35.3 0 64 28.7 64 64v64h64c35.3 0 64 28.7 64 64v256c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64h64zm144 288c-17.7 0-32 14.3-32 32v80h96v-80c0-17.7-14.3-32-32-32zm-144 16v-32c0-8.8-7.2-16-16-16H80c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16m-16-112c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16H80c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16zm400 112v-32c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16m-16-112c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16zM264 104v32h-32c-8.8 0-16 7.2-16 16v16c0 8.8 7.2 16 16 16h32v32c0 8.8 7.2 16 16 16h16c8.8 0 16-7.2 16-16v-32h32c8.8 0 16-7.2 16-16v-16c0-8.8-7.2-16-16-16h-32v-32c0-8.8-7.2-16-16-16h-16c-8.8 0-16 7.2-16 16"/></svg></span> <strong>Healthcare</strong></p>
+<hr />
+<p>HIPAA-compliant, $2M+ ROI</p>
+<p><a href="guides/healthcare-applications.md"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Healthcare Guide</a></p>
+</li>
+<li>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.5c-1.35-.85-3.8-1.5-5.5-1.5-1.65 0-3.35.3-4.75 1.05-.1.05-.15.05-.25.05-.25 0-.5-.25-.5-.5V6c.6-.45 1.25-.75 2-1 1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5.75.25 1.4.55 2 1v14.6c0 .25-.25.5-.5.5-.1 0-.15 0-.25-.05-1.4-.75-3.1-1.05-4.75-1.05-1.7 0-4.15.65-5.5 1.5M12 8v11.5c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5V7c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5m1 3.5c1.11-.68 2.6-1 4.5-1 .91 0 1.76.09 2.5.28V9.23c-.87-.15-1.71-.23-2.5-.23q-2.655 0-4.5.84zm4.5.17c-1.71 0-3.21.26-4.5.79v1.69c1.11-.65 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24v-1.5c-.87-.16-1.71-.23-2.5-.23m2.5 2.9c-.87-.16-1.71-.24-2.5-.24-1.83 0-3.33.27-4.5.8v1.69c1.11-.66 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24z"/></svg></span> <strong>API Reference</strong></p>
+<hr />
+<p>Complete API documentation</p>
+<p><a href="api-reference/empathy-os.md"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> API Docs</a></p>
+</li>
+</ul>
+</div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>### Step 4: Create a Getting Started Guide
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>**File**: `docs/getting-started/installation.md`
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>```markdown
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a># Installation
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>## Prerequisites
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>- **Python**: 3.10 or higher
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>- **pip**: Latest version recommended
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>
+<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>## Basic Installation
+<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>
+<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a>### Core Framework
+<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a>
+<a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a>```bash
+<a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a>pip install empathy-framework
+</code></pre></div>
+<p>This installs the core Empathy Framework with basic functionality.</p>
+<h2 id="installation-options">Installation Options<a class="headerlink" href="#installation-options" title="Permanent link">&para;</a></h2>
+<h3 id="with-llm-support">With LLM Support<a class="headerlink" href="#with-llm-support" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>pip<span class="w"> </span>install<span class="w"> </span>empathy-framework<span class="o">[</span>llm<span class="o">]</span>
+</code></pre></div>
+<p>Includes:
+- Anthropic Claude SDK
+- OpenAI SDK</p>
+<h3 id="with-healthcare-support">With Healthcare Support<a class="headerlink" href="#with-healthcare-support" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>pip<span class="w"> </span>install<span class="w"> </span>empathy-framework<span class="o">[</span>healthcare<span class="o">]</span>
+</code></pre></div>
+<p>Includes:
+- FHIR client (Epic, Cerner integration)
+- HL7 parsing
+- HIPAA audit logging</p>
+<h3 id="with-webhooks">With Webhooks<a class="headerlink" href="#with-webhooks" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>pip<span class="w"> </span>install<span class="w"> </span>empathy-framework<span class="o">[</span>webhooks<span class="o">]</span>
+</code></pre></div>
+<p>Includes:
+- aiohttp (async HTTP)
+- requests (sync HTTP)</p>
+<h3 id="full-installation-recommended">Full Installation (Recommended)<a class="headerlink" href="#full-installation-recommended" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>pip<span class="w"> </span>install<span class="w"> </span>empathy-framework<span class="o">[</span>full<span class="o">]</span>
+</code></pre></div>
+<p>Includes everything: LLM providers, healthcare, webhooks.</p>
+<h3 id="development-installation">Development Installation<a class="headerlink" href="#development-installation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Clone repository</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Smart-AI-Memory/empathy.git
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="nb">cd</span><span class="w"> </span>empathy-framework
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="c1"># Install in editable mode with dev dependencies</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>dev<span class="o">]</span>
+</code></pre></div>
+<h2 id="verification">Verification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
+<p>Verify installation:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import empathy_os; print(empathy_os.__version__)&quot;</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="c1"># Output: 1.8.0</span>
+</code></pre></div>
+<p>Or use the CLI:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>empathy-framework<span class="w"> </span>version
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="c1"># Output: Empathy v1.8.0</span>
+</code></pre></div>
+<h2 id="next-steps_1">Next Steps<a class="headerlink" href="#next-steps_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="quickstart.md">Quick Start Guide</a> - Build your first chatbot in 5 minutes</li>
+<li><a href="configuration.md">Configuration</a> - Learn about configuration options
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>---
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>## Writing Documentation Best Practices
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>### Use Admonitions (Call-out Boxes)
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>```markdown
+<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a>!!! note
+<a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a>    This is a note
+<a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a>
+<a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a>!!! warning
+<a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a>    This is a warning
+<a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a>
+<a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a>!!! tip
+<a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a>    This is a helpful tip
+<a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a>
+<a id="__codelineno-21-17" name="__codelineno-21-17" href="#__codelineno-21-17"></a>!!! danger
+<a id="__codelineno-21-18" name="__codelineno-21-18" href="#__codelineno-21-18"></a>    This is dangerous - be careful!
+</code></pre></div></li>
+</ul>
+<p><strong>Renders as beautiful colored boxes!</strong></p>
+<h3 id="code-blocks-with-syntax-highlighting">Code Blocks with Syntax Highlighting<a class="headerlink" href="#code-blocks-with-syntax-highlighting" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="sb">```python</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="kn">from</span> <span class="nn">empathy_os</span> <span class="kn">import</span> <span class="n">EmpathyOS</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="n">empathy</span> <span class="o">=</span> <span class="n">EmpathyOS</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;user_123&quot;</span><span class="p">)</span>
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="sb">```</span>
+</code></pre></div>
+<h3 id="tabs-for-multiple-options">Tabs for Multiple Options<a class="headerlink" href="#tabs-for-multiple-options" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>=== &quot;Python&quot;
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="sb">    ```python</span>
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello World&quot;</span><span class="p">)</span>
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="sb">    ```</span>
+<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>
+<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>=== &quot;JavaScript&quot;
+<a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>
+<a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a><span class="sb">    ```javascript</span>
+<a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a><span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Hello World&quot;</span><span class="p">)</span>
+<a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a><span class="sb">    ```</span>
+</code></pre></div>
+<h3 id="tables">Tables<a class="headerlink" href="#tables" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>| Feature | Description | Status |
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>|---------|-------------|--------|
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>| Level 4 | Anticipatory | ✅ Ready |
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>| HIPAA   | Compliance  | ✅ Ready |
+</code></pre></div>
+<hr />
+<h2 id="auto-generate-api-documentation">Auto-Generate API Documentation<a class="headerlink" href="#auto-generate-api-documentation" title="Permanent link">&para;</a></h2>
+<h3 id="using-mkdocstrings">Using mkdocstrings<a class="headerlink" href="#using-mkdocstrings" title="Permanent link">&para;</a></h3>
+<p><strong>File</strong>: <code>docs/api-reference/empathy-os.md</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="gh"># EmpathyOS API Reference</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="gu">## Overview</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>
+<a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a>The <span class="sb">`EmpathyOS`</span> class is the main entry point for the Empathy Framework.
+<a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a>
+<a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="gu">## Class Documentation</span>
+<a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a>
+<a id="__codelineno-25-9" name="__codelineno-25-9" href="#__codelineno-25-9"></a>::: empathy_os.core.EmpathyOS
+<a id="__codelineno-25-10" name="__codelineno-25-10" href="#__codelineno-25-10"></a>    options:
+<a id="__codelineno-25-11" name="__codelineno-25-11" href="#__codelineno-25-11"></a>      show_source: true
+<a id="__codelineno-25-12" name="__codelineno-25-12" href="#__codelineno-25-12"></a>      heading_level: 3
+</code></pre></div>
+<p><strong>What this does</strong>:
+- Automatically extracts docstrings from <code>empathy_os.core.EmpathyOS</code>
+- Formats them as beautiful documentation
+- Includes method signatures, parameters, return types</p>
+<p><strong>Your Python code should have Google-style docstrings</strong>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="k">class</span> <span class="nc">EmpathyOS</span><span class="p">:</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="sd">    Main Empathy Framework class for Level 1-5 AI collaboration.</span>
+<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>
+<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="sd">    Args:</span>
+<a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a><span class="sd">        user_id: Unique identifier for the user</span>
+<a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a><span class="sd">        target_level: Target empathy level (1-5)</span>
+<a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a><span class="sd">        confidence_threshold: Minimum confidence for Level 4 predictions</span>
+<a id="__codelineno-26-9" name="__codelineno-26-9" href="#__codelineno-26-9"></a>
+<a id="__codelineno-26-10" name="__codelineno-26-10" href="#__codelineno-26-10"></a><span class="sd">    Example:</span>
+<a id="__codelineno-26-11" name="__codelineno-26-11" href="#__codelineno-26-11"></a><span class="sd">        ```python</span>
+<a id="__codelineno-26-12" name="__codelineno-26-12" href="#__codelineno-26-12"></a><span class="sd">        empathy = EmpathyOS(</span>
+<a id="__codelineno-26-13" name="__codelineno-26-13" href="#__codelineno-26-13"></a><span class="sd">            user_id=&quot;user_123&quot;,</span>
+<a id="__codelineno-26-14" name="__codelineno-26-14" href="#__codelineno-26-14"></a><span class="sd">            target_level=4,</span>
+<a id="__codelineno-26-15" name="__codelineno-26-15" href="#__codelineno-26-15"></a><span class="sd">            confidence_threshold=0.75</span>
+<a id="__codelineno-26-16" name="__codelineno-26-16" href="#__codelineno-26-16"></a><span class="sd">        )</span>
+<a id="__codelineno-26-17" name="__codelineno-26-17" href="#__codelineno-26-17"></a><span class="sd">        ```</span>
+<a id="__codelineno-26-18" name="__codelineno-26-18" href="#__codelineno-26-18"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-26-19" name="__codelineno-26-19" href="#__codelineno-26-19"></a>
+<a id="__codelineno-26-20" name="__codelineno-26-20" href="#__codelineno-26-20"></a>    <span class="k">def</span> <span class="nf">interact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_input</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<a id="__codelineno-26-21" name="__codelineno-26-21" href="#__codelineno-26-21"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-26-22" name="__codelineno-26-22" href="#__codelineno-26-22"></a><span class="sd">        Process user input and generate empathetic response.</span>
+<a id="__codelineno-26-23" name="__codelineno-26-23" href="#__codelineno-26-23"></a>
+<a id="__codelineno-26-24" name="__codelineno-26-24" href="#__codelineno-26-24"></a><span class="sd">        Args:</span>
+<a id="__codelineno-26-25" name="__codelineno-26-25" href="#__codelineno-26-25"></a><span class="sd">            user_id: User identifier</span>
+<a id="__codelineno-26-26" name="__codelineno-26-26" href="#__codelineno-26-26"></a><span class="sd">            user_input: User&#39;s query or statement</span>
+<a id="__codelineno-26-27" name="__codelineno-26-27" href="#__codelineno-26-27"></a><span class="sd">            context: Additional context for the interaction</span>
+<a id="__codelineno-26-28" name="__codelineno-26-28" href="#__codelineno-26-28"></a>
+<a id="__codelineno-26-29" name="__codelineno-26-29" href="#__codelineno-26-29"></a><span class="sd">        Returns:</span>
+<a id="__codelineno-26-30" name="__codelineno-26-30" href="#__codelineno-26-30"></a><span class="sd">            Response object containing the empathetic response</span>
+<a id="__codelineno-26-31" name="__codelineno-26-31" href="#__codelineno-26-31"></a>
+<a id="__codelineno-26-32" name="__codelineno-26-32" href="#__codelineno-26-32"></a><span class="sd">        Example:</span>
+<a id="__codelineno-26-33" name="__codelineno-26-33" href="#__codelineno-26-33"></a><span class="sd">            ```python</span>
+<a id="__codelineno-26-34" name="__codelineno-26-34" href="#__codelineno-26-34"></a><span class="sd">            response = empathy.interact(</span>
+<a id="__codelineno-26-35" name="__codelineno-26-35" href="#__codelineno-26-35"></a><span class="sd">                user_id=&quot;user_123&quot;,</span>
+<a id="__codelineno-26-36" name="__codelineno-26-36" href="#__codelineno-26-36"></a><span class="sd">                user_input=&quot;Help me debug this&quot;,</span>
+<a id="__codelineno-26-37" name="__codelineno-26-37" href="#__codelineno-26-37"></a><span class="sd">                context={&quot;code&quot;: &quot;...&quot;}</span>
+<a id="__codelineno-26-38" name="__codelineno-26-38" href="#__codelineno-26-38"></a><span class="sd">            )</span>
+<a id="__codelineno-26-39" name="__codelineno-26-39" href="#__codelineno-26-39"></a><span class="sd">            print(response.response)</span>
+<a id="__codelineno-26-40" name="__codelineno-26-40" href="#__codelineno-26-40"></a><span class="sd">            ```</span>
+<a id="__codelineno-26-41" name="__codelineno-26-41" href="#__codelineno-26-41"></a><span class="sd">        &quot;&quot;&quot;</span>
+<a id="__codelineno-26-42" name="__codelineno-26-42" href="#__codelineno-26-42"></a>        <span class="k">pass</span>
+</code></pre></div>
+<hr />
+<h2 id="building-the-site">Building the Site<a class="headerlink" href="#building-the-site" title="Permanent link">&para;</a></h2>
+<h3 id="development-live-preview">Development (Live Preview)<a class="headerlink" href="#development-live-preview" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>mkdocs<span class="w"> </span>serve
+</code></pre></div>
+<ul>
+<li>Starts server at http://127.0.0.1:8000</li>
+<li>Auto-reloads on file changes</li>
+<li>Use this while writing docs</li>
+</ul>
+<h3 id="production-build">Production Build<a class="headerlink" href="#production-build" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>mkdocs<span class="w"> </span>build
+</code></pre></div>
+<p><strong>Creates</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>site/
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>├── index.html
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>├── getting-started/
+<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a>│   └── installation/
+<a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>│       └── index.html
+<a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a>└── ... (all your docs as HTML)
+</code></pre></div></p>
+<p>This <code>site/</code> directory is a complete static website - upload anywhere!</p>
+<hr />
+<h2 id="deploying-to-read-the-docs">Deploying to Read the Docs<a class="headerlink" href="#deploying-to-read-the-docs" title="Permanent link">&para;</a></h2>
+<h3 id="step-1-create-readthedocsyaml">Step 1: Create <code>.readthedocs.yaml</code><a class="headerlink" href="#step-1-create-readthedocsyaml" title="Permanent link">&para;</a></h3>
+<p>At project root:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="c1"># .readthedocs.yaml</span>
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>
+<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="nt">build</span><span class="p">:</span>
+<a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a><span class="w">  </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-22.04</span>
+<a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a><span class="w">  </span><span class="nt">tools</span><span class="p">:</span>
+<a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a><span class="w">    </span><span class="nt">python</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.12&quot;</span>
+<a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a>
+<a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a><span class="nt">mkdocs</span><span class="p">:</span>
+<a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a><span class="w">  </span><span class="nt">configuration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mkdocs.yml</span>
+<a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a>
+<a id="__codelineno-30-12" name="__codelineno-30-12" href="#__codelineno-30-12"></a><span class="nt">python</span><span class="p">:</span>
+<a id="__codelineno-30-13" name="__codelineno-30-13" href="#__codelineno-30-13"></a><span class="w">  </span><span class="nt">install</span><span class="p">:</span>
+<a id="__codelineno-30-14" name="__codelineno-30-14" href="#__codelineno-30-14"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">requirements</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docs/requirements.txt</span>
+</code></pre></div>
+<h3 id="step-2-create-docsrequirementstxt">Step 2: Create <code>docs/requirements.txt</code><a class="headerlink" href="#step-2-create-docsrequirementstxt" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>mkdocs&gt;=1.5.0
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>mkdocs-material&gt;=9.0.0
+<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>mkdocstrings[python]&gt;=0.24.0
+</code></pre></div>
+<h3 id="step-3-connect-github-to-read-the-docs">Step 3: Connect GitHub to Read the Docs<a class="headerlink" href="#step-3-connect-github-to-read-the-docs" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Go to https://readthedocs.org</li>
+<li>Sign in with GitHub</li>
+<li>Click "Import a Project"</li>
+<li>Select <code>Smart-AI-Memory/empathy</code></li>
+<li>Click "Build"</li>
+</ol>
+<p><strong>Done!</strong> Your docs will auto-deploy on every commit to <code>main</code>.</p>
+<p><strong>Your URL</strong>: https://empathy-framework.readthedocs.io</p>
+<hr />
+<h2 id="advanced-features">Advanced Features<a class="headerlink" href="#advanced-features" title="Permanent link">&para;</a></h2>
+<h3 id="search">Search<a class="headerlink" href="#search" title="Permanent link">&para;</a></h3>
+<p>Automatically included! Just start typing in the search box.</p>
+<h3 id="versioning">Versioning<a class="headerlink" href="#versioning" title="Permanent link">&para;</a></h3>
+<p>Support multiple versions (v1.7.0, v1.8.0, latest):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>pip<span class="w"> </span>install<span class="w"> </span>mike
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>
+<a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="c1"># Setup versioning</span>
+<a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a>mike<span class="w"> </span>deploy<span class="w"> </span><span class="m">1</span>.8.0<span class="w"> </span>latest<span class="w"> </span>--update-aliases
+<a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a>mike<span class="w"> </span>set-default<span class="w"> </span>latest
+<a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a>
+<a id="__codelineno-32-7" name="__codelineno-32-7" href="#__codelineno-32-7"></a><span class="c1"># Deploy</span>
+<a id="__codelineno-32-8" name="__codelineno-32-8" href="#__codelineno-32-8"></a>mike<span class="w"> </span>deploy<span class="w"> </span>--push
+</code></pre></div>
+<h3 id="custom-domain">Custom Domain<a class="headerlink" href="#custom-domain" title="Permanent link">&para;</a></h3>
+<p>In Read the Docs settings:
+- Add custom domain: <code>docs.empathy-framework.com</code>
+- Update DNS CNAME record</p>
+<hr />
+<h2 id="workflow-for-empathy-framework-docs">Workflow for Empathy Framework Docs<a class="headerlink" href="#workflow-for-empathy-framework-docs" title="Permanent link">&para;</a></h2>
+<h3 id="your-daily-workflow">Your Daily Workflow<a class="headerlink" href="#your-daily-workflow" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Edit docs</strong> in <code>docs/</code> directory (just Markdown!)</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="c1"># Edit a file</span>
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>code<span class="w"> </span>docs/getting-started/quickstart.md
+</code></pre></div>
+<ol>
+<li><strong>Preview locally</strong></li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>mkdocs<span class="w"> </span>serve
+<a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a><span class="c1"># Open http://127.0.0.1:8000</span>
+</code></pre></div>
+<ol>
+<li><strong>Commit and push</strong></li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>git<span class="w"> </span>add<span class="w"> </span>docs/
+<a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;docs: Update quickstart guide&quot;</span>
+<a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>git<span class="w"> </span>push
+</code></pre></div>
+<ol>
+<li><strong>Auto-deploy</strong> to Read the Docs (no action needed!)</li>
+</ol>
+<h3 id="creating-new-pages">Creating New Pages<a class="headerlink" href="#creating-new-pages" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="c1"># Create new guide</span>
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>touch<span class="w"> </span>docs/guides/my-new-guide.md
+<a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>
+<a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a><span class="c1"># Add content</span>
+<a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;# My New Guide\n\nContent here...&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>docs/guides/my-new-guide.md
+<a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a>
+<a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a><span class="c1"># Add to navigation in mkdocs.yml</span>
+</code></pre></div>
+<p>In <code>mkdocs.yml</code>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="nt">nav</span><span class="p">:</span>
+<a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Guides</span><span class="p">:</span>
+<a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">My New Guide</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guides/my-new-guide.md</span>
+</code></pre></div></p>
+<hr />
+<h2 id="tips-tricks">Tips &amp; Tricks<a class="headerlink" href="#tips-tricks" title="Permanent link">&para;</a></h2>
+<h3 id="tip-1-use-relative-links">Tip 1: Use Relative Links<a class="headerlink" href="#tip-1-use-relative-links" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>See the [<span class="nt">installation guide</span>](<span class="na">../getting-started/installation.md</span>).
+</code></pre></div>
+<h3 id="tip-2-include-code-from-files">Tip 2: Include Code from Files<a class="headerlink" href="#tip-2-include-code-from-files" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="sb">```python</span><span class="w"> </span>title=&quot;example.py&quot;
+<a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a><span class="o">--</span><span class="mi">8</span><span class="o">&lt;--</span> <span class="s2">&quot;examples/simple_chatbot.py&quot;</span>
+<a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a><span class="sb">```</span>
+</code></pre></div>
+<h3 id="tip-3-keyboard-shortcuts">Tip 3: Keyboard Shortcuts<a class="headerlink" href="#tip-3-keyboard-shortcuts" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>++ctrl+c++ to copy
+</code></pre></div>
+<p>Renders as: <kbd>Ctrl</kbd>+<kbd>C</kbd></p>
+<h3 id="tip-4-emojis">Tip 4: Emojis<a class="headerlink" href="#tip-4-emojis" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>:rocket: :brain: :heart:
+</code></pre></div>
+<p>Renders as: 🚀 🧠 ❤️</p>
+<hr />
+<h2 id="common-issues-solutions">Common Issues &amp; Solutions<a class="headerlink" href="#common-issues-solutions" title="Permanent link">&para;</a></h2>
+<h3 id="issue-address-already-in-use">Issue: "Address already in use"<a class="headerlink" href="#issue-address-already-in-use" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: Port 8000 is already in use</p>
+<p><strong>Solution</strong>: Use different port
+<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>mkdocs<span class="w"> </span>serve<span class="w"> </span>-a<span class="w"> </span><span class="m">127</span>.0.0.1:8001
+</code></pre></div></p>
+<h3 id="issue-module-not-found">Issue: "Module not found"<a class="headerlink" href="#issue-module-not-found" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: mkdocstrings can't find Python module</p>
+<p><strong>Solution</strong>: Install package in development mode
+<div class="highlight"><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</code></pre></div></p>
+<h3 id="issue-search-not-working">Issue: Search not working<a class="headerlink" href="#issue-search-not-working" title="Permanent link">&para;</a></h3>
+<p><strong>Problem</strong>: Need to rebuild search index</p>
+<p><strong>Solution</strong>: Clear cache and rebuild
+<div class="highlight"><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>rm<span class="w"> </span>-rf<span class="w"> </span>site/
+<a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a>mkdocs<span class="w"> </span>build
+</code></pre></div></p>
+<hr />
+<h2 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">&para;</a></h2>
+<h3 id="official-documentation">Official Documentation<a class="headerlink" href="#official-documentation" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>MkDocs</strong>: https://www.mkdocs.org</li>
+<li><strong>Material Theme</strong>: https://squidfunk.github.io/mkdocs-material/</li>
+<li><strong>mkdocstrings</strong>: https://mkdocstrings.github.io</li>
+</ul>
+<h3 id="examples-to-learn-from">Examples to Learn From<a class="headerlink" href="#examples-to-learn-from" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>FastAPI</strong>: https://github.com/tiangolo/fastapi/tree/master/docs</li>
+<li><strong>Pydantic</strong>: https://github.com/pydantic/pydantic/tree/main/docs</li>
+</ul>
+<h3 id="cheat-sheets">Cheat Sheets<a class="headerlink" href="#cheat-sheets" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Markdown</strong>: https://www.markdownguide.org/cheat-sheet/</li>
+<li><strong>Material Icons</strong>: https://squidfunk.github.io/mkdocs-material/reference/icons-emojis/</li>
+</ul>
+<hr />
+<h2 id="next-steps-for-you">Next Steps for You<a class="headerlink" href="#next-steps-for-you" title="Permanent link">&para;</a></h2>
+<h3 id="week-1-2-tasks">Week 1-2 Tasks<a class="headerlink" href="#week-1-2-tasks" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Setup MkDocs</strong> (30 minutes)</li>
+<li>[ ] Install: <code>pip install mkdocs-material mkdocstrings[python]</code></li>
+<li>[ ] Create <code>mkdocs.yml</code> (use template above)</li>
+<li>
+<p>[ ] Run <code>mkdocs serve</code> and verify it works</p>
+</li>
+<li>
+<p><strong>Create Directory Structure</strong> (15 minutes)</p>
+</li>
+<li>[ ] Create <code>docs/</code> subdirectories</li>
+<li>
+<p>[ ] Move existing examples to <code>docs/examples/</code></p>
+</li>
+<li>
+<p><strong>Write Homepage</strong> (1 hour)</p>
+</li>
+<li>[ ] Create <code>docs/index.md</code> (use template above)</li>
+<li>
+<p>[ ] Add badges, quick start, features</p>
+</li>
+<li>
+<p><strong>Getting Started Section</strong> (4 hours)</p>
+</li>
+<li>[ ] <code>installation.md</code></li>
+<li>[ ] <code>quickstart.md</code> (5-minute working example)</li>
+<li>[ ] <code>configuration.md</code> (all config options)</li>
+<li>
+<p>[ ] <code>first-application.md</code> (detailed tutorial)</p>
+</li>
+<li>
+<p><strong>Connect to Read the Docs</strong> (30 minutes)</p>
+</li>
+<li>[ ] Create <code>.readthedocs.yaml</code></li>
+<li>[ ] Create <code>docs/requirements.txt</code></li>
+<li>[ ] Import project on Read the Docs</li>
+<li>[ ] Verify build succeeds</li>
+</ol>
+<p><strong>Total: ~7 hours for professional documentation website!</strong></p>
+<hr />
+<h2 id="questions">Questions?<a class="headerlink" href="#questions" title="Permanent link">&para;</a></h2>
+<p><strong>Common Questions</strong>:</p>
+<p><strong>Q: Do I need to know HTML/CSS?</strong>
+A: No! Just write Markdown. MkDocs handles everything.</p>
+<p><strong>Q: Can I preview before deploying?</strong>
+A: Yes! <code>mkdocs serve</code> shows exactly what will be deployed.</p>
+<p><strong>Q: What if I make a mistake?</strong>
+A: Just edit the Markdown file and save. Auto-reloads instantly.</p>
+<p><strong>Q: How do I add images?</strong>
+A: Put images in <code>docs/assets/</code>, reference as <code>![Alt text](assets/image.png)</code></p>
+<p><strong>Q: Can I customize the theme?</strong>
+A: Yes! Material theme has 50+ customization options in <code>mkdocs.yml</code>.</p>
+<hr />
+<h2 id="ready-to-start">Ready to Start!<a class="headerlink" href="#ready-to-start" title="Permanent link">&para;</a></h2>
+<p>You now know everything you need to create professional documentation for Empathy Framework!</p>
+<p><strong>Your first command</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>pip<span class="w"> </span>install<span class="w"> </span>mkdocs-material<span class="w"> </span>mkdocstrings<span class="o">[</span>python<span class="o">]</span>
+<a id="__codelineno-45-2" name="__codelineno-45-2" href="#__codelineno-45-2"></a>mkdocs<span class="w"> </span>serve
+</code></pre></div></p>
+<p>Open http://127.0.0.1:8000 and start editing! 🚀</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 Smart-AI-Memory
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/Smart-AI-Memory/empathy" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://pypi.org/project/empathy-framework/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 444.7a20.4 20.4 0 1 1 0-40.7 20.4 20.4 0 1 1 0 40.7M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.6-183.4a20.4 20.4 0 1 1 0 40.8 20.4 20.4 0 1 1 0-40.8"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

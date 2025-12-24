@@ -1,0 +1,4475 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Production-ready Level 4 Anticipatory Intelligence for AI-human collaboration. Build AI systems that predict problems before they happen.">
+      
+      
+        <meta name="author" content="Patrick Roebuck">
+      
+      
+        <link rel="canonical" href="https://smartaimemory.com/framework-docs/internal/WIZARD_AGENT_IMPROVEMENT_PLAN/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/empathy-brain-logo.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Wizard & Agent Improvement Plan - Empathy Framework</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <!-- Plausible Analytics - Privacy-respecting, no cookies -->
+  <script defer data-domain="smartaimemory.com" src="https://plausible.io/js/script.js"></script>
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wizard-agent-improvement-plan" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Empathy Framework" class="md-header__button md-logo" aria-label="Empathy Framework" data-md-component="logo">
+      
+  <img src="../../assets/images/empathy-brain-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Empathy Framework
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Wizard &amp; Agent Improvement Plan
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Smart-AI-Memory/empathy" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Smart-AI-Memory/empathy
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../tutorials/" class="md-tabs__link">
+          
+  
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../how-to/" class="md-tabs__link">
+          
+  
+  
+  How-to
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../explanation/" class="md-tabs__link">
+          
+  
+  
+  Explanation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
+          
+  
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../contributing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Contributing
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../get-the-book/" class="md-tabs__link">
+          
+  
+  
+  Book
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Empathy Framework" class="md-nav__button md-logo" aria-label="Empathy Framework" data-md-component="logo">
+      
+  <img src="../../assets/images/empathy-brain-logo.png" alt="logo">
+
+    </a>
+    Empathy Framework
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Smart-AI-Memory/empathy" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Smart-AI-Memory/empathy
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/examples/simple-chatbot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Review Assistant
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/examples/sbar-clinical-handoff/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SBAR Clinical Handoff
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/examples/multi-agent-team-coordination/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Agent Team
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/examples/adaptive-learning-system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Adaptive Learning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/examples/webhook-event-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Webhook Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-to
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to Guides
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memory System
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Memory System
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/unified-memory-system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unified Memory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/short-term-memory-implementation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Short-Term Memory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/memory-graph/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memory Graph
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Agents
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Agents
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/agent-factory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Factory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/smart-router/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Smart Router
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/auto-chaining/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Auto-Chaining
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Integration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/webhook-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Webhooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/security-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/hipaa-compliance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HIPAA Compliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Patterns
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Patterns
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/practical-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Practical Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/resilience-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resilience Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/prerequisites/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prerequisites
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explanation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Explanation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explanation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Philosophy
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Philosophy
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/EMPATHY_PHILOSOPHY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Empathy Philosophy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/multi-agent-philosophy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Agent Philosophy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/HOW_CLAUDE_LEARNS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How Claude Learns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Concepts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/TEACHING_AI_YOUR_PHILOSOPHY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Teaching AI Your Philosophy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/adaptive-learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Adaptive Learning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/COMPARISON/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Comparison
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Integration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/USING_EMPATHY_WITH_LLMS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using with LLMs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/MEMDOCS_EMPATHY_INTEGRATION/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MemDocs Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/EMPATHY_FRAMEWORK_NON_TECHNICAL_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Non-Technical Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/CLI_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/CLI_CHEATSHEET/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Cheatsheet
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/API_REFERENCE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/empathy-os/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EmpathyOS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Config
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/pattern-library/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pattern Library
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/multi-agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Agent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/llm-toolkit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Toolkit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wizards
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Wizards
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/wizards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Industry Wizards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/software-wizards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Software Wizards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/ai-wizards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Wizards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Help
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Help
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/FAQ/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/TROUBLESHOOTING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/USER_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/SHORT_TERM_MEMORY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Short-Term Memory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Book
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Book
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../get-the-book/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get the Book
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../book-cover/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cover
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/how-to-read-this-book/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Read
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/preface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preface
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/foreword/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foreword by Claude
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#executive-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Executive Summary
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Executive Summary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gold-standard-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gold Standard Reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#current-state-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current State Analysis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Current State Analysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wizard-quality-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wizard Quality Matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-vs-wizard-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent vs Wizard Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#improvement-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Improvement Plan
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Improvement Plan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-foundation-weeks-1-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: Foundation (Weeks 1-2)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1: Foundation (Weeks 1-2)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-coach-wizard-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Coach Wizard Implementation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-unified-base-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Unified Base Class
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-memory-enhancement-weeks-3-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: Memory Enhancement (Weeks 3-4)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2: Memory Enhancement (Weeks 3-4)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-software-wizard-persistence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Software Wizard Persistence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-healthcare-cross-session-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Healthcare Cross-Session Learning
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-prediction-enhancement-weeks-5-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: Prediction Enhancement (Weeks 5-6)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3: Prediction Enhancement (Weeks 5-6)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-level-4-anticipatory-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Level 4 Anticipatory Capabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4-agent-evolution-weeks-7-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: Agent Evolution (Weeks 7-8)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 4: Agent Evolution (Weeks 7-8)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-wizard-agent-transformations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Wizard → Agent Transformations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-multi-agent-orchestration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Multi-Agent Orchestration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-5-quality-testing-weeks-9-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5: Quality &amp; Testing (Weeks 9-10)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 5: Quality &amp; Testing (Weeks 9-10)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-test-suite-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Test Suite Creation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-performance-benchmarks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Performance Benchmarks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation-priority-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation Priority Matrix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#success-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Success Metrics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Success Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#before-current-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before (Current State)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#after-target-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After (Target State)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resource-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Resource Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#development-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development Time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skills-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Skills Required
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appendix-detailed-wizard-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Appendix: Detailed Wizard Inventory
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Appendix: Detailed Wizard Inventory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-software-wizards-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. Software Wizards (18)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-healthcare-wizards-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. Healthcare Wizards (18)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-coach-wizards-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. Coach Wizards (19)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-domain-wizards-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. Domain Wizards (16)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="wizard-agent-improvement-plan">Wizard &amp; Agent Improvement Plan<a class="headerlink" href="#wizard-agent-improvement-plan" title="Permanent link">&para;</a></h1>
+<p><strong>Created:</strong> December 12, 2025
+<strong>Status:</strong> PLAN ONLY - Not yet implemented
+<strong>Scope:</strong> 55 wizards + 6 agents</p>
+<hr />
+<h2 id="executive-summary">Executive Summary<a class="headerlink" href="#executive-summary" title="Permanent link">&para;</a></h2>
+<p>Systematic review of all wizards and agents revealed significant improvement opportunities:</p>
+<ul>
+<li><strong>74% of wizards</strong> (40/55) are incomplete stubs or lack memory capabilities</li>
+<li><strong>Only 14%</strong> implement persistent cross-session learning</li>
+<li><strong>Coach wizards</strong> (20) are template stubs with no real implementation</li>
+<li><strong>Agents</strong> have sophisticated patterns that wizards should adopt</li>
+</ul>
+<h3 id="gold-standard-reference">Gold Standard Reference<a class="headerlink" href="#gold-standard-reference" title="Permanent link">&para;</a></h3>
+<p>Three wizards represent modern best practices:
+- <code>memory_enhanced_debugging_wizard.py</code> - Bug correlation with historical patterns
+- <code>tech_debt_wizard.py</code> - Trajectory analysis with predictions
+- <code>security_learning_wizard.py</code> - Team decision learning</p>
+<p>All other wizards should be upgraded to match these patterns.</p>
+<hr />
+<h2 id="current-state-analysis">Current State Analysis<a class="headerlink" href="#current-state-analysis" title="Permanent link">&para;</a></h2>
+<h3 id="wizard-quality-matrix">Wizard Quality Matrix<a class="headerlink" href="#wizard-quality-matrix" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Total</th>
+<th>Memory</th>
+<th>Async</th>
+<th>Level 4</th>
+<th>Quality</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Software</strong></td>
+<td>18</td>
+<td>3 (17%)</td>
+<td>90%</td>
+<td>60%</td>
+<td>Mixed</td>
+</tr>
+<tr>
+<td><strong>Healthcare</strong></td>
+<td>18</td>
+<td>11 (61%)*</td>
+<td>100%</td>
+<td>40%</td>
+<td>Good</td>
+</tr>
+<tr>
+<td><strong>Coach</strong></td>
+<td>19</td>
+<td>0 (0%)</td>
+<td>0%</td>
+<td>0%</td>
+<td><strong>Stubs</strong></td>
+</tr>
+<tr>
+<td><strong>Domain</strong></td>
+<td>16</td>
+<td>0 (0%)</td>
+<td>40%</td>
+<td>30%</td>
+<td>Mixed</td>
+</tr>
+</tbody>
+</table>
+<p>*Healthcare uses Redis sessions, not cross-session pattern learning</p>
+<h3 id="agent-vs-wizard-comparison">Agent vs Wizard Comparison<a class="headerlink" href="#agent-vs-wizard-comparison" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Agents</th>
+<th>Wizards</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Purpose</td>
+<td>Autonomous multi-step workflows</td>
+<td>Guided user decisions</td>
+</tr>
+<tr>
+<td>State</td>
+<td>TypedDict with 50+ fields</td>
+<td>Simple input/output</td>
+</tr>
+<tr>
+<td>Orchestration</td>
+<td>LangGraph conditional routing</td>
+<td>Linear progression</td>
+</tr>
+<tr>
+<td>Model Selection</td>
+<td>Strategic (Opus/Sonnet)</td>
+<td>Single model</td>
+</tr>
+<tr>
+<td>Pattern Learning</td>
+<td>Active extraction &amp; storage</td>
+<td>Minimal</td>
+</tr>
+<tr>
+<td>Error Handling</td>
+<td>Sophisticated fallbacks</td>
+<td>Linear failure</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="improvement-plan">Improvement Plan<a class="headerlink" href="#improvement-plan" title="Permanent link">&para;</a></h2>
+<h3 id="phase-1-foundation-weeks-1-2">Phase 1: Foundation (Weeks 1-2)<a class="headerlink" href="#phase-1-foundation-weeks-1-2" title="Permanent link">&para;</a></h3>
+<h4 id="11-coach-wizard-implementation">1.1 Coach Wizard Implementation<a class="headerlink" href="#11-coach-wizard-implementation" title="Permanent link">&para;</a></h4>
+<p><strong>Scope:</strong> 20 wizards currently stub implementations
+<strong>Effort:</strong> High
+<strong>Impact:</strong> Critical - these are foundational</p>
+<p><strong>Current state:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># All coach wizards look like this:</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">async</span> <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">pass</span>  <span class="c1"># Not implemented</span>
+</code></pre></div></p>
+<p><strong>Target state:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">async</span> <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="c1"># Actual implementation with:</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="c1"># - Pattern storage</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="c1"># - Issue detection</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="c1"># - Predictions</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="c1"># - Error handling</span>
+</code></pre></div></p>
+<p><strong>Wizards to upgrade:</strong>
+1. <code>security_wizard.py</code> - Security best practices
+2. <code>performance_wizard.py</code> - Performance optimization
+3. <code>testing_wizard.py</code> - Test strategy
+4. <code>refactoring_wizard.py</code> - Code refactoring
+5. <code>database_wizard.py</code> - Database design
+6. <code>api_wizard.py</code> - API design
+7. <code>debugging_wizard.py</code> - Debugging strategies
+8. <code>scaling_wizard.py</code> - Scaling patterns
+9. <code>observability_wizard.py</code> - Logging/metrics
+10. <code>cicd_wizard.py</code> - Pipeline automation
+11. <code>documentation_wizard.py</code> - Documentation
+12. <code>compliance_wizard.py</code> - Compliance
+13. <code>migration_wizard.py</code> - System migration
+14. <code>monitoring_wizard.py</code> - Application monitoring
+15. <code>localization_wizard.py</code> - i18n patterns
+16. <code>accessibility_wizard.py</code> - WCAG compliance</p>
+<p><strong>Implementation pattern per wizard:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">class</span> <span class="nc">SecurityWizard</span><span class="p">(</span><span class="n">BaseWizard</span><span class="p">):</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern_storage_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./patterns/coach/security&quot;</span><span class="p">):</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">pattern_storage</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">pattern_storage_path</span><span class="p">)</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="c1"># 1. Scan code for security issues</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        <span class="n">issues</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scan_for_issues</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>        <span class="c1"># 2. Correlate with historical patterns</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        <span class="n">historical</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_historical_matches</span><span class="p">(</span><span class="n">issues</span><span class="p">)</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>        <span class="c1"># 3. Generate predictions</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_future_issues</span><span class="p">(</span><span class="n">issues</span><span class="p">)</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>        <span class="c1"># 4. Store new patterns</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store_patterns</span><span class="p">(</span><span class="n">issues</span><span class="p">)</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>        <span class="k">return</span> <span class="p">{</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>            <span class="s2">&quot;issues&quot;</span><span class="p">:</span> <span class="n">issues</span><span class="p">,</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>            <span class="s2">&quot;historical_matches&quot;</span><span class="p">:</span> <span class="n">historical</span><span class="p">,</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>            <span class="s2">&quot;predictions&quot;</span><span class="p">:</span> <span class="n">predictions</span><span class="p">,</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>            <span class="s2">&quot;recommendations&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_recommendations</span><span class="p">(</span><span class="n">issues</span><span class="p">)</span>
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>        <span class="p">}</span>
+</code></pre></div></p>
+<h4 id="12-unified-base-class">1.2 Unified Base Class<a class="headerlink" href="#12-unified-base-class" title="Permanent link">&para;</a></h4>
+<p><strong>Scope:</strong> Create shared foundation for agents and wizards
+<strong>Effort:</strong> Medium
+<strong>Impact:</strong> High - reduces duplication, enables sharing</p>
+<p><strong>New class hierarchy:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>BaseAutonomousComponent
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>├── BaseAgent (for autonomous workflows)
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>│   ├── BookProductionAgent
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>│   ├── ComplianceAgent
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>│   └── ...
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>└── BaseWizard (for guided processes)
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    ├── MemoryEnhancedWizard
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    ├── HealthcareWizard
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    └── ...
+</code></pre></div></p>
+<p><strong>Shared capabilities:</strong>
+- Redis state management
+- MemDocs pattern storage
+- Audit trail logging
+- Error handling patterns
+- LangGraph integration hooks</p>
+<hr />
+<h3 id="phase-2-memory-enhancement-weeks-3-4">Phase 2: Memory Enhancement (Weeks 3-4)<a class="headerlink" href="#phase-2-memory-enhancement-weeks-3-4" title="Permanent link">&para;</a></h3>
+<h4 id="21-software-wizard-persistence">2.1 Software Wizard Persistence<a class="headerlink" href="#21-software-wizard-persistence" title="Permanent link">&para;</a></h4>
+<p><strong>Scope:</strong> 7 software wizards lacking memory
+<strong>Effort:</strong> Medium
+<strong>Impact:</strong> High</p>
+<p><strong>Wizards to upgrade:</strong>
+1. <code>ai_collaboration_wizard.py</code> - Add collaboration pattern learning
+2. <code>agent_orchestration_wizard.py</code> - Store orchestration patterns
+3. <code>rag_pattern_wizard.py</code> - Learn effective RAG configurations
+4. <code>prompt_engineering_wizard.py</code> - Store prompt effectiveness data
+5. <code>ai_documentation_wizard.py</code> - Track documentation patterns
+6. <code>multi_model_wizard.py</code> - Learn model selection strategies
+7. <code>enhanced_testing_wizard.py</code> - Store test coverage trends</p>
+<p><strong>Implementation:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Add to each wizard:</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">class</span> <span class="nc">AICollaborationWizard</span><span class="p">(</span><span class="n">BaseWizard</span><span class="p">):</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">record_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Store successful collaboration pattern for future learning.&quot;&quot;&quot;</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>        <span class="n">pattern_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;collab_</span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">_%H%M%S&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>        <span class="n">pattern_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern_storage</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pattern_id</span><span class="si">}</span><span class="s2">.json&quot;</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pattern_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">pattern_id</span><span class="p">,</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>                <span class="s2">&quot;pattern&quot;</span><span class="p">:</span> <span class="n">pattern</span><span class="p">,</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>                <span class="s2">&quot;stored_at&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>                <span class="s2">&quot;effectiveness_score&quot;</span><span class="p">:</span> <span class="kc">None</span>  <span class="c1"># Updated after validation</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>            <span class="p">},</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>        <span class="k">return</span> <span class="n">pattern_id</span>
+</code></pre></div></p>
+<h4 id="22-healthcare-cross-session-learning">2.2 Healthcare Cross-Session Learning<a class="headerlink" href="#22-healthcare-cross-session-learning" title="Permanent link">&para;</a></h4>
+<p><strong>Scope:</strong> 11 healthcare wizards with Redis but no pattern learning
+<strong>Effort:</strong> Medium-High
+<strong>Impact:</strong> High (clinical improvement tracking)</p>
+<p><strong>Add to healthcare wizards:</strong>
+- Clinical outcome tracking (like tech_debt trajectory)
+- HIPAA-compliant decision recording
+- Pattern discovery in audit trail
+- Cross-session learning with encryption</p>
+<p><strong>Example - SBAR Wizard enhancement:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">async</span> <span class="k">def</span> <span class="nf">record_clinical_outcome</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sbar_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">outcome</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Track clinical outcome for learning and quality improvement.&quot;&quot;&quot;</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="c1"># Encrypt PHI before storage</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">encrypted_outcome</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encrypt_phi</span><span class="p">(</span><span class="n">outcome</span><span class="p">)</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="c1"># Store in HIPAA-compliant pattern storage</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store_clinical_pattern</span><span class="p">({</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>        <span class="s2">&quot;sbar_id&quot;</span><span class="p">:</span> <span class="n">sbar_id</span><span class="p">,</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>        <span class="s2">&quot;outcome&quot;</span><span class="p">:</span> <span class="n">encrypted_outcome</span><span class="p">,</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>        <span class="s2">&quot;outcome_date&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>        <span class="s2">&quot;quality_indicators&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_quality_indicators</span><span class="p">(</span><span class="n">outcome</span><span class="p">)</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="p">})</span>
+</code></pre></div></p>
+<hr />
+<h3 id="phase-3-prediction-enhancement-weeks-5-6">Phase 3: Prediction Enhancement (Weeks 5-6)<a class="headerlink" href="#phase-3-prediction-enhancement-weeks-5-6" title="Permanent link">&para;</a></h3>
+<h4 id="31-level-4-anticipatory-capabilities">3.1 Level 4 Anticipatory Capabilities<a class="headerlink" href="#31-level-4-anticipatory-capabilities" title="Permanent link">&para;</a></h4>
+<p><strong>Scope:</strong> All wizards lacking prediction features
+<strong>Effort:</strong> High
+<strong>Impact:</strong> High - differentiating capability</p>
+<p><strong>Pattern from gold standard:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">def</span> <span class="nf">_calculate_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">history</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate trajectory and predictions from historical data.&quot;&quot;&quot;</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">history</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;trend&quot;</span><span class="p">:</span> <span class="s2">&quot;insufficient_data&quot;</span><span class="p">}</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="c1"># Calculate growth rate</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="n">previous</span> <span class="o">=</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;total&quot;</span><span class="p">]</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="n">current_total</span> <span class="o">=</span> <span class="n">current</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    <span class="n">change_percent</span> <span class="o">=</span> <span class="p">((</span><span class="n">current_total</span> <span class="o">-</span> <span class="n">previous</span><span class="p">)</span> <span class="o">/</span> <span class="n">previous</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="c1"># Project future</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="n">monthly_rate</span> <span class="o">=</span> <span class="n">change_percent</span> <span class="o">/</span> <span class="mi">30</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>    <span class="n">projection_30</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">current_total</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">monthly_rate</span><span class="p">))</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>    <span class="n">projection_90</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">current_total</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">monthly_rate</span> <span class="o">*</span> <span class="mi">3</span><span class="p">))</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>    <span class="c1"># Days until critical threshold</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>    <span class="k">if</span> <span class="n">monthly_rate</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>        <span class="n">days_until_2x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">monthly_rate</span><span class="o">/</span><span class="mi">30</span><span class="p">)</span> <span class="o">*</span> <span class="mi">30</span><span class="p">)</span>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>        <span class="n">days_until_2x</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>    <span class="k">return</span> <span class="p">{</span>
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a>        <span class="s2">&quot;change_percent&quot;</span><span class="p">:</span> <span class="n">change_percent</span><span class="p">,</span>
+<a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a>        <span class="s2">&quot;trend&quot;</span><span class="p">:</span> <span class="s2">&quot;increasing&quot;</span> <span class="k">if</span> <span class="n">change_percent</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="k">else</span> <span class="s2">&quot;stable&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a>        <span class="s2">&quot;projection_30_days&quot;</span><span class="p">:</span> <span class="n">projection_30</span><span class="p">,</span>
+<a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a>        <span class="s2">&quot;projection_90_days&quot;</span><span class="p">:</span> <span class="n">projection_90</span><span class="p">,</span>
+<a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a>        <span class="s2">&quot;days_until_critical&quot;</span><span class="p">:</span> <span class="n">days_until_2x</span>
+<a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a>    <span class="p">}</span>
+</code></pre></div></p>
+<p><strong>Apply to:</strong>
+- Security wizards → Security vulnerability trajectory
+- Performance wizards → Performance degradation prediction
+- Testing wizards → Test coverage trend analysis
+- Database wizards → Query performance trajectory
+- Healthcare wizards → Clinical outcome predictions</p>
+<hr />
+<h3 id="phase-4-agent-evolution-weeks-7-8">Phase 4: Agent Evolution (Weeks 7-8)<a class="headerlink" href="#phase-4-agent-evolution-weeks-7-8" title="Permanent link">&para;</a></h3>
+<h4 id="41-wizard-agent-transformations">4.1 Wizard → Agent Transformations<a class="headerlink" href="#41-wizard-agent-transformations" title="Permanent link">&para;</a></h4>
+<p><strong>Scope:</strong> Select wizards that should become autonomous agents
+<strong>Effort:</strong> High
+<strong>Impact:</strong> Medium-High</p>
+<p><strong>Candidates for transformation:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Wizard</th>
+<th>Agent Version</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Security Analysis</td>
+<td>SecurityMonitorAgent</td>
+<td>Continuous monitoring, proactive alerts</td>
+</tr>
+<tr>
+<td>Testing</td>
+<td>TestGenerationAgent</td>
+<td>Autonomous test creation, failure learning</td>
+</tr>
+<tr>
+<td>Performance Profiling</td>
+<td>PerformanceAgent</td>
+<td>Autonomous optimization</td>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>DocumentationAgent</td>
+<td>Maintain docs as code changes</td>
+</tr>
+<tr>
+<td>Compliance</td>
+<td>ComplianceMonitorAgent</td>
+<td>Continuous compliance checking</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Transformation criteria:</strong>
+- Can operate without user interaction
+- Benefits from continuous monitoring
+- Has clear success metrics
+- Can learn from outcomes autonomously</p>
+<h4 id="42-multi-agent-orchestration">4.2 Multi-Agent Orchestration<a class="headerlink" href="#42-multi-agent-orchestration" title="Permanent link">&para;</a></h4>
+<p><strong>Scope:</strong> Create reusable orchestration framework
+<strong>Effort:</strong> High
+<strong>Impact:</strong> High</p>
+<p><strong>Create AgentOrchestrator class:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">class</span> <span class="nc">AgentOrchestrator</span><span class="p">:</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles multi-agent coordination.&quot;&quot;&quot;</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">agent_registry</span> <span class="o">=</span> <span class="p">{}</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">OrchestratorState</span><span class="p">)</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="k">def</span> <span class="nf">register_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="n">BaseAgent</span><span class="p">):</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Register agent for orchestration.&quot;&quot;&quot;</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">agent_registry</span><span class="p">[</span><span class="n">agent_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>    <span class="k">def</span> <span class="nf">create_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_sequence</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">CompiledGraph</span><span class="p">:</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create execution pipeline from agent sequence.&quot;&quot;&quot;</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">agent_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">agent_sequence</span><span class="p">):</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">agent_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_registry</span><span class="p">[</span><span class="n">agent_id</span><span class="p">]</span><span class="o">.</span><span class="n">execute</span><span class="p">)</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>                <span class="n">prev</span> <span class="o">=</span> <span class="n">agent_sequence</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>                <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">prev</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">)</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the pipeline.&quot;&quot;&quot;</span>
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">initial_state</span><span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h3 id="phase-5-quality-testing-weeks-9-10">Phase 5: Quality &amp; Testing (Weeks 9-10)<a class="headerlink" href="#phase-5-quality-testing-weeks-9-10" title="Permanent link">&para;</a></h3>
+<h4 id="51-test-suite-creation">5.1 Test Suite Creation<a class="headerlink" href="#51-test-suite-creation" title="Permanent link">&para;</a></h4>
+<p><strong>Scope:</strong> Zero tests currently exist for wizards_consolidated
+<strong>Effort:</strong> Medium
+<strong>Impact:</strong> High</p>
+<p><strong>Test categories:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>tests/wizards_consolidated/
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>├── test_memory_patterns.py      # Pattern storage/retrieval
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>├── test_async_behavior.py       # Async chain integrity
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>├── test_error_handling.py       # Error recovery
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>├── test_predictions.py          # Trajectory calculations
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>├── test_redis_integration.py    # Redis fallback
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>└── test_loader.py               # Manifest loader
+</code></pre></div></p>
+<p><strong>Target coverage:</strong> 80%+</p>
+<h4 id="52-performance-benchmarks">5.2 Performance Benchmarks<a class="headerlink" href="#52-performance-benchmarks" title="Permanent link">&para;</a></h4>
+<p><strong>Scope:</strong> Establish performance baselines
+<strong>Effort:</strong> Low
+<strong>Impact:</strong> Medium</p>
+<p><strong>Metrics to track:</strong>
+- Wizard initialization time
+- Analysis execution time
+- Pattern storage/retrieval latency
+- Redis connection overhead
+- Memory usage per wizard</p>
+<hr />
+<h2 id="implementation-priority-matrix">Implementation Priority Matrix<a class="headerlink" href="#implementation-priority-matrix" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Phase</th>
+<th>Scope</th>
+<th>Effort</th>
+<th>Impact</th>
+<th>Timeline</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>P0</strong></td>
+<td>1.1</td>
+<td>Coach wizard implementation</td>
+<td>High</td>
+<td>Critical</td>
+<td>Weeks 1-2</td>
+</tr>
+<tr>
+<td><strong>P0</strong></td>
+<td>1.2</td>
+<td>Unified base class</td>
+<td>Medium</td>
+<td>High</td>
+<td>Week 2</td>
+</tr>
+<tr>
+<td><strong>P1</strong></td>
+<td>2.1</td>
+<td>Software wizard persistence</td>
+<td>Medium</td>
+<td>High</td>
+<td>Week 3</td>
+</tr>
+<tr>
+<td><strong>P1</strong></td>
+<td>2.2</td>
+<td>Healthcare cross-session</td>
+<td>Medium-High</td>
+<td>High</td>
+<td>Week 4</td>
+</tr>
+<tr>
+<td><strong>P2</strong></td>
+<td>3.1</td>
+<td>Level 4 predictions</td>
+<td>High</td>
+<td>High</td>
+<td>Weeks 5-6</td>
+</tr>
+<tr>
+<td><strong>P2</strong></td>
+<td>4.1</td>
+<td>Wizard → Agent transforms</td>
+<td>High</td>
+<td>Medium-High</td>
+<td>Weeks 7-8</td>
+</tr>
+<tr>
+<td><strong>P3</strong></td>
+<td>4.2</td>
+<td>Multi-agent orchestration</td>
+<td>High</td>
+<td>High</td>
+<td>Week 8</td>
+</tr>
+<tr>
+<td><strong>P3</strong></td>
+<td>5.1</td>
+<td>Test suite</td>
+<td>Medium</td>
+<td>High</td>
+<td>Weeks 9-10</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="success-metrics">Success Metrics<a class="headerlink" href="#success-metrics" title="Permanent link">&para;</a></h2>
+<h3 id="before-current-state">Before (Current State)<a class="headerlink" href="#before-current-state" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Memory-enhanced wizards: 3/55 (5%)</li>
+<li>Async coverage: 45%</li>
+<li>Level 4 predictions: 25%</li>
+<li>Test coverage: 0%</li>
+</ul>
+<h3 id="after-target-state">After (Target State)<a class="headerlink" href="#after-target-state" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Memory-enhanced wizards: 55/55 (100%)</li>
+<li>Async coverage: 100%</li>
+<li>Level 4 predictions: 80%</li>
+<li>Test coverage: 80%</li>
+</ul>
+<hr />
+<h2 id="resource-requirements">Resource Requirements<a class="headerlink" href="#resource-requirements" title="Permanent link">&para;</a></h2>
+<h3 id="development-time">Development Time<a class="headerlink" href="#development-time" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Total estimated: 10 weeks</li>
+<li>Phase 1 (Foundation): 2 weeks</li>
+<li>Phase 2 (Memory): 2 weeks</li>
+<li>Phase 3 (Predictions): 2 weeks</li>
+<li>Phase 4 (Agents): 2 weeks</li>
+<li>Phase 5 (Testing): 2 weeks</li>
+</ul>
+<h3 id="skills-required">Skills Required<a class="headerlink" href="#skills-required" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Python async/await patterns</li>
+<li>LangGraph orchestration</li>
+<li>Redis operations</li>
+<li>Healthcare compliance (HIPAA)</li>
+<li>Test framework (pytest)</li>
+</ul>
+<hr />
+<h2 id="appendix-detailed-wizard-inventory">Appendix: Detailed Wizard Inventory<a class="headerlink" href="#appendix-detailed-wizard-inventory" title="Permanent link">&para;</a></h2>
+<h3 id="a-software-wizards-18">A. Software Wizards (18)<a class="headerlink" href="#a-software-wizards-18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Wizard</th>
+<th>Lines</th>
+<th>Memory</th>
+<th>Async</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>memory_enhanced_debugging_wizard</td>
+<td>711</td>
+<td>✅</td>
+<td>✅</td>
+<td>Gold Standard</td>
+</tr>
+<tr>
+<td>tech_debt_wizard</td>
+<td>735</td>
+<td>✅</td>
+<td>✅</td>
+<td>Gold Standard</td>
+</tr>
+<tr>
+<td>security_learning_wizard</td>
+<td>755</td>
+<td>✅</td>
+<td>✅</td>
+<td>Gold Standard</td>
+</tr>
+<tr>
+<td>advanced_debugging_wizard</td>
+<td>388</td>
+<td>❌</td>
+<td>Partial</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>ai_collaboration_wizard</td>
+<td>499</td>
+<td>❌</td>
+<td>Partial</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>performance_profiling_wizard</td>
+<td>~350</td>
+<td>❌</td>
+<td>✅</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>ai_context_wizard</td>
+<td>435</td>
+<td>❌</td>
+<td>Unknown</td>
+<td>Review needed</td>
+</tr>
+<tr>
+<td>agent_orchestration_wizard</td>
+<td>447</td>
+<td>❌</td>
+<td>Unknown</td>
+<td>Review needed</td>
+</tr>
+<tr>
+<td>rag_pattern_wizard</td>
+<td>449</td>
+<td>❌</td>
+<td>Unknown</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>prompt_engineering_wizard</td>
+<td>426</td>
+<td>❌</td>
+<td>Partial</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>ai_documentation_wizard</td>
+<td>501</td>
+<td>❌</td>
+<td>Partial</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>book_chapter_wizard</td>
+<td>518</td>
+<td>❌</td>
+<td>Partial</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>enhanced_testing_wizard</td>
+<td>533</td>
+<td>❌</td>
+<td>Partial</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>multi_model_wizard</td>
+<td>497</td>
+<td>❌</td>
+<td>Partial</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>security_analysis_wizard</td>
+<td>321</td>
+<td>❌</td>
+<td>Unknown</td>
+<td>Legacy</td>
+</tr>
+<tr>
+<td>testing_wizard</td>
+<td>~250</td>
+<td>❌</td>
+<td>Unknown</td>
+<td>Legacy</td>
+</tr>
+<tr>
+<td>base_wizard</td>
+<td>~200</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>Base class</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b-healthcare-wizards-18">B. Healthcare Wizards (18)<a class="headerlink" href="#b-healthcare-wizards-18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Wizard</th>
+<th>Lines</th>
+<th>Memory</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sbar_wizard</td>
+<td>608</td>
+<td>Redis</td>
+<td>Add pattern learning</td>
+</tr>
+<tr>
+<td>admission_assessment_wizard</td>
+<td>644</td>
+<td>Redis</td>
+<td>Add outcome tracking</td>
+</tr>
+<tr>
+<td>shift_handoff_wizard</td>
+<td>535</td>
+<td>Redis</td>
+<td>Add pattern learning</td>
+</tr>
+<tr>
+<td>soap_note_wizard</td>
+<td>679</td>
+<td>Redis</td>
+<td>Add HIPAA audit</td>
+</tr>
+<tr>
+<td>clinical_assessment</td>
+<td>769</td>
+<td>Redis</td>
+<td>Add scoring</td>
+</tr>
+<tr>
+<td>discharge_summary_wizard</td>
+<td>466</td>
+<td>Redis</td>
+<td>Add follow-up tracking</td>
+</tr>
+<tr>
+<td>patient_education</td>
+<td>654</td>
+<td>Redis</td>
+<td>Add personalization</td>
+</tr>
+<tr>
+<td>quality_improvement</td>
+<td>705</td>
+<td>Redis</td>
+<td>Add QI metrics</td>
+</tr>
+<tr>
+<td>incident_report_wizard</td>
+<td>452</td>
+<td>Redis</td>
+<td>Add trend analysis</td>
+</tr>
+<tr>
+<td>dosage_calculation</td>
+<td>497</td>
+<td>❌</td>
+<td>Add safety history</td>
+</tr>
+<tr>
+<td>sbar_report</td>
+<td>323</td>
+<td>❌</td>
+<td>Add persistence</td>
+</tr>
+<tr>
+<td>medication_reconciliation</td>
+<td>~400</td>
+<td>Redis</td>
+<td>Add drug interaction</td>
+</tr>
+<tr>
+<td>clinical_protocol_monitor</td>
+<td>~350</td>
+<td>Redis</td>
+<td>Add compliance metrics</td>
+</tr>
+<tr>
+<td>nursing_assessment</td>
+<td>~350</td>
+<td>Redis</td>
+<td>Add history</td>
+</tr>
+</tbody>
+</table>
+<h3 id="c-coach-wizards-19">C. Coach Wizards (19)<a class="headerlink" href="#c-coach-wizards-19" title="Permanent link">&para;</a></h3>
+<p><strong>All are stub implementations requiring full implementation:</strong></p>
+<ol>
+<li>security_wizard</li>
+<li>performance_wizard</li>
+<li>testing_wizard</li>
+<li>refactoring_wizard</li>
+<li>database_wizard</li>
+<li>api_wizard</li>
+<li>debugging_wizard</li>
+<li>scaling_wizard</li>
+<li>observability_wizard</li>
+<li>cicd_wizard</li>
+<li>documentation_wizard</li>
+<li>compliance_wizard</li>
+<li>migration_wizard</li>
+<li>monitoring_wizard</li>
+<li>localization_wizard</li>
+<li>accessibility_wizard</li>
+<li>base_wizard (base class - OK)</li>
+<li>generate_wizards (utility - OK)</li>
+</ol>
+<h3 id="d-domain-wizards-16">D. Domain Wizards (16)<a class="headerlink" href="#d-domain-wizards-16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Wizard</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>healthcare_wizard</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>finance_wizard</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>legal_wizard</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>hr_wizard</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>education_wizard</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>retail_wizard</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>manufacturing_wizard</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>logistics_wizard</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>insurance_wizard</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>real_estate_wizard</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>government_wizard</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>research_wizard</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>sales_wizard</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>customer_support_wizard</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>accounting_wizard</td>
+<td>Needs memory</td>
+</tr>
+<tr>
+<td>technology_wizard</td>
+<td>Needs memory</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>This plan is for review and approval. Implementation should not begin until priorities are confirmed.</em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 Smart-AI-Memory
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/Smart-AI-Memory/empathy" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://pypi.org/project/empathy-framework/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 444.7a20.4 20.4 0 1 1 0-40.7 20.4 20.4 0 1 1 0 40.7M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.6-183.4a20.4 20.4 0 1 1 0 40.8 20.4 20.4 0 1 1 0-40.8"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

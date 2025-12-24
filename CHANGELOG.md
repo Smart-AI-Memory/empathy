@@ -5,6 +5,18 @@ All notable changes to the Empathy Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.3] - 2025-12-24
+
+### Fixed
+
+- Fixed PyPI URLs to match Diátaxis documentation structure
+  - Getting Started: `/framework-docs/tutorials/quickstart/`
+  - FAQ: `/framework-docs/reference/FAQ/`
+- Rebuilt and updated documentation with Diátaxis structure
+- Fresh MkDocs build deployed to website
+
+---
+
 ## [3.2.2] - 2025-12-24
 
 ### Fixed
