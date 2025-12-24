@@ -4,7 +4,7 @@ import path from "path";
 const nextConfig: NextConfig = {
   output: 'standalone',
   outputFileTracingRoot: path.join(__dirname, './'),
-  skipTrailingSlashRedirect: true,  // Don't auto-redirect trailing slashes - let middleware handle it
+  trailingSlash: true,  // Force trailing slashes for MkDocs compatibility
   eslint: {
     // Only run ESLint on these directories during production builds
     dirs: ['app'],
