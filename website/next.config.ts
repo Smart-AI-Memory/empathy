@@ -4,6 +4,7 @@ import path from "path";
 const nextConfig: NextConfig = {
   output: 'standalone',
   outputFileTracingRoot: path.join(__dirname, './'),
+  trailingSlash: true,  // Ensure trailing slashes for correct relative path resolution
   eslint: {
     // Only run ESLint on these directories during production builds
     dirs: ['app'],
