@@ -5,6 +5,70 @@ All notable changes to the Empathy Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2025-12-24
+
+### Added
+
+**Unified Typer CLI**
+- New `empathy` command consolidating 5 entry points into one
+- Beautiful Rich output with colored panels and tables
+- Subcommand groups: `memory`, `provider`, `workflow`, `wizard`
+- Cheatsheet command: `empathy cheatsheet`
+- Backward-compatible legacy entry points preserved
+
+**Dev Container Support**
+- One-click development environment with VS Code
+- Docker Compose setup with Python 3.11 + Redis 7
+- Pre-configured VS Code extensions (Python, Ruff, Black, MyPy, Pylance)
+- Automatic dependency installation on container creation
+
+**CI/CD Enhancements**
+- Python 3.13 added to test matrix (now 3.10-3.13 × 3 OS = 12 jobs)
+- MyPy type checking in lint workflow (non-blocking)
+- Codecov coverage upload for test tracking
+- Documentation workflow for MkDocs build and deploy
+- PR labeler for automatic label assignment
+- Dependabot for automated dependency updates (pip, actions, docker)
+
+**Async Pattern Detection**
+- Background pattern detection for Level 3 proactive interactions
+- Non-blocking pattern analysis during conversations
+- Sequential, preference, and conditional pattern types
+
+**Workflow Tests**
+- PR Review workflow tests (32 tests)
+- Dependency Check workflow tests (29 tests)
+- Security Audit workflow tests
+- Base workflow tests
+
+### Changed
+
+**Documentation Restructured with Diátaxis**
+- Tutorials: Learning-oriented guides (installation, quickstart, examples)
+- How-to: Task-oriented guides (memory, agents, integration)
+- Explanation: Understanding-oriented content (philosophy, concepts)
+- Reference: Information-oriented docs (API, CLI, glossary)
+- Internal docs moved to `docs/internal/`
+
+**Core Dependencies**
+- Added `rich>=13.0.0` for beautiful CLI output
+- Added `typer>=0.9.0` for modern CLI commands
+- Ruff auto-fix enabled (`fix = true`)
+
+**Project Structure**
+- Root directory cleaned up (36 → 7 markdown files)
+- Planning docs moved to `docs/development-logs/`
+- Architecture docs organized in `docs/architecture/`
+- Marketing materials in `docs/marketing/`
+
+### Fixed
+
+- Fixed broken internal documentation links after Diátaxis reorganization
+- Lint fixes for unused variables in test files
+- Black formatting for workflow tests
+
+---
+
 ## [3.1.0] - 2025-12-23
 
 ### Added

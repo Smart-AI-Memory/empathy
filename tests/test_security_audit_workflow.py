@@ -6,7 +6,6 @@ team decision integration, and remediation planning.
 """
 
 import json
-import os
 import tempfile
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -42,7 +41,7 @@ class TestSecurityPatterns:
     def test_severity_values(self):
         """Test that severities are valid values."""
         valid_severities = {"critical", "high", "medium", "low"}
-        for vuln_type, info in SECURITY_PATTERNS.items():
+        for _vuln_type, info in SECURITY_PATTERNS.items():
             assert info["severity"] in valid_severities
 
 
@@ -203,7 +202,7 @@ class TestSecurityAuditStages:
         with patch.object(workflow, "_triage", new_callable=AsyncMock) as mock:
             mock.return_value = ({"findings": []}, 100, 50)
 
-            result = await workflow.run_stage("triage", ModelTier.CHEAP, {"path": "."})
+            await workflow.run_stage("triage", ModelTier.CHEAP, {"path": "."})
 
             mock.assert_called_once()
 
@@ -215,9 +214,7 @@ class TestSecurityAuditStages:
         with patch.object(workflow, "_analyze", new_callable=AsyncMock) as mock:
             mock.return_value = ({"analysis": {}}, 200, 100)
 
-            result = await workflow.run_stage(
-                "analyze", ModelTier.CAPABLE, {"findings": []}
-            )
+            await workflow.run_stage("analyze", ModelTier.CAPABLE, {"findings": []})
 
             mock.assert_called_once()
 
@@ -229,7 +226,7 @@ class TestSecurityAuditStages:
         with patch.object(workflow, "_assess", new_callable=AsyncMock) as mock:
             mock.return_value = ({"risk_score": 0}, 150, 75)
 
-            result = await workflow.run_stage("assess", ModelTier.CAPABLE, {})
+            await workflow.run_stage("assess", ModelTier.CAPABLE, {})
 
             mock.assert_called_once()
 
@@ -241,7 +238,7 @@ class TestSecurityAuditStages:
         with patch.object(workflow, "_remediate", new_callable=AsyncMock) as mock:
             mock.return_value = ({"remediation_plan": []}, 300, 200)
 
-            result = await workflow.run_stage("remediate", ModelTier.PREMIUM, {})
+            await workflow.run_stage("remediate", ModelTier.PREMIUM, {})
 
             mock.assert_called_once()
 
@@ -348,7 +345,7 @@ class TestSecurityAuditTriage:
         with tempfile.TemporaryDirectory() as tmpdir:
             node_dir = Path(tmpdir) / "node_modules"
             node_dir.mkdir()
-            (node_dir / "lib.js").write_text('eval(user_input)')
+            (node_dir / "lib.js").write_text("eval(user_input)")
 
             workflow = SecurityAuditWorkflow()
 
@@ -463,9 +460,7 @@ def get_user(user_id: int) -> Optional[dict]:
             )
 
             # Clean code should have minimal findings
-            critical_findings = [
-                f for f in result["findings"] if f["severity"] == "critical"
-            ]
+            critical_findings = [f for f in result["findings"] if f["severity"] == "critical"]
             assert len(critical_findings) == 0
 
     @pytest.mark.asyncio

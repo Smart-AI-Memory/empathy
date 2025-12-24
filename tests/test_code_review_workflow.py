@@ -116,7 +116,7 @@ class TestCodeReviewWorkflowStages:
         with patch.object(workflow, "_classify", new_callable=AsyncMock) as mock:
             mock.return_value = ({"change_type": "feature"}, 100, 50)
 
-            result = await workflow.run_stage("classify", ModelTier.CHEAP, {"diff": "..."})
+            await workflow.run_stage("classify", ModelTier.CHEAP, {"diff": "..."})
 
             mock.assert_called_once()
 
@@ -128,7 +128,7 @@ class TestCodeReviewWorkflowStages:
         with patch.object(workflow, "_scan", new_callable=AsyncMock) as mock:
             mock.return_value = ({"security_issues": []}, 200, 100)
 
-            result = await workflow.run_stage("scan", ModelTier.CAPABLE, {"diff": "..."})
+            await workflow.run_stage("scan", ModelTier.CAPABLE, {"diff": "..."})
 
             mock.assert_called_once()
 
@@ -140,9 +140,7 @@ class TestCodeReviewWorkflowStages:
         with patch.object(workflow, "_architect_review", new_callable=AsyncMock) as mock:
             mock.return_value = ({"recommendations": []}, 300, 200)
 
-            result = await workflow.run_stage(
-                "architect_review", ModelTier.PREMIUM, {"diff": "..."}
-            )
+            await workflow.run_stage("architect_review", ModelTier.PREMIUM, {"diff": "..."})
 
             mock.assert_called_once()
 
@@ -154,9 +152,7 @@ class TestCodeReviewWorkflowStages:
         with patch.object(workflow, "_crew_review", new_callable=AsyncMock) as mock:
             mock.return_value = ({"crew_analysis": {}}, 500, 300)
 
-            result = await workflow.run_stage(
-                "crew_review", ModelTier.PREMIUM, {"diff": "..."}
-            )
+            await workflow.run_stage("crew_review", ModelTier.PREMIUM, {"diff": "..."})
 
             mock.assert_called_once()
 

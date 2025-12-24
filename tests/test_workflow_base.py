@@ -6,9 +6,6 @@ Tests the foundation classes used by all workflow implementations.
 
 from dataclasses import asdict
 from datetime import datetime
-from unittest.mock import AsyncMock, MagicMock, patch
-
-import pytest
 
 from src.empathy_os.workflows.base import (
     PROVIDER_MODELS,
@@ -104,8 +101,8 @@ class TestProviderModels:
 
     def test_model_names_are_strings(self):
         """Test all model names are strings."""
-        for provider, models in PROVIDER_MODELS.items():
-            for tier, model_name in models.items():
+        for _provider, models in PROVIDER_MODELS.items():
+            for _tier, model_name in models.items():
                 assert isinstance(model_name, str)
                 assert len(model_name) > 0
 

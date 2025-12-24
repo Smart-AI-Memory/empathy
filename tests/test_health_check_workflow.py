@@ -7,7 +7,6 @@ Tests the workflow wrapper for project health diagnosis and fixing.
 import json
 import os
 import tempfile
-from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -267,7 +266,7 @@ class TestHealthCheckWorkflowStages:
 
             from src.empathy_os.workflows.base import ModelTier
 
-            result = await workflow.run_stage("fix", ModelTier.CAPABLE, {"path": "."})
+            await workflow.run_stage("fix", ModelTier.CAPABLE, {"path": "."})
 
             mock_fix.assert_called_once()
 
