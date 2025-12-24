@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "empathy-framework"
-version = "3.2.0"
+version = "3.2.1"
 description = "AI collaboration framework with persistent memory, anticipatory intelligence, code inspection, and multi-agent orchestration"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.10"
@@ -211,8 +211,8 @@ empathy-sync-claude = "empathy_llm_toolkit.cli.sync_claude:main"
 [project.urls]
 Homepage = "https://www.smartaimemory.com"
 Documentation = "https://www.smartaimemory.com/docs"
-"Getting Started" = "https://www.smartaimemory.com/docs/getting-started"
-FAQ = "https://www.smartaimemory.com/docs/faq"
+"Getting Started" = "https://www.smartaimemory.com/docs/tutorials/quickstart"
+FAQ = "https://www.smartaimemory.com/docs/reference/FAQ"
 Book = "https://www.smartaimemory.com/book"
 Repository = "https://github.com/Smart-AI-Memory/empathy-framework"
 Issues = "https://github.com/Smart-AI-Memory/empathy-framework/issues"
