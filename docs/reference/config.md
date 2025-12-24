@@ -370,5 +370,5 @@ export EMPATHY_PATTERN_CONFIDENCE_THRESHOLD=0.70
 ## See Also
 
 - [EmpathyOS API](empathy-os.md)
-- [Quick Start Guide](../getting-started/quickstart.md)
-- [Configuration Examples](../getting-started/configuration.md)
+- [Quick Start Guide](../tutorials/quickstart.md)
+- [Configuration Examples](../reference/configuration.md)

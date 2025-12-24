@@ -73,5 +73,5 @@ export EMPATHY_CONFIDENCE_THRESHOLD=0.75
 
 ## Next Steps
 
-- **[Examples](../examples/simple-chatbot.md)**: See configuration in action
-- **[API Reference](../api-reference/empathy-os.md)**: Complete API documentation
+- **[Examples](../tutorials/tutorials/examples/simple-chatbot.md)**: See configuration in action
+- **[API Reference](../reference/empathy-os.md)**: Complete API documentation

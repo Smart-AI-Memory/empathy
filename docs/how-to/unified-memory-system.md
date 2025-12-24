@@ -444,7 +444,7 @@ from empathy_os.memory.security import AuditLogger
 
 - **[Short-Term Memory Implementation](./short-term-memory-implementation.md)**: Detailed Redis setup
 - **[Security Architecture](./security-architecture.md)**: PII scrubbing, encryption, audit logging
-- **[API Reference: Memory](../api-reference/multi-agent.md)**: Complete class documentation
+- **[API Reference: Memory](../reference/multi-agent.md)**: Complete class documentation
 
 ---
 

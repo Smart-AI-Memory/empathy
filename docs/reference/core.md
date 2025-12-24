@@ -343,4 +343,4 @@ elif response.level >= 4:
 - [EmpathyOS API](empathy-os.md)
 - [Configuration API](config.md)
 - [Pattern Library](pattern-library.md)
-- [Simple Chatbot Example](../examples/simple-chatbot.md)
+- [Simple Chatbot Example](../tutorials/tutorials/examples/simple-chatbot.md)

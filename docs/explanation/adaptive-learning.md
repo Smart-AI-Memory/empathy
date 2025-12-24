@@ -413,13 +413,13 @@ print(f"Learning velocity: {metrics['learning_velocity']}")  # How fast improvin
 
 ## Examples
 
-See the complete [Adaptive Learning System Example](../examples/adaptive-learning-system.md) for a full implementation.
+See the complete [Adaptive Learning System Example](../tutorials/examples/adaptive-learning-system.md) for a full implementation.
 
 ---
 
 ## See Also
 
 - [Multi-Agent Coordination](multi-agent-coordination.md) - Team patterns
-- [Adaptive Learning Example](../examples/adaptive-learning-system.md) - Full implementation
-- [Pattern Library API](../api-reference/pattern-library.md) - Pattern management
-- [EmpathyOS API](../api-reference/empathy-os.md) - Core configuration
+- [Adaptive Learning Example](../tutorials/examples/adaptive-learning-system.md) - Full implementation
+- [Pattern Library API](../reference/pattern-library.md) - Pattern management
+- [EmpathyOS API](../reference/empathy-os.md) - Core configuration

@@ -556,7 +556,7 @@ print(f"Failed deliveries: {stats['failed_count']}")
 
 ## Examples
 
-See the complete [Webhook Event Integration Example](../examples/webhook-event-integration.md) for implementations with:
+See the complete [Webhook Event Integration Example](../tutorials/examples/webhook-event-integration.md) for implementations with:
 
 - Slack notifications
 - JIRA ticket creation
@@ -568,6 +568,6 @@ See the complete [Webhook Event Integration Example](../examples/webhook-event-i
 
 ## See Also
 
-- [Webhook Example](../examples/webhook-event-integration.md) - Full implementation
+- [Webhook Example](../tutorials/examples/webhook-event-integration.md) - Full implementation
 - [Security Architecture](security-architecture.md) - Webhook security
-- [EmpathyOS API](../api-reference/empathy-os.md) - Webhook configuration
+- [EmpathyOS API](../reference/empathy-os.md) - Webhook configuration

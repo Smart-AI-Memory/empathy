@@ -367,9 +367,9 @@ print(f"Received {len(signals)} reviews")
 ## API Reference
 
 See the full API documentation:
-- [EmpathyOS](./api-reference/empathy-os.md)
-- [Multi-Agent Coordination](./api-reference/multi-agent.md)
-- [Persistence](./api-reference/persistence.md)
+- [EmpathyOS](empathy-os.md)
+- [Multi-Agent Coordination](multi-agent.md)
+- [Persistence](persistence.md)
 
 ---
 

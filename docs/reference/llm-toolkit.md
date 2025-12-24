@@ -545,5 +545,5 @@ llm = EmpathyLLM(
 
 - [EmpathyOS API](empathy-os.md)
 - [Configuration API](config.md)
-- [Healthcare SBAR Example](../examples/sbar-clinical-handoff.md)
+- [Healthcare SBAR Example](../tutorials/tutorials/examples/sbar-clinical-handoff.md)
 - [Security Architecture](../guides/security-architecture.md)

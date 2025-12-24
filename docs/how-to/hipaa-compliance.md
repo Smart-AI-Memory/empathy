@@ -466,9 +466,9 @@ For a **100-bed hospital**:
 ## See Also
 
 - [Security Architecture](security-architecture.md) - Technical implementation details
-- [Healthcare Wizards](../api-reference/wizards.md) - PHI-aware AI assistants
-- [SBAR Example](../examples/sbar-clinical-handoff.md) - HIPAA-compliant handoff protocol
-- [LLM Toolkit](../api-reference/llm-toolkit.md) - Security API reference
+- [Healthcare Wizards](../reference/wizards.md) - PHI-aware AI assistants
+- [SBAR Example](../tutorials/examples/sbar-clinical-handoff.md) - HIPAA-compliant handoff protocol
+- [LLM Toolkit](../reference/llm-toolkit.md) - Security API reference
 
 ---
 

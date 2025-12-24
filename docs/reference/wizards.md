@@ -107,7 +107,7 @@ Domain-specific AI assistants with built-in security, compliance, and industry b
         4. ✅ Implement access controls
         5. ✅ Sign Business Associate Agreement with LLM provider
 
-    **See Also:** [SBAR Clinical Handoff Example](../examples/sbar-clinical-handoff.md)
+    **See Also:** [SBAR Clinical Handoff Example](../tutorials/tutorials/examples/sbar-clinical-handoff.md)
 
 === ":fontawesome-solid-building-columns: Finance"
 
@@ -522,5 +522,5 @@ result = await wizard.process(
 
 - [LLM Toolkit](llm-toolkit.md) - Core LLM functionality
 - [Security Architecture](../guides/security-architecture.md) - Security implementation details
-- [SBAR Example](../examples/sbar-clinical-handoff.md) - Healthcare wizard in action
+- [SBAR Example](../tutorials/tutorials/examples/sbar-clinical-handoff.md) - Healthcare wizard in action
 - [Configuration](config.md) - Wizard configuration options

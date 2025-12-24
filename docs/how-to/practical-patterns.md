@@ -679,8 +679,8 @@ print(f"After 12 successes: {status['current_tier']}")
 
 ## Next Steps
 
-- **[API Reference](../api-reference/multi-agent.md)**: Full class documentation
-- **[Examples](../examples/multi-agent-team-coordination.md)**: Complete working examples
+- **[API Reference](../reference/multi-agent.md)**: Full class documentation
+- **[Examples](../tutorials/examples/multi-agent-team-coordination.md)**: Complete working examples
 - **[Philosophy](./multi-agent-philosophy.md)**: Understand the design principles
 
 ---

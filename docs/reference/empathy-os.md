@@ -214,4 +214,4 @@ See [Configuration API](config.md) for detailed configuration options.
 - [Configuration Reference](config.md)
 - [Core Data Structures](core.md)
 - [Pattern Library](pattern-library.md)
-- [Simple Chatbot Example](../examples/simple-chatbot.md)
+- [Simple Chatbot Example](../tutorials/tutorials/examples/simple-chatbot.md)

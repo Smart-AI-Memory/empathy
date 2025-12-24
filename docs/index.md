@@ -102,7 +102,7 @@ Webhooks for Slack, GitHub, JIRA, Datadog, and custom services.
 
     **Patient Handoffs**: Automated SBAR reports (60% time savings)
 
-    **Live demo coming soon** - See the [SBAR Example](examples/sbar-clinical-handoff.md) for complete code
+    **Live demo coming soon** - See the [SBAR Example](tutorials/examples/sbar-clinical-handoff.md) for complete code
 
     ```python
     from empathy_os import EmpathyOS
@@ -148,10 +148,14 @@ Webhooks for Slack, GitHub, JIRA, Datadog, and custom services.
 
 ## Documentation
 
-- **[Getting Started](getting-started/installation.md)**: Install and configure
-- **[Examples](examples/simple-chatbot.md)**: 5 comprehensive tutorials
-- **[API Reference](api-reference/index.md)**: Complete API documentation
-- **[Contributing](contributing.md)**: How to contribute
+Organized using the [Diátaxis framework](https://diataxis.fr/) for better discoverability:
+
+| Section | Purpose | Start Here |
+|---------|---------|------------|
+| **[Tutorials](tutorials/index.md)** | Learn by doing | [Quick Start](tutorials/quickstart.md) |
+| **[How-to](how-to/index.md)** | Solve specific tasks | [Agent Factory](how-to/agent-factory.md) |
+| **[Explanation](explanation/index.md)** | Understand concepts | [Philosophy](explanation/EMPATHY_PHILOSOPHY.md) |
+| **[Reference](reference/index.md)** | Look up details | [API Reference](reference/API_REFERENCE.md) |
 
 ---
 
@@ -190,7 +194,7 @@ Webhooks for Slack, GitHub, JIRA, Datadog, and custom services.
 
     Get up and running in 5 minutes
 
-    [:octicons-arrow-right-24: Quick Start](getting-started/quickstart.md)
+    [:octicons-arrow-right-24: Quick Start](tutorials/quickstart.md)
 
 -   :fontawesome-solid-robot:{ .lg .middle } **Examples**
 
@@ -198,7 +202,7 @@ Webhooks for Slack, GitHub, JIRA, Datadog, and custom services.
 
     5 comprehensive tutorials with working code
 
-    [:octicons-arrow-right-24: See Examples](examples/simple-chatbot.md)
+    [:octicons-arrow-right-24: See Examples](tutorials/examples/simple-chatbot.md)
 
 -   :fontawesome-solid-hospital:{ .lg .middle } **Healthcare**
 
@@ -206,7 +210,7 @@ Webhooks for Slack, GitHub, JIRA, Datadog, and custom services.
 
     HIPAA-compliant, $2M+ ROI
 
-    [:octicons-arrow-right-24: SBAR Example](examples/sbar-clinical-handoff.md)
+    [:octicons-arrow-right-24: SBAR Example](tutorials/examples/sbar-clinical-handoff.md)
 
 -   :material-book-open-variant:{ .lg .middle } **API Reference**
 
@@ -214,7 +218,7 @@ Webhooks for Slack, GitHub, JIRA, Datadog, and custom services.
 
     Complete API documentation
 
-    [:octicons-arrow-right-24: API Docs](api-reference/index.md)
+    [:octicons-arrow-right-24: API Docs](reference/index.md)
 
 </div>
 

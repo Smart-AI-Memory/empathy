@@ -179,7 +179,7 @@ for step in result.first_steps:
 - **[Guides](../guides/multi-agent-philosophy.md)** - Learn the philosophy behind multi-agent coordination
 - **[Implementation](../guides/short-term-memory-implementation.md)** - Build your own coordinating agents
 - **[Practical Patterns](../guides/practical-patterns.md)** - Ready-to-use patterns with measured benefits
-- **[Examples](../examples/multi-agent-team-coordination.md)** - Full working code samples
+- **[Examples](examples/multi-agent-team-coordination.md)** - Full working code samples
 
 ---
 

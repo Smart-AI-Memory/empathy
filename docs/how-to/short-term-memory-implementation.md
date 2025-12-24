@@ -543,8 +543,8 @@ new_agent.restore_collaboration_state(session_id=agent.session_id)
 ## Next Steps
 
 - **[Practical Patterns](./practical-patterns.md)**: Ready-to-use patterns for common scenarios
-- **[API Reference](../api-reference/multi-agent.md)**: Complete class documentation
-- **[Examples](../examples/multi-agent-team-coordination.md)**: Full working examples
+- **[API Reference](../reference/multi-agent.md)**: Complete class documentation
+- **[Examples](../tutorials/examples/multi-agent-team-coordination.md)**: Full working examples
 
 ---
 

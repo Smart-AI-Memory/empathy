@@ -492,8 +492,8 @@ session.signal("review_complete", {
 ## Next Steps
 
 - **[Short-Term Memory Reference](../SHORT_TERM_MEMORY.md)**: Complete API documentation
-- **[API Reference: Multi-Agent](../api-reference/multi-agent.md)**: Detailed class documentation
-- **[Example: Team Coordination](../examples/multi-agent-team-coordination.md)**: Full working example
+- **[API Reference: Multi-Agent](../reference/multi-agent.md)**: Detailed class documentation
+- **[Example: Team Coordination](../tutorials/examples/multi-agent-team-coordination.md)**: Full working example
 
 ---
 

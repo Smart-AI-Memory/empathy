@@ -503,7 +503,7 @@ print(f"Collaboration efficiency: {team_stats['collaboration_efficiency']:.0%}")
 
 ## Examples
 
-See the complete [Multi-Agent Team Coordination Example](../examples/multi-agent-team-coordination.md) for a full implementation with:
+See the complete [Multi-Agent Team Coordination Example](../tutorials/examples/multi-agent-team-coordination.md) for a full implementation with:
 
 - PR review automation
 - Automated test generation
@@ -516,6 +516,6 @@ See the complete [Multi-Agent Team Coordination Example](../examples/multi-agent
 ## See Also
 
 - [Adaptive Learning](adaptive-learning.md) - How agents learn
-- [Pattern Library API](../api-reference/pattern-library.md) - Pattern management
-- [Multi-Agent Example](../examples/multi-agent-team-coordination.md) - Full implementation
-- [EmpathyOS API](../api-reference/empathy-os.md) - Agent configuration
+- [Pattern Library API](../reference/pattern-library.md) - Pattern management
+- [Multi-Agent Example](../tutorials/examples/multi-agent-team-coordination.md) - Full implementation
+- [EmpathyOS API](../reference/empathy-os.md) - Agent configuration

@@ -370,6 +370,6 @@ def test_secrets_detection():
 ## See Also
 
 - [HIPAA Compliance Guide](hipaa-compliance.md) - Healthcare-specific requirements
-- [LLM Toolkit API](../api-reference/llm-toolkit.md) - Security API reference
-- [Industry Wizards](../api-reference/wizards.md) - Domain-specific security
-- [SBAR Example](../examples/sbar-clinical-handoff.md) - Healthcare security in action
+- [LLM Toolkit API](../reference/llm-toolkit.md) - Security API reference
+- [Industry Wizards](../reference/wizards.md) - Domain-specific security
+- [SBAR Example](../tutorials/examples/sbar-clinical-handoff.md) - Healthcare security in action

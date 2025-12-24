@@ -464,4 +464,4 @@ def batch_save_patterns(patterns, db_path):
 - [Pattern Library API](pattern-library.md)
 - [EmpathyOS API](empathy-os.md)
 - [Configuration API](config.md)
-- [CLI Export/Import Commands](../getting-started/quickstart.md#cli-commands)
+- [CLI Export/Import Commands](../tutorials/quickstart.md#cli-commands)
