@@ -433,6 +433,17 @@ echo 'ANTHROPIC_API_KEY=sk-ant-...' >> .env
 
 ---
 
+## Project Evolution
+
+For those interested in the development history and architectural decisions:
+
+- **[Development Logs](docs/development-logs/)** — Execution plans, phase completions, and progress tracking
+- **[Architecture Docs](docs/architecture/)** — System design, memory architecture, and integration plans
+- **[Marketing Materials](docs/marketing/)** — Pitch decks, outreach templates, and commercial readiness
+- **[Guides](docs/guides/)** — Publishing tutorials, MkDocs setup, and distribution policies
+
+---
+
 ## License
 
 **Fair Source License 0.9** — Free for students, educators, and teams ≤5 employees. Commercial license ($99/dev/year) for larger organizations. [Details →](LICENSE)

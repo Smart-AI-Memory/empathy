@@ -49,6 +49,8 @@ __pycache__/
 
 # Security
 security_scan_results.json
+pip_audit_results.json
+*.audit.json
 .env
 **/.env
 **/tests/.env
