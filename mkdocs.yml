@@ -15,59 +15,95 @@ edit_uri: edit/main/docs/
 # Copyright
 copyright: Copyright &copy; 2025 Smart-AI-Memory
 
-# Navigation Structure
+# Navigation Structure - Diátaxis Framework
+# Tutorials (learning), How-to (tasks), Explanation (understanding), Reference (information)
 nav:
   - Home: index.md
-  - Get the Book: get-the-book.md
-  - The Book:
+
+  # Learning-oriented
+  - Tutorials:
+      - tutorials/index.md
+      - Installation: tutorials/installation.md
+      - Quick Start: tutorials/quickstart.md
+      - Examples:
+          - Code Review Assistant: tutorials/examples/simple-chatbot.md
+          - SBAR Clinical Handoff: tutorials/examples/sbar-clinical-handoff.md
+          - Multi-Agent Team: tutorials/examples/multi-agent-team-coordination.md
+          - Adaptive Learning: tutorials/examples/adaptive-learning-system.md
+          - Webhook Integration: tutorials/examples/webhook-event-integration.md
+
+  # Task-oriented
+  - How-to:
+      - how-to/index.md
+      - Memory System:
+          - Unified Memory: how-to/unified-memory-system.md
+          - Short-Term Memory: how-to/short-term-memory-implementation.md
+          - Memory Graph: how-to/memory-graph.md
+      - AI Agents:
+          - Agent Factory: how-to/agent-factory.md
+          - Smart Router: how-to/smart-router.md
+          - Auto-Chaining: how-to/auto-chaining.md
+      - Integration:
+          - Webhooks: how-to/webhook-integration.md
+          - Security: how-to/security-architecture.md
+          - HIPAA Compliance: how-to/hipaa-compliance.md
+      - Patterns:
+          - Practical Patterns: how-to/practical-patterns.md
+          - Resilience Patterns: how-to/resilience-patterns.md
+      - Prerequisites: how-to/prerequisites.md
+
+  # Understanding-oriented
+  - Explanation:
+      - explanation/index.md
+      - Philosophy:
+          - The Empathy Philosophy: explanation/EMPATHY_PHILOSOPHY.md
+          - Multi-Agent Philosophy: explanation/multi-agent-philosophy.md
+          - How Claude Learns: explanation/HOW_CLAUDE_LEARNS.md
+      - Concepts:
+          - Teaching AI Your Philosophy: explanation/TEACHING_AI_YOUR_PHILOSOPHY.md
+          - Adaptive Learning: explanation/adaptive-learning.md
+          - Comparison: explanation/COMPARISON.md
+      - Integration:
+          - Using with LLMs: explanation/USING_EMPATHY_WITH_LLMS.md
+          - MemDocs Integration: explanation/MEMDOCS_EMPATHY_INTEGRATION.md
+      - Non-Technical Guide: explanation/EMPATHY_FRAMEWORK_NON_TECHNICAL_GUIDE.md
+
+  # Information-oriented
+  - Reference:
+      - reference/index.md
+      - CLI:
+          - CLI Guide: reference/CLI_GUIDE.md
+          - CLI Cheatsheet: reference/CLI_CHEATSHEET.md
+      - API:
+          - Overview: reference/API_REFERENCE.md
+          - EmpathyOS: reference/empathy-os.md
+          - Configuration: reference/configuration.md
+          - Core: reference/core.md
+          - Config: reference/config.md
+          - Pattern Library: reference/pattern-library.md
+          - Multi-Agent: reference/multi-agent.md
+          - Persistence: reference/persistence.md
+          - LLM Toolkit: reference/llm-toolkit.md
+      - Wizards:
+          - Industry Wizards: reference/wizards.md
+          - Software Wizards: reference/software-wizards.md
+          - AI Wizards: reference/ai-wizards.md
+      - Help:
+          - FAQ: reference/FAQ.md
+          - Troubleshooting: reference/TROUBLESHOOTING.md
+          - Glossary: reference/glossary.md
+          - User Guide: reference/USER_GUIDE.md
+          - Short-Term Memory: reference/SHORT_TERM_MEMORY.md
+
+  - Contributing: contributing.md
+
+  # Book section (separate from main docs)
+  - Book:
+      - Get the Book: get-the-book.md
       - Cover: book-cover.md
-      - How to Read This Book: guides/how-to-read-this-book.md
+      - How to Read: guides/how-to-read-this-book.md
       - Preface: guides/preface.md
       - Foreword by Claude: guides/foreword.md
-      - Appendix - CLI Reference: CLI_CHEATSHEET.md
-  - Getting Started:
-      - Installation: getting-started/installation.md
-      - Prerequisites: guides/prerequisites.md
-      - Quick Start: getting-started/quickstart.md
-      - Configuration: getting-started/configuration.md
-      - CLI Guide: CLI_GUIDE.md
-      - CLI Cheatsheet: CLI_CHEATSHEET.md
-  - Philosophy:
-      - Multi-Agent Coordination: guides/multi-agent-philosophy.md
-      - The Empathy Philosophy: EMPATHY_PHILOSOPHY.md
-  - Implementation:
-      - Unified Memory System: guides/unified-memory-system.md
-      - Short-Term Memory: guides/short-term-memory-implementation.md
-      - Practical Patterns: guides/practical-patterns.md
-      - Agent Factory: guides/agent-factory.md
-      - Intelligence System:
-          - Smart Router: guides/smart-router.md
-          - Memory Graph: guides/memory-graph.md
-          - Auto-Chaining: guides/auto-chaining.md
-      - Resilience Patterns: guides/resilience-patterns.md
-      - Short-Term Memory Reference: SHORT_TERM_MEMORY.md
-      - Glossary: guides/glossary.md
-  - Examples:
-      - Code Review Assistant: examples/simple-chatbot.md
-      - SBAR Clinical Handoff: examples/sbar-clinical-handoff.md
-      - Multi-Agent Coordination: examples/multi-agent-team-coordination.md
-      - Adaptive Learning: examples/adaptive-learning-system.md
-      - Webhook Integration: examples/webhook-event-integration.md
-  - API Reference:
-      - Overview: api-reference/index.md
-      - EmpathyOS: api-reference/empathy-os.md
-      - Configuration: api-reference/config.md
-      - Core: api-reference/core.md
-      - Pattern Library: api-reference/pattern-library.md
-      - Multi-Agent Coordination: api-reference/multi-agent.md
-      - Persistence: api-reference/persistence.md
-      - LLM Toolkit: api-reference/llm-toolkit.md
-      - Wizards:
-          - Industry Wizards: api-reference/wizards.md
-          - Software Wizards: api-reference/software-wizards.md
-          - AI Wizards: api-reference/ai-wizards.md
-  - FAQ: FAQ.md
-  - Contributing: contributing.md
 
 # Theme Configuration (Material)
 theme:
