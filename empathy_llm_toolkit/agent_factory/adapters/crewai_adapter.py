@@ -164,7 +164,7 @@ class CrewAIWorkflow(BaseWorkflow):
         """
         super().__init__(config, agents)
         self._crew = crew
-        self._tasks = []
+        self._tasks: list = []
 
     async def run(self, input_data: str | dict, initial_state: dict | None = None) -> dict:
         """Run the CrewAI crew workflow."""

@@ -150,7 +150,7 @@ class TechnologyWizard(BaseWizard):
 - Not a substitute for qualified IT professionals and security experts
 - Always defer to IT leadership for critical infrastructure decisions
 
-Remember: System security and data protection are paramount. All interactions are logged for security audit and compliance.
+Remember: System security and data protection are paramount. Interactions are logged.
 """
 
     def get_pii_patterns(self) -> list[str]:

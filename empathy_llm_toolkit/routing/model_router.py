@@ -30,12 +30,7 @@ from typing import Any
 
 # Import from unified registry
 from empathy_os.models import MODEL_REGISTRY, ModelInfo
-from empathy_os.models.tasks import (
-    CAPABLE_TASKS,
-    CHEAP_TASKS,
-    PREMIUM_TASKS,
-    get_tier_for_task,
-)
+from empathy_os.models.tasks import CAPABLE_TASKS, CHEAP_TASKS, PREMIUM_TASKS, get_tier_for_task
 
 
 class ModelTier(Enum):

@@ -49,13 +49,18 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             switch (message.type) {
                 case 'runCommand':
                     try {
-                        const cmdName = `empathy.${message.command}`;
-                        // Check if command exists before executing
-                        const allCommands = await vscode.commands.getCommands(true);
-                        if (allCommands.includes(cmdName)) {
-                            await vscode.commands.executeCommand(cmdName);
+                        // Special handling for run-tests (runs pytest directly)
+                        if (message.command === 'run-tests') {
+                            await this._runTests();
                         } else {
-                            vscode.window.showWarningMessage(`Command not found: ${cmdName}`);
+                            const cmdName = `empathy.${message.command}`;
+                            // Check if command exists before executing
+                            const allCommands = await vscode.commands.getCommands(true);
+                            if (allCommands.includes(cmdName)) {
+                                await vscode.commands.executeCommand(cmdName);
+                            } else {
+                                vscode.window.showWarningMessage(`Command not found: ${cmdName}`);
+                            }
                         }
                     } catch (err) {
                         vscode.window.showErrorMessage(`Command failed: ${err}`);
@@ -79,6 +84,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     break;
                 case 'getCosts':
                     this._sendCostsData();
+                    break;
+                case 'getModelConfig':
+                    this._sendModelConfigData();
                     break;
                 case 'showFilePicker':
                     await this._showFilePicker(message.workflow);
@@ -498,6 +506,88 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         }
     }
 
+    private _sendModelConfigData() {
+        if (!this._view) {
+            return;
+        }
+
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+
+        // Default model configuration
+        let modelConfig = {
+            provider: 'anthropic',
+            mode: 'single',
+            models: {
+                cheap: 'claude-3-haiku',
+                capable: 'claude-3-5-sonnet',
+                premium: 'claude-3-opus'
+            }
+        };
+
+        if (workspaceFolder) {
+            // Try to read from .env file
+            const envFile = path.join(workspaceFolder, '.env');
+            if (fs.existsSync(envFile)) {
+                try {
+                    const envContent = fs.readFileSync(envFile, 'utf8');
+
+                    // Check for provider keys
+                    const hasAnthropic = envContent.includes('ANTHROPIC_API_KEY');
+                    const hasOpenAI = envContent.includes('OPENAI_API_KEY');
+
+                    if (hasAnthropic && hasOpenAI) {
+                        modelConfig.provider = 'Hybrid';
+                        modelConfig.mode = 'hybrid';
+                        modelConfig.models = {
+                            cheap: 'gpt-4o-mini',
+                            capable: 'claude-3-5-sonnet',
+                            premium: 'claude-3-opus'
+                        };
+                    } else if (hasOpenAI && !hasAnthropic) {
+                        modelConfig.provider = 'OpenAI';
+                        modelConfig.mode = 'single';
+                        modelConfig.models = {
+                            cheap: 'gpt-4o-mini',
+                            capable: 'gpt-4o',
+                            premium: 'o1'
+                        };
+                    } else {
+                        modelConfig.provider = 'Anthropic';
+                    }
+                } catch {
+                    // Use defaults
+                }
+            }
+
+            // Try to read from empathy config
+            const config = vscode.workspace.getConfiguration('empathy');
+            const empathyDir = path.join(workspaceFolder, config.get<string>('empathyDir', '.empathy'));
+            const configFile = path.join(empathyDir, 'config.json');
+
+            if (fs.existsSync(configFile)) {
+                try {
+                    const savedConfig = JSON.parse(fs.readFileSync(configFile, 'utf8'));
+                    if (savedConfig.provider) {
+                        modelConfig.provider = savedConfig.provider;
+                    }
+                    if (savedConfig.mode) {
+                        modelConfig.mode = savedConfig.mode;
+                    }
+                    if (savedConfig.models) {
+                        modelConfig.models = { ...modelConfig.models, ...savedConfig.models };
+                    }
+                } catch {
+                    // Use defaults
+                }
+            }
+        }
+
+        this._view.webview.postMessage({
+            type: 'modelConfig',
+            data: modelConfig
+        });
+    }
+
     private _loadWorkflows(empathyDir: string): WorkflowData {
         const workflows: WorkflowData = {
             totalRuns: 0,
@@ -609,6 +699,22 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         return this._workflowHistory.get(workflowId);
     }
 
+    private async _runTests() {
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+        if (!workspaceFolder) {
+            vscode.window.showErrorMessage('No workspace folder open');
+            return;
+        }
+
+        // Create terminal for test output
+        const terminal = vscode.window.createTerminal({
+            name: 'Empathy Tests',
+            cwd: workspaceFolder
+        });
+        terminal.show();
+        terminal.sendText('python -m pytest tests/ --no-cov -v');
+    }
+
     private async _runWorkflow(workflowName: string, input?: string) {
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
         if (!workspaceFolder) {
@@ -629,7 +735,6 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
 
         // Execute workflow and capture output - pass input as JSON with workflow-specific key
         const inputKeys: Record<string, string> = {
-            'research': 'question',
             'code-review': 'target',
             'doc-gen': 'target',
             'bug-predict': 'target',
@@ -638,9 +743,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             'test-gen': 'target',
             'refactor-plan': 'target',
             'dependency-check': 'scope',
-            'release-prep': 'version',
+            'health-check': 'path',
             'pro-review': 'diff',
-            'pr-review': 'target'
+            'pr-review': 'target_path'
         };
         const inputKey = inputKeys[workflowName] || 'query';
 
@@ -1130,6 +1235,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
     <div class="tabs">
         <button class="tab active" data-tab="power">Power</button>
         <button class="tab" data-tab="health">Health</button>
+        <button class="tab" data-tab="costs">Costs</button>
         <button class="tab" data-tab="workflows">Workflows</button>
     </div>
 
@@ -1155,13 +1261,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     <span class="action-icon">&#x1F4DA;</span>
                     <span>Learn Patterns</span>
                 </button>
-                <button class="action-btn workflow-btn" data-cmd="health" data-title="Health Check">
-                    <span class="action-icon">&#x2764;</span>
-                    <span>Check Health</span>
-                </button>
-                <button class="action-btn workflow-btn" id="view-costs-btn" data-title="View Costs">
-                    <span class="action-icon">&#x1F4B0;</span>
-                    <span>View Costs</span>
+                <button class="action-btn workflow-btn" data-cmd="run-tests" data-title="Run Tests">
+                    <span class="action-icon">&#x1F9EA;</span>
+                    <span>Run Tests</span>
                 </button>
             </div>
         </div>
@@ -1188,113 +1290,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             </div>
         </div>
 
-        <!-- Cost Simulator (Beta) -->
-        <div class="card" style="margin-top: 12px">
-            <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
-                <span>Cost Simulator <span style="font-size: 9px; color: #a855f7; font-weight: normal; opacity: 0.9;">(Beta)</span></span>
-                <span style="font-size: 10px; opacity: 0.7;">Estimate costs by provider & tier mix</span>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 2fr 3fr; gap: 10px; margin-top: 8px;">
-                <!-- Controls -->
-                <div>
-                    <div style="margin-bottom: 8px;">
-                        <div style="font-size: 11px; margin-bottom: 4px; opacity: 0.8;">Provider preset</div>
-                        <select id="sim-provider" style="width: 100%; padding: 6px 8px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 4px; font-size: 11px;">
-                            <option value="hybrid">Hybrid (recommended)</option>
-                            <option value="anthropic">Anthropic only</option>
-                            <option value="openai">OpenAI only</option>
-                        </select>
-                    </div>
-
-                    <div style="margin-bottom: 8px;">
-                        <div style="font-size: 11px; margin-bottom: 4px; opacity: 0.8;">Scenario</div>
-                        <select id="sim-scenario" style="width: 100%; padding: 6px 8px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 4px; font-size: 11px;">
-                            <option value="default">Typical week</option>
-                            <option value="heavy">Heavy experimentation</option>
-                            <option value="light">Light usage</option>
-                        </select>
-                    </div>
-
-                    <div style="margin-bottom: 8px;">
-                        <div style="font-size: 11px; margin-bottom: 4px; opacity: 0.8;">Tier mix override</div>
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; font-size: 10px;">
-                            <label>Cheap
-                                <input id="sim-cheap" type="number" min="0" max="100" step="5" value="50" style="width: 100%; margin-top: 2px; padding: 4px 6px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 3px; font-size: 10px;" />
-                            </label>
-                            <label>Capable
-                                <input id="sim-capable" type="number" min="0" max="100" step="5" value="40" style="width: 100%; margin-top: 2px; padding: 4px 6px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 3px; font-size: 10px;" />
-                            </label>
-                            <label>Premium
-                                <input id="sim-premium" type="number" min="0" max="100" step="5" value="10" style="width: 100%; margin-top: 2px; padding: 4px 6px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 3px; font-size: 10px;" />
-                            </label>
-                        </div>
-                        <div id="sim-mix-warning" style="margin-top: 2px; font-size: 9px; color: var(--vscode-inputValidation-warningForeground); display: none;">Percentages will be normalized to 100%.</div>
-                    </div>
-
-                    <button class="btn" id="sim-recalc" style="width: 100%; margin-top: 4px; font-size: 10px;">Recalculate</button>
-                </div>
-
-                <!-- Results -->
-                <div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center; margin-bottom: 8px;">
-                        <div>
-                            <div style="font-size: 14px; font-weight: 600;" id="sim-actual">$0.00</div>
-                            <div style="font-size: 10px; opacity: 0.7;">Scenario cost</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 14px; font-weight: 600;" id="sim-baseline">$0.00</div>
-                            <div style="font-size: 10px; opacity: 0.7;">All-premium baseline</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 14px; font-weight: 600; color: var(--vscode-charts-green);" id="sim-savings">$0.00</div>
-                            <div style="font-size: 10px; opacity: 0.7;">Saved vs baseline</div>
-                        </div>
-                    </div>
-
-                    <div style="font-size: 10px; opacity: 0.8; margin-bottom: 4px;">By tier (scenario)</div>
-                    <div id="sim-tier-breakdown" style="font-size: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;"></div>
-
-                    <div style="font-size: 9px; opacity: 0.7; margin-top: 6px;">
-                        Simulated costs use static pricing aligned with Empathy tiers and assume ~1K tokens per request.
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Cost Details Panel (hidden by default) -->
-        <div id="costs-panel" class="card" style="margin-top: 12px; display: none;">
-            <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
-                <span>&#x1F4B0; Cost Details (7 days)</span>
-                <button id="close-costs" style="background: none; border: none; cursor: pointer; font-size: 14px; opacity: 0.7;">&#x2715;</button>
-            </div>
-            <div id="costs-summary" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; text-align: center;">
-                <div>
-                    <div style="font-size: 18px; font-weight: bold; color: var(--vscode-charts-green);" id="costs-saved">$0.00</div>
-                    <div style="font-size: 10px; opacity: 0.7;">Saved</div>
-                </div>
-                <div>
-                    <div style="font-size: 18px; font-weight: bold;" id="costs-percent">0%</div>
-                    <div style="font-size: 10px; opacity: 0.7;">Reduction</div>
-                </div>
-                <div>
-                    <div style="font-size: 18px; font-weight: bold;" id="costs-total">$0.00</div>
-                    <div style="font-size: 10px; opacity: 0.7;">Actual</div>
-                </div>
-            </div>
-            <div style="font-size: 11px; font-weight: bold; margin-bottom: 6px; opacity: 0.8;">Recent Requests</div>
-            <div id="costs-list" style="max-height: 200px; overflow-y: auto;">
-                <div style="text-align: center; padding: 20px; opacity: 0.5;">Loading...</div>
-            </div>
-        </div>
-
         <div class="card" style="margin-top: 12px">
             <div class="card-title">Workflows <span style="font-size: 9px; color: #a855f7; font-weight: normal; opacity: 0.9;">(New Beta Feature)</span></div>
             <div class="actions-grid workflow-grid">
-                <button class="action-btn workflow-btn" data-workflow="research">
-                    <span class="action-icon">&#x1F50D;</span>
-                    <span>Research Topic</span>
-                </button>
                 <button class="action-btn workflow-btn" data-workflow="pro-review">
                     <span class="action-icon">&#x2B50;</span>
                     <span>Run Analysis</span>
@@ -1327,9 +1325,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     <span class="action-icon">&#x1F4E6;</span>
                     <span>Check Deps</span>
                 </button>
-                <button class="action-btn workflow-btn" data-workflow="release-prep">
-                    <span class="action-icon">&#x1F3C1;</span>
-                    <span>Prep Release</span>
+                <button class="action-btn workflow-btn" data-workflow="health-check" title="Run HealthCheckCrew for comprehensive 5-agent project health analysis">
+                    <span class="action-icon">&#x1FA7A;</span>
+                    <span>Check Health</span>
                 </button>
                 <button class="action-btn workflow-btn" data-workflow="pr-review">
                     <span class="action-icon">&#x1F50D;</span>
@@ -1351,9 +1349,14 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     <textarea id="workflow-input" placeholder="e.g., What are the best practices for error handling?" style="width: 100%; height: 60px; padding: 8px; font-size: 11px; font-family: var(--vscode-font-family); background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 4px; resize: vertical;"></textarea>
                 </div>
                 <div id="workflow-file-input" style="display: none;">
-                    <div style="display: flex; gap: 6px;">
+                    <div style="display: flex; gap: 6px; align-items: center;">
                         <input id="workflow-path" type="text" placeholder="Click Browse..." readonly style="flex: 1; padding: 8px; font-size: 11px; font-family: var(--vscode-font-family); background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 4px;">
                         <button id="workflow-browse-btn" class="btn" style="white-space: nowrap;">&#x1F4C2; Browse</button>
+                    </div>
+                    <div id="workflow-project-row" style="display: none; margin-top: 6px;">
+                        <button id="workflow-project-root-btn" class="btn" style="width: 100%; background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground);" title="Use entire project folder">
+                            &#x1F4C1; Use Entire Project
+                        </button>
                     </div>
                 </div>
                 <div id="workflow-dropdown-input" style="display: none; text-align: center; padding: 10px;">
@@ -1396,7 +1399,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 <span class="tree-label">Types</span>
                 <span class="tree-value" id="metric-types">--</span>
             </div>
-            <div class="tree-item">
+            <div class="tree-item" data-cmd="securityScan">
                 <span class="tree-icon" id="security-icon">&#x2714;</span>
                 <span class="tree-label">Security</span>
                 <span class="tree-value" id="metric-security">0 high</span>
@@ -1423,9 +1426,161 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             </div>
         </div>
 
-        <div class="btn-row">
-            <button class="btn" data-cmd="runScan">Scan</button>
-            <button class="btn" data-cmd="fixAll">Fix All</button>
+        <!-- Health Actions -->
+        <div class="card" style="margin-top: 10px;">
+            <div class="card-title">Health Actions</div>
+            <div class="actions-grid" style="grid-template-columns: repeat(2, 1fr); gap: 8px;">
+                <button class="action-btn" data-cmd="runScan" title="Run HealthCheckCrew for comprehensive 5-agent analysis">
+                    <span class="action-icon">&#x1FA7A;</span>
+                    <span>Deep Scan</span>
+                </button>
+                <button class="action-btn" data-cmd="fixAll" title="Apply safe auto-fixes (ruff --fix, formatting)">
+                    <span class="action-icon">&#x1F527;</span>
+                    <span>Auto Fix</span>
+                </button>
+                <button class="action-btn" data-cmd="runTests" title="Run pytest test suite">
+                    <span class="action-icon">&#x1F9EA;</span>
+                    <span>Run Tests</span>
+                </button>
+                <button class="action-btn" data-cmd="securityScan" title="Quick security vulnerability scan">
+                    <span class="action-icon">&#x1F512;</span>
+                    <span>Security Scan</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Costs Tab -->
+    <div id="tab-costs" class="tab-content">
+        <!-- Current Model Configuration -->
+        <div class="card">
+            <div class="card-title">Current Configuration</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;">
+                <div>
+                    <div style="font-size: 10px; opacity: 0.7; margin-bottom: 4px;">Provider</div>
+                    <div style="font-size: 14px; font-weight: 600;" id="current-provider">Detecting...</div>
+                </div>
+                <div>
+                    <div style="font-size: 10px; opacity: 0.7; margin-bottom: 4px;">Mode</div>
+                    <div style="font-size: 14px; font-weight: 600;" id="current-mode">--</div>
+                </div>
+            </div>
+            <div style="margin-top: 12px;">
+                <div style="font-size: 10px; opacity: 0.7; margin-bottom: 4px;">Active Models by Tier</div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 11px;" id="tier-models">
+                    <div style="padding: 6px; background: var(--vscode-input-background); border-radius: 4px;">
+                        <div style="font-weight: 600; color: var(--vscode-charts-green);">Cheap</div>
+                        <div style="opacity: 0.8;" id="model-cheap">--</div>
+                    </div>
+                    <div style="padding: 6px; background: var(--vscode-input-background); border-radius: 4px;">
+                        <div style="font-weight: 600; color: var(--vscode-charts-blue);">Capable</div>
+                        <div style="opacity: 0.8;" id="model-capable">--</div>
+                    </div>
+                    <div style="padding: 6px; background: var(--vscode-input-background); border-radius: 4px;">
+                        <div style="font-weight: 600; color: var(--vscode-charts-purple);">Premium</div>
+                        <div style="opacity: 0.8;" id="model-premium">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cost Summary (7 days) -->
+        <div class="card" style="margin-top: 12px;">
+            <div class="card-title">Cost Summary (7 days)</div>
+            <div id="costs-summary" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; text-align: center;">
+                <div>
+                    <div style="font-size: 20px; font-weight: bold; color: var(--vscode-charts-green);" id="costs-saved">$0.00</div>
+                    <div style="font-size: 10px; opacity: 0.7;">Saved</div>
+                </div>
+                <div>
+                    <div style="font-size: 20px; font-weight: bold;" id="costs-percent">0%</div>
+                    <div style="font-size: 10px; opacity: 0.7;">Reduction</div>
+                </div>
+                <div>
+                    <div style="font-size: 20px; font-weight: bold;" id="costs-total">$0.00</div>
+                    <div style="font-size: 10px; opacity: 0.7;">Actual</div>
+                </div>
+            </div>
+            <div style="margin-top: 12px;">
+                <div style="font-size: 11px; font-weight: bold; margin-bottom: 6px; opacity: 0.8;">Recent Requests</div>
+                <div id="costs-list" style="max-height: 150px; overflow-y: auto;">
+                    <div style="text-align: center; padding: 16px; opacity: 0.5;">Loading...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cost Simulator -->
+        <div class="card" style="margin-top: 12px;">
+            <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Cost Simulator <span style="font-size: 9px; color: #a855f7; font-weight: normal; opacity: 0.9;">(Beta)</span></span>
+            </div>
+            <div style="font-size: 10px; opacity: 0.7; margin-bottom: 8px;">Estimate costs by provider & tier mix</div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <!-- Controls -->
+                <div>
+                    <div style="margin-bottom: 8px;">
+                        <div style="font-size: 10px; margin-bottom: 4px; opacity: 0.8;">Provider preset</div>
+                        <select id="sim-provider" style="width: 100%; padding: 6px 8px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 4px; font-size: 11px;">
+                            <option value="hybrid">Hybrid (recommended)</option>
+                            <option value="anthropic">Anthropic only</option>
+                            <option value="openai">OpenAI only</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 8px;">
+                        <div style="font-size: 10px; margin-bottom: 4px; opacity: 0.8;">Scenario</div>
+                        <select id="sim-scenario" style="width: 100%; padding: 6px 8px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 4px; font-size: 11px;">
+                            <option value="default">Typical week</option>
+                            <option value="heavy">Heavy experimentation</option>
+                            <option value="light">Light usage</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 8px;">
+                        <div style="font-size: 10px; margin-bottom: 4px; opacity: 0.8;">Tier mix</div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; font-size: 10px;">
+                            <label>Cheap
+                                <input id="sim-cheap" type="number" min="0" max="100" step="5" value="50" style="width: 100%; margin-top: 2px; padding: 4px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 3px; font-size: 10px;" />
+                            </label>
+                            <label>Capable
+                                <input id="sim-capable" type="number" min="0" max="100" step="5" value="40" style="width: 100%; margin-top: 2px; padding: 4px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 3px; font-size: 10px;" />
+                            </label>
+                            <label>Premium
+                                <input id="sim-premium" type="number" min="0" max="100" step="5" value="10" style="width: 100%; margin-top: 2px; padding: 4px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 3px; font-size: 10px;" />
+                            </label>
+                        </div>
+                        <div id="sim-mix-warning" style="margin-top: 2px; font-size: 9px; color: var(--vscode-inputValidation-warningForeground); display: none;">Percentages will be normalized to 100%.</div>
+                    </div>
+
+                    <button class="btn" id="sim-recalc" style="width: 100%; font-size: 10px;">Recalculate</button>
+                </div>
+
+                <!-- Results -->
+                <div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; text-align: center; margin-bottom: 8px;">
+                        <div>
+                            <div style="font-size: 13px; font-weight: 600;" id="sim-actual">$0.00</div>
+                            <div style="font-size: 9px; opacity: 0.7;">Scenario</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 13px; font-weight: 600;" id="sim-baseline">$0.00</div>
+                            <div style="font-size: 9px; opacity: 0.7;">Baseline</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 13px; font-weight: 600; color: var(--vscode-charts-green);" id="sim-savings">$0.00</div>
+                            <div style="font-size: 9px; opacity: 0.7;">Saved</div>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 10px; opacity: 0.8; margin-bottom: 4px;">By tier</div>
+                    <div id="sim-tier-breakdown" style="font-size: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;"></div>
+
+                    <div style="font-size: 9px; opacity: 0.6; margin-top: 8px;">
+                        Based on ~1K tokens/request
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1456,10 +1611,6 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 <div class="empty-state">No workflow runs yet</div>
             </div>
         </div>
-
-        <div class="btn-row">
-            <button class="btn" data-cmd="workflow">List Workflows</button>
-        </div>
     </div>
 
     <script nonce="${nonce}">
@@ -1472,6 +1623,12 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 tab.classList.add('active');
                 document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+
+                // Load data when switching to Costs tab
+                if (tab.dataset.tab === 'costs') {
+                    vscode.postMessage({ type: 'getCosts' });
+                    vscode.postMessage({ type: 'getModelConfig' });
+                }
             });
         });
 
@@ -1538,11 +1695,6 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
 
         // Workflow input configuration - defines input type and UI for each workflow
         const workflowConfig = {
-            'research': {
-                type: 'text',
-                label: 'What would you like to research?',
-                placeholder: 'e.g., Best practices for error handling in Python'
-            },
             'code-review': {
                 type: 'file',
                 label: 'Select file to review',
@@ -1585,10 +1737,10 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 label: 'Select dependency check scope',
                 options: ['All dependencies', 'Security-critical only', 'Outdated only', 'Direct dependencies only']
             },
-            'release-prep': {
+            'health-check': {
                 type: 'text',
-                label: 'Enter release version',
-                placeholder: 'e.g., v2.3.0'
+                label: 'Path to check (or . for current)',
+                placeholder: 'e.g., src/ or .'
             },
             'pro-review': {
                 type: 'file',
@@ -1600,6 +1752,11 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 type: 'folder',
                 label: 'Select folder containing PR changes',
                 placeholder: 'Click Browse to select folder...'
+            },
+            'health-check': {
+                type: 'folder',
+                label: 'Select folder to check health',
+                placeholder: 'Click Browse or use Project button...'
             }
         };
 
@@ -1627,12 +1784,24 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             } else if (type === 'file' || type === 'folder') {
                 fileInput.style.display = 'block';
                 pathField.placeholder = config.placeholder || 'Click Browse...';
-                pathField.value = lastInput; // Pre-populate with last input
                 // If hybrid (allowText), make editable
                 pathField.readOnly = !config.allowText;
-                // Request active file for pre-population only if no history
-                if (!lastInput) {
-                    vscode.postMessage({ type: 'getActiveFile', workflow: currentWorkflow });
+                // Show "Use Entire Project" row only for folder-type workflows
+                const projectRow = document.getElementById('workflow-project-row');
+                if (projectRow) {
+                    projectRow.style.display = type === 'folder' ? 'block' : 'none';
+                }
+
+                if (type === 'folder') {
+                    // For folders: default to project root "." unless user has history
+                    pathField.value = lastInput || '.';
+                    pathField.placeholder = 'Project root (.) or Browse...';
+                } else {
+                    // For files: use history or request active file
+                    pathField.value = lastInput || '';
+                    if (!lastInput) {
+                        vscode.postMessage({ type: 'getActiveFile', workflow: currentWorkflow });
+                    }
                 }
             } else if (type === 'dropdown') {
                 dropdownInput.style.display = 'block';
@@ -1693,6 +1862,21 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     vscode.postMessage({ type: 'showFolderPicker', workflow: currentWorkflow });
                 } else {
                     vscode.postMessage({ type: 'showFilePicker', workflow: currentWorkflow });
+                }
+            });
+        }
+
+        // Project Root button click handler - sets path to project root
+        const projectRootBtn = document.getElementById('workflow-project-root-btn');
+        if (projectRootBtn) {
+            projectRootBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!currentWorkflow) return;
+                const pathField = document.getElementById('workflow-path');
+                if (pathField) {
+                    pathField.value = '.';
+                    pathField.dispatchEvent(new Event('input', { bubbles: true }));
                 }
             });
         }
@@ -1791,21 +1975,19 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             });
         }
 
-        // View Costs button - show panel and request data
+        // View Costs button - switch to Costs tab and request data
         const viewCostsBtn = document.getElementById('view-costs-btn');
-        const costsPanel = document.getElementById('costs-panel');
-        const closeCostsBtn = document.getElementById('close-costs');
 
         if (viewCostsBtn) {
             viewCostsBtn.addEventListener('click', function() {
-                costsPanel.style.display = 'block';
+                // Switch to Costs tab
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.querySelector('.tab[data-tab="costs"]').classList.add('active');
+                document.getElementById('tab-costs').classList.add('active');
+                // Request cost data and model config
                 vscode.postMessage({ type: 'getCosts' });
-            });
-        }
-
-        if (closeCostsBtn) {
-            closeCostsBtn.addEventListener('click', function() {
-                costsPanel.style.display = 'none';
+                vscode.postMessage({ type: 'getModelConfig' });
             });
         }
 
@@ -1832,6 +2014,8 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 showErrorBanner(message.data.errors);
             } else if (message.type === 'costsData') {
                 updateCostsPanel(message.data);
+            } else if (message.type === 'modelConfig') {
+                updateModelConfig(message.data);
             } else if (message.type === 'workflowStatus') {
                 updateWorkflowResults(message.data);
             } else if (message.type === 'pickerResult') {
@@ -2124,6 +2308,35 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             }).join('');
         }
 
+        function updateModelConfig(data) {
+            // Update provider and mode
+            const providerEl = document.getElementById('current-provider');
+            const modeEl = document.getElementById('current-mode');
+
+            if (providerEl) {
+                providerEl.textContent = data.provider || 'Unknown';
+            }
+            if (modeEl) {
+                const modeLabels = {
+                    'single': 'Single Provider',
+                    'hybrid': 'Hybrid (Cost Optimized)',
+                    'custom': 'Custom'
+                };
+                modeEl.textContent = modeLabels[data.mode] || data.mode || '--';
+            }
+
+            // Update tier models
+            if (data.models) {
+                const cheapEl = document.getElementById('model-cheap');
+                const capableEl = document.getElementById('model-capable');
+                const premiumEl = document.getElementById('model-premium');
+
+                if (cheapEl) cheapEl.textContent = data.models.cheap || '--';
+                if (capableEl) capableEl.textContent = data.models.capable || '--';
+                if (premiumEl) premiumEl.textContent = data.models.premium || '--';
+            }
+        }
+
         function formatTimeAgo(timestamp) {
             if (!timestamp) return '';
             const now = new Date();
@@ -2211,7 +2424,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 return;
             }
 
-            list.innerHTML = workflows.recentRuns.slice(0, 5).map(run => {
+            list.innerHTML = workflows.recentRuns.slice(0, 10).map(run => {
                 // Build XML summary section if available
                 let xmlSection = '';
                 if (run.xml_parsed && run.summary) {

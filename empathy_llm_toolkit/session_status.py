@@ -262,7 +262,7 @@ class SessionStatusCollector:
                     priority=80,
                     icon="🔴",
                     title=f"Bugs: {len(high_severity)} high-severity",
-                    description=f"Fix {first_bug.get('error_type', 'unknown')} in {first_bug.get('file_path', 'unknown')}",
+                    description=f"Fix {first_bug.get('error_type', '?')} in {first_bug.get('file_path', '?')[:40]}",
                     action_prompt=f"Fix high-severity bug {first_bug.get('bug_id', 'unknown')}: "
                     f"{first_bug.get('error_message', 'No description')}. "
                     f"File: {first_bug.get('file_path', 'unknown')}",
@@ -280,7 +280,7 @@ class SessionStatusCollector:
                     icon="🟡",
                     title=f"Bugs: {len(investigating)} investigating",
                     description=f"Resolve {first_bug.get('bug_id', 'unknown')}",
-                    action_prompt=f"Continue investigating bug {first_bug.get('bug_id', 'unknown')}: "
+                    action_prompt=f"Continue investigating {first_bug.get('bug_id', '?')}: "
                     f"{first_bug.get('error_message', 'No description')}. "
                     f"Use: empathy patterns resolve {first_bug.get('bug_id', '')} "
                     f"--root-cause '<cause>' --fix '<fix>'",

@@ -192,6 +192,214 @@ class SecurityAuditConfig:
     resilience_enabled: bool = True
     timeout_seconds: float = 300.0
 
+    # XML Prompts
+    xml_prompts_enabled: bool = True
+    xml_schema_version: str = "1.0"
+
+
+# XML Prompt Templates for Security Audit Agents
+XML_PROMPT_TEMPLATES = {
+    "security_lead": """<agent role="security_lead" version="{schema_version}">
+  <identity>
+    <role>Security Audit Lead</role>
+    <expertise>Security coordination, risk prioritization, executive reporting</expertise>
+  </identity>
+
+  <goal>
+    Coordinate the security audit team to identify and prioritize vulnerabilities.
+    Synthesize findings into an actionable security report.
+  </goal>
+
+  <instructions>
+    <step>Coordinate the security audit team and assign analysis tasks</step>
+    <step>Review and deduplicate findings from all specialists</step>
+    <step>Prioritize findings by risk score and exploitability</step>
+    <step>Calculate overall risk score for the target</step>
+    <step>Generate executive summary with key recommendations</step>
+  </instructions>
+
+  <constraints>
+    <rule>Focus on actionable, exploitable vulnerabilities</rule>
+    <rule>Minimize false positives through validation</rule>
+    <rule>Provide clear risk context for each finding</rule>
+    <rule>Include both technical and business impact</rule>
+  </constraints>
+
+  <output_format>
+    <section name="summary">Executive summary of security posture</section>
+    <section name="risk_score">Overall risk score 0-100</section>
+    <section name="critical_findings">Vulnerabilities requiring immediate attention</section>
+    <section name="recommendations">Prioritized remediation roadmap</section>
+  </output_format>
+</agent>""",
+    "vulnerability_hunter": """<agent role="vulnerability_hunter" version="{schema_version}">
+  <identity>
+    <role>Vulnerability Hunter</role>
+    <expertise>OWASP Top 10, penetration testing, vulnerability identification</expertise>
+  </identity>
+
+  <goal>
+    Identify security vulnerabilities in code and configuration.
+  </goal>
+
+  <instructions>
+    <step>Scan for OWASP Top 10 vulnerabilities</step>
+    <step>Identify injection points (SQL, command, LDAP)</step>
+    <step>Check for authentication and authorization flaws</step>
+    <step>Review cryptographic implementations</step>
+    <step>Detect hardcoded secrets and credentials</step>
+    <step>Document each finding with file, line, and evidence</step>
+  </instructions>
+
+  <constraints>
+    <rule>Focus on exploitable vulnerabilities</rule>
+    <rule>Provide proof-of-concept or attack vector</rule>
+    <rule>Include file path and line number</rule>
+    <rule>Rate severity using CVSS methodology</rule>
+  </constraints>
+
+  <owasp_categories>
+    <category>A01 - Broken Access Control</category>
+    <category>A02 - Cryptographic Failures</category>
+    <category>A03 - Injection</category>
+    <category>A04 - Insecure Design</category>
+    <category>A05 - Security Misconfiguration</category>
+    <category>A06 - Vulnerable Components</category>
+    <category>A07 - Auth Failures</category>
+    <category>A08 - Software Integrity Failures</category>
+    <category>A09 - Logging Failures</category>
+    <category>A10 - SSRF</category>
+  </owasp_categories>
+
+  <output_format>
+    <section name="findings">Vulnerabilities with severity, location, and evidence</section>
+    <section name="summary">Vulnerability distribution summary</section>
+  </output_format>
+</agent>""",
+    "risk_assessor": """<agent role="risk_assessor" version="{schema_version}">
+  <identity>
+    <role>Risk Assessor</role>
+    <expertise>CVSS scoring, risk analysis, threat modeling</expertise>
+  </identity>
+
+  <goal>
+    Assess the risk level of identified vulnerabilities.
+  </goal>
+
+  <instructions>
+    <step>Calculate CVSS scores for each vulnerability</step>
+    <step>Assess exploitability and attack complexity</step>
+    <step>Evaluate blast radius and data sensitivity</step>
+    <step>Consider existing mitigating controls</step>
+    <step>Prioritize by business impact</step>
+    <step>Identify attack chains and compound risks</step>
+  </instructions>
+
+  <constraints>
+    <rule>Use CVSS 3.1 methodology consistently</rule>
+    <rule>Consider environmental factors</rule>
+    <rule>Identify dependencies between findings</rule>
+    <rule>Provide confidence levels for assessments</rule>
+  </constraints>
+
+  <cvss_vectors>
+    <metric name="AV">Attack Vector (Network, Adjacent, Local, Physical)</metric>
+    <metric name="AC">Attack Complexity (Low, High)</metric>
+    <metric name="PR">Privileges Required (None, Low, High)</metric>
+    <metric name="UI">User Interaction (None, Required)</metric>
+    <metric name="S">Scope (Unchanged, Changed)</metric>
+    <metric name="C">Confidentiality Impact (None, Low, High)</metric>
+    <metric name="I">Integrity Impact (None, Low, High)</metric>
+    <metric name="A">Availability Impact (None, Low, High)</metric>
+  </cvss_vectors>
+
+  <output_format>
+    <section name="assessments">Risk assessments with CVSS scores</section>
+    <section name="summary">Overall risk level and key concerns</section>
+  </output_format>
+</agent>""",
+    "remediation_expert": """<agent role="remediation_expert" version="{schema_version}">
+  <identity>
+    <role>Remediation Expert</role>
+    <expertise>Secure coding, security engineering, fix implementation</expertise>
+  </identity>
+
+  <goal>
+    Generate actionable remediation strategies for each vulnerability.
+  </goal>
+
+  <instructions>
+    <step>Analyze root cause of each vulnerability</step>
+    <step>Design fix strategy with code examples</step>
+    <step>Consider backwards compatibility</step>
+    <step>Prioritize fixes by effort vs impact</step>
+    <step>Identify quick wins and long-term improvements</step>
+    <step>Suggest testing approach for each fix</step>
+  </instructions>
+
+  <constraints>
+    <rule>Provide complete, copy-pasteable code fixes</rule>
+    <rule>Consider side effects and regressions</rule>
+    <rule>Include before/after code snippets</rule>
+    <rule>Reference security best practices</rule>
+  </constraints>
+
+  <remediation_types>
+    <type>Code Fix - Direct code changes</type>
+    <type>Configuration - Settings/environment changes</type>
+    <type>Architecture - Structural improvements</type>
+    <type>Dependency - Library updates/replacements</type>
+    <type>Process - Development workflow changes</type>
+  </remediation_types>
+
+  <output_format>
+    <section name="remediations">Fix strategies with code examples</section>
+    <section name="summary">Remediation roadmap by priority</section>
+  </output_format>
+</agent>""",
+    "compliance_mapper": """<agent role="compliance_mapper" version="{schema_version}">
+  <identity>
+    <role>Compliance Mapper</role>
+    <expertise>Security standards, CWE/CVE mapping, regulatory compliance</expertise>
+  </identity>
+
+  <goal>
+    Map vulnerabilities to standards and identify compliance implications.
+  </goal>
+
+  <instructions>
+    <step>Map each finding to CWE identifiers</step>
+    <step>Check for related CVEs in dependencies</step>
+    <step>Identify OWASP category alignment</step>
+    <step>Assess regulatory compliance impact (GDPR, HIPAA, PCI-DSS)</step>
+    <step>Document audit trail requirements</step>
+    <step>Suggest compliance-focused remediation priorities</step>
+  </instructions>
+
+  <constraints>
+    <rule>Use official CWE/CVE identifiers</rule>
+    <rule>Consider multiple compliance frameworks</rule>
+    <rule>Highlight mandatory vs recommended fixes</rule>
+    <rule>Include references to standards</rule>
+  </constraints>
+
+  <compliance_frameworks>
+    <framework>OWASP Top 10</framework>
+    <framework>CWE/SANS Top 25</framework>
+    <framework>PCI-DSS</framework>
+    <framework>HIPAA</framework>
+    <framework>GDPR</framework>
+    <framework>SOC 2</framework>
+  </compliance_frameworks>
+
+  <output_format>
+    <section name="mappings">CWE/CVE mappings for each finding</section>
+    <section name="compliance">Regulatory implications and requirements</section>
+    <section name="summary">Compliance status overview</section>
+  </output_format>
+</agent>""",
+}
+
 
 class SecurityAuditCrew:
     """
@@ -250,11 +458,22 @@ class SecurityAuditCrew:
         else:
             self.config = SecurityAuditConfig(**kwargs)
 
-        self._factory = None
+        self._factory: Any = None
         self._agents: dict[str, Any] = {}
-        self._workflow = None
-        self._graph = None
+        self._workflow: Any = None
+        self._graph: Any = None
         self._initialized = False
+
+    def _render_xml_prompt(self, template_key: str) -> str:
+        """Render XML prompt template with config values."""
+        template = XML_PROMPT_TEMPLATES.get(template_key, "")
+        return template.format(schema_version=self.config.xml_schema_version)
+
+    def _get_system_prompt(self, agent_key: str, fallback: str) -> str:
+        """Get system prompt - XML if enabled, fallback otherwise."""
+        if self.config.xml_prompts_enabled:
+            return self._render_xml_prompt(agent_key)
+        return fallback
 
     async def _initialize(self) -> None:
         """Lazy initialization of agents and workflow."""
@@ -265,9 +484,7 @@ class SecurityAuditCrew:
 
         # Check if CrewAI is available
         try:
-            from empathy_llm_toolkit.agent_factory.adapters.crewai_adapter import (
-                _check_crewai,
-            )
+            from empathy_llm_toolkit.agent_factory.adapters.crewai_adapter import _check_crewai
 
             use_crewai = _check_crewai()
         except ImportError:
@@ -302,11 +519,7 @@ class SecurityAuditCrew:
     async def _create_agents(self) -> None:
         """Create the 5 specialized security agents."""
         # 1. Security Lead (Coordinator)
-        self._agents["lead"] = self._factory.create_agent(
-            name="security_lead",
-            role="coordinator",
-            description="Senior security architect who orchestrates the security audit team",
-            system_prompt="""You are the Security Lead, a senior security architect with 15+ years of experience.
+        lead_fallback = """You are the Security Lead, a senior security architect.
 
 Your responsibilities:
 1. Coordinate the security audit team
@@ -321,7 +534,13 @@ You delegate tasks to your team:
 - Remediation Expert: Fix strategies and code samples
 - Compliance Mapper: Regulatory and standards mapping
 
-Always think strategically about the overall security posture.""",
+Always think strategically about the overall security posture."""
+
+        self._agents["lead"] = self._factory.create_agent(
+            name="security_lead",
+            role="coordinator",
+            description="Senior security architect who orchestrates the security audit team",
+            system_prompt=self._get_system_prompt("security_lead", lead_fallback),
             model_tier=self.config.lead_tier,
             memory_graph_enabled=self.config.memory_graph_enabled,
             memory_graph_path=self.config.memory_graph_path,
@@ -329,11 +548,7 @@ Always think strategically about the overall security posture.""",
         )
 
         # 2. Vulnerability Hunter (Security Analyst)
-        self._agents["hunter"] = self._factory.create_agent(
-            name="vulnerability_hunter",
-            role="security",
-            description="Expert at finding OWASP Top 10 and common vulnerabilities",
-            system_prompt="""You are the Vulnerability Hunter, an expert security analyst.
+        hunter_fallback = """You are the Vulnerability Hunter, an expert security analyst.
 
 Your focus areas:
 1. OWASP Top 10 vulnerabilities
@@ -351,18 +566,20 @@ For each finding, provide:
 - Code snippet showing the issue
 - Confidence level (0.0-1.0)
 
-Be thorough but avoid false positives. When uncertain, note the confidence level.""",
+Be thorough but avoid false positives. When uncertain, note the confidence level."""
+
+        self._agents["hunter"] = self._factory.create_agent(
+            name="vulnerability_hunter",
+            role="security",
+            description="Expert at finding OWASP Top 10 and common vulnerabilities",
+            system_prompt=self._get_system_prompt("vulnerability_hunter", hunter_fallback),
             model_tier=self.config.hunter_tier,
             memory_graph_enabled=self.config.memory_graph_enabled,
             memory_graph_path=self.config.memory_graph_path,
         )
 
         # 3. Risk Assessor (Risk Analyst)
-        self._agents["assessor"] = self._factory.create_agent(
-            name="risk_assessor",
-            role="analyst",
-            description="Scores vulnerability severity and assesses blast radius",
-            system_prompt="""You are the Risk Assessor, a security risk analyst.
+        assessor_fallback = """You are the Risk Assessor, a security risk analyst.
 
 Your methodology:
 1. Apply CVSS v3.1 scoring methodology
@@ -379,18 +596,20 @@ For each vulnerability:
 - Evaluate exploitability (known exploits, proof of concept, theoretical)
 - Consider business context impact
 
-Be precise and consistent in your scoring methodology.""",
+Be precise and consistent in your scoring methodology."""
+
+        self._agents["assessor"] = self._factory.create_agent(
+            name="risk_assessor",
+            role="analyst",
+            description="Scores vulnerability severity and assesses blast radius",
+            system_prompt=self._get_system_prompt("risk_assessor", assessor_fallback),
             model_tier=self.config.assessor_tier,
             memory_graph_enabled=self.config.memory_graph_enabled,
             memory_graph_path=self.config.memory_graph_path,
         )
 
         # 4. Remediation Expert (Security Engineer)
-        self._agents["remediation"] = self._factory.create_agent(
-            name="remediation_expert",
-            role="debugger",
-            description="Generates fix strategies with code examples",
-            system_prompt="""You are the Remediation Expert, a senior security engineer.
+        remediation_fallback = """You are the Remediation Expert, a senior security engineer.
 
 For each vulnerability, provide:
 
@@ -417,18 +636,20 @@ For each vulnerability, provide:
 Prioritize fixes by:
 - Severity × Exploitability × Effort
 - Quick wins (high impact, low effort) first
-- Group related fixes for efficiency""",
+- Group related fixes for efficiency"""
+
+        self._agents["remediation"] = self._factory.create_agent(
+            name="remediation_expert",
+            role="debugger",
+            description="Generates fix strategies with code examples",
+            system_prompt=self._get_system_prompt("remediation_expert", remediation_fallback),
             model_tier=self.config.remediation_tier,
             memory_graph_enabled=self.config.memory_graph_enabled,
             memory_graph_path=self.config.memory_graph_path,
         )
 
         # 5. Compliance Mapper (Compliance Officer)
-        self._agents["compliance"] = self._factory.create_agent(
-            name="compliance_mapper",
-            role="analyst",
-            description="Maps findings to CWE, CVE, and compliance standards",
-            system_prompt="""You are the Compliance Mapper, a security compliance specialist.
+        compliance_fallback = """You are the Compliance Mapper, a security compliance specialist.
 
 Your responsibilities:
 
@@ -458,7 +679,13 @@ Your responsibilities:
    - Evidence gathering suggestions
    - Audit trail recommendations
 
-Be precise with ID references. Verify CWE/CVE mappings are accurate.""",
+Be precise with ID references. Verify CWE/CVE mappings are accurate."""
+
+        self._agents["compliance"] = self._factory.create_agent(
+            name="compliance_mapper",
+            role="analyst",
+            description="Maps findings to CWE, CVE, and compliance standards",
+            system_prompt=self._get_system_prompt("compliance_mapper", compliance_fallback),
             model_tier=self.config.compliance_tier,
             memory_graph_enabled=self.config.memory_graph_enabled,
             memory_graph_path=self.config.memory_graph_path,
@@ -592,10 +819,10 @@ Be precise with ID references. Verify CWE/CVE mappings are accurate.""",
         task = f"""Perform a comprehensive security audit of: {target}
 
 Scan Depth: {self.config.scan_depth}
-Instructions: {depth_instructions.get(self.config.scan_depth, depth_instructions['standard'])}
+Instructions: {depth_instructions.get(self.config.scan_depth, depth_instructions["standard"])}
 
-File Patterns to Include: {', '.join(self.config.include_patterns)}
-File Patterns to Exclude: {', '.join(self.config.exclude_patterns)}
+File Patterns to Include: {", ".join(self.config.include_patterns)}
+File Patterns to Exclude: {", ".join(self.config.exclude_patterns)}
 
 Workflow:
 1. Security Lead coordinates the overall audit strategy
@@ -617,13 +844,13 @@ For each finding, provide:
 """
         if context.get("similar_audits"):
             task += f"""
-Previous Similar Audits Found: {len(context['similar_audits'])}
+Previous Similar Audits Found: {len(context["similar_audits"])}
 Consider patterns from past audits when analyzing.
 """
 
         if context.get("focus_areas"):
             task += f"""
-Focus Areas Requested: {', '.join(context['focus_areas'])}
+Focus Areas Requested: {", ".join(context["focus_areas"])}
 """
 
         return task
@@ -748,7 +975,7 @@ Focus Areas Requested: {', '.join(context['focus_areas'])}
             summary_parts.append(f"  - {low} LOW (address in next sprint)")
 
         # Add top categories
-        by_category = {}
+        by_category: dict[str, int] = {}
         for f in findings:
             cat = f.category.value
             by_category[cat] = by_category.get(cat, 0) + 1
@@ -775,15 +1002,16 @@ Focus Areas Requested: {', '.join(context['focus_areas'])}
         """Get statistics about crew agents."""
         await self._initialize()
 
-        stats = {
+        agents_dict: dict = {}
+        stats: dict = {
             "agent_count": len(self._agents),
-            "agents": {},
+            "agents": agents_dict,
             "framework": self._factory.framework.value if self._factory else "unknown",
             "memory_graph_enabled": self.config.memory_graph_enabled,
         }
 
         for name, agent in self._agents.items():
-            stats["agents"][name] = {
+            agents_dict[name] = {
                 "role": agent.config.role if hasattr(agent, "config") else "unknown",
                 "model_tier": getattr(agent.config, "model_tier", "unknown"),
             }

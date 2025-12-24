@@ -106,7 +106,7 @@ class ResilientAgent(BaseAgent):
         super().__init__(agent.config)
         self._wrapped = agent
         self._resilience_config = config or ResilienceConfig()
-        self._circuit_breaker = None
+        self._circuit_breaker: Any = None
         self._setup_resilience()
 
     def _setup_resilience(self) -> None:
@@ -178,14 +178,14 @@ class ResilientAgent(BaseAgent):
                     "retry_enabled": config.enable_retry,
                     "timeout_enabled": config.enable_timeout,
                 }
-            return result
+            return dict(result)
         except Exception as e:
             if config.enable_fallback:
                 logger.warning(f"Agent {self.name} failed, using fallback: {e}")
                 fallback = config.fallback_value
                 if callable(fallback):
-                    return fallback(input_data, context, e)
-                return fallback
+                    return dict(fallback(input_data, context, e))
+                return dict(fallback) if isinstance(fallback, dict) else {"output": fallback}
             raise
 
     async def stream(self, input_data: str | dict, context: dict | None = None):
@@ -204,7 +204,7 @@ class ResilientAgent(BaseAgent):
         # Apply timeout to entire stream
         if config.enable_timeout:
             try:
-                async with asyncio.timeout(config.timeout_seconds):
+                async with asyncio.timeout(config.timeout_seconds):  # type: ignore[attr-defined]
                     async for chunk in _stream():
                         yield chunk
             except asyncio.TimeoutError:
@@ -313,7 +313,7 @@ class ResilientAgent(BaseAgent):
     def circuit_state(self) -> str | None:
         """Get current circuit breaker state."""
         if self._circuit_breaker:
-            return self._circuit_breaker.state.value
+            return str(self._circuit_breaker.state.value)
         return None
 
     def reset_circuit_breaker(self) -> None:

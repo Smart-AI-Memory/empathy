@@ -56,10 +56,7 @@ async def _get_crew_review(
         return None
 
     try:
-        from empathy_llm_toolkit.agent_factory.crews import (
-            CodeReviewConfig,
-            CodeReviewCrew,
-        )
+        from empathy_llm_toolkit.agent_factory.crews import CodeReviewConfig, CodeReviewCrew
 
         # Build config from dict
         crew_config = CodeReviewConfig(**(config or {}))
@@ -204,11 +201,15 @@ def merge_code_review_results(
             "merged": False,
         }
 
-    if crew_report is None:
+    if crew_report is None and workflow_findings is not None:
         return {**workflow_findings, "merged": False, "crew_enabled": False}
 
-    if workflow_findings is None:
+    if workflow_findings is None and crew_report is not None:
         return {**crew_report, "merged": False}
+
+    # At this point, both should be non-None
+    assert crew_report is not None
+    assert workflow_findings is not None
 
     # Merge findings (prefer crew findings for duplicates)
     crew_findings = crew_report.get("findings", [])

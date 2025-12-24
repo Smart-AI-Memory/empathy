@@ -134,9 +134,9 @@ PREMIUM_TASKS: frozenset[str] = frozenset(
 
 # Complete mapping for lookup
 TASK_TIER_MAP: dict[str, ModelTier] = {
-    **{task: ModelTier.CHEAP for task in CHEAP_TASKS},
-    **{task: ModelTier.CAPABLE for task in CAPABLE_TASKS},
-    **{task: ModelTier.PREMIUM for task in PREMIUM_TASKS},
+    **dict.fromkeys(CHEAP_TASKS, ModelTier.CHEAP),
+    **dict.fromkeys(CAPABLE_TASKS, ModelTier.CAPABLE),
+    **dict.fromkeys(PREMIUM_TASKS, ModelTier.PREMIUM),
 }
 
 

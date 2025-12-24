@@ -18,7 +18,7 @@ Licensed under Fair Source 0.9
 
 import hashlib
 import json
-from collections import defaultdict
+from collections import defaultdict, deque
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -435,12 +435,12 @@ class MemoryGraph:
         if source_id not in self.nodes or target_id not in self.nodes:
             return []
 
-        # BFS with path tracking
+        # BFS with path tracking (deque for O(1) popleft)
         visited: set[str] = {source_id}
-        queue: list[list[tuple[str, Edge | None]]] = [[(source_id, None)]]
+        queue: deque[list[tuple[str, Edge | None]]] = deque([[(source_id, None)]])
 
         while queue:
-            path = queue.pop(0)
+            path = queue.popleft()
             current_id = path[-1][0]
 
             if len(path) > max_depth:

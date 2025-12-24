@@ -66,21 +66,27 @@ class CodeReviewPipeline:
 
     def __init__(
         self,
+        provider: str = "anthropic",
         mode: str = "full",
         parallel_crew: bool = True,
         crew_config: dict | None = None,
+        **kwargs,
     ):
         """
         Initialize the pipeline.
 
         Args:
+            provider: LLM provider to use (anthropic, openai, etc.)
             mode: Review mode ("full", "standard", "quick")
             parallel_crew: Run crew in parallel with workflow (full mode only)
             crew_config: Configuration for CodeReviewCrew
+            **kwargs: Additional arguments (for CLI compatibility)
         """
+        self.provider = provider
         self.mode = mode
         self.parallel_crew = parallel_crew
-        self.crew_config = crew_config or {}
+        # Inject provider into crew config
+        self.crew_config = {"provider": provider, **(crew_config or {})}
         self.crew_enabled = mode == "full"
 
     @classmethod

@@ -312,7 +312,7 @@ class ContextualPatternInjector:
             lines.append("")
             for decision in security:
                 lines.append(
-                    f"- **{decision.get('finding_hash', 'unknown')}**: {decision.get('decision', 'unknown')}"
+                    f"- **{decision.get('finding_hash', '?')}**: {decision.get('decision', '?')}"
                 )
                 lines.append(f"  - Reason: {decision.get('reason', 'N/A')}")
                 lines.append("")

@@ -273,7 +273,7 @@ class EmpathyLLM:
 # Empathy Framework Instructions
 {level_prompt}
 
-Follow the instructions from CLAUDE.md files above, then apply the Empathy Framework guidelines below.
+Follow the CLAUDE.md instructions above, then apply the Empathy Framework below.
 """
         else:
             return level_prompt
@@ -565,9 +565,9 @@ Follow the instructions from CLAUDE.md files above, then apply the Empathy Frame
             prompt = f"""
 User said: "{user_input}"
 
-I've detected a pattern: When you {matching_pattern.trigger}, you typically {matching_pattern.action}.
+Pattern detected: When you {matching_pattern.trigger}, you typically {matching_pattern.action}.
 
-Based on this pattern (confidence: {matching_pattern.confidence:.0%}), I'm proactively {matching_pattern.action}.
+Confidence: {matching_pattern.confidence:.0%}. Proactively {matching_pattern.action}.
 
 [Provide the expected result/action]
 
@@ -633,7 +633,7 @@ COLLABORATION CONTEXT:
 - Total interactions: {len(state.interactions)}
 - Trust level: {state.trust_level:.2f}
 - Detected patterns: {len(state.detected_patterns)}
-- Success rate: {state.successful_actions / (state.successful_actions + state.failed_actions) if (state.successful_actions + state.failed_actions) > 0 else 0:.0%}
+- Success rate: {state.success_rate:.0%}
 
 TASK:
 1. Respond to immediate request

@@ -20,10 +20,7 @@ class TestSecurityFinding:
     def test_finding_creation(self):
         """Test creating a security finding."""
         from empathy_llm_toolkit.agent_factory.crews import SecurityFinding
-        from empathy_llm_toolkit.agent_factory.crews.security_audit import (
-            FindingCategory,
-            Severity,
-        )
+        from empathy_llm_toolkit.agent_factory.crews.security_audit import FindingCategory, Severity
 
         finding = SecurityFinding(
             title="SQL Injection in user input",
@@ -47,10 +44,7 @@ class TestSecurityFinding:
     def test_finding_to_dict(self):
         """Test converting finding to dictionary."""
         from empathy_llm_toolkit.agent_factory.crews import SecurityFinding
-        from empathy_llm_toolkit.agent_factory.crews.security_audit import (
-            FindingCategory,
-            Severity,
-        )
+        from empathy_llm_toolkit.agent_factory.crews.security_audit import FindingCategory, Severity
 
         finding = SecurityFinding(
             title="XSS Vulnerability",
@@ -69,10 +63,7 @@ class TestSecurityFinding:
     def test_finding_defaults(self):
         """Test finding default values."""
         from empathy_llm_toolkit.agent_factory.crews import SecurityFinding
-        from empathy_llm_toolkit.agent_factory.crews.security_audit import (
-            FindingCategory,
-            Severity,
-        )
+        from empathy_llm_toolkit.agent_factory.crews.security_audit import FindingCategory, Severity
 
         finding = SecurityFinding(
             title="Test",
@@ -94,10 +85,7 @@ class TestSecurityReport:
     def test_report_creation(self):
         """Test creating a security report."""
         from empathy_llm_toolkit.agent_factory.crews import SecurityFinding, SecurityReport
-        from empathy_llm_toolkit.agent_factory.crews.security_audit import (
-            FindingCategory,
-            Severity,
-        )
+        from empathy_llm_toolkit.agent_factory.crews.security_audit import FindingCategory, Severity
 
         findings = [
             SecurityFinding(
@@ -135,10 +123,7 @@ class TestSecurityReport:
     def test_report_risk_score(self):
         """Test risk score calculation."""
         from empathy_llm_toolkit.agent_factory.crews import SecurityFinding, SecurityReport
-        from empathy_llm_toolkit.agent_factory.crews.security_audit import (
-            FindingCategory,
-            Severity,
-        )
+        from empathy_llm_toolkit.agent_factory.crews.security_audit import FindingCategory, Severity
 
         # Empty report = 0 risk
         empty_report = SecurityReport(target="./src", findings=[])
@@ -169,10 +154,7 @@ class TestSecurityReport:
     def test_report_findings_by_category(self):
         """Test grouping findings by category."""
         from empathy_llm_toolkit.agent_factory.crews import SecurityFinding, SecurityReport
-        from empathy_llm_toolkit.agent_factory.crews.security_audit import (
-            FindingCategory,
-            Severity,
-        )
+        from empathy_llm_toolkit.agent_factory.crews.security_audit import FindingCategory, Severity
 
         findings = [
             SecurityFinding(
@@ -204,10 +186,7 @@ class TestSecurityReport:
     def test_report_to_dict(self):
         """Test converting report to dictionary."""
         from empathy_llm_toolkit.agent_factory.crews import SecurityFinding, SecurityReport
-        from empathy_llm_toolkit.agent_factory.crews.security_audit import (
-            FindingCategory,
-            Severity,
-        )
+        from empathy_llm_toolkit.agent_factory.crews.security_audit import FindingCategory, Severity
 
         findings = [
             SecurityFinding(
@@ -273,10 +252,7 @@ class TestSecurityAuditCrew:
 
     def test_crew_creation_with_config(self):
         """Test creating crew with config object."""
-        from empathy_llm_toolkit.agent_factory.crews import (
-            SecurityAuditConfig,
-            SecurityAuditCrew,
-        )
+        from empathy_llm_toolkit.agent_factory.crews import SecurityAuditConfig, SecurityAuditCrew
 
         config = SecurityAuditConfig(
             api_key="test-key",
@@ -362,14 +338,8 @@ class TestSecurityAuditCrewParsing:
 
     def test_generate_summary_with_findings(self):
         """Test summary generation with findings."""
-        from empathy_llm_toolkit.agent_factory.crews import (
-            SecurityAuditCrew,
-            SecurityFinding,
-        )
-        from empathy_llm_toolkit.agent_factory.crews.security_audit import (
-            FindingCategory,
-            Severity,
-        )
+        from empathy_llm_toolkit.agent_factory.crews import SecurityAuditCrew, SecurityFinding
+        from empathy_llm_toolkit.agent_factory.crews.security_audit import FindingCategory, Severity
 
         crew = SecurityAuditCrew()
 
@@ -421,10 +391,7 @@ class TestSecurityAuditCrewParsing:
     def test_dict_to_finding(self):
         """Test converting dictionary to finding."""
         from empathy_llm_toolkit.agent_factory.crews import SecurityAuditCrew
-        from empathy_llm_toolkit.agent_factory.crews.security_audit import (
-            FindingCategory,
-            Severity,
-        )
+        from empathy_llm_toolkit.agent_factory.crews.security_audit import FindingCategory, Severity
 
         crew = SecurityAuditCrew()
 
@@ -483,10 +450,7 @@ class TestSecurityAuditCrewWorkflow:
         """Test audit execution with mocked workflow."""
         from unittest.mock import AsyncMock, MagicMock
 
-        from empathy_llm_toolkit.agent_factory.crews import (
-            SecurityAuditConfig,
-            SecurityAuditCrew,
-        )
+        from empathy_llm_toolkit.agent_factory.crews import SecurityAuditConfig, SecurityAuditCrew
 
         config = SecurityAuditConfig(
             memory_graph_enabled=False,

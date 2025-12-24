@@ -657,13 +657,8 @@ class TestEndToEndIntegration:
 
     def test_imports_work(self):
         """Test all new exports are importable."""
-        from empathy_os.workflows.secure_release import (
-            SecureReleasePipeline,
-            SecureReleaseResult,
-        )
-        from empathy_os.workflows.security_adapters import (
-            _check_crew_available,
-        )
+        from empathy_os.workflows.secure_release import SecureReleasePipeline, SecureReleaseResult
+        from empathy_os.workflows.security_adapters import _check_crew_available
 
         # All imports should succeed
         assert SecureReleasePipeline is not None

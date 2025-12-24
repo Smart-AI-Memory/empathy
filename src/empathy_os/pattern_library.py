@@ -134,7 +134,7 @@ class PatternLibrary:
             ...     agent_id="agent_1",
             ...     pattern_type="conditional",
             ...     name="High-stakes decision pattern",
-            ...     description="For high-stakes decisions, provide multiple options with tradeoffs",
+            ...     description="For high-stakes decisions, provide options with tradeoffs",
             ...     confidence=0.9
             ... )
             >>> library.contribute_pattern("agent_1", pattern)

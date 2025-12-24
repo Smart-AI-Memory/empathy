@@ -374,21 +374,21 @@ class DependencyCheckWorkflow(BaseWorkflow):
             )
 
         # Build input payload for prompt
-        input_payload = f"""Target: {target or 'codebase'}
+        input_payload = f"""Target: {target or "codebase"}
 
-Total Dependencies: {input_data.get('total_dependencies', 0)}
+Total Dependencies: {input_data.get("total_dependencies", 0)}
 Risk Score: {risk_score}/100
 Risk Level: {risk_level}
 
 Vulnerabilities ({len(vulnerabilities)}):
-{chr(10).join(vuln_summary) if vuln_summary else 'None found'}
+{chr(10).join(vuln_summary) if vuln_summary else "None found"}
 
 Outdated Packages: {len(outdated)}
 
 Severity Summary:
-- Critical: {assessment.get('critical_count', 0)}
-- High: {assessment.get('high_count', 0)}
-- Medium: {assessment.get('medium_count', 0)}"""
+- Critical: {assessment.get("critical_count", 0)}
+- High: {assessment.get("high_count", 0)}
+- Medium: {assessment.get("medium_count", 0)}"""
 
         # Check if XML prompts are enabled
         if self._is_xml_enabled():

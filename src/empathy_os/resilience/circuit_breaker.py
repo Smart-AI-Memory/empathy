@@ -222,12 +222,13 @@ def circuit_breaker(
                 if fallback:
                     logger.info(f"Circuit '{cb_name}' open, using fallback")
                     if asyncio.iscoroutinefunction(fallback):
-                        return await fallback(*args, **kwargs)
+                        fb_result: T = await fallback(*args, **kwargs)
+                        return fb_result
                     return fallback(*args, **kwargs)
                 raise CircuitOpenError(cb_name, cb.get_time_until_reset())
 
             try:
-                result = await func(*args, **kwargs)
+                result: T = await func(*args, **kwargs)  # type: ignore[misc]
                 cb.record_success()
                 return result
             except Exception as e:
@@ -251,7 +252,7 @@ def circuit_breaker(
                 raise
 
         if asyncio.iscoroutinefunction(func):
-            return async_wrapper
+            return async_wrapper  # type: ignore[return-value]
         return sync_wrapper
 
     return decorator

@@ -221,7 +221,7 @@ class ChainExecutor:
                     expected = _parse_value(value_str)
 
                     try:
-                        return op_func(actual, expected)
+                        return bool(op_func(actual, expected))
                     except (ValueError, TypeError):
                         return False
 

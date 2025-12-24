@@ -69,7 +69,7 @@ class MemoryAwareAgent(BaseAgent):
         self._query_similar = query_similar
         self._similarity_threshold = similarity_threshold
         self._max_similar_results = max_similar_results
-        self._graph = None
+        self._graph: Any = None
 
         self._init_graph()
 
@@ -146,7 +146,7 @@ class MemoryAwareAgent(BaseAgent):
                 context["similar_findings"] = similar_findings
 
         # Stream from wrapped agent
-        async for chunk in self._wrapped.stream(input_data, context):
+        async for chunk in self._wrapped.stream(input_data, context):  # type: ignore[attr-defined]
             yield chunk
 
     def _get_similar_findings(self, input_data: str | dict) -> list[dict]:

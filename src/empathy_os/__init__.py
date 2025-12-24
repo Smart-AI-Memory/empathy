@@ -89,7 +89,7 @@ from .leverage_points import LeveragePointAnalyzer
 from .logging_config import LoggingConfig, get_logger
 
 # Memory module (unified short-term + long-term + security)
-from .memory import (  # Short-term (Redis); Security - Audit; Claude Memory; Security - PII; Security - Secrets; Long-term (Persistent); Unified Memory Interface (recommended); Configuration
+from .memory import (  # Memory module imports
     AccessTier,
     AgentCredentials,
     AuditEvent,

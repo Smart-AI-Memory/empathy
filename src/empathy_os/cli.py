@@ -35,9 +35,7 @@ from empathy_os.workflows import (
     create_example_config,
     get_workflow,
 )
-from empathy_os.workflows import (
-    list_workflows as get_workflow_list,
-)
+from empathy_os.workflows import list_workflows as get_workflow_list
 
 logger = get_logger(__name__)
 
@@ -581,9 +579,9 @@ def cmd_achievements(args):
     print(f"  Total commands run:    {stats.get('total_commands', 0)}")
     print(f"  Days active:           {stats.get('days_active', 0)}")
     print(f"  Patterns learned:      {stats.get('patterns_learned', 0)}")
-    print(
-        f"  Tips discovered:       {stats.get('tips_shown', 0)}/{stats.get('tips_remaining', 0) + stats.get('tips_shown', 0)}"
-    )
+    shown = stats.get("tips_shown", 0)
+    total = shown + stats.get("tips_remaining", 0)
+    print(f"  Tips discovered:       {shown}/{total}")
     print()
 
     # Command breakdown
@@ -1166,9 +1164,8 @@ def cmd_run(args):
                 for pred in response.predictions:
                     print(f"   • {pred}")
 
-            print(
-                f"\n  Level: {response.level} | Confidence: {response.confidence:.0%} | Time: {duration:.0f}ms"
-            )
+            conf = f"{response.confidence:.0%}"
+            print(f"\n  Level: {response.level} | Confidence: {conf} | Time: {duration:.0f}ms")
             print()
 
             # Ask for feedback
@@ -1764,8 +1761,8 @@ def cmd_workflow(args):
         try:
             workflow_cls = get_workflow(name)
 
-            # Get provider (default to anthropic)
-            provider = getattr(args, "provider", "anthropic")
+            # Get provider (default to anthropic if not specified)
+            provider = args.provider if args.provider else "anthropic"
             workflow = workflow_cls(provider=provider)
 
             # Parse input
@@ -1779,18 +1776,33 @@ def cmd_workflow(args):
             # Execute workflow
             result = asyncio.run(workflow.execute(**input_data))
 
-            # Extract the actual content from final_output
-            output_content = _extract_workflow_content(result.final_output)
+            # Extract the actual content - handle different result types
+            if hasattr(result, "final_output"):
+                output_content = _extract_workflow_content(result.final_output)
+            elif hasattr(result, "summary"):
+                output_content = result.summary
+            else:
+                output_content = str(result)
+
+            # Get timing - handle different attribute names
+            duration_ms = getattr(result, "total_duration_ms", None)
+            if duration_ms is None and hasattr(result, "duration_seconds"):
+                duration_ms = int(result.duration_seconds * 1000)
+
+            # Get cost info if available
+            cost_report = getattr(result, "cost_report", None)
+            total_cost = cost_report.total_cost if cost_report else 0.0
+            savings = cost_report.savings if cost_report else 0.0
 
             if args.json:
                 # JSON output includes both content and metadata
                 output = {
                     "success": result.success,
                     "output": output_content,
-                    "cost": result.cost_report.total_cost,
-                    "savings": result.cost_report.savings,
-                    "duration_ms": result.total_duration_ms,
-                    "error": result.error,
+                    "cost": total_cost,
+                    "savings": savings,
+                    "duration_ms": duration_ms or 0,
+                    "error": getattr(result, "error", None),
                 }
                 print(json_mod.dumps(output, indent=2))
             else:
@@ -1803,11 +1815,11 @@ def cmd_workflow(args):
 
                     # Brief footer with timing (detailed costs available via 'empathy costs')
                     print("-" * 50)
-                    print(
-                        f"Completed in {result.total_duration_ms}ms | Cost: ${result.cost_report.total_cost:.4f} (saved ${result.cost_report.savings:.4f})"
-                    )
+                    ms = duration_ms or 0
+                    print(f"Completed in {ms}ms | Cost: ${total_cost:.4f} (saved ${savings:.4f})")
                 else:
-                    print(f"\n✗ Workflow failed: {result.error}\n")
+                    error_msg = getattr(result, "error", None) or "Unknown error"
+                    print(f"\n✗ Workflow failed: {error_msg}\n")
 
         except KeyError as e:
             print(f"Error: {e}")

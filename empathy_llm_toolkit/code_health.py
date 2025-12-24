@@ -795,14 +795,10 @@ class HealthCheckRunner:
                                 file_path="requirements.txt",
                                 line=None,
                                 code=item.get("id", "VULN"),
-                                message=f"{item.get('name')}: {item.get('description', 'Vulnerability found')}",
+                                message=f"{item.get('name')}: {item.get('description', 'Vuln')}",
                                 severity="error" if item.get("fix_versions") else "warning",
                                 fixable=bool(item.get("fix_versions")),
-                                fix_command=(
-                                    f"pip install {item.get('name')}=={item.get('fix_versions', ['latest'])[0]}"
-                                    if item.get("fix_versions")
-                                    else None
-                                ),
+                                fix_command=self._get_fix_cmd(item),
                             )
                         )
                 except json.JSONDecodeError:
@@ -828,6 +824,13 @@ class HealthCheckRunner:
                 tool_used=tool,
                 details={"error": str(e)},
             )
+
+    def _get_fix_cmd(self, item: dict) -> str | None:
+        """Get pip install command to fix a vulnerable package."""
+        fix_versions = item.get("fix_versions")
+        if fix_versions:
+            return f"pip install {item.get('name')}=={fix_versions[0]}"
+        return None
 
 
 class AutoFixer:
@@ -1083,7 +1086,7 @@ def format_health_output(
         if result.category == CheckCategory.TESTS:
             details = result.details
             lines.append(
-                f"{icon} {category_name}: {details.get('passed', 0)} passed, {details.get('failed', 0)} failed"
+                f"{icon} {category_name}: {details.get('passed', 0)}P/{details.get('failed', 0)}F"
             )
         elif result.category == CheckCategory.LINT:
             lines.append(f"{icon} {category_name}: {result.issue_count} warnings")

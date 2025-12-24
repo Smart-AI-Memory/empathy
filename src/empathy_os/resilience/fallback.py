@@ -92,7 +92,8 @@ def fallback(
             # Try primary function
             try:
                 if asyncio.iscoroutinefunction(func):
-                    return await func(*args, **kwargs)
+                    result: T = await func(*args, **kwargs)
+                    return result
                 return func(*args, **kwargs)
             except Exception as e:
                 if log_failures:
@@ -102,8 +103,9 @@ def fallback(
             for fallback_func in fallback_funcs:
                 try:
                     if asyncio.iscoroutinefunction(fallback_func):
-                        return await fallback_func(*args, **kwargs)
-                    return fallback_func(*args, **kwargs)
+                        result = await fallback_func(*args, **kwargs)
+                        return result
+                    return fallback_func(*args, **kwargs)  # type: ignore[no-any-return]
                 except Exception as e:
                     if log_failures:
                         logger.warning(f"Fallback {fallback_func.__name__} failed: {e}")
@@ -111,7 +113,7 @@ def fallback(
 
             # All failed, use default
             if default is not None:
-                return default
+                return default  # type: ignore[no-any-return]
 
             raise RuntimeError(f"All fallbacks failed for {func.__name__}")
 
@@ -125,19 +127,19 @@ def fallback(
 
             for fallback_func in fallback_funcs:
                 try:
-                    return fallback_func(*args, **kwargs)
+                    return fallback_func(*args, **kwargs)  # type: ignore[no-any-return]
                 except Exception as e:
                     if log_failures:
                         logger.warning(f"Fallback {fallback_func.__name__} failed: {e}")
                     continue
 
             if default is not None:
-                return default
+                return default  # type: ignore[no-any-return]
 
             raise RuntimeError(f"All fallbacks failed for {func.__name__}")
 
         if asyncio.iscoroutinefunction(func):
-            return async_wrapper
+            return async_wrapper  # type: ignore[return-value]
         return sync_wrapper
 
     return decorator
@@ -173,6 +175,7 @@ def with_fallback(
         fb.add(f)
 
     async def wrapper(*args: Any, **kwargs: Any) -> T:
-        return await fb.execute(*args, **kwargs)
+        result: T = await fb.execute(*args, **kwargs)
+        return result
 
-    return wrapper
+    return wrapper  # type: ignore[return-value]

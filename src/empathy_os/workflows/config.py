@@ -165,8 +165,8 @@ class WorkflowConfig:
 
         # Handle nested 'workflows' key from empathy.config.yaml
         if "workflows" in data:
-            return data["workflows"]
-        return data
+            return dict(data["workflows"])
+        return dict(data)
 
     @staticmethod
     def _apply_env_overrides(config: dict[str, Any]) -> dict[str, Any]:
@@ -254,7 +254,7 @@ class WorkflowConfig:
             True if XML prompts are enabled.
         """
         config = self.get_xml_config_for_workflow(workflow_name)
-        return config.get("enabled", False)
+        return bool(config.get("enabled", False))
 
     def save(self, path: str | Path) -> None:
         """Save configuration to file."""
@@ -441,6 +441,34 @@ workflow_xml_configs:
     enabled: true
     enforce_response_xml: false  # More flexible for research
     template_name: "research"
+    bug-predict:
+        enabled: true
+        enforce_response_xml: true
+        template_name: "bug-analysis"
+    perf-audit:
+        enabled: true
+        enforce_response_xml: true
+        template_name: "perf-audit"
+    test-gen:
+        enabled: true
+        enforce_response_xml: true
+        template_name: "test-gen"
+    doc-gen:
+        enabled: true
+        enforce_response_xml: true
+        template_name: "doc-gen"
+    release-prep:
+        enabled: true
+        enforce_response_xml: true
+        template_name: "release-prep"
+    dependency-check:
+        enabled: true
+        enforce_response_xml: true
+        template_name: "dependency-check"
+    refactor-plan:
+        enabled: true
+        enforce_response_xml: true
+        template_name: "refactor-plan"
 
 # =============================================================================
 # ENVIRONMENT VARIABLE OVERRIDES

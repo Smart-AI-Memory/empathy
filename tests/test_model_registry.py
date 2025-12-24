@@ -22,11 +22,7 @@ from empathy_os.models import (
     get_model,
     get_pricing_for_model,
 )
-from empathy_os.models.registry import (
-    TIER_PRICING,
-    get_supported_providers,
-    get_tiers,
-)
+from empathy_os.models.registry import TIER_PRICING, get_supported_providers, get_tiers
 
 
 class TestModelTierEnum:

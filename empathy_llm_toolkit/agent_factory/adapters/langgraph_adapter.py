@@ -218,9 +218,9 @@ class LangGraphAdapter(BaseAdapter):
             from langchain_anthropic import ChatAnthropic
 
             # LangChain API varies between versions - use type: ignore for flexibility
-            return ChatAnthropic(
-                model=model_id,  # type: ignore[call-arg]
-                api_key=self.api_key,  # type: ignore[arg-type]
+            return ChatAnthropic(  # type: ignore[call-arg]
+                model=model_id,
+                api_key=self.api_key,
                 temperature=config.temperature,
                 max_tokens_to_sample=config.max_tokens,  # Anthropic uses max_tokens_to_sample
             )

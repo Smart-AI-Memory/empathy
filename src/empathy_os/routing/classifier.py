@@ -88,7 +88,7 @@ class HaikuClassifier:
         if context:
             context_str = f"\n\nContext:\n{json.dumps(context, indent=2)}"
 
-        system_prompt = """You are a request router that classifies developer requests to the appropriate wizard.
+        system_prompt = """You are a request router that classifies requests to the appropriate wizard.
 
 Analyze the request and determine:
 1. The PRIMARY wizard that best handles this request

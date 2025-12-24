@@ -55,7 +55,9 @@ def timeout(
         @wraps(func)
         async def async_wrapper(*args: Any, **kwargs: Any) -> T:
             try:
-                return await asyncio.wait_for(func(*args, **kwargs), timeout=seconds)
+                coro = func(*args, **kwargs)
+                result: T = await asyncio.wait_for(coro, timeout=seconds)  # type: ignore[arg-type]
+                return result
             except asyncio.TimeoutError:
                 operation = error_message or func.__name__
                 logger.warning(f"Timeout after {seconds}s: {operation}")
@@ -63,7 +65,8 @@ def timeout(
                 if fallback:
                     logger.info(f"Using fallback for {func.__name__}")
                     if asyncio.iscoroutinefunction(fallback):
-                        return await fallback(*args, **kwargs)
+                        result = await fallback(*args, **kwargs)
+                        return result
                     return fallback(*args, **kwargs)
 
                 raise TimeoutError(operation, seconds)
@@ -99,7 +102,7 @@ def timeout(
                 signal.setitimer(signal.ITIMER_REAL, 0)
 
         if asyncio.iscoroutinefunction(func):
-            return async_wrapper
+            return async_wrapper  # type: ignore[return-value]
         return sync_wrapper
 
     return decorator

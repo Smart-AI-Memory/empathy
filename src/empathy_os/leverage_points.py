@@ -196,11 +196,11 @@ class LeveragePointAnalyzer:
         points.append(
             LeveragePoint(
                 level=LeverageLevel.PARADIGM,
-                description="Shift paradigm: Documentation as learning artifact, not compliance burden",
+                description="Paradigm shift: Docs as learning artifact, not compliance burden",
                 problem_domain="documentation",
                 impact_potential=0.9,
                 implementation_difficulty=0.8,
-                proposed_intervention="Reframe documentation as 'capturing team learning' not 'creating artifacts'",
+                proposed_intervention="Reframe docs as 'capturing team learning' not 'creating artifacts'",
                 expected_outcomes=[
                     "Developers see value in documentation",
                     "Documentation becomes natural part of workflow",
@@ -234,7 +234,7 @@ class LeveragePointAnalyzer:
                 problem_domain="documentation",
                 impact_potential=0.8,
                 implementation_difficulty=0.5,
-                proposed_intervention="Deploy Level 5 anticipatory system that detects patterns and auto-documents",
+                proposed_intervention="Deploy Level 5 system that detects patterns and auto-documents",
                 expected_outcomes=[
                     "Reduce manual documentation by 70%",
                     "Free developers for creative work",
@@ -304,7 +304,7 @@ class LeveragePointAnalyzer:
                 problem_domain="trust",
                 impact_potential=0.7,
                 implementation_difficulty=0.5,
-                proposed_intervention="Start with high-confidence, low-risk tasks to build momentum",
+                proposed_intervention="Start with high-confidence, low-risk tasks for momentum",
                 expected_outcomes=[
                     "Quick wins build trust",
                     "Positive feedback loop activated",

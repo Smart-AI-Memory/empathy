@@ -150,6 +150,11 @@ class EmpathyConfig:
             >>> config = EmpathyConfig.from_env()
             >>> print(config.user_id)  # "alice"
         """
+        from dataclasses import fields as dataclass_fields
+
+        # Get valid field names from the dataclass
+        valid_fields = {f.name for f in dataclass_fields(cls)}
+
         data: dict[str, Any] = {}
 
         # Get all environment variables with prefix
@@ -157,6 +162,10 @@ class EmpathyConfig:
             if key.startswith(prefix):
                 # Convert EMPATHY_USER_ID -> user_id
                 field_name = key[len(prefix) :].lower()
+
+                # Skip unknown fields (e.g., EMPATHY_MASTER_KEY for encryption)
+                if field_name not in valid_fields:
+                    continue
 
                 # Type conversion based on field name
                 if field_name in ("target_level",):
@@ -334,14 +343,12 @@ class EmpathyConfig:
             )
 
         if not 0.0 <= self.pattern_confidence_threshold <= 1.0:
-            raise ValueError(
-                f"pattern_confidence_threshold must be 0.0-1.0, got {self.pattern_confidence_threshold}"
-            )
+            val = self.pattern_confidence_threshold
+            raise ValueError(f"pattern_confidence_threshold must be 0.0-1.0, got {val}")
 
         if self.persistence_backend not in ("sqlite", "json", "none"):
-            raise ValueError(
-                f"persistence_backend must be 'sqlite', 'json', or 'none', got {self.persistence_backend}"
-            )
+            val = self.persistence_backend
+            raise ValueError(f"persistence_backend must be 'sqlite', 'json', or 'none', got {val}")
 
         return True
 

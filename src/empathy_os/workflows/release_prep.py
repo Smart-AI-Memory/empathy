@@ -543,17 +543,17 @@ class ReleasePreparationWorkflow(BaseWorkflow):
             warnings.append(f"Low test count: {test_count}")
 
         # Build input payload for LLM
-        input_payload = f"""Target: {target or 'codebase'}
+        input_payload = f"""Target: {target or "codebase"}
 
-Health Score: {health.get('health_score', 0)}/100
-Health Checks: {json.dumps(health.get('checks', {}), indent=2)}
+Health Score: {health.get("health_score", 0)}/100
+Health Checks: {json.dumps(health.get("checks", {}), indent=2)}
 
-Security Issues: {security.get('total_issues', 0)}
-High Severity: {security.get('high_severity', 0)}
-Medium Severity: {security.get('medium_severity', 0)}
+Security Issues: {security.get("total_issues", 0)}
+High Severity: {security.get("high_severity", 0)}
+Medium Severity: {security.get("medium_severity", 0)}
 
-Commit Count: {changelog.get('total_commits', 0)}
-Changes by Category: {json.dumps(changelog.get('by_category', {}), indent=2)}
+Commit Count: {changelog.get("total_commits", 0)}
+Changes by Category: {json.dumps(changelog.get("by_category", {}), indent=2)}
 
 Blockers: {json.dumps(blockers, indent=2)}
 Warnings: {json.dumps(warnings, indent=2)}"""

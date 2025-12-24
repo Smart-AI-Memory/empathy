@@ -208,7 +208,7 @@ class SecureReleasePipeline:
                 code_workflow = CodeReviewWorkflow(**self.kwargs)
 
                 # Pass crew findings as external audit if available
-                code_input = {
+                code_input: dict = {
                     "diff": diff,
                     "files_changed": files_changed or [],
                 }
@@ -299,7 +299,7 @@ class SecureReleasePipeline:
             return 0.0
 
         weighted_sum = sum(s * w for s, w in zip(scores, weights, strict=False))
-        return min(100.0, weighted_sum / sum(weights))
+        return float(min(100.0, weighted_sum / sum(weights)))
 
     def _aggregate_findings(
         self,

@@ -184,7 +184,7 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         if CostTracker is not None:
             try:
                 tracker = CostTracker(self.empathy_dir)
-                cost_summary = tracker.get_summary(30)
+                cost_summary = tracker.get_summary(30)  # noqa: F841
             except Exception:
                 pass
 
@@ -501,12 +501,12 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             <div class="card">
                 <h2>Workflow Runs</h2>
                 <div class="value">{workflow_stats.get("total_runs", 0)}</div>
-                <div class="label">{workflow_stats.get("avg_savings_percent", 0):.0f}% avg savings</div>
+                <div class="label">{workflow_stats.get("avg_savings_percent", 0):.0f}% savings</div>
             </div>
 
             <div class="card success">
                 <h2>Total Savings</h2>
-                <div class="value">${workflow_stats.get("total_savings", 0) + cost_summary.get("savings", 0):.2f}</div>
+                <div class="value">${workflow_stats.get("total_savings", 0):.2f}</div>
                 <div class="label">workflows + API</div>
             </div>
         </div>
@@ -584,13 +584,17 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         rows = []
         for bug in bugs[-10:]:  # Last 10
             status_class = bug.get("status", "investigating")
+            root = bug.get("root_cause", "")
+            root_display = (root[:60] + "...") if len(root) > 60 else (root or "-")
+            resolved = bug.get("resolved_at") or bug.get("timestamp")
+            date_display = resolved[:10] if resolved else "-"
             rows.append(
                 f"""
                 <tr>
                     <td>{bug.get("bug_type", "unknown")}</td>
-                    <td>{(bug.get("root_cause", "")[:60] + "...") if len(bug.get("root_cause", "")) > 60 else bug.get("root_cause", "-")}</td>
+                    <td>{root_display}</td>
                     <td><span class="status {status_class}">{status_class}</span></td>
-                    <td>{bug.get("resolved_at", bug.get("timestamp", "-"))[:10] if bug.get("resolved_at") or bug.get("timestamp") else "-"}</td>
+                    <td>{date_display}</td>
                 </tr>
             """
             )
@@ -602,7 +606,7 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         by_workflow = workflow_stats.get("by_workflow", {})
 
         if not by_workflow:
-            return '<div class="workflow-card"><p style="color: var(--text-muted);">No workflow runs yet. Try: empathy workflow run research</p></div>'
+            return '<div class="workflow-card"><p>No workflow runs yet.</p></div>'
 
         cards = []
         for name, stats in by_workflow.items():
@@ -626,7 +630,7 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         total = sum(by_tier.values())
 
         if total == 0:
-            return '<div class="tier-bar"><div class="tier" style="width: 100%; background: var(--bg); color: var(--text-muted);">No data yet</div></div>'
+            return '<div class="tier-bar"><div class="tier">No data yet</div></div>'
 
         cheap_pct = (by_tier.get("cheap", 0) / total) * 100 if total > 0 else 0
         capable_pct = (by_tier.get("capable", 0) / total) * 100 if total > 0 else 0

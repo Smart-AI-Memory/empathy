@@ -34,6 +34,8 @@ except ImportError:
     pass  # python-dotenv not installed, rely on environment variables
 
 from empathy_os.cost_tracker import MODEL_PRICING, CostTracker
+
+# Import unified types from empathy_os.models
 from empathy_os.models import (
     ExecutionContext,
     LLMCallRecord,
@@ -43,14 +45,8 @@ from empathy_os.models import (
     WorkflowStageRecord,
     get_telemetry_store,
 )
-from empathy_os.models import (
-    ModelProvider as UnifiedModelProvider,
-)
-
-# Import unified types from empathy_os.models
-from empathy_os.models import (
-    ModelTier as UnifiedModelTier,
-)
+from empathy_os.models import ModelProvider as UnifiedModelProvider
+from empathy_os.models import ModelTier as UnifiedModelTier
 
 if TYPE_CHECKING:
     from .config import WorkflowConfig
@@ -164,7 +160,8 @@ def _load_workflow_history(history_file: str = WORKFLOW_HISTORY_FILE) -> list[di
         return []
     try:
         with open(path) as f:
-            return json.load(f)
+            data = json.load(f)
+            return list(data) if isinstance(data, list) else []
     except (json.JSONDecodeError, OSError):
         return []
 
@@ -818,7 +815,7 @@ class BaseWorkflow(ABC):
     def _is_xml_enabled(self) -> bool:
         """Check if XML prompts are enabled for this workflow."""
         config = self._get_xml_config()
-        return config.get("enabled", False)
+        return bool(config.get("enabled", False))
 
     def _render_xml_prompt(
         self,

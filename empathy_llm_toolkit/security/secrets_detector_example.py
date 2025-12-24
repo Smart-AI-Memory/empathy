@@ -22,7 +22,7 @@ def example_1_basic_detection():
     # Sample code with secrets
     code = """
     # Configuration
-    ANTHROPIC_API_KEY = "sk-ant-api03-abc123xyz789def456ghi789jkl012mno345pqr678stu901vwx234yz567abc890def123ghi456jkl789mno012pqr"
+    ANTHROPIC_API_KEY = "sk-ant-api03-abc123xyz789def456ghi789jkl012mno345pqr678stu901vwx"
     password = "my_secret_password"
     DATABASE_URL = "postgres://user:pass123@localhost:5432/db"
     """

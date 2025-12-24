@@ -84,14 +84,7 @@ from .long_term import (
     SecurityError,
 )
 from .long_term import PermissionError as MemoryPermissionError
-from .nodes import (
-    BugNode,
-    Node,
-    NodeType,
-    PatternNode,
-    PerformanceNode,
-    VulnerabilityNode,
-)
+from .nodes import BugNode, Node, NodeType, PatternNode, PerformanceNode, VulnerabilityNode
 
 # Redis Bootstrap
 from .redis_bootstrap import (

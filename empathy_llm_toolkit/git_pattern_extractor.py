@@ -175,7 +175,7 @@ class GitPatternExtractor:
             "date": datetime.now().isoformat(),
             "file_path": pattern.get("file", "unknown"),
             "error_type": pattern.get("type", "unknown"),
-            "error_message": f"Auto-detected from commit: {pattern.get('commit_message', '')[:100]}",
+            "error_message": f"From commit: {pattern.get('commit_message', '')[:80]}",
             "root_cause": "",  # To be filled by user
             "fix_applied": pattern.get("description", ""),
             "fix_code": pattern.get("code_sample", ""),

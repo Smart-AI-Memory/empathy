@@ -223,7 +223,7 @@ class LangChainAdapter(BaseAdapter):
             # LangChain API varies between versions - use type: ignore for flexibility
             return ChatAnthropic(  # type: ignore[call-arg]
                 model=model_id,
-                api_key=self.api_key,  # type: ignore[arg-type]
+                api_key=self.api_key,
                 temperature=config.temperature,
                 max_tokens_to_sample=config.max_tokens,
             )
@@ -246,17 +246,14 @@ class LangChainAdapter(BaseAdapter):
 
         # Import from langchain or langgraph depending on version
         try:
-            from langchain.agents import (  # type: ignore[attr-defined]
-                AgentExecutor,
-                create_tool_calling_agent,
-            )
+            from langchain.agents import AgentExecutor, create_tool_calling_agent
         except (ImportError, AttributeError):
             # Newer versions may have different import paths
             from langgraph.prebuilt import (
-                create_react_agent as create_tool_calling_agent,
-            )  # noqa: F401
+                create_react_agent as create_tool_calling_agent,  # type: ignore[assignment]; noqa: F401
+            )
 
-            AgentExecutor = None
+            AgentExecutor = None  # type: ignore[misc, assignment]
         from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
         llm = self._get_llm(config)
@@ -336,13 +333,13 @@ class LangChainAdapter(BaseAdapter):
     def _default_system_prompt(self, config: AgentConfig) -> str:
         """Generate default system prompt based on role."""
         role_prompts = {
-            "researcher": "You are a thorough researcher. Gather comprehensive information and cite sources.",
+            "researcher": "You are a thorough researcher. Gather information and cite sources.",
             "writer": "You are a skilled writer. Create clear, engaging content.",
             "reviewer": "You are a critical reviewer. Provide constructive feedback.",
             "editor": "You are an experienced editor. Refine and improve content.",
             "debugger": "You are an expert debugger. Analyze code issues systematically.",
             "security": "You are a security analyst. Identify vulnerabilities and risks.",
-            "coordinator": "You coordinate a team of agents. Delegate tasks and synthesize results.",
+            "coordinator": "You coordinate a team of agents. Delegate and synthesize results.",
         }
 
         base = role_prompts.get(config.role.value, f"You are a helpful {config.role.value} agent.")

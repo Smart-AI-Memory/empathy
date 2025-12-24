@@ -156,9 +156,7 @@ def morning_workflow(
     if recent_bugs:
         print(f"\n  New this week: {len(recent_bugs)} patterns")
         for bug in recent_bugs[:3]:
-            print(
-                f"    - {bug.get('bug_type', 'unknown')}: {bug.get('root_cause', 'investigating')[:50]}"
-            )
+            print(f"    - {bug.get('bug_type', '?')}: {bug.get('root_cause', '?')[:40]}")
 
     # 2. Tech debt trajectory
     print("\n" + "TECH DEBT TRAJECTORY")
@@ -233,7 +231,7 @@ def morning_workflow(
     ]
     if investigating_bugs:
         suggestions.append(
-            f"Resolve {len(investigating_bugs)} investigating bug(s) - run 'empathy patterns resolve'"
+            f"Resolve {len(investigating_bugs)} investigating bug(s) via 'empathy patterns resolve'"
         )
 
     if trend == "increasing":
@@ -349,8 +347,8 @@ def ship_workflow(
         # Import here to avoid circular imports
         try:
             from empathy_llm_toolkit.cli.sync_claude import (
-                sync_patterns_to_claude,
-            )  # type: ignore[attr-defined]
+                sync_patterns_to_claude,  # type: ignore[attr-defined]
+            )
 
             result = sync_patterns_to_claude(
                 patterns_dir=patterns_dir, output_dir=".claude/rules/empathy"

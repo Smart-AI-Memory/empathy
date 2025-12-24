@@ -73,7 +73,7 @@ class EmpathyLevel(ABC):
                 - 'level_name': str - Human-readable level name
                 - 'action': str - Type of action taken
                 - 'description': str - Description of the response
-                - 'initiative': str - Initiative level ('none', 'guided', 'proactive', 'anticipatory', 'systems_thinking')
+                - 'initiative': str - Level ('none'|'guided'|'proactive'|'anticipatory'|'systems')
                 - 'reasoning': str - Explanation of why this level's approach was used
                 - Additional fields specific to the level implementation
 

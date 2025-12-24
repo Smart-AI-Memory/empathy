@@ -40,7 +40,7 @@ WIZARD_REGISTRY: dict[str, WizardInfo] = {
     # Workflows (cost-optimized pipelines)
     "security-audit": WizardInfo(
         name="security-audit",
-        description="Analyze code for security vulnerabilities, injection risks, and compliance issues",
+        description="Analyze code for security vulnerabilities, injection risks, compliance",
         keywords=[
             "security",
             "vulnerability",
@@ -115,7 +115,7 @@ WIZARD_REGISTRY: dict[str, WizardInfo] = {
     ),
     "perf-audit": WizardInfo(
         name="perf-audit",
-        description="Analyze code for performance issues, bottlenecks, and optimization opportunities",
+        description="Analyze code for performance issues, bottlenecks, optimizations",
         keywords=[
             "performance",
             "perf",
@@ -139,7 +139,7 @@ WIZARD_REGISTRY: dict[str, WizardInfo] = {
     ),
     "refactor-plan": WizardInfo(
         name="refactor-plan",
-        description="Plan code refactoring to improve structure, reduce complexity, and enhance maintainability",
+        description="Plan code refactoring to improve structure, reduce complexity",
         keywords=[
             "refactor",
             "restructure",

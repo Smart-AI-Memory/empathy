@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "empathy-framework"
-version = "3.0.1"
+version = "3.0.2"
 description = "AI collaboration framework with persistent memory, anticipatory intelligence, code inspection, and multi-agent orchestration"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.10"
@@ -282,6 +282,11 @@ known-first-party = ["services", "empathy_llm_toolkit", "empathy_software_plugin
 # MyPy type checker configuration
 [tool.mypy]
 python_version = "3.10"
+exclude = [
+    "10_9_2025_ai_nurse_florence/",
+    "anthropic-cookbook/",
+    "salvaged/",
+]
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false

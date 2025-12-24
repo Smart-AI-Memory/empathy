@@ -267,7 +267,7 @@ class HealthcareWizard(BaseWizard):
 - In emergencies, direct users to appropriate emergency services
 - Do not diagnose or prescribe - support healthcare professionals who do
 
-Remember: Patient safety and privacy are paramount. All interactions are logged for quality assurance and HIPAA compliance.
+Remember: Patient safety and privacy are paramount. Interactions are logged for HIPAA compliance.
 """
 
     def get_phi_patterns(self) -> list[str]:

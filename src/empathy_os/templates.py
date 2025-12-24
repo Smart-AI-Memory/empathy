@@ -648,7 +648,7 @@ def scaffold_project(
         if any(target.iterdir()):
             return {
                 "success": False,
-                "error": f"Directory '{target}' already exists and is not empty. Use --force to overwrite.",
+                "error": f"Directory '{target}' exists and is not empty. Use --force to overwrite.",
             }
 
     # Create directory

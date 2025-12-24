@@ -235,7 +235,7 @@ def test_workflow_runs_file():
 
         print("✓ Workflow runs file loaded successfully")
         print(f"  - Total runs: {total_runs}")
-        print(f"  - Successful: {successful} ({100*successful//max(total_runs,1)}%)")
+        print(f"  - Successful: {successful} ({100 * successful // max(total_runs, 1)}%)")
         print(f"  - Total cost: ${total_cost:.4f}")
         print(f"  - Total savings: ${total_savings:.4f}")
         return True

@@ -28,7 +28,8 @@ async def generate_api_docs():
     print("-" * 50 + "\n")
 
     workflow = DocumentGenerationWorkflow(
-        skip_polish_threshold=1000, max_sections=10  # Skip premium for short docs
+        skip_polish_threshold=1000,
+        max_sections=10,  # Skip premium for short docs
     )
 
     source_code = '''

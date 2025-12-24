@@ -65,6 +65,7 @@ class PRReviewWorkflow:
 
     def __init__(
         self,
+        provider: str = "anthropic",
         use_code_crew: bool = True,
         use_security_crew: bool = True,
         parallel: bool = True,
@@ -75,17 +76,20 @@ class PRReviewWorkflow:
         Initialize the workflow.
 
         Args:
+            provider: LLM provider to use (anthropic, openai, etc.)
             use_code_crew: Enable CodeReviewCrew
             use_security_crew: Enable SecurityAuditCrew
             parallel: Run crews in parallel (recommended)
             code_crew_config: Configuration for CodeReviewCrew
             security_crew_config: Configuration for SecurityAuditCrew
         """
+        self.provider = provider
         self.use_code_crew = use_code_crew
         self.use_security_crew = use_security_crew
         self.parallel = parallel
-        self.code_crew_config = code_crew_config or {}
-        self.security_crew_config = security_crew_config or {}
+        # Inject provider into crew configs
+        self.code_crew_config = {"provider": provider, **(code_crew_config or {})}
+        self.security_crew_config = {"provider": provider, **(security_crew_config or {})}
 
     @classmethod
     def for_comprehensive_review(cls) -> "PRReviewWorkflow":
@@ -116,7 +120,7 @@ class PRReviewWorkflow:
 
     async def execute(
         self,
-        diff: str,
+        diff: str | None = None,
         files_changed: list[str] | None = None,
         target_path: str = ".",
         context: dict | None = None,
@@ -125,7 +129,7 @@ class PRReviewWorkflow:
         Execute comprehensive PR review with both crews.
 
         Args:
-            diff: PR diff content
+            diff: PR diff content (auto-generated from git if not provided)
             files_changed: List of changed files
             target_path: Path to codebase for security audit
             context: Additional context
@@ -136,6 +140,38 @@ class PRReviewWorkflow:
         start_time = time.time()
         files_changed = files_changed or []
         context = context or {}
+
+        # Auto-generate diff from git if not provided
+        if not diff:
+            import subprocess
+
+            try:
+                # Get diff of staged and unstaged changes
+                result = subprocess.run(
+                    ["git", "diff", "HEAD"],
+                    cwd=target_path,
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
+                )
+                diff = result.stdout or ""
+                if not diff:
+                    # Try getting diff against main/master
+                    for branch in ["main", "master"]:
+                        result = subprocess.run(
+                            ["git", "diff", branch],
+                            cwd=target_path,
+                            capture_output=True,
+                            text=True,
+                            timeout=30,
+                        )
+                        if result.stdout:
+                            diff = result.stdout
+                            break
+                if not diff:
+                    diff = "(No diff available - no changes detected)"
+            except Exception:
+                diff = "(Could not generate diff from git)"
 
         # Initialize result collectors
         code_review: dict | None = None
@@ -280,8 +316,8 @@ class PRReviewWorkflow:
 
         results = await asyncio.gather(code_task, security_task, return_exceptions=True)
 
-        code_review = results[0] if not isinstance(results[0], Exception) else None
-        security_audit = results[1] if not isinstance(results[1], Exception) else None
+        code_review: dict | None = results[0] if isinstance(results[0], dict) else None
+        security_audit: dict | None = results[1] if isinstance(results[1], dict) else None
 
         if isinstance(results[0], Exception):
             logger.warning(f"Code review failed: {results[0]}")
@@ -372,13 +408,13 @@ class PRReviewWorkflow:
     def _get_code_quality_score(self, code_review: dict | None) -> float:
         """Extract code quality score from review."""
         if code_review:
-            return code_review.get("quality_score", 85.0)
+            return float(code_review.get("quality_score", 85.0))
         return 85.0  # Default if no review
 
     def _get_security_risk_score(self, security_audit: dict | None) -> float:
         """Extract security risk score from audit."""
         if security_audit:
-            return security_audit.get("risk_score", 20.0)
+            return float(security_audit.get("risk_score", 20.0))
         return 20.0  # Default if no audit
 
     def _calculate_combined_score(

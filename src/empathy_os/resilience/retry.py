@@ -89,13 +89,14 @@ def retry(
 
             for attempt in range(1, config.max_attempts + 1):
                 try:
-                    return await func(*args, **kwargs)
+                    result: T = await func(*args, **kwargs)  # type: ignore[misc]
+                    return result
                 except config.retryable_exceptions as e:
                     last_exception = e
 
                     if attempt == config.max_attempts:
                         logger.error(
-                            f"All {config.max_attempts} retry attempts failed for {func.__name__}: {e}"
+                            f"All {config.max_attempts} retries failed for {func.__name__}: {e}"
                         )
                         raise
 
@@ -129,7 +130,7 @@ def retry(
 
                     if attempt == config.max_attempts:
                         logger.error(
-                            f"All {config.max_attempts} retry attempts failed for {func.__name__}: {e}"
+                            f"All {config.max_attempts} retries failed for {func.__name__}: {e}"
                         )
                         raise
 
@@ -150,7 +151,7 @@ def retry(
 
         # Return appropriate wrapper based on function type
         if asyncio.iscoroutinefunction(func):
-            return async_wrapper
+            return async_wrapper  # type: ignore[return-value]
         return sync_wrapper
 
     return decorator
@@ -189,7 +190,8 @@ async def retry_with_backoff(
     for attempt in range(1, config.max_attempts + 1):
         try:
             if asyncio.iscoroutinefunction(func):
-                return await func(*args, **kwargs)
+                result: T = await func(*args, **kwargs)
+                return result
             return func(*args, **kwargs)
         except config.retryable_exceptions as e:
             last_exception = e
@@ -199,7 +201,7 @@ async def retry_with_backoff(
 
             delay = config.get_delay(attempt)
             logger.warning(
-                f"Attempt {attempt}/{config.max_attempts} failed: {e}. " f"Retrying in {delay:.2f}s"
+                f"Attempt {attempt}/{config.max_attempts} failed: {e}. Retrying in {delay:.2f}s"
             )
             await asyncio.sleep(delay)
 

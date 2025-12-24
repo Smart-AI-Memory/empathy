@@ -328,7 +328,7 @@ class BugPredictionWorkflow(BaseWorkflow):
 
         # Normalize and sort
         max_risk = max(file_risks.values()) if file_risks else 1.0
-        predictions = [
+        predictions: list[dict] = [
             {
                 "file": f,
                 "risk_score": round(r / max_risk, 2),
@@ -339,9 +339,9 @@ class BugPredictionWorkflow(BaseWorkflow):
 
         # Calculate overall risk score
         self._risk_score = (
-            sum(p["risk_score"] for p in predictions[:5]) / 5
+            sum(float(p["risk_score"]) for p in predictions[:5]) / 5
             if len(predictions) >= 5
-            else sum(p["risk_score"] for p in predictions) / max(len(predictions), 1)
+            else sum(float(p["risk_score"]) for p in predictions) / max(len(predictions), 1)
         )
 
         input_tokens = len(str(input_data)) // 4
@@ -351,7 +351,7 @@ class BugPredictionWorkflow(BaseWorkflow):
             {
                 "predictions": predictions[:20],  # Top 20 risky files
                 "overall_risk_score": round(self._risk_score, 2),
-                "high_risk_files": len([p for p in predictions if p["risk_score"] > 0.7]),
+                "high_risk_files": len([p for p in predictions if float(p["risk_score"]) > 0.7]),
                 **input_data,
             },
             input_tokens,
@@ -382,15 +382,15 @@ class BugPredictionWorkflow(BaseWorkflow):
                 )
 
         # Build input payload
-        input_payload = f"""Target: {target or 'codebase'}
+        input_payload = f"""Target: {target or "codebase"}
 
 Issues Found:
-{chr(10).join(issues_summary) if issues_summary else 'No specific issues identified'}
+{chr(10).join(issues_summary) if issues_summary else "No specific issues identified"}
 
 Historical Bug Patterns:
-{json.dumps(self._bug_patterns[:5], indent=2) if self._bug_patterns else 'None'}
+{json.dumps(self._bug_patterns[:5], indent=2) if self._bug_patterns else "None"}
 
-Risk Score: {input_data.get('overall_risk_score', 0):.2f}"""
+Risk Score: {input_data.get("overall_risk_score", 0):.2f}"""
 
         # Check if XML prompts are enabled
         if self._is_xml_enabled():

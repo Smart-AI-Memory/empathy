@@ -146,7 +146,7 @@ class CustomerSupportWizard(BaseWizard):
 - Always defer to supervisors for complex or sensitive cases
 - Recommendations should be reviewed by support agents
 
-Remember: Customer satisfaction and privacy are paramount. All interactions are logged for quality assurance.
+Remember: Customer satisfaction and privacy are paramount. Interactions are logged.
 """
 
     def get_pii_patterns(self) -> list[str]:

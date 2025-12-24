@@ -249,7 +249,7 @@ class PerformanceAuditWorkflow(BaseWorkflow):
                         continue
 
         # Group by impact
-        by_impact = {"high": [], "medium": [], "low": []}
+        by_impact: dict[str, list] = {"high": [], "medium": [], "low": []}
         for f in findings:
             impact = f.get("impact", "low")
             by_impact[impact].append(f)
@@ -398,13 +398,13 @@ class PerformanceAuditWorkflow(BaseWorkflow):
         top_issues = sorted(issue_counts.items(), key=lambda x: -x[1])[:5]
 
         # Build input payload for prompt
-        input_payload = f"""Target: {target or 'codebase'}
+        input_payload = f"""Target: {target or "codebase"}
 
-Performance Score: {hotspot_result.get('perf_score', 0)}/100
-Performance Level: {hotspot_result.get('perf_level', 'unknown')}
+Performance Score: {hotspot_result.get("perf_score", 0)}/100
+Performance Level: {hotspot_result.get("perf_level", "unknown")}
 
 Hotspots:
-{chr(10).join(hotspots_summary) if hotspots_summary else 'No hotspots identified'}
+{chr(10).join(hotspots_summary) if hotspots_summary else "No hotspots identified"}
 
 Top Issues:
 {json.dumps([{"type": t, "count": c} for t, c in top_issues], indent=2)}"""

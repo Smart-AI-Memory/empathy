@@ -207,7 +207,7 @@ class BasePlugin(ABC):
                 A PluginMetadata instance containing:
                 - name: str - Human-readable plugin name (e.g., 'Software Plugin')
                 - version: str - Semantic version string (e.g., '1.0.0')
-                - domain: str - Domain this plugin serves (e.g., 'software', 'healthcare', 'finance')
+                - domain: str - Domain this plugin serves (e.g., 'software', 'healthcare')
                 - description: str - Brief description of plugin functionality
                 - author: str - Plugin author or organization name
                 - license: str - License identifier (e.g., 'Apache-2.0', 'MIT')

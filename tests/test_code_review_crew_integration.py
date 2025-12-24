@@ -411,11 +411,11 @@ class TestWorkflowRegistry:
     """Test workflow registration."""
 
     def test_crew_review_registered(self):
-        """Test crew-review is registered in workflow registry."""
+        """Test pro-review is registered in workflow registry."""
         from empathy_os.workflows import WORKFLOW_REGISTRY, CodeReviewPipeline
 
-        assert "crew-review" in WORKFLOW_REGISTRY
-        assert WORKFLOW_REGISTRY["crew-review"] == CodeReviewPipeline
+        assert "pro-review" in WORKFLOW_REGISTRY
+        assert WORKFLOW_REGISTRY["pro-review"] == CodeReviewPipeline
 
     def test_pr_review_registered(self):
         """Test pr-review is registered in workflow registry."""
@@ -428,7 +428,7 @@ class TestWorkflowRegistry:
         """Test get_workflow function."""
         from empathy_os.workflows import CodeReviewPipeline, PRReviewWorkflow, get_workflow
 
-        assert get_workflow("crew-review") == CodeReviewPipeline
+        assert get_workflow("pro-review") == CodeReviewPipeline
         assert get_workflow("pr-review") == PRReviewWorkflow
 
 
@@ -442,7 +442,7 @@ class TestEndToEndIntegration:
 
     @pytest.mark.asyncio
     async def test_crew_review_full_flow(self):
-        """Test complete crew-review flow - verify structure and imports."""
+        """Test complete pro-review flow - verify structure and imports."""
         from empathy_os.workflows import CodeReviewPipeline
         from empathy_os.workflows.code_review_pipeline import CodeReviewPipelineResult
 

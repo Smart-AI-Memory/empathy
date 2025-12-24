@@ -334,10 +334,18 @@ class RefactorPlanWorkflow(BaseWorkflow):
         # Sort by priority
         prioritized.sort(key=lambda x: -x["priority_score"])
 
-        # Group into priority tiers
-        high_priority = [p for p in prioritized if p["priority_score"] >= 10]
-        medium_priority = [p for p in prioritized if 5 <= p["priority_score"] < 10]
-        low_priority = [p for p in prioritized if p["priority_score"] < 5]
+        # Group into priority tiers (single pass instead of 3 scans)
+        high_priority: list[dict] = []
+        medium_priority: list[dict] = []
+        low_priority: list[dict] = []
+        for p in prioritized:
+            score = p["priority_score"]
+            if score >= 10:
+                high_priority.append(p)
+            elif score >= 5:
+                medium_priority.append(p)
+            else:
+                low_priority.append(p)
 
         input_tokens = len(str(input_data)) // 4
         output_tokens = len(str(prioritized)) // 4
@@ -376,17 +384,17 @@ class RefactorPlanWorkflow(BaseWorkflow):
             )
 
         # Build input payload for prompt
-        input_payload = f"""Target: {target or 'codebase'}
+        input_payload = f"""Target: {target or "codebase"}
 
-Total Debt Items: {input_data.get('total_debt', 0)}
-Trajectory: {analysis.get('trajectory', 'unknown')}
-Velocity: {analysis.get('velocity', 0)} items/snapshot
+Total Debt Items: {input_data.get("total_debt", 0)}
+Trajectory: {analysis.get("trajectory", "unknown")}
+Velocity: {analysis.get("velocity", 0)} items/snapshot
 
 High Priority Items ({len(high_priority)}):
-{chr(10).join(high_summary) if high_summary else 'None'}
+{chr(10).join(high_summary) if high_summary else "None"}
 
 Medium Priority Items: {len(medium_priority)}
-Hotspot Files: {json.dumps([h.get('file') for h in analysis.get('hotspots', [])[:5]], indent=2)}"""
+Hotspot Files: {json.dumps([h.get("file") for h in analysis.get("hotspots", [])[:5]], indent=2)}"""
 
         # Check if XML prompts are enabled
         if self._is_xml_enabled():
@@ -447,7 +455,7 @@ Create a phased approach to reduce debt sustainably."""
             "high_priority_count": len(high_priority),
         }
 
-        result = {
+        result: dict = {
             "refactoring_plan": response,
             "summary": summary,
             "model_tier_used": tier.value,

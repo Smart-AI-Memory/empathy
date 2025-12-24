@@ -74,9 +74,7 @@ class TestResilientAgentCreation:
         """Test creating a resilient agent wrapper."""
         from empathy_llm_toolkit.agent_factory.adapters.native import NativeAdapter
         from empathy_llm_toolkit.agent_factory.base import AgentConfig
-        from empathy_llm_toolkit.agent_factory.resilient import (
-            ResilientAgent,
-        )
+        from empathy_llm_toolkit.agent_factory.resilient import ResilientAgent
 
         adapter = NativeAdapter()
         base_agent = adapter.create_agent(AgentConfig(name="test"))
@@ -91,10 +89,7 @@ class TestResilientAgentCreation:
         """Test creating resilient agent with custom config."""
         from empathy_llm_toolkit.agent_factory.adapters.native import NativeAdapter
         from empathy_llm_toolkit.agent_factory.base import AgentConfig
-        from empathy_llm_toolkit.agent_factory.resilient import (
-            ResilienceConfig,
-            ResilientAgent,
-        )
+        from empathy_llm_toolkit.agent_factory.resilient import ResilienceConfig, ResilientAgent
 
         adapter = NativeAdapter()
         base_agent = adapter.create_agent(AgentConfig(name="test"))
@@ -171,10 +166,7 @@ class TestResilientAgentInvoke:
         """Test successful invocation through resilient wrapper."""
         from empathy_llm_toolkit.agent_factory.adapters.native import NativeAdapter
         from empathy_llm_toolkit.agent_factory.base import AgentConfig
-        from empathy_llm_toolkit.agent_factory.resilient import (
-            ResilienceConfig,
-            ResilientAgent,
-        )
+        from empathy_llm_toolkit.agent_factory.resilient import ResilienceConfig, ResilientAgent
 
         adapter = NativeAdapter()
         base_agent = adapter.create_agent(AgentConfig(name="test"))
@@ -196,10 +188,7 @@ class TestResilientAgentInvoke:
         """Test resilient agent adds resilience metadata."""
         from empathy_llm_toolkit.agent_factory.adapters.native import NativeAdapter
         from empathy_llm_toolkit.agent_factory.base import AgentConfig
-        from empathy_llm_toolkit.agent_factory.resilient import (
-            ResilienceConfig,
-            ResilientAgent,
-        )
+        from empathy_llm_toolkit.agent_factory.resilient import ResilienceConfig, ResilientAgent
 
         adapter = NativeAdapter()
         base_agent = adapter.create_agent(AgentConfig(name="test"))
@@ -223,10 +212,7 @@ class TestResilientAgentTimeout:
     async def test_timeout_triggers_on_slow_operation(self):
         """Test that timeout triggers for slow operations."""
         from empathy_llm_toolkit.agent_factory.base import AgentConfig, BaseAgent
-        from empathy_llm_toolkit.agent_factory.resilient import (
-            ResilienceConfig,
-            ResilientAgent,
-        )
+        from empathy_llm_toolkit.agent_factory.resilient import ResilienceConfig, ResilientAgent
 
         # Create a slow mock agent
         class SlowAgent(BaseAgent):
@@ -254,10 +240,7 @@ class TestResilientAgentTimeout:
     async def test_timeout_with_fallback(self):
         """Test that fallback is used when timeout occurs."""
         from empathy_llm_toolkit.agent_factory.base import AgentConfig, BaseAgent
-        from empathy_llm_toolkit.agent_factory.resilient import (
-            ResilienceConfig,
-            ResilientAgent,
-        )
+        from empathy_llm_toolkit.agent_factory.resilient import ResilienceConfig, ResilientAgent
 
         class SlowAgent(BaseAgent):
             async def invoke(self, input_data, context=None):
@@ -292,10 +275,7 @@ class TestResilientAgentRetry:
     async def test_retry_on_transient_error(self):
         """Test retry mechanism on transient errors."""
         from empathy_llm_toolkit.agent_factory.base import AgentConfig, BaseAgent
-        from empathy_llm_toolkit.agent_factory.resilient import (
-            ResilienceConfig,
-            ResilientAgent,
-        )
+        from empathy_llm_toolkit.agent_factory.resilient import ResilienceConfig, ResilientAgent
 
         # Agent that fails twice then succeeds
         call_count = 0
@@ -330,10 +310,7 @@ class TestResilientAgentRetry:
     async def test_retry_exhausted_raises(self):
         """Test that exception is raised when retries exhausted."""
         from empathy_llm_toolkit.agent_factory.base import AgentConfig, BaseAgent
-        from empathy_llm_toolkit.agent_factory.resilient import (
-            ResilienceConfig,
-            ResilientAgent,
-        )
+        from empathy_llm_toolkit.agent_factory.resilient import ResilienceConfig, ResilientAgent
 
         class AlwaysFailingAgent(BaseAgent):
             async def invoke(self, input_data, context=None):
@@ -364,10 +341,7 @@ class TestResilientAgentCircuitBreaker:
     async def test_circuit_breaker_opens(self):
         """Test circuit breaker opens after failures."""
         from empathy_llm_toolkit.agent_factory.base import AgentConfig, BaseAgent
-        from empathy_llm_toolkit.agent_factory.resilient import (
-            ResilienceConfig,
-            ResilientAgent,
-        )
+        from empathy_llm_toolkit.agent_factory.resilient import ResilienceConfig, ResilientAgent
         from empathy_os.resilience import CircuitOpenError
 
         class AlwaysFailingAgent(BaseAgent):
@@ -402,10 +376,7 @@ class TestResilientAgentCircuitBreaker:
         """Test circuit_state property."""
         from empathy_llm_toolkit.agent_factory.adapters.native import NativeAdapter
         from empathy_llm_toolkit.agent_factory.base import AgentConfig
-        from empathy_llm_toolkit.agent_factory.resilient import (
-            ResilienceConfig,
-            ResilientAgent,
-        )
+        from empathy_llm_toolkit.agent_factory.resilient import ResilienceConfig, ResilientAgent
 
         adapter = NativeAdapter()
         base_agent = adapter.create_agent(AgentConfig(name="test"))
@@ -419,10 +390,7 @@ class TestResilientAgentCircuitBreaker:
         """Test manual circuit breaker reset."""
         from empathy_llm_toolkit.agent_factory.adapters.native import NativeAdapter
         from empathy_llm_toolkit.agent_factory.base import AgentConfig
-        from empathy_llm_toolkit.agent_factory.resilient import (
-            ResilienceConfig,
-            ResilientAgent,
-        )
+        from empathy_llm_toolkit.agent_factory.resilient import ResilienceConfig, ResilientAgent
 
         adapter = NativeAdapter()
         base_agent = adapter.create_agent(AgentConfig(name="test"))
@@ -465,10 +433,7 @@ class TestResilientAgentDelegation:
         """Test conversation history is delegated to wrapped agent."""
         from empathy_llm_toolkit.agent_factory.adapters.native import NativeAdapter
         from empathy_llm_toolkit.agent_factory.base import AgentConfig
-        from empathy_llm_toolkit.agent_factory.resilient import (
-            ResilienceConfig,
-            ResilientAgent,
-        )
+        from empathy_llm_toolkit.agent_factory.resilient import ResilienceConfig, ResilientAgent
 
         adapter = NativeAdapter()
         base_agent = adapter.create_agent(AgentConfig(name="test"))

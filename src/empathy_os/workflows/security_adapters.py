@@ -54,10 +54,7 @@ async def _get_crew_audit(
         return None
 
     try:
-        from empathy_llm_toolkit.agent_factory.crews import (
-            SecurityAuditConfig,
-            SecurityAuditCrew,
-        )
+        from empathy_llm_toolkit.agent_factory.crews import SecurityAuditConfig, SecurityAuditCrew
 
         # Build config from dict
         crew_config = SecurityAuditConfig(**(config or {}))
@@ -88,7 +85,7 @@ def crew_report_to_workflow_format(report: "SecurityReport") -> dict:
     Returns:
         Dict in workflow format with findings, assessment, etc.
     """
-    findings = []
+    findings: list[dict] = []
     for finding in report.findings:
         finding_dict = {
             "type": finding.category.value if finding.category else "other",
@@ -116,9 +113,9 @@ def crew_report_to_workflow_format(report: "SecurityReport") -> dict:
     }
 
     # Build OWASP category breakdown
-    by_owasp = {}
-    for finding in findings:
-        owasp = finding.get("owasp", "Other")
+    by_owasp: dict[str, int] = {}
+    for f_dict in findings:
+        owasp = f_dict.get("owasp", "Other")
         by_owasp[owasp] = by_owasp.get(owasp, 0) + 1
 
     return {
@@ -194,11 +191,15 @@ def merge_security_results(
     if crew_report is None and workflow_findings is None:
         return {"findings": [], "risk_score": 0, "merged": False}
 
-    if crew_report is None:
+    if crew_report is None and workflow_findings is not None:
         return {**workflow_findings, "merged": False, "crew_enabled": False}
 
-    if workflow_findings is None:
+    if workflow_findings is None and crew_report is not None:
         return {**crew_report, "merged": False}
+
+    # At this point, both should be non-None
+    assert crew_report is not None
+    assert workflow_findings is not None
 
     # Merge findings (prefer crew findings for duplicates)
     crew_findings = crew_report.get("findings", [])

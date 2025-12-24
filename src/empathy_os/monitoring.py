@@ -106,7 +106,7 @@ class AgentMonitor:
         >>> # Record agent activity
         >>> monitor.record_interaction("code_reviewer", response_time_ms=150.0)
         >>> monitor.record_pattern_discovery("code_reviewer")
-        >>> monitor.record_pattern_use("test_generator", pattern_agent="code_reviewer", success=True)
+        >>> monitor.record_pattern_use("test_gen", pattern_agent="code_reviewer", success=True)
         >>>
         >>> # Get individual stats
         >>> stats = monitor.get_agent_stats("code_reviewer")

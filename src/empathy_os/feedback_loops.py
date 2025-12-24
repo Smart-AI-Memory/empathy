@@ -99,7 +99,7 @@ class FeedbackLoopDetector:
             loop_id="R1_trust_building",
             loop_type=LoopType.REINFORCING,
             polarity=LoopPolarity.VIRTUOUS,
-            description="Trust building virtuous cycle: Success → Trust ↑ → Delegation ↑ → More Success",
+            description="Trust building cycle: Success → Trust ↑ → Delegation ↑ → More Success",
             components=["trust", "success_rate", "delegation_level"],
             intervention_points=["celebrate_wins", "increase_transparency"],
         )
@@ -109,7 +109,7 @@ class FeedbackLoopDetector:
             loop_id="R2_trust_erosion",
             loop_type=LoopType.REINFORCING,
             polarity=LoopPolarity.VICIOUS,
-            description="Trust erosion vicious cycle: Failure → Trust ↓ → Micromanagement ↑ → More Failures",
+            description="Trust erosion: Failure → Trust ↓ → Micromanagement ↑ → More Failures",
             components=["trust", "failure_rate", "oversight_level"],
             intervention_points=["break_cycle", "rebuild_confidence", "adjust_scope"],
         )
@@ -191,7 +191,7 @@ class FeedbackLoopDetector:
                 "loop_type": "reinforcing_vicious",
                 "loop_strength": min(abs(trust_trend) * (1 - success_rate), 1.0),
                 "trend": "amplifying_negative",
-                "recommendation": "INTERVENTION NEEDED: Break the cycle. Reduce scope, rebuild confidence.",
+                "recommendation": "INTERVENTION NEEDED: Break cycle. Reduce scope, rebuild confidence.",
                 "details": dominant_loop,
             }
 

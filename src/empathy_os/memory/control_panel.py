@@ -624,7 +624,7 @@ class MemoryAPIHandler(BaseHTTPRequestHandler):
             self._send_json(
                 {
                     "success": status.available,
-                    "message": f"Redis {'started' if status.available else 'failed'} via {status.method.value}",
+                    "message": f"Redis {'OK' if status.available else 'failed'} via {status.method.value}",
                 }
             )
 
@@ -829,7 +829,7 @@ Quick Start:
             print(f"\nPatterns ({len(patterns)} found):")
             for p in patterns:
                 print(
-                    f"  [{p.get('classification', 'UNKNOWN')}] {p.get('pattern_id', 'unknown')} ({p.get('pattern_type', 'unknown')})"
+                    f"  [{p.get('classification', '?')}] {p.get('pattern_id', '?')} ({p.get('pattern_type', '?')})"
                 )
 
     elif args.command == "export":

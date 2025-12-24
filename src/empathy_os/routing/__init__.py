@@ -18,13 +18,7 @@ Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
-from .chain_executor import (
-    ChainConfig,
-    ChainExecution,
-    ChainExecutor,
-    ChainStep,
-    ChainTrigger,
-)
+from .chain_executor import ChainConfig, ChainExecution, ChainExecutor, ChainStep, ChainTrigger
 from .classifier import ClassificationResult, HaikuClassifier
 from .smart_router import RoutingDecision, SmartRouter, quick_route
 from .wizard_registry import WIZARD_REGISTRY, WizardInfo, WizardRegistry

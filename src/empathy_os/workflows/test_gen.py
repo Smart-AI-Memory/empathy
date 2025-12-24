@@ -436,14 +436,14 @@ class TestGenerationWorkflow(BaseWorkflow):
 @pytest.mark.asyncio
 async def test_{name}():
     # Test {name} with valid inputs
-    result = await {name}({', '.join(['None'] * len(params) if params else [])})
+    result = await {name}({", ".join(["None"] * len(params) if params else [])})
     assert result is not None
 """
         else:
             return f"""
 def test_{name}():
     # Test {name} with valid inputs
-    result = {name}({', '.join(['None'] * len(params) if params else [])})
+    result = {name}({", ".join(["None"] * len(params) if params else [])})
     assert result is not None
 """
 
@@ -488,13 +488,13 @@ class Test{name}:
         total_tests = sum(len(tf.get("tests", [])) for tf in generated_tests)
 
         # Build input payload for prompt
-        input_payload = f"""Target: {target or 'codebase'}
+        input_payload = f"""Target: {target or "codebase"}
 
 Total Tests Generated: {total_tests}
 Files Covered: {len(generated_tests)}
 
 Tests Summary:
-{chr(10).join(test_summary[:30]) if test_summary else 'No tests generated'}"""
+{chr(10).join(test_summary[:30]) if test_summary else "No tests generated"}"""
 
         # Check if XML prompts are enabled
         if self._is_xml_enabled():

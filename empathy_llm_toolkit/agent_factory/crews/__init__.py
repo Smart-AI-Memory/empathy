@@ -2,7 +2,8 @@
 Empathy Framework - Pre-built Crews
 
 Ready-to-use multi-agent crews for common tasks.
-Each crew leverages CrewAI's hierarchical collaboration patterns.
+Each crew leverages CrewAI's hierarchical collaboration patterns
+with XML-enhanced prompts for structured output.
 
 Copyright 2025 Smart-AI-Memory
 Licensed under Fair Source License 0.9
@@ -14,6 +15,13 @@ from empathy_llm_toolkit.agent_factory.crews.code_review import (
     CodeReviewReport,
     ReviewFinding,
     Verdict,
+)
+from empathy_llm_toolkit.agent_factory.crews.health_check import (
+    HealthCheckConfig,
+    HealthCheckCrew,
+    HealthCheckReport,
+    HealthFix,
+    HealthIssue,
 )
 from empathy_llm_toolkit.agent_factory.crews.security_audit import (
     SecurityAuditConfig,
@@ -34,4 +42,10 @@ __all__ = [
     "CodeReviewReport",
     "ReviewFinding",
     "Verdict",
+    # Health Check Crew
+    "HealthCheckCrew",
+    "HealthCheckConfig",
+    "HealthCheckReport",
+    "HealthIssue",
+    "HealthFix",
 ]

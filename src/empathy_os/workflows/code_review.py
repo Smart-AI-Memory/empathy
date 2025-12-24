@@ -171,7 +171,7 @@ Respond with a brief classification summary."""
 
         user_message = f"""Classify this code change:
 
-Files: {', '.join(files_changed) if files_changed else 'Not specified'}
+Files: {", ".join(files_changed) if files_changed else "Not specified"}
 
 Code:
 {code_to_review[:4000]}"""
@@ -355,20 +355,23 @@ Be thorough but focused on actionable findings."""
             external_summary = external_audit.get("summary", "")
             external_findings = external_audit.get("findings", [])
             if external_summary or external_findings:
+                # Build findings list efficiently (avoid O(n²) string concat)
+                finding_lines = []
+                for finding in external_findings[:10]:  # Top 10
+                    sev = finding.get("severity", "unknown").upper()
+                    title = finding.get("title", "N/A")
+                    desc = finding.get("description", "")[:100]
+                    finding_lines.append(f"- [{sev}] {title}: {desc}")
+
                 external_context = f"""
 
 ## External Security Audit Results
 Summary: {external_summary}
 
 Findings ({len(external_findings)} total):
-"""
-                for finding in external_findings[:10]:  # Top 10
-                    sev = finding.get("severity", "unknown").upper()
-                    title = finding.get("title", "N/A")
-                    desc = finding.get("description", "")[:100]
-                    external_context += f"- [{sev}] {title}: {desc}\n"
+{chr(10).join(finding_lines)}
 
-                external_context += "\nVerify these findings and identify additional issues."
+Verify these findings and identify additional issues."""
 
         user_message = f"""Review this code for security and quality issues:
 
@@ -385,7 +388,7 @@ Code to review:
         has_critical = "critical" in response.lower() or "high" in response.lower()
 
         # Merge external audit findings if provided
-        security_findings = []
+        security_findings: list[dict] = []
         external_has_critical = False
 
         if external_audit:
@@ -440,35 +443,38 @@ Code to review:
         merged_sections = [llm_response]
 
         if summary or findings:
-            crew_section = "\n\n## SecurityAuditCrew Analysis\n"
+            # Build crew section efficiently (avoid O(n²) string concat)
+            parts = ["\n\n## SecurityAuditCrew Analysis\n"]
             if summary:
-                crew_section += f"\n{summary}\n"
+                parts.append(f"\n{summary}\n")
 
-            crew_section += f"\n**Risk Score**: {risk_score}/100\n"
+            parts.append(f"\n**Risk Score**: {risk_score}/100\n")
 
             if findings:
                 critical = [f for f in findings if f.get("severity") == "critical"]
                 high = [f for f in findings if f.get("severity") == "high"]
 
                 if critical:
-                    crew_section += "\n### Critical Findings\n"
+                    parts.append("\n### Critical Findings\n")
                     for f in critical:
-                        crew_section += f"- **{f.get('title', 'N/A')}**"
+                        title = f"- **{f.get('title', 'N/A')}**"
                         if f.get("file"):
-                            crew_section += f" ({f.get('file')}:{f.get('line', '?')})"
-                        crew_section += f"\n  {f.get('description', '')[:200]}\n"
+                            title += f" ({f.get('file')}:{f.get('line', '?')})"
+                        parts.append(title)
+                        parts.append(f"\n  {f.get('description', '')[:200]}\n")
                         if f.get("remediation"):
-                            crew_section += f"  *Fix*: {f.get('remediation')[:150]}\n"
+                            parts.append(f"  *Fix*: {f.get('remediation')[:150]}\n")
 
                 if high:
-                    crew_section += "\n### High Severity Findings\n"
+                    parts.append("\n### High Severity Findings\n")
                     for f in high[:5]:  # Top 5
-                        crew_section += f"- **{f.get('title', 'N/A')}**"
+                        title = f"- **{f.get('title', 'N/A')}**"
                         if f.get("file"):
-                            crew_section += f" ({f.get('file')}:{f.get('line', '?')})"
-                        crew_section += f"\n  {f.get('description', '')[:150]}\n"
+                            title += f" ({f.get('file')}:{f.get('line', '?')})"
+                        parts.append(title)
+                        parts.append(f"\n  {f.get('description', '')[:150]}\n")
 
-            merged_sections.append(crew_section)
+            merged_sections.append("".join(parts))
 
         return "\n".join(merged_sections), findings, has_critical
 
@@ -568,7 +574,7 @@ Provide actionable, specific feedback."""
             elif "APPROVE" in response.upper() and "SUGGESTIONS" not in response.upper():
                 verdict = "approve"
 
-        result = {
+        result: dict = {
             "architectural_review": response,
             "verdict": verdict,
             "recommendations": [],

@@ -42,15 +42,10 @@ from .code_review import CodeReviewWorkflow
 
 # Code review crew integration (v3.1)
 from .code_review_pipeline import CodeReviewPipeline, CodeReviewPipelineResult
-from .config import (
-    DEFAULT_MODELS,
-    ModelConfig,
-    WorkflowConfig,
-    create_example_config,
-    get_model,
-)
+from .config import DEFAULT_MODELS, ModelConfig, WorkflowConfig, create_example_config, get_model
 from .dependency_check import DependencyCheckWorkflow
 from .document_gen import DocumentGenerationWorkflow
+from .health_check import HealthCheckWorkflow
 from .perf_audit import PerformanceAuditWorkflow
 from .pr_review import PRReviewResult, PRReviewWorkflow
 from .refactor_plan import RefactorPlanWorkflow
@@ -60,11 +55,7 @@ from .research_synthesis import ResearchSynthesisWorkflow
 # Security crew integration (v3.0)
 from .secure_release import SecureReleasePipeline, SecureReleaseResult
 from .security_audit import SecurityAuditWorkflow
-from .step_config import (
-    WorkflowStepConfig,
-    steps_from_tier_map,
-    validate_step_config,
-)
+from .step_config import WorkflowStepConfig, steps_from_tier_map, validate_step_config
 from .test_gen import TestGenerationWorkflow
 
 # Re-export CLI commands from the workflows.py module
@@ -99,7 +90,6 @@ if os.path.exists(_workflows_module_path):
 # Workflow registry for CLI discovery
 WORKFLOW_REGISTRY: dict[str, type[BaseWorkflow]] = {
     # Core workflows
-    "research": ResearchSynthesisWorkflow,
     "code-review": CodeReviewWorkflow,
     "doc-gen": DocumentGenerationWorkflow,
     # Analysis workflows
@@ -117,6 +107,8 @@ WORKFLOW_REGISTRY: dict[str, type[BaseWorkflow]] = {
     # Code review crew integration (v3.1)
     "pro-review": CodeReviewPipeline,
     "pr-review": PRReviewWorkflow,
+    # Health check crew integration (v3.1)
+    "health-check": HealthCheckWorkflow,
 }
 
 
@@ -148,13 +140,18 @@ def list_workflows() -> list[dict]:
     """
     workflows = []
     for name, cls in WORKFLOW_REGISTRY.items():
+        # Handle both BaseWorkflow subclasses and composite pipelines
+        stages = getattr(cls, "stages", [])
+        tier_map = getattr(cls, "tier_map", {})
+        description = getattr(cls, "description", "No description")
+
         workflows.append(
             {
                 "name": name,
                 "class": cls.__name__,
-                "description": cls.description,
-                "stages": cls.stages,
-                "tier_map": {k: v.value for k, v in cls.tier_map.items()},
+                "description": description,
+                "stages": stages,
+                "tier_map": {k: v.value for k, v in tier_map.items()} if tier_map else {},
             }
         )
     return workflows
@@ -199,6 +196,8 @@ __all__ = [
     "CodeReviewPipelineResult",
     "PRReviewWorkflow",
     "PRReviewResult",
+    # Health check crew integration (v3.1)
+    "HealthCheckWorkflow",
     # Registry
     "WORKFLOW_REGISTRY",
     "get_workflow",

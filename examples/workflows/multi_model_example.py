@@ -17,22 +17,16 @@ import tempfile
 from datetime import datetime
 
 # Model Registry imports
-from empathy_os.models import (
-    # Registry
+from empathy_os.models import (  # Registry; Validation; Fallback; Telemetry; Executor; Tasks
     CircuitBreaker,
-    # Validation
     ConfigValidator,
     ExecutionContext,
-    # Fallback
     FallbackPolicy,
     FallbackStrategy,
-    # Telemetry
     LLMCallRecord,
-    # Executor
     MockLLMExecutor,
     ResilientExecutor,
     RetryPolicy,
-    # Tasks
     TelemetryAnalytics,
     TelemetryStore,
     WorkflowRunRecord,
@@ -276,7 +270,7 @@ def demo_fallback_policies():
     # Simulate failures
     for i in range(3):
         breaker.record_failure("anthropic")
-        print(f"After failure {i+1}: available = {breaker.is_available('anthropic')}")
+        print(f"After failure {i + 1}: available = {breaker.is_available('anthropic')}")
 
     print(f"\nCircuit status: {breaker.get_status()}")
 

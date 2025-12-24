@@ -12,7 +12,7 @@ Usage:
     generator.write_to_file("./.claude/patterns_summary.md")
 
 CLI:
-    python -m empathy_llm_toolkit.pattern_summary --patterns-dir ./patterns --output ./.claude/patterns_summary.md
+    python -m empathy_llm_toolkit.pattern_summary --patterns-dir ./patterns --output patterns.md
 
 Author: Empathy Framework Team
 Version: 2.1.2
@@ -153,8 +153,8 @@ class PatternSummaryGenerator:
                 "",
                 "## How to Use These Patterns",
                 "",
-                "- **Debugging**: When encountering errors, check if similar bugs have been resolved",
-                "- **Security**: Before flagging security issues, check team decisions for false positives",
+                "- **Debugging**: Check if similar bugs have been resolved",
+                "- **Security**: Check team decisions for false positives",
                 "- **Tech Debt**: Consider debt trajectory when planning refactoring work",
                 "",
             ]

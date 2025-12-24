@@ -422,9 +422,7 @@ class SecurityAuditWorkflow(BaseWorkflow):
 
         Supports XML-enhanced prompts when enabled in workflow config.
         """
-        from .security_adapters import (
-            _check_crew_available,
-        )
+        from .security_adapters import _check_crew_available
 
         assessment = input_data.get("assessment", {})
         critical = assessment.get("critical_findings", [])
@@ -452,15 +450,15 @@ class SecurityAuditWorkflow(BaseWorkflow):
             )
 
         # Build input payload for prompt
-        input_payload = f"""Target: {target or 'codebase'}
+        input_payload = f"""Target: {target or "codebase"}
 
 Findings:
-{chr(10).join(findings_summary) if findings_summary else 'No critical or high findings'}
+{chr(10).join(findings_summary) if findings_summary else "No critical or high findings"}
 
-Risk Score: {assessment.get('risk_score', 0)}/100
-Risk Level: {assessment.get('risk_level', 'unknown')}
+Risk Score: {assessment.get("risk_score", 0)}/100
+Risk Level: {assessment.get("risk_level", "unknown")}
 
-Severity Breakdown: {json.dumps(assessment.get('severity_breakdown', {}), indent=2)}"""
+Severity Breakdown: {json.dumps(assessment.get("severity_breakdown", {}), indent=2)}"""
 
         # Check if XML prompts are enabled
         if self._is_xml_enabled():
@@ -617,20 +615,23 @@ Provide a detailed remediation plan with specific fixes."""
         if not crew_findings:
             return llm_response
 
-        crew_section = "\n\n## Enhanced Remediation (SecurityAuditCrew)\n\n"
-        crew_section += f"**Agents Used**: {', '.join(crew_remediation.get('agents_used', []))}\n\n"
+        # Build crew section efficiently (avoid O(n²) string concat)
+        parts = [
+            "\n\n## Enhanced Remediation (SecurityAuditCrew)\n\n",
+            f"**Agents Used**: {', '.join(crew_remediation.get('agents_used', []))}\n\n",
+        ]
 
         for finding in crew_findings:
             if finding.get("remediation"):
-                crew_section += f"### {finding.get('title', 'Finding')}\n"
-                crew_section += f"**Severity**: {finding.get('severity', 'unknown').upper()}\n"
+                parts.append(f"### {finding.get('title', 'Finding')}\n")
+                parts.append(f"**Severity**: {finding.get('severity', 'unknown').upper()}\n")
                 if finding.get("cwe_id"):
-                    crew_section += f"**CWE**: {finding.get('cwe_id')}\n"
+                    parts.append(f"**CWE**: {finding.get('cwe_id')}\n")
                 if finding.get("cvss_score"):
-                    crew_section += f"**CVSS Score**: {finding.get('cvss_score')}\n"
-                crew_section += f"\n**Remediation**:\n{finding.get('remediation')}\n\n"
+                    parts.append(f"**CVSS Score**: {finding.get('cvss_score')}\n")
+                parts.append(f"\n**Remediation**:\n{finding.get('remediation')}\n\n")
 
-        return llm_response + crew_section
+        return llm_response + "".join(parts)
 
     def _get_remediation_action(self, finding: dict) -> str:
         """Generate specific remediation action for a finding."""
