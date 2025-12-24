@@ -105,7 +105,7 @@ backend = [
 # LSP server for editor integration (optional)
 lsp = [
     "pygls>=1.0.0,<2.0.0",
-    "lsprotocol>=2023.0.0,<2024.0.0",
+    "lsprotocol>=2023.0.0,<2026.0.0",
 ]
 
 # Windows compatibility
@@ -171,7 +171,7 @@ all = [
     "starlette>=0.40.0,<1.0.0",  # CVE fix
     # LSP
     "pygls>=1.0.0,<2.0.0",
-    "lsprotocol>=2023.0.0,<2024.0.0",
+    "lsprotocol>=2023.0.0,<2026.0.0",
     # Windows
     "colorama>=0.4.6,<1.0.0",
     # Documentation
