@@ -88,6 +88,24 @@ PERF_PATTERNS = {
     },
 }
 
+# Known false positives - patterns that match but aren't performance issues
+# These are documented for transparency; the regex-based detection has limitations.
+#
+# FALSE POSITIVE: string_concat_loop
+#   - Sequential string building (code += "line1"; code += "line2") is NOT in a loop
+#   - Examples: examples/coach/wizards/accessibility_wizard.py (lines 330-536)
+#   - Examples: agents/code_inspection/nodes/reporting.py (HTML building)
+#   - Verdict: OK - sequential concatenation, not loop-based
+#
+# FALSE POSITIVE: large_list_copy
+#   - list(x) or x[:] used for defensive copying or type conversion
+#   - Often intentional to avoid mutating original data
+#   - Verdict: OK - usually intentional, low impact
+#
+# FALSE POSITIVE: repeated_regex (edge cases)
+#   - Single-use regex in rarely-called functions
+#   - Verdict: OK - pre-compilation only matters for hot paths
+
 
 class PerformanceAuditWorkflow(BaseWorkflow):
     """
