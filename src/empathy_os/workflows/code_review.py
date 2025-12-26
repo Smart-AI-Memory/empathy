@@ -14,6 +14,18 @@ import os
 from typing import Any
 
 from .base import PROVIDER_MODELS, BaseWorkflow, ModelProvider, ModelTier
+from .step_config import WorkflowStepConfig
+
+# Define step configurations for executor-based execution
+CODE_REVIEW_STEPS = {
+    "architect_review": WorkflowStepConfig(
+        name="architect_review",
+        task_type="architectural_decision",  # Premium tier task
+        tier_hint="premium",
+        description="Comprehensive architectural code review",
+        max_tokens=3000,
+    ),
+}
 
 
 class CodeReviewWorkflow(BaseWorkflow):
@@ -546,9 +558,25 @@ Provide actionable, specific feedback."""
 
 {input_payload}"""
 
-        response, input_tokens, output_tokens = await self._call_llm(
-            tier, system or "", user_message, max_tokens=3000
-        )
+        # Try executor-based execution first (Phase 3 pattern)
+        if self._executor is not None or self._api_key:
+            try:
+                step = CODE_REVIEW_STEPS["architect_review"]
+                response, input_tokens, output_tokens, cost = await self.run_step_with_executor(
+                    step=step,
+                    prompt=user_message,
+                    system=system,
+                )
+            except Exception:
+                # Fall back to legacy _call_llm if executor fails
+                response, input_tokens, output_tokens = await self._call_llm(
+                    tier, system or "", user_message, max_tokens=3000
+                )
+        else:
+            # Legacy path for backward compatibility
+            response, input_tokens, output_tokens = await self._call_llm(
+                tier, system or "", user_message, max_tokens=3000
+            )
 
         # Parse XML response if enforcement is enabled
         parsed_data = self._parse_xml_response(response)
@@ -592,4 +620,125 @@ Provide actionable, specific feedback."""
                 }
             )
 
+        # Add formatted report for human readability
+        result["formatted_report"] = format_code_review_report(result, input_data)
+
         return (result, input_tokens, output_tokens)
+
+
+def format_code_review_report(result: dict, input_data: dict) -> str:
+    """
+    Format code review output as a human-readable report.
+
+    Args:
+        result: The architect_review stage result
+        input_data: Input data from previous stages
+
+    Returns:
+        Formatted report string
+    """
+    lines = []
+
+    # Header
+    verdict = result.get("verdict", "unknown").upper().replace("_", " ")
+    verdict_icon = {
+        "APPROVE": "✅",
+        "APPROVE WITH SUGGESTIONS": "🔶",
+        "REQUEST CHANGES": "⚠️",
+        "REJECT": "❌",
+    }.get(verdict, "❓")
+
+    lines.append("=" * 60)
+    lines.append("CODE REVIEW REPORT")
+    lines.append("=" * 60)
+    lines.append("")
+    lines.append(f"Verdict: {verdict_icon} {verdict}")
+    lines.append("")
+
+    # Classification summary
+    classification = input_data.get("classification", "")
+    if classification:
+        lines.append("-" * 60)
+        lines.append("CLASSIFICATION")
+        lines.append("-" * 60)
+        lines.append(classification[:500])
+        lines.append("")
+
+    # Security scan results
+    has_critical = input_data.get("has_critical_issues", False)
+    security_score = input_data.get("security_score", 100)
+    security_icon = "🔴" if has_critical else ("🟡" if security_score < 90 else "🟢")
+
+    lines.append("-" * 60)
+    lines.append("SECURITY ANALYSIS")
+    lines.append("-" * 60)
+    lines.append(f"Security Score: {security_icon} {security_score}/100")
+    lines.append(f"Critical Issues: {'Yes' if has_critical else 'No'}")
+    lines.append("")
+
+    # Security findings
+    security_findings = input_data.get("security_findings", [])
+    if security_findings:
+        lines.append("Security Findings:")
+        for finding in security_findings[:10]:
+            severity = finding.get("severity", "unknown").upper()
+            title = finding.get("title", "N/A")
+            sev_icon = {"CRITICAL": "🔴", "HIGH": "🟠", "MEDIUM": "🟡", "LOW": "🟢"}.get(
+                severity, "⚪"
+            )
+            lines.append(f"  {sev_icon} [{severity}] {title}")
+        lines.append("")
+
+    # Scan results summary
+    scan_results = input_data.get("scan_results", "")
+    if scan_results:
+        lines.append("Scan Summary:")
+        # Truncate scan results for readability
+        summary = scan_results[:800]
+        if len(scan_results) > 800:
+            summary += "..."
+        lines.append(summary)
+        lines.append("")
+
+    # Architectural review
+    arch_review = result.get("architectural_review", "")
+    if arch_review:
+        lines.append("-" * 60)
+        lines.append("ARCHITECTURAL REVIEW")
+        lines.append("-" * 60)
+        lines.append(arch_review)
+        lines.append("")
+
+    # Recommendations
+    recommendations = result.get("recommendations", [])
+    if recommendations:
+        lines.append("-" * 60)
+        lines.append("RECOMMENDATIONS")
+        lines.append("-" * 60)
+        for i, rec in enumerate(recommendations, 1):
+            lines.append(f"{i}. {rec}")
+        lines.append("")
+
+    # Crew review results (if available)
+    crew_review = input_data.get("crew_review", {})
+    if crew_review and crew_review.get("available") and not crew_review.get("fallback"):
+        lines.append("-" * 60)
+        lines.append("CREW REVIEW ANALYSIS")
+        lines.append("-" * 60)
+        lines.append(f"Quality Score: {crew_review.get('quality_score', 'N/A')}/100")
+        lines.append(f"Finding Count: {crew_review.get('finding_count', 0)}")
+        agents = crew_review.get("agents_used", [])
+        if agents:
+            lines.append(f"Agents Used: {', '.join(agents)}")
+        summary = crew_review.get("summary", "")
+        if summary:
+            lines.append(f"Summary: {summary[:300]}")
+        lines.append("")
+
+    # Footer
+    lines.append("=" * 60)
+    model_tier = result.get("model_tier_used", "unknown")
+    lines.append(f"Review completed using {model_tier} tier model")
+    lines.append("=" * 60)
+
+    return "\n".join(lines)

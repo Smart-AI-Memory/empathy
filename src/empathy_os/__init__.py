@@ -89,9 +89,9 @@ from .leverage_points import LeveragePointAnalyzer
 from .logging_config import LoggingConfig, get_logger
 
 # Memory module (unified short-term + long-term + security)
-from .memory import (  # Memory module imports
+from .memory import (
     AccessTier,
-    AgentCredentials,
+    AgentCredentials,  # Memory module imports
     AuditEvent,
     AuditLogger,
     Classification,

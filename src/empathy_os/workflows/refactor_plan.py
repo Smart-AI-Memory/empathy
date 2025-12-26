@@ -21,6 +21,18 @@ from pathlib import Path
 from typing import Any
 
 from .base import PROVIDER_MODELS, BaseWorkflow, ModelProvider, ModelTier
+from .step_config import WorkflowStepConfig
+
+# Define step configurations for executor-based execution
+REFACTOR_PLAN_STEPS = {
+    "plan": WorkflowStepConfig(
+        name="plan",
+        task_type="architectural_decision",  # Premium tier task
+        tier_hint="premium",
+        description="Generate prioritized refactoring roadmap",
+        max_tokens=3000,
+    ),
+}
 
 # Debt markers and their severity
 DEBT_MARKERS = {
@@ -441,9 +453,25 @@ Be specific and actionable."""
 
 Create a phased approach to reduce debt sustainably."""
 
-        response, input_tokens, output_tokens = await self._call_llm(
-            tier, system or "", user_message, max_tokens=3000
-        )
+        # Try executor-based execution first (Phase 3 pattern)
+        if self._executor is not None or self._api_key:
+            try:
+                step = REFACTOR_PLAN_STEPS["plan"]
+                response, input_tokens, output_tokens, cost = await self.run_step_with_executor(
+                    step=step,
+                    prompt=user_message,
+                    system=system,
+                )
+            except Exception:
+                # Fall back to legacy _call_llm if executor fails
+                response, input_tokens, output_tokens = await self._call_llm(
+                    tier, system or "", user_message, max_tokens=3000
+                )
+        else:
+            # Legacy path for backward compatibility
+            response, input_tokens, output_tokens = await self._call_llm(
+                tier, system or "", user_message, max_tokens=3000
+            )
 
         # Parse XML response if enforcement is enabled
         parsed_data = self._parse_xml_response(response)
@@ -472,11 +500,137 @@ Create a phased approach to reduce debt sustainably."""
                 }
             )
 
+        # Add formatted report for human readability
+        result["formatted_report"] = format_refactor_plan_report(result, input_data)
+
         return (
             result,
             input_tokens,
             output_tokens,
         )
+
+
+def format_refactor_plan_report(result: dict, input_data: dict) -> str:
+    """
+    Format refactor plan output as a human-readable report.
+
+    Args:
+        result: The plan stage result
+        input_data: Input data from previous stages
+
+    Returns:
+        Formatted report string
+    """
+    lines = []
+
+    # Header with trajectory
+    summary = result.get("summary", {})
+    total_debt = summary.get("total_debt", 0)
+    trajectory = summary.get("trajectory", "unknown")
+    high_priority_count = summary.get("high_priority_count", 0)
+
+    # Trajectory icon
+    if trajectory == "increasing":
+        traj_icon = "📈"
+        traj_text = "INCREASING"
+    elif trajectory == "decreasing":
+        traj_icon = "📉"
+        traj_text = "DECREASING"
+    else:
+        traj_icon = "➡️"
+        traj_text = "STABLE"
+
+    lines.append("=" * 60)
+    lines.append("REFACTOR PLAN REPORT")
+    lines.append("=" * 60)
+    lines.append("")
+    lines.append(f"Total Tech Debt Items: {total_debt}")
+    lines.append(f"Trajectory: {traj_icon} {traj_text}")
+    lines.append(f"High Priority Items: {high_priority_count}")
+    lines.append("")
+
+    # Scan summary
+    by_marker = input_data.get("by_marker", {})
+    files_scanned = input_data.get("files_scanned", 0)
+
+    lines.append("-" * 60)
+    lines.append("DEBT SCAN SUMMARY")
+    lines.append("-" * 60)
+    lines.append(f"Files Scanned: {files_scanned}")
+    if by_marker:
+        lines.append("By Marker Type:")
+        for marker, count in sorted(by_marker.items(), key=lambda x: -x[1]):
+            severity = DEBT_MARKERS.get(marker, {}).get("severity", "low")
+            sev_icon = {"high": "🔴", "medium": "🟡", "low": "🟢"}.get(severity, "⚪")
+            lines.append(f"  {sev_icon} {marker}: {count}")
+    lines.append("")
+
+    # Analysis
+    analysis = input_data.get("analysis", {})
+    if analysis:
+        lines.append("-" * 60)
+        lines.append("TRAJECTORY ANALYSIS")
+        lines.append("-" * 60)
+        velocity = analysis.get("velocity", 0)
+        snapshots = analysis.get("historical_snapshots", 0)
+
+        lines.append(f"Historical Snapshots: {snapshots}")
+        if velocity != 0:
+            velocity_text = f"+{velocity}" if velocity > 0 else str(velocity)
+            lines.append(f"Velocity: {velocity_text} items/snapshot")
+        lines.append("")
+
+    # Hotspots
+    hotspots = analysis.get("hotspots", [])
+    if hotspots:
+        lines.append("-" * 60)
+        lines.append("🔥 HOTSPOT FILES")
+        lines.append("-" * 60)
+        for h in hotspots[:10]:
+            file_path = h.get("file", "unknown")
+            debt_count = h.get("debt_count", 0)
+            lines.append(f"  • {file_path}")
+            lines.append(f"      {debt_count} debt items")
+        lines.append("")
+
+    # High priority items
+    high_priority = input_data.get("high_priority", [])
+    if high_priority:
+        lines.append("-" * 60)
+        lines.append("🔴 HIGH PRIORITY ITEMS")
+        lines.append("-" * 60)
+        for item in high_priority[:10]:
+            file_path = item.get("file", "unknown")
+            line = item.get("line", "?")
+            marker = item.get("marker", "DEBT")
+            message = item.get("message", "")[:50]
+            score = item.get("priority_score", 0)
+            hotspot = "🔥" if item.get("is_hotspot") else ""
+            lines.append(f"  [{marker}] {file_path}:{line} {hotspot}")
+            lines.append(f"      {message} (score: {score})")
+        if len(high_priority) > 10:
+            lines.append(f"  ... and {len(high_priority) - 10} more")
+        lines.append("")
+
+    # Refactoring plan from LLM
+    refactoring_plan = result.get("refactoring_plan", "")
+    if refactoring_plan and not refactoring_plan.startswith("[Simulated"):
+        lines.append("-" * 60)
+        lines.append("REFACTORING ROADMAP")
+        lines.append("-" * 60)
+        if len(refactoring_plan) > 2000:
+            lines.append(refactoring_plan[:2000] + "...")
+        else:
+            lines.append(refactoring_plan)
+        lines.append("")
+
+    # Footer
+    lines.append("=" * 60)
+    model_tier = result.get("model_tier_used", "unknown")
+    lines.append(f"Analyzed {total_debt} debt items using {model_tier} tier model")
+    lines.append("=" * 60)
+
+    return "\n".join(lines)
 
 
 def main():

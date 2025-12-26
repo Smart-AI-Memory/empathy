@@ -9,9 +9,33 @@ Licensed under Fair Source 0.9
 
 import subprocess
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from .linter_parsers import LintIssue
+
+
+def _validate_file_path(file_path: str) -> bool:
+    """
+    Validate file path is safe for subprocess execution.
+
+    SECURITY: Prevents command injection via malicious file paths.
+    Checks that path exists, is a file, and doesn't contain shell metacharacters.
+    """
+    if not file_path:
+        return False
+    try:
+        p = Path(file_path).resolve()
+        # Must exist and be a file
+        if not p.exists() or not p.is_file():
+            return False
+        # Must not contain shell metacharacters
+        shell_chars = set(";|&$`(){}[]<>\\'\"\n\r\t")
+        if any(c in str(p) for c in shell_chars):
+            return False
+        return True
+    except Exception:
+        return False
 
 
 @dataclass
@@ -133,6 +157,15 @@ class ESLintFixApplier(BaseFixApplier):
             )
 
         # Run ESLint --fix on specific file
+        # SECURITY: Validate file path before subprocess execution
+        if not _validate_file_path(issue.file_path):
+            return FixResult(
+                issue=issue,
+                success=False,
+                method="autofix",
+                error=f"Invalid or unsafe file path: {issue.file_path}",
+            )
+
         try:
             result = subprocess.run(
                 ["npx", "eslint", "--fix", issue.file_path],
@@ -218,6 +251,15 @@ class PylintFixApplier(BaseFixApplier):
         if dry_run:
             return FixResult(
                 issue=issue, success=True, method="autofix", changes_made="Would format with black"
+            )
+
+        # SECURITY: Validate file path before subprocess execution
+        if not _validate_file_path(issue.file_path):
+            return FixResult(
+                issue=issue,
+                success=False,
+                method="autofix",
+                error=f"Invalid or unsafe file path: {issue.file_path}",
             )
 
         # Try black first

@@ -1643,7 +1643,9 @@ def _extract_workflow_content(final_output):
     # If it's a dict, try to extract meaningful content
     if isinstance(final_output, dict):
         # Common keys that contain the main output
+        # formatted_report is first - preferred for security-audit and other formatted outputs
         content_keys = [
+            "formatted_report",  # Human-readable formatted output (security-audit, etc.)
             "answer",
             "synthesis",
             "result",
@@ -1779,6 +1781,11 @@ def cmd_workflow(args):
             # Extract the actual content - handle different result types
             if hasattr(result, "final_output"):
                 output_content = _extract_workflow_content(result.final_output)
+            elif hasattr(result, "metadata") and isinstance(result.metadata, dict):
+                # Check for formatted_report in metadata (e.g., HealthCheckResult)
+                output_content = result.metadata.get("formatted_report")
+                if not output_content and hasattr(result, "summary"):
+                    output_content = result.summary
             elif hasattr(result, "summary"):
                 output_content = result.summary
             else:
@@ -1795,6 +1802,16 @@ def cmd_workflow(args):
             savings = cost_report.savings if cost_report else 0.0
 
             if args.json:
+                # Extract error from various result types
+                error = getattr(result, "error", None)
+                if not error and not result.success:
+                    blockers = getattr(result, "blockers", [])
+                    if blockers:
+                        error = "; ".join(blockers)
+                    else:
+                        metadata = getattr(result, "metadata", {})
+                        error = metadata.get("error") if isinstance(metadata, dict) else None
+
                 # JSON output includes both content and metadata
                 output = {
                     "success": result.success,
@@ -1802,7 +1819,7 @@ def cmd_workflow(args):
                     "cost": total_cost,
                     "savings": savings,
                     "duration_ms": duration_ms or 0,
-                    "error": getattr(result, "error", None),
+                    "error": error,
                 }
                 print(json_mod.dumps(output, indent=2))
             else:
@@ -1818,7 +1835,20 @@ def cmd_workflow(args):
                     ms = duration_ms or 0
                     print(f"Completed in {ms}ms | Cost: ${total_cost:.4f} (saved ${savings:.4f})")
                 else:
-                    error_msg = getattr(result, "error", None) or "Unknown error"
+                    # Extract error from various result types
+                    error_msg = getattr(result, "error", None)
+                    if not error_msg:
+                        # Check for blockers (CodeReviewPipelineResult)
+                        blockers = getattr(result, "blockers", [])
+                        if blockers:
+                            error_msg = "; ".join(blockers)
+                        else:
+                            # Check metadata for error
+                            metadata = getattr(result, "metadata", {})
+                            error_msg = (
+                                metadata.get("error") if isinstance(metadata, dict) else None
+                            )
+                    error_msg = error_msg or "Unknown error"
                     print(f"\n✗ Workflow failed: {error_msg}\n")
 
         except KeyError as e:

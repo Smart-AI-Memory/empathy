@@ -103,6 +103,13 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 case 'openWebDashboard':
                     vscode.commands.executeCommand('empathy.openWebDashboard');
                     break;
+                case 'copyToClipboard':
+                    await vscode.env.clipboard.writeText(message.content);
+                    vscode.window.showInformationMessage('Report copied to clipboard');
+                    break;
+                case 'askClaude':
+                    await this._askClaude(message.content);
+                    break;
             }
         });
 
@@ -447,11 +454,13 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             // Get last 10 requests
             const requests = (data.requests || []).slice(-10).reverse();
 
-            // Calculate 7-day totals
+            // Calculate 7-day totals and build daily costs array
             let totalSavings = 0;
             let totalCost = 0;
             let baselineCost = 0;
             const byTier: Record<string, { requests: number; savings: number; cost: number }> = {};
+            const dailyCosts: Array<{ date: string; cost: number; savings: number }> = [];
+            const byProvider: Record<string, { requests: number; cost: number }> = {};
 
             const cutoff = new Date();
             cutoff.setDate(cutoff.getDate() - 7);
@@ -463,12 +472,20 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     totalCost += d.actual_cost || 0;
                     totalSavings += d.savings || 0;
                     baselineCost += d.baseline_cost || 0;
+                    dailyCosts.push({
+                        date: dateStr,
+                        cost: d.actual_cost || 0,
+                        savings: d.savings || 0
+                    });
                 }
             }
 
+            // Sort daily costs by date
+            dailyCosts.sort((a, b) => a.date.localeCompare(b.date));
+
             const savingsPercent = baselineCost > 0 ? Math.round((totalSavings / baselineCost) * 100) : 0;
 
-            // 7-day tier breakdown based on per-request data
+            // 7-day tier breakdown and provider breakdown based on per-request data
             const cutoffIso = cutoff.toISOString();
             for (const req of requests as any[]) {
                 if (!req || typeof req.timestamp !== 'string') {
@@ -479,6 +496,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     continue;
                 }
 
+                // Tier breakdown
                 const tier = (req.tier as string) || 'capable';
                 if (!byTier[tier]) {
                     byTier[tier] = { requests: 0, savings: 0, cost: 0 };
@@ -486,6 +504,29 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 byTier[tier].requests += 1;
                 byTier[tier].savings += req.savings || 0;
                 byTier[tier].cost += req.actual_cost || 0;
+
+                // Provider breakdown
+                const provider = (req.provider as string) || 'unknown';
+                if (!byProvider[provider]) {
+                    byProvider[provider] = { requests: 0, cost: 0 };
+                }
+                byProvider[provider].requests += 1;
+                byProvider[provider].cost += req.actual_cost || 0;
+            }
+
+            // Also check for by_provider in the data file
+            if (data.by_provider) {
+                for (const [provider, pdata] of Object.entries(data.by_provider || {})) {
+                    const pd = pdata as any;
+                    if (!byProvider[provider]) {
+                        byProvider[provider] = { requests: 0, cost: 0 };
+                    }
+                    // Use file data if request-based data is empty
+                    if (byProvider[provider].requests === 0) {
+                        byProvider[provider].requests = pd.requests || 0;
+                        byProvider[provider].cost = pd.actual_cost || 0;
+                    }
+                }
             }
 
             this._view.webview.postMessage({
@@ -495,7 +536,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     totalSavings,
                     totalCost,
                     savingsPercent,
-                    byTier
+                    byTier,
+                    dailyCosts,
+                    byProvider
                 }
             });
         } catch {
@@ -837,6 +880,12 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         });
     }
 
+    private async _askClaude(content: string) {
+        // Copy report to clipboard
+        await vscode.env.clipboard.writeText(content);
+        vscode.window.showInformationMessage('Report copied! Paste into Claude Code input.');
+    }
+
     private _sendActiveFile(workflow: string) {
         const activeEditor = vscode.window.activeTextEditor;
         let activePath = '';
@@ -853,6 +902,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
 
     private _getHtmlForWebview(webview: vscode.Webview): string {
         const nonce = getNonce();
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const projectName = workspaceFolder ? path.basename(workspaceFolder.uri.fsPath) : 'project';
+        const projectPath = './' + projectName;
 
         return `<!DOCTYPE html>
 <html lang="en">
@@ -1369,6 +1421,12 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             </div>
             <div id="workflow-results-content" style="max-height: 300px; overflow-y: auto; font-family: var(--vscode-editor-font-family); font-size: 11px; line-height: 1.5; white-space: pre-wrap; background: var(--vscode-editor-background); padding: 10px; border-radius: 4px; border: 1px solid var(--border); display: none;">
             </div>
+            <!-- Report Action Button -->
+            <div id="workflow-actions" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border);">
+                <button id="ask-claude-btn" class="btn" style="width: 100%; font-size: 10px; padding: 6px 8px; background: var(--vscode-button-background); color: var(--vscode-button-foreground);" title="Copy report with prompt to clipboard">
+                    &#x1F4AC; Ask Claude
+                </button>
+            </div>
         </div>
 
         <div style="margin-top: 12px; text-align: center;">
@@ -1509,12 +1567,57 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             </div>
         </div>
 
+        <!-- Cost Trend Chart (7 days) -->
+        <div class="card" style="margin-top: 12px;">
+            <div class="card-title">Daily Cost Trend</div>
+            <div id="cost-trend-chart" style="height: 120px; display: flex; align-items: flex-end; gap: 4px; padding: 8px 0;">
+                <div style="text-align: center; opacity: 0.5; width: 100%;">No data yet</div>
+            </div>
+            <div id="cost-trend-labels" style="display: flex; justify-content: space-between; font-size: 9px; opacity: 0.6; padding: 0 4px;"></div>
+        </div>
+
+        <!-- Tier Distribution Chart -->
+        <div class="card" style="margin-top: 12px;">
+            <div class="card-title">Cost by Tier</div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div id="tier-pie-chart" style="width: 80px; height: 80px; flex-shrink: 0;">
+                    <svg viewBox="0 0 32 32" style="transform: rotate(-90deg); width: 100%; height: 100%;">
+                        <circle id="pie-cheap" r="16" cx="16" cy="16" fill="transparent" stroke="var(--vscode-charts-green)" stroke-width="32" stroke-dasharray="0 100" />
+                        <circle id="pie-capable" r="16" cx="16" cy="16" fill="transparent" stroke="var(--vscode-charts-blue)" stroke-width="32" stroke-dasharray="0 100" stroke-dashoffset="0" />
+                        <circle id="pie-premium" r="16" cx="16" cy="16" fill="transparent" stroke="var(--vscode-charts-purple)" stroke-width="32" stroke-dasharray="0 100" stroke-dashoffset="0" />
+                    </svg>
+                </div>
+                <div id="tier-legend" style="flex: 1; font-size: 10px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <span><span style="color: var(--vscode-charts-green);">●</span> Cheap</span>
+                        <span id="tier-cheap-pct">--</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <span><span style="color: var(--vscode-charts-blue);">●</span> Capable</span>
+                        <span id="tier-capable-pct">--</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span><span style="color: var(--vscode-charts-purple);">●</span> Premium</span>
+                        <span id="tier-premium-pct">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Provider Comparison -->
+        <div class="card" style="margin-top: 12px;">
+            <div class="card-title">Cost by Provider</div>
+            <div id="provider-bars" style="display: flex; flex-direction: column; gap: 6px;">
+                <div style="text-align: center; opacity: 0.5; padding: 8px;">No provider data</div>
+            </div>
+        </div>
+
         <!-- Cost Simulator -->
         <div class="card" style="margin-top: 12px;">
             <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
-                <span>Cost Simulator <span style="font-size: 9px; color: #a855f7; font-weight: normal; opacity: 0.9;">(Beta)</span></span>
+                <span>Cost Simulator <span style="font-size: 9px; color: #a855f7; font-weight: normal; opacity: 0.9;">(Interactive)</span></span>
             </div>
-            <div style="font-size: 10px; opacity: 0.7; margin-bottom: 8px;">Estimate costs by provider & tier mix</div>
+            <div style="font-size: 10px; opacity: 0.7; margin-bottom: 8px;">Drag sliders to see real-time cost estimates</div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                 <!-- Controls -->
@@ -1538,22 +1641,26 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     </div>
 
                     <div style="margin-bottom: 8px;">
-                        <div style="font-size: 10px; margin-bottom: 4px; opacity: 0.8;">Tier mix</div>
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; font-size: 10px;">
-                            <label>Cheap
-                                <input id="sim-cheap" type="number" min="0" max="100" step="5" value="50" style="width: 100%; margin-top: 2px; padding: 4px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 3px; font-size: 10px;" />
-                            </label>
-                            <label>Capable
-                                <input id="sim-capable" type="number" min="0" max="100" step="5" value="40" style="width: 100%; margin-top: 2px; padding: 4px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 3px; font-size: 10px;" />
-                            </label>
-                            <label>Premium
-                                <input id="sim-premium" type="number" min="0" max="100" step="5" value="10" style="width: 100%; margin-top: 2px; padding: 4px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 3px; font-size: 10px;" />
-                            </label>
+                        <div style="font-size: 10px; margin-bottom: 4px; opacity: 0.8;">Tier mix (drag to adjust)</div>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="width: 50px; font-size: 10px; color: var(--vscode-charts-green);">Cheap</span>
+                                <input id="sim-cheap" type="range" min="0" max="100" step="5" value="50" style="flex: 1; height: 6px; accent-color: var(--vscode-charts-green);" />
+                                <span id="sim-cheap-val" style="width: 30px; font-size: 10px; text-align: right;">50%</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="width: 50px; font-size: 10px; color: var(--vscode-charts-blue);">Capable</span>
+                                <input id="sim-capable" type="range" min="0" max="100" step="5" value="40" style="flex: 1; height: 6px; accent-color: var(--vscode-charts-blue);" />
+                                <span id="sim-capable-val" style="width: 30px; font-size: 10px; text-align: right;">40%</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="width: 50px; font-size: 10px; color: var(--vscode-charts-purple);">Premium</span>
+                                <input id="sim-premium" type="range" min="0" max="100" step="5" value="10" style="flex: 1; height: 6px; accent-color: var(--vscode-charts-purple);" />
+                                <span id="sim-premium-val" style="width: 30px; font-size: 10px; text-align: right;">10%</span>
+                            </div>
                         </div>
-                        <div id="sim-mix-warning" style="margin-top: 2px; font-size: 9px; color: var(--vscode-inputValidation-warningForeground); display: none;">Percentages will be normalized to 100%.</div>
+                        <div id="sim-mix-warning" style="margin-top: 4px; font-size: 9px; color: var(--vscode-inputValidation-warningForeground); display: none;">Percentages normalized to 100%</div>
                     </div>
-
-                    <button class="btn" id="sim-recalc" style="width: 100%; font-size: 10px;">Recalculate</button>
                 </div>
 
                 <!-- Results -->
@@ -1570,6 +1677,19 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                         <div>
                             <div style="font-size: 13px; font-weight: 600; color: var(--vscode-charts-green);" id="sim-savings">$0.00</div>
                             <div style="font-size: 9px; opacity: 0.7;">Saved</div>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Projection Chart -->
+                    <div style="margin-bottom: 8px;">
+                        <div style="font-size: 10px; opacity: 0.8; margin-bottom: 4px;">Monthly Projection</div>
+                        <div id="sim-projection-chart" style="height: 50px; display: flex; gap: 2px; align-items: flex-end;">
+                            <div style="flex: 1; background: var(--vscode-charts-blue); height: 50%; border-radius: 2px;" title="Scenario"></div>
+                            <div style="flex: 1; background: var(--vscode-input-background); border: 1px dashed var(--vscode-charts-red); height: 100%; border-radius: 2px;" title="Baseline"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-around; font-size: 9px; opacity: 0.6; margin-top: 2px;">
+                            <span>Scenario</span>
+                            <span>Baseline</span>
                         </div>
                     </div>
 
@@ -1605,6 +1725,26 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             </div>
         </div>
 
+        <!-- Execution Timeline (last 24h) -->
+        <div class="card" style="margin-top: 12px;">
+            <div class="card-title">Execution Timeline (24h)</div>
+            <div id="workflow-timeline" style="display: flex; align-items: flex-end; gap: 2px; height: 60px; padding: 8px 0;">
+                <div style="text-align: center; opacity: 0.5; width: 100%;">No recent activity</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 9px; opacity: 0.6; margin-top: 4px;">
+                <span>24h ago</span>
+                <span>Now</span>
+            </div>
+        </div>
+
+        <!-- Workflow Cost Comparison -->
+        <div class="card" style="margin-top: 12px;">
+            <div class="card-title">Cost by Workflow Type</div>
+            <div id="workflow-cost-bars" style="display: flex; flex-direction: column; gap: 6px;">
+                <div style="text-align: center; opacity: 0.5; padding: 8px;">No workflow data</div>
+            </div>
+        </div>
+
         <div class="card" style="margin-top: 12px">
             <div class="card-title">Recent Runs</div>
             <div id="workflows-list">
@@ -1615,6 +1755,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
 
     <script nonce="${nonce}">
         const vscode = acquireVsCodeApi();
+        const PROJECT_PATH = '${projectPath}';
 
         // Tab switching
         document.querySelectorAll('.tab').forEach(tab => {
@@ -1692,6 +1833,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         const workflowButtonState = new Map();
         let currentWorkflow = null;
         let workflowLastInputs = {}; // Persisted workflow inputs
+        let lastReportData = null; // Store last workflow report for copy/ask actions
 
         // Workflow input configuration - defines input type and UI for each workflow
         const workflowConfig = {
@@ -1723,9 +1865,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 placeholder: 'Click Browse to select folder...'
             },
             'test-gen': {
-                type: 'file',
-                label: 'Select file to generate tests for',
-                placeholder: 'Click Browse to select file...'
+                type: 'folder',
+                label: 'Select folder to analyze for test gaps',
+                placeholder: 'Click Browse to select folder...'
             },
             'refactor-plan': {
                 type: 'folder',
@@ -1786,10 +1928,10 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 pathField.placeholder = config.placeholder || 'Click Browse...';
                 // If hybrid (allowText), make editable
                 pathField.readOnly = !config.allowText;
-                // Show "Use Entire Project" row only for folder-type workflows
+                // Show "Use Entire Project" row for both file and folder type workflows
                 const projectRow = document.getElementById('workflow-project-row');
                 if (projectRow) {
-                    projectRow.style.display = type === 'folder' ? 'block' : 'none';
+                    projectRow.style.display = 'block';
                 }
 
                 if (type === 'folder') {
@@ -1875,7 +2017,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 if (!currentWorkflow) return;
                 const pathField = document.getElementById('workflow-path');
                 if (pathField) {
-                    pathField.value = '.';
+                    pathField.value = PROJECT_PATH;
                     pathField.dispatchEvent(new Event('input', { bubbles: true }));
                 }
             });
@@ -1975,6 +2117,40 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             });
         }
 
+        // Ask Claude button - copy report with prompt to clipboard and open Claude Code
+        const askClaudeBtn = document.getElementById('ask-claude-btn');
+        if (askClaudeBtn) {
+            askClaudeBtn.addEventListener('click', function() {
+                if (!lastReportData) return;
+
+                // Build the prompt with report
+                const newline = String.fromCharCode(10);
+                const workflowName = lastReportData.workflow || 'workflow';
+                const metadata = [
+                    '--- ' + workflowName + ' Report ---',
+                    'Timestamp: ' + (lastReportData.timestamp || new Date().toISOString()),
+                    'Cost: ' + (lastReportData.cost || 'N/A'),
+                    'Duration: ' + (lastReportData.duration || 'N/A'),
+                    '---',
+                    ''
+                ].join(newline);
+
+                const prompt = 'Based on this ' + workflowName + ' report, please analyze the findings and suggest next steps:' + newline + newline + metadata + lastReportData.output;
+
+                // Send to backend to copy and open Claude Code
+                vscode.postMessage({ type: 'askClaude', content: prompt, workflow: workflowName });
+
+                // Visual feedback
+                const originalText = askClaudeBtn.innerHTML;
+                askClaudeBtn.innerHTML = '&#x2714; Copied!';
+                askClaudeBtn.style.background = 'rgba(16, 185, 129, 0.3)';
+                setTimeout(() => {
+                    askClaudeBtn.innerHTML = originalText;
+                    askClaudeBtn.style.background = '';
+                }, 2000);
+            });
+        }
+
         // View Costs button - switch to Costs tab and request data
         const viewCostsBtn = document.getElementById('view-costs-btn');
 
@@ -2059,6 +2235,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             const resultsTitle = document.getElementById('workflow-results-title');
             const resultsStatus = document.getElementById('workflow-results-status');
             const resultsContent = document.getElementById('workflow-results-content');
+            const actionsPanel = document.getElementById('workflow-actions');
 
             // Restore button state only on complete/error
             if (data.status !== 'running') {
@@ -2082,6 +2259,8 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 resultsStatus.style.color = '#6366f1';
                 resultsStatus.innerHTML = '&#x23F3; Running workflow...';
                 resultsContent.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.5;">Executing workflow...</div>';
+                // Hide actions while running
+                if (actionsPanel) actionsPanel.style.display = 'none';
             } else if (data.status === 'complete') {
                 resultsStatus.style.display = 'block';
                 resultsStatus.style.background = 'rgba(16, 185, 129, 0.2)';
@@ -2099,12 +2278,27 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 } else {
                     resultsContent.textContent = data.output || 'Workflow completed successfully.';
                 }
+
+                // Store report data for copy/ask actions
+                lastReportData = {
+                    workflow: data.workflow,
+                    output: data.output || '',
+                    timestamp: new Date().toISOString(),
+                    cost: data.cost || 'N/A',
+                    duration: data.duration || 'N/A'
+                };
+
+                // Show action buttons
+                if (actionsPanel) actionsPanel.style.display = 'block';
             } else if (data.status === 'error') {
                 resultsStatus.style.display = 'block';
                 resultsStatus.style.background = 'rgba(239, 68, 68, 0.2)';
                 resultsStatus.style.color = 'var(--vscode-testing-iconFailed)';
                 resultsStatus.innerHTML = '&#x2718; Error';
                 resultsContent.textContent = data.output || data.error || 'An error occurred.';
+                // Hide actions on error
+                if (actionsPanel) actionsPanel.style.display = 'none';
+                lastReportData = null;
             }
         }
 
@@ -2270,11 +2464,132 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             return div.innerHTML;
         }
 
+        // Chart rendering functions
+        function renderCostTrendChart(dailyCosts) {
+            const container = document.getElementById('cost-trend-chart');
+            const labelsContainer = document.getElementById('cost-trend-labels');
+
+            if (!dailyCosts || dailyCosts.length === 0) {
+                container.innerHTML = '<div style="text-align: center; opacity: 0.5; width: 100%;">No daily data yet</div>';
+                labelsContainer.innerHTML = '';
+                return;
+            }
+
+            // Get last 7 days
+            const last7 = dailyCosts.slice(-7);
+            const maxCost = Math.max(...last7.map(d => d.cost), 0.01);
+
+            const barHtml = last7.map((d, i) => {
+                const height = Math.max((d.cost / maxCost) * 100, 2);
+                const savingsHeight = Math.max((d.savings / maxCost) * 100, 0);
+                return '<div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; height: 100%;" title="' + d.date + ': $' + d.cost.toFixed(4) + '">' +
+                    '<div style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; width: 100%;">' +
+                        '<div style="background: var(--vscode-charts-green); opacity: 0.4; height: ' + savingsHeight + '%; border-radius: 2px 2px 0 0;"></div>' +
+                        '<div style="background: var(--vscode-charts-blue); height: ' + height + '%; border-radius: 0 0 2px 2px; min-height: 2px;"></div>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+
+            container.innerHTML = barHtml;
+
+            // Show first and last date labels
+            if (last7.length > 0) {
+                const firstDate = last7[0].date.split('-').slice(1).join('/');
+                const lastDate = last7[last7.length - 1].date.split('-').slice(1).join('/');
+                labelsContainer.innerHTML = '<span>' + firstDate + '</span><span>' + lastDate + '</span>';
+            }
+        }
+
+        function renderTierPieChart(byTier) {
+            if (!byTier || Object.keys(byTier).length === 0) {
+                document.getElementById('tier-cheap-pct').textContent = '--';
+                document.getElementById('tier-capable-pct').textContent = '--';
+                document.getElementById('tier-premium-pct').textContent = '--';
+                return;
+            }
+
+            const cheap = byTier.cheap?.cost || 0;
+            const capable = byTier.capable?.cost || 0;
+            const premium = byTier.premium?.cost || 0;
+            const total = cheap + capable + premium;
+
+            if (total === 0) {
+                document.getElementById('tier-cheap-pct').textContent = '0%';
+                document.getElementById('tier-capable-pct').textContent = '0%';
+                document.getElementById('tier-premium-pct').textContent = '0%';
+                return;
+            }
+
+            const cheapPct = (cheap / total) * 100;
+            const capablePct = (capable / total) * 100;
+            const premiumPct = (premium / total) * 100;
+
+            // Update pie chart using stroke-dasharray
+            const circumference = 2 * Math.PI * 16; // r=16
+            const pct = 100;
+
+            const pieChaps = document.getElementById('pie-cheap');
+            const pieCapa = document.getElementById('pie-capable');
+            const piePrem = document.getElementById('pie-premium');
+
+            if (pieChaps) {
+                pieChaps.setAttribute('stroke-dasharray', (cheapPct * pct / 100) + ' ' + pct);
+            }
+            if (pieCapa) {
+                pieCapa.setAttribute('stroke-dasharray', (capablePct * pct / 100) + ' ' + pct);
+                pieCapa.setAttribute('stroke-dashoffset', '-' + (cheapPct * pct / 100));
+            }
+            if (piePrem) {
+                piePrem.setAttribute('stroke-dasharray', (premiumPct * pct / 100) + ' ' + pct);
+                piePrem.setAttribute('stroke-dashoffset', '-' + ((cheapPct + capablePct) * pct / 100));
+            }
+
+            // Update legend
+            document.getElementById('tier-cheap-pct').textContent = cheapPct.toFixed(0) + '% ($' + cheap.toFixed(2) + ')';
+            document.getElementById('tier-capable-pct').textContent = capablePct.toFixed(0) + '% ($' + capable.toFixed(2) + ')';
+            document.getElementById('tier-premium-pct').textContent = premiumPct.toFixed(0) + '% ($' + premium.toFixed(2) + ')';
+        }
+
+        function renderProviderBars(byProvider) {
+            const container = document.getElementById('provider-bars');
+
+            if (!byProvider || Object.keys(byProvider).length === 0) {
+                container.innerHTML = '<div style="text-align: center; opacity: 0.5; padding: 8px;">No provider data</div>';
+                return;
+            }
+
+            const providerColors = {
+                anthropic: '#d97706',
+                openai: '#22c55e',
+                ollama: '#6366f1'
+            };
+
+            const entries = Object.entries(byProvider);
+            const maxCost = Math.max(...entries.map(([_, v]) => v.cost), 0.01);
+
+            container.innerHTML = entries.map(([provider, data]) => {
+                const width = Math.max((data.cost / maxCost) * 100, 5);
+                const color = providerColors[provider.toLowerCase()] || '#888';
+                return '<div style="display: flex; align-items: center; gap: 8px; font-size: 10px;">' +
+                    '<div style="width: 60px; text-transform: capitalize;">' + provider + '</div>' +
+                    '<div style="flex: 1; height: 16px; background: var(--vscode-input-background); border-radius: 2px; overflow: hidden;">' +
+                        '<div style="width: ' + width + '%; height: 100%; background: ' + color + '; border-radius: 2px;"></div>' +
+                    '</div>' +
+                    '<div style="width: 60px; text-align: right;">$' + data.cost.toFixed(2) + '</div>' +
+                '</div>';
+            }).join('');
+        }
+
         function updateCostsPanel(data) {
             // Update summary
             document.getElementById('costs-saved').textContent = '$' + (data.totalSavings || 0).toFixed(2);
             document.getElementById('costs-percent').textContent = (data.savingsPercent || 0) + '%';
             document.getElementById('costs-total').textContent = '$' + (data.totalCost || 0).toFixed(2);
+
+            // Render charts
+            renderCostTrendChart(data.dailyCosts);
+            renderTierPieChart(data.byTier);
+            renderProviderBars(data.byProvider);
 
             // Update requests list
             const listEl = document.getElementById('costs-list');
@@ -2395,6 +2710,89 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             }
         }
 
+        // Workflow chart rendering functions
+        function renderWorkflowTimeline(recentRuns) {
+            const container = document.getElementById('workflow-timeline');
+
+            if (!recentRuns || recentRuns.length === 0) {
+                container.innerHTML = '<div style="text-align: center; opacity: 0.5; width: 100%;">No recent activity</div>';
+                return;
+            }
+
+            // Group runs by hour buckets (last 24 hours = 24 slots)
+            const now = new Date();
+            const buckets = new Array(24).fill(null).map(() => ({ success: 0, failed: 0 }));
+
+            for (const run of recentRuns) {
+                if (!run.timestamp) continue;
+                const runTime = new Date(run.timestamp);
+                const hoursAgo = Math.floor((now - runTime) / 3600000);
+                if (hoursAgo >= 0 && hoursAgo < 24) {
+                    const bucketIdx = 23 - hoursAgo; // 0 = oldest, 23 = most recent
+                    if (run.success) {
+                        buckets[bucketIdx].success++;
+                    } else {
+                        buckets[bucketIdx].failed++;
+                    }
+                }
+            }
+
+            const maxCount = Math.max(...buckets.map(b => b.success + b.failed), 1);
+
+            const barsHtml = buckets.map((bucket, i) => {
+                const total = bucket.success + bucket.failed;
+                if (total === 0) {
+                    return '<div style="flex: 1; height: 100%; display: flex; align-items: flex-end;">' +
+                        '<div style="width: 100%; height: 2px; background: var(--vscode-input-background); border-radius: 1px;"></div>' +
+                    '</div>';
+                }
+                const height = Math.max((total / maxCount) * 100, 8);
+                const successPct = (bucket.success / total) * 100;
+                const color = bucket.failed > 0 ? 'linear-gradient(to top, var(--vscode-testing-iconFailed) ' + (100 - successPct) + '%, var(--vscode-testing-iconPassed) ' + (100 - successPct) + '%)' : 'var(--vscode-testing-iconPassed)';
+                return '<div style="flex: 1; height: 100%; display: flex; align-items: flex-end;" title="' + total + ' run(s)">' +
+                    '<div style="width: 100%; height: ' + height + '%; background: ' + color + '; border-radius: 2px; min-height: 4px;"></div>' +
+                '</div>';
+            }).join('');
+
+            container.innerHTML = barsHtml;
+        }
+
+        function renderWorkflowCostBars(byWorkflow) {
+            const container = document.getElementById('workflow-cost-bars');
+
+            if (!byWorkflow || Object.keys(byWorkflow).length === 0) {
+                container.innerHTML = '<div style="text-align: center; opacity: 0.5; padding: 8px;">No workflow data</div>';
+                return;
+            }
+
+            const entries = Object.entries(byWorkflow).sort((a, b) => b[1].cost - a[1].cost);
+            const maxCost = Math.max(...entries.map(([_, v]) => v.cost), 0.01);
+
+            const workflowColors = {
+                'security-audit': '#ef4444',
+                'code-review': '#3b82f6',
+                'bug-predict': '#f59e0b',
+                'perf-audit': '#8b5cf6',
+                'test-gen': '#22c55e',
+                'doc-gen': '#06b6d4',
+                'refactor-plan': '#ec4899',
+                'release-prep': '#6366f1'
+            };
+
+            container.innerHTML = entries.slice(0, 6).map(([workflow, data]) => {
+                const width = Math.max((data.cost / maxCost) * 100, 5);
+                const color = workflowColors[workflow] || '#888';
+                const shortName = workflow.replace('-audit', '').replace('-gen', '').replace('-', ' ');
+                return '<div style="display: flex; align-items: center; gap: 8px; font-size: 10px;">' +
+                    '<div style="width: 70px; text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="' + workflow + '">' + shortName + '</div>' +
+                    '<div style="flex: 1; height: 14px; background: var(--vscode-input-background); border-radius: 2px; overflow: hidden;">' +
+                        '<div style="width: ' + width + '%; height: 100%; background: ' + color + '; border-radius: 2px;"></div>' +
+                    '</div>' +
+                    '<div style="width: 50px; text-align: right;">$' + data.cost.toFixed(3) + '</div>' +
+                '</div>';
+            }).join('');
+        }
+
         function updateWorkflows(workflows, isEmpty) {
             // Guard against null workflows data
             if (!workflows) {
@@ -2402,6 +2800,8 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 document.getElementById('wf-success').textContent = '0%';
                 document.getElementById('wf-cost').textContent = '$0.00';
                 document.getElementById('wf-savings').textContent = '$0.00';
+                renderWorkflowTimeline([]);
+                renderWorkflowCostBars({});
                 return;
             }
 
@@ -2409,6 +2809,10 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             document.getElementById('wf-success').textContent = workflows.totalRuns > 0 ? Math.round((workflows.successfulRuns / workflows.totalRuns) * 100) + '%' : '0%';
             document.getElementById('wf-cost').textContent = '$' + workflows.totalCost.toFixed(4);
             document.getElementById('wf-savings').textContent = '$' + workflows.totalSavings.toFixed(4);
+
+            // Render charts
+            renderWorkflowTimeline(workflows.recentRuns);
+            renderWorkflowCostBars(workflows.byWorkflow);
 
             const list = document.getElementById('workflows-list');
 
@@ -2494,6 +2898,20 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             };
         }
 
+        function updateSliderLabels() {
+            // Update slider value labels
+            const cheapVal = document.getElementById('sim-cheap-val');
+            const capableVal = document.getElementById('sim-capable-val');
+            const premiumVal = document.getElementById('sim-premium-val');
+            const cheapInput = document.getElementById('sim-cheap');
+            const capableInput = document.getElementById('sim-capable');
+            const premiumInput = document.getElementById('sim-premium');
+
+            if (cheapVal && cheapInput) cheapVal.textContent = cheapInput.value + '%';
+            if (capableVal && capableInput) capableVal.textContent = capableInput.value + '%';
+            if (premiumVal && premiumInput) premiumVal.textContent = premiumInput.value + '%';
+        }
+
         function runSimulator() {
             const providerSelect = document.getElementById('sim-provider');
             const scenarioSelect = document.getElementById('sim-scenario');
@@ -2505,6 +2923,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             if (!providerSelect || !scenarioSelect || !cheapInput || !capableInput || !premiumInput) {
                 return;
             }
+
+            // Update slider labels first
+            updateSliderLabels();
 
             const provider = providerSelect.value || 'hybrid';
             const scenario = scenarioSelect.value || 'default';
@@ -2546,6 +2967,27 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             if (baselineEl) baselineEl.textContent = '$' + baselineCost.toFixed(2);
             if (savingsEl) savingsEl.textContent = '$' + Math.max(0, savings).toFixed(2);
 
+            // Update projection chart (monthly = 4 weeks)
+            const monthlyActual = actualCost * 4;
+            const monthlyBaseline = baselineCost * 4;
+            const projectionChart = document.getElementById('sim-projection-chart');
+            if (projectionChart && monthlyBaseline > 0) {
+                const actualHeight = Math.max((monthlyActual / monthlyBaseline) * 100, 5);
+                projectionChart.innerHTML =
+                    '<div style="flex: 1; display: flex; flex-direction: column; align-items: center;">' +
+                        '<div style="flex: 1; width: 100%; display: flex; align-items: flex-end;">' +
+                            '<div style="width: 100%; height: ' + actualHeight + '%; background: linear-gradient(to top, var(--vscode-charts-green), var(--vscode-charts-blue)); border-radius: 2px;"></div>' +
+                        '</div>' +
+                        '<div style="font-size: 9px; margin-top: 2px;">$' + monthlyActual.toFixed(0) + '/mo</div>' +
+                    '</div>' +
+                    '<div style="flex: 1; display: flex; flex-direction: column; align-items: center;">' +
+                        '<div style="flex: 1; width: 100%; display: flex; align-items: flex-end;">' +
+                            '<div style="width: 100%; height: 100%; background: var(--vscode-input-background); border: 1px dashed var(--vscode-charts-red); border-radius: 2px; opacity: 0.6;"></div>' +
+                        '</div>' +
+                        '<div style="font-size: 9px; margin-top: 2px;">$' + monthlyBaseline.toFixed(0) + '/mo</div>' +
+                    '</div>';
+            }
+
             // Tier breakdown
             const tierEl = document.getElementById('sim-tier-breakdown');
             if (tierEl) {
@@ -2565,14 +3007,19 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             }
         }
 
-        const simRecalcBtn = document.getElementById('sim-recalc');
-        if (simRecalcBtn) {
-            simRecalcBtn.addEventListener('click', function() {
-                runSimulator();
-            });
-        }
+        // Real-time slider updates
+        ['sim-cheap', 'sim-capable', 'sim-premium'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                // 'input' fires while dragging, 'change' fires on release
+                el.addEventListener('input', function() {
+                    runSimulator();
+                });
+            }
+        });
 
-        ['sim-provider', 'sim-scenario', 'sim-cheap', 'sim-capable', 'sim-premium'].forEach(id => {
+        // Dropdown changes
+        ['sim-provider', 'sim-scenario'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.addEventListener('change', function() {

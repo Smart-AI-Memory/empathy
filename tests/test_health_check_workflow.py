@@ -11,10 +11,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from src.empathy_os.workflows.health_check import (
-    HealthCheckResult,
-    HealthCheckWorkflow,
-)
+from src.empathy_os.workflows.health_check import HealthCheckResult, HealthCheckWorkflow
 
 
 class TestHealthCheckResult:

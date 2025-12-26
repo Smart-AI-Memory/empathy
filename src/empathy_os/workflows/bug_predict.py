@@ -20,6 +20,18 @@ from pathlib import Path
 from typing import Any
 
 from .base import PROVIDER_MODELS, BaseWorkflow, ModelProvider, ModelTier
+from .step_config import WorkflowStepConfig
+
+# Define step configurations for executor-based execution
+BUG_PREDICT_STEPS = {
+    "recommend": WorkflowStepConfig(
+        name="recommend",
+        task_type="final_review",  # Premium tier task
+        tier_hint="premium",
+        description="Generate bug prevention recommendations",
+        max_tokens=2000,
+    ),
+}
 
 
 class BugPredictionWorkflow(BaseWorkflow):
@@ -178,12 +190,31 @@ class BugPredictionWorkflow(BaseWorkflow):
         scanned_files: list[dict] = []
         patterns_found: list[dict] = []
 
+        # Directories to exclude from scanning (dependencies, build artifacts, etc.)
+        exclude_dirs = [
+            ".git",
+            "node_modules",
+            ".venv",
+            "venv",
+            "env",
+            "__pycache__",
+            "site-packages",
+            "dist",
+            "build",
+            ".tox",
+            ".nox",
+            ".eggs",
+            "*.egg-info",
+        ]
+
         # Walk directory and collect file info
         target = Path(target_path)
         if target.exists():
             for ext in file_types:
                 for file_path in target.rglob(f"*{ext}"):
-                    if ".git" in str(file_path) or "node_modules" in str(file_path):
+                    # Skip excluded directories
+                    path_str = str(file_path)
+                    if any(excl in path_str for excl in exclude_dirs):
                         continue
                     try:
                         content = file_path.read_text(errors="ignore")
@@ -436,9 +467,25 @@ Be specific and actionable. Prioritize by severity."""
 
 Provide detailed recommendations for preventing bugs."""
 
-        response, input_tokens, output_tokens = await self._call_llm(
-            tier, system or "", user_message, max_tokens=2000
-        )
+        # Try executor-based execution first (Phase 3 pattern)
+        if self._executor is not None or self._api_key:
+            try:
+                step = BUG_PREDICT_STEPS["recommend"]
+                response, input_tokens, output_tokens, cost = await self.run_step_with_executor(
+                    step=step,
+                    prompt=user_message,
+                    system=system,
+                )
+            except Exception:
+                # Fall back to legacy _call_llm if executor fails
+                response, input_tokens, output_tokens = await self._call_llm(
+                    tier, system or "", user_message, max_tokens=2000
+                )
+        else:
+            # Legacy path for backward compatibility
+            response, input_tokens, output_tokens = await self._call_llm(
+                tier, system or "", user_message, max_tokens=2000
+            )
 
         # Parse XML response if enforcement is enabled
         parsed_data = self._parse_xml_response(response)
@@ -461,7 +508,125 @@ Provide detailed recommendations for preventing bugs."""
                 }
             )
 
+        # Add formatted report for human readability
+        result["formatted_report"] = format_bug_predict_report(result, input_data)
+
         return (result, input_tokens, output_tokens)
+
+
+def format_bug_predict_report(result: dict, input_data: dict) -> str:
+    """
+    Format bug prediction output as a human-readable report.
+
+    Args:
+        result: The recommend stage result
+        input_data: Input data from previous stages
+
+    Returns:
+        Formatted report string
+    """
+    lines = []
+
+    # Header with risk assessment
+    risk_score = result.get("overall_risk_score", 0)
+    if risk_score >= 0.8:
+        risk_icon = "🔴"
+        risk_text = "HIGH RISK"
+    elif risk_score >= 0.5:
+        risk_icon = "🟠"
+        risk_text = "MODERATE RISK"
+    elif risk_score >= 0.3:
+        risk_icon = "🟡"
+        risk_text = "LOW RISK"
+    else:
+        risk_icon = "🟢"
+        risk_text = "MINIMAL RISK"
+
+    lines.append("=" * 60)
+    lines.append("BUG PREDICTION REPORT")
+    lines.append("=" * 60)
+    lines.append("")
+    lines.append(f"Overall Risk: {risk_icon} {risk_text} ({risk_score:.0%})")
+    lines.append("")
+
+    # Scan summary
+    file_count = input_data.get("file_count", 0)
+    pattern_count = input_data.get("pattern_count", 0)
+    lines.append("-" * 60)
+    lines.append("SCAN SUMMARY")
+    lines.append("-" * 60)
+    lines.append(f"Files Scanned: {file_count}")
+    lines.append(f"Patterns Found: {pattern_count}")
+    lines.append("")
+
+    # Patterns found by severity
+    patterns = input_data.get("patterns_found", [])
+    if patterns:
+        high = [p for p in patterns if p.get("severity") == "high"]
+        medium = [p for p in patterns if p.get("severity") == "medium"]
+        low = [p for p in patterns if p.get("severity") == "low"]
+
+        lines.append("Pattern Breakdown:")
+        lines.append(f"  🔴 High: {len(high)}")
+        lines.append(f"  🟡 Medium: {len(medium)}")
+        lines.append(f"  🟢 Low: {len(low)}")
+        lines.append("")
+
+    # High risk predictions
+    predictions = input_data.get("predictions", [])
+    high_risk = [p for p in predictions if float(p.get("risk_score", 0)) > 0.7]
+    if high_risk:
+        lines.append("-" * 60)
+        lines.append("HIGH RISK FILES")
+        lines.append("-" * 60)
+        for pred in high_risk[:10]:
+            file_path = pred.get("file", "unknown")
+            score = pred.get("risk_score", 0)
+            file_patterns = pred.get("patterns", [])
+            lines.append(f"  🔴 {file_path} (risk: {score:.0%})")
+            for p in file_patterns[:3]:
+                lines.append(
+                    f"      - {p.get('pattern', 'unknown')}: {p.get('severity', 'unknown')}"
+                )
+        lines.append("")
+
+    # Correlations with historical bugs
+    correlations = input_data.get("correlations", [])
+    high_conf = [
+        c for c in correlations if c.get("confidence", 0) > 0.6 and c.get("historical_bug")
+    ]
+    if high_conf:
+        lines.append("-" * 60)
+        lines.append("HISTORICAL BUG CORRELATIONS")
+        lines.append("-" * 60)
+        for corr in high_conf[:5]:
+            current = corr.get("current_pattern", {})
+            historical = corr.get("historical_bug", {})
+            confidence = corr.get("confidence", 0)
+            lines.append(
+                f"  ⚠️ {current.get('pattern', 'unknown')} correlates with {historical.get('type', 'unknown')}"
+            )
+            lines.append(f"      Confidence: {confidence:.0%}")
+            if historical.get("root_cause"):
+                lines.append(f"      Root cause: {historical.get('root_cause')[:80]}")
+        lines.append("")
+
+    # Recommendations
+    recommendations = result.get("recommendations", "")
+    if recommendations:
+        lines.append("-" * 60)
+        lines.append("RECOMMENDATIONS")
+        lines.append("-" * 60)
+        lines.append(recommendations)
+        lines.append("")
+
+    # Footer
+    lines.append("=" * 60)
+    model_tier = result.get("model_tier_used", "unknown")
+    lines.append(f"Analysis completed using {model_tier} tier model")
+    lines.append("=" * 60)
+
+    return "\n".join(lines)
 
 
 def main():

@@ -130,6 +130,15 @@ class PatternExtractionWizard(BaseWizard):
         commit_message = context.get("commit_message", "")
         commits = context.get("commits", 1)
 
+        # SECURITY: Validate commits parameter to prevent command injection
+        # Must be a positive integer within reasonable bounds
+        try:
+            commits = int(commits)
+            if commits < 1 or commits > 100:
+                commits = 1
+        except (TypeError, ValueError):
+            commits = 1
+
         # Fetch diff if not provided
         if not diff:
             diff, commit_message = self._get_git_diff(commits)

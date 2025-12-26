@@ -23,6 +23,18 @@ from pathlib import Path
 from typing import Any
 
 from .base import PROVIDER_MODELS, BaseWorkflow, ModelProvider, ModelTier
+from .step_config import WorkflowStepConfig
+
+# Define step configurations for executor-based execution
+RELEASE_PREP_STEPS = {
+    "approve": WorkflowStepConfig(
+        name="approve",
+        task_type="final_review",  # Premium tier task
+        tier_hint="premium",
+        description="Assess release readiness and provide go/no-go recommendation",
+        max_tokens=2000,
+    ),
+}
 
 
 class ReleasePreparationWorkflow(BaseWorkflow):
@@ -599,9 +611,25 @@ Be thorough and flag any potential issues."""
 
 Provide a comprehensive release readiness assessment."""
 
-        response, input_tokens, output_tokens = await self._call_llm(
-            tier, system or "", user_message, max_tokens=2000
-        )
+        # Try executor-based execution first (Phase 3 pattern)
+        if self._executor is not None or self._api_key:
+            try:
+                step = RELEASE_PREP_STEPS["approve"]
+                response, input_tokens, output_tokens, cost = await self.run_step_with_executor(
+                    step=step,
+                    prompt=user_message,
+                    system=system,
+                )
+            except Exception:
+                # Fall back to legacy _call_llm if executor fails
+                response, input_tokens, output_tokens = await self._call_llm(
+                    tier, system or "", user_message, max_tokens=2000
+                )
+        else:
+            # Legacy path for backward compatibility
+            response, input_tokens, output_tokens = await self._call_llm(
+                tier, system or "", user_message, max_tokens=2000
+            )
 
         # Parse XML response if enforcement is enabled
         parsed_data = self._parse_xml_response(response)
@@ -635,7 +663,154 @@ Provide a comprehensive release readiness assessment."""
                 }
             )
 
+        # Add formatted report for human readability
+        result["formatted_report"] = format_release_prep_report(result, input_data)
+
         return (result, input_tokens, output_tokens)
+
+
+def format_release_prep_report(result: dict, input_data: dict) -> str:
+    """
+    Format release preparation output as a human-readable report.
+
+    Args:
+        result: The approve stage result
+        input_data: Input data from previous stages
+
+    Returns:
+        Formatted report string
+    """
+    lines = []
+
+    # Header with approval status
+    approved = result.get("approved", False)
+    confidence = result.get("confidence", "unknown").upper()
+
+    if approved:
+        status_icon = "✅"
+        status_text = "READY FOR RELEASE"
+    else:
+        status_icon = "❌"
+        status_text = "NOT READY"
+
+    lines.append("=" * 60)
+    lines.append("RELEASE PREPARATION REPORT")
+    lines.append("=" * 60)
+    lines.append("")
+    lines.append(f"Status: {status_icon} {status_text}")
+    lines.append(f"Confidence: {confidence}")
+    lines.append(f"Recommendation: {result.get('recommendation', 'N/A')}")
+    lines.append("")
+
+    # Health checks
+    health = input_data.get("health", {})
+    health_score = health.get("health_score", 0)
+    checks = health.get("checks", {})
+
+    lines.append("-" * 60)
+    lines.append("HEALTH CHECKS")
+    lines.append("-" * 60)
+    lines.append(f"Health Score: {health_score}/100")
+    lines.append("")
+
+    for check_name, check_data in checks.items():
+        passed = check_data.get("passed", False)
+        skipped = check_data.get("skipped", False)
+        tool = check_data.get("tool", "unknown")
+
+        if skipped:
+            icon = "⏭️"
+            status = "SKIPPED"
+        elif passed:
+            icon = "✅"
+            status = "PASSED"
+        else:
+            icon = "❌"
+            status = "FAILED"
+
+        errors = check_data.get("errors", 0)
+        extra = f" ({errors} errors)" if errors else ""
+        lines.append(f"  {icon} {check_name.upper()} ({tool}): {status}{extra}")
+    lines.append("")
+
+    # Security summary
+    security = input_data.get("security", {})
+    if security:
+        lines.append("-" * 60)
+        lines.append("SECURITY SCAN")
+        lines.append("-" * 60)
+        total_issues = security.get("total_issues", 0)
+        high = security.get("high_severity", 0)
+        medium = security.get("medium_severity", 0)
+        passed = security.get("passed", True)
+
+        if passed:
+            lines.append("✅ No high severity issues found")
+        else:
+            lines.append(f"❌ {high} high severity issues found")
+
+        lines.append(f"Total Issues: {total_issues}")
+        lines.append(f"  🔴 High: {high}")
+        lines.append(f"  🟡 Medium: {medium}")
+        lines.append("")
+
+    # Changelog summary
+    changelog = input_data.get("changelog", {})
+    if changelog:
+        lines.append("-" * 60)
+        lines.append("CHANGELOG")
+        lines.append("-" * 60)
+        commit_count = changelog.get("total_commits", 0)
+        by_category = changelog.get("by_category", {})
+        period = changelog.get("period", "unknown")
+
+        lines.append(f"Period: {period}")
+        lines.append(f"Total Commits: {commit_count}")
+        if by_category:
+            lines.append("By Category:")
+            for cat, count in by_category.items():
+                lines.append(f"  • {cat}: {count}")
+        lines.append("")
+
+    # Blockers
+    blockers = result.get("blockers", [])
+    if blockers:
+        lines.append("-" * 60)
+        lines.append("🚫 BLOCKERS")
+        lines.append("-" * 60)
+        for blocker in blockers:
+            lines.append(f"  • {blocker}")
+        lines.append("")
+
+    # Warnings
+    warnings = result.get("warnings", [])
+    if warnings:
+        lines.append("-" * 60)
+        lines.append("⚠️  WARNINGS")
+        lines.append("-" * 60)
+        for warning in warnings:
+            lines.append(f"  • {warning}")
+        lines.append("")
+
+    # LLM Assessment
+    assessment = result.get("assessment", "")
+    if assessment and not assessment.startswith("[Simulated"):
+        lines.append("-" * 60)
+        lines.append("DETAILED ASSESSMENT")
+        lines.append("-" * 60)
+        if len(assessment) > 1500:
+            lines.append(assessment[:1500] + "...")
+        else:
+            lines.append(assessment)
+        lines.append("")
+
+    # Footer
+    lines.append("=" * 60)
+    model_tier = result.get("model_tier_used", "unknown")
+    lines.append(f"Assessed using {model_tier} tier model")
+    lines.append("=" * 60)
+
+    return "\n".join(lines)
 
 
 def main():

@@ -1,12 +1,22 @@
 #!/usr/bin/env python
 """
-Test script for Claude Memory Integration (v1.8.0-alpha)
+Test script for Claude Memory Integration
 
 This script demonstrates and tests all memory features:
 - Hierarchical loading (Enterprise/User/Project)
 - @import directive support
 - Memory integration with EmpathyLLM
 - Cache management and reloading
+
+Usage:
+    python test_memory_integration.py
+
+Requirements:
+    - empathy_llm_toolkit package installed
+    - Write access to .claude/ directory for test files
+
+Copyright 2025 Smart-AI-Memory
+Licensed under Fair Source License 0.9
 """
 
 import os
@@ -16,8 +26,8 @@ from empathy_llm_toolkit import EmpathyLLM
 from empathy_llm_toolkit.claude_memory import ClaudeMemoryConfig, ClaudeMemoryLoader
 
 
-def test_basic_memory_loading():
-    """Test 1: Basic project memory loading"""
+def test_basic_memory_loading() -> None:
+    """Test basic project memory loading from .claude/CLAUDE.md."""
     print("\n" + "=" * 60)
     print("TEST 1: Basic Project Memory Loading")
     print("=" * 60)
@@ -35,8 +45,8 @@ def test_basic_memory_loading():
     print(memory[:300])
 
 
-def test_import_directive():
-    """Test 2: @import directive with modular files"""
+def test_import_directive() -> None:
+    """Test @import directive for including modular CLAUDE.md files."""
     print("\n" + "=" * 60)
     print("TEST 2: @import Directive")
     print("=" * 60)
@@ -87,8 +97,8 @@ Memory integration test
     print(memory[:500])
 
 
-def test_empathy_llm_integration():
-    """Test 3: Integration with EmpathyLLM"""
+def test_empathy_llm_integration() -> None:
+    """Test memory integration with EmpathyLLM system prompt building."""
     print("\n" + "=" * 60)
     print("TEST 3: EmpathyLLM Integration")
     print("=" * 60)
@@ -125,8 +135,8 @@ def test_empathy_llm_integration():
     print(f"Level instructions: {len(system_prompt) - len(llm._cached_memory)} chars")
 
 
-def test_memory_reloading():
-    """Test 4: Memory cache clearing and reloading"""
+def test_memory_reloading() -> None:
+    """Test memory cache clearing and dynamic reloading after file changes."""
     print("\n" + "=" * 60)
     print("TEST 4: Memory Reloading")
     print("=" * 60)
@@ -162,8 +172,8 @@ def test_memory_reloading():
     print(f"Diff:     +{new_length - original_length} chars")
 
 
-def test_hierarchical_loading():
-    """Test 5: User + Project hierarchical loading"""
+def test_hierarchical_loading() -> None:
+    """Test hierarchical memory loading (User + Project levels)."""
     print("\n" + "=" * 60)
     print("TEST 5: Hierarchical Loading (User + Project)")
     print("=" * 60)
@@ -220,8 +230,8 @@ def test_hierarchical_loading():
             print("✓ Cleaned up test user memory")
 
 
-def test_disabled_memory():
-    """Test 6: Memory disabled (default behavior)"""
+def test_disabled_memory() -> None:
+    """Test backward compatibility when memory is disabled (default behavior)."""
     print("\n" + "=" * 60)
     print("TEST 6: Disabled Memory (Backward Compatibility)")
     print("=" * 60)
@@ -243,11 +253,11 @@ def test_disabled_memory():
     print(f"✓ No memory markers: {'PROJECT Level' not in system_prompt}")
 
 
-def main():
-    """Run all tests"""
+def main() -> None:
+    """Run all memory integration tests."""
     print("\n" + "=" * 60)
     print("Claude Memory Integration Test Suite")
-    print("Empathy Framework v1.8.0-alpha")
+    print("Empathy Framework")
     print("=" * 60)
 
     try:

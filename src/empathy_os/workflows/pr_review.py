@@ -251,7 +251,7 @@ class PRReviewWorkflow:
 
             duration = time.time() - start_time
 
-            return PRReviewResult(
+            result = PRReviewResult(
                 success=True,
                 verdict=verdict,
                 code_quality_score=code_quality_score,
@@ -278,6 +278,10 @@ class PRReviewWorkflow:
                     "parallel_execution": self.parallel,
                 },
             )
+
+            # Add formatted report for human readability
+            result.metadata["formatted_report"] = format_pr_review_report(result)
+            return result
 
         except Exception as e:
             logger.error(f"PRReviewWorkflow failed: {e}")
@@ -576,6 +580,154 @@ def main():
                 print(f"  - {r[:80]}...")
 
     asyncio.run(run())
+
+
+def format_pr_review_report(result: PRReviewResult) -> str:
+    """
+    Format PR review result as a human-readable report.
+
+    Args:
+        result: The PRReviewResult dataclass
+
+    Returns:
+        Formatted report string
+    """
+    lines = []
+
+    # Header with verdict
+    verdict_emoji = {
+        "approve": "✅",
+        "approve_with_suggestions": "🟡",
+        "request_changes": "🟠",
+        "reject": "🔴",
+    }
+    emoji = verdict_emoji.get(result.verdict, "⚪")
+
+    lines.append("=" * 60)
+    lines.append("PR REVIEW REPORT")
+    lines.append("=" * 60)
+    lines.append("")
+
+    # Verdict banner
+    lines.append("-" * 60)
+    lines.append(f"{emoji} VERDICT: {result.verdict.upper().replace('_', ' ')}")
+    lines.append("-" * 60)
+    lines.append("")
+
+    # Scores
+    lines.append("-" * 60)
+    lines.append("SCORES")
+    lines.append("-" * 60)
+
+    # Code quality score with visual bar
+    cq_score = result.code_quality_score
+    cq_bar = "█" * int(cq_score / 10) + "░" * (10 - int(cq_score / 10))
+    lines.append(f"Code Quality:    [{cq_bar}] {cq_score:.0f}/100")
+
+    # Security risk (inverted - lower is better)
+    sr_score = result.security_risk_score
+    sr_bar = "█" * int(sr_score / 10) + "░" * (10 - int(sr_score / 10))
+    risk_label = "LOW" if sr_score < 30 else "MEDIUM" if sr_score < 60 else "HIGH"
+    lines.append(f"Security Risk:   [{sr_bar}] {sr_score:.0f}/100 ({risk_label})")
+
+    # Combined score
+    combined = result.combined_score
+    combined_bar = "█" * int(combined / 10) + "░" * (10 - int(combined / 10))
+    lines.append(f"Combined Score:  [{combined_bar}] {combined:.0f}/100")
+    lines.append("")
+
+    # Summary
+    if result.summary:
+        lines.append("-" * 60)
+        lines.append("SUMMARY")
+        lines.append("-" * 60)
+        # Word wrap summary
+        words = result.summary.split()
+        current_line = ""
+        for word in words:
+            if len(current_line) + len(word) + 1 <= 58:
+                current_line += (" " if current_line else "") + word
+            else:
+                lines.append(current_line)
+                current_line = word
+        if current_line:
+            lines.append(current_line)
+        lines.append("")
+
+    # Blockers
+    if result.blockers:
+        lines.append("-" * 60)
+        lines.append("🚫 BLOCKERS (must fix before merge)")
+        lines.append("-" * 60)
+        for blocker in result.blockers:
+            lines.append(f"  • {blocker}")
+        lines.append("")
+
+    # Findings summary
+    if result.all_findings:
+        lines.append("-" * 60)
+        lines.append("FINDINGS")
+        lines.append("-" * 60)
+        lines.append(f"Total: {len(result.all_findings)}")
+        lines.append(f"  🔴 Critical: {result.critical_count}")
+        lines.append(f"  🟠 High: {result.high_count}")
+        lines.append(f"  Code Issues: {len(result.code_findings)}")
+        lines.append(f"  Security Issues: {len(result.security_findings)}")
+        lines.append("")
+
+        # Show top critical/high findings
+        critical_high = [
+            f for f in result.all_findings if f.get("severity") in ("critical", "high")
+        ]
+        if critical_high:
+            lines.append("Top Issues:")
+            for i, finding in enumerate(critical_high[:5], 1):
+                severity = finding.get("severity", "unknown")
+                title = finding.get("title", finding.get("message", "Unknown issue"))
+                emoji = "🔴" if severity == "critical" else "🟠"
+                if len(title) > 50:
+                    title = title[:47] + "..."
+                lines.append(f"  {emoji} {i}. {title}")
+            if len(critical_high) > 5:
+                lines.append(f"  ... and {len(critical_high) - 5} more critical/high issues")
+            lines.append("")
+
+    # Warnings
+    if result.warnings:
+        lines.append("-" * 60)
+        lines.append("⚠️  WARNINGS")
+        lines.append("-" * 60)
+        for warning in result.warnings:
+            lines.append(f"  • {warning}")
+        lines.append("")
+
+    # Recommendations
+    if result.recommendations:
+        lines.append("-" * 60)
+        lines.append("RECOMMENDATIONS")
+        lines.append("-" * 60)
+        for i, rec in enumerate(result.recommendations[:5], 1):
+            if len(rec) > 55:
+                rec = rec[:52] + "..."
+            lines.append(f"  {i}. {rec}")
+        if len(result.recommendations) > 5:
+            lines.append(f"  ... and {len(result.recommendations) - 5} more")
+        lines.append("")
+
+    # Agents used
+    if result.agents_used:
+        lines.append("-" * 60)
+        lines.append("AGENTS USED")
+        lines.append("-" * 60)
+        lines.append(f"  {', '.join(result.agents_used)}")
+        lines.append("")
+
+    # Footer
+    lines.append("=" * 60)
+    lines.append(f"Review completed in {result.duration_seconds:.1f}s")
+    lines.append("=" * 60)
+
+    return "\n".join(lines)
 
 
 if __name__ == "__main__":

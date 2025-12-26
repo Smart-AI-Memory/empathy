@@ -55,11 +55,13 @@ class LLMCallRecord:
     # Performance
     latency_ms: int = 0
 
-    # Fallback tracking
+    # Fallback and resilience tracking
     fallback_used: bool = False
     fallback_chain: list[str] = field(default_factory=list)
     original_provider: str | None = None
     original_model: str | None = None
+    retry_count: int = 0  # Number of retries before success
+    circuit_breaker_state: str | None = None  # "closed", "open", "half-open"
 
     # Error tracking
     success: bool = True

@@ -250,8 +250,8 @@ class LangChainAdapter(BaseAdapter):
         except (ImportError, AttributeError):
             # Newer versions may have different import paths
             from langgraph.prebuilt import (
-                create_react_agent as create_tool_calling_agent,  # type: ignore[assignment]; noqa: F401
-            )
+                create_react_agent as create_tool_calling_agent,
+            )  # type: ignore[assignment]; noqa: F401
 
             AgentExecutor = None  # type: ignore[misc, assignment]
         from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder

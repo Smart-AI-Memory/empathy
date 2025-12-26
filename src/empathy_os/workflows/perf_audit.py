@@ -21,6 +21,18 @@ from pathlib import Path
 from typing import Any
 
 from .base import PROVIDER_MODELS, BaseWorkflow, ModelProvider, ModelTier
+from .step_config import WorkflowStepConfig
+
+# Define step configurations for executor-based execution
+PERF_AUDIT_STEPS = {
+    "optimize": WorkflowStepConfig(
+        name="optimize",
+        task_type="final_review",  # Premium tier task
+        tier_hint="premium",
+        description="Generate performance optimization recommendations",
+        max_tokens=3000,
+    ),
+}
 
 # Performance anti-patterns to detect
 PERF_PATTERNS = {
@@ -51,8 +63,9 @@ PERF_PATTERNS = {
     },
     "string_concat_loop": {
         "patterns": [
-            r'for\s+.*:\s*\n\s*\w+\s*\+=\s*["\']',
-            r'for\s+.*:\s*\n\s*\w+\s*=\s*\w+\s*\+\s*["\']',
+            # Match: for x in y: \n    str += "..." (actual loop, not generator expression)
+            # Exclude: any(... for x in ...) by requiring standalone for statement
+            r'^[ \t]*for\s+\w+\s+in\s+[^:]+:\s*\n[ \t]+\w+\s*\+=\s*["\']',
         ],
         "description": "String concatenation in loop (use join)",
         "impact": "medium",
@@ -91,11 +104,11 @@ PERF_PATTERNS = {
 # Known false positives - patterns that match but aren't performance issues
 # These are documented for transparency; the regex-based detection has limitations.
 #
-# FALSE POSITIVE: string_concat_loop
-#   - Sequential string building (code += "line1"; code += "line2") is NOT in a loop
-#   - Examples: examples/coach/wizards/accessibility_wizard.py (lines 330-536)
-#   - Examples: agents/code_inspection/nodes/reporting.py (HTML building)
-#   - Verdict: OK - sequential concatenation, not loop-based
+# IMPROVED: string_concat_loop
+#   - Pattern now requires line to START with 'for' (excludes generator expressions)
+#   - Previously matched: any(x for x in y) followed by += on next line
+#   - Now correctly excludes: generator expressions inside any(), all(), etc.
+#   - Sequential string building (code += "line1"; code += "line2") correctly ignored
 #
 # FALSE POSITIVE: large_list_copy
 #   - list(x) or x[:] used for defensive copying or type conversion
@@ -471,9 +484,25 @@ Prioritize by potential performance gain."""
 
 Provide detailed optimization strategies."""
 
-        response, input_tokens, output_tokens = await self._call_llm(
-            tier, system or "", user_message, max_tokens=3000
-        )
+        # Try executor-based execution first (Phase 3 pattern)
+        if self._executor is not None or self._api_key:
+            try:
+                step = PERF_AUDIT_STEPS["optimize"]
+                response, input_tokens, output_tokens, cost = await self.run_step_with_executor(
+                    step=step,
+                    prompt=user_message,
+                    system=system,
+                )
+            except Exception:
+                # Fall back to legacy _call_llm if executor fails
+                response, input_tokens, output_tokens = await self._call_llm(
+                    tier, system or "", user_message, max_tokens=3000
+                )
+        else:
+            # Legacy path for backward compatibility
+            response, input_tokens, output_tokens = await self._call_llm(
+                tier, system or "", user_message, max_tokens=3000
+            )
 
         # Parse XML response if enforcement is enabled
         parsed_data = self._parse_xml_response(response)
@@ -497,6 +526,9 @@ Provide detailed optimization strategies."""
                     "checklist": parsed_data.get("checklist", []),
                 }
             )
+
+        # Add formatted report for human readability
+        result["formatted_report"] = format_perf_audit_report(result, input_data)
 
         return (result, input_tokens, output_tokens)
 
@@ -545,6 +577,126 @@ Provide detailed optimization strategies."""
             },
         }
         return actions.get(concern)
+
+
+def format_perf_audit_report(result: dict, input_data: dict) -> str:
+    """
+    Format performance audit output as a human-readable report.
+
+    Args:
+        result: The optimize stage result
+        input_data: Input data from previous stages
+
+    Returns:
+        Formatted report string
+    """
+    lines = []
+
+    # Header with performance score
+    perf_score = result.get("perf_score", 0)
+    perf_level = result.get("perf_level", "unknown").upper()
+
+    if perf_score >= 85:
+        perf_icon = "🟢"
+        perf_text = "EXCELLENT"
+    elif perf_score >= 75:
+        perf_icon = "🟡"
+        perf_text = "GOOD"
+    elif perf_score >= 50:
+        perf_icon = "🟠"
+        perf_text = "NEEDS OPTIMIZATION"
+    else:
+        perf_icon = "🔴"
+        perf_text = "CRITICAL"
+
+    lines.append("=" * 60)
+    lines.append("PERFORMANCE AUDIT REPORT")
+    lines.append("=" * 60)
+    lines.append("")
+    lines.append(f"Performance Score: {perf_icon} {perf_score}/100 ({perf_text})")
+    lines.append(f"Performance Level: {perf_level}")
+    lines.append("")
+
+    # Scan summary
+    files_scanned = input_data.get("files_scanned", 0)
+    finding_count = input_data.get("finding_count", 0)
+    by_impact = input_data.get("by_impact", {})
+
+    lines.append("-" * 60)
+    lines.append("SCAN SUMMARY")
+    lines.append("-" * 60)
+    lines.append(f"Files Scanned: {files_scanned}")
+    lines.append(f"Issues Found: {finding_count}")
+    lines.append("")
+    lines.append("Issues by Impact:")
+    lines.append(f"  🔴 High: {by_impact.get('high', 0)}")
+    lines.append(f"  🟡 Medium: {by_impact.get('medium', 0)}")
+    lines.append(f"  🟢 Low: {by_impact.get('low', 0)}")
+    lines.append("")
+
+    # Top issues
+    top_issues = result.get("top_issues", [])
+    if top_issues:
+        lines.append("-" * 60)
+        lines.append("TOP PERFORMANCE ISSUES")
+        lines.append("-" * 60)
+        for issue in top_issues:
+            issue_type = issue.get("type", "unknown").replace("_", " ").title()
+            count = issue.get("count", 0)
+            lines.append(f"  • {issue_type}: {count} occurrences")
+        lines.append("")
+
+    # Hotspots
+    hotspot_result = input_data.get("hotspot_result", {})
+    hotspots = hotspot_result.get("hotspots", [])
+    if hotspots:
+        lines.append("-" * 60)
+        lines.append("PERFORMANCE HOTSPOTS")
+        lines.append("-" * 60)
+        lines.append(f"Critical Hotspots: {hotspot_result.get('critical_count', 0)}")
+        lines.append(f"Moderate Hotspots: {hotspot_result.get('moderate_count', 0)}")
+        lines.append("")
+        for h in hotspots[:8]:
+            file_path = h.get("file", "unknown")
+            score = h.get("complexity_score", 0)
+            concerns = h.get("concerns", [])
+            score_icon = "🔴" if score >= 20 else "🟠" if score >= 10 else "🟡"
+            lines.append(f"  {score_icon} {file_path}")
+            lines.append(f"      Score: {score} | Concerns: {', '.join(concerns[:3])}")
+        lines.append("")
+
+    # High impact findings
+    findings = input_data.get("findings", [])
+    high_impact = [f for f in findings if f.get("impact") == "high"]
+    if high_impact:
+        lines.append("-" * 60)
+        lines.append("HIGH IMPACT FINDINGS")
+        lines.append("-" * 60)
+        for f in high_impact[:10]:
+            file_path = f.get("file", "unknown")
+            line = f.get("line", "?")
+            desc = f.get("description", "Unknown issue")
+            lines.append(f"  🔴 {file_path}:{line}")
+            lines.append(f"      {desc}")
+        lines.append("")
+
+    # Optimization recommendations
+    optimization_plan = result.get("optimization_plan", "")
+    if optimization_plan:
+        lines.append("-" * 60)
+        lines.append("OPTIMIZATION RECOMMENDATIONS")
+        lines.append("-" * 60)
+        lines.append(optimization_plan)
+        lines.append("")
+
+    # Footer
+    lines.append("=" * 60)
+    model_tier = result.get("model_tier_used", "unknown")
+    rec_count = result.get("recommendation_count", 0)
+    lines.append(f"Analyzed {rec_count} hotspots using {model_tier} tier model")
+    lines.append("=" * 60)
+
+    return "\n".join(lines)
 
 
 def main():

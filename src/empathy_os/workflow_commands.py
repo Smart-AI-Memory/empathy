@@ -347,8 +347,8 @@ def ship_workflow(
         # Import here to avoid circular imports
         try:
             from empathy_llm_toolkit.cli.sync_claude import (
-                sync_patterns_to_claude,  # type: ignore[attr-defined]
-            )
+                sync_patterns_to_claude,
+            )  # type: ignore[attr-defined]
 
             result = sync_patterns_to_claude(
                 patterns_dir=patterns_dir, output_dir=".claude/rules/empathy"

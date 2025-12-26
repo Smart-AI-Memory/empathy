@@ -14,6 +14,12 @@ pip install empathy-framework[full]
 
 ## What's New in v3.2.x
 
+### Enterprise-Ready Workflows
+
+- **Formatted Reports for All Workflows** — Every workflow now includes `formatted_report` with consistent structure, status icons, and actionable summaries
+- **Enterprise-Safe Doc-Gen** — Auto-scaling tokens, chunked generation, cost guardrails ($5 default limit), graceful degradation, and file export
+- **Output Chunking** — Large reports automatically split into displayable sections to avoid truncation
+
 ### Unified CLI & Developer Experience
 
 - **Unified Typer CLI** — One `empathy` command with Rich output, subcommand groups, and cheatsheet
@@ -225,6 +231,41 @@ print(result.summary, result.findings, result.checklist)
 
 ---
 
+## Enterprise Doc-Gen
+
+Generate comprehensive documentation for large projects with enterprise-safe defaults:
+
+```python
+from empathy_os.workflows import DocumentGenerationWorkflow
+
+# Enterprise-safe configuration
+workflow = DocumentGenerationWorkflow(
+    export_path="docs/generated",     # Auto-save to disk
+    max_cost=5.0,                     # Cost guardrail ($5 default)
+    chunked_generation=True,          # Handle large projects
+    graceful_degradation=True,        # Partial results on errors
+)
+
+result = await workflow.execute(
+    source_code=your_code,
+    doc_type="api_reference",
+    audience="developers"
+)
+
+# Access the formatted report
+print(result.final_output["formatted_report"])
+
+# Large outputs are chunked for display
+if "output_chunks" in result.final_output:
+    for chunk in result.final_output["output_chunks"]:
+        print(chunk)
+
+# Full docs saved to disk
+print(f"Saved to: {result.final_output.get('export_path')}")
+```
+
+---
+
 ## Smart Router
 
 Route natural language requests to the right wizard automatically:
@@ -391,7 +432,7 @@ cd empathy-framework && pip install -e .[dev]
 | **Multi-Model Router** | Smart routing across providers and tiers |
 | **Memory System** | Redis short-term + encrypted long-term patterns |
 | **17 Coach Wizards** | Security, performance, testing, docs, prompt engineering |
-| **10 Cost-Optimized Workflows** | Multi-tier pipelines with XML prompts |
+| **10 Cost-Optimized Workflows** | Multi-tier pipelines with formatted reports & XML prompts |
 | **Healthcare Suite** | SBAR, SOAP notes, clinical protocols (HIPAA) |
 | **Code Inspection** | Unified pipeline with SARIF/GitHub Actions support |
 | **VSCode Extension** | Visual dashboard for memory and workflows |

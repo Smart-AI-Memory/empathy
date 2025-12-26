@@ -18,12 +18,25 @@ Usage:
     print(f"Cost: ${result.cost_report.total_cost:.4f}")
     print(f"Saved: {result.cost_report.savings_percent:.1f}% vs premium-only")
 
+Workflow Discovery:
+    Workflows can be discovered via entry points (pyproject.toml):
+
+    [project.entry-points."empathy.workflows"]
+    my-workflow = "my_package.workflows:MyWorkflow"
+
+    Then call discover_workflows() to load all registered workflows.
+
 Copyright 2025 Smart-AI-Memory
 Licensed under Fair Source License 0.9
 """
 
+import importlib.metadata
 import importlib.util
 import os
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .base import BaseWorkflow
 
 from .base import (
     PROVIDER_MODELS,
@@ -80,8 +93,8 @@ if os.path.exists(_workflows_module_path):
         cmd_fix_all = _workflows_cli.cmd_fix_all
         cmd_learn = _workflows_cli.cmd_learn
 
-# Workflow registry for CLI discovery
-WORKFLOW_REGISTRY: dict[str, type[BaseWorkflow]] = {
+# Default workflow registry (statically defined for backwards compatibility)
+_DEFAULT_WORKFLOWS: dict[str, type[BaseWorkflow]] = {
     # Core workflows
     "code-review": CodeReviewWorkflow,
     "doc-gen": DocumentGenerationWorkflow,
@@ -103,6 +116,73 @@ WORKFLOW_REGISTRY: dict[str, type[BaseWorkflow]] = {
     # Health check crew integration (v3.1)
     "health-check": HealthCheckWorkflow,
 }
+
+# Workflow registry populated at module load
+WORKFLOW_REGISTRY: dict[str, type[BaseWorkflow]] = {}
+
+
+def discover_workflows(include_defaults: bool = True) -> dict[str, type[BaseWorkflow]]:
+    """
+    Discover workflows via entry points.
+
+    This function loads workflows registered as entry points under the
+    'empathy.workflows' group. This allows third-party packages to register
+    custom workflows that integrate with the Empathy Framework.
+
+    Args:
+        include_defaults: Whether to include default built-in workflows
+
+    Returns:
+        Dictionary mapping workflow names to workflow classes
+
+    Example:
+        # In your pyproject.toml:
+        [project.entry-points."empathy.workflows"]
+        my-workflow = "my_package.workflows:MyCustomWorkflow"
+
+        # In your code:
+        from empathy_os.workflows import discover_workflows
+        workflows = discover_workflows()
+        MyWorkflow = workflows.get("my-workflow")
+    """
+    discovered: dict[str, type[BaseWorkflow]] = {}
+
+    # Include default workflows if requested
+    if include_defaults:
+        discovered.update(_DEFAULT_WORKFLOWS)
+
+    # Discover via entry points
+    try:
+        eps = importlib.metadata.entry_points(group="empathy.workflows")
+        for ep in eps:
+            try:
+                workflow_cls = ep.load()
+                # Validate it's a proper workflow class
+                if isinstance(workflow_cls, type) and hasattr(workflow_cls, "execute"):
+                    discovered[ep.name] = workflow_cls
+            except Exception:
+                # Skip invalid entry points silently
+                pass
+    except Exception:
+        # If entry point discovery fails, just use defaults
+        pass
+
+    return discovered
+
+
+def refresh_workflow_registry() -> None:
+    """
+    Refresh the global WORKFLOW_REGISTRY by re-discovering all workflows.
+
+    Call this after installing new packages that register workflows.
+    """
+    global WORKFLOW_REGISTRY
+    WORKFLOW_REGISTRY.clear()
+    WORKFLOW_REGISTRY.update(discover_workflows())
+
+
+# Initialize registry on module load
+WORKFLOW_REGISTRY.update(discover_workflows())
 
 
 def get_workflow(name: str) -> type[BaseWorkflow]:
@@ -191,10 +271,12 @@ __all__ = [
     "PRReviewResult",
     # Health check crew integration (v3.1)
     "HealthCheckWorkflow",
-    # Registry
+    # Registry and discovery
     "WORKFLOW_REGISTRY",
     "get_workflow",
     "list_workflows",
+    "discover_workflows",
+    "refresh_workflow_registry",
     # Stats for dashboard
     "get_workflow_stats",
     # CLI commands (re-exported from workflow_commands.py)

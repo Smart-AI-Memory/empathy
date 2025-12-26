@@ -50,6 +50,22 @@ repos:
         args: ['-c', '.bandit', '-r', 'src/', 'empathy_software_plugin/', 'empathy_llm_toolkit/', 'coach_wizards/', '--severity-level', 'medium', '--confidence-level', 'medium']
         pass_filenames: false
 
+  # Detect-secrets - Prevent secrets from being committed
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: |
+          (?x)^(
+            \.env\.example$|
+            tests/test_secrets_detector\.py$|
+            tests/test_secure_memdocs\.py$|
+            empathy_llm_toolkit/security/secrets_detector\.py$|
+            empathy_llm_toolkit/security/secure_memdocs_example\.py$|
+            anthropic-cookbook/
+          )
+
   # Standard pre-commit hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0

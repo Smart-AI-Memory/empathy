@@ -370,18 +370,19 @@ class TestResilientExecutor:
     @pytest.mark.asyncio
     async def test_circuit_breaker_skip(self, executor):
         """Test that open circuits are skipped."""
-        # Open the circuit for anthropic
-        executor.circuit_breaker.record_failure("anthropic")
-        executor.circuit_breaker.record_failure("anthropic")
-        executor.circuit_breaker.record_failure("anthropic")
-        executor.circuit_breaker.record_failure("anthropic")
-        executor.circuit_breaker.record_failure("anthropic")
+        # Open the circuit for anthropic:capable (the primary tier)
+        # CircuitBreaker now tracks per provider:tier combination
+        executor.circuit_breaker.record_failure("anthropic", "capable")
+        executor.circuit_breaker.record_failure("anthropic", "capable")
+        executor.circuit_breaker.record_failure("anthropic", "capable")
+        executor.circuit_breaker.record_failure("anthropic", "capable")
+        executor.circuit_breaker.record_failure("anthropic", "capable")
 
         mock_fn = AsyncMock(return_value="success")
 
         result, metadata = await executor.execute_with_fallback(mock_fn)
 
-        # Should have skipped anthropic
+        # Should have skipped anthropic:capable
         assert any(
             step.get("skipped") and step.get("reason") == "circuit_breaker_open"
             for step in metadata.get("fallback_chain", [])

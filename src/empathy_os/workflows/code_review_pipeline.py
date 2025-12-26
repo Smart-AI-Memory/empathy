@@ -17,6 +17,10 @@ import asyncio
 import logging
 import time
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    pass
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +33,7 @@ class CodeReviewPipelineResult:
     verdict: str  # "approve", "approve_with_suggestions", "request_changes", "reject"
     quality_score: float
     crew_report: dict | None
-    workflow_result: dict | None
+    workflow_result: Any  # WorkflowResult or None
     combined_findings: list[dict]
     critical_count: int
     high_count: int
@@ -139,7 +143,7 @@ class CodeReviewPipeline:
 
         # Initialize result collectors
         crew_report: dict | None = None
-        workflow_result: dict | None = None
+        workflow_result: Any = None  # WorkflowResult or None
         all_findings: list[dict] = []
         recommendations: list[str] = []
         blockers: list[str] = []
@@ -177,12 +181,15 @@ class CodeReviewPipeline:
 
             if workflow_result:
                 # Get workflow findings from various stages
-                wf_output = workflow_result.get("final_output", {})
-                scan_findings = wf_output.get("security_findings", [])
+                # WorkflowResult is a dataclass, access attributes directly
+                wf_output = workflow_result.final_output or {}
+                scan_findings = (
+                    wf_output.get("security_findings", []) if isinstance(wf_output, dict) else []
+                )
                 all_findings.extend(scan_findings)
 
                 # Get cost from workflow
-                cost_report = workflow_result.get("cost_report", {})
+                cost_report = workflow_result.cost_report
                 if hasattr(cost_report, "total_cost"):
                     total_cost = cost_report.total_cost
 
@@ -210,7 +217,7 @@ class CodeReviewPipeline:
 
             duration = time.time() - start_time
 
-            return CodeReviewPipelineResult(
+            result = CodeReviewPipelineResult(
                 success=True,
                 verdict=verdict,
                 quality_score=quality_score,
@@ -233,6 +240,10 @@ class CodeReviewPipeline:
                     "parallel_crew": self.parallel_crew,
                 },
             )
+
+            # Add formatted report for human readability
+            result.metadata["formatted_report"] = format_code_review_pipeline_report(result)
+            return result
 
         except Exception as e:
             logger.error(f"CodeReviewPipeline failed: {e}")
@@ -261,7 +272,7 @@ class CodeReviewPipeline:
         code_to_review: str,
         files_changed: list[str],
         context: dict,
-    ) -> tuple[dict | None, dict | None]:
+    ) -> tuple[dict | None, Any]:  # Second element is WorkflowResult or None
         """Run full mode with crew and workflow."""
         from .code_review import CodeReviewWorkflow
         from .code_review_adapters import (
@@ -271,7 +282,7 @@ class CodeReviewPipeline:
         )
 
         crew_report: dict | None = None
-        workflow_result: dict | None = None
+        workflow_result: Any = None  # WorkflowResult or None
 
         # Check if crew is available
         crew_available = _check_crew_available()
@@ -345,7 +356,7 @@ class CodeReviewPipeline:
         code_to_review: str,
         files_changed: list[str],
         context: dict,
-    ) -> dict:
+    ) -> Any:  # Returns WorkflowResult
         """Run standard mode with workflow only."""
         from .code_review import CodeReviewWorkflow
 
@@ -362,7 +373,7 @@ class CodeReviewPipeline:
         code_to_review: str,
         files_changed: list[str],
         context: dict,
-    ) -> dict:
+    ) -> Any:  # Returns WorkflowResult
         """Run quick mode with minimal stages."""
         from .code_review import CodeReviewWorkflow
 
@@ -393,7 +404,7 @@ class CodeReviewPipeline:
     def _calculate_quality_score(
         self,
         crew_report: dict | None,
-        workflow_result: dict | None,
+        workflow_result: Any,  # WorkflowResult or None
         findings: list[dict],
     ) -> float:
         """Calculate combined quality score."""
@@ -408,8 +419,10 @@ class CodeReviewPipeline:
 
         # Workflow security score (if available)
         if workflow_result:
-            wf_output = workflow_result.get("final_output", {})
-            security_score = wf_output.get("security_score", 90)
+            wf_output = workflow_result.final_output or {}
+            security_score = (
+                wf_output.get("security_score", 90) if isinstance(wf_output, dict) else 90
+            )
             scores.append(security_score)
             weights.append(1.0)
 
@@ -436,7 +449,7 @@ class CodeReviewPipeline:
     def _determine_verdict(
         self,
         crew_report: dict | None,
-        workflow_result: dict | None,
+        workflow_result: Any,  # WorkflowResult or None
         quality_score: float,
         blockers: list[str],
     ) -> str:
@@ -453,8 +466,10 @@ class CodeReviewPipeline:
 
         # Workflow verdict (from architect review)
         if workflow_result:
-            wf_output = workflow_result.get("final_output", {})
-            wf_verdict = wf_output.get("verdict", "approve")
+            wf_output = workflow_result.final_output or {}
+            wf_verdict = (
+                wf_output.get("verdict", "approve") if isinstance(wf_output, dict) else "approve"
+            )
             verdicts.append(wf_verdict)
 
         # Score-based verdict
@@ -545,6 +560,150 @@ def main():
                 print(f"  - {r[:100]}...")
 
     asyncio.run(run())
+
+
+def format_code_review_pipeline_report(result: CodeReviewPipelineResult) -> str:
+    """
+    Format code review pipeline result as a human-readable report.
+
+    Args:
+        result: The CodeReviewPipelineResult dataclass
+
+    Returns:
+        Formatted report string
+    """
+    lines = []
+
+    # Header with verdict
+    verdict_emoji = {
+        "approve": "✅",
+        "approve_with_suggestions": "🟡",
+        "request_changes": "🟠",
+        "reject": "🔴",
+    }
+    emoji = verdict_emoji.get(result.verdict, "⚪")
+
+    lines.append("=" * 60)
+    lines.append("CODE REVIEW REPORT")
+    lines.append("=" * 60)
+    lines.append("")
+
+    # Verdict banner
+    lines.append("-" * 60)
+    lines.append(f"{emoji} VERDICT: {result.verdict.upper().replace('_', ' ')}")
+    lines.append("-" * 60)
+    lines.append(f"Mode: {result.mode}")
+    lines.append("")
+
+    # Quality score with visual bar
+    score = result.quality_score
+    bar = "█" * int(score / 10) + "░" * (10 - int(score / 10))
+    quality_label = (
+        "EXCELLENT"
+        if score >= 90
+        else "GOOD" if score >= 70 else "NEEDS WORK" if score >= 50 else "POOR"
+    )
+    lines.append("-" * 60)
+    lines.append("QUALITY SCORE")
+    lines.append("-" * 60)
+    lines.append(f"[{bar}] {score:.0f}/100 ({quality_label})")
+    lines.append("")
+
+    # Crew summary (if available)
+    if result.crew_report and result.crew_report.get("summary"):
+        lines.append("-" * 60)
+        lines.append("SUMMARY")
+        lines.append("-" * 60)
+        summary = result.crew_report["summary"]
+        # Word wrap the summary
+        words = summary.split()
+        current_line = ""
+        for word in words:
+            if len(current_line) + len(word) + 1 <= 58:
+                current_line += (" " if current_line else "") + word
+            else:
+                lines.append(current_line)
+                current_line = word
+        if current_line:
+            lines.append(current_line)
+        lines.append("")
+
+    # Findings summary
+    total_findings = len(result.combined_findings)
+    lines.append("-" * 60)
+    lines.append("FINDINGS")
+    lines.append("-" * 60)
+
+    # Show files reviewed from metadata
+    files_reviewed = result.metadata.get("files_reviewed", 0)
+    if files_reviewed > 0:
+        lines.append(f"Files Reviewed: {files_reviewed}")
+
+    if total_findings > 0 or result.critical_count > 0 or result.high_count > 0:
+        lines.append(f"Issues Found: {total_findings}")
+        lines.append(f"  🔴 Critical: {result.critical_count}")
+        lines.append(f"  🟠 High: {result.high_count}")
+        lines.append(f"  🟡 Medium: {result.medium_count}")
+        lines.append("")
+
+        # Show top critical/high findings
+        if result.combined_findings:
+            critical_high = [
+                f for f in result.combined_findings if f.get("severity") in ("critical", "high")
+            ][:5]
+            if critical_high:
+                lines.append("Top Issues:")
+                for i, finding in enumerate(critical_high, 1):
+                    severity = finding.get("severity", "unknown")
+                    title = finding.get(
+                        "title", finding.get("message", finding.get("description", "Issue found"))
+                    )
+                    emoji_f = "🔴" if severity == "critical" else "🟠"
+                    if len(str(title)) > 50:
+                        title = str(title)[:47] + "..."
+                    lines.append(f"  {emoji_f} {i}. {title}")
+                lines.append("")
+    else:
+        lines.append("✅ No issues found!")
+        lines.append("")
+
+    # Blockers
+    if result.blockers:
+        lines.append("-" * 60)
+        lines.append("🚫 BLOCKERS")
+        lines.append("-" * 60)
+        for blocker in result.blockers:
+            lines.append(f"  • {blocker}")
+        lines.append("")
+
+    # Recommendations
+    if result.recommendations:
+        lines.append("-" * 60)
+        lines.append("RECOMMENDATIONS")
+        lines.append("-" * 60)
+        for i, rec in enumerate(result.recommendations[:5], 1):
+            rec_str = str(rec)
+            if len(rec_str) > 55:
+                rec_str = rec_str[:52] + "..."
+            lines.append(f"  {i}. {rec_str}")
+        if len(result.recommendations) > 5:
+            lines.append(f"  ... and {len(result.recommendations) - 5} more")
+        lines.append("")
+
+    # Agents used
+    if result.agents_used:
+        lines.append("-" * 60)
+        lines.append("AGENTS USED")
+        lines.append("-" * 60)
+        lines.append(f"  {', '.join(result.agents_used)}")
+        lines.append("")
+
+    # Footer
+    lines.append("=" * 60)
+    lines.append(f"Review completed in {result.duration_seconds:.1f}s | Cost: ${result.cost:.4f}")
+    lines.append("=" * 60)
+
+    return "\n".join(lines)
 
 
 if __name__ == "__main__":

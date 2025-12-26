@@ -1,0 +1,13 @@
+{
+  "bug_id": "bug_20251225_533ed3c8",
+  "date": "2025-12-25T13:31:07.632471",
+  "file_path": "src/utils/helpers.ts",
+  "error_type": "null_reference",
+  "error_message": "TypeError: Cannot read property 'length' of undefined",
+  "root_cause": "",
+  "fix_applied": "",
+  "fix_code": null,
+  "resolution_time_minutes": 0,
+  "resolved_by": "",
+  "status": "investigating"
+}

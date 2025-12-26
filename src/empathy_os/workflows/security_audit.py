@@ -21,6 +21,99 @@ from pathlib import Path
 from typing import Any
 
 from .base import PROVIDER_MODELS, BaseWorkflow, ModelProvider, ModelTier
+from .step_config import WorkflowStepConfig
+
+# Define step configurations for executor-based execution
+SECURITY_STEPS = {
+    "remediate": WorkflowStepConfig(
+        name="remediate",
+        task_type="final_review",  # Premium tier task
+        tier_hint="premium",
+        description="Generate remediation plan for security vulnerabilities",
+        max_tokens=3000,
+    ),
+}
+
+# Directories to skip during scanning (build artifacts, third-party code)
+SKIP_DIRECTORIES = {
+    ".git",
+    "node_modules",
+    "__pycache__",
+    "venv",
+    ".venv",
+    "env",
+    ".next",  # Next.js build output
+    "dist",
+    "build",
+    ".tox",
+    "site",  # MkDocs output
+    "ebook-site",
+    "website",  # Website build artifacts
+    "anthropic-cookbook",  # Third-party examples
+    ".eggs",
+    "*.egg-info",
+    "htmlcov",  # Coverage report artifacts
+    "htmlcov_logging",  # Coverage report artifacts
+    ".coverage",  # Coverage data
+    "vscode-extension",  # VSCode extension code (separate security review)
+    "vscode-memory-panel",  # VSCode panel code
+    "wizard-dashboard",  # Dashboard build
+}
+
+# Patterns that indicate a line is DETECTION code, not vulnerable code
+# These help avoid false positives when scanning security tools
+DETECTION_PATTERNS = [
+    r'["\']eval\s*\(["\']',  # String literal like "eval(" (detection, not execution)
+    r'["\']exec\s*\(["\']',  # String literal like "exec(" (detection, not execution)
+    r"in\s+content",  # Pattern detection like "eval(" in content
+    r"re\.compile",  # Regex compilation for detection
+    r"\.finditer\(",  # Regex matching for detection
+    r"\.search\(",  # Regex searching for detection
+]
+
+# Known fake/test credential patterns to ignore
+FAKE_CREDENTIAL_PATTERNS = [
+    r"EXAMPLE",  # AWS example keys
+    r"FAKE",
+    r"TEST",
+    r"your-.*-here",
+    r'"your-key"',  # Placeholder key
+    r"abc123xyz",
+    r"\.\.\.",  # Placeholder with ellipsis
+    r"test-key",
+    r"mock",
+    r'"hardcoded_secret"',  # Literal example text
+    r'"secret"$',  # Generic "secret" as value
+    r'"secret123"',  # Test password
+    r'"password"$',  # Generic password as value
+    r"_PATTERN",  # Pattern constants
+    r"_EXAMPLE",  # Example constants
+]
+
+# Files/paths that contain security examples/tests (not vulnerabilities)
+SECURITY_EXAMPLE_PATHS = [
+    "owasp_patterns.py",
+    "vulnerability_scanner.py",
+    "test_security",
+    "test_secrets",
+    "test_owasp",
+    "secrets_detector.py",  # Security tool with pattern definitions
+    "pii_scrubber.py",  # Privacy tool
+    "secure_memdocs",  # Secure storage module
+    "/security/",  # Security modules
+]
+
+# Test file patterns - findings here are informational, not critical
+TEST_FILE_PATTERNS = [
+    r"/tests/",
+    r"/test_",
+    r"_test\.py$",
+    r"_demo\.py$",
+    r"_example\.py$",
+    r"/examples/",
+    r"/demo",
+    r"coach/vscode-extension",  # Example VSCode extension
+]
 
 # Common security vulnerability patterns (OWASP Top 10 inspired)
 SECURITY_PATTERNS = {
@@ -236,30 +329,66 @@ class SecurityAuditWorkflow(BaseWorkflow):
         if target.exists():
             for ext in file_types:
                 for file_path in target.rglob(f"*{ext}"):
-                    if any(
-                        skip in str(file_path)
-                        for skip in [".git", "node_modules", "__pycache__", "venv"]
-                    ):
+                    # Skip excluded directories
+                    if any(skip in str(file_path) for skip in SKIP_DIRECTORIES):
                         continue
 
                     try:
                         content = file_path.read_text(errors="ignore")
+                        lines = content.split("\n")
                         files_scanned += 1
 
                         for vuln_type, vuln_info in SECURITY_PATTERNS.items():
                             for pattern in vuln_info["patterns"]:
                                 matches = list(re.finditer(pattern, content, re.IGNORECASE))
                                 for match in matches:
-                                    # Find line number
+                                    # Find line number and get the line content
                                     line_num = content[: match.start()].count("\n") + 1
+                                    line_content = (
+                                        lines[line_num - 1] if line_num <= len(lines) else ""
+                                    )
+
+                                    # Skip if file is a security example/test file
+                                    file_name = str(file_path)
+                                    if any(exp in file_name for exp in SECURITY_EXAMPLE_PATHS):
+                                        continue
+
+                                    # Skip if this looks like detection/scanning code
+                                    if self._is_detection_code(line_content, match.group()):
+                                        continue
+
+                                    # Skip fake/test credentials
+                                    if vuln_type == "hardcoded_secret":
+                                        if self._is_fake_credential(match.group()):
+                                            continue
+
+                                    # Skip command_injection in documentation strings
+                                    if vuln_type == "command_injection":
+                                        if self._is_documentation_or_string(
+                                            line_content, match.group()
+                                        ):
+                                            continue
+
+                                    # Check if this is a test file - downgrade to informational
+                                    is_test_file = any(
+                                        re.search(pat, file_name) for pat in TEST_FILE_PATTERNS
+                                    )
+
+                                    # Skip test file findings for hardcoded_secret (expected in tests)
+                                    if is_test_file and vuln_type == "hardcoded_secret":
+                                        continue
+
                                     findings.append(
                                         {
                                             "type": vuln_type,
                                             "file": str(file_path),
                                             "line": line_num,
                                             "match": match.group()[:100],
-                                            "severity": vuln_info["severity"],
+                                            "severity": (
+                                                "low" if is_test_file else vuln_info["severity"]
+                                            ),
                                             "owasp": vuln_info["owasp"],
+                                            "is_test": is_test_file,
                                         }
                                     )
                     except OSError:
@@ -350,6 +479,86 @@ class SecurityAuditWorkflow(BaseWorkflow):
         }
         return analyses.get(vuln_type, "Review for security implications.")
 
+    def _is_detection_code(self, line_content: str, match_text: str) -> bool:
+        """
+        Check if a match is actually detection/scanning code, not a vulnerability.
+
+        This prevents false positives when scanning security tools that contain
+        patterns like 'if "eval(" in content:' which are detecting vulnerabilities,
+        not introducing them.
+        """
+        # Check if the line contains detection patterns
+        for pattern in DETECTION_PATTERNS:
+            if re.search(pattern, line_content, re.IGNORECASE):
+                return True
+
+        # Check if the match is inside a string literal used for comparison
+        # e.g., 'if "eval(" in content:' or 'pattern = r"eval\("'
+        if f'"{match_text.strip()}"' in line_content or f"'{match_text.strip()}'" in line_content:
+            return True
+
+        return False
+
+    def _is_fake_credential(self, match_text: str) -> bool:
+        """
+        Check if a matched credential is obviously fake/for testing.
+
+        This prevents false positives for test fixtures using patterns like
+        'AKIAIOSFODNN7EXAMPLE' (AWS official example) or 'test-key-not-real'.
+        """
+        for pattern in FAKE_CREDENTIAL_PATTERNS:
+            if re.search(pattern, match_text, re.IGNORECASE):
+                return True
+        return False
+
+    def _is_documentation_or_string(self, line_content: str, match_text: str) -> bool:
+        """
+        Check if a command injection match is in documentation or string literals.
+
+        This prevents false positives for:
+        - Docstrings describing security issues
+        - String literals containing example vulnerable code
+        - Comments explaining vulnerabilities
+        """
+        line = line_content.strip()
+
+        # Check if line is a comment
+        if line.startswith("#") or line.startswith("//") or line.startswith("*"):
+            return True
+
+        # Check if inside a docstring (triple quotes)
+        if '"""' in line or "'''" in line:
+            return True
+
+        # Check if the match is inside a string literal being defined
+        # e.g., 'pattern = r"eval\("' or '"eval(" in content'
+        string_patterns = [
+            r'["\'].*' + re.escape(match_text.strip()[:10]) + r'.*["\']',  # Inside quotes
+            r'r["\'].*' + re.escape(match_text.strip()[:10]),  # Raw string
+            r'=\s*["\']',  # String assignment
+        ]
+        for pattern in string_patterns:
+            if re.search(pattern, line):
+                return True
+
+        # Check for common documentation patterns
+        doc_indicators = [
+            "example",
+            "vulnerable",
+            "insecure",
+            "dangerous",
+            "pattern",
+            "detect",
+            "scan",
+            "check for",
+            "look for",
+        ]
+        line_lower = line.lower()
+        if any(ind in line_lower for ind in doc_indicators):
+            return True
+
+        return False
+
     async def _assess(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
         """
         Risk scoring and severity classification.
@@ -401,11 +610,17 @@ class SecurityAuditWorkflow(BaseWorkflow):
         input_tokens = len(str(input_data)) // 4
         output_tokens = len(str(assessment)) // 4
 
+        # Build output with assessment
+        output = {
+            "assessment": assessment,
+            **input_data,
+        }
+
+        # Add formatted report for human readability
+        output["formatted_report"] = format_security_report(output)
+
         return (
-            {
-                "assessment": assessment,
-                **input_data,
-            },
+            output,
             input_tokens,
             output_tokens,
         )
@@ -506,9 +721,25 @@ Be specific and actionable."""
 
 Provide a detailed remediation plan with specific fixes."""
 
-        response, input_tokens, output_tokens = await self._call_llm(
-            tier, system or "", user_message, max_tokens=3000
-        )
+        # Try executor-based execution first (Phase 3 pattern)
+        if self._executor is not None or self._api_key:
+            try:
+                step = SECURITY_STEPS["remediate"]
+                response, input_tokens, output_tokens, cost = await self.run_step_with_executor(
+                    step=step,
+                    prompt=user_message,
+                    system=system,
+                )
+            except Exception:
+                # Fall back to legacy _call_llm if executor fails
+                response, input_tokens, output_tokens = await self._call_llm(
+                    tier, system or "", user_message, max_tokens=3000
+                )
+        else:
+            # Legacy path for backward compatibility
+            response, input_tokens, output_tokens = await self._call_llm(
+                tier, system or "", user_message, max_tokens=3000
+            )
 
         # Parse XML response if enforcement is enabled
         parsed_data = self._parse_xml_response(response)
@@ -646,6 +877,119 @@ Provide a detailed remediation plan with specific fixes."""
         return actions.get(finding.get("type", ""), "Apply security best practices.")
 
 
+def format_security_report(output: dict) -> str:
+    """
+    Format security audit output as a human-readable report.
+
+    This format is designed to be:
+    - Easy for humans to read and understand
+    - Easy to copy/paste to an AI assistant for remediation help
+    - Actionable with clear severity levels and file locations
+
+    Args:
+        output: The workflow output dictionary
+
+    Returns:
+        Formatted report string
+    """
+    lines = []
+
+    # Header
+    assessment = output.get("assessment", {})
+    risk_level = assessment.get("risk_level", "unknown").upper()
+    risk_score = assessment.get("risk_score", 0)
+
+    lines.append("=" * 60)
+    lines.append("SECURITY AUDIT REPORT")
+    lines.append("=" * 60)
+    lines.append("")
+    lines.append(f"Risk Level: {risk_level}")
+    lines.append(f"Risk Score: {risk_score}/100")
+    lines.append("")
+
+    # Severity breakdown
+    breakdown = assessment.get("severity_breakdown", {})
+    lines.append("Severity Summary:")
+    for sev in ["critical", "high", "medium", "low"]:
+        count = breakdown.get(sev, 0)
+        icon = {"critical": "🔴", "high": "🟠", "medium": "🟡", "low": "🟢"}.get(sev, "⚪")
+        lines.append(f"  {icon} {sev.capitalize()}: {count}")
+    lines.append("")
+
+    # Files scanned
+    files_scanned = output.get("files_scanned", 0)
+    lines.append(f"Files Scanned: {files_scanned}")
+    lines.append("")
+
+    # Findings requiring review
+    needs_review = output.get("needs_review", [])
+    if needs_review:
+        lines.append("-" * 60)
+        lines.append("FINDINGS REQUIRING REVIEW")
+        lines.append("-" * 60)
+        lines.append("")
+
+        for i, finding in enumerate(needs_review, 1):
+            severity = finding.get("severity", "unknown").upper()
+            vuln_type = finding.get("type", "unknown")
+            file_path = finding.get("file", "").split("Empathy-framework/")[-1]
+            line_num = finding.get("line", 0)
+            match = finding.get("match", "")[:50]
+            owasp = finding.get("owasp", "")
+            is_test = finding.get("is_test", False)
+            analysis = finding.get("analysis", "")
+
+            test_marker = " [TEST FILE]" if is_test else ""
+            lines.append(f"{i}. [{severity}]{test_marker} {vuln_type}")
+            lines.append(f"   File: {file_path}:{line_num}")
+            lines.append(f"   Match: {match}")
+            lines.append(f"   OWASP: {owasp}")
+            if analysis:
+                lines.append(f"   Analysis: {analysis}")
+            lines.append("")
+
+    # Accepted risks
+    accepted = output.get("accepted_risks", [])
+    if accepted:
+        lines.append("-" * 60)
+        lines.append("ACCEPTED RISKS (No Action Required)")
+        lines.append("-" * 60)
+        lines.append("")
+
+        for finding in accepted:
+            vuln_type = finding.get("type", "unknown")
+            file_path = finding.get("file", "").split("Empathy-framework/")[-1]
+            line_num = finding.get("line", 0)
+            reason = finding.get("decision_reason", "")
+
+            lines.append(f"  - {vuln_type} in {file_path}:{line_num}")
+            if reason:
+                lines.append(f"    Reason: {reason}")
+        lines.append("")
+
+    # Remediation plan if present
+    remediation = output.get("remediation_plan", "")
+    if remediation and remediation.strip():
+        lines.append("-" * 60)
+        lines.append("REMEDIATION PLAN")
+        lines.append("-" * 60)
+        lines.append("")
+        lines.append(remediation)
+        lines.append("")
+
+    # Footer with action items
+    lines.append("=" * 60)
+    if needs_review:
+        lines.append("ACTION REQUIRED:")
+        lines.append(f"  Review {len(needs_review)} finding(s) above")
+        lines.append("  Copy this report to Claude Code for remediation help")
+    else:
+        lines.append("STATUS: All clear - no critical or high findings")
+    lines.append("=" * 60)
+
+    return "\n".join(lines)
+
+
 def main():
     """CLI entry point for security audit workflow."""
     import asyncio
@@ -654,17 +998,9 @@ def main():
         workflow = SecurityAuditWorkflow()
         result = await workflow.execute(path=".", file_types=[".py"])
 
-        print("\nSecurity Audit Results")
-        print("=" * 50)
-        print(f"Provider: {result.provider}")
-        print(f"Success: {result.success}")
-
-        assessment = result.final_output.get("assessment", {})
-        print(f"Risk Level: {assessment.get('risk_level', 'N/A')}")
-        print(f"Risk Score: {assessment.get('risk_score', 0)}/100")
-        print("\nSeverity Breakdown:")
-        for sev, count in assessment.get("severity_breakdown", {}).items():
-            print(f"  {sev}: {count}")
+        # Use the new formatted report
+        report = format_security_report(result.final_output)
+        print(report)
 
         print("\nCost Report:")
         print(f"  Total Cost: ${result.cost_report.total_cost:.4f}")

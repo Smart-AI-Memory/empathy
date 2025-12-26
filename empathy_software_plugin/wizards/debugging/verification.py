@@ -15,6 +15,29 @@ from typing import Any
 from .linter_parsers import LintIssue, parse_linter_output
 
 
+def _validate_target_path(target: str) -> bool:
+    """
+    Validate target path is safe for linter subprocess execution.
+
+    SECURITY: Prevents command injection via malicious file/directory paths.
+    Checks that path exists and doesn't contain shell metacharacters.
+    """
+    if not target:
+        return False
+    try:
+        p = Path(target).resolve()
+        # Must exist as file or directory
+        if not p.exists():
+            return False
+        # Must not contain shell metacharacters
+        shell_chars = set(";|&$`(){}[]<>\\'\"\n\r\t")
+        if any(c in str(p) for c in shell_chars):
+            return False
+        return True
+    except Exception:
+        return False
+
+
 @dataclass
 class VerificationResult:
     """Result of verification check"""
@@ -73,6 +96,10 @@ class ESLintRunner(BaseLinterRunner):
     def run(self, target: str, output_format: str = "json") -> list[LintIssue]:
         """Run ESLint"""
 
+        # SECURITY: Validate target path before subprocess execution
+        if not _validate_target_path(target):
+            raise ValueError(f"Invalid or unsafe target path: {target}")
+
         cmd = ["npx", "eslint"]
 
         if output_format == "json":
@@ -106,6 +133,10 @@ class PylintRunner(BaseLinterRunner):
     def run(self, target: str, output_format: str = "json") -> list[LintIssue]:
         """Run Pylint"""
 
+        # SECURITY: Validate target path before subprocess execution
+        if not _validate_target_path(target):
+            raise ValueError(f"Invalid or unsafe target path: {target}")
+
         cmd = ["pylint"]
 
         if output_format == "json":
@@ -138,6 +169,10 @@ class MyPyRunner(BaseLinterRunner):
 
     def run(self, target: str, output_format: str = "json") -> list[LintIssue]:
         """Run mypy"""
+
+        # SECURITY: Validate target path before subprocess execution
+        if not _validate_target_path(target):
+            raise ValueError(f"Invalid or unsafe target path: {target}")
 
         cmd = ["mypy", target]
 

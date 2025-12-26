@@ -95,6 +95,43 @@ The Empathy Framework includes several security features:
 3. **API Key Protection**: Environment variable-based configuration
 4. **Audit Trail**: Optional logging of all wizard invocations
 5. **Rate Limiting**: Built-in protection against service abuse
+6. **Command Injection Prevention**: All file paths and user inputs are validated before subprocess execution
+7. **Secrets Detection**: Pre-commit hooks using detect-secrets to prevent accidental credential exposure
+
+### Pre-commit Security Hooks
+
+Run `pre-commit install` to enable:
+
+```bash
+pre-commit install
+```
+
+Security hooks include:
+
+- **detect-secrets**: Scans for potential API keys and credentials
+- **bandit**: Python security linter for common vulnerabilities
+
+### Built-in Security Tools
+
+```python
+from empathy_llm_toolkit.security import SecretsDetector, PIIScrubber
+
+# Detect secrets in content
+detector = SecretsDetector()
+findings = detector.scan(content)
+
+# Scrub PII before storage
+scrubber = PIIScrubber()
+clean_content = scrubber.scrub(content)
+```
+
+### Test Credentials
+
+All test files use obviously fake credentials:
+
+- Prefix with `TEST_`, `FAKE_`, or `EXAMPLE_`
+- Use placeholder patterns like `abc123xyz789...`
+- AWS example keys: `AKIAIOSFODNN7EXAMPLE`
 
 ## Known Security Considerations
 

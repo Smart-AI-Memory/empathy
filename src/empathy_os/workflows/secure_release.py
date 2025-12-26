@@ -75,6 +75,11 @@ class SecureReleaseResult:
             "crew_enabled": self.crew_enabled,
         }
 
+    @property
+    def formatted_report(self) -> str:
+        """Generate human-readable report."""
+        return format_secure_release_report(self)
+
 
 class SecureReleasePipeline:
     """
@@ -440,3 +445,140 @@ class SecureReleasePipeline:
             mode="quick",
             use_crew=False,
         )
+
+
+def format_secure_release_report(result: SecureReleaseResult) -> str:
+    """
+    Format secure release result as a human-readable report.
+
+    Args:
+        result: The SecureReleaseResult object
+
+    Returns:
+        Formatted report string
+    """
+    lines = []
+
+    # Header with go/no-go decision
+    go_no_go = result.go_no_go
+
+    if go_no_go == "GO":
+        status_icon = "✅"
+        status_text = "READY FOR RELEASE"
+    elif go_no_go == "CONDITIONAL":
+        status_icon = "⚠️"
+        status_text = "CONDITIONAL APPROVAL"
+    else:
+        status_icon = "❌"
+        status_text = "RELEASE BLOCKED"
+
+    lines.append("=" * 60)
+    lines.append("SECURE RELEASE REPORT")
+    lines.append("=" * 60)
+    lines.append("")
+    lines.append(f"Decision: {status_icon} {go_no_go} - {status_text}")
+    lines.append(f"Risk Score: {result.combined_risk_score:.1f}/100")
+    lines.append(f"Pipeline Mode: {result.mode.upper()}")
+    lines.append(f"Crew Enabled: {'Yes' if result.crew_enabled else 'No'}")
+    lines.append("")
+
+    # Findings summary
+    lines.append("-" * 60)
+    lines.append("FINDINGS SUMMARY")
+    lines.append("-" * 60)
+    lines.append(f"Total Findings: {result.total_findings}")
+    lines.append(f"  🔴 Critical: {result.critical_count}")
+    lines.append(f"  🟠 High: {result.high_count}")
+    lines.append("")
+
+    # Blockers
+    if result.blockers:
+        lines.append("-" * 60)
+        lines.append("🚫 BLOCKERS (Must Fix Before Release)")
+        lines.append("-" * 60)
+        for blocker in result.blockers:
+            lines.append(f"  • {blocker}")
+        lines.append("")
+
+    # Warnings
+    if result.warnings:
+        lines.append("-" * 60)
+        lines.append("⚠️  WARNINGS")
+        lines.append("-" * 60)
+        for warning in result.warnings:
+            lines.append(f"  • {warning}")
+        lines.append("")
+
+    # Recommendations
+    if result.recommendations:
+        lines.append("-" * 60)
+        lines.append("💡 RECOMMENDATIONS")
+        lines.append("-" * 60)
+        for rec in result.recommendations:
+            lines.append(f"  • {rec}")
+        lines.append("")
+
+    # Individual workflow summaries
+    lines.append("-" * 60)
+    lines.append("WORKFLOW RESULTS")
+    lines.append("-" * 60)
+
+    # Crew results
+    if result.crew_report:
+        crew_risk = result.crew_report.get("risk_score", 0)
+        crew_findings = result.crew_report.get("finding_count", 0)
+        crew_icon = "✅" if crew_risk < 50 else "⚠️" if crew_risk < 75 else "❌"
+        lines.append(
+            f"  {crew_icon} SecurityAuditCrew: {crew_findings} findings, risk {crew_risk}/100"
+        )
+    elif result.crew_enabled:
+        lines.append("  ⏭️ SecurityAuditCrew: Skipped or failed")
+
+    # Security audit
+    if result.security_audit:
+        sec_output = result.security_audit.final_output or {}
+        assessment = sec_output.get("assessment", {})
+        sec_risk = assessment.get("risk_score", 0)
+        sec_level = assessment.get("risk_level", "unknown")
+        sec_icon = "✅" if sec_risk < 50 else "⚠️" if sec_risk < 75 else "❌"
+        lines.append(f"  {sec_icon} SecurityAudit: {sec_level} risk ({sec_risk}/100)")
+
+    # Code review
+    if result.code_review:
+        cr_output = result.code_review.final_output or {}
+        verdict = cr_output.get("verdict", "unknown")
+        cr_icon = "✅" if verdict == "approve" else "⚠️" if verdict == "request_changes" else "❌"
+        lines.append(f"  {cr_icon} CodeReview: {verdict}")
+
+    # Release prep
+    if result.release_prep:
+        rp_output = result.release_prep.final_output or {}
+        approved = rp_output.get("approved", False)
+        confidence = rp_output.get("confidence", "unknown")
+        rp_icon = "✅" if approved else "❌"
+        lines.append(
+            f"  {rp_icon} ReleasePrep: {'Approved' if approved else 'Not Approved'} ({confidence} confidence)"
+        )
+
+    lines.append("")
+
+    # Cost and duration
+    lines.append("-" * 60)
+    lines.append("EXECUTION DETAILS")
+    lines.append("-" * 60)
+    duration_sec = result.total_duration_ms / 1000
+    lines.append(f"Total Cost: ${result.total_cost:.4f}")
+    lines.append(f"Duration: {duration_sec:.1f}s")
+    lines.append("")
+
+    # Footer
+    lines.append("=" * 60)
+    if go_no_go == "GO":
+        lines.append("All security checks passed. Proceed with release.")
+    elif go_no_go == "CONDITIONAL":
+        lines.append("Review warnings before proceeding with release.")
+    else:
+        lines.append("Address all blockers before release can proceed.")
+    lines.append("=" * 60)
+
+    return "\n".join(lines)

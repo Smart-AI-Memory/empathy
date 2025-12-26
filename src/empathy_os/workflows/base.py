@@ -84,30 +84,48 @@ class ModelProvider(Enum):
         return UnifiedModelProvider(self.value)
 
 
-# Model mappings by provider and tier
-PROVIDER_MODELS: dict[ModelProvider, dict[ModelTier, str]] = {
-    ModelProvider.ANTHROPIC: {
-        ModelTier.CHEAP: "claude-3-5-haiku-20241022",
-        ModelTier.CAPABLE: "claude-sonnet-4-20250514",
-        ModelTier.PREMIUM: "claude-opus-4-5-20251101",  # Opus 4.5
-    },
-    ModelProvider.OPENAI: {
-        ModelTier.CHEAP: "gpt-4o-mini",
-        ModelTier.CAPABLE: "gpt-4o",
-        ModelTier.PREMIUM: "gpt-5.2",  # Latest GPT-5.2
-    },
-    ModelProvider.OLLAMA: {
-        ModelTier.CHEAP: "llama3.2:3b",
-        ModelTier.CAPABLE: "llama3.2:latest",
-        ModelTier.PREMIUM: "llama3.2:latest",  # Ollama doesn't have premium tier
-    },
-    # Hybrid: Mix best models from different providers for optimal cost/quality
-    ModelProvider.HYBRID: {
-        ModelTier.CHEAP: "gpt-4o-mini",  # OpenAI - cheapest per token
-        ModelTier.CAPABLE: "claude-sonnet-4-20250514",  # Anthropic - best code/reasoning
-        ModelTier.PREMIUM: "claude-opus-4-5-20251101",  # Anthropic - best overall
-    },
-}
+# Import unified MODEL_REGISTRY as single source of truth
+# This import is placed here intentionally to avoid circular imports
+from empathy_os.models import MODEL_REGISTRY  # noqa: E402
+
+
+def _build_provider_models() -> dict[ModelProvider, dict[ModelTier, str]]:
+    """
+    Build PROVIDER_MODELS from MODEL_REGISTRY.
+
+    This ensures PROVIDER_MODELS stays in sync with the single source of truth.
+    """
+    result: dict[ModelProvider, dict[ModelTier, str]] = {}
+
+    # Map string provider names to ModelProvider enum
+    provider_map = {
+        "anthropic": ModelProvider.ANTHROPIC,
+        "openai": ModelProvider.OPENAI,
+        "ollama": ModelProvider.OLLAMA,
+        "hybrid": ModelProvider.HYBRID,
+    }
+
+    # Map string tier names to ModelTier enum
+    tier_map = {
+        "cheap": ModelTier.CHEAP,
+        "capable": ModelTier.CAPABLE,
+        "premium": ModelTier.PREMIUM,
+    }
+
+    for provider_str, tiers in MODEL_REGISTRY.items():
+        if provider_str not in provider_map:
+            continue  # Skip custom providers
+        provider_enum = provider_map[provider_str]
+        result[provider_enum] = {}
+        for tier_str, model_info in tiers.items():
+            if tier_str in tier_map:
+                result[provider_enum][tier_map[tier_str]] = model_info.id
+
+    return result
+
+
+# Model mappings by provider and tier (derived from MODEL_REGISTRY)
+PROVIDER_MODELS: dict[ModelProvider, dict[ModelTier, str]] = _build_provider_models()
 
 
 @dataclass
@@ -363,6 +381,7 @@ class BaseWorkflow(ABC):
         self._executor = executor
         self._telemetry_backend = telemetry_backend or get_telemetry_store()
         self._run_id: str | None = None  # Set at start of execute()
+        self._api_key: str | None = None  # For default executor creation
 
         # Load config if not provided
         self._config = config or WorkflowConfig.load()
@@ -629,12 +648,48 @@ class BaseWorkflow(ABC):
             step_name=step_name,
             user_id=user_id,
             session_id=session_id,
-            extra={
+            metadata={
                 "task_type": task_type,
                 "run_id": self._run_id,
                 "provider": self._provider_str,
             },
         )
+
+    def _create_default_executor(self) -> LLMExecutor:
+        """
+        Create a default EmpathyLLMExecutor wrapped in ResilientExecutor.
+
+        This method is called lazily when run_step_with_executor is used
+        without a pre-configured executor. The executor is wrapped with
+        resilience features (retry, fallback, circuit breaker).
+
+        Returns:
+            LLMExecutor instance (ResilientExecutor wrapping EmpathyLLMExecutor)
+        """
+        from empathy_os.models.empathy_executor import EmpathyLLMExecutor
+        from empathy_os.models.fallback import ResilientExecutor
+
+        # Create the base executor
+        base_executor = EmpathyLLMExecutor(
+            provider=self._provider_str,
+            api_key=self._api_key,
+            telemetry_store=self._telemetry_backend,
+        )
+        # Wrap with resilience layer (retry, fallback, circuit breaker)
+        return ResilientExecutor(executor=base_executor)
+
+    def _get_executor(self) -> LLMExecutor:
+        """
+        Get or create the LLM executor.
+
+        Returns the configured executor or creates a default one.
+
+        Returns:
+            LLMExecutor instance
+        """
+        if self._executor is None:
+            self._executor = self._create_default_executor()
+        return self._executor
 
     def _emit_call_telemetry(
         self,
@@ -744,10 +799,11 @@ class BaseWorkflow(ABC):
         **kwargs: Any,
     ) -> tuple[str, int, int, float]:
         """
-        Run a workflow step using the LLMExecutor (if configured).
+        Run a workflow step using the LLMExecutor.
 
         This method provides a unified interface for executing steps with
-        automatic routing, telemetry, and cost tracking.
+        automatic routing, telemetry, and cost tracking. If no executor
+        was provided at construction, a default EmpathyLLMExecutor is created.
 
         Args:
             step: WorkflowStepConfig defining the step
@@ -757,14 +813,8 @@ class BaseWorkflow(ABC):
 
         Returns:
             Tuple of (content, input_tokens, output_tokens, cost)
-
-        Raises:
-            ValueError: If no executor is configured
         """
-        if self._executor is None:
-            raise ValueError(
-                "No LLMExecutor configured. Pass executor= to __init__ or use run_stage() instead."
-            )
+        executor = self._get_executor()
 
         context = self._create_execution_context(
             step_name=step.name,
@@ -772,7 +822,7 @@ class BaseWorkflow(ABC):
         )
 
         start_time = datetime.now()
-        response = await self._executor.run(
+        response = await executor.run(
             task_type=step.task_type,
             prompt=prompt,
             system=system,
@@ -786,16 +836,21 @@ class BaseWorkflow(ABC):
         self._emit_call_telemetry(
             step_name=step.name,
             task_type=step.task_type,
-            tier=response.tier_used.value,
-            model_id=response.model_used,
-            input_tokens=response.input_tokens,
-            output_tokens=response.output_tokens,
-            cost=response.cost,
+            tier=response.tier,
+            model_id=response.model_id,
+            input_tokens=response.tokens_input,
+            output_tokens=response.tokens_output,
+            cost=response.cost_estimate,
             latency_ms=latency_ms,
             success=True,
         )
 
-        return response.content, response.input_tokens, response.output_tokens, response.cost
+        return (
+            response.content,
+            response.tokens_input,
+            response.tokens_output,
+            response.cost_estimate,
+        )
 
     # =========================================================================
     # XML Prompt Integration (Phase 4)

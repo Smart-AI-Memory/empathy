@@ -262,8 +262,10 @@ class HealthCheckWorkflow(BaseWorkflow):
         # Test check
         if self.check_tests:
             try:
+                # Use "tests/" directory or rely on pytest.ini testpaths
+                # Don't pass path="." which overrides testpaths and causes collection errors
                 result = subprocess.run(
-                    ["python", "-m", "pytest", path, "-q", "--tb=no"],
+                    ["python", "-m", "pytest", "tests/", "-q", "--tb=no", "--no-cov"],
                     capture_output=True,
                     text=True,
                     timeout=180,
@@ -404,6 +406,9 @@ class HealthCheckWorkflow(BaseWorkflow):
         # Auto-save to .empathy/health.json for dashboard
         self._save_health_data(health_result, kwargs.get("path", "."))
 
+        # Add formatted report to metadata for human readability
+        health_result.metadata["formatted_report"] = format_health_check_report(health_result)
+
         return health_result
 
     def _save_health_data(self, result: HealthCheckResult, project_path: str) -> None:
@@ -457,6 +462,121 @@ class HealthCheckWorkflow(BaseWorkflow):
             logger.info(f"Saved health data to {health_file}")
         except Exception as e:
             logger.warning(f"Failed to save health data: {e}")
+
+
+def format_health_check_report(result: HealthCheckResult) -> str:
+    """
+    Format health check output as a human-readable report.
+
+    Args:
+        result: The HealthCheckResult dataclass
+
+    Returns:
+        Formatted report string
+    """
+    lines = []
+
+    # Header with health status
+    score = result.health_score
+    if score >= 90:
+        status_icon = "🟢"
+        status_text = "EXCELLENT"
+    elif score >= 80:
+        status_icon = "🟡"
+        status_text = "HEALTHY"
+    elif score >= 60:
+        status_icon = "🟠"
+        status_text = "NEEDS ATTENTION"
+    else:
+        status_icon = "🔴"
+        status_text = "UNHEALTHY"
+
+    lines.append("=" * 60)
+    lines.append("PROJECT HEALTH CHECK REPORT")
+    lines.append("=" * 60)
+    lines.append("")
+    lines.append(f"Health Score: {status_icon} {score:.0f}/100 ({status_text})")
+    lines.append(f"Status: {'✅ Healthy' if result.is_healthy else '⚠️ Issues Found'}")
+    lines.append("")
+
+    # Checks run summary
+    lines.append("-" * 60)
+    lines.append("CHECKS PERFORMED")
+    lines.append("-" * 60)
+    for check_name, check_result in result.checks_run.items():
+        passed = check_result.get("passed", False)
+        skipped = check_result.get("skipped", False)
+        if skipped:
+            icon = "⏭️"
+            status = "Skipped"
+        elif passed:
+            icon = "✅"
+            status = "Passed"
+        else:
+            icon = "❌"
+            status = "Failed"
+        lines.append(f"  {icon} {check_name.capitalize()}: {status}")
+    lines.append("")
+
+    # Issue summary
+    if result.issues:
+        lines.append("-" * 60)
+        lines.append("ISSUES FOUND")
+        lines.append("-" * 60)
+        lines.append(f"Total: {len(result.issues)}")
+        lines.append(f"  🔴 Critical: {result.critical_count}")
+        lines.append(f"  🟠 High: {result.high_count}")
+        lines.append("")
+
+        # Group issues by category
+        by_category: dict[str, list] = {}
+        for issue in result.issues:
+            cat = issue.get("category", "other")
+            if cat not in by_category:
+                by_category[cat] = []
+            by_category[cat].append(issue)
+
+        for category, issues in by_category.items():
+            lines.append(f"  {category.upper()} ({len(issues)} issues):")
+            for issue in issues[:5]:  # Show top 5 per category
+                severity = issue.get("severity", "unknown").upper()
+                title = issue.get("title", "Unknown issue")
+                sev_icon = {"CRITICAL": "🔴", "HIGH": "🟠", "MEDIUM": "🟡", "LOW": "🟢"}.get(
+                    severity, "⚪"
+                )
+                lines.append(f"    {sev_icon} [{severity}] {title}")
+            if len(issues) > 5:
+                lines.append(f"    ... and {len(issues) - 5} more")
+        lines.append("")
+
+    # Fixes applied
+    if result.fixes:
+        lines.append("-" * 60)
+        lines.append("FIXES APPLIED")
+        lines.append("-" * 60)
+        lines.append(f"Total Fixes: {result.applied_fixes_count}")
+        for fix in result.fixes[:10]:
+            status = fix.get("status", "unknown")
+            title = fix.get("title", "Unknown fix")
+            status_icon = "✅" if status == "applied" else "⚠️"
+            lines.append(f"  {status_icon} {title}")
+        lines.append("")
+
+    # Agents used
+    if result.agents_used:
+        lines.append("-" * 60)
+        lines.append("AGENTS USED")
+        lines.append("-" * 60)
+        for agent in result.agents_used:
+            lines.append(f"  🤖 {agent}")
+        lines.append("")
+
+    # Footer
+    lines.append("=" * 60)
+    lines.append(f"Duration: {result.duration_seconds:.1f}s | Cost: ${result.cost:.4f}")
+    lines.append("=" * 60)
+
+    return "\n".join(lines)
 
 
 def main():

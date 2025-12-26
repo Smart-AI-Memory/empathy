@@ -219,6 +219,22 @@ Issues = "https://github.com/Smart-AI-Memory/empathy-framework/issues"
 Discussions = "https://github.com/Smart-AI-Memory/empathy-framework/discussions"
 Changelog = "https://github.com/Smart-AI-Memory/empathy-framework/blob/main/CHANGELOG.md"
 
+# Workflow plugin entry points for auto-discovery
+[project.entry-points."empathy.workflows"]
+code-review = "empathy_os.workflows.code_review:CodeReviewWorkflow"
+doc-gen = "empathy_os.workflows.document_gen:DocumentGenerationWorkflow"
+bug-predict = "empathy_os.workflows.bug_predict:BugPredictionWorkflow"
+security-audit = "empathy_os.workflows.security_audit:SecurityAuditWorkflow"
+perf-audit = "empathy_os.workflows.perf_audit:PerformanceAuditWorkflow"
+test-gen = "empathy_os.workflows.test_gen:TestGenerationWorkflow"
+refactor-plan = "empathy_os.workflows.refactor_plan:RefactorPlanWorkflow"
+dependency-check = "empathy_os.workflows.dependency_check:DependencyCheckWorkflow"
+release-prep = "empathy_os.workflows.release_prep:ReleasePreparationWorkflow"
+secure-release = "empathy_os.workflows.secure_release:SecureReleasePipeline"
+pro-review = "empathy_os.workflows.code_review_pipeline:CodeReviewPipeline"
+pr-review = "empathy_os.workflows.pr_review:PRReviewWorkflow"
+health-check = "empathy_os.workflows.health_check:HealthCheckWorkflow"
+
 [tool.setuptools]
 # Package discovery
 packages = [
@@ -293,6 +309,9 @@ exclude = [
     "10_9_2025_ai_nurse_florence/",
     "anthropic-cookbook/",
     "salvaged/",
+    "site/",
+    "ebook-site/",
+    "website/",
 ]
 warn_return_any = true
 warn_unused_configs = true

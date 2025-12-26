@@ -163,16 +163,17 @@ class CircuitBreaker:
     Circuit breaker to temporarily disable failing providers.
 
     Prevents cascading failures by stopping calls to providers that
-    are experiencing issues.
+    are experiencing issues. Tracks state per provider:tier combination
+    for fine-grained control (e.g., Opus rate-limited shouldn't block Haiku).
 
     Example:
         >>> breaker = CircuitBreaker(failure_threshold=3, recovery_timeout=60)
-        >>> if breaker.is_available("anthropic"):
+        >>> if breaker.is_available("anthropic", "capable"):
         ...     try:
         ...         response = call_llm(...)
-        ...         breaker.record_success("anthropic")
+        ...         breaker.record_success("anthropic", "capable")
         ...     except Exception as e:
-        ...         breaker.record_failure("anthropic")
+        ...         breaker.record_failure("anthropic", "capable")
     """
 
     def __init__(
@@ -194,23 +195,31 @@ class CircuitBreaker:
         self.half_open_calls = half_open_calls
         self._states: dict[str, CircuitBreakerState] = {}
 
-    def _get_state(self, provider: str) -> CircuitBreakerState:
-        """Get or create state for a provider."""
-        if provider not in self._states:
-            self._states[provider] = CircuitBreakerState()
-        return self._states[provider]
+    def _get_key(self, provider: str, tier: str | None = None) -> str:
+        """Get the state key for a provider:tier combination."""
+        if tier:
+            return f"{provider}:{tier}"
+        return provider
 
-    def is_available(self, provider: str) -> bool:
+    def _get_state(self, provider: str, tier: str | None = None) -> CircuitBreakerState:
+        """Get or create state for a provider:tier combination."""
+        key = self._get_key(provider, tier)
+        if key not in self._states:
+            self._states[key] = CircuitBreakerState()
+        return self._states[key]
+
+    def is_available(self, provider: str, tier: str | None = None) -> bool:
         """
-        Check if a provider is available.
+        Check if a provider:tier is available.
 
         Args:
             provider: Provider to check
+            tier: Optional tier (if None, checks provider-level)
 
         Returns:
-            True if provider can be called
+            True if provider:tier can be called
         """
-        state = self._get_state(provider)
+        state = self._get_state(provider, tier)
 
         if not state.is_open:
             return True
@@ -224,28 +233,30 @@ class CircuitBreaker:
 
         return False
 
-    def record_success(self, provider: str) -> None:
+    def record_success(self, provider: str, tier: str | None = None) -> None:
         """
         Record a successful call.
 
         Args:
             provider: Provider that succeeded
+            tier: Optional tier
         """
-        state = self._get_state(provider)
+        state = self._get_state(provider, tier)
 
         # Reset on success
         state.failure_count = 0
         state.is_open = False
         state.opened_at = None
 
-    def record_failure(self, provider: str) -> None:
+    def record_failure(self, provider: str, tier: str | None = None) -> None:
         """
         Record a failed call.
 
         Args:
             provider: Provider that failed
+            tier: Optional tier
         """
-        state = self._get_state(provider)
+        state = self._get_state(provider, tier)
 
         state.failure_count += 1
         state.last_failure = datetime.now()
@@ -266,16 +277,18 @@ class CircuitBreaker:
             for provider, state in self._states.items()
         }
 
-    def reset(self, provider: str | None = None) -> None:
+    def reset(self, provider: str | None = None, tier: str | None = None) -> None:
         """
         Reset circuit breaker state.
 
         Args:
             provider: Provider to reset (all if None)
+            tier: Tier to reset (provider-level if None)
         """
         if provider:
-            if provider in self._states:
-                self._states[provider] = CircuitBreakerState()
+            key = self._get_key(provider, tier)
+            if key in self._states:
+                self._states[key] = CircuitBreakerState()
         else:
             self._states.clear()
 
@@ -335,15 +348,31 @@ class RetryPolicy:
         return error_type in self.retry_on_errors
 
 
+class AllProvidersFailedError(Exception):
+    """Raised when all fallback providers have failed."""
+
+    def __init__(self, message: str, attempts: list[dict[str, Any]]):
+        super().__init__(message)
+        self.attempts = attempts
+
+
 class ResilientExecutor:
     """
     Wrapper that adds resilience to LLM execution.
 
     Combines fallback policies, circuit breakers, and retry logic.
+    Implements the LLMExecutor protocol by wrapping another executor.
+
+    Example:
+        >>> from empathy_os.models.empathy_executor import EmpathyLLMExecutor
+        >>> base_executor = EmpathyLLMExecutor(provider="anthropic")
+        >>> resilient = ResilientExecutor(executor=base_executor)
+        >>> response = await resilient.run("summarize", "Summarize this...")
     """
 
     def __init__(
         self,
+        executor: Any | None = None,
         fallback_policy: FallbackPolicy | None = None,
         circuit_breaker: CircuitBreaker | None = None,
         retry_policy: RetryPolicy | None = None,
@@ -352,13 +381,161 @@ class ResilientExecutor:
         Initialize resilient executor.
 
         Args:
+            executor: Inner LLMExecutor to wrap
             fallback_policy: Fallback configuration
             circuit_breaker: Circuit breaker instance
             retry_policy: Retry configuration
         """
+        self._executor = executor
         self.fallback_policy = fallback_policy or FallbackPolicy()
         self.circuit_breaker = circuit_breaker or CircuitBreaker()
         self.retry_policy = retry_policy or RetryPolicy()
+
+    async def run(
+        self,
+        task_type: str,
+        prompt: str,
+        system: str | None = None,
+        context: Any | None = None,
+        **kwargs: Any,
+    ) -> Any:
+        """
+        Execute LLM call with retry and fallback support.
+
+        Implements the LLMExecutor protocol. Uses per-call policies from
+        context.metadata if provided.
+
+        Args:
+            task_type: Type of task for routing
+            prompt: The user prompt
+            system: Optional system prompt
+            context: Optional ExecutionContext (can contain retry_policy, fallback_policy)
+            **kwargs: Additional arguments
+
+        Returns:
+            LLMResponse from the wrapped executor
+        """
+        if self._executor is None:
+            raise RuntimeError("ResilientExecutor requires an inner executor")
+
+        # Allow per-call policy overrides via context.metadata
+        retry_policy = self.retry_policy
+        fallback_policy = self.fallback_policy
+
+        if context and hasattr(context, "metadata"):
+            if "retry_policy" in context.metadata:
+                retry_policy = context.metadata["retry_policy"]
+            if "fallback_policy" in context.metadata:
+                fallback_policy = context.metadata["fallback_policy"]
+
+        # Build execution chain: primary + fallbacks
+        chain = [
+            FallbackStep(
+                provider=fallback_policy.primary_provider,
+                tier=fallback_policy.primary_tier,
+                description="Primary",
+            )
+        ] + fallback_policy.get_fallback_chain()
+
+        attempts: list[dict[str, Any]] = []
+        last_error: Exception | None = None
+        total_retries = 0  # Track total retry count across all attempts
+
+        for step in chain:
+            # Check circuit breaker (per provider:tier)
+            if not self.circuit_breaker.is_available(step.provider, step.tier):
+                attempts.append(
+                    {
+                        "provider": step.provider,
+                        "tier": step.tier,
+                        "skipped": True,
+                        "reason": "circuit_breaker_open",
+                        "circuit_breaker_state": "open",
+                    }
+                )
+                continue
+
+            # Try with retries
+            for attempt_num in range(1, retry_policy.max_retries + 1):
+                try:
+                    # Update context with current provider/tier hints
+                    if context and hasattr(context, "provider_hint"):
+                        context.provider_hint = step.provider
+                    if context and hasattr(context, "tier_hint"):
+                        context.tier_hint = step.tier
+
+                    response = await self._executor.run(
+                        task_type=task_type,
+                        prompt=prompt,
+                        system=system,
+                        context=context,
+                        **kwargs,
+                    )
+
+                    # Success - record and return
+                    self.circuit_breaker.record_success(step.provider, step.tier)
+
+                    # Add resilience metadata to response
+                    if hasattr(response, "metadata"):
+                        response.metadata["fallback_used"] = step.description != "Primary"
+                        response.metadata["attempts"] = attempts
+                        response.metadata["retry_count"] = total_retries
+                        response.metadata["circuit_breaker_state"] = "closed"
+                        response.metadata["original_provider"] = fallback_policy.primary_provider
+                        response.metadata["original_tier"] = fallback_policy.primary_tier
+                        if step.description != "Primary":
+                            response.metadata["fallback_chain"] = [
+                                f"{a['provider']}:{a['tier']}" for a in attempts
+                            ]
+
+                    return response
+
+                except Exception as e:
+                    last_error = e
+                    error_type = self._classify_error(e)
+                    total_retries += 1  # Increment retry counter
+
+                    if retry_policy.should_retry(error_type, attempt_num):
+                        delay = retry_policy.get_delay_ms(attempt_num)
+                        time.sleep(delay / 1000)
+                        continue
+
+                    # Record failure and move to next fallback
+                    self.circuit_breaker.record_failure(step.provider, step.tier)
+                    attempts.append(
+                        {
+                            "provider": step.provider,
+                            "tier": step.tier,
+                            "skipped": False,
+                            "error": str(e),
+                            "error_type": error_type,
+                            "attempt": attempt_num,
+                        }
+                    )
+                    break
+
+        # All fallbacks exhausted
+        raise AllProvidersFailedError(
+            f"All fallback options exhausted. Last error: {last_error}",
+            attempts=attempts,
+        ) from last_error
+
+    def get_model_for_task(self, task_type: str) -> str:
+        """Delegate to inner executor."""
+        if self._executor and hasattr(self._executor, "get_model_for_task"):
+            return self._executor.get_model_for_task(task_type)
+        return ""
+
+    def estimate_cost(
+        self,
+        task_type: str,
+        input_tokens: int,
+        output_tokens: int,
+    ) -> float:
+        """Delegate to inner executor."""
+        if self._executor and hasattr(self._executor, "estimate_cost"):
+            return self._executor.estimate_cost(task_type, input_tokens, output_tokens)
+        return 0.0
 
     async def execute_with_fallback(
         self,
@@ -367,7 +544,7 @@ class ResilientExecutor:
         **kwargs: Any,
     ) -> tuple[Any, dict[str, Any]]:
         """
-        Execute LLM call with fallback support.
+        Execute LLM call with fallback support (legacy API).
 
         Args:
             call_fn: Async function to call (takes provider, model as kwargs)
@@ -397,8 +574,8 @@ class ResilientExecutor:
         last_error: Exception | None = None
 
         for step in chain:
-            # Check circuit breaker
-            if not self.circuit_breaker.is_available(step.provider):
+            # Check circuit breaker (per provider:tier)
+            if not self.circuit_breaker.is_available(step.provider, step.tier):
                 metadata["fallback_chain"].append(
                     {
                         "provider": step.provider,
@@ -422,7 +599,7 @@ class ResilientExecutor:
                     )
 
                     # Success
-                    self.circuit_breaker.record_success(step.provider)
+                    self.circuit_breaker.record_success(step.provider, step.tier)
 
                     if step.description != "Primary":
                         metadata["fallback_used"] = True
@@ -443,7 +620,7 @@ class ResilientExecutor:
                         continue
 
                     # Record failure and move to next fallback
-                    self.circuit_breaker.record_failure(step.provider)
+                    self.circuit_breaker.record_failure(step.provider, step.tier)
                     metadata["fallback_chain"].append(
                         {
                             "provider": step.provider,
@@ -456,7 +633,10 @@ class ResilientExecutor:
                     break
 
         # All fallbacks exhausted
-        raise Exception(f"All fallback options exhausted. Last error: {last_error}") from last_error
+        raise AllProvidersFailedError(
+            f"All fallback options exhausted. Last error: {last_error}",
+            attempts=metadata["fallback_chain"],
+        ) from last_error
 
     def _classify_error(self, error: Exception) -> str:
         """Classify an error for retry decisions."""

@@ -1,2 +1,10 @@
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
+# API-specific requirements
+#
+# For full installation, use from project root:
+#   pip install -e .[backend]
+#
+# This file is for minimal API-only deployments.
+
+# FastAPI (CVE-fixed versions aligned with pyproject.toml)
+fastapi>=0.109.1,<1.0.0
+uvicorn[standard]>=0.20.0,<1.0.0

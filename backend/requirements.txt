@@ -1,28 +1,26 @@
 # Backend requirements for Empathy Framework API
+#
+# For development, install from the project root:
+#   pip install -e .[backend,dev]
+#
+# This file provides standalone installation for deployments.
+# Version constraints are aligned with pyproject.toml
 
-# FastAPI and web server
-fastapi==0.115.6
-uvicorn[standard]==0.34.0
-python-multipart==0.0.20
+# FastAPI and web server (CVE-fixed versions)
+fastapi>=0.109.1,<1.0.0
+uvicorn[standard]>=0.20.0,<1.0.0
+starlette>=0.40.0,<1.0.0
+python-multipart>=0.0.9,<1.0.0
 
 # Security and authentication
-PyJWT[crypto]>=2.8.0  # Replaces python-jose - uses cryptography backend
-passlib[bcrypt]==1.7.4
-python-dotenv==1.0.0
+PyJWT[crypto]>=2.8.0,<3.0.0
+passlib[bcrypt]>=1.7.4,<2.0.0
+python-dotenv>=1.0.0,<2.0.0
 
-# Data validation
-pydantic==2.5.3
-pydantic-settings==2.1.0
-email-validator==2.1.0
+# Data validation (match core deps)
+pydantic>=2.0.0,<3.0.0
+pydantic-settings>=2.0.0,<3.0.0
+email-validator>=2.0.0,<3.0.0
 
 # Async support
-aiofiles==23.2.1
-
-# Database (for future use)
-# sqlalchemy==2.0.25
-# alembic==1.13.1
-
-# Testing
-pytest==7.4.4
-pytest-asyncio==0.23.3
-httpx==0.26.0
+aiofiles>=23.0.0,<24.0.0

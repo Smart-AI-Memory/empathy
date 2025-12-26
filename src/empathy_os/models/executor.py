@@ -18,8 +18,6 @@ Licensed under Fair Source License 0.9
 from dataclasses import dataclass, field
 from typing import Any, Protocol, runtime_checkable
 
-from .registry import ModelTier
-
 
 @dataclass
 class LLMResponse:
@@ -28,20 +26,54 @@ class LLMResponse:
 
     Contains the response content along with token counts, cost information,
     and metadata about the execution.
+
+    Attributes:
+        content: The LLM response text
+        model_id: Model identifier (e.g., "claude-sonnet-4-20250514")
+        provider: Provider name (e.g., "anthropic", "openai")
+        tier: Model tier ("cheap", "capable", "premium")
+        tokens_input: Number of input tokens used
+        tokens_output: Number of output tokens generated
+        cost_estimate: Estimated cost in USD
+        latency_ms: Response time in milliseconds
+        metadata: Additional response metadata
     """
 
     content: str
-    input_tokens: int
-    output_tokens: int
-    model_used: str
-    tier_used: ModelTier
-    cost: float
+    model_id: str
+    provider: str
+    tier: str
+    tokens_input: int = 0
+    tokens_output: int = 0
+    cost_estimate: float = 0.0
+    latency_ms: int = 0
     metadata: dict[str, Any] = field(default_factory=dict)
+
+    # Backwards compatibility aliases
+    @property
+    def input_tokens(self) -> int:
+        """Alias for tokens_input (backwards compatibility)."""
+        return self.tokens_input
+
+    @property
+    def output_tokens(self) -> int:
+        """Alias for tokens_output (backwards compatibility)."""
+        return self.tokens_output
+
+    @property
+    def model_used(self) -> str:
+        """Alias for model_id (backwards compatibility)."""
+        return self.model_id
+
+    @property
+    def cost(self) -> float:
+        """Alias for cost_estimate (backwards compatibility)."""
+        return self.cost_estimate
 
     @property
     def total_tokens(self) -> int:
         """Total tokens used (input + output)."""
-        return self.input_tokens + self.output_tokens
+        return self.tokens_input + self.tokens_output
 
 
 @dataclass
@@ -51,13 +83,28 @@ class ExecutionContext:
 
     Provides additional information that may be used for routing,
     logging, or cost tracking.
+
+    Attributes:
+        user_id: User identifier for tracking
+        workflow_name: Name of the workflow (e.g., "security-audit")
+        step_name: Name of the current step (e.g., "scan")
+        task_type: Task type for routing (e.g., "summarize", "fix_bug")
+        provider_hint: Override default provider selection
+        tier_hint: Override tier selection (cheap/capable/premium)
+        timeout_seconds: Timeout for this execution
+        session_id: Session identifier
+        metadata: Additional context (can include retry_policy, fallback_policy)
     """
 
+    user_id: str | None = None
     workflow_name: str | None = None
     step_name: str | None = None
-    user_id: str | None = None
+    task_type: str | None = None
+    provider_hint: str | None = None
+    tier_hint: str | None = None
+    timeout_seconds: int | None = None
     session_id: str | None = None
-    extra: dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @runtime_checkable
@@ -183,11 +230,13 @@ class MockLLMExecutor:
 
         return LLMResponse(
             content=self.default_response,
-            input_tokens=len(prompt.split()) * 4,  # Rough estimate
-            output_tokens=len(self.default_response.split()) * 4,
-            model_used=self.default_model,
-            tier_used=tier,
-            cost=0.0,
+            model_id=self.default_model,
+            provider="mock",
+            tier=tier.value if hasattr(tier, "value") else str(tier),
+            tokens_input=len(prompt.split()) * 4,  # Rough estimate
+            tokens_output=len(self.default_response.split()) * 4,
+            cost_estimate=0.0,
+            latency_ms=10,
             metadata={"mock": True, "task_type": task_type},
         )
 
