@@ -59,10 +59,10 @@ dependencies = [
 [project.optional-dependencies]
 # LLM providers (user chooses which they need)
 anthropic = ["anthropic>=0.8.0,<1.0.0"]
-openai = ["openai>=1.6.0,<2.0.0"]
+openai = ["openai>=1.6.0,<3.0.0"]
 llm = [
     "anthropic>=0.8.0,<1.0.0",
-    "openai>=1.6.0,<2.0.0",
+    "openai>=1.6.0,<3.0.0",
 ]
 
 # MemDocs integration for long-term memory
@@ -139,7 +139,7 @@ dev = [
 full = [
     # LLM providers
     "anthropic>=0.8.0,<1.0.0",
-    "openai>=1.6.0,<2.0.0",
+    "openai>=1.6.0,<3.0.0",
     # MemDocs integration
     "memdocs>=1.0.0",
     # Agents
@@ -155,7 +155,7 @@ full = [
 all = [
     # LLM providers
     "anthropic>=0.8.0,<1.0.0",
-    "openai>=1.6.0,<2.0.0",
+    "openai>=1.6.0,<3.0.0",
     # MemDocs integration
     "memdocs>=1.0.0",
     # Agents
