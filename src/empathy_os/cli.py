@@ -25,6 +25,7 @@ from empathy_os.discovery import show_tip_if_available
 from empathy_os.logging_config import get_logger
 from empathy_os.pattern_library import PatternLibrary
 from empathy_os.persistence import MetricsCollector, PatternPersistence, StateManager
+from empathy_os.platform_utils import setup_asyncio_policy
 from empathy_os.templates import cmd_new
 from empathy_os.workflows import (
     WorkflowConfig,
@@ -1796,10 +1797,15 @@ def cmd_workflow(args):
             if duration_ms is None and hasattr(result, "duration_seconds"):
                 duration_ms = int(result.duration_seconds * 1000)
 
-            # Get cost info if available
+            # Get cost info if available (check cost_report first, then direct cost attribute)
             cost_report = getattr(result, "cost_report", None)
-            total_cost = cost_report.total_cost if cost_report else 0.0
-            savings = cost_report.savings if cost_report else 0.0
+            if cost_report and hasattr(cost_report, "total_cost"):
+                total_cost = cost_report.total_cost
+                savings = getattr(cost_report, "savings", 0.0)
+            else:
+                # Fall back to direct cost attribute (e.g., CodeReviewPipelineResult)
+                total_cost = getattr(result, "cost", 0.0)
+                savings = 0.0
 
             if args.json:
                 # Extract error from various result types
@@ -1829,11 +1835,6 @@ def cmd_workflow(args):
                         print(f"\n{output_content}\n")
                     else:
                         print("\n✓ Workflow completed successfully.\n")
-
-                    # Brief footer with timing (detailed costs available via 'empathy costs')
-                    print("-" * 50)
-                    ms = duration_ms or 0
-                    print(f"Completed in {ms}ms | Cost: ${total_cost:.4f} (saved ${savings:.4f})")
                 else:
                     # Extract error from various result types
                     error_msg = getattr(result, "error", None)
@@ -1980,6 +1981,9 @@ def cmd_frameworks(args):
 
 def main():
     """Main CLI entry point"""
+    # Configure Windows-compatible asyncio event loop policy
+    setup_asyncio_policy()
+
     parser = argparse.ArgumentParser(
         prog="empathy",
         description="Empathy - Build AI systems with 5 levels of empathy",

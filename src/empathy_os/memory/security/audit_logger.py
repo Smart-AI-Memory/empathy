@@ -96,7 +96,7 @@ class AuditLogger:
     - Log rotation support
 
     Example:
-        >>> logger = AuditLogger(log_dir="/var/log/empathy")
+        >>> logger = AuditLogger()  # Uses platform-appropriate default
         >>> logger.log_llm_request(
         ...     user_id="user@company.com",
         ...     empathy_level=3,
@@ -119,7 +119,7 @@ class AuditLogger:
 
     def __init__(
         self,
-        log_dir: str = "/var/log/empathy",
+        log_dir: str | None = None,  # Uses platform-appropriate default if None
         log_filename: str = "audit.jsonl",
         max_file_size_mb: int = 100,
         retention_days: int = 365,
@@ -137,7 +137,13 @@ class AuditLogger:
             enable_rotation: Whether to enable automatic log rotation
             enable_console_logging: Whether to also log to console (for development)
         """
-        self.log_dir = Path(log_dir)
+        # Use platform-appropriate default if log_dir not specified
+        if log_dir is None:
+            from empathy_os.platform_utils import get_default_log_dir
+
+            self.log_dir = get_default_log_dir()
+        else:
+            self.log_dir = Path(log_dir)
         self.log_filename = log_filename
         self.log_path = self.log_dir / log_filename
         self.max_file_size_bytes = max_file_size_mb * 1024 * 1024
@@ -558,7 +564,7 @@ class AuditLogger:
             ...     user_id="user@company.com",
             ...     violation_type="secrets_detected",
             ...     severity="HIGH",
-            ...     details={"secret_type": "api_key", "action": "llm_request"},
+            ...     details={"secret_type": "api_key", "action": "llm_request"},  # pragma: allowlist secret
             ...     blocked=True
             ... )
         """
