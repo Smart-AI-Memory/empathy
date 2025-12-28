@@ -346,8 +346,8 @@ def ship_workflow(
         print("5. Syncing patterns to Claude Code...")
         # Import here to avoid circular imports
         try:
-            from empathy_llm_toolkit.cli.sync_claude import (  # type: ignore[attr-defined]
-                sync_patterns_to_claude,
+            from empathy_llm_toolkit.cli.sync_claude import (
+                sync_patterns_to_claude,  # type: ignore[attr-defined]
             )
 
             result = sync_patterns_to_claude(

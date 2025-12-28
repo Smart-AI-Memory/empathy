@@ -95,6 +95,12 @@ class EmpathyConfig:
         Example:
             >>> config = EmpathyConfig.from_yaml("empathy.config.yml")
             >>> empathy = EmpathyOS(config=config)
+
+        Note:
+            Unknown fields in the YAML file are silently ignored.
+            This allows config files to contain settings for other
+            components (e.g., model_preferences, workflows) without
+            breaking EmpathyConfig loading.
         """
         if not YAML_AVAILABLE:
             raise ImportError(
@@ -104,7 +110,14 @@ class EmpathyConfig:
         with open(filepath) as f:
             data = yaml.safe_load(f)
 
-        return cls(**data)
+        # Filter to only known fields (gracefully ignore unknown fields like
+        # 'provider', 'model_preferences', 'workflows', etc.)
+        from dataclasses import fields as dataclass_fields
+
+        valid_fields = {f.name for f in dataclass_fields(cls)}
+        filtered_data = {k: v for k, v in data.items() if k in valid_fields}
+
+        return cls(**filtered_data)
 
     @classmethod
     def from_json(cls, filepath: str) -> "EmpathyConfig":
@@ -120,11 +133,20 @@ class EmpathyConfig:
         Example:
             >>> config = EmpathyConfig.from_json("empathy.config.json")
             >>> empathy = EmpathyOS(config=config)
+
+        Note:
+            Unknown fields in the JSON file are silently ignored.
         """
         with open(filepath) as f:
             data = json.load(f)
 
-        return cls(**data)
+        # Filter to only known fields (gracefully ignore unknown fields)
+        from dataclasses import fields as dataclass_fields
+
+        valid_fields = {f.name for f in dataclass_fields(cls)}
+        filtered_data = {k: v for k, v in data.items() if k in valid_fields}
+
+        return cls(**filtered_data)
 
     @classmethod
     def from_env(cls, prefix: str = "EMPATHY_") -> "EmpathyConfig":

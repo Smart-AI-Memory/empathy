@@ -1,6 +1,6 @@
 # Empathy Framework - Production Security Configuration
 # Location: ./.claude/CLAUDE.md
-# Project: empathy-framework v3.3.1
+# Project: empathy-framework v3.3.3
 # Classification: INTERNAL
 
 # Import pattern library summary (auto-generated)
@@ -405,5 +405,5 @@ By working on this project, I confirm:
 ---
 
 *This configuration enforces enterprise security while enabling the five-level empathy system.*
-*Last updated: 2025-12-27*
-*Empathy Framework v3.3.1*
+*Last updated: 2025-12-28*
+*Empathy Framework v3.3.3*

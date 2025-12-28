@@ -311,6 +311,126 @@ class TestWorkflowResult:
         assert len(skipped_stages) == 1
         assert skipped_stages[0].name == "s2"
 
+    def test_workflow_result_error_type_defaults(self):
+        """Test error_type and transient default values."""
+        now = datetime.now()
+        result = WorkflowResult(
+            success=True,
+            stages=[],
+            final_output={},
+            cost_report=CostReport(
+                total_cost=0.0,
+                baseline_cost=0.0,
+                savings=0.0,
+                savings_percent=0.0,
+            ),
+            started_at=now,
+            completed_at=now,
+            total_duration_ms=100,
+        )
+
+        # Default values
+        assert result.error_type is None
+        assert result.transient is False
+
+    def test_workflow_result_with_error_taxonomy(self):
+        """Test WorkflowResult with structured error taxonomy fields."""
+        now = datetime.now()
+        result = WorkflowResult(
+            success=False,
+            stages=[],
+            final_output={},
+            cost_report=CostReport(
+                total_cost=0.01,
+                baseline_cost=0.01,
+                savings=0.0,
+                savings_percent=0.0,
+            ),
+            started_at=now,
+            completed_at=now,
+            total_duration_ms=500,
+            error="API rate limit exceeded",
+            error_type="provider",
+            transient=True,
+        )
+
+        assert result.success is False
+        assert result.error == "API rate limit exceeded"
+        assert result.error_type == "provider"
+        assert result.transient is True
+
+    def test_workflow_result_timeout_error(self):
+        """Test WorkflowResult with timeout error classification."""
+        now = datetime.now()
+        result = WorkflowResult(
+            success=False,
+            stages=[],
+            final_output={},
+            cost_report=CostReport(
+                total_cost=0.0,
+                baseline_cost=0.0,
+                savings=0.0,
+                savings_percent=0.0,
+            ),
+            started_at=now,
+            completed_at=now,
+            total_duration_ms=120000,
+            error="Request timed out after 120 seconds",
+            error_type="timeout",
+            transient=True,
+        )
+
+        assert result.error_type == "timeout"
+        assert result.transient is True  # Timeouts are typically retryable
+
+    def test_workflow_result_config_error(self):
+        """Test WorkflowResult with config error classification."""
+        now = datetime.now()
+        result = WorkflowResult(
+            success=False,
+            stages=[],
+            final_output={},
+            cost_report=CostReport(
+                total_cost=0.0,
+                baseline_cost=0.0,
+                savings=0.0,
+                savings_percent=0.0,
+            ),
+            started_at=now,
+            completed_at=now,
+            total_duration_ms=50,
+            error="Invalid configuration: missing API key",
+            error_type="config",
+            transient=False,
+        )
+
+        assert result.error_type == "config"
+        assert result.transient is False  # Config errors require user action
+
+    def test_workflow_result_validation_error(self):
+        """Test WorkflowResult with validation error classification."""
+        now = datetime.now()
+        result = WorkflowResult(
+            success=False,
+            stages=[],
+            final_output={},
+            cost_report=CostReport(
+                total_cost=0.0,
+                baseline_cost=0.0,
+                savings=0.0,
+                savings_percent=0.0,
+            ),
+            started_at=now,
+            completed_at=now,
+            total_duration_ms=25,
+            error="Invalid input: file path is required",
+            error_type="validation",
+            transient=False,
+        )
+
+        assert result.error_type == "validation"
+        assert result.transient is False  # Validation errors require fixing input
+
 
 class TestModelPricing:
     """Tests for model pricing consistency."""

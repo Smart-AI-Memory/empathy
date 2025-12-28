@@ -1,0 +1,15 @@
+{
+    "scenario": "simplify_conditional",
+    "description": "Functions with deeply nested and redundant conditionals",
+    "min_findings": 1,
+    "max_findings": 5,
+    "primary_category": "simplify",
+    "expected_patterns": [
+        {
+            "category": "simplify",
+            "title_contains": ["simplify", "conditional", "nested", "flatten"],
+            "min_confidence": 0.7
+        }
+    ],
+    "notes": "check_eligibility has 6 levels of nesting, is_valid_input has redundant checks"
+}

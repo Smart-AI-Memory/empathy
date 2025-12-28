@@ -23,6 +23,15 @@ from empathy_llm_toolkit.agent_factory.crews.health_check import (
     HealthFix,
     HealthIssue,
 )
+from empathy_llm_toolkit.agent_factory.crews.refactoring import (
+    CodeCheckpoint,
+    RefactoringCategory,
+    RefactoringConfig,
+    RefactoringCrew,
+    RefactoringFinding,
+    RefactoringReport,
+    UserProfile,
+)
 from empathy_llm_toolkit.agent_factory.crews.security_audit import (
     SecurityAuditConfig,
     SecurityAuditCrew,
@@ -48,4 +57,12 @@ __all__ = [
     "HealthCheckReport",
     "HealthIssue",
     "HealthFix",
+    # Refactoring Crew
+    "RefactoringCrew",
+    "RefactoringConfig",
+    "RefactoringReport",
+    "RefactoringFinding",
+    "RefactoringCategory",
+    "CodeCheckpoint",
+    "UserProfile",
 ]

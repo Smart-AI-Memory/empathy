@@ -19,6 +19,7 @@ import * as fs from 'fs';
 import { PowerPanel } from './panels/PowerPanel';
 import { EmpathyDashboardProvider } from './panels/EmpathyDashboardPanel';
 import { MemoryPanelProvider } from './panels/MemoryPanelProvider';
+import { RefactorAdvisorPanel } from './panels/RefactorAdvisorPanel';
 import { InitializeWizardPanel } from './panels/InitializeWizardPanel';
 import { initializeProject, showWelcomeIfNeeded as showInitializeWelcome } from './commands/initializeProject';
 
@@ -79,6 +80,20 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.registerWebviewViewProvider(
             MemoryPanelProvider.viewType,
             memoryProvider,
+            {
+                webviewOptions: {
+                    retainContextWhenHidden: true
+                }
+            }
+        )
+    );
+
+    // Refactor Advisor panel - Interactive refactoring with 2-agent crew
+    const refactorAdvisorProvider = new RefactorAdvisorPanel(context.extensionUri, context);
+    context.subscriptions.push(
+        vscode.window.registerWebviewViewProvider(
+            RefactorAdvisorPanel.viewType,
+            refactorAdvisorProvider,
             {
                 webviewOptions: {
                     retainContextWhenHidden: true

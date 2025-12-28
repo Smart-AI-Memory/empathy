@@ -172,6 +172,9 @@ class WorkflowResult:
     total_duration_ms: int
     provider: str = "unknown"
     error: str | None = None
+    # Structured error taxonomy for reliability
+    error_type: str | None = None  # "config" | "runtime" | "provider" | "timeout" | "validation"
+    transient: bool = False  # True if retry is reasonable (e.g., provider timeout)
 
 
 def _load_workflow_history(history_file: str = WORKFLOW_HISTORY_FILE) -> list[dict]:
@@ -622,6 +625,27 @@ class BaseWorkflow(ABC):
                 final_output = stage.result
                 break
 
+        # Classify error type and transient status
+        error_type = None
+        transient = False
+        if error:
+            error_lower = error.lower()
+            if "timeout" in error_lower or "timed out" in error_lower:
+                error_type = "timeout"
+                transient = True
+            elif "config" in error_lower or "configuration" in error_lower:
+                error_type = "config"
+                transient = False
+            elif "api" in error_lower or "rate limit" in error_lower or "quota" in error_lower:
+                error_type = "provider"
+                transient = True
+            elif "validation" in error_lower or "invalid" in error_lower:
+                error_type = "validation"
+                transient = False
+            else:
+                error_type = "runtime"
+                transient = False
+
         provider_str = getattr(self, "_provider_str", "unknown")
         result = WorkflowResult(
             success=error is None,
@@ -633,6 +657,8 @@ class BaseWorkflow(ABC):
             total_duration_ms=total_duration_ms,
             provider=provider_str,
             error=error,
+            error_type=error_type,
+            transient=transient,
         )
 
         # Report workflow completion to progress tracker

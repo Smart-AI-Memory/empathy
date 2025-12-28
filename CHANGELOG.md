@@ -7,6 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [3.3.3] - 2025-12-28
+
+### Added
+
+**Reliability Improvements**
+- Structured error taxonomy in `WorkflowResult`:
+  - New `error_type` field: `"config"` | `"runtime"` | `"provider"` | `"timeout"` | `"validation"`
+  - New `transient` boolean field to indicate if retry is reasonable
+  - Auto-classification of errors in `BaseWorkflow.execute()`
+- Configuration architecture documentation (`docs/configuration-architecture.md`)
+  - Documents schema separation between `EmpathyConfig` and `WorkflowConfig`
+  - Identifies `WorkflowConfig` naming collision between two modules
+  - Best practices for config loading
+
+**Refactor Advisor Enhancements** (VSCode Extension)
+- Backend health indicator showing connection status
+- Cancellation mechanism for in-flight analysis
+- Pre-flight validation (Python and API key check before analysis)
+- Cancel button during analysis with proper cleanup
+
+### Fixed
+
+- `EmpathyConfig.from_yaml()` and `from_json()` now gracefully ignore unknown fields
+  - Fixes `TypeError: got an unexpected keyword argument 'provider'`
+  - Allows config files to contain settings for other components
+- Model ID test assertions updated to match registry (`claude-sonnet-4-5-20250514`)
+- Updated model_router docstrings to reflect current model IDs
+
+### Tests
+
+- Added 5 tests for `EmpathyConfig` unknown field filtering
+- Added 5 tests for `WorkflowResult` error taxonomy (`error_type`, `transient`)
+
+---
+
+## [3.3.2] - 2025-12-27
+
 ### Added
 
 **Windows Compatibility**

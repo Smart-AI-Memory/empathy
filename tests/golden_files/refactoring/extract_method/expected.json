@@ -1,0 +1,22 @@
+{
+    "scenario": "extract_method",
+    "description": "Long function with extractable validation and calculation logic",
+    "min_findings": 1,
+    "max_findings": 3,
+    "primary_category": "extract_method",
+    "expected_patterns": [
+        {
+            "category": "extract_method",
+            "title_contains": ["validation", "validate"],
+            "line_range": [9, 21],
+            "min_confidence": 0.7
+        }
+    ],
+    "optional_patterns": [
+        {
+            "category": "extract_method",
+            "title_contains": ["calculate", "total"],
+            "line_range": [23, 30]
+        }
+    ]
+}

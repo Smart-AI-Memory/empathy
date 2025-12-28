@@ -58,35 +58,35 @@ from empathy_llm_toolkit.wizards.research_wizard import ResearchWizard  # noqa: 
 from empathy_llm_toolkit.wizards.retail_wizard import RetailWizard  # noqa: E402
 from empathy_llm_toolkit.wizards.sales_wizard import SalesWizard  # noqa: E402
 from empathy_llm_toolkit.wizards.technology_wizard import TechnologyWizard  # noqa: E402
-from empathy_software_plugin.wizards.advanced_debugging_wizard import (
+from empathy_software_plugin.wizards.advanced_debugging_wizard import (  # noqa: E402
     AdvancedDebuggingWizard,
-)  # noqa: E402
-from empathy_software_plugin.wizards.agent_orchestration_wizard import (
+)
+from empathy_software_plugin.wizards.agent_orchestration_wizard import (  # noqa: E402
     AgentOrchestrationWizard,
-)  # noqa: E402
-from empathy_software_plugin.wizards.ai_collaboration_wizard import (
+)
+from empathy_software_plugin.wizards.ai_collaboration_wizard import (  # noqa: E402
     AICollaborationWizard,
-)  # noqa: E402
+)
 from empathy_software_plugin.wizards.ai_context_wizard import AIContextWindowWizard  # noqa: E402
-from empathy_software_plugin.wizards.ai_documentation_wizard import (
+from empathy_software_plugin.wizards.ai_documentation_wizard import (  # noqa: E402
     AIDocumentationWizard,
-)  # noqa: E402
-from empathy_software_plugin.wizards.enhanced_testing_wizard import (
+)
+from empathy_software_plugin.wizards.enhanced_testing_wizard import (  # noqa: E402
     EnhancedTestingWizard,
-)  # noqa: E402
+)
 
 # AI wizards (12 total)
 from empathy_software_plugin.wizards.multi_model_wizard import MultiModelWizard  # noqa: E402
-from empathy_software_plugin.wizards.performance_profiling_wizard import (
+from empathy_software_plugin.wizards.performance_profiling_wizard import (  # noqa: E402
     PerformanceProfilingWizard as AIPerformanceWizard,
-)  # noqa: E402
-from empathy_software_plugin.wizards.prompt_engineering_wizard import (
+)
+from empathy_software_plugin.wizards.prompt_engineering_wizard import (  # noqa: E402
     PromptEngineeringWizard,
-)  # noqa: E402
+)
 from empathy_software_plugin.wizards.rag_pattern_wizard import RAGPatternWizard  # noqa: E402
-from empathy_software_plugin.wizards.security_analysis_wizard import (
+from empathy_software_plugin.wizards.security_analysis_wizard import (  # noqa: E402
     SecurityAnalysisWizard,
-)  # noqa: E402
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

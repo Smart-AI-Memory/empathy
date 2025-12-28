@@ -1,0 +1,15 @@
+{
+    "scenario": "remove_duplication",
+    "description": "Multiple functions with duplicated header/footer formatting logic",
+    "min_findings": 1,
+    "max_findings": 4,
+    "primary_category": "remove_duplication",
+    "expected_patterns": [
+        {
+            "category": "remove_duplication",
+            "title_contains": ["duplicate", "duplication", "repeated", "consolidate", "extract"],
+            "min_confidence": 0.6
+        }
+    ],
+    "notes": "Header and footer formatting is repeated across 3 functions - should be extracted to shared helper"
+}

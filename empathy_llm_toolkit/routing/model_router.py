@@ -185,9 +185,9 @@ class ModelRouter:
             >>> router.route("summarize")
             'claude-3-5-haiku-20241022'
             >>> router.route("fix_bug")
-            'claude-sonnet-4-20250514'
+            'claude-sonnet-4-5-20250514'
             >>> router.route("coordinate")
-            'claude-opus-4-20250514'
+            'claude-opus-4-5-20251101'
         """
         provider = provider or self._default_provider
         tier = self._get_tier(task_type)

@@ -1,0 +1,15 @@
+{
+    "scenario": "rename_variable",
+    "description": "Functions with poorly named single-letter variables",
+    "min_findings": 2,
+    "max_findings": 10,
+    "primary_category": "rename",
+    "expected_patterns": [
+        {
+            "category": "rename",
+            "title_contains": ["rename", "variable", "unclear", "single-letter"],
+            "min_confidence": 0.6
+        }
+    ],
+    "notes": "Should identify x, y, z, a, b, r, e, t as candidates for renaming"
+}

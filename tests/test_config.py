@@ -869,3 +869,151 @@ class TestLoadConfigDefaultPathDetection:
 
         finally:
             os.chdir(original_cwd)
+
+
+class TestUnknownFieldFiltering:
+    """Test that unknown fields are gracefully ignored when loading config.
+
+    This is critical for forward compatibility - config files may contain
+    fields for other components (e.g., model_preferences, workflows) that
+    EmpathyConfig doesn't know about.
+    """
+
+    def test_from_yaml_ignores_unknown_fields(self, temp_dir):
+        """Test from_yaml filters out unknown fields like 'provider'."""
+        filepath = Path(temp_dir) / "config_with_extras.yml"
+
+        # Write a config file with fields EmpathyConfig doesn't recognize
+        yaml_content = """
+# Known EmpathyConfig fields
+user_id: yaml_user
+target_level: 4
+confidence_threshold: 0.85
+
+# Unknown fields (should be ignored, not cause TypeError)
+provider: anthropic
+model_preferences:
+  cheap: claude-3-5-haiku-20241022
+  capable: claude-sonnet-4-5-20250514
+workflows:
+  max_cost_per_run: 5.00
+memory:
+  enabled: true
+  redis_url: redis://localhost:6379
+"""
+        with open(filepath, "w") as f:
+            f.write(yaml_content)
+
+        # Should NOT raise TypeError about unexpected keyword argument
+        config = EmpathyConfig.from_yaml(str(filepath))
+
+        # Known fields should be loaded correctly
+        assert config.user_id == "yaml_user"
+        assert config.target_level == 4
+        assert config.confidence_threshold == 0.85
+
+        # Unknown fields should NOT be attributes
+        assert not hasattr(config, "provider")
+        assert not hasattr(config, "model_preferences")
+        assert not hasattr(config, "workflows")
+        assert not hasattr(config, "memory")
+
+    def test_from_json_ignores_unknown_fields(self, temp_dir):
+        """Test from_json filters out unknown fields."""
+        filepath = Path(temp_dir) / "config_with_extras.json"
+
+        # Write a config file with extra fields
+        config_data = {
+            # Known fields
+            "user_id": "json_user",
+            "target_level": 5,
+            "metrics_enabled": False,
+            # Unknown fields
+            "provider": "openai",
+            "model_preferences": {"cheap": "gpt-4o-mini"},
+            "telemetry": {"enabled": True, "storage": "jsonl"},
+            "some_future_field": "value",
+        }
+        with open(filepath, "w") as f:
+            json.dump(config_data, f)
+
+        # Should NOT raise TypeError
+        config = EmpathyConfig.from_json(str(filepath))
+
+        # Known fields loaded
+        assert config.user_id == "json_user"
+        assert config.target_level == 5
+        assert config.metrics_enabled is False
+
+        # Unknown fields not present
+        assert not hasattr(config, "provider")
+        assert not hasattr(config, "model_preferences")
+        assert not hasattr(config, "telemetry")
+        assert not hasattr(config, "some_future_field")
+
+    def test_from_yaml_with_only_unknown_fields(self, temp_dir):
+        """Test from_yaml with config containing ONLY unknown fields."""
+        filepath = Path(temp_dir) / "unknown_only.yml"
+
+        yaml_content = """
+provider: anthropic
+model_preferences:
+  capable: claude-sonnet-4-5-20250514
+"""
+        with open(filepath, "w") as f:
+            f.write(yaml_content)
+
+        # Should return a default config (all fields filtered out)
+        config = EmpathyConfig.from_yaml(str(filepath))
+
+        # Should have default values
+        assert config.user_id == "default_user"
+        assert config.target_level == 3
+        assert config.confidence_threshold == 0.75
+
+    def test_from_json_with_empty_after_filtering(self, temp_dir):
+        """Test from_json when all fields are unknown."""
+        filepath = Path(temp_dir) / "unknown_only.json"
+
+        config_data = {
+            "unknown_field_1": "value1",
+            "unknown_field_2": {"nested": "data"},
+        }
+        with open(filepath, "w") as f:
+            json.dump(config_data, f)
+
+        # Should return default config
+        config = EmpathyConfig.from_json(str(filepath))
+
+        assert config.user_id == "default_user"
+        assert config.target_level == 3
+
+    def test_from_yaml_mixed_known_and_unknown(self, temp_dir):
+        """Test that known fields are loaded while unknown are filtered."""
+        filepath = Path(temp_dir) / "mixed.yml"
+
+        yaml_content = """
+user_id: mixed_user
+unknown_before: should_be_ignored
+target_level: 2
+unknown_middle:
+  nested: value
+confidence_threshold: 0.9
+unknown_after: also_ignored
+persistence_enabled: false
+"""
+        with open(filepath, "w") as f:
+            f.write(yaml_content)
+
+        config = EmpathyConfig.from_yaml(str(filepath))
+
+        # All known fields present
+        assert config.user_id == "mixed_user"
+        assert config.target_level == 2
+        assert config.confidence_threshold == 0.9
+        assert config.persistence_enabled is False
+
+        # All unknown fields absent
+        assert not hasattr(config, "unknown_before")
+        assert not hasattr(config, "unknown_middle")
+        assert not hasattr(config, "unknown_after")

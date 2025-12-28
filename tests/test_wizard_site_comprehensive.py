@@ -168,7 +168,7 @@ SOFTWARE_WIZARDS = [
         "name": "Security Wizard",
         "category": "coach",
         "sample_input": """import os
-password = "admin123"  # Hardcoded credential
+password = "admin123"  # Hardcoded credential  # pragma: allowlist secret
 query = f"SELECT * FROM users WHERE id = {user_id}"  # SQL injection
 """,
         "expected_features": ["issues", "issues_found"],
