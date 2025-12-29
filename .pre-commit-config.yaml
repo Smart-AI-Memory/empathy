@@ -61,14 +61,17 @@ repos:
             \.env\.example$|
             .*\.md$|
             .*\.json$|
+            .*_audit.*\.py$|
             tests/|
             dashboard/|
             website/|
+            src/empathy_os/workflows/security_audit\.py$|
             empathy_software_plugin/wizards/security/|
             empathy_llm_toolkit/security/|
             memdocs_storage/|
             demo_security_complete\.py$|
             test_memory_integration\.py$|
+            profile_audit_logger\.py$|
             docs/|
             examples/|
             anthropic-cookbook/
