@@ -112,7 +112,7 @@ class ASTFunctionAnalyzer(ast.NodeVisitor):
 
         # Process methods
         for item in node.body:
-            if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            if isinstance(item, ast.FunctionDef | ast.AsyncFunctionDef):
                 method_sig = self._extract_function_signature(
                     item, is_async=isinstance(item, ast.AsyncFunctionDef)
                 )
@@ -236,7 +236,7 @@ class ASTFunctionAnalyzer(ast.NodeVisitor):
         """Estimate cyclomatic complexity (simplified)."""
         complexity = 1
         for child in ast.walk(node):
-            if isinstance(child, (ast.If, ast.While, ast.For, ast.ExceptHandler)):
+            if isinstance(child, ast.If | ast.While | ast.For | ast.ExceptHandler):
                 complexity += 1
             elif isinstance(child, ast.BoolOp):
                 complexity += len(child.values) - 1
