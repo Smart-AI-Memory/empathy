@@ -5,7 +5,14 @@ Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
-from empathy_os.routing import (
+from pathlib import Path
+
+import pytest
+
+# Check if wizard_chains.yaml exists for chain executor tests
+CHAIN_CONFIG_EXISTS = Path(".empathy/wizard_chains.yaml").exists()
+
+from empathy_os.routing import (  # noqa: E402
     ChainExecutor,
     HaikuClassifier,
     RoutingDecision,
@@ -230,6 +237,7 @@ class TestSmartRouter:
         assert hasattr(decision, "context")
 
 
+@pytest.mark.skipif(not CHAIN_CONFIG_EXISTS, reason=".empathy/wizard_chains.yaml not found")
 class TestChainExecutor:
     """Tests for ChainExecutor."""
 

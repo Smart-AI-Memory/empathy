@@ -13,8 +13,11 @@ from pathlib import Path
 
 import pytest
 
-from empathy_os.memory import EdgeType, MemoryGraph
-from empathy_os.routing import (
+# Check if wizard_chains.yaml exists for chain executor tests
+CHAIN_CONFIG_EXISTS = Path(".empathy/wizard_chains.yaml").exists()
+
+from empathy_os.memory import EdgeType, MemoryGraph  # noqa: E402
+from empathy_os.routing import (  # noqa: E402
     ChainExecutor,
     ClassificationResult,
     HaikuClassifier,
@@ -202,6 +205,7 @@ class TestMemoryGraphIntegration:
         assert stats["nodes_by_wizard"]["bug-predict"] == 1
 
 
+@pytest.mark.skipif(not CHAIN_CONFIG_EXISTS, reason=".empathy/wizard_chains.yaml not found")
 class TestChainExecutorIntegration:
     """Integration tests for Chain Executor with routing."""
 

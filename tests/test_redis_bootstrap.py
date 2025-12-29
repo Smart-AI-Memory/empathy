@@ -17,6 +17,16 @@ Licensed under Fair Source 0.9
 import subprocess
 from unittest.mock import Mock, patch
 
+import pytest
+
+# Check if redis is available
+try:
+    import redis  # noqa: F401
+
+    REDIS_AVAILABLE = True
+except ImportError:
+    REDIS_AVAILABLE = False
+
 from empathy_os.memory.redis_bootstrap import (
     RedisStartMethod,
     RedisStatus,
@@ -69,6 +79,7 @@ class TestRedisStatus:
         assert status.pid is None
 
 
+@pytest.mark.skipif(not REDIS_AVAILABLE, reason="redis package not installed")
 class TestCheckRedisRunning:
     """Test _check_redis_running function"""
 

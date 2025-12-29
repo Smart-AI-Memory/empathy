@@ -19,6 +19,7 @@ import pytest
 
 from empathy_os.memory.long_term import (
     DEFAULT_CLASSIFICATION_RULES,
+    HAS_ENCRYPTION,
     Classification,
     ClassificationRules,
     EncryptionManager,
@@ -360,14 +361,12 @@ class TestEncryptionManager:
         except ImportError:
             pytest.skip("cryptography library not installed")
 
+    @pytest.mark.skipif(not HAS_ENCRYPTION, reason="cryptography library not installed")
     def test_invalid_env_key_raises(self):
         """Test invalid environment key raises ValueError."""
-        try:
-            with patch.dict(os.environ, {"EMPATHY_MASTER_KEY": "not-valid-base64!!!"}):
-                with pytest.raises(ValueError):
-                    EncryptionManager()
-        except ImportError:
-            pytest.skip("cryptography library not installed")
+        with patch.dict(os.environ, {"EMPATHY_MASTER_KEY": "not-valid-base64!!!"}):
+            with pytest.raises(ValueError):
+                EncryptionManager()
 
 
 class TestClassificationIntegration:
