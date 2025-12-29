@@ -102,7 +102,12 @@ def mock_llm_provider():
     """Create a mock LLM provider for testing."""
     provider = MagicMock()
     provider.generate = AsyncMock(
-        return_value="# Chapter 23: Test Chapter\n\nThis is test content with **key concepts**.\n\n```python\nprint('hello')\n```\n\n## Key Takeaways\n\n1. First point\n2. Second point"
+        return_value=(
+            "# Chapter 23: Test Chapter\n\n"
+            "This is test content with **key concepts**.\n\n"
+            "```python\nprint('hello')\n```\n\n"
+            "## Key Takeaways\n\n1. First point\n2. Second point"
+        )
     )
     return provider
 

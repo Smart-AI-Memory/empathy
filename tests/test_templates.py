@@ -10,15 +10,14 @@ Tests cover:
 - File creation and directory handling
 """
 
-import pytest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 from empathy_os.templates import (
     TEMPLATES,
+    cmd_new,
     list_templates,
     scaffold_project,
-    cmd_new,
 )
 
 
@@ -256,9 +255,7 @@ class TestScaffoldProject:
         )
 
         # Should create or append to .gitignore
-        assert (target / ".gitignore").exists() or ".gitignore" in result.get(
-            "files_created", []
-        )
+        assert (target / ".gitignore").exists() or ".gitignore" in result.get("files_created", [])
 
     def test_default_target_dir(self, tmp_path, monkeypatch):
         """Test uses project name as default target dir."""

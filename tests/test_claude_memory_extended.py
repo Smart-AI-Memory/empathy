@@ -540,7 +540,8 @@ class TestHierarchicalMemoryLoading:
             memory = loader.load_all_memory(temp_project_dir)
 
             assert "Enterprise" in memory
-            # Check for user memory content marker, not just "User" (Windows paths may contain "Users")
+            # Check for user memory content marker, not just "User"
+            # (Windows paths may contain "Users")
             assert "# User" not in memory
             assert "Project" in memory
 

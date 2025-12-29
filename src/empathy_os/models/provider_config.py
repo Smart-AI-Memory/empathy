@@ -388,3 +388,181 @@ def reset_provider_config() -> None:
     """Reset the global provider configuration (forces reload)."""
     global _global_config
     _global_config = None
+
+
+def configure_hybrid_interactive() -> ProviderConfig:
+    """
+    Interactive hybrid configuration - let users pick models for each tier.
+
+    Shows available models from all providers with detected API keys,
+    allowing users to mix and match the best models for their workflow.
+
+    Returns:
+        ProviderConfig with custom tier mappings
+    """
+    print("\n" + "=" * 60)
+    print("🔀 Hybrid Model Configuration")
+    print("=" * 60)
+    print("\nSelect the best model for each tier from available providers.")
+    print("This creates a custom mix optimized for your workflow.\n")
+
+    # Detect available providers
+    available = ProviderConfig.detect_available_providers()
+
+    if not available:
+        print("⚠️  No API keys detected. Please set at least one of:")
+        print("   - ANTHROPIC_API_KEY")
+        print("   - OPENAI_API_KEY")
+        print("   - GOOGLE_API_KEY")
+        print("   - Or run Ollama locally")
+        return ProviderConfig.auto_detect()
+
+    print(f"✓ Available providers: {', '.join(available)}\n")
+
+    # Collect models for each tier from available providers
+    tier_selections: dict[str, str] = {}
+
+    for tier in ["cheap", "capable", "premium"]:
+        tier_upper = tier.upper()
+        print("-" * 60)
+        print(f"  {tier_upper} TIER - Select a model:")
+        print("-" * 60)
+
+        # Build options from available providers
+        options: list[tuple[str, ModelInfo]] = []
+        for provider in available:
+            model_info = MODEL_REGISTRY.get(provider, {}).get(tier)
+            if model_info:
+                options.append((provider, model_info))
+
+        if not options:
+            print(f"  No models available for {tier} tier")
+            continue
+
+        # Display options with pricing info
+        for i, (provider, info) in enumerate(options, 1):
+            provider_label = provider.capitalize()
+            cost_info = f"${info.input_cost_per_million:.2f}/${info.output_cost_per_million:.2f} per M tokens"
+            if provider == "ollama":
+                cost_info = "FREE (local)"
+
+            # Add feature badges
+            features = []
+            if info.supports_vision:
+                features.append("👁 vision")
+            if info.supports_tools:
+                features.append("🔧 tools")
+            if provider == "google":
+                features.append("📚 2M context")
+
+            features_str = f" [{', '.join(features)}]" if features else ""
+
+            print(f"  [{i}] {info.id}")
+            print(f"      Provider: {provider_label} | {cost_info}{features_str}")
+
+        # Get user choice
+        default_idx = 0
+        # Set smart defaults based on tier
+        if tier == "cheap":
+            # Prefer cheapest: ollama > google > openai > anthropic
+            for pref in ["ollama", "google", "openai", "anthropic"]:
+                for i, (p, _) in enumerate(options):
+                    if p == pref:
+                        default_idx = i
+                        break
+                else:
+                    continue
+                break
+        elif tier == "capable":
+            # Prefer best reasoning: anthropic > openai > google > ollama
+            for pref in ["anthropic", "openai", "google", "ollama"]:
+                for i, (p, _) in enumerate(options):
+                    if p == pref:
+                        default_idx = i
+                        break
+                else:
+                    continue
+                break
+        elif tier == "premium":
+            # Prefer most capable: anthropic > openai > google > ollama
+            for pref in ["anthropic", "openai", "google", "ollama"]:
+                for i, (p, _) in enumerate(options):
+                    if p == pref:
+                        default_idx = i
+                        break
+                else:
+                    continue
+                break
+
+        print(f"\n  Recommended: [{default_idx + 1}] {options[default_idx][1].id}")
+
+        try:
+            choice = input(f"  Your choice [1-{len(options)}]: ").strip()
+            if not choice:
+                idx = default_idx
+            else:
+                idx = int(choice) - 1
+                if idx < 0 or idx >= len(options):
+                    idx = default_idx
+        except (ValueError, EOFError):
+            idx = default_idx
+
+        selected_provider, selected_model = options[idx]
+        tier_selections[tier] = selected_model.id
+        print(f"  ✓ Selected: {selected_model.id} ({selected_provider})\n")
+
+    # Create custom config
+    config = ProviderConfig(
+        mode=ProviderMode.CUSTOM,
+        primary_provider="custom",
+        tier_providers={},  # Not used in CUSTOM mode
+        available_providers=available,
+    )
+
+    # Store the custom tier->model mapping
+    # We'll save this to workflows.yaml custom_models section
+    print("\n" + "=" * 60)
+    print("✅ Hybrid Configuration Complete!")
+    print("=" * 60)
+    print("\nYour custom model mapping:")
+    for tier, model_id in tier_selections.items():
+        print(f"  {tier:8} → {model_id}")
+
+    # Save to workflows.yaml
+    _save_hybrid_to_workflows_yaml(tier_selections)
+
+    print("\n✓ Configuration saved to .empathy/workflows.yaml")
+    print("  Run workflows with: python -m empathy_os.cli workflow run <name>")
+
+    return config
+
+
+def _save_hybrid_to_workflows_yaml(tier_selections: dict[str, str]) -> None:
+    """Save hybrid tier selections to workflows.yaml."""
+    from pathlib import Path
+
+    import yaml
+
+    workflows_path = Path(".empathy/workflows.yaml")
+
+    # Load existing config or create new
+    if workflows_path.exists():
+        with open(workflows_path) as f:
+            config = yaml.safe_load(f) or {}
+    else:
+        config = {}
+        workflows_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Update config
+    config["default_provider"] = "hybrid"
+
+    # Ensure custom_models exists
+    if "custom_models" not in config or config["custom_models"] is None:
+        config["custom_models"] = {}
+
+    # Set hybrid model mapping
+    config["custom_models"]["hybrid"] = tier_selections
+
+    # Write back
+    with open(workflows_path, "w") as f:
+        yaml.dump(config, f, default_flow_style=False, sort_keys=False)

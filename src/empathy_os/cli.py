@@ -28,7 +28,6 @@ from empathy_os.persistence import MetricsCollector, PatternPersistence, StateMa
 from empathy_os.platform_utils import setup_asyncio_policy
 from empathy_os.templates import cmd_new
 from empathy_os.workflows import (
-    WorkflowConfig,
     cmd_fix_all,
     cmd_learn,
     cmd_morning,
@@ -1414,12 +1413,28 @@ def cmd_wizard(args):
     print("\n3. Which LLM provider will you use?")
     print("   [1] Anthropic Claude ⭐ Recommended")
     print("   [2] OpenAI GPT-4")
-    print("   [3] Local (Ollama)")
-    print("   [4] Skip (configure later)")
+    print("   [3] Google Gemini (2M context)")
+    print("   [4] Local (Ollama)")
+    print("   [5] Hybrid (mix best models from each provider)")
+    print("   [6] Skip (configure later)")
 
-    llm_choice = input("\nYour choice (1-4) [1]: ").strip() or "1"
-    llm_map = {"1": "anthropic", "2": "openai", "3": "ollama", "4": None}
+    llm_choice = input("\nYour choice (1-6) [1]: ").strip() or "1"
+    llm_map = {
+        "1": "anthropic",
+        "2": "openai",
+        "3": "google",
+        "4": "ollama",
+        "5": "hybrid",
+        "6": None,
+    }
     llm_provider = llm_map.get(llm_choice, "anthropic")
+
+    # If hybrid selected, launch interactive tier selection
+    if llm_provider == "hybrid":
+        from empathy_os.models.provider_config import configure_hybrid_interactive
+
+        configure_hybrid_interactive()
+        llm_provider = None  # Already saved by hybrid config
 
     # Step 4: User ID
     print("\n4. What user ID should we use?")
@@ -1481,12 +1496,92 @@ llm_provider: "{llm_provider}"
     print("\nNext steps:")
     print(f"  1. Edit {output_file} to customize settings")
 
-    if llm_provider in ["anthropic", "openai"]:
-        env_var = "ANTHROPIC_API_KEY" if llm_provider == "anthropic" else "OPENAI_API_KEY"
+    if llm_provider in ["anthropic", "openai", "google"]:
+        env_var_map = {
+            "anthropic": "ANTHROPIC_API_KEY",
+            "openai": "OPENAI_API_KEY",
+            "google": "GOOGLE_API_KEY",
+        }
+        env_var = env_var_map.get(llm_provider, "API_KEY")
         print(f"  2. Set {env_var} environment variable")
 
     print("  3. Run: empathy-framework run --config empathy.config.yml")
     print("\nHappy empathizing! 🧠✨\n")
+
+
+def cmd_provider_hybrid(args):
+    """Configure hybrid mode - pick best models for each tier."""
+    from empathy_os.models.provider_config import configure_hybrid_interactive
+
+    configure_hybrid_interactive()
+
+
+def cmd_provider_show(args):
+    """Show current provider configuration."""
+    from empathy_os.models.provider_config import ProviderConfig
+    from empathy_os.workflows.config import WorkflowConfig
+
+    print("\n" + "=" * 60)
+    print("Provider Configuration")
+    print("=" * 60)
+
+    # Detect available providers
+    config = ProviderConfig.auto_detect()
+    print(
+        f"\nDetected API keys for: {', '.join(config.available_providers) if config.available_providers else 'None'}"
+    )
+
+    # Load workflow config
+    wf_config = WorkflowConfig.load()
+    print(f"\nDefault provider: {wf_config.default_provider}")
+
+    # Show effective models
+    print("\nEffective model mapping:")
+    if wf_config.custom_models and "hybrid" in wf_config.custom_models:
+        hybrid = wf_config.custom_models["hybrid"]
+        for tier in ["cheap", "capable", "premium"]:
+            model = hybrid.get(tier, "not configured")
+            print(f"  {tier:8} → {model}")
+    else:
+        from empathy_os.models import MODEL_REGISTRY
+
+        provider = wf_config.default_provider
+        if provider in MODEL_REGISTRY:
+            for tier in ["cheap", "capable", "premium"]:
+                model_info = MODEL_REGISTRY[provider].get(tier)
+                if model_info:
+                    print(f"  {tier:8} → {model_info.id} ({provider})")
+
+    print()
+
+
+def cmd_provider_set(args):
+    """Set default provider."""
+    from pathlib import Path
+
+    import yaml
+
+    provider = args.name
+    workflows_path = Path(".empathy/workflows.yaml")
+
+    # Load existing config or create new
+    if workflows_path.exists():
+        with open(workflows_path) as f:
+            config = yaml.safe_load(f) or {}
+    else:
+        config = {}
+        workflows_path.parent.mkdir(parents=True, exist_ok=True)
+
+    config["default_provider"] = provider
+
+    with open(workflows_path, "w") as f:
+        yaml.dump(config, f, default_flow_style=False, sort_keys=False)
+
+    print(f"✓ Default provider set to: {provider}")
+    print(f"  Saved to: {workflows_path}")
+
+    if provider == "hybrid":
+        print("\n  Tip: Run 'empathy provider hybrid' to customize tier models")
 
 
 def cmd_sync_claude(args):
@@ -1764,8 +1859,14 @@ def cmd_workflow(args):
         try:
             workflow_cls = get_workflow(name)
 
-            # Get provider (default to anthropic if not specified)
-            provider = args.provider if args.provider else "anthropic"
+            # Get provider from CLI arg, or fall back to config's default_provider
+            if args.provider:
+                provider = args.provider
+            else:
+                from empathy_os.workflows.config import WorkflowConfig
+
+                wf_config = WorkflowConfig.load()
+                provider = wf_config.default_provider
             workflow = workflow_cls(provider=provider)
 
             # Parse input
@@ -2135,6 +2236,33 @@ def main():
     )
     parser_wizard.set_defaults(func=cmd_wizard)
 
+    # Provider command (Model provider configuration)
+    parser_provider = subparsers.add_parser(
+        "provider", help="Configure model providers and hybrid mode"
+    )
+    provider_subparsers = parser_provider.add_subparsers(dest="provider_cmd")
+
+    # provider hybrid - Interactive hybrid configuration
+    parser_provider_hybrid = provider_subparsers.add_parser(
+        "hybrid", help="Configure hybrid mode - pick best models for each tier"
+    )
+    parser_provider_hybrid.set_defaults(func=cmd_provider_hybrid)
+
+    # provider show - Show current configuration
+    parser_provider_show = provider_subparsers.add_parser(
+        "show", help="Show current provider configuration"
+    )
+    parser_provider_show.set_defaults(func=cmd_provider_show)
+
+    # provider set - Quick set single provider
+    parser_provider_set = provider_subparsers.add_parser(
+        "set", help="Set default provider (anthropic, openai, google, ollama)"
+    )
+    parser_provider_set.add_argument(
+        "name", choices=["anthropic", "openai", "google", "ollama", "hybrid"], help="Provider name"
+    )
+    parser_provider_set.set_defaults(func=cmd_provider_set)
+
     # Status command (Session status assistant)
     parser_status = subparsers.add_parser(
         "status", help="Session status - prioritized project status report"
@@ -2338,9 +2466,9 @@ def main():
     parser_workflow.add_argument(
         "--provider",
         "-p",
-        choices=["anthropic", "openai", "ollama", "hybrid"],
+        choices=["anthropic", "openai", "google", "ollama", "hybrid"],
         default=None,  # None means use config
-        help="Model provider: anthropic, openai, ollama, or hybrid (mix of best models)",
+        help="Model provider: anthropic, openai, google, ollama, or hybrid (mix of best models)",
     )
     parser_workflow.add_argument(
         "--force",

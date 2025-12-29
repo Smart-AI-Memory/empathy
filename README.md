@@ -3,8 +3,8 @@
 **The AI collaboration framework that predicts problems before they happen.**
 
 [![PyPI](https://img.shields.io/pypi/v/empathy-framework)](https://pypi.org/project/empathy-framework/)
-[![Tests](https://img.shields.io/badge/tests-3%2C564%20passing-brightgreen)](https://github.com/Smart-AI-Memory/empathy-framework/actions)
-[![Coverage](https://img.shields.io/badge/coverage-55%25-yellow)](https://github.com/Smart-AI-Memory/empathy-framework)
+[![Tests](https://img.shields.io/badge/tests-5%2C603%20passing-brightgreen)](https://github.com/Smart-AI-Memory/empathy-framework/actions)
+[![Coverage](https://img.shields.io/badge/coverage-64%25-yellow)](https://github.com/Smart-AI-Memory/empathy-framework)
 [![License](https://img.shields.io/badge/license-Fair%20Source%200.9-blue)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10+-blue)](https://www.python.org)
 
@@ -13,6 +13,12 @@ pip install empathy-framework[full]
 ```
 
 ## What's New in v3.5.x
+
+### Project Indexing & Test Suite Expansion (v3.5.4)
+
+- **Project Indexing System** — JSON-based file tracking with automatic structure scanning, metadata tracking, and CrewAI integration
+- **5,603 Tests** — Comprehensive test coverage at 64% with 30+ new test modules
+- **BaselineManager Fix** — Resolved test isolation bug affecting suppression system
 
 ### Memory API Security Hardening (v3.5.0)
 

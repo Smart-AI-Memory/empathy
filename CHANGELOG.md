@@ -5,6 +5,49 @@ All notable changes to the Empathy Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.5.4] - 2025-12-29
+
+### Added
+
+#### Comprehensive Test Suite Expansion
+
+- Added 30+ new test files with comprehensive coverage
+- New test modules:
+  - `test_baseline.py` - 71 tests for BaselineManager suppression system
+  - `test_graph.py` - Memory graph knowledge base tests
+  - `test_linter_parsers.py` - Multi-linter parser tests (ESLint, Pylint, MyPy, TypeScript, Clippy)
+  - `test_agent_orchestration_wizard.py` - 54 tests for agent orchestration
+  - `test_code_review_wizard.py` - 52 tests for code review wizard
+  - `test_tech_debt_wizard.py` - 39 tests for tech debt tracking
+  - `test_security_learning_wizard.py` - 35 tests for security learning
+  - `test_secure_release.py` - 31 tests for secure release pipeline
+  - `test_sync_claude.py` - 27 tests for Claude sync functionality
+  - `test_reporting.py` - 27 tests for reporting concepts
+  - `test_sbar_wizard.py` - Healthcare SBAR wizard tests
+- Integration and performance test directories (`tests/integration/`, `tests/performance/`)
+- **Project Indexing System** (`src/empathy_os/project_index/`) — JSON-based file tracking with:
+  - Automatic project structure scanning and indexing
+  - File metadata tracking (size, type, last modified)
+  - Codebase statistics and reports
+  - CrewAI integration for AI-powered analysis
+- Test maintenance workflows (`test_lifecycle.py`, `test_maintenance.py`)
+
+### Fixed
+
+- **BaselineManager**: Fixed test isolation bug where `BASELINE_SCHEMA.copy()` created shallow copies, causing nested dictionaries to be shared across test instances. Changed to `copy.deepcopy(BASELINE_SCHEMA)` for proper isolation.
+- **ESLint Parser Test**: Fixed `test_parse_eslint_text_multiple_files` - rule names must be lowercase letters and hyphens only (changed `rule-1` to `no-unused-vars`)
+- **Lint Warnings**: Fixed ambiguous variable name `l` → `line` in scanner.py
+- **Lint Warnings**: Fixed unused loop variable `pkg` → `_pkg` in test_dependency_check.py
+
+### Tests
+
+- Total tests: 5,603 passed, 72 skipped
+- Coverage: 63.65% (exceeds 25% target)
+- All workflow tests now pass with proper mocking
+- Fixed 31+ previously failing workflow tests
+
+---
+
 ## [3.5.3] - 2025-12-29
 
 ### Documentation

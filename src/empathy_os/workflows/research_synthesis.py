@@ -16,10 +16,9 @@ Copyright 2025 Smart-AI-Memory
 Licensed under Fair Source License 0.9
 """
 
-import os
 from typing import Any
 
-from .base import PROVIDER_MODELS, BaseWorkflow, ModelProvider, ModelTier
+from .base import BaseWorkflow, ModelTier
 from .step_config import WorkflowStepConfig
 
 # Step configurations for executor-based execution
@@ -112,80 +111,6 @@ class ResearchSynthesisWorkflow(BaseWorkflow):
         super().__init__(**kwargs)
         self.complexity_threshold = complexity_threshold
         self._detected_complexity: float = 0.0
-        self._client = None
-        self._api_key = os.getenv("ANTHROPIC_API_KEY")
-
-    def _get_client(self):
-        """Lazy-load the Anthropic client."""
-        if self._client is None and self._api_key:
-            try:
-                import anthropic
-
-                self._client = anthropic.Anthropic(api_key=self._api_key)
-            except ImportError:
-                pass
-        return self._client
-
-    # Fallback models by tier (used if PROVIDER_MODELS lookup fails)
-    FALLBACK_MODELS: dict[str, str] = {
-        "cheap": "claude-3-5-haiku-20241022",
-        "capable": "claude-sonnet-4-20250514",
-        "premium": "claude-opus-4-5-20251101",
-    }
-
-    def _get_model_for_tier(self, tier: ModelTier) -> str:
-        """
-        Get the model name for a given tier with fallback logic.
-
-        Attempts to get model from PROVIDER_MODELS registry first.
-        Falls back to known-good model IDs if registry lookup fails.
-        """
-        provider = ModelProvider.ANTHROPIC
-        model = PROVIDER_MODELS.get(provider, {}).get(tier)
-
-        if model:
-            return model
-
-        # Fallback: use known-good model IDs
-        tier_str = tier.value if hasattr(tier, "value") else str(tier)
-        return self.FALLBACK_MODELS.get(tier_str, "claude-sonnet-4-20250514")
-
-    async def _call_llm(
-        self, tier: ModelTier, system: str, user_message: str, max_tokens: int = 4096
-    ) -> tuple[str, int, int]:
-        """
-        Make an actual LLM call using the Anthropic API.
-
-        Returns:
-            (response_text, input_tokens, output_tokens)
-        """
-        client = self._get_client()
-        if not client:
-            # Fallback to simulation if no API key
-            return (
-                f"[Simulated - set ANTHROPIC_API_KEY for real results]\n\n{user_message[:200]}...",
-                len(user_message) // 4,
-                100,
-            )
-
-        model = self._get_model_for_tier(tier)
-
-        try:
-            response = client.messages.create(
-                model=model,
-                max_tokens=max_tokens,
-                system=system,
-                messages=[{"role": "user", "content": user_message}],
-            )
-
-            content = response.content[0].text if response.content else ""
-            input_tokens = response.usage.input_tokens
-            output_tokens = response.usage.output_tokens
-
-            return content, input_tokens, output_tokens
-
-        except Exception as e:
-            return f"Error calling LLM: {e}", 0, 0
 
     async def _call_with_step(
         self,

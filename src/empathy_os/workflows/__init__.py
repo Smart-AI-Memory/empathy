@@ -104,7 +104,7 @@ _DEFAULT_WORKFLOWS: dict[str, type] = {
     "security-audit": SecurityAuditWorkflow,
     "perf-audit": PerformanceAuditWorkflow,
     # Generation workflows
-    "test-gen": TestGenerationWorkflow,
+    "test-gen": TestGenerationWorkflow,  # Enabled by default for test coverage
     "refactor-plan": RefactorPlanWorkflow,
     # Operational workflows
     "dependency-check": DependencyCheckWorkflow,
@@ -118,20 +118,36 @@ _DEFAULT_WORKFLOWS: dict[str, type] = {
     "health-check": HealthCheckWorkflow,
 }
 
+# Opt-in workflows - not included by default, must be explicitly enabled
+# Currently empty - all workflows are enabled by default
+# Use disabled_workflows in config to turn off specific workflows
+_OPT_IN_WORKFLOWS: dict[str, type] = {}
+
 # Workflow registry populated at module load
 WORKFLOW_REGISTRY: dict[str, type[BaseWorkflow]] = {}
 
 
-def discover_workflows(include_defaults: bool = True) -> dict[str, type[BaseWorkflow]]:
+def discover_workflows(
+    include_defaults: bool = True,
+    config: "WorkflowConfig | None" = None,
+) -> dict[str, type[BaseWorkflow]]:
     """
-    Discover workflows via entry points.
+    Discover workflows via entry points and config.
 
     This function loads workflows registered as entry points under the
     'empathy.workflows' group. This allows third-party packages to register
     custom workflows that integrate with the Empathy Framework.
 
+    Workflow availability is controlled by:
+    1. Default workflows (always included unless disabled)
+    2. Opt-in workflows (test-gen) - must be explicitly enabled OR compliance_mode=hipaa
+    3. enabled_workflows config - explicitly enable specific workflows
+    4. disabled_workflows config - explicitly disable specific workflows
+    5. Entry point discovery - third-party workflows
+
     Args:
         include_defaults: Whether to include default built-in workflows
+        config: Optional WorkflowConfig for enabled/disabled workflows
 
     Returns:
         Dictionary mapping workflow names to workflow classes
@@ -145,12 +161,31 @@ def discover_workflows(include_defaults: bool = True) -> dict[str, type[BaseWork
         from empathy_os.workflows import discover_workflows
         workflows = discover_workflows()
         MyWorkflow = workflows.get("my-workflow")
+
+        # With HIPAA mode (enables test-gen):
+        config = WorkflowConfig.load()  # compliance_mode: hipaa
+        workflows = discover_workflows(config=config)
     """
     discovered: dict[str, type[BaseWorkflow]] = {}
 
     # Include default workflows if requested
     if include_defaults:
         discovered.update(_DEFAULT_WORKFLOWS)
+
+    # Add opt-in workflows based on config
+    if config is not None:
+        # HIPAA mode auto-enables healthcare workflows
+        if config.is_hipaa_mode():
+            discovered.update(_OPT_IN_WORKFLOWS)
+
+        # Explicitly enabled workflows
+        for workflow_name in config.enabled_workflows:
+            if workflow_name in _OPT_IN_WORKFLOWS:
+                discovered[workflow_name] = _OPT_IN_WORKFLOWS[workflow_name]
+
+        # Explicitly disabled workflows
+        for workflow_name in config.disabled_workflows:
+            discovered.pop(workflow_name, None)
 
     # Discover via entry points
     try:
@@ -160,7 +195,9 @@ def discover_workflows(include_defaults: bool = True) -> dict[str, type[BaseWork
                 workflow_cls = ep.load()
                 # Validate it's a proper workflow class
                 if isinstance(workflow_cls, type) and hasattr(workflow_cls, "execute"):
-                    discovered[ep.name] = workflow_cls
+                    # Check if disabled in config
+                    if config is None or ep.name not in config.disabled_workflows:
+                        discovered[ep.name] = workflow_cls
             except Exception:
                 # Skip invalid entry points silently
                 pass
@@ -171,15 +208,29 @@ def discover_workflows(include_defaults: bool = True) -> dict[str, type[BaseWork
     return discovered
 
 
-def refresh_workflow_registry() -> None:
+def refresh_workflow_registry(config: "WorkflowConfig | None" = None) -> None:
     """
     Refresh the global WORKFLOW_REGISTRY by re-discovering all workflows.
 
-    Call this after installing new packages that register workflows.
+    Call this after installing new packages that register workflows,
+    or after changing the WorkflowConfig (e.g., enabling HIPAA mode).
+
+    Args:
+        config: Optional WorkflowConfig for enabled/disabled workflows
     """
     global WORKFLOW_REGISTRY
     WORKFLOW_REGISTRY.clear()
-    WORKFLOW_REGISTRY.update(discover_workflows())
+    WORKFLOW_REGISTRY.update(discover_workflows(config=config))
+
+
+def get_opt_in_workflows() -> dict[str, type]:
+    """
+    Get the list of opt-in workflows that require explicit enabling.
+
+    Returns:
+        Dictionary of workflow name to class for opt-in workflows
+    """
+    return dict(_OPT_IN_WORKFLOWS)
 
 
 # Initialize registry on module load

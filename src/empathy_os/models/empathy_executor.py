@@ -29,6 +29,8 @@ class EmpathyLLMExecutor:
     This executor provides a unified interface for workflows to call LLMs
     with automatic tier-based model routing and cost tracking.
 
+    Supports hybrid mode where different tiers use different providers.
+
     Example:
         >>> executor = EmpathyLLMExecutor(provider="anthropic")
         >>> response = await executor.run(
@@ -52,7 +54,7 @@ class EmpathyLLMExecutor:
 
         Args:
             empathy_llm: Optional pre-configured EmpathyLLM instance.
-            provider: LLM provider (anthropic, openai, ollama).
+            provider: LLM provider (anthropic, openai, google, ollama, hybrid).
             api_key: Optional API key for the provider.
             telemetry_store: Optional telemetry store for recording calls.
             **llm_kwargs: Additional arguments for EmpathyLLM.
@@ -62,6 +64,94 @@ class EmpathyLLMExecutor:
         self._llm_kwargs = llm_kwargs
         self._llm = empathy_llm
         self._telemetry = telemetry_store
+        self._hybrid_llms: dict[str, Any] = {}  # Cache per-provider LLMs for hybrid mode
+        self._hybrid_config: dict[str, str] | None = None  # tier -> model_id mapping
+
+        # Load hybrid config if provider is hybrid
+        if provider == "hybrid":
+            self._load_hybrid_config()
+
+    def _load_hybrid_config(self) -> None:
+        """Load hybrid tier->model mapping from workflows.yaml."""
+        try:
+            from empathy_os.workflows.config import WorkflowConfig
+
+            config = WorkflowConfig.load()
+            if config.custom_models and "hybrid" in config.custom_models:
+                self._hybrid_config = config.custom_models["hybrid"]
+                logger.info(f"Loaded hybrid config: {self._hybrid_config}")
+        except Exception as e:
+            logger.warning(f"Failed to load hybrid config: {e}")
+
+    def _get_provider_for_model(self, model_id: str) -> str:
+        """Determine which provider a model belongs to based on its ID."""
+        model_lower = model_id.lower()
+        if (
+            "claude" in model_lower
+            or "haiku" in model_lower
+            or "sonnet" in model_lower
+            or "opus" in model_lower
+        ):
+            return "anthropic"
+        elif "gpt" in model_lower or "o1" in model_lower:
+            return "openai"
+        elif "gemini" in model_lower:
+            return "google"
+        elif "llama" in model_lower or "mixtral" in model_lower or ":" in model_id:
+            return "ollama"
+        # Default to anthropic
+        return "anthropic"
+
+    def _get_llm_for_tier(self, tier: str) -> tuple[Any, str, str]:
+        """
+        Get the appropriate LLM for a tier (supports hybrid mode).
+
+        Returns:
+            Tuple of (llm_instance, actual_provider, model_id)
+        """
+        if self._provider != "hybrid" or not self._hybrid_config:
+            # Non-hybrid mode: use single provider
+            return self._get_llm(), self._provider, ""
+
+        # Hybrid mode: determine provider based on tier's model
+        model_id = self._hybrid_config.get(tier, "")
+        if not model_id:
+            # Fall back to non-hybrid
+            return self._get_llm(), self._provider, ""
+
+        actual_provider = self._get_provider_for_model(model_id)
+
+        # Get or create LLM for this provider
+        if actual_provider not in self._hybrid_llms:
+            try:
+                import os
+
+                from empathy_llm_toolkit import EmpathyLLM
+
+                # Get API key for this provider from environment
+                api_key_map = {
+                    "anthropic": os.getenv("ANTHROPIC_API_KEY"),
+                    "openai": os.getenv("OPENAI_API_KEY"),
+                    "google": os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY"),
+                    "ollama": None,  # Ollama doesn't need API key
+                }
+                api_key = api_key_map.get(actual_provider)
+
+                kwargs = {
+                    "provider": actual_provider,
+                    "model": model_id,
+                    "enable_model_routing": False,  # Use explicit model
+                    **self._llm_kwargs,
+                }
+                if api_key:
+                    kwargs["api_key"] = api_key
+
+                self._hybrid_llms[actual_provider] = EmpathyLLM(**kwargs)
+                logger.info(f"Created hybrid LLM for {actual_provider} with model {model_id}")
+            except ImportError as e:
+                raise ImportError("empathy_llm_toolkit is required for EmpathyLLMExecutor.") from e
+
+        return self._hybrid_llms[actual_provider], actual_provider, model_id
 
     def _get_llm(self) -> Any:
         """Lazy initialization of EmpathyLLM."""
@@ -106,7 +196,6 @@ class EmpathyLLMExecutor:
         Returns:
             LLMResponse with content, tokens, cost, and metadata.
         """
-        llm = self._get_llm()
         start_time = time.time()
         call_id = str(uuid.uuid4())
 
@@ -114,6 +203,13 @@ class EmpathyLLMExecutor:
         effective_task_type = task_type
         if context and context.task_type:
             effective_task_type = context.task_type
+
+        # Determine tier for this task
+        tier = get_tier_for_task(effective_task_type)
+        tier_str = tier.value if hasattr(tier, "value") else str(tier)
+
+        # Get appropriate LLM (supports hybrid mode)
+        llm, actual_provider, hybrid_model_id = self._get_llm_for_tier(tier_str)
 
         # Build context dict
         full_context: dict[str, Any] = kwargs.pop("existing_context", {})
@@ -134,8 +230,8 @@ class EmpathyLLMExecutor:
         if context and context.user_id:
             user_id = context.user_id
 
-        # Use provider hint if provided
-        provider = context.provider_hint if context and context.provider_hint else self._provider
+        # Use actual provider (resolved for hybrid mode)
+        provider = actual_provider
 
         # Call EmpathyLLM with task_type routing
         result = await llm.interact(
@@ -151,16 +247,14 @@ class EmpathyLLMExecutor:
 
         # Extract routing metadata
         metadata = result.get("metadata", {})
-        tier = get_tier_for_task(effective_task_type)
-        tier_str = tier.value if hasattr(tier, "value") else str(tier)
 
         # Get token counts
         tokens_input = metadata.get("tokens_used", 0)
         tokens_output = metadata.get("output_tokens", 0)
 
-        # Get model info
+        # Get model info - use hybrid_model_id if set, otherwise look up
         model_info = get_model(provider, tier_str)
-        model_id = metadata.get("routed_model", metadata.get("model", ""))
+        model_id = hybrid_model_id or metadata.get("routed_model", metadata.get("model", ""))
         if not model_id and model_info:
             model_id = model_info.id
 

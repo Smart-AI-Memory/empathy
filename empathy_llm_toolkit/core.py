@@ -23,7 +23,13 @@ from empathy_os.memory import (
 )
 
 from .levels import EmpathyLevel
-from .providers import AnthropicProvider, BaseLLMProvider, LocalProvider, OpenAIProvider
+from .providers import (
+    AnthropicProvider,
+    BaseLLMProvider,
+    GeminiProvider,
+    LocalProvider,
+    OpenAIProvider,
+)
 from .routing import ModelRouter
 from .state import CollaborationState, PatternType, UserPattern
 
@@ -218,6 +224,8 @@ class EmpathyLLM:
             )
         elif provider == "openai":
             return OpenAIProvider(api_key=api_key, model=model or "gpt-4-turbo-preview", **kwargs)
+        elif provider in ("google", "gemini"):
+            return GeminiProvider(api_key=api_key, model=model or "gemini-1.5-pro", **kwargs)
         elif provider == "local":
             return LocalProvider(
                 endpoint=kwargs.get("endpoint", "http://localhost:11434"),

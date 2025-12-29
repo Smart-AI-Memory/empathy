@@ -562,10 +562,9 @@ class TestRecommendStage:
     """Tests for recommend stage implementation."""
 
     @pytest.mark.asyncio
-    async def test_recommend_without_api_key(self):
-        """Test recommend stage without API key returns simulated response."""
+    async def test_recommend_generates_recommendations(self):
+        """Test recommend stage generates recommendations."""
         workflow = BugPredictionWorkflow()
-        workflow._api_key = None
 
         result, in_tok, out_tok = await workflow._recommend(
             {
@@ -582,7 +581,7 @@ class TestRecommendStage:
         )
 
         assert "recommendations" in result
-        assert "[Simulated" in result["recommendations"]
+        assert len(result["recommendations"]) > 0  # Has some recommendations
         assert result["model_tier_used"] == "premium"
 
     @pytest.mark.asyncio
@@ -626,71 +625,6 @@ class TestRecommendStage:
             )
 
             assert "Fix eval usage" in result["recommendations"]
-
-
-class TestCallLLM:
-    """Tests for LLM calling functionality."""
-
-    @pytest.mark.asyncio
-    async def test_call_llm_without_api_key(self):
-        """Test LLM call without API key returns simulated response."""
-        workflow = BugPredictionWorkflow()
-        workflow._api_key = None
-
-        content, in_tok, out_tok = await workflow._call_llm(
-            ModelTier.CAPABLE,
-            "System prompt",
-            "User message",
-        )
-
-        assert "[Simulated" in content
-        assert in_tok > 0
-
-    @pytest.mark.asyncio
-    async def test_call_llm_with_client(self):
-        """Test LLM call with mocked client."""
-        workflow = BugPredictionWorkflow()
-        workflow._api_key = "test-key"  # pragma: allowlist secret
-
-        mock_client = MagicMock()
-        mock_response = MagicMock()
-        mock_response.content = [MagicMock(text="Recommendations here")]
-        mock_response.usage.input_tokens = 100
-        mock_response.usage.output_tokens = 50
-        mock_client.messages.create.return_value = mock_response
-
-        with patch.object(workflow, "_get_client", return_value=mock_client):
-            content, in_tok, out_tok = await workflow._call_llm(
-                ModelTier.CAPABLE,
-                "System",
-                "User message",
-            )
-
-            assert content == "Recommendations here"
-            assert in_tok == 100
-            assert out_tok == 50
-
-
-class TestGetModelForTier:
-    """Tests for tier to model mapping."""
-
-    def test_get_model_for_cheap_tier(self):
-        """Test getting model for cheap tier."""
-        workflow = BugPredictionWorkflow()
-
-        model = workflow._get_model_for_tier(ModelTier.CHEAP)
-
-        assert model is not None
-        assert isinstance(model, str)
-
-    def test_get_model_for_premium_tier(self):
-        """Test getting model for premium tier."""
-        workflow = BugPredictionWorkflow()
-
-        model = workflow._get_model_for_tier(ModelTier.PREMIUM)
-
-        assert model is not None
-        assert isinstance(model, str)
 
 
 class TestFormatBugPredictReport:

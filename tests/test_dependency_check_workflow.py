@@ -8,7 +8,6 @@ with inventory, assess, and report stages.
 import json
 import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -51,7 +50,6 @@ class TestDependencyCheckWorkflowInit:
         assert workflow.name == "dependency-check"
         assert workflow.description == "Audit dependencies for vulnerabilities and updates"
         assert workflow.stages == ["inventory", "assess", "report"]
-        assert workflow._client is None
 
     def test_tier_map(self):
         """Test tier mapping for stages."""
@@ -451,77 +449,6 @@ class TestDependencyReport:
         # Check priority ordering
         priorities = [r["priority"] for r in result["recommendations"]]
         assert priorities == sorted(priorities)
-
-
-class TestDependencyCheckLLMCalls:
-    """Tests for LLM call handling."""
-
-    def test_get_client_no_api_key(self):
-        """Test client returns None without API key."""
-        workflow = DependencyCheckWorkflow()
-        workflow._api_key = None
-
-        client = workflow._get_client()
-
-        assert client is None
-
-    @pytest.mark.asyncio
-    async def test_call_llm_no_client(self):
-        """Test LLM call returns simulation when no client."""
-        workflow = DependencyCheckWorkflow()
-        workflow._api_key = None
-
-        content, input_tokens, output_tokens = await workflow._call_llm(
-            ModelTier.CAPABLE,
-            "System prompt",
-            "User message",
-        )
-
-        assert "[Simulated" in content
-        assert input_tokens > 0
-
-    @pytest.mark.asyncio
-    async def test_call_llm_with_client(self):
-        """Test LLM call with mocked client."""
-        workflow = DependencyCheckWorkflow()
-        workflow._api_key = "test-key"
-
-        mock_client = MagicMock()
-        mock_response = MagicMock()
-        mock_response.content = [MagicMock(text="Security report content")]
-        mock_response.usage.input_tokens = 200
-        mock_response.usage.output_tokens = 150
-        mock_client.messages.create.return_value = mock_response
-
-        with patch.object(workflow, "_get_client", return_value=mock_client):
-            content, input_tokens, output_tokens = await workflow._call_llm(
-                ModelTier.CAPABLE,
-                "System",
-                "Message",
-            )
-
-        assert content == "Security report content"
-        assert input_tokens == 200
-        assert output_tokens == 150
-
-    @pytest.mark.asyncio
-    async def test_call_llm_error_handling(self):
-        """Test LLM call error handling."""
-        workflow = DependencyCheckWorkflow()
-        workflow._api_key = "test-key"
-
-        mock_client = MagicMock()
-        mock_client.messages.create.side_effect = Exception("API Error")
-
-        with patch.object(workflow, "_get_client", return_value=mock_client):
-            content, input_tokens, output_tokens = await workflow._call_llm(
-                ModelTier.CAPABLE,
-                "System",
-                "Message",
-            )
-
-        assert "Error calling LLM" in content
-        assert input_tokens == 0
 
 
 class TestDependencyCheckIntegration:

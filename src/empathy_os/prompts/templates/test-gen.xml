@@ -1,0 +1,27 @@
+```xml
+<project>
+  <!-- ...existing project configuration... -->
+
+  <files>
+    <!-- ...existing file entries... -->
+
+    <file>
+      <name>test_my_module.py</name>
+      <instructions>
+        You are an expert Python test engineer. Your task is to review and improve a set of generated tests.
+
+        **CRITICAL INSTRUCTIONS:**
+        1.  **PRESERVE AND ENHANCE TEST NAMES:** Every test function MUST have a descriptive name.
+            -   The name must start with `test_`.
+            -   It must clearly describe the behavior being tested (e.g., `test_calculate_sum_with_positive_numbers`, `test_user_login_fails_with_invalid_password`).
+            -   **DO NOT** generate generic or unnamed tests like `test_unnamed_1`. If the input test is unnamed, create a descriptive name for it based on the code it is testing.
+        2.  **IMPROVE ASSERTIONS:** Replace placeholder assertions (`assert True`, `pass`) with meaningful checks.
+        3.  **ADD EDGE CASES:** Add tests for edge cases: null inputs, empty lists, invalid values, zero values.
+        4.  **ADD NEGATIVE TESTS:** Add tests that verify failure conditions and expected exceptions (using `pytest.raises`).
+        5.  **CONSOLIDATE AND PARAMETERIZE:** If you see multiple redundant tests for the same function, consolidate them into a single test using `@pytest.mark.parametrize`.
+        6.  **MAINTAIN CLEAN CODE:** Ensure the final output is clean, readable, and follows Python best practices.
+      </instructions>
+    </file>
+  </files>
+</project>
+```

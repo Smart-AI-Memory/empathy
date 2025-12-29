@@ -9,9 +9,9 @@ Tests cover:
 - Configuration inheritance
 """
 
+from unittest.mock import AsyncMock, MagicMock
+
 import pytest
-from unittest.mock import MagicMock, AsyncMock, patch
-from pathlib import Path
 
 
 class TestWorkflowWizardIntegration:
@@ -21,10 +21,12 @@ class TestWorkflowWizardIntegration:
     def mock_llm(self):
         """Create a mock LLM instance."""
         llm = MagicMock()
-        llm.interact = AsyncMock(return_value={
-            "response": "Mock LLM response",
-            "confidence": 0.9,
-        })
+        llm.interact = AsyncMock(
+            return_value={
+                "response": "Mock LLM response",
+                "confidence": 0.9,
+            }
+        )
         llm.provider = "anthropic"
         return llm
 
@@ -33,15 +35,19 @@ class TestWorkflowWizardIntegration:
         """Create a mock wizard."""
         wizard = MagicMock()
         wizard.analyze_code = MagicMock(return_value=[])
-        wizard.analyze = AsyncMock(return_value={
-            "issues": [],
-            "recommendations": ["Test recommendation"],
-            "confidence": 0.85,
-        })
-        wizard.process = AsyncMock(return_value={
-            "response": "Wizard response",
-            "classification": "general",
-        })
+        wizard.analyze = AsyncMock(
+            return_value={
+                "issues": [],
+                "recommendations": ["Test recommendation"],
+                "confidence": 0.85,
+            }
+        )
+        wizard.process = AsyncMock(
+            return_value={
+                "response": "Wizard response",
+                "classification": "general",
+            }
+        )
         return wizard
 
 
@@ -116,10 +122,7 @@ class TestSecurityWorkflowIntegration:
         compliance_wizard_results = {"issues": [{"type": "pii_exposure"}]}
 
         # Simulate aggregation
-        all_issues = (
-            security_wizard_results["issues"] +
-            compliance_wizard_results["issues"]
-        )
+        all_issues = security_wizard_results["issues"] + compliance_wizard_results["issues"]
 
         assert len(all_issues) == 2
         assert all_issues[0]["type"] == "injection"

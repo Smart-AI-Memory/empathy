@@ -8,7 +8,7 @@ team decision integration, and remediation planning.
 import json
 import tempfile
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
@@ -379,54 +379,6 @@ def safe_query(user_id: int) -> dict:
                 f["type"] == "sql_injection" and "parameterized" in f.get("match", "")
                 for f in result["findings"]
             )
-
-
-class TestSecurityAuditLLMCalls:
-    """Tests for LLM call handling."""
-
-    def test_get_client_no_api_key(self):
-        """Test client returns None without API key."""
-        workflow = SecurityAuditWorkflow()
-        workflow._api_key = None
-
-        client = workflow._get_client()
-
-        assert client is None
-
-    @pytest.mark.asyncio
-    async def test_call_llm_no_client(self):
-        """Test LLM call returns simulation when no client."""
-        workflow = SecurityAuditWorkflow()
-        workflow._api_key = None
-
-        content, input_tokens, output_tokens = await workflow._call_llm(
-            ModelTier.CAPABLE, "System", "Analyze vulnerabilities"
-        )
-
-        assert "[Simulated" in content
-        assert input_tokens > 0
-
-    @pytest.mark.asyncio
-    async def test_call_llm_with_client(self):
-        """Test LLM call with mocked client."""
-        workflow = SecurityAuditWorkflow()
-        workflow._api_key = "test-key"
-
-        mock_client = MagicMock()
-        mock_response = MagicMock()
-        mock_response.content = [MagicMock(text="Analysis complete")]
-        mock_response.usage.input_tokens = 100
-        mock_response.usage.output_tokens = 50
-        mock_client.messages.create.return_value = mock_response
-
-        with patch.object(workflow, "_get_client", return_value=mock_client):
-            content, input_tokens, output_tokens = await workflow._call_llm(
-                ModelTier.CAPABLE, "System", "Message"
-            )
-
-        assert content == "Analysis complete"
-        assert input_tokens == 100
-        assert output_tokens == 50
 
 
 class TestSecurityAuditIntegration:

@@ -17,12 +17,11 @@ Licensed under Fair Source License 0.9
 """
 
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from .base import PROVIDER_MODELS, BaseWorkflow, ModelProvider, ModelTier
+from .base import BaseWorkflow, ModelTier
 from .step_config import WorkflowStepConfig
 
 logger = logging.getLogger(__name__)
@@ -130,55 +129,6 @@ class DocumentGenerationWorkflow(BaseWorkflow):
         self._accumulated_cost: float = 0.0
         self._cost_warning_issued: bool = False
         self._partial_results: dict = {}
-        self._client = None
-        self._api_key = os.getenv("ANTHROPIC_API_KEY")
-
-    def _get_client(self):
-        """Lazy-load the Anthropic client."""
-        if self._client is None and self._api_key:
-            try:
-                import anthropic
-
-                self._client = anthropic.Anthropic(api_key=self._api_key)
-            except ImportError:
-                pass
-        return self._client
-
-    def _get_model_for_tier(self, tier: ModelTier) -> str:
-        """Get the model name for a given tier."""
-        provider = ModelProvider.ANTHROPIC
-        return PROVIDER_MODELS.get(provider, {}).get(tier, "claude-sonnet-4-20250514")
-
-    async def _call_llm(
-        self, tier: ModelTier, system: str, user_message: str, max_tokens: int = 4096
-    ) -> tuple[str, int, int]:
-        """Make an actual LLM call using the Anthropic API."""
-        client = self._get_client()
-        if not client:
-            return (
-                f"[Simulated - set ANTHROPIC_API_KEY for real results]\n\n{user_message[:200]}...",
-                len(user_message) // 4,
-                100,
-            )
-
-        model = self._get_model_for_tier(tier)
-
-        try:
-            response = client.messages.create(
-                model=model,
-                max_tokens=max_tokens,
-                system=system,
-                messages=[{"role": "user", "content": user_message}],
-            )
-
-            content = response.content[0].text if response.content else ""
-            input_tokens = response.usage.input_tokens
-            output_tokens = response.usage.output_tokens
-
-            return content, input_tokens, output_tokens
-
-        except Exception as e:
-            return f"Error calling LLM: {e}", 0, 0
 
     def _estimate_cost(self, tier: ModelTier, input_tokens: int, output_tokens: int) -> float:
         """Estimate cost for a given tier and token counts."""

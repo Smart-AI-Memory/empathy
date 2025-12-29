@@ -1417,7 +1417,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         </div>
 
         <div class="card" style="margin-top: 12px">
-            <div class="card-title">Workflows <span style="font-size: 9px; color: #a855f7; font-weight: normal; opacity: 0.9;">(New Beta Feature)</span></div>
+            <div class="card-title">Workflows</div>
             <div class="actions-grid workflow-grid">
                 <button class="action-btn workflow-btn" data-workflow="pro-review">
                     <span class="action-icon">&#x2B50;</span>

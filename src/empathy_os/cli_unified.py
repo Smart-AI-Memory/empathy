@@ -136,7 +136,7 @@ app.add_typer(provider_app, name="provider")
 def provider_show(
     ctx: typer.Context,
     set_provider: str | None = typer.Option(
-        None, "--set", "-s", help="Set provider (anthropic, openai, ollama, hybrid)"
+        None, "--set", "-s", help="Set provider (anthropic, openai, google, ollama, hybrid)"
     ),
     interactive: bool = typer.Option(False, "--interactive", "-i", help="Interactive setup wizard"),
     format_out: str = typer.Option("table", "--format", "-f", help="Output format (table, json)"),

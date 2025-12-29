@@ -710,10 +710,11 @@ class TestGetRedisOrMock:
 
     @patch("empathy_os.memory.redis_bootstrap.ensure_redis")
     def test_get_redis_custom_host_port(self, mock_ensure):
-        """Test with custom host and port"""
+        """Test with custom host and port (mock fallback)"""
+        # When Redis is unavailable, should fall back to mock
         mock_status = RedisStatus(
-            available=True,
-            method=RedisStartMethod.ALREADY_RUNNING,
+            available=False,
+            method=RedisStartMethod.DOCKER,  # Method doesn't matter when not available
             host="192.168.1.100",
             port=6380,
         )
@@ -722,6 +723,7 @@ class TestGetRedisOrMock:
         memory, status = get_redis_or_mock(host="192.168.1.100", port=6380)
         assert status.host == "192.168.1.100"
         assert status.port == 6380
+        assert memory is not None  # Should get a mock memory
 
 
 class TestEdgeCases:

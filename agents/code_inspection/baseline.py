@@ -15,6 +15,7 @@ Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
+import copy
 import json
 import re
 from dataclasses import dataclass, field
@@ -140,7 +141,7 @@ class BaselineManager:
             True if loaded successfully, False if no baseline exists
         """
         if not self.baseline_path.exists():
-            self.baseline = BASELINE_SCHEMA.copy()
+            self.baseline = copy.deepcopy(BASELINE_SCHEMA)
             return False
 
         try:
@@ -149,7 +150,7 @@ class BaselineManager:
             return True
         except (json.JSONDecodeError, OSError) as e:
             print(f"Warning: Failed to load baseline: {e}")
-            self.baseline = BASELINE_SCHEMA.copy()
+            self.baseline = copy.deepcopy(BASELINE_SCHEMA)
             return False
 
     def save(self) -> bool:

@@ -49,13 +49,21 @@ def mock_anthropic():
 @pytest.fixture
 def llm_with_security(mock_anthropic):
     """EmpathyLLM instance with security enabled"""
-    return EmpathyLLM(provider="anthropic", api_key="test-key", enable_security=True)  # pragma: allowlist secret
+    return EmpathyLLM(
+        provider="anthropic",
+        api_key="test-key",  # pragma: allowlist secret
+        enable_security=True,
+    )
 
 
 @pytest.fixture
 def llm_without_security(mock_anthropic):
     """EmpathyLLM instance without security"""
-    return EmpathyLLM(provider="anthropic", api_key="test-key", enable_security=False)  # pragma: allowlist secret
+    return EmpathyLLM(
+        provider="anthropic",
+        api_key="test-key",  # pragma: allowlist secret
+        enable_security=False,
+    )
 
 
 # Wizard definitions with expected properties

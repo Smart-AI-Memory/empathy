@@ -699,8 +699,8 @@ class TestCmdWizard:
         monkeypatch.chdir(temp_dir)
         args = MockArgs()
 
-        # use case=3 (customer support), level=5, provider=3 (Ollama), user
-        with patch("builtins.input", side_effect=["3", "5", "3", "support_agent"]):
+        # use case=3 (customer support), level=5, provider=4 (Ollama), user
+        with patch("builtins.input", side_effect=["3", "5", "4", "support_agent"]):
             cmd_wizard(args)
 
         captured = capsys.readouterr()
@@ -717,8 +717,8 @@ class TestCmdWizard:
         monkeypatch.chdir(temp_dir)
         args = MockArgs()
 
-        # use case=4 (other), default level, skip provider, default user
-        with patch("builtins.input", side_effect=["4", "", "4", ""]):
+        # use case=4 (other), default level, skip provider (6), default user
+        with patch("builtins.input", side_effect=["4", "", "6", ""]):
             cmd_wizard(args)
 
         captured = capsys.readouterr()

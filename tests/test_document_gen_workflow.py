@@ -13,7 +13,7 @@ Licensed under Fair Source License 0.9
 
 import tempfile
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
@@ -621,54 +621,6 @@ class TestDocumentGenerationSkipStage:
 
         skip, reason = workflow.should_skip_stage("write", {})
         assert skip is False
-
-
-class TestDocumentGenerationLLMCalls:
-    """Tests for LLM call handling."""
-
-    def test_get_client_no_api_key(self):
-        """Test client returns None without API key."""
-        workflow = DocumentGenerationWorkflow()
-        workflow._api_key = None
-
-        client = workflow._get_client()
-
-        assert client is None
-
-    @pytest.mark.asyncio
-    async def test_call_llm_no_client(self):
-        """Test LLM call returns simulation when no client."""
-        workflow = DocumentGenerationWorkflow()
-        workflow._api_key = None
-
-        content, input_tokens, output_tokens = await workflow._call_llm(
-            ModelTier.CAPABLE, "System", "Generate documentation"
-        )
-
-        assert "[Simulated" in content
-        assert input_tokens > 0
-
-    @pytest.mark.asyncio
-    async def test_call_llm_with_client(self):
-        """Test LLM call with mocked client."""
-        workflow = DocumentGenerationWorkflow()
-        workflow._api_key = "test-key"  # pragma: allowlist secret
-
-        mock_client = MagicMock()
-        mock_response = MagicMock()
-        mock_response.content = [MagicMock(text="Generated docs")]
-        mock_response.usage.input_tokens = 200
-        mock_response.usage.output_tokens = 100
-        mock_client.messages.create.return_value = mock_response
-
-        with patch.object(workflow, "_get_client", return_value=mock_client):
-            content, input_tokens, output_tokens = await workflow._call_llm(
-                ModelTier.CAPABLE, "System", "Message"
-            )
-
-        assert content == "Generated docs"
-        assert input_tokens == 200
-        assert output_tokens == 100
 
 
 class TestFormatDocGenReport:

@@ -14,16 +14,258 @@ Copyright 2025 Smart-AI-Memory
 Licensed under Fair Source License 0.9
 """
 
+import ast
 import json
-import os
+import re
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from .base import PROVIDER_MODELS, BaseWorkflow, ModelProvider, ModelTier
+from .base import BaseWorkflow, ModelTier
 from .step_config import WorkflowStepConfig
+
+# =============================================================================
+# AST-Based Function Analysis
+# =============================================================================
+
+
+@dataclass
+class FunctionSignature:
+    """Detailed function analysis for test generation."""
+
+    name: str
+    params: list[tuple[str, str, str | None]]  # (name, type_hint, default)
+    return_type: str | None
+    is_async: bool
+    raises: set[str]
+    has_side_effects: bool
+    docstring: str | None
+    complexity: int = 1  # Rough complexity estimate
+    decorators: list[str] = field(default_factory=list)
+
+
+@dataclass
+class ClassSignature:
+    """Detailed class analysis for test generation."""
+
+    name: str
+    methods: list[FunctionSignature]
+    init_params: list[tuple[str, str, str | None]]  # Constructor params
+    base_classes: list[str]
+    docstring: str | None
+
+
+class ASTFunctionAnalyzer(ast.NodeVisitor):
+    """
+    AST-based function analyzer for accurate test generation.
+
+    Extracts:
+    - Function signatures with types
+    - Exception types raised
+    - Side effects detection
+    - Complexity estimation
+    """
+
+    def __init__(self):
+        self.functions: list[FunctionSignature] = []
+        self.classes: list[ClassSignature] = []
+        self._current_class: str | None = None
+
+    def analyze(self, code: str) -> tuple[list[FunctionSignature], list[ClassSignature]]:
+        """Analyze code and extract function/class signatures."""
+        try:
+            tree = ast.parse(code)
+            self.functions = []
+            self.classes = []
+            self.visit(tree)
+            return self.functions, self.classes
+        except SyntaxError:
+            return [], []
+
+    def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+        """Extract function signature."""
+        if self._current_class is None:  # Only top-level functions
+            sig = self._extract_function_signature(node)
+            self.functions.append(sig)
+        self.generic_visit(node)
+
+    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+        """Extract async function signature."""
+        if self._current_class is None:
+            sig = self._extract_function_signature(node, is_async=True)
+            self.functions.append(sig)
+        self.generic_visit(node)
+
+    def visit_ClassDef(self, node: ast.ClassDef) -> None:
+        """Extract class signature with methods."""
+        self._current_class = node.name
+        methods = []
+        init_params: list[tuple[str, str, str | None]] = []
+
+        # Extract base classes
+        base_classes = []
+        for base in node.bases:
+            if isinstance(base, ast.Name):
+                base_classes.append(base.id)
+            elif isinstance(base, ast.Attribute):
+                base_classes.append(ast.unparse(base))
+
+        # Process methods
+        for item in node.body:
+            if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                method_sig = self._extract_function_signature(
+                    item, is_async=isinstance(item, ast.AsyncFunctionDef)
+                )
+                methods.append(method_sig)
+
+                # Extract __init__ params
+                if item.name == "__init__":
+                    init_params = method_sig.params[1:]  # Skip 'self'
+
+        self.classes.append(
+            ClassSignature(
+                name=node.name,
+                methods=methods,
+                init_params=init_params,
+                base_classes=base_classes,
+                docstring=ast.get_docstring(node),
+            )
+        )
+
+        self._current_class = None
+        # Don't call generic_visit to avoid processing methods again
+
+    def _extract_function_signature(
+        self, node: ast.FunctionDef | ast.AsyncFunctionDef, is_async: bool = False
+    ) -> FunctionSignature:
+        """Extract detailed signature from function node."""
+        # Extract parameters with types and defaults
+        params = []
+        defaults = list(node.args.defaults)
+        num_defaults = len(defaults)
+        num_args = len(node.args.args)
+
+        for i, arg in enumerate(node.args.args):
+            param_name = arg.arg
+            param_type = ast.unparse(arg.annotation) if arg.annotation else "Any"
+
+            # Calculate default index
+            default_idx = i - (num_args - num_defaults)
+            default_val = None
+            if default_idx >= 0:
+                try:
+                    default_val = ast.unparse(defaults[default_idx])
+                except Exception:
+                    default_val = "..."
+
+            params.append((param_name, param_type, default_val))
+
+        # Extract return type
+        return_type = ast.unparse(node.returns) if node.returns else None
+
+        # Find raised exceptions
+        raises: set[str] = set()
+        for child in ast.walk(node):
+            if isinstance(child, ast.Raise) and child.exc:
+                if isinstance(child.exc, ast.Call):
+                    if isinstance(child.exc.func, ast.Name):
+                        raises.add(child.exc.func.id)
+                    elif isinstance(child.exc.func, ast.Attribute):
+                        raises.add(child.exc.func.attr)
+                elif isinstance(child.exc, ast.Name):
+                    raises.add(child.exc.id)
+
+        # Detect side effects (simple heuristic)
+        has_side_effects = self._detect_side_effects(node)
+
+        # Estimate complexity
+        complexity = self._estimate_complexity(node)
+
+        # Extract decorators
+        decorators = []
+        for dec in node.decorator_list:
+            if isinstance(dec, ast.Name):
+                decorators.append(dec.id)
+            elif isinstance(dec, ast.Attribute):
+                decorators.append(ast.unparse(dec))
+            elif isinstance(dec, ast.Call):
+                if isinstance(dec.func, ast.Name):
+                    decorators.append(dec.func.id)
+
+        return FunctionSignature(
+            name=node.name,
+            params=params,
+            return_type=return_type,
+            is_async=is_async or isinstance(node, ast.AsyncFunctionDef),
+            raises=raises,
+            has_side_effects=has_side_effects,
+            docstring=ast.get_docstring(node),
+            complexity=complexity,
+            decorators=decorators,
+        )
+
+    def _detect_side_effects(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
+        """Detect if function has side effects (writes to files, global state, etc.)."""
+        side_effect_names = {
+            "print",
+            "write",
+            "open",
+            "save",
+            "delete",
+            "remove",
+            "update",
+            "insert",
+            "execute",
+            "send",
+            "post",
+            "put",
+            "patch",
+        }
+
+        for child in ast.walk(node):
+            if isinstance(child, ast.Call):
+                if isinstance(child.func, ast.Name):
+                    if child.func.id.lower() in side_effect_names:
+                        return True
+                elif isinstance(child.func, ast.Attribute):
+                    if child.func.attr.lower() in side_effect_names:
+                        return True
+        return False
+
+    def _estimate_complexity(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> int:
+        """Estimate cyclomatic complexity (simplified)."""
+        complexity = 1
+        for child in ast.walk(node):
+            if isinstance(child, (ast.If, ast.While, ast.For, ast.ExceptHandler)):
+                complexity += 1
+            elif isinstance(child, ast.BoolOp):
+                complexity += len(child.values) - 1
+        return complexity
+
 
 # Define step configurations for executor-based execution
 TEST_GEN_STEPS = {
+    "identify": WorkflowStepConfig(
+        name="identify",
+        task_type="triage",  # Cheap tier task
+        tier_hint="cheap",
+        description="Identify files needing tests",
+        max_tokens=2000,
+    ),
+    "analyze": WorkflowStepConfig(
+        name="analyze",
+        task_type="code_analysis",  # Capable tier task
+        tier_hint="capable",
+        description="Analyze code structure for test generation",
+        max_tokens=3000,
+    ),
+    "generate": WorkflowStepConfig(
+        name="generate",
+        task_type="code_generation",  # Capable tier task
+        tier_hint="capable",
+        description="Generate test cases",
+        max_tokens=4000,
+    ),
     "review": WorkflowStepConfig(
         name="review",
         task_type="final_review",  # Premium tier task
@@ -71,56 +313,7 @@ class TestGenerationWorkflow(BaseWorkflow):
         self.min_tests_for_review = min_tests_for_review
         self._test_count: int = 0
         self._bug_hotspots: list[str] = []
-        self._client = None
-        self._api_key = os.getenv("ANTHROPIC_API_KEY")
         self._load_bug_hotspots()
-
-    def _get_client(self):
-        """Lazy-load the Anthropic client."""
-        if self._client is None and self._api_key:
-            try:
-                import anthropic
-
-                self._client = anthropic.Anthropic(api_key=self._api_key)
-            except ImportError:
-                pass
-        return self._client
-
-    def _get_model_for_tier(self, tier: ModelTier) -> str:
-        """Get the model name for a given tier."""
-        provider = ModelProvider.ANTHROPIC
-        return PROVIDER_MODELS.get(provider, {}).get(tier, "claude-sonnet-4-20250514")
-
-    async def _call_llm(
-        self, tier: ModelTier, system: str, user_message: str, max_tokens: int = 4096
-    ) -> tuple[str, int, int]:
-        """Make an actual LLM call using the Anthropic API."""
-        client = self._get_client()
-        if not client:
-            return (
-                "[Simulated - set ANTHROPIC_API_KEY for real results]",
-                len(user_message) // 4,
-                100,
-            )
-
-        model = self._get_model_for_tier(tier)
-
-        try:
-            response = client.messages.create(
-                model=model,
-                max_tokens=max_tokens,
-                system=system,
-                messages=[{"role": "user", "content": user_message}],
-            )
-
-            content = response.content[0].text if response.content else ""
-            input_tokens = response.usage.input_tokens
-            output_tokens = response.usage.output_tokens
-
-            return content, input_tokens, output_tokens
-
-        except Exception as e:
-            return f"Error calling LLM: {e}", 0, 0
 
     def _load_bug_hotspots(self) -> None:
         """Load files with historical bugs from pattern library."""
@@ -341,38 +534,55 @@ class TestGenerationWorkflow(BaseWorkflow):
         )
 
     def _extract_functions(self, content: str) -> list[dict]:
-        """Extract function definitions from Python code."""
-        import re
+        """Extract function definitions from Python code using AST analysis."""
+        analyzer = ASTFunctionAnalyzer()
+        functions, _ = analyzer.analyze(content)
 
-        functions = []
-        pattern = r"^\s*(?:async\s+)?def\s+(\w+)\s*\(([^)]*)\)"
-
-        for match in re.finditer(pattern, content, re.MULTILINE):
-            name = match.group(1)
-            if not name.startswith("_") or name.startswith("__"):
-                params = match.group(2).split(",") if match.group(2).strip() else []
-                functions.append(
+        result = []
+        for sig in functions[:20]:  # Limit
+            if not sig.name.startswith("_") or sig.name.startswith("__"):
+                result.append(
                     {
-                        "name": name,
-                        "params": [p.strip().split(":")[0].strip() for p in params if p.strip()],
-                        "is_async": "async" in match.group(0),
+                        "name": sig.name,
+                        "params": [(p[0], p[1], p[2]) for p in sig.params],
+                        "param_names": [p[0] for p in sig.params],
+                        "is_async": sig.is_async,
+                        "return_type": sig.return_type,
+                        "raises": list(sig.raises),
+                        "has_side_effects": sig.has_side_effects,
+                        "complexity": sig.complexity,
+                        "docstring": sig.docstring,
                     }
                 )
-
-        return functions[:20]  # Limit
+        return result
 
     def _extract_classes(self, content: str) -> list[dict]:
-        """Extract class definitions from Python code."""
-        import re
+        """Extract class definitions from Python code using AST analysis."""
+        analyzer = ASTFunctionAnalyzer()
+        _, classes = analyzer.analyze(content)
 
-        classes = []
-        pattern = r"^\s*class\s+(\w+)\s*(?:\([^)]*\))?:"
-
-        for match in re.finditer(pattern, content, re.MULTILINE):
-            name = match.group(1)
-            classes.append({"name": name})
-
-        return classes[:10]  # Limit
+        result = []
+        for sig in classes[:10]:  # Limit
+            methods = [
+                {
+                    "name": m.name,
+                    "params": [(p[0], p[1], p[2]) for p in m.params],
+                    "is_async": m.is_async,
+                    "raises": list(m.raises),
+                }
+                for m in sig.methods
+                if not m.name.startswith("_") or m.name == "__init__"
+            ]
+            result.append(
+                {
+                    "name": sig.name,
+                    "init_params": [(p[0], p[1], p[2]) for p in sig.init_params],
+                    "methods": methods,
+                    "base_classes": sig.base_classes,
+                    "docstring": sig.docstring,
+                }
+            )
+        return result
 
     def _generate_suggestions(self, functions: list[dict], classes: list[dict]) -> list[str]:
         """Generate test suggestions based on code structure."""
@@ -452,166 +662,413 @@ class TestGenerationWorkflow(BaseWorkflow):
         )
 
     def _generate_test_for_function(self, module: str, func: dict) -> str:
-        """Generate a test function for a function."""
+        """Generate executable tests for a function based on AST analysis."""
         name = func["name"]
-        params = func.get("params", [])
+        params = func.get("params", [])  # List of (name, type, default) tuples
+        param_names = func.get("param_names", [p[0] if isinstance(p, tuple) else p for p in params])
         is_async = func.get("is_async", False)
+        return_type = func.get("return_type")
+        raises = func.get("raises", [])
+        has_side_effects = func.get("has_side_effects", False)
 
-        if is_async:
-            return f"""
+        # Generate test values based on parameter types
+        test_cases = self._generate_test_cases_for_params(params)
+        param_str = ", ".join(test_cases.get("valid_args", [""] * len(params)))
+
+        # Build parametrized test if we have multiple test cases
+        parametrize_cases = test_cases.get("parametrize_cases", [])
+
+        tests = []
+        tests.append(f"import pytest\nfrom {module} import {name}\n")
+
+        # Generate parametrized test if we have cases
+        if parametrize_cases and len(parametrize_cases) > 1:
+            param_names_str = ", ".join(param_names) if param_names else "value"
+            cases_str = ",\n    ".join(parametrize_cases)
+
+            if is_async:
+                tests.append(
+                    f'''
+@pytest.mark.parametrize("{param_names_str}", [
+    {cases_str},
+])
 @pytest.mark.asyncio
-async def test_{name}():
-    # Test {name} with valid inputs
-    result = await {name}({", ".join(["None"] * len(params) if params else [])})
+async def test_{name}_with_various_inputs({param_names_str}):
+    """Test {name} with various input combinations."""
+    result = await {name}({", ".join(param_names)})
     assert result is not None
-"""
+'''
+                )
+            else:
+                tests.append(
+                    f'''
+@pytest.mark.parametrize("{param_names_str}", [
+    {cases_str},
+])
+def test_{name}_with_various_inputs({param_names_str}):
+    """Test {name} with various input combinations."""
+    result = {name}({", ".join(param_names)})
+    assert result is not None
+'''
+                )
         else:
-            return f"""
-def test_{name}():
-    # Test {name} with valid inputs
-    result = {name}({", ".join(["None"] * len(params) if params else [])})
+            # Simple valid input test
+            if is_async:
+                tests.append(
+                    f'''
+@pytest.mark.asyncio
+async def test_{name}_returns_value():
+    """Test that {name} returns a value with valid inputs."""
+    result = await {name}({param_str})
     assert result is not None
-"""
+'''
+                )
+            else:
+                tests.append(
+                    f'''
+def test_{name}_returns_value():
+    """Test that {name} returns a value with valid inputs."""
+    result = {name}({param_str})
+    assert result is not None
+'''
+                )
+
+        # Generate edge case tests based on parameter types
+        edge_cases = test_cases.get("edge_cases", [])
+        if edge_cases:
+            edge_cases_str = ",\n    ".join(edge_cases)
+            if is_async:
+                tests.append(
+                    f'''
+@pytest.mark.parametrize("edge_input", [
+    {edge_cases_str},
+])
+@pytest.mark.asyncio
+async def test_{name}_edge_cases(edge_input):
+    """Test {name} with edge case inputs."""
+    try:
+        result = await {name}(edge_input)
+        # Function should either return a value or raise an expected error
+        assert result is not None or result == 0 or result == "" or result == []
+    except (ValueError, TypeError, KeyError) as e:
+        # Expected error for edge cases
+        assert str(e)  # Error message should not be empty
+'''
+                )
+            else:
+                tests.append(
+                    f'''
+@pytest.mark.parametrize("edge_input", [
+    {edge_cases_str},
+])
+def test_{name}_edge_cases(edge_input):
+    """Test {name} with edge case inputs."""
+    try:
+        result = {name}(edge_input)
+        # Function should either return a value or raise an expected error
+        assert result is not None or result == 0 or result == "" or result == []
+    except (ValueError, TypeError, KeyError) as e:
+        # Expected error for edge cases
+        assert str(e)  # Error message should not be empty
+'''
+                )
+
+        # Generate exception tests for each raised exception
+        for exc_type in raises[:3]:  # Limit to 3 exception types
+            if is_async:
+                tests.append(
+                    f'''
+@pytest.mark.asyncio
+async def test_{name}_raises_{exc_type.lower()}():
+    """Test that {name} raises {exc_type} for invalid inputs."""
+    with pytest.raises({exc_type}):
+        await {name}(None)  # Adjust input to trigger {exc_type}
+'''
+                )
+            else:
+                tests.append(
+                    f'''
+def test_{name}_raises_{exc_type.lower()}():
+    """Test that {name} raises {exc_type} for invalid inputs."""
+    with pytest.raises({exc_type}):
+        {name}(None)  # Adjust input to trigger {exc_type}
+'''
+                )
+
+        # Add return type assertion if we know the type
+        if return_type and return_type not in ("None", "Any"):
+            type_check = self._get_type_assertion(return_type)
+            if type_check and not has_side_effects:
+                if is_async:
+                    tests.append(
+                        f'''
+@pytest.mark.asyncio
+async def test_{name}_returns_correct_type():
+    """Test that {name} returns the expected type."""
+    result = await {name}({param_str})
+    {type_check}
+'''
+                    )
+                else:
+                    tests.append(
+                        f'''
+def test_{name}_returns_correct_type():
+    """Test that {name} returns the expected type."""
+    result = {name}({param_str})
+    {type_check}
+'''
+                    )
+
+        return "\n".join(tests)
+
+    def _generate_test_cases_for_params(self, params: list) -> dict:
+        """Generate test cases based on parameter types."""
+        valid_args = []
+        parametrize_cases = []
+        edge_cases = []
+
+        for param in params:
+            if isinstance(param, tuple) and len(param) >= 2:
+                _name, type_hint, default = param[0], param[1], param[2] if len(param) > 2 else None
+            else:
+                _name = param if isinstance(param, str) else str(param)  # noqa: F841
+                type_hint = "Any"
+                default = None
+
+            # Generate valid value based on type
+            if "str" in type_hint.lower():
+                valid_args.append('"test_value"')
+                parametrize_cases.extend(['"hello"', '"world"', '"test_string"'])
+                edge_cases.extend(['""', '" "', '"a" * 1000'])
+            elif "int" in type_hint.lower():
+                valid_args.append("42")
+                parametrize_cases.extend(["0", "1", "100", "-1"])
+                edge_cases.extend(["0", "-1", "2**31 - 1"])
+            elif "float" in type_hint.lower():
+                valid_args.append("3.14")
+                parametrize_cases.extend(["0.0", "1.0", "-1.5", "100.5"])
+                edge_cases.extend(["0.0", "-0.0", "float('inf')"])
+            elif "bool" in type_hint.lower():
+                valid_args.append("True")
+                parametrize_cases.extend(["True", "False"])
+            elif "list" in type_hint.lower():
+                valid_args.append("[1, 2, 3]")
+                parametrize_cases.extend(["[]", "[1]", "[1, 2, 3]"])
+                edge_cases.extend(["[]", "[None]"])
+            elif "dict" in type_hint.lower():
+                valid_args.append('{"key": "value"}')
+                parametrize_cases.extend(["{}", '{"a": 1}', '{"key": "value"}'])
+                edge_cases.extend(["{}"])
+            elif default is not None:
+                valid_args.append(str(default))
+            else:
+                valid_args.append("None")
+                edge_cases.append("None")
+
+        return {
+            "valid_args": valid_args,
+            "parametrize_cases": parametrize_cases[:5],  # Limit cases
+            "edge_cases": list(set(edge_cases))[:5],  # Unique edge cases
+        }
+
+    def _get_type_assertion(self, return_type: str) -> str | None:
+        """Generate assertion for return type checking."""
+        type_map = {
+            "str": "assert isinstance(result, str)",
+            "int": "assert isinstance(result, int)",
+            "float": "assert isinstance(result, (int, float))",
+            "bool": "assert isinstance(result, bool)",
+            "list": "assert isinstance(result, list)",
+            "dict": "assert isinstance(result, dict)",
+            "tuple": "assert isinstance(result, tuple)",
+        }
+        for type_name, assertion in type_map.items():
+            if type_name in return_type.lower():
+                return assertion
+        return None
 
     def _generate_test_for_class(self, module: str, cls: dict) -> str:
-        """Generate a test class for a class."""
+        """Generate executable test class based on AST analysis."""
         name = cls["name"]
-        return f"""
-class Test{name}:
-    def test_init(self):
-        # Test {name} initialization
-        instance = {name}()
-        assert instance is not None
+        init_params = cls.get("init_params", [])
+        methods = cls.get("methods", [])
+        _docstring = cls.get("docstring", "")  # Reserved for future use  # noqa: F841
 
-    def test_basic_functionality(self):
-        # Test basic {name} methods
-        instance = {name}()
-        # Add specific method tests
-        pass
-"""
+        # Generate constructor arguments
+        init_args = self._generate_test_cases_for_params(init_params)
+        init_arg_str = ", ".join(init_args.get("valid_args", []))
+
+        tests = []
+        tests.append(f"import pytest\nfrom {module} import {name}\n")
+
+        # Fixture for class instance
+        tests.append(
+            f'''
+@pytest.fixture
+def {name.lower()}_instance():
+    """Create a {name} instance for testing."""
+    return {name}({init_arg_str})
+'''
+        )
+
+        # Test initialization
+        tests.append(
+            f'''
+class Test{name}:
+    """Tests for {name} class."""
+
+    def test_initialization(self):
+        """Test that {name} can be instantiated."""
+        instance = {name}({init_arg_str})
+        assert instance is not None
+'''
+        )
+
+        # Test with parametrized init args if we have multiple cases
+        if init_params and len(init_args.get("parametrize_cases", [])) > 1:
+            param_names = [p[0] for p in init_params]
+            param_names_str = ", ".join(param_names)
+            cases = init_args.get("parametrize_cases", [])[:3]
+            cases_str = ",\n        ".join(cases)
+            tests.append(
+                f'''
+    @pytest.mark.parametrize("{param_names_str}", [
+        {cases_str},
+    ])
+    def test_initialization_with_various_args(self, {param_names_str}):
+        """Test {name} initialization with various arguments."""
+        instance = {name}({param_names_str})
+        assert instance is not None
+'''
+            )
+
+        # Generate tests for each public method
+        for method in methods[:5]:  # Limit to 5 methods
+            method_name = method.get("name", "")
+            if method_name.startswith("_") and method_name != "__init__":
+                continue
+            if method_name == "__init__":
+                continue
+
+            method_params = method.get("params", [])[1:]  # Skip self
+            is_async = method.get("is_async", False)
+            raises = method.get("raises", [])
+
+            # Generate method call args
+            method_args = self._generate_test_cases_for_params(method_params)
+            method_arg_str = ", ".join(method_args.get("valid_args", []))
+
+            if is_async:
+                tests.append(
+                    f'''
+    @pytest.mark.asyncio
+    async def test_{method_name}_returns_value(self, {name.lower()}_instance):
+        """Test that {method_name} returns a value."""
+        result = await {name.lower()}_instance.{method_name}({method_arg_str})
+        assert result is not None or result == 0 or result == "" or result == []
+'''
+                )
+            else:
+                tests.append(
+                    f'''
+    def test_{method_name}_returns_value(self, {name.lower()}_instance):
+        """Test that {method_name} returns a value."""
+        result = {name.lower()}_instance.{method_name}({method_arg_str})
+        assert result is not None or result == 0 or result == "" or result == []
+'''
+                )
+
+            # Add exception tests for methods that raise
+            for exc_type in raises[:2]:
+                if is_async:
+                    tests.append(
+                        f'''
+    @pytest.mark.asyncio
+    async def test_{method_name}_raises_{exc_type.lower()}(self, {name.lower()}_instance):
+        """Test that {method_name} raises {exc_type} for invalid inputs."""
+        with pytest.raises({exc_type}):
+            await {name.lower()}_instance.{method_name}(None)
+'''
+                    )
+                else:
+                    tests.append(
+                        f'''
+    def test_{method_name}_raises_{exc_type.lower()}(self, {name.lower()}_instance):
+        """Test that {method_name} raises {exc_type} for invalid inputs."""
+        with pytest.raises({exc_type}):
+            {name.lower()}_instance.{method_name}(None)
+'''
+                    )
+
+        return "\n".join(tests)
 
     async def _review(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
         """
         Review and improve generated tests using LLM.
 
-        Quality review of generated tests, removing duplicates
-        and improving test coverage.
-
-        Supports XML-enhanced prompts when enabled in workflow config.
+        This stage now receives the generated test code and uses the LLM
+        to create the final analysis report.
         """
+        # Get the generated tests from the previous stage
         generated_tests = input_data.get("generated_tests", [])
-        target = input_data.get("target", "")
+        if not generated_tests:
+            # If no tests were generated, return the input data as is.
+            return input_data, 0, 0
 
-        # Build test summary for LLM
-        test_summary = []
-        for test_file in generated_tests:
-            for test in test_file.get("tests", []):
-                test_summary.append(
-                    f"- {test_file.get('source_file')}: {test.get('name', 'unnamed')} "
-                    f"({test.get('type', 'unit')})"
-                )
+        # Prepare the context for the LLM by formatting the generated test code
+        test_context = "<generated_tests>\n"
+        for test_item in generated_tests:
+            test_context += f"  <file path=\"{test_item['source_file']}\">\n"
+            for test in test_item["tests"]:
+                # Extract test name from code for the report
+                test_name = "unnamed"
+                try:
+                    match = re.search(r"def\s+(test_\w+)", test["code"])
+                    if match:
+                        test_name = match.group(1)
+                except Exception:
+                    pass
+                test_context += f"    <test name=\"{test_name}\" target=\"{test['target']}\" />\n"
+            test_context += "  </file>\n"
+        test_context += "</generated_tests>\n"
 
-        total_tests = sum(len(tf.get("tests", [])) for tf in generated_tests)
+        # Build the system prompt directly for the review stage
+        target_files = [item["source_file"] for item in generated_tests]
+        file_list = "\n".join(f"  - {f}" for f in target_files)
 
-        # Build input payload for prompt
-        input_payload = f"""Target: {target or "codebase"}
+        system_prompt = f"""You are an expert test engineer specializing in Python test coverage analysis.
 
-Total Tests Generated: {total_tests}
-Files Covered: {len(generated_tests)}
+Your task is to review the generated test structure and produce a comprehensive test gap analysis report.
 
-Tests Summary:
-{chr(10).join(test_summary[:30]) if test_summary else "No tests generated"}"""
+Target files ({len(generated_tests)}):
+{file_list}
 
-        # Check if XML prompts are enabled
-        if self._is_xml_enabled():
-            # Use XML-enhanced prompt
-            user_message = self._render_xml_prompt(
-                role="QA engineer specializing in test quality",
-                goal="Review and improve the generated test suite",
-                instructions=[
-                    "Identify duplicate or redundant tests",
-                    "Suggest improvements to test coverage",
-                    "Review edge cases and error handling",
-                    "Rate overall test quality",
-                    "Recommend additional tests for untested paths",
-                ],
-                constraints=[
-                    "Focus on high-value test improvements",
-                    "Identify missing edge cases",
-                    "Suggest specific test scenarios to add",
-                ],
-                input_type="generated_tests",
-                input_payload=input_payload,
-                extra={
-                    "total_tests": total_tests,
-                    "files_covered": len(generated_tests),
-                },
-            )
-            system = None  # XML prompt includes all context
-        else:
-            # Use legacy plain text prompts
-            system = """You are a QA engineer specializing in test quality.
-Review the generated tests and provide improvement recommendations.
+Provide a detailed analysis including:
+1. Summary of tests generated
+2. Coverage assessment
+3. Any identified gaps or missing edge cases
+4. Recommendations for additional tests
 
-Focus on:
-1. Test coverage gaps
-2. Edge case handling
-3. Duplicate test detection
-4. Code quality improvements
+Format your response as a clear, structured report."""
 
-Provide actionable feedback."""
+        user_message = f"Please generate a test gap analysis report based on the following test structure:\n{test_context}"
 
-            user_message = f"""Review these generated tests:
+        # Call the LLM using the provider-agnostic executor from BaseWorkflow
+        step_config = TEST_GEN_STEPS["review"]
+        report, in_tokens, out_tokens, _cost = await self.run_step_with_executor(
+            step=step_config,
+            prompt=user_message,
+            system=system_prompt,
+        )
 
-{input_payload}
+        # Replace the previous analysis with the final, accurate report
+        input_data["analysis_report"] = report
+        return input_data, in_tokens, out_tokens
 
-Provide quality assessment and improvement recommendations."""
-
-        # Try executor-based execution first (Phase 3 pattern)
-        if self._executor is not None or self._api_key:
-            try:
-                step = TEST_GEN_STEPS["review"]
-                response, input_tokens, output_tokens, cost = await self.run_step_with_executor(
-                    step=step,
-                    prompt=user_message,
-                    system=system,
-                )
-            except Exception:
-                # Fall back to legacy _call_llm if executor fails
-                response, input_tokens, output_tokens = await self._call_llm(
-                    tier, system or "", user_message, max_tokens=3000
-                )
-        else:
-            # Legacy path for backward compatibility
-            response, input_tokens, output_tokens = await self._call_llm(
-                tier, system or "", user_message, max_tokens=3000
-            )
-
-        # Parse XML response if enforcement is enabled
-        parsed_data = self._parse_xml_response(response)
-
-        result = {
-            "review_feedback": response,
-            "total_tests": total_tests,
-            "files_covered": len(generated_tests),
-            "model_tier_used": tier.value,
-        }
-
-        # Merge parsed XML data if available
-        if parsed_data.get("xml_parsed"):
-            result.update(
-                {
-                    "xml_parsed": True,
-                    "summary": parsed_data.get("summary"),
-                    "findings": parsed_data.get("findings", []),
-                    "checklist": parsed_data.get("checklist", []),
-                }
-            )
-
-        # Add formatted report for human readability
-        result["formatted_report"] = format_test_gen_report(result, input_data)
-
-        return (result, input_tokens, output_tokens)
+    def get_max_tokens(self, stage_name: str) -> int:
+        """Get the maximum token limit for a stage."""
+        # Default to 4096
+        return 4096
 
 
 def format_test_gen_report(result: dict, input_data: dict) -> str:

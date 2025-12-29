@@ -105,6 +105,28 @@ class WorkflowConfig:
     # Per-workflow XML prompt configuration overrides
     workflow_xml_configs: dict[str, dict[str, Any]] = field(default_factory=dict)
 
+    # ==========================================================================
+    # Compliance and Feature Flags
+    # ==========================================================================
+
+    # Compliance mode: "standard" (default) or "hipaa" (healthcare)
+    # - standard: PII scrubbing disabled, test-gen disabled
+    # - hipaa: PII scrubbing enabled, test-gen enabled, stricter auditing
+    compliance_mode: str = "standard"
+
+    # Explicitly enabled workflows (added to defaults)
+    # Use this to opt-in to workflows like "test-gen"
+    enabled_workflows: list[str] = field(default_factory=list)
+
+    # Explicitly disabled workflows (removed from defaults)
+    disabled_workflows: list[str] = field(default_factory=list)
+
+    # PII scrubbing - auto-enabled in hipaa mode, opt-in otherwise
+    pii_scrubbing_enabled: bool | None = None  # None = use compliance_mode default
+
+    # Audit logging level - "standard", "enhanced", or "hipaa"
+    audit_level: str = "standard"
+
     @classmethod
     def load(cls, config_path: str | Path | None = None) -> "WorkflowConfig":
         """
@@ -127,6 +149,8 @@ class WorkflowConfig:
                 Path(".empathy/workflows.yaml"),
                 Path(".empathy/workflows.yml"),
                 Path(".empathy/workflows.json"),
+                Path("empathy.config.yml"),  # Main config file
+                Path("empathy.config.yaml"),
             ]
             for path in search_paths:
                 if path.exists():
@@ -149,6 +173,12 @@ class WorkflowConfig:
             pricing_overrides=config_data.get("pricing_overrides", {}),
             xml_prompt_defaults=config_data.get("xml_prompt_defaults", {}),
             workflow_xml_configs=config_data.get("workflow_xml_configs", {}),
+            # Compliance and feature flags
+            compliance_mode=config_data.get("compliance_mode", "standard"),
+            enabled_workflows=config_data.get("enabled_workflows", []),
+            disabled_workflows=config_data.get("disabled_workflows", []),
+            pii_scrubbing_enabled=config_data.get("pii_scrubbing_enabled"),
+            audit_level=config_data.get("audit_level", "standard"),
         )
 
     @staticmethod
@@ -163,10 +193,25 @@ class WorkflowConfig:
         else:
             data = json.loads(content)
 
+        result: dict[str, Any] = {}
+
+        # Handle root-level provider from empathy.config.yml
+        if "provider" in data:
+            result["default_provider"] = data["provider"]
+
+        # Handle model_preferences as custom_models
+        if "model_preferences" in data:
+            provider = data.get("provider", "anthropic")
+            result["custom_models"] = {provider: data["model_preferences"]}
+
         # Handle nested 'workflows' key from empathy.config.yaml
-        if "workflows" in data:
-            return dict(data["workflows"])
-        return dict(data)
+        if "workflows" in data and isinstance(data["workflows"], dict):
+            result.update(data["workflows"])
+        elif "workflows" not in data and "provider" not in data:
+            # Legacy format: entire file is workflow config
+            result = dict(data)
+
+        return result
 
     @staticmethod
     def _apply_env_overrides(config: dict[str, Any]) -> dict[str, Any]:
@@ -256,6 +301,76 @@ class WorkflowConfig:
         config = self.get_xml_config_for_workflow(workflow_name)
         return bool(config.get("enabled", False))
 
+    # ==========================================================================
+    # Compliance and Feature Flag Methods
+    # ==========================================================================
+
+    def is_hipaa_mode(self) -> bool:
+        """Check if HIPAA compliance mode is enabled."""
+        return self.compliance_mode.lower() == "hipaa"
+
+    def is_pii_scrubbing_enabled(self) -> bool:
+        """
+        Check if PII scrubbing is enabled.
+
+        Returns True if:
+        - Explicitly enabled via pii_scrubbing_enabled=True
+        - OR compliance_mode is "hipaa" (and not explicitly disabled)
+
+        Returns:
+            True if PII scrubbing should be active
+        """
+        # Explicit setting takes precedence
+        if self.pii_scrubbing_enabled is not None:
+            return self.pii_scrubbing_enabled
+
+        # Default based on compliance mode
+        return self.is_hipaa_mode()
+
+    def is_workflow_enabled(self, workflow_name: str) -> bool:
+        """
+        Check if a specific workflow is enabled.
+
+        Args:
+            workflow_name: Name of the workflow (e.g., "test-gen")
+
+        Returns:
+            True if workflow is enabled
+        """
+        # Explicitly disabled takes precedence
+        if workflow_name in self.disabled_workflows:
+            return False
+
+        # Explicitly enabled
+        if workflow_name in self.enabled_workflows:
+            return True
+
+        # HIPAA mode enables healthcare-specific workflows
+        if self.is_hipaa_mode():
+            hipaa_workflows = {"test-gen"}  # Workflows auto-enabled in HIPAA mode
+            if workflow_name in hipaa_workflows:
+                return True
+
+        # Default: workflow must be in standard registry (handled by __init__.py)
+        return None  # None means "use default registry behavior"
+
+    def get_effective_audit_level(self) -> str:
+        """
+        Get the effective audit level based on compliance mode.
+
+        Returns:
+            Audit level string: "standard", "enhanced", or "hipaa"
+        """
+        # Explicit setting takes precedence
+        if self.audit_level != "standard":
+            return self.audit_level
+
+        # HIPAA mode defaults to hipaa audit level
+        if self.is_hipaa_mode():
+            return "hipaa"
+
+        return "standard"
+
     def save(self, path: str | Path) -> None:
         """Save configuration to file."""
         path = Path(path)
@@ -266,6 +381,12 @@ class WorkflowConfig:
             "pricing_overrides": self.pricing_overrides,
             "xml_prompt_defaults": self.xml_prompt_defaults,
             "workflow_xml_configs": self.workflow_xml_configs,
+            # Compliance and feature flags
+            "compliance_mode": self.compliance_mode,
+            "enabled_workflows": self.enabled_workflows,
+            "disabled_workflows": self.disabled_workflows,
+            "pii_scrubbing_enabled": self.pii_scrubbing_enabled,
+            "audit_level": self.audit_level,
         }
 
         path.parent.mkdir(parents=True, exist_ok=True)

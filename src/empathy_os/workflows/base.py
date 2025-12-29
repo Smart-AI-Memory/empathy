@@ -78,6 +78,7 @@ class ModelProvider(Enum):
 
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
+    GOOGLE = "google"  # Google Gemini models
     OLLAMA = "ollama"
     HYBRID = "hybrid"  # Mix of best models from different providers
     CUSTOM = "custom"  # User-defined custom models
@@ -104,6 +105,7 @@ def _build_provider_models() -> dict[ModelProvider, dict[ModelTier, str]]:
     provider_map = {
         "anthropic": ModelProvider.ANTHROPIC,
         "openai": ModelProvider.OPENAI,
+        "google": ModelProvider.GOOGLE,
         "ollama": ModelProvider.OLLAMA,
         "hybrid": ModelProvider.HYBRID,
     }
@@ -431,6 +433,45 @@ class BaseWorkflow(ABC):
         # Use config-aware model lookup
         model = get_model(provider_str, tier.value, self._config)
         return model
+
+    async def _call_llm(
+        self, tier: ModelTier, system: str, user_message: str, max_tokens: int = 4096
+    ) -> tuple[str, int, int]:
+        """
+        Provider-agnostic LLM call using the configured provider.
+
+        This method uses run_step_with_executor internally to make LLM calls
+        that respect the configured provider (anthropic, openai, google, etc.).
+
+        Args:
+            tier: Model tier to use (CHEAP, CAPABLE, PREMIUM)
+            system: System prompt
+            user_message: User message/prompt
+            max_tokens: Maximum tokens in response
+
+        Returns:
+            Tuple of (response_content, input_tokens, output_tokens)
+        """
+        from .step_config import WorkflowStepConfig
+
+        # Create a step config for this call
+        step = WorkflowStepConfig(
+            name=f"llm_call_{tier.value}",
+            task_type="general",
+            tier_hint=tier.value,
+            description="LLM call",
+            max_tokens=max_tokens,
+        )
+
+        try:
+            content, in_tokens, out_tokens, _cost = await self.run_step_with_executor(
+                step=step,
+                prompt=user_message,
+                system=system,
+            )
+            return content, in_tokens, out_tokens
+        except Exception as e:
+            return f"Error calling LLM: {e}", 0, 0
 
     def _calculate_cost(self, tier: ModelTier, input_tokens: int, output_tokens: int) -> float:
         """Calculate cost for a stage."""
