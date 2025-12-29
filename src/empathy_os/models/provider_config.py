@@ -57,6 +57,7 @@ class ProviderConfig:
         provider_env_vars = {
             "anthropic": ["ANTHROPIC_API_KEY"],
             "openai": ["OPENAI_API_KEY"],
+            "google": ["GOOGLE_API_KEY", "GEMINI_API_KEY"],
             "ollama": [],  # Ollama is local, check if running
         }
 
@@ -141,8 +142,8 @@ class ProviderConfig:
             )
         else:
             # Multiple providers available
-            # Default to first cloud provider (prefer anthropic > openai > ollama)
-            priority = ["anthropic", "openai", "ollama"]
+            # Default to first cloud provider (prefer anthropic > openai > google > ollama)
+            priority = ["anthropic", "openai", "google", "ollama"]
             primary = next((p for p in priority if p in available), available[0])
             return cls(
                 mode=ProviderMode.SINGLE,
@@ -243,6 +244,7 @@ def configure_provider_interactive() -> ProviderConfig:
         print("\n⚠️  No API keys detected. Please set one of:")
         print("   - ANTHROPIC_API_KEY (recommended)")
         print("   - OPENAI_API_KEY")
+        print("   - GOOGLE_API_KEY or GEMINI_API_KEY (2M context window)")
         print("   - Or run Ollama locally")
         print("\nDefaulting to Anthropic. You'll need to set ANTHROPIC_API_KEY.")
         return ProviderConfig(
@@ -264,6 +266,8 @@ def configure_provider_interactive() -> ProviderConfig:
             desc = "Claude models (Haiku/Sonnet/Opus)"
         elif provider == "openai":
             desc = "GPT models (GPT-4o-mini/GPT-4o/o1)"
+        elif provider == "google":
+            desc = "Gemini models (Flash/Pro - 2M context window)"
         elif provider == "ollama":
             desc = "Local models (Llama 3.2)"
         else:
@@ -336,7 +340,7 @@ def configure_provider_cli(
     CLI-based provider configuration (non-interactive).
 
     Args:
-        provider: Provider name (anthropic, openai, ollama, hybrid)
+        provider: Provider name (anthropic, openai, google, ollama, hybrid)
         mode: Mode (single, hybrid, custom)
 
     Returns:

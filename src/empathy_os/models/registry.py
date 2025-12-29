@@ -37,6 +37,7 @@ class ModelProvider(Enum):
 
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
+    GOOGLE = "google"
     OLLAMA = "ollama"
     HYBRID = "hybrid"
     CUSTOM = "custom"
@@ -197,6 +198,46 @@ MODEL_REGISTRY: dict[str, dict[str, ModelInfo]] = {
             max_tokens=32768,
             supports_vision=False,
             supports_tools=False,  # o1 doesn't support tools yet
+        ),
+    },
+    # -------------------------------------------------------------------------
+    # Google Gemini Models
+    # Key feature: Massive context windows (1M-2M tokens)
+    # Model recommendations by tier:
+    #   cheap: gemini-2.0-flash-exp (1M context, fast, very cheap)
+    #   capable: gemini-1.5-pro (2M context, excellent for large codebases)
+    #   premium: gemini-2.5-pro (Google's most capable reasoning model)
+    # -------------------------------------------------------------------------
+    "google": {
+        "cheap": ModelInfo(
+            id="gemini-2.0-flash-exp",
+            provider="google",
+            tier="cheap",
+            input_cost_per_million=0.10,
+            output_cost_per_million=0.40,
+            max_tokens=8192,
+            supports_vision=True,
+            supports_tools=True,
+        ),
+        "capable": ModelInfo(
+            id="gemini-1.5-pro",
+            provider="google",
+            tier="capable",
+            input_cost_per_million=1.25,
+            output_cost_per_million=5.00,
+            max_tokens=8192,
+            supports_vision=True,
+            supports_tools=True,
+        ),
+        "premium": ModelInfo(
+            id="gemini-2.5-pro",
+            provider="google",
+            tier="premium",
+            input_cost_per_million=1.25,
+            output_cost_per_million=10.00,
+            max_tokens=8192,
+            supports_vision=True,
+            supports_tools=True,
         ),
     },
     # -------------------------------------------------------------------------

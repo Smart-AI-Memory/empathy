@@ -47,3 +47,17 @@ suite('Dashboard Panel Tests', () => {
         }
     });
 });
+
+suite('Initialize Wizard Tests', () => {
+    test('Initialize command should be registered', async () => {
+        const commands = await vscode.commands.getCommands(true);
+        assert.ok(commands.includes('empathy.initialize'), 'Initialize command not found');
+    });
+
+    test('Supported providers should not include hybrid', () => {
+        // Verify hybrid was removed from supported providers
+        const supportedProviders = ['anthropic', 'openai', 'google', 'ollama'];
+        assert.ok(!supportedProviders.includes('hybrid'), 'Hybrid should be removed');
+        assert.ok(supportedProviders.includes('google'), 'Google should be supported');
+    });
+});

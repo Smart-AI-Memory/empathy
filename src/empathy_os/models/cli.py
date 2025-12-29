@@ -494,7 +494,7 @@ def configure_provider(
     Configure provider settings.
 
     Args:
-        provider: Provider to set (anthropic, openai, ollama, hybrid)
+        provider: Provider to set (anthropic, openai, google, ollama, hybrid)
         mode: Mode to set (single, hybrid)
         interactive: Whether to run interactive configuration
 
@@ -586,7 +586,10 @@ Examples:
     # Provider command
     prov_parser = subparsers.add_parser("provider", help="Configure provider settings")
     prov_parser.add_argument(
-        "--set", "-s", dest="provider_set", help="Set provider (anthropic, openai, ollama, hybrid)"
+        "--set",
+        "-s",
+        dest="provider_set",
+        help="Set provider (anthropic, openai, google, ollama, hybrid)",
     )
     prov_parser.add_argument(
         "--mode", "-m", choices=["single", "hybrid"], help="Set mode (single or hybrid)"

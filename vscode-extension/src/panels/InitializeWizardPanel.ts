@@ -15,7 +15,7 @@ import * as fs from 'fs';
 /**
  * Supported LLM providers
  */
-type Provider = 'anthropic' | 'openai' | 'ollama' | 'hybrid';
+type Provider = 'anthropic' | 'openai' | 'google' | 'ollama';
 
 /**
  * Wizard step definitions
@@ -155,14 +155,18 @@ export class InitializeWizardPanel {
 
             case 'selectProvider':
                 this._state.provider = message.provider;
-                if (message.provider === 'ollama') {
-                    // Ollama doesn't need API key
-                    this._state.apiKeyValid = true;
-                    this._state.currentStep = 'preferences';
-                } else {
-                    this._state.currentStep = 'apiKey';
-                }
-                this._updateWebview();
+                // Brief delay so user sees selection before advancing
+                this._postMessage({ type: 'providerSelected', provider: message.provider });
+                setTimeout(() => {
+                    if (message.provider === 'ollama') {
+                        // Ollama doesn't need API key
+                        this._state.apiKeyValid = true;
+                        this._state.currentStep = 'preferences';
+                    } else {
+                        this._state.currentStep = 'apiKey';
+                    }
+                    this._updateWebview();
+                }, 300);
                 break;
 
             case 'validateApiKey':
@@ -221,10 +225,14 @@ export class InitializeWizardPanel {
                 // Skip to next logical step
                 if (this._state.currentStep === 'apiKey') {
                     this._state.currentStep = 'preferences';
+                    this._updateWebview();
                 } else if (this._state.currentStep === 'preferences') {
-                    this._state.currentStep = 'generate';
+                    // Skip preferences and generate config directly
+                    this._generateConfigFile();
+                    this._state.configGenerated = true;
+                    this._state.currentStep = 'complete';
+                    this._updateWebview();
                 }
-                this._updateWebview();
                 break;
         }
     }
@@ -233,7 +241,7 @@ export class InitializeWizardPanel {
      * Navigate back to previous step
      */
     private _goBack(): void {
-        const stepOrder: WizardStep[] = ['welcome', 'provider', 'apiKey', 'preferences', 'generate', 'complete'];
+        const stepOrder: WizardStep[] = ['welcome', 'provider', 'apiKey', 'preferences', 'complete'];
         const currentIndex = stepOrder.indexOf(this._state.currentStep);
         if (currentIndex > 0) {
             this._state.currentStep = stepOrder[currentIndex - 1];
@@ -259,9 +267,9 @@ export class InitializeWizardPanel {
                 // OpenAI keys start with sk-
                 return key.startsWith('sk-') && key.length > 20;
 
-            case 'hybrid':
-                // For hybrid, we accept either format
-                return (key.startsWith('sk-ant-') || key.startsWith('sk-')) && key.length > 20;
+            case 'google':
+                // Google/Gemini API keys start with AIza
+                return key.startsWith('AIza') && key.length > 30;
 
             default:
                 return true;
@@ -342,17 +350,17 @@ telemetry:
                     capable: 'gpt-4o',
                     premium: 'o1'
                 };
+            case 'google':
+                return {
+                    cheap: 'gemini-2.0-flash-exp',
+                    capable: 'gemini-1.5-pro',
+                    premium: 'gemini-2.5-pro'
+                };
             case 'ollama':
                 return {
                     cheap: 'llama3.2:3b',
                     capable: 'llama3.1:8b',
                     premium: 'llama3.1:70b'
-                };
-            case 'hybrid':
-                return {
-                    cheap: 'gpt-4o-mini',
-                    capable: 'claude-sonnet-4-20250514',
-                    premium: 'claude-opus-4-20250514'
                 };
             default:
                 return {
@@ -654,7 +662,7 @@ if __name__ == "__main__":
             <p class="subtitle">Let's get you set up in under 5 minutes</p>
 
             <ul class="feature-list">
-                <li>Multi-provider LLM support (Anthropic, OpenAI, Ollama)</li>
+                <li>Multi-provider LLM support (Anthropic, OpenAI, Google Gemini, Ollama)</li>
                 <li>Smart tier routing saves 80-96% on API costs</li>
                 <li>10+ production-ready workflows</li>
                 <li>Enterprise-ready with XML-enhanced outputs</li>
@@ -681,15 +689,15 @@ if __name__ == "__main__":
                     <div class="provider-name">OpenAI</div>
                     <div class="provider-desc">GPT-4o & o1</div>
                 </div>
+                <div class="provider-card" data-provider="google">
+                    <div class="provider-icon">🔵</div>
+                    <div class="provider-name">Google Gemini</div>
+                    <div class="provider-desc">2M context window</div>
+                </div>
                 <div class="provider-card" data-provider="ollama">
                     <div class="provider-icon">🦙</div>
                     <div class="provider-name">Ollama</div>
                     <div class="provider-desc">Local Llama models</div>
-                </div>
-                <div class="provider-card" data-provider="hybrid">
-                    <div class="provider-icon">🔀</div>
-                    <div class="provider-name">Hybrid</div>
-                    <div class="provider-desc">Best of all providers</div>
                 </div>
             </div>
 
@@ -705,7 +713,7 @@ if __name__ == "__main__":
 
             <div class="input-group">
                 <label for="apiKey">API Key</label>
-                <input type="password" id="apiKey" placeholder="sk-...">
+                <input type="password" id="apiKey" placeholder="Enter API key...">
                 <div class="validation-status" id="keyStatus"></div>
             </div>
 
@@ -774,9 +782,18 @@ if __name__ == "__main__":
         document.getElementById('apiKey').addEventListener('input', validateKey);
 
         // Provider card click handlers
-        document.querySelectorAll('.provider-card').forEach(function(card) {
-            card.addEventListener('click', function() {
-                selectProvider(this.dataset.provider);
+        document.querySelectorAll('.provider-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                const target = e.currentTarget;
+                const provider = target.dataset.provider;
+                console.log('[Wizard] Provider card clicked:', provider);
+
+                // Immediate visual feedback
+                document.querySelectorAll('.provider-card').forEach(c => c.classList.remove('selected'));
+                target.classList.add('selected');
+
+                // Send to extension
+                selectProvider(provider);
             });
         });
 
@@ -830,15 +847,24 @@ if __name__ == "__main__":
                 }
             });
 
-            // Update API key subtitle
+            // Update API key subtitle and placeholder
             if (currentState.provider) {
                 const providerNames = {
                     anthropic: 'Anthropic',
                     openai: 'OpenAI',
-                    hybrid: 'your primary provider'
+                    google: 'Google Gemini',
+                    ollama: 'Ollama'
+                };
+                const placeholders = {
+                    anthropic: 'sk-ant-...',
+                    openai: 'sk-...',
+                    google: 'AIza...',
+                    ollama: 'No key required'
                 };
                 document.getElementById('apiKeySubtitle').textContent =
                     'Enter your ' + (providerNames[currentState.provider] || currentState.provider) + ' API key';
+                document.getElementById('apiKey').placeholder =
+                    placeholders[currentState.provider] || 'API key...';
             }
             console.log('[Wizard] updateUI complete');
             } catch (err) {

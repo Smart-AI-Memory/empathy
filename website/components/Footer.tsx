@@ -19,7 +19,7 @@ export default function Footer() {
               SmartAI Memory
             </Link>
             <p className="mt-4 text-sm text-[var(--text-secondary)]">
-              Building anticipatory AI systems that predict problems before they happen.
+              AI framework for production apps. 44+ wizards, long-term memory, enterprise security.
             </p>
             <div className="flex gap-4 mt-4">
               <a
@@ -43,32 +43,32 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Products Column */}
+          {/* Product Column */}
           <div>
-            <h3 className="font-bold text-sm uppercase tracking-wide mb-4">Products</h3>
+            <h3 className="font-bold text-sm uppercase tracking-wide mb-4">Product</h3>
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/framework"
+                  href="/wizards"
                   className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
                 >
-                  Empathy Framework
+                  AI Wizards
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/book"
+                  href="/framework-docs/"
                   className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
                 >
-                  Book
+                  Documentation
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/pricing"
+                  href="/blog"
                   className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
                 >
-                  Pricing
+                  Blog
                 </Link>
               </li>
             </ul>
@@ -79,14 +79,6 @@ export default function Footer() {
             <h3 className="font-bold text-sm uppercase tracking-wide mb-4">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <Link
-                  href="/framework-docs/"
-                  className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
-                >
-                  Documentation
-                </Link>
-              </li>
-              <li>
                 <a
                   href="https://github.com/Smart-AI-Memory/empathy-framework"
                   target="_blank"
@@ -95,6 +87,14 @@ export default function Footer() {
                 >
                   GitHub
                 </a>
+              </li>
+              <li>
+                <Link
+                  href="/faq"
+                  className="text-sm text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors"
+                >
+                  FAQ
+                </Link>
               </li>
               <li>
                 <Link

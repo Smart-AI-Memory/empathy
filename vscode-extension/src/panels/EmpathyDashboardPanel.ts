@@ -1718,9 +1718,11 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     <div style="margin-bottom: 8px;">
                         <div style="font-size: 10px; margin-bottom: 4px; opacity: 0.8;">Provider preset</div>
                         <select id="sim-provider" style="width: 100%; padding: 6px 8px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 4px; font-size: 11px;">
-                            <option value="hybrid">Hybrid (recommended)</option>
-                            <option value="anthropic">Anthropic only</option>
-                            <option value="openai">OpenAI only</option>
+                            <option value="cost-optimized">Cost-Optimized (Recommended)</option>
+                            <option value="anthropic">Anthropic</option>
+                            <option value="openai">OpenAI</option>
+                            <option value="google">Google Gemini</option>
+                            <option value="ollama">Ollama (Free - Local)</option>
                         </select>
                     </div>
 
@@ -2814,8 +2816,8 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             const providerColors = {
                 anthropic: '#d97706',
                 openai: '#22c55e',
-                ollama: '#6366f1',
-                hybrid: '#8b5cf6'
+                google: '#4285f4',
+                ollama: '#6366f1'
             };
 
             // Filter out "unknown" if there are other providers
@@ -3132,11 +3134,20 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
 
         // --- Cost Simulator (Beta) ---
 
-        // Static per-request costs aligned with tiers (rough approximations)
+        // Per-request costs based on actual model pricing from registry
+        // Assumes average request: ~1000 input tokens, ~500 output tokens
+        // Formula: (1000/1M * input_cost) + (500/1M * output_cost)
         const SIM_TIER_PRICING = {
-            anthropic: { cheap: 0.001, capable: 0.004, premium: 0.012 },
-            openai: { cheap: 0.0005, capable: 0.003, premium: 0.01 },
-            hybrid: { cheap: 0.0007, capable: 0.0035, premium: 0.011 }
+            // Haiku: $0.80/$4.00, Sonnet: $3.00/$15.00, Opus: $15.00/$75.00
+            anthropic: { cheap: 0.0028, capable: 0.0105, premium: 0.0525 },
+            // GPT-4o-mini: $0.15/$0.60, GPT-4o: $2.50/$10.00, o1: $15.00/$60.00
+            openai: { cheap: 0.00045, capable: 0.0075, premium: 0.045 },
+            // Flash: $0.10/$0.40, 1.5 Pro: $1.25/$5.00, 2.5 Pro: $1.25/$10.00
+            google: { cheap: 0.0003, capable: 0.00375, premium: 0.00625 },
+            // Cost-Optimized: Google cheap/capable + Anthropic premium (best quality where it matters)
+            'cost-optimized': { cheap: 0.0003, capable: 0.00375, premium: 0.0525 },
+            // Local models - no API cost
+            ollama: { cheap: 0, capable: 0, premium: 0 }
         };
 
         // Scenario presets: total requests per week
@@ -3187,7 +3198,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             // Update slider labels first
             updateSliderLabels();
 
-            const provider = providerSelect.value || 'hybrid';
+            const provider = providerSelect.value || 'cost-optimized';
             const scenario = scenarioSelect.value || 'default';
 
             const cheapPct = parseFloat(cheapInput.value) || 0;
@@ -3202,7 +3213,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             const mix = normalizeMix(cheapPct, capablePct, premiumPct);
             const totalRequests = SIM_SCENARIOS[scenario] || SIM_SCENARIOS.default;
 
-            const pricing = SIM_TIER_PRICING[provider] || SIM_TIER_PRICING.hybrid;
+            const pricing = SIM_TIER_PRICING[provider] || SIM_TIER_PRICING['cost-optimized'];
 
             const cheapReq = totalRequests * mix.cheap;
             const capableReq = totalRequests * mix.capable;

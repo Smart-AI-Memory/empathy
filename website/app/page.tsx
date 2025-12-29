@@ -1,47 +1,74 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import GitHubStarsBadge from '@/components/GitHubStarsBadge';
 import TestsBadge from '@/components/TestsBadge';
-import PersonaCards from '@/components/PersonaCards';
-import SocialProof from '@/components/SocialProof';
-import LeadMagnet from '@/components/LeadMagnet';
 
-const levels = [
+const features = [
   {
-    level: 1,
-    name: 'Reactive',
-    description: 'Responds only when asked',
-    example: 'Most current AI tools',
+    icon: '⚡',
+    title: '10 Integrated Workflows',
+    description: 'Research topics deeply, review code for bugs and style, debug errors with context, refactor safely, generate tests, write docs, scan for vulnerabilities, optimize performance, explain complex code, and get daily briefings—all from your IDE.',
+    link: '/workflows',
   },
   {
-    level: 2,
-    name: 'Guided',
-    description: 'Asks clarifying questions',
-    example: 'ChatGPT, basic assistants',
+    icon: '🤖',
+    title: '20+ Specialized Agents',
+    description: 'Pre-built agent crews for code review, security audits, health checks, and refactoring. Built with Agent Factory for LangGraph, CrewAI, and more.',
+    link: '/framework-docs/',
   },
   {
-    level: 3,
-    name: 'Proactive',
-    description: 'Notices patterns and offers improvements',
-    example: 'GitHub Copilot, advanced linters',
+    icon: '🎛️',
+    title: 'VSCode Dashboard',
+    description: 'Real-time health scores, cost tracking, workflow monitoring, and quick actions. See your AI collaboration at a glance.',
+    link: '/framework-docs/',
   },
   {
-    level: 4,
-    name: 'Anticipatory',
-    description: 'Predicts future problems before they happen',
-    example: 'Empathy',
-    highlight: true,
+    icon: '🧠',
+    title: 'Long-Term Memory',
+    description: 'Your AI remembers patterns, decisions, and context across sessions. No more repeating yourself.',
+    link: '/framework-docs/',
   },
   {
-    level: 5,
-    name: 'Transformative',
-    description: 'Reshapes workflows to prevent entire classes of problems',
-    example: 'Our vision for the future',
-    future: true,
+    icon: '🔌',
+    title: 'Multi-Provider Support',
+    description: 'Works with Anthropic, OpenAI, Gemini, and Ollama. Smart tier routing saves 80-96% on costs.',
+    link: '/framework-docs/',
+  },
+  {
+    icon: '🔒',
+    title: 'Enterprise Security',
+    description: 'Built-in PII scrubbing, secrets detection, and audit logging. SOC2 and HIPAA-ready.',
+    link: '/framework-docs/',
+  },
+  {
+    icon: '🧙',
+    title: '44+ AI Wizards',
+    description: 'Pre-built, specialized AI assistants for debugging, code review, security scanning, refactoring, and more.',
+    link: '/wizards',
   },
 ];
+
+const codeExample = `from empathy_os import EmpathyLLM
+from empathy_os.workflows import ResearchWorkflow, DebugWorkflow
+
+# Initialize with smart tier routing (80-96% cost savings)
+llm = EmpathyLLM(provider="anthropic")
+
+# Run a research workflow
+research = ResearchWorkflow(llm)
+result = await research.run(
+    topic="WebSocket authentication patterns",
+    depth="comprehensive"
+)
+
+# Or debug with full context
+debug = DebugWorkflow(llm)
+fix = await debug.analyze(error_log, project_context="React app")
+
+print(fix.root_cause)
+print(fix.suggested_fix)`;
+
 
 export default function Home() {
   return (
@@ -51,14 +78,7 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative overflow-hidden py-20 sm:py-28" aria-label="Hero">
           <div className="absolute inset-0" aria-hidden="true">
-            <Image
-              src="/images/AdobeStock_1773561909.jpeg"
-              alt=""
-              fill
-              className="object-cover opacity-20"
-              priority
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-[var(--background)] via-transparent to-[var(--background)]" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)] via-transparent to-[var(--secondary)] opacity-5" />
           </div>
           <div className="container relative">
             <div className="max-w-4xl mx-auto text-center animate-fade-in">
@@ -66,279 +86,160 @@ export default function Home() {
               <div className="flex flex-wrap gap-3 justify-center mb-8">
                 <GitHubStarsBadge />
                 <TestsBadge />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--border)] text-sm font-medium">
+                  <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                  v3.4.0 Stable
+                </span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
-                Build AI That Anticipates Problems{' '}
-                <span className="text-gradient">Before They Happen</span>
+                AI Framework for{' '}
+                <span className="text-gradient">Production Apps</span>
               </h1>
               <p className="text-xl text-[var(--text-secondary)] mb-8 max-w-3xl mx-auto">
-                Production-ready frameworks for Level 4 Anticipatory Intelligence.
-                Stop reacting. Start predicting.
+                10 integrated workflows, 20+ specialized agents, VSCode dashboard, and multi-provider support.
+                Agent Factory uses CrewAI and LangGraph by default—build smarter AI features in a fraction of the time.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Link
-                  href="/framework"
+                  href="/framework-docs/tutorials/quickstart/"
                   className="btn btn-primary text-lg px-8 py-4"
                   aria-label="Get started with the framework"
                 >
-                  Get Started Free
+                  pip install empathy-framework
                 </Link>
                 <Link
-                  href="/demo/distributed-memory"
+                  href="/workflows"
                   className="btn btn-outline text-lg px-8 py-4"
-                  aria-label="See a demo"
+                  aria-label="Explore Workflows"
                 >
-                  See Demo
+                  Explore Workflows
                 </Link>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Who This Is For */}
-        <PersonaCards />
+        {/* Code Example */}
+        <section className="py-16 bg-[var(--border)] bg-opacity-30" aria-label="Code example">
+          <div className="container">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-2xl font-bold text-center mb-8">
+                Get Started in 5 Lines of Code
+              </h2>
+              <div className="bg-[#1e1e1e] rounded-xl overflow-hidden shadow-2xl">
+                <div className="flex items-center gap-2 px-4 py-3 bg-[#2d2d2d] border-b border-[#3d3d3d]">
+                  <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+                  <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+                  <div className="w-3 h-3 rounded-full bg-[#27ca40]"></div>
+                  <span className="ml-2 text-sm text-gray-400">main.py</span>
+                </div>
+                <pre className="p-6 overflow-x-auto text-sm">
+                  <code className="text-gray-300">{codeExample}</code>
+                </pre>
+              </div>
+            </div>
+          </div>
+        </section>
 
-        {/* 5 Levels Section */}
-        <section className="py-20" aria-label="The 5 levels of AI empathy">
+        {/* Features Grid */}
+        <section className="py-20" aria-label="Features">
           <div className="container">
             <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">
-              The 5 Levels of AI Intelligence
+              Everything You Need for Production AI
             </h2>
             <p className="text-center text-[var(--text-secondary)] mb-12 max-w-2xl mx-auto">
-              From reactive responses to anticipatory systems that predict problems 30-90 days ahead
+              Stop building AI infrastructure from scratch. Focus on your product.
             </p>
 
-            <div className="max-w-4xl mx-auto grid gap-4">
-              {levels.map((item) => (
-                <div
-                  key={item.level}
-                  className={`p-6 rounded-lg border-2 transition-all ${
-                    item.highlight
-                      ? 'border-[var(--accent)] bg-[var(--accent)] text-white shadow-lg'
-                      : item.future
-                      ? 'border-dashed border-[var(--border)] opacity-60'
-                      : 'border-[var(--border)] hover:border-[var(--primary)] hover:shadow-md'
-                  }`}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {features.map((feature) => (
+                <Link
+                  key={feature.title}
+                  href={feature.link}
+                  className="group bg-[var(--background)] p-6 rounded-xl border-2 border-[var(--border)] hover:border-[var(--primary)] hover:shadow-lg transition-all"
                 >
-                  <div className="flex items-start gap-4">
-                    <div
-                      className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl ${
-                        item.highlight
-                          ? 'bg-white text-[var(--accent)]'
-                          : item.future
-                          ? 'bg-[var(--border)] text-[var(--muted)] border-2 border-dashed'
-                          : 'bg-[var(--border)] text-[var(--foreground)]'
-                      }`}
-                    >
-                      {item.level}
-                    </div>
-                    <div className="flex-1">
-                      <h3
-                        className="text-xl font-bold mb-1"
-                        style={{ color: item.highlight ? '#ffffff' : '#0F172A' }}
-                      >
-                        Level {item.level}: {item.name}
-                        {item.highlight && (
-                          <span className="ml-2 text-sm font-normal bg-white/20 px-2 py-0.5 rounded">
-                            You are here
-                          </span>
-                        )}
-                        {item.future && (
-                          <span className="ml-2 text-sm font-normal" style={{ color: '#64748B' }}>
-                            Coming soon
-                          </span>
-                        )}
-                      </h3>
-                      <p
-                        className="mb-1"
-                        style={{ color: item.highlight ? 'rgba(255,255,255,0.9)' : '#334155' }}
-                      >
-                        {item.description}
-                      </p>
-                      <p
-                        className="text-sm"
-                        style={{ color: item.highlight ? 'rgba(255,255,255,0.75)' : '#64748B' }}
-                      >
-                        Example: {item.example}
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                  <div className="text-4xl mb-4">{feature.icon}</div>
+                  <h3 className="text-xl font-bold mb-2 group-hover:text-[var(--primary)] transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-[var(--text-secondary)]">
+                    {feature.description}
+                  </p>
+                </Link>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Products Section */}
-        <section id="products" className="py-20 bg-[var(--border)] bg-opacity-30" aria-label="Our products">
+
+        {/* Case Study Teaser */}
+        <section className="py-20" aria-label="Case study">
           <div className="container">
-            <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">
-              Complete AI Collaboration Platform
-            </h2>
-            <p className="text-center text-[var(--text-secondary)] mb-12 max-w-2xl mx-auto">
-              Intelligence + Memory + Coordination = Anticipatory AI
-            </p>
-
-            <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {/* Empathy */}
-              <div className="bg-[var(--background)] p-6 rounded-xl border-2 border-[var(--primary)] border-opacity-30 hover:border-opacity-100 transition-all">
-                <div className="text-4xl mb-4">🧠</div>
-                <h3 className="text-xl font-bold mb-2">Empathy</h3>
-                <p className="text-sm text-[var(--muted)] mb-3">The intelligence layer</p>
-                <p className="text-[var(--text-secondary)] text-sm mb-4">
-                  5-level maturity model with 44 specialized wizards for healthcare,
-                  software development, and AI collaboration.
-                </p>
-                <div className="flex flex-wrap gap-1 mb-4">
-                  <span className="text-xs bg-[var(--border)] px-2 py-1 rounded">Claude</span>
-                  <span className="text-xs bg-[var(--border)] px-2 py-1 rounded">GPT-4</span>
-                  <span className="text-xs bg-[var(--border)] px-2 py-1 rounded">Gemini</span>
-                </div>
-                <Link href="/framework" className="btn btn-primary w-full text-sm">
-                  Explore Framework
-                </Link>
-              </div>
-
-              {/* Long-Term Memory */}
-              <div className="bg-[var(--background)] p-6 rounded-xl border-2 border-[var(--secondary)] border-opacity-30 hover:border-opacity-100 transition-all">
-                <div className="text-4xl mb-4">📚</div>
-                <h3 className="text-xl font-bold mb-2">Long-Term Memory</h3>
-                <p className="text-sm text-[var(--muted)] mb-3">Built-in pattern storage</p>
-                <p className="text-[var(--text-secondary)] text-sm mb-4">
-                  Persistent project-specific context that carries across sessions.
-                  Your AI remembers what matters.
-                </p>
-                <div className="flex flex-wrap gap-1 mb-4">
-                  <span className="text-xs bg-[var(--border)] px-2 py-1 rounded">Cross-session</span>
-                  <span className="text-xs bg-[var(--border)] px-2 py-1 rounded">Patterns</span>
-                </div>
-                <Link href="/framework#memory" className="btn btn-outline w-full text-sm">
-                  Learn More
-                </Link>
-              </div>
-
-              {/* Advanced Capabilities (Chapter 23) */}
-              <div className="bg-[var(--background)] p-6 rounded-xl border-2 border-[var(--accent)] border-opacity-30 hover:border-opacity-100 transition-all">
-                <div className="text-4xl mb-4">🔀</div>
-                <h3 className="text-xl font-bold mb-2">Advanced Capabilities</h3>
-                <p className="text-sm text-[var(--muted)] mb-3">Multi-Agent Coordination</p>
-                <p className="text-[var(--text-secondary)] text-sm mb-4">
-                  Distributed Memory Networks enable teams of AI agents to share patterns,
-                  resolve conflicts, and collaborate.
-                </p>
-                <div className="flex flex-wrap gap-1 mb-4">
-                  <span className="text-xs bg-[var(--border)] px-2 py-1 rounded">Ch. 23</span>
-                  <span className="text-xs bg-[var(--border)] px-2 py-1 rounded">Free preview</span>
-                </div>
-                <div className="space-y-2">
-                  <Link href="/demo/distributed-memory" className="btn btn-primary w-full text-sm">
-                    Try Demo
-                  </Link>
-                  <Link
-                    href="/chapter-23"
-                    className="block text-center text-xs text-[var(--primary)] hover:underline"
+            <div className="max-w-4xl mx-auto bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] rounded-2xl p-8 md:p-12 text-white">
+              <div className="flex flex-col md:flex-row items-center gap-8">
+                <div className="flex-1">
+                  <p className="text-sm font-medium opacity-80 mb-2">CASE STUDY</p>
+                  <h3 className="text-2xl md:text-3xl font-bold mb-4">
+                    Healthcare AI in Production
+                  </h3>
+                  <p className="opacity-90 mb-6">
+                    See how we built 14+ HIPAA-compliant clinical AI tools using Empathy Framework,
+                    including automated SBAR reports and diagnostic assistance.
+                  </p>
+                  <a
+                    href="https://healthcare.smartaimemory.com/static/dashboard.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-white text-[var(--primary)] px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
                   >
-                    Read Chapter 23 Free →
-                  </Link>
+                    View Live Demo
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                      <polyline points="15 3 21 3 21 9" />
+                      <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                  </a>
+                </div>
+                <div className="flex-shrink-0">
+                  <div className="w-32 h-32 md:w-40 md:h-40 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center">
+                    <span className="text-6xl md:text-7xl">🏥</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Social Proof */}
-        <SocialProof />
-
-        {/* Interactive Demos */}
-        <section className="py-20 bg-[var(--border)] bg-opacity-30" aria-label="Interactive demos">
+        {/* CTA */}
+        <section className="py-20 bg-[var(--border)] bg-opacity-30" aria-label="Call to action">
           <div className="container">
-            <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">
-              Try It Live
-            </h2>
-            <p className="text-center text-[var(--text-secondary)] mb-12 max-w-2xl mx-auto">
-              No signup required. See Level 4 in action.
-            </p>
-
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {/* Healthcare */}
-              <a
-                href="https://healthcare.smartaimemory.com/static/dashboard.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group bg-[var(--background)] rounded-xl overflow-hidden border-2 border-[var(--border)] hover:border-[var(--primary)] hover:shadow-lg transition-all"
-              >
-                <div className="aspect-video bg-[var(--border)] relative overflow-hidden">
-                  <Image
-                    src="/images/demo-placeholder-healthcare.svg"
-                    alt="Healthcare Wizards Dashboard"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform"
-                  />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Image
-                      src="/images/icons/stethoscope.svg"
-                      alt=""
-                      width={24}
-                      height={24}
-                      className="text-[var(--primary)]"
-                    />
-                    <h3 className="text-lg font-bold group-hover:text-[var(--primary)] transition-colors">
-                      Healthcare Wizards
-                    </h3>
-                  </div>
-                  <p className="text-sm text-[var(--text-secondary)] mb-3">
-                    14+ HIPAA-compliant clinical tools
-                  </p>
-                  <span className="text-sm font-medium text-[var(--primary)]">
-                    Launch Demo →
-                  </span>
-                </div>
-              </a>
-
-              {/* Software */}
-              <a
-                href="https://wizards.smartaimemory.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group bg-[var(--background)] rounded-xl overflow-hidden border-2 border-[var(--border)] hover:border-[var(--secondary)] hover:shadow-lg transition-all"
-              >
-                <div className="aspect-video bg-[var(--border)] relative overflow-hidden">
-                  <Image
-                    src="/images/demo-placeholder-software.svg"
-                    alt="Software Development Wizards Dashboard"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform"
-                  />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Image
-                      src="/images/icons/file-terminal.svg"
-                      alt=""
-                      width={24}
-                      height={24}
-                    />
-                    <h3 className="text-lg font-bold group-hover:text-[var(--secondary)] transition-colors">
-                      Developer Wizards
-                    </h3>
-                  </div>
-                  <p className="text-sm text-[var(--text-secondary)] mb-3">
-                    16+ debugging & optimization tools
-                  </p>
-                  <span className="text-sm font-medium text-[var(--secondary)]">
-                    Launch Demo →
-                  </span>
-                </div>
-              </a>
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                Ready to Build Smarter AI?
+              </h2>
+              <p className="text-xl text-[var(--text-secondary)] mb-8">
+                Join developers shipping production AI with Empathy Framework.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/framework-docs/tutorials/quickstart/"
+                  className="btn btn-primary text-lg px-8 py-4"
+                >
+                  Read the Docs
+                </Link>
+                <a
+                  href="https://github.com/Smart-AI-Memory/empathy-framework"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-outline text-lg px-8 py-4"
+                >
+                  Star on GitHub
+                </a>
+              </div>
             </div>
           </div>
         </section>
-
-        {/* Lead Magnet CTA */}
-        <LeadMagnet />
       </main>
       <Footer />
     </>

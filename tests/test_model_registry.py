@@ -46,6 +46,7 @@ class TestModelProviderEnum:
         """Verify provider enum values."""
         assert ModelProvider.ANTHROPIC.value == "anthropic"
         assert ModelProvider.OPENAI.value == "openai"
+        assert ModelProvider.GOOGLE.value == "google"
         assert ModelProvider.OLLAMA.value == "ollama"
         assert ModelProvider.HYBRID.value == "hybrid"
         assert ModelProvider.CUSTOM.value == "custom"
@@ -162,7 +163,7 @@ class TestModelRegistry:
 
     def test_all_providers_present(self):
         """Verify all expected providers are in registry."""
-        expected = {"anthropic", "openai", "ollama", "hybrid"}
+        expected = {"anthropic", "openai", "google", "ollama", "hybrid"}
         assert set(MODEL_REGISTRY.keys()) == expected
 
     def test_all_tiers_present_for_each_provider(self):
@@ -197,6 +198,35 @@ class TestModelRegistry:
         premium = MODEL_REGISTRY["openai"]["premium"]
         assert premium.id == "o1"
         assert premium.supports_tools is False  # o1 doesn't support tools
+
+    def test_google_models(self):
+        """Verify Google/Gemini model configurations."""
+        cheap = MODEL_REGISTRY["google"]["cheap"]
+        assert cheap.id == "gemini-2.0-flash-exp"
+        assert cheap.provider == "google"
+        assert cheap.input_cost_per_million == 0.10
+
+        capable = MODEL_REGISTRY["google"]["capable"]
+        assert capable.id == "gemini-1.5-pro"
+        assert capable.provider == "google"
+
+        premium = MODEL_REGISTRY["google"]["premium"]
+        assert premium.id == "gemini-2.5-pro"
+        assert premium.provider == "google"
+        # Gemini 2.5 Pro is Google's most capable model
+        assert premium.supports_vision is True
+        assert premium.supports_tools is True
+
+    def test_google_tier_differentiation(self):
+        """Verify Google tiers use different models."""
+        cheap = MODEL_REGISTRY["google"]["cheap"]
+        capable = MODEL_REGISTRY["google"]["capable"]
+        premium = MODEL_REGISTRY["google"]["premium"]
+
+        # Each tier should have a distinct model
+        assert cheap.id != capable.id
+        assert capable.id != premium.id
+        assert cheap.id != premium.id
 
     def test_ollama_zero_cost(self):
         """Verify Ollama models have zero cost."""
@@ -265,6 +295,7 @@ class TestHelperFunctions:
         providers = get_supported_providers()
         assert "anthropic" in providers
         assert "openai" in providers
+        assert "google" in providers
         assert "ollama" in providers
         assert "hybrid" in providers
 

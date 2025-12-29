@@ -11,6 +11,15 @@ const nextConfig: NextConfig = {
     // Ignore ESLint errors during production builds
     ignoreDuringBuilds: true,
   },
+  async rewrites() {
+    return [
+      // Serve index.html for framework-docs directory paths
+      {
+        source: '/framework-docs/:path*/',
+        destination: '/framework-docs/:path*/index.html',
+      },
+    ];
+  },
 };
 
 export default nextConfig;

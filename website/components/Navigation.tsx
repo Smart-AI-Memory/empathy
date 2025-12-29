@@ -5,16 +5,25 @@ import { useState, useEffect, useRef } from 'react';
 import { useTheme } from '@/lib/theme-provider';
 
 const navItems = [
-  { label: 'Framework', href: '/framework' },
-  { label: 'Book', href: '/book' },
-  { label: 'Pricing', href: '/pricing' },
+  { label: 'Wizards', href: '/wizards' },
+  { label: 'Docs', href: '/framework-docs/' },
 ];
 
 const docsItems = [
   {
-    label: 'Framework Docs',
+    label: 'Getting Started',
+    href: '/framework-docs/tutorials/quickstart/',
+    description: 'Quick start guide',
+  },
+  {
+    label: 'Workflows',
+    href: '/workflows',
+    description: '10 integrated AI workflows',
+  },
+  {
+    label: 'MkDocs',
     href: '/framework-docs/',
-    description: 'API reference and guides',
+    description: 'Full API documentation',
   },
   {
     label: 'Blog',
@@ -22,45 +31,29 @@ const docsItems = [
     description: 'Technical articles and updates',
   },
   {
-    label: 'Getting Started',
-    href: '/framework-docs/getting-started/quickstart/',
-    description: 'Quick start guide',
-  },
-  {
     label: 'FAQ',
     href: '/faq',
     description: 'Frequently asked questions',
   },
+  {
+    label: 'README',
+    href: 'https://github.com/Smart-AI-Memory/empathy-framework#readme',
+    description: 'Project overview on GitHub',
+  },
+  {
+    label: 'Changelog',
+    href: 'https://github.com/Smart-AI-Memory/empathy-framework/blob/main/CHANGELOG.md',
+    description: 'Version history and updates',
+  },
 ];
 
-const demoItems = [
-  {
-    label: 'Healthcare Wizards',
-    href: 'https://healthcare.smartaimemory.com/static/dashboard.html',
-    external: true,
-    description: '14+ HIPAA-compliant clinical tools',
-  },
-  {
-    label: 'Dev Wizards',
-    href: 'https://wizards.smartaimemory.com',
-    external: true,
-    description: '16+ development & debugging tools',
-  },
-  {
-    label: 'Distributed Memory Demo',
-    href: '/demo/distributed-memory',
-    external: false,
-    description: 'Multi-agent coordination (Ch. 23)',
-  },
-];
+// Demos dropdown removed - wizards now has its own page
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDemosOpen, setIsDemosOpen] = useState(false);
   const [isDocsOpen, setIsDocsOpen] = useState(false);
   const { setTheme, resolvedTheme } = useTheme();
-  const demosRef = useRef<HTMLDivElement>(null);
   const docsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -74,9 +67,6 @@ export default function Navigation() {
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (demosRef.current && !demosRef.current.contains(event.target as Node)) {
-        setIsDemosOpen(false);
-      }
       if (docsRef.current && !docsRef.current.contains(event.target as Node)) {
         setIsDocsOpen(false);
       }
@@ -161,73 +151,6 @@ export default function Navigation() {
                       <span className="font-medium text-sm">{doc.label}</span>
                       <p className="text-xs text-[var(--muted)] mt-0.5">{doc.description}</p>
                     </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Demos Dropdown */}
-            <div className="relative" ref={demosRef}>
-              <button
-                type="button"
-                onClick={() => setIsDemosOpen(!isDemosOpen)}
-                className="flex items-center gap-1 text-sm font-medium hover:text-[var(--primary)] transition-colors"
-                aria-expanded={isDemosOpen ? 'true' : 'false'}
-                aria-haspopup="true"
-              >
-                Demos
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={`transition-transform ${isDemosOpen ? 'rotate-180' : ''}`}
-                  aria-hidden="true"
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </button>
-
-              {isDemosOpen && (
-                <div className="absolute top-full right-0 mt-2 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg py-2 animate-fade-in">
-                  {demoItems.map((demo) => (
-                    <a
-                      key={demo.label}
-                      href={demo.href}
-                      target={demo.external ? '_blank' : undefined}
-                      rel={demo.external ? 'noopener noreferrer' : undefined}
-                      className="block px-4 py-2 hover:bg-[var(--border)] hover:bg-opacity-50 transition-colors"
-                      onClick={() => setIsDemosOpen(false)}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm">{demo.label}</span>
-                        {demo.external && (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="12"
-                            height="12"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="text-[var(--muted)]"
-                            aria-hidden="true"
-                          >
-                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                            <polyline points="15 3 21 3 21 9" />
-                            <line x1="10" y1="14" x2="21" y2="3" />
-                          </svg>
-                        )}
-                      </div>
-                      <p className="text-xs text-[var(--muted)] mt-0.5">{demo.description}</p>
-                    </a>
                   ))}
                 </div>
               )}
@@ -383,26 +306,6 @@ export default function Navigation() {
                   >
                     {doc.label}
                   </Link>
-                ))}
-              </div>
-
-              {/* Mobile Demos Section */}
-              <div className="pt-2 border-t border-[var(--border)]">
-                <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide mb-2">
-                  Demos
-                </p>
-                {demoItems.map((demo) => (
-                  <a
-                    key={demo.label}
-                    href={demo.href}
-                    target={demo.external ? '_blank' : undefined}
-                    rel={demo.external ? 'noopener noreferrer' : undefined}
-                    className="block py-2 text-sm font-medium hover:text-[var(--primary)] transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {demo.label}
-                    {demo.external && ' ↗'}
-                  </a>
                 ))}
               </div>
 
