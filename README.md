@@ -438,9 +438,10 @@ pip install empathy-framework[full]
 pip install empathy-framework
 
 # Specific providers
-pip install empathy-framework[anthropic]
-pip install empathy-framework[openai]
-pip install empathy-framework[llm]  # Both
+pip install empathy-framework[anthropic]  # Claude
+pip install empathy-framework[openai]     # GPT-4, Ollama (OpenAI-compatible)
+pip install empathy-framework[google]     # Gemini
+pip install empathy-framework[llm]        # All providers
 
 # Development
 git clone https://github.com/Smart-AI-Memory/empathy-framework.git

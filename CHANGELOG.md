@@ -5,6 +5,13 @@ All notable changes to the Empathy Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.5.3] - 2025-12-29
+
+### Documentation
+
+- Updated Install Options with all provider extras (anthropic, openai, google)
+- Added clarifying comments for each provider install option
+
 ## [3.5.2] - 2025-12-29
 
 ### Documentation
