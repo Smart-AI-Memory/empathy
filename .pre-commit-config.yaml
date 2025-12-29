@@ -71,7 +71,7 @@ repos:
             memdocs_storage/|
             demo_security_complete\.py$|
             test_memory_integration\.py$|
-            profile_audit_logger\.py$|
+            profile_.*\.py$|
             docs/|
             examples/|
             anthropic-cookbook/
