@@ -5,7 +5,54 @@ All notable changes to the Empathy Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.5.0] - 2025-12-29
+
+### Added
+
+- Memory Control Panel: View Patterns button now displays pattern list with classification badges
+- Memory Control Panel: Project-level `auto_start_redis` config option in `empathy.config.yml`
+- Memory Control Panel: Visual feedback for button actions (Check Status, Export show loading states)
+- Memory Control Panel: "Check Status" button for manual status refresh (renamed from Refresh)
+- VSCode Settings: `empathy.memory.autoRefresh` - Enable/disable auto-refresh (default: true)
+- VSCode Settings: `empathy.memory.autoRefreshInterval` - Refresh interval in seconds (default: 30)
+- VSCode Settings: `empathy.memory.showNotifications` - Show operation notifications (default: true)
+
+### Security
+
+**Memory API Security Hardening** (v2.2.0)
+
+- **Input Validation**: Pattern IDs, agent IDs, and classifications are now validated on both client and server
+  - Prevents path traversal attacks (`../`, `..\\`)
+  - Validates format with regex patterns
+  - Length bounds checking (3-64 chars)
+  - Rejects null bytes and dangerous characters
+- **API Key Authentication**: Optional Bearer token or X-API-Key header authentication
+  - Set via `--api-key` CLI flag or `EMPATHY_MEMORY_API_KEY` environment variable
+  - Constant-time comparison using SHA-256 hash
+- **Rate Limiting**: Per-IP rate limiting (default: 100 requests/minute)
+  - Configurable via `--rate-limit` and `--no-rate-limit` CLI flags
+  - Returns `X-RateLimit-Remaining` and `X-RateLimit-Limit` headers
+- **HTTPS Support**: Optional TLS encryption
+  - Set via `--ssl-cert` and `--ssl-key` CLI flags
+- **CORS Restrictions**: CORS now restricted to localhost by default
+  - Configurable via `--cors-origins` CLI flag
+- **Request Body Size Limit**: 1MB limit prevents DoS attacks
+- **TypeScript Client**: Added input validation matching backend rules
+
+### Fixed
+
+- Memory Control Panel: Fixed config key mismatch (`empathyMemory` → `empathy.memory`) preventing settings from loading
+- Memory Control Panel: Fixed API response parsing for Redis status display
+- Memory Control Panel: Fixed pattern statistics not updating correctly
+- Memory Control Panel: View Patterns now properly displays pattern list instead of just count
+
+### Tests
+
+- Added 37 unit tests for Memory API security features
+  - Input validation tests (pattern IDs, agent IDs, classifications)
+  - Rate limiter tests (limits, window expiration, per-IP tracking)
+  - API key authentication tests (enable/disable, env vars, constant-time comparison)
+  - Integration tests for security features
 
 ---
 

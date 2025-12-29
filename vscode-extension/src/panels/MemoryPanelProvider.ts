@@ -50,7 +50,7 @@ export class MemoryPanelProvider implements vscode.WebviewViewProvider {
         private readonly _context: vscode.ExtensionContext
     ) {
         // Initialize API service with config
-        const config = vscode.workspace.getConfiguration('empathyMemory');
+        const config = vscode.workspace.getConfiguration('empathy.memory');
         this._apiService = new MemoryAPIService({
             host: config.get<string>('apiHost') || 'localhost',
             port: config.get<number>('apiPort') || 8765,
@@ -59,7 +59,7 @@ export class MemoryPanelProvider implements vscode.WebviewViewProvider {
 
         // Listen for config changes
         vscode.workspace.onDidChangeConfiguration((e) => {
-            if (e.affectsConfiguration('empathyMemory')) {
+            if (e.affectsConfiguration('empathy.memory')) {
                 this._updateAPIConfig();
                 this._refreshPanel();
             }
@@ -122,7 +122,9 @@ export class MemoryPanelProvider implements vscode.WebviewViewProvider {
         try {
             switch (message.type) {
                 case 'ready':
-                    // Webview is ready, send initial data
+                    // Webview is ready, auto-start Redis if configured
+                    await this._autoStartRedisIfConfigured();
+                    // Then send initial data
                     await this._refreshPanel();
                     break;
 
@@ -184,6 +186,37 @@ export class MemoryPanelProvider implements vscode.WebviewViewProvider {
                 type: 'connectionError',
                 message: 'Cannot connect to Memory API. Make sure the backend is running on port 8765.'
             });
+        }
+    }
+
+    /**
+     * Auto-start Redis if configured in project empathy.config.yml
+     */
+    private async _autoStartRedisIfConfigured(): Promise<void> {
+        try {
+            const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+            if (!workspaceFolder) {
+                return;
+            }
+
+            // Read empathy.config.yml from workspace
+            const configPath = vscode.Uri.joinPath(workspaceFolder.uri, 'empathy.config.yml');
+            try {
+                const configContent = await vscode.workspace.fs.readFile(configPath);
+                const configText = Buffer.from(configContent).toString('utf8');
+
+                // Simple YAML parsing for auto_start_redis
+                // Look for "auto_start_redis: true" in the memory section
+                const autoStartMatch = configText.match(/auto_start_redis:\s*(true|false)/i);
+                if (autoStartMatch && autoStartMatch[1].toLowerCase() === 'true') {
+                    // Auto-start Redis silently (don't show notification)
+                    await this._apiService.startRedis();
+                }
+            } catch {
+                // Config file doesn't exist or can't be read - skip auto-start
+            }
+        } catch {
+            // Ignore errors - auto-start is optional
         }
     }
 
@@ -331,8 +364,8 @@ export class MemoryPanelProvider implements vscode.WebviewViewProvider {
      * Start auto-refresh timer
      */
     private _startAutoRefresh(): void {
-        const config = vscode.workspace.getConfiguration('empathyMemory');
-        if (!config.get<boolean>('autoRefresh')) {
+        const config = vscode.workspace.getConfiguration('empathy.memory');
+        if (!config.get<boolean>('autoRefresh', true)) {
             return;
         }
 
@@ -356,7 +389,7 @@ export class MemoryPanelProvider implements vscode.WebviewViewProvider {
      * Update API configuration
      */
     private _updateAPIConfig(): void {
-        const config = vscode.workspace.getConfiguration('empathyMemory');
+        const config = vscode.workspace.getConfiguration('empathy.memory');
         this._apiService.updateConfig({
             host: config.get<string>('apiHost') || 'localhost',
             port: config.get<number>('apiPort') || 8765
@@ -374,8 +407,8 @@ export class MemoryPanelProvider implements vscode.WebviewViewProvider {
      * Show info notification
      */
     private _showInfo(message: string): void {
-        const config = vscode.workspace.getConfiguration('empathyMemory');
-        if (config.get<boolean>('showNotifications')) {
+        const config = vscode.workspace.getConfiguration('empathy.memory');
+        if (config.get<boolean>('showNotifications', true)) {
             vscode.window.showInformationMessage(`Empathy Memory: ${message}`);
         }
     }
@@ -384,8 +417,8 @@ export class MemoryPanelProvider implements vscode.WebviewViewProvider {
      * Show warning notification
      */
     private _showWarning(message: string): void {
-        const config = vscode.workspace.getConfiguration('empathyMemory');
-        if (config.get<boolean>('showNotifications')) {
+        const config = vscode.workspace.getConfiguration('empathy.memory');
+        if (config.get<boolean>('showNotifications', true)) {
             vscode.window.showWarningMessage(`Empathy Memory: ${message}`);
         }
     }

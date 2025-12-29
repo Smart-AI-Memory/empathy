@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "empathy-framework"
-version = "3.4.0"
+version = "3.5.0"
 description = "AI collaboration framework with persistent memory, anticipatory intelligence, code inspection, and multi-agent orchestration"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.10"
@@ -379,6 +379,8 @@ branch = true
 precision = 2
 show_missing = true
 skip_covered = false
+# Coverage threshold - increase as tests improve (target: 75%)
+fail_under = 40
 exclude_lines = [
     "pragma: no cover",
     "def __repr__",

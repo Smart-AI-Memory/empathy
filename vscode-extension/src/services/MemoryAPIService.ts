@@ -118,6 +118,89 @@ export interface APIConfig {
     host: string;
     port: number;
     timeout: number; // milliseconds
+    apiKey?: string; // Optional API key for authentication
+}
+
+// =============================================================================
+// Input Validation
+// =============================================================================
+
+/**
+ * Pattern ID validation regex - matches format: pat_YYYYMMDDHHMMSS_hexstring
+ */
+const PATTERN_ID_REGEX = /^pat_\d{14}_[a-f0-9]{8,16}$/;
+
+/**
+ * Alternative pattern ID format
+ */
+const PATTERN_ID_ALT_REGEX = /^[a-zA-Z][a-zA-Z0-9_-]{2,63}$/;
+
+/**
+ * Valid classifications
+ */
+const VALID_CLASSIFICATIONS = ['PUBLIC', 'INTERNAL', 'SENSITIVE'];
+
+/**
+ * Validate pattern ID to prevent path traversal and injection attacks.
+ */
+function validatePatternId(patternId: string): boolean {
+    if (!patternId || typeof patternId !== 'string') {
+        return false;
+    }
+
+    // Check for path traversal attempts
+    if (patternId.includes('..') || patternId.includes('/') || patternId.includes('\\')) {
+        return false;
+    }
+
+    // Check for null bytes
+    if (patternId.includes('\x00')) {
+        return false;
+    }
+
+    // Check length bounds
+    if (patternId.length < 3 || patternId.length > 64) {
+        return false;
+    }
+
+    // Must match one of the valid formats
+    return PATTERN_ID_REGEX.test(patternId) || PATTERN_ID_ALT_REGEX.test(patternId);
+}
+
+/**
+ * Validate agent ID format.
+ */
+function validateAgentId(agentId: string): boolean {
+    if (!agentId || typeof agentId !== 'string') {
+        return false;
+    }
+
+    // Check for dangerous characters
+    const dangerous = ['.', '/', '\\', '\x00', ';', '|', '&'];
+    if (dangerous.some(c => agentId.includes(c))) {
+        return false;
+    }
+
+    // Check length bounds
+    if (agentId.length < 1 || agentId.length > 64) {
+        return false;
+    }
+
+    // Simple alphanumeric with some allowed chars
+    return /^[a-zA-Z0-9_@.-]+$/.test(agentId);
+}
+
+/**
+ * Validate classification parameter.
+ */
+function validateClassification(classification: string | undefined): boolean {
+    if (classification === undefined) {
+        return true;
+    }
+    if (typeof classification !== 'string') {
+        return false;
+    }
+    return VALID_CLASSIFICATIONS.includes(classification.toUpperCase());
 }
 
 /**
@@ -130,7 +213,8 @@ export class MemoryAPIService {
         this.config = {
             host: config.host || 'localhost',
             port: config.port || 8765,
-            timeout: config.timeout || 10000
+            timeout: config.timeout || 10000,
+            apiKey: config.apiKey
         };
     }
 
@@ -150,14 +234,21 @@ export class MemoryAPIService {
         body?: any
     ): Promise<T> {
         return new Promise((resolve, reject) => {
+            const headers: Record<string, string> = {
+                'Content-Type': 'application/json'
+            };
+
+            // Add API key authentication if configured
+            if (this.config.apiKey) {
+                headers['Authorization'] = `Bearer ${this.config.apiKey}`;
+            }
+
             const options: http.RequestOptions = {
                 hostname: this.config.host,
                 port: this.config.port,
                 path: path,
                 method: method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: headers,
                 timeout: this.config.timeout
             };
 
@@ -242,9 +333,17 @@ export class MemoryAPIService {
         classification?: Classification,
         limit: number = 100
     ): Promise<PatternSummary[]> {
-        let path = `/api/patterns?limit=${limit}`;
+        // Validate classification
+        if (classification && !validateClassification(classification)) {
+            throw new Error('Invalid classification. Use PUBLIC, INTERNAL, or SENSITIVE.');
+        }
+
+        // Sanitize limit
+        const safeLimit = Math.max(1, Math.min(limit, 1000));
+
+        let path = `/api/patterns?limit=${safeLimit}`;
         if (classification) {
-            path += `&classification=${classification}`;
+            path += `&classification=${encodeURIComponent(classification)}`;
         }
         return this.request<PatternSummary[]>('GET', path);
     }
@@ -253,14 +352,22 @@ export class MemoryAPIService {
      * Get a specific pattern
      */
     async getPattern(patternId: string): Promise<any> {
-        return this.request<any>('GET', `/api/patterns/${patternId}`);
+        // Validate pattern ID to prevent path traversal
+        if (!validatePatternId(patternId)) {
+            throw new Error('Invalid pattern ID format');
+        }
+        return this.request<any>('GET', `/api/patterns/${encodeURIComponent(patternId)}`);
     }
 
     /**
      * Delete a pattern
      */
     async deletePattern(patternId: string): Promise<{ success: boolean }> {
-        return this.request<{ success: boolean }>('DELETE', `/api/patterns/${patternId}`);
+        // Validate pattern ID to prevent path traversal
+        if (!validatePatternId(patternId)) {
+            throw new Error('Invalid pattern ID format');
+        }
+        return this.request<{ success: boolean }>('DELETE', `/api/patterns/${encodeURIComponent(patternId)}`);
     }
 
     /**
@@ -269,9 +376,14 @@ export class MemoryAPIService {
     async exportPatterns(
         classification?: Classification
     ): Promise<{ pattern_count: number; export_data: any }> {
+        // Validate classification
+        if (classification && !validateClassification(classification)) {
+            throw new Error('Invalid classification. Use PUBLIC, INTERNAL, or SENSITIVE.');
+        }
+
         let path = '/api/patterns/export';
         if (classification) {
-            path += `?classification=${classification}`;
+            path += `?classification=${encodeURIComponent(classification)}`;
         }
         return this.request<{ pattern_count: number; export_data: any }>('GET', path);
     }
@@ -287,6 +399,10 @@ export class MemoryAPIService {
      * Clear short-term memory for an agent
      */
     async clearShortTerm(agentId: string = 'admin'): Promise<{ keys_deleted: number }> {
+        // Validate agent ID
+        if (!validateAgentId(agentId)) {
+            throw new Error('Invalid agent ID format');
+        }
         return this.request<{ keys_deleted: number }>('POST', '/api/memory/clear', { agent_id: agentId });
     }
 

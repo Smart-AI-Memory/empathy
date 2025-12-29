@@ -113,7 +113,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>Memory Control</h1>
+        <h1>Memory Control <small style="font-size:10px;opacity:0.5">v2</small></h1>
         <span class="status-badge disconnected" id="connection-status">Disconnected</span>
     </div>
 
@@ -159,6 +159,7 @@
                 <button class="btn" onclick="listPatterns()">View Patterns</button>
                 <button class="btn secondary" onclick="exportPatterns()">Export</button>
             </div>
+            <div id="patterns-list" class="hidden" style="margin-top: 12px; max-height: 200px; overflow-y: auto;"></div>
         </div>
 
         <div class="card">
@@ -186,7 +187,7 @@
             <div class="card-title">Actions</div>
             <div class="btn-row">
                 <button class="btn secondary" onclick="clearShortTerm()">Clear Short-term</button>
-                <button class="btn" onclick="refresh()">Refresh</button>
+                <button class="btn" onclick="refresh()">Check Status</button>
             </div>
         </div>
     </div>
@@ -217,6 +218,7 @@
         });
 
         function updateStatus(status, stats) {
+            // Debug: show what we received
             document.getElementById('error-view').classList.add('hidden');
             document.getElementById('connected-view').classList.remove('hidden');
 
@@ -224,14 +226,21 @@
             badge.textContent = 'Connected';
             badge.className = 'status-badge connected';
 
-            if (status) {
-                document.getElementById('redis-status').textContent = status.redis_running ? 'Running' : 'Stopped';
-                document.getElementById('memory-used').textContent = status.memory_used || '--';
+            // Robust Redis status check with multiple fallbacks
+            let redisRunning = false;
+            let redisStatusText = 'Unknown';
+
+            if (status && status.redis) {
+                redisStatusText = status.redis.status || 'unknown';
+                redisRunning = redisStatusText === 'running';
             }
 
+            document.getElementById('redis-status').textContent = redisRunning ? 'Running' : 'Stopped';
+            document.getElementById('memory-used').textContent = stats?.redis_memory_used || '--';
+
             if (stats) {
-                document.getElementById('total-patterns').textContent = stats.total_patterns || 0;
-                document.getElementById('short-term-keys').textContent = stats.short_term_keys || 0;
+                document.getElementById('total-patterns').textContent = stats.patterns_total || 0;
+                document.getElementById('short-term-keys').textContent = stats.redis_keys_total || 0;
             }
         }
 
@@ -248,42 +257,91 @@
             if (!health) return;
 
             const statusClass = {
+                'pass': 'healthy',
+                'warn': 'degraded',
+                'fail': 'unhealthy',
+                'info': 'healthy',
                 'healthy': 'healthy',
                 'degraded': 'degraded',
                 'unhealthy': 'unhealthy'
             };
 
-            if (health.components) {
-                if (health.components.redis) {
-                    const el = document.getElementById('health-redis');
-                    el.textContent = health.components.redis.status || '--';
-                    el.className = 'health-status ' + (statusClass[health.components.redis.status] || '');
-                }
-                if (health.components.api) {
-                    const el = document.getElementById('health-api');
-                    el.textContent = health.components.api.status || '--';
-                    el.className = 'health-status ' + (statusClass[health.components.api.status] || '');
-                }
-                if (health.components.storage) {
-                    const el = document.getElementById('health-storage');
-                    el.textContent = health.components.storage.status || '--';
-                    el.className = 'health-status ' + (statusClass[health.components.storage.status] || '');
-                }
+            // Map checks array to components for display
+            if (health.checks && Array.isArray(health.checks)) {
+                health.checks.forEach(check => {
+                    let el;
+                    if (check.name === 'redis') {
+                        el = document.getElementById('health-redis');
+                    } else if (check.name === 'long_term') {
+                        el = document.getElementById('health-storage');
+                    }
+                    if (el) {
+                        el.textContent = check.status || '--';
+                        el.className = 'health-status ' + (statusClass[check.status] || '');
+                    }
+                });
+                // API is healthy if we got a response
+                const apiEl = document.getElementById('health-api');
+                apiEl.textContent = 'pass';
+                apiEl.className = 'health-status healthy';
             }
         }
 
         function showPatterns(patterns) {
-            // For now, just show count - could expand to pattern viewer
-            if (patterns && patterns.length >= 0) {
-                document.getElementById('total-patterns').textContent = patterns.length;
+            const listEl = document.getElementById('patterns-list');
+
+            if (!patterns || patterns.length === 0) {
+                listEl.innerHTML = '<div style="padding: 8px; opacity: 0.7; text-align: center;">No patterns found</div>';
+                listEl.classList.remove('hidden');
+                return;
             }
+
+            // Update count
+            document.getElementById('total-patterns').textContent = patterns.length;
+
+            // Build pattern list HTML
+            let html = '';
+            patterns.forEach(p => {
+                const badgeColor = p.classification === 'PUBLIC' ? 'var(--vscode-testing-iconPassed)' :
+                                   p.classification === 'INTERNAL' ? 'var(--vscode-editorWarning-foreground)' :
+                                   'var(--vscode-testing-iconFailed)';
+                const encrypted = p.encrypted ? ' 🔒' : '';
+                html += `
+                    <div style="padding: 6px 0; border-bottom: 1px solid var(--vscode-panel-border);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(128,128,128,0.2); color: ${badgeColor};">${p.classification}</span>
+                            <span style="font-size: 10px; opacity: 0.7;">${p.pattern_type}${encrypted}</span>
+                        </div>
+                        <div style="font-size: 11px; margin-top: 4px; word-break: break-all;">${p.pattern_id}</div>
+                    </div>
+                `;
+            });
+
+            listEl.innerHTML = html;
+            listEl.classList.remove('hidden');
         }
 
-        function refresh() { vscode.postMessage({ type: 'refresh' }); }
+        function refresh() {
+            // Show brief visual feedback
+            const btn = document.querySelector('button[onclick="refresh()"]');
+            if (btn) {
+                btn.textContent = 'Checking...';
+                setTimeout(() => { btn.textContent = 'Check Status'; }, 1000);
+            }
+            vscode.postMessage({ type: 'refresh' });
+        }
         function startRedis() { vscode.postMessage({ type: 'startRedis' }); }
         function stopRedis() { vscode.postMessage({ type: 'stopRedis' }); }
         function listPatterns() { vscode.postMessage({ type: 'listPatterns' }); }
-        function exportPatterns() { vscode.postMessage({ type: 'exportPatterns' }); }
+        function exportPatterns() {
+            // Show feedback that export is starting
+            const btn = document.querySelector('button[onclick="exportPatterns()"]');
+            if (btn) {
+                btn.textContent = 'Exporting...';
+                setTimeout(() => { btn.textContent = 'Export'; }, 2000);
+            }
+            vscode.postMessage({ type: 'exportPatterns' });
+        }
         function healthCheck() { vscode.postMessage({ type: 'healthCheck' }); }
         function clearShortTerm() { vscode.postMessage({ type: 'clearShortTerm' }); }
     </script>

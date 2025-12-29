@@ -29,6 +29,12 @@ Activity bar icon opens three views:
 - **Costs**: API usage and savings
 	- The **By tier (7 days)** breakdown is documented in `../docs/dashboard-costs-by-tier.md`.
 	- The **Cost Simulator (beta)** card lets you experiment with different provider presets and tier mixes to estimate weekly costs and savings.
+- **Memory (Beta)**: Redis and pattern storage control panel
+  - View Redis status and memory usage
+  - Browse stored patterns with classification badges (PUBLIC/INTERNAL/SENSITIVE)
+  - Export patterns to JSON
+  - Run system health checks
+  - Clear short-term memory
 
 ## Requirements
 
@@ -49,6 +55,11 @@ pip install empathy-framework
 | `empathy.showStatusBar` | `true` | Show status bar item |
 | `empathy.autoRefresh` | `true` | Auto-refresh data |
 | `empathy.refreshInterval` | `300` | Refresh interval (seconds) |
+| `empathy.memory.apiHost` | `localhost` | (Beta) Memory API host |
+| `empathy.memory.apiPort` | `8765` | (Beta) Memory API port |
+| `empathy.memory.autoRefresh` | `true` | (Beta) Auto-refresh memory status |
+| `empathy.memory.autoRefreshInterval` | `30` | (Beta) Refresh interval (seconds) |
+| `empathy.memory.showNotifications` | `true` | (Beta) Show operation notifications |
 
 ## Getting Started
 

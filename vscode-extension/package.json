@@ -258,6 +258,23 @@
           "type": "number",
           "default": 8765,
           "description": "(Beta) Memory API port for Redis-backed memory"
+        },
+        "empathy.memory.autoRefresh": {
+          "type": "boolean",
+          "default": true,
+          "description": "(Beta) Auto-refresh memory status every 30 seconds"
+        },
+        "empathy.memory.autoRefreshInterval": {
+          "type": "number",
+          "default": 30,
+          "minimum": 5,
+          "maximum": 300,
+          "description": "(Beta) Auto-refresh interval in seconds"
+        },
+        "empathy.memory.showNotifications": {
+          "type": "boolean",
+          "default": true,
+          "description": "(Beta) Show notifications for memory operations"
         }
       }
     }

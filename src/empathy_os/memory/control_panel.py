@@ -30,12 +30,17 @@ Licensed under Fair Source 0.9
 """
 
 import argparse
+import hashlib
 import json
 import logging
+import os
+import re
 import signal
+import ssl
 import sys
 import time
 import warnings
+from collections import defaultdict
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -59,9 +64,177 @@ from .short_term import AccessTier, AgentCredentials, RedisShortTermMemory
 warnings.filterwarnings("ignore", category=RuntimeWarning, module="runpy")
 
 # Version
-__version__ = "2.1.1"
+__version__ = "2.2.0"
 
 logger = structlog.get_logger(__name__)
+
+# =============================================================================
+# Security Configuration
+# =============================================================================
+
+# Pattern ID validation regex - matches format: pat_YYYYMMDDHHMMSS_hexstring
+PATTERN_ID_REGEX = re.compile(r"^pat_\d{14}_[a-f0-9]{8,16}$")
+
+# Alternative pattern formats that are also valid
+PATTERN_ID_ALT_REGEX = re.compile(r"^[a-zA-Z][a-zA-Z0-9_-]{2,63}$")
+
+# Rate limiting configuration
+RATE_LIMIT_WINDOW_SECONDS = 60
+RATE_LIMIT_MAX_REQUESTS = 100  # Per IP per window
+
+
+def _validate_pattern_id(pattern_id: str) -> bool:
+    """
+    Validate pattern ID to prevent path traversal and injection attacks.
+
+    Args:
+        pattern_id: The pattern ID to validate
+
+    Returns:
+        True if valid, False otherwise
+    """
+    if not pattern_id or not isinstance(pattern_id, str):
+        return False
+
+    # Check for path traversal attempts
+    if ".." in pattern_id or "/" in pattern_id or "\\" in pattern_id:
+        return False
+
+    # Check for null bytes
+    if "\x00" in pattern_id:
+        return False
+
+    # Check length bounds
+    if len(pattern_id) < 3 or len(pattern_id) > 64:
+        return False
+
+    # Must match one of the valid formats
+    return bool(PATTERN_ID_REGEX.match(pattern_id) or PATTERN_ID_ALT_REGEX.match(pattern_id))
+
+
+def _validate_agent_id(agent_id: str) -> bool:
+    """
+    Validate agent ID format.
+
+    Args:
+        agent_id: The agent ID to validate
+
+    Returns:
+        True if valid, False otherwise
+    """
+    if not agent_id or not isinstance(agent_id, str):
+        return False
+
+    # Check for dangerous characters
+    if any(c in agent_id for c in [".", "/", "\\", "\x00", ";", "|", "&"]):
+        return False
+
+    # Check length bounds
+    if len(agent_id) < 1 or len(agent_id) > 64:
+        return False
+
+    # Simple alphanumeric with some allowed chars
+    return bool(re.match(r"^[a-zA-Z0-9_@.-]+$", agent_id))
+
+
+def _validate_classification(classification: str | None) -> bool:
+    """
+    Validate classification parameter.
+
+    Args:
+        classification: The classification to validate
+
+    Returns:
+        True if valid, False otherwise
+    """
+    if classification is None:
+        return True
+    if not isinstance(classification, str):
+        return False
+    return classification.upper() in ("PUBLIC", "INTERNAL", "SENSITIVE")
+
+
+class RateLimiter:
+    """Simple in-memory rate limiter by IP address."""
+
+    def __init__(self, window_seconds: int = 60, max_requests: int = 100):
+        self.window_seconds = window_seconds
+        self.max_requests = max_requests
+        self._requests: dict[str, list[float]] = defaultdict(list)
+
+    def is_allowed(self, client_ip: str) -> bool:
+        """
+        Check if request is allowed for this IP.
+
+        Args:
+            client_ip: The client IP address
+
+        Returns:
+            True if allowed, False if rate limited
+        """
+        now = time.time()
+        window_start = now - self.window_seconds
+
+        # Clean old entries
+        self._requests[client_ip] = [ts for ts in self._requests[client_ip] if ts > window_start]
+
+        # Check if over limit
+        if len(self._requests[client_ip]) >= self.max_requests:
+            logger.warning("rate_limit_exceeded", client_ip=client_ip)
+            return False
+
+        # Record this request
+        self._requests[client_ip].append(now)
+        return True
+
+    def get_remaining(self, client_ip: str) -> int:
+        """Get remaining requests for this IP."""
+        now = time.time()
+        window_start = now - self.window_seconds
+        recent = [ts for ts in self._requests[client_ip] if ts > window_start]
+        return max(0, self.max_requests - len(recent))
+
+
+class APIKeyAuth:
+    """Simple API key authentication."""
+
+    def __init__(self, api_key: str | None = None):
+        """
+        Initialize API key auth.
+
+        Args:
+            api_key: The API key to require. If None, reads from
+                     EMPATHY_MEMORY_API_KEY env var. If still None, auth is disabled.
+        """
+        self.api_key = api_key or os.environ.get("EMPATHY_MEMORY_API_KEY")
+        self.enabled = bool(self.api_key)
+        if self.enabled:
+            # Store hash of API key for comparison
+            self._key_hash = hashlib.sha256(self.api_key.encode()).hexdigest()
+            logger.info("api_key_auth_enabled")
+        else:
+            self._key_hash = None
+            logger.info("api_key_auth_disabled", reason="no_key_configured")
+
+    def is_valid(self, provided_key: str | None) -> bool:
+        """
+        Check if provided API key is valid.
+
+        Args:
+            provided_key: The key provided in the request
+
+        Returns:
+            True if valid or auth disabled, False otherwise
+        """
+        if not self.enabled:
+            return True
+
+        if not provided_key:
+            return False
+
+        # Constant-time comparison via hash
+        provided_hash = hashlib.sha256(provided_key.encode()).hexdigest()
+        return provided_hash == self._key_hash
 
 
 @dataclass
@@ -534,18 +707,80 @@ class MemoryAPIHandler(BaseHTTPRequestHandler):
     """HTTP request handler for Memory Control Panel API."""
 
     panel: MemoryControlPanel | None = None  # Set by server
+    rate_limiter: RateLimiter | None = None  # Set by server
+    api_auth: APIKeyAuth | None = None  # Set by server
+    allowed_origins: list[str] | None = None  # Set by server for CORS
 
     def log_message(self, format, *args):
         """Override to use structlog instead of stderr."""
         logger.debug("api_request", message=format % args)
 
+    def _get_client_ip(self) -> str:
+        """Get client IP address, handling proxies."""
+        # Check for X-Forwarded-For header (behind proxy)
+        forwarded = self.headers.get("X-Forwarded-For")
+        if forwarded:
+            # Take the first IP in the chain
+            return forwarded.split(",")[0].strip()
+        # Fall back to direct connection
+        return self.client_address[0]
+
+    def _check_rate_limit(self) -> bool:
+        """Check if request should be rate limited."""
+        if self.rate_limiter is None:
+            return True
+        return self.rate_limiter.is_allowed(self._get_client_ip())
+
+    def _check_auth(self) -> bool:
+        """Check API key authentication."""
+        if self.api_auth is None or not self.api_auth.enabled:
+            return True
+
+        # Check Authorization header
+        auth_header = self.headers.get("Authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            token = auth_header[7:]
+            return self.api_auth.is_valid(token)
+
+        # Check X-API-Key header
+        api_key = self.headers.get("X-API-Key")
+        if api_key:
+            return self.api_auth.is_valid(api_key)
+
+        return False
+
+    def _get_cors_origin(self) -> str:
+        """Get appropriate CORS origin header value."""
+        if self.allowed_origins is None:
+            # Default: allow localhost only
+            origin = self.headers.get("Origin", "")
+            if origin.startswith("http://localhost") or origin.startswith("https://localhost"):
+                return origin
+            return "http://localhost:8765"
+
+        if "*" in self.allowed_origins:
+            return "*"
+
+        origin = self.headers.get("Origin", "")
+        if origin in self.allowed_origins:
+            return origin
+
+        return self.allowed_origins[0] if self.allowed_origins else ""
+
     def _send_json(self, data: Any, status: int = 200):
         """Send JSON response."""
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
-        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Origin", self._get_cors_origin())
         self.send_header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-API-Key")
+
+        # Add rate limit headers if available
+        if self.rate_limiter:
+            remaining = self.rate_limiter.get_remaining(self._get_client_ip())
+            self.send_header("X-RateLimit-Remaining", str(remaining))
+            self.send_header("X-RateLimit-Limit", str(self.rate_limiter.max_requests))
+
         self.end_headers()
         self.wfile.write(json.dumps(data).encode())
 
@@ -556,15 +791,26 @@ class MemoryAPIHandler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         """Handle CORS preflight."""
         self.send_response(200)
-        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Origin", self._get_cors_origin())
         self.send_header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-API-Key")
         self.end_headers()
 
     def do_GET(self):
         """Handle GET requests."""
+        # Rate limiting check
+        if not self._check_rate_limit():
+            self._send_error("Rate limit exceeded. Try again later.", 429)
+            return
+
+        # Authentication check (skip for ping endpoint)
         parsed = urlparse(self.path)
         path = parsed.path
+
+        if path != "/api/ping" and not self._check_auth():
+            self._send_error("Unauthorized. Provide valid API key.", 401)
+            return
+
         query = parse_qs(parsed.query)
 
         if path == "/api/ping":
@@ -582,12 +828,30 @@ class MemoryAPIHandler(BaseHTTPRequestHandler):
 
         elif path == "/api/patterns":
             classification = query.get("classification", [None])[0]
-            limit = int(query.get("limit", [100])[0])
+
+            # Validate classification
+            if not _validate_classification(classification):
+                self._send_error("Invalid classification. Use PUBLIC, INTERNAL, or SENSITIVE.", 400)
+                return
+
+            # Validate and sanitize limit
+            try:
+                limit = int(query.get("limit", [100])[0])
+                limit = max(1, min(limit, 1000))  # Clamp between 1 and 1000
+            except (ValueError, TypeError):
+                limit = 100
+
             patterns = self.panel.list_patterns(classification=classification, limit=limit)
             self._send_json(patterns)
 
         elif path == "/api/patterns/export":
             classification = query.get("classification", [None])[0]
+
+            # Validate classification
+            if not _validate_classification(classification):
+                self._send_error("Invalid classification. Use PUBLIC, INTERNAL, or SENSITIVE.", 400)
+                return
+
             patterns = self.panel.list_patterns(classification=classification)
             export_data = {
                 "exported_at": datetime.utcnow().isoformat() + "Z",
@@ -598,6 +862,12 @@ class MemoryAPIHandler(BaseHTTPRequestHandler):
 
         elif path.startswith("/api/patterns/"):
             pattern_id = path.split("/")[-1]
+
+            # Validate pattern ID
+            if not _validate_pattern_id(pattern_id):
+                self._send_error("Invalid pattern ID format", 400)
+                return
+
             patterns = self.panel.list_patterns()
             pattern = next((p for p in patterns if p.get("pattern_id") == pattern_id), None)
             if pattern:
@@ -610,14 +880,33 @@ class MemoryAPIHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         """Handle POST requests."""
+        # Rate limiting check
+        if not self._check_rate_limit():
+            self._send_error("Rate limit exceeded. Try again later.", 429)
+            return
+
+        # Authentication check
+        if not self._check_auth():
+            self._send_error("Unauthorized. Provide valid API key.", 401)
+            return
+
         parsed = urlparse(self.path)
         path = parsed.path
 
-        # Read body if present
+        # Read body if present (with size limit to prevent DoS)
         content_length = int(self.headers.get("Content-Length", 0))
+        max_body_size = 1024 * 1024  # 1MB limit
+        if content_length > max_body_size:
+            self._send_error("Request body too large", 413)
+            return
+
         body = {}
         if content_length > 0:
-            body = json.loads(self.rfile.read(content_length).decode())
+            try:
+                body = json.loads(self.rfile.read(content_length).decode())
+            except (json.JSONDecodeError, UnicodeDecodeError):
+                self._send_error("Invalid JSON body", 400)
+                return
 
         if path == "/api/redis/start":
             status = self.panel.start_redis(verbose=False)
@@ -639,6 +928,12 @@ class MemoryAPIHandler(BaseHTTPRequestHandler):
 
         elif path == "/api/memory/clear":
             agent_id = body.get("agent_id", "admin")
+
+            # Validate agent ID
+            if not _validate_agent_id(agent_id):
+                self._send_error("Invalid agent ID format", 400)
+                return
+
             deleted = self.panel.clear_short_term(agent_id)
             self._send_json({"keys_deleted": deleted})
 
@@ -647,22 +942,89 @@ class MemoryAPIHandler(BaseHTTPRequestHandler):
 
     def do_DELETE(self):
         """Handle DELETE requests."""
+        # Rate limiting check
+        if not self._check_rate_limit():
+            self._send_error("Rate limit exceeded. Try again later.", 429)
+            return
+
+        # Authentication check
+        if not self._check_auth():
+            self._send_error("Unauthorized. Provide valid API key.", 401)
+            return
+
         parsed = urlparse(self.path)
         path = parsed.path
 
         if path.startswith("/api/patterns/"):
             pattern_id = path.split("/")[-1]
+
+            # Validate pattern ID to prevent path traversal
+            if not _validate_pattern_id(pattern_id):
+                self._send_error("Invalid pattern ID format", 400)
+                return
+
             deleted = self.panel.delete_pattern(pattern_id)
             self._send_json({"success": deleted})
         else:
             self._send_error("Not found", 404)
 
 
-def run_api_server(panel: MemoryControlPanel, host: str = "localhost", port: int = 8765):
-    """Run the Memory API server."""
+def run_api_server(
+    panel: MemoryControlPanel,
+    host: str = "localhost",
+    port: int = 8765,
+    api_key: str | None = None,
+    enable_rate_limit: bool = True,
+    rate_limit_requests: int = 100,
+    rate_limit_window: int = 60,
+    ssl_certfile: str | None = None,
+    ssl_keyfile: str | None = None,
+    allowed_origins: list[str] | None = None,
+):
+    """
+    Run the Memory API server with security features.
+
+    Args:
+        panel: MemoryControlPanel instance
+        host: Host to bind to
+        port: Port to bind to
+        api_key: API key for authentication (or set EMPATHY_MEMORY_API_KEY env var)
+        enable_rate_limit: Enable rate limiting
+        rate_limit_requests: Max requests per window per IP
+        rate_limit_window: Rate limit window in seconds
+        ssl_certfile: Path to SSL certificate file for HTTPS
+        ssl_keyfile: Path to SSL key file for HTTPS
+        allowed_origins: List of allowed CORS origins (None = localhost only)
+    """
+    # Set up handler class attributes
     MemoryAPIHandler.panel = panel
+    MemoryAPIHandler.allowed_origins = allowed_origins
+
+    # Set up rate limiting
+    if enable_rate_limit:
+        MemoryAPIHandler.rate_limiter = RateLimiter(
+            window_seconds=rate_limit_window, max_requests=rate_limit_requests
+        )
+    else:
+        MemoryAPIHandler.rate_limiter = None
+
+    # Set up API key authentication
+    MemoryAPIHandler.api_auth = APIKeyAuth(api_key)
 
     server = HTTPServer((host, port), MemoryAPIHandler)
+
+    # Enable HTTPS if certificates provided
+    use_https = False
+    if ssl_certfile and ssl_keyfile:
+        if Path(ssl_certfile).exists() and Path(ssl_keyfile).exists():
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            context.load_cert_chain(ssl_certfile, ssl_keyfile)
+            server.socket = context.wrap_socket(server.socket, server_side=True)
+            use_https = True
+        else:
+            logger.warning("ssl_cert_not_found", certfile=ssl_certfile, keyfile=ssl_keyfile)
+
+    protocol = "https" if use_https else "http"
 
     # Graceful shutdown handler
     def shutdown_handler(signum, frame):
@@ -682,9 +1044,19 @@ def run_api_server(panel: MemoryControlPanel, host: str = "localhost", port: int
     print(f"\n{'=' * 50}")
     print("EMPATHY MEMORY API SERVER")
     print(f"{'=' * 50}")
-    print(f"\nServer running at http://{host}:{port}")
+    print(f"\nServer running at {protocol}://{host}:{port}")
+
+    # Security status
+    print("\nSecurity:")
+    print(f"  HTTPS:        {'✓ Enabled' if use_https else '✗ Disabled'}")
+    print(f"  API Key Auth: {'✓ Enabled' if MemoryAPIHandler.api_auth.enabled else '✗ Disabled'}")
+    print(
+        f"  Rate Limit:   {'✓ Enabled (' + str(rate_limit_requests) + '/min)' if enable_rate_limit else '✗ Disabled'}"
+    )
+    print(f"  CORS Origins: {allowed_origins or ['localhost']}")
+
     print("\nEndpoints:")
-    print("  GET  /api/ping           Health check")
+    print("  GET  /api/ping           Health check (no auth)")
     print("  GET  /api/status         Memory system status")
     print("  GET  /api/stats          Detailed statistics")
     print("  GET  /api/health         Health check with recommendations")
@@ -693,6 +1065,12 @@ def run_api_server(panel: MemoryControlPanel, host: str = "localhost", port: int
     print("  POST /api/redis/start    Start Redis")
     print("  POST /api/redis/stop     Stop Redis")
     print("  POST /api/memory/clear   Clear short-term memory")
+
+    if MemoryAPIHandler.api_auth.enabled:
+        print("\nAuthentication:")
+        print("  Add header: Authorization: Bearer <your-api-key>")
+        print("  Or header:  X-API-Key: <your-api-key>")
+
     print("\nPress Ctrl+C to stop\n")
 
     server.serve_forever()
@@ -770,6 +1148,20 @@ Quick Start:
     parser.add_argument("--json", action="store_true", help="Output in JSON format")
     parser.add_argument("-v", "--verbose", action="store_true", help="Show debug output")
 
+    # Security options (for api/serve commands)
+    parser.add_argument(
+        "--api-key", help="API key for authentication (or set EMPATHY_MEMORY_API_KEY env var)"
+    )
+    parser.add_argument("--no-rate-limit", action="store_true", help="Disable rate limiting")
+    parser.add_argument(
+        "--rate-limit", type=int, default=100, help="Max requests per minute per IP (default: 100)"
+    )
+    parser.add_argument("--ssl-cert", help="Path to SSL certificate file for HTTPS")
+    parser.add_argument("--ssl-key", help="Path to SSL key file for HTTPS")
+    parser.add_argument(
+        "--cors-origins", help="Comma-separated list of allowed CORS origins (default: localhost)"
+    )
+
     args = parser.parse_args()
 
     # Configure logging (quiet by default)
@@ -838,7 +1230,22 @@ Quick Start:
         print(f"✓ Exported {count} patterns to {output}")
 
     elif args.command == "api":
-        run_api_server(panel, host=args.host, port=args.api_port)
+        # Parse CORS origins
+        cors_origins = None
+        if args.cors_origins:
+            cors_origins = [o.strip() for o in args.cors_origins.split(",")]
+
+        run_api_server(
+            panel,
+            host=args.host,
+            port=args.api_port,
+            api_key=args.api_key,
+            enable_rate_limit=not args.no_rate_limit,
+            rate_limit_requests=args.rate_limit,
+            ssl_certfile=args.ssl_cert,
+            ssl_keyfile=args.ssl_key,
+            allowed_origins=cors_origins,
+        )
 
     elif args.command == "serve":
         # Start Redis first
@@ -854,8 +1261,23 @@ Quick Start:
             print(f"  ⚠ Redis not available: {redis_status.message}")
             print("      (Continuing with mock memory)")
 
+        # Parse CORS origins
+        cors_origins = None
+        if args.cors_origins:
+            cors_origins = [o.strip() for o in args.cors_origins.split(",")]
+
         print("\n[2/2] Starting API server...")
-        run_api_server(panel, host=args.host, port=args.api_port)
+        run_api_server(
+            panel,
+            host=args.host,
+            port=args.api_port,
+            api_key=args.api_key,
+            enable_rate_limit=not args.no_rate_limit,
+            rate_limit_requests=args.rate_limit,
+            ssl_certfile=args.ssl_cert,
+            ssl_keyfile=args.ssl_key,
+            allowed_origins=cors_origins,
+        )
 
 
 if __name__ == "__main__":
