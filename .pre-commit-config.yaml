@@ -84,7 +84,7 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
-        exclude: mkdocs.yml  # Uses custom YAML constructors
+        exclude: ^mkdocs.*\.yml$  # Uses custom YAML constructors
       - id: check-added-large-files
         args: ['--maxkb=1000']
       - id: check-merge-conflict
@@ -106,7 +106,7 @@ repos:
         language: python
         pass_filenames: false
         files: ^patterns/.*\.json$
-        stages: [commit]
+        stages: [manual]  # Requires project installation
 
       # Pattern-based code review (optional - enable with 'stages: [commit]')
       # Reviews staged code against historical bug patterns
