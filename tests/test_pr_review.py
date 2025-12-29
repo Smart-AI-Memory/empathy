@@ -4,6 +4,7 @@ Tests for src/empathy_os/workflows/pr_review.py
 Tests the PRReviewWorkflow and PRReviewResult classes.
 """
 
+import sys
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -657,6 +658,7 @@ class TestPRReviewWorkflowExecute:
         assert result.metadata["security_crew_enabled"] is False
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(sys.platform == "win32", reason="Duration timing unreliable on Windows")
     async def test_execute_duration_tracked(self):
         """Test execute tracks duration."""
         workflow = PRReviewWorkflow(

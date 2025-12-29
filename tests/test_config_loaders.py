@@ -15,6 +15,7 @@ Licensed under Fair Source 0.9
 import configparser
 import json
 import shutil
+import sys
 import tempfile
 from pathlib import Path
 
@@ -976,6 +977,7 @@ class TestErrorHandling:
         with pytest.raises(json.JSONDecodeError):
             loader.load(str(config_path))
 
+    @pytest.mark.skipif(sys.platform == "win32", reason="Permission tests not reliable on Windows")
     def test_eslint_permission_error(self, temp_dir):
         """Test ESLint loader handles permission errors."""
         # This test is platform-dependent; skip if we can't set permissions

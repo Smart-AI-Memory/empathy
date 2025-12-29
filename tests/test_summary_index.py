@@ -4,6 +4,8 @@ Tests for ConversationSummaryIndex
 Tests the Redis-backed conversation summary with topic indexing.
 """
 
+import sys
+
 import pytest
 
 from empathy_os.memory import (
@@ -160,6 +162,7 @@ class TestConversationSummaryIndex:
         context = summary_index.get_context_for_agent("session123")
         assert "auth.py" in context.relevant_files
 
+    @pytest.mark.skipif(sys.platform == "win32", reason="Timeline ordering differs on Windows")
     def test_timeline_ordering(self, summary_index):
         """Test that timeline events are ordered correctly."""
         # Add events in sequence

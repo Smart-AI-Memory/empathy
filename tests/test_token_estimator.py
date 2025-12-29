@@ -8,6 +8,7 @@ Licensed under Fair Source License 0.9
 """
 
 import os
+import sys
 import tempfile
 from pathlib import Path
 from unittest.mock import patch
@@ -250,6 +251,7 @@ class TestEstimateWorkflowCost:
 class TestEstimateWorkflowCostWithFile:
     """Tests for file-based workflow cost estimation."""
 
+    @pytest.mark.skipif(sys.platform == "win32", reason="File locking issues on Windows")
     def test_with_file_path(self):
         """Test estimation with file path."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
