@@ -246,7 +246,7 @@ class TestModelInfo:
             input_cost_per_million=1.0,
             output_cost_per_million=2.0,
         )
-        with pytest.raises(Exception):  # FrozenInstanceError
+        with pytest.raises((AttributeError, TypeError)):  # FrozenInstanceError
             model.id = "modified"
 
 
