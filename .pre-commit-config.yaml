@@ -64,6 +64,8 @@ repos:
             empathy_llm_toolkit/security/secrets_detector\.py$|
             empathy_llm_toolkit/security/secure_memdocs_example\.py$|
             demo_security_complete\.py$|
+            docs/|
+            examples/|
             anthropic-cookbook/
           )
 
