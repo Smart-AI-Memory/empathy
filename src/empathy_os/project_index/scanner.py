@@ -361,12 +361,12 @@ class ProjectScanner:
 
         for node in ast.walk(tree):
             # Check for docstrings
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Module)):
+            if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef | ast.Module):
                 if ast.get_docstring(node):
                     result["has_docstrings"] = True
 
             # Check for type hints
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
                 if node.returns or any(arg.annotation for arg in node.args.args):
                     result["has_type_hints"] = True
 
@@ -376,7 +376,9 @@ class ProjectScanner:
 
                 # Simple complexity: count branches
                 for child in ast.walk(node):
-                    if isinstance(child, (ast.If, ast.For, ast.While, ast.Try, ast.ExceptHandler)):
+                    if isinstance(
+                        child, ast.If | ast.For | ast.While | ast.Try | ast.ExceptHandler
+                    ):
                         result["complexity"] += 1.0
 
             # Track imports

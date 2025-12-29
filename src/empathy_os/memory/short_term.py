@@ -1624,7 +1624,7 @@ class RedisShortTermMemory:
             "agent_id": credentials.agent_id,
             "timestamp": datetime.now().isoformat(),
             **{
-                str(k): json.dumps(v) if isinstance(v, (dict, list)) else str(v)
+                str(k): json.dumps(v) if isinstance(v, dict | list) else str(v)
                 for k, v in data.items()
             },
         }
