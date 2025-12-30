@@ -95,7 +95,29 @@ export type FilePickerMessageType =
 // =============================================================================
 
 /**
- * Predefined file filters for consistency across panels
+ * Predefined file filters for consistency across panels.
+ *
+ * @example
+ * ```typescript
+ * // Use in showFilePicker options
+ * const files = await service.showFilePicker({
+ *     filters: FILE_FILTERS.PYTHON,
+ *     title: 'Select Python file'
+ * });
+ *
+ * // Or in webview message
+ * vscode.postMessage({
+ *     type: 'filePicker:selectFile',
+ *     options: { filters: { 'Python Files': ['py'] } }
+ * });
+ * ```
+ *
+ * @property PYTHON - Filter for `.py` files only
+ * @property TYPESCRIPT - Filter for `.ts` and `.tsx` files
+ * @property JAVASCRIPT - Filter for `.js` and `.jsx` files
+ * @property CODE_ALL - Common code files (py, ts, tsx, js, jsx) plus all files
+ * @property DOCUMENTS - Documents (md, txt, json, yaml) plus code files
+ * @property ALL - All files (no filtering)
  */
 export const FILE_FILTERS: { [key: string]: FilePickerFilters } = {
     PYTHON: { 'Python Files': ['py'] },
@@ -118,7 +140,31 @@ export const FILE_FILTERS: { [key: string]: FilePickerFilters } = {
 // =============================================================================
 
 /**
- * Singleton service for standardized file/folder selection
+ * Singleton service for standardized file/folder selection across all panels.
+ *
+ * Provides a consistent API for:
+ * - File selection (single or multiple)
+ * - Folder selection
+ * - Getting the currently active file in the editor
+ * - Getting the project/workspace root
+ *
+ * @example
+ * ```typescript
+ * // Get the singleton instance
+ * const service = getFilePickerService();
+ *
+ * // Show file picker
+ * const files = await service.showFilePicker({
+ *     filters: FILE_FILTERS.PYTHON,
+ *     title: 'Select Python file'
+ * });
+ *
+ * // Get active file with language filter
+ * const activeFile = service.getActiveFile('python');
+ *
+ * // Get project root
+ * const root = service.getProjectRoot();
+ * ```
  */
 export class FilePickerService {
     private static _instance: FilePickerService | null = null;
@@ -264,10 +310,37 @@ export function getFilePickerService(): FilePickerService {
 // =============================================================================
 
 /**
- * Create a message handler for file picker operations
- * @param service FilePickerService instance
- * @param postMessage Function to send messages to webview
+ * Create a message handler for file picker operations.
+ *
+ * Use this factory to create a handler that routes `filePicker:*` messages
+ * from the webview to the appropriate FilePickerService methods.
+ *
+ * @param service - FilePickerService instance (use getFilePickerService())
+ * @param postMessage - Function to send FilePickerResponse back to webview
  * @returns Handler function that returns true if message was handled
+ *
+ * @example
+ * ```typescript
+ * // In your panel's resolveWebviewView method:
+ * this._handleFilePicker = createFilePickerMessageHandler(
+ *     this._filePickerService,
+ *     (msg: FilePickerResponse) => {
+ *         if (msg.type === 'filePicker:result' && msg.success && msg.result) {
+ *             const result = Array.isArray(msg.result) ? msg.result[0] : msg.result;
+ *             webviewView.webview.postMessage({
+ *                 type: 'pathSelected',
+ *                 path: result.path
+ *             });
+ *         }
+ *     }
+ * );
+ *
+ * // In your message handler:
+ * if (message.type?.startsWith('filePicker:')) {
+ *     await this._handleFilePicker?.(message);
+ *     return;
+ * }
+ * ```
  */
 export function createFilePickerMessageHandler(
     service: FilePickerService,

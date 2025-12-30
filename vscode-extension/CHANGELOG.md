@@ -18,6 +18,18 @@ All notable changes to the "Empathy Framework" extension will be documented in t
   - Findings persist across VS Code restarts
   - File watcher auto-refreshes diagnostics
 - **Run Security Scan Command** - `Empathy: Run Security Scan` from command palette
+- **FilePickerService** - Centralized file/folder selection across all panels
+  - Singleton service with consistent API for all panels
+  - Standardized `filePicker:*` message protocol
+  - Four selection modes: File, Folder, Active File, Project Root
+  - Predefined file filters (PYTHON, CODE_ALL, DOCUMENTS, ALL)
+  - Uses OS-native dialogs via `vscode.window.showOpenDialog()`
+
+### Changed
+
+- **RefactorAdvisorPanel** - Added Folder and Project buttons for broader scope selection
+- **ResearchSynthesisPanel** - Added Active and Project buttons for quick source addition
+- **TestGeneratorPanel** - Input field now starts empty with placeholder (was ".")
 
 ## [1.2.0] - 2025-12-29
 
