@@ -1395,6 +1395,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
 
         const displayName = workflowNames[workflowName] || workflowName;
         const timestamp = new Date().toLocaleString();
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || '';
 
         // Format the report as markdown
         let content = `# ${displayName} Report\n\n`;
@@ -1404,8 +1405,12 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         }
         content += `\n---\n\n`;
 
+        // Special formatting for sync-claude output
+        if (workflowName === 'sync-claude') {
+            content = this._formatSyncClaudeReport(output, timestamp, workspaceFolder);
+        }
         // Try to parse as JSON for structured formatting, otherwise use raw output
-        try {
+        else try {
             const parsed = JSON.parse(output);
             content += this._formatJsonReport(parsed);
         } catch {
@@ -1500,6 +1505,81 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         if (!content) {
             content = '```json\n' + JSON.stringify(data, null, 2) + '\n```\n';
         }
+
+        return content;
+    }
+
+    /**
+     * Format sync-claude output with enhanced display:
+     * - Clickable file links
+     * - Pattern counts by category
+     * - Sample patterns preview
+     */
+    private _formatSyncClaudeReport(output: string, timestamp: string, workspaceFolder: string): string {
+        let content = `# 🔄 Sync to Claude Code\n\n`;
+        content += `**Generated:** ${timestamp}\n\n`;
+
+        // Parse categories from output (format: "✓ category: N patterns → path")
+        const categoryRegex = /✓\s+(\w+):\s+(\d+)\s+patterns\s+→\s+(.+\.md)/g;
+        const categories: Array<{ name: string; count: number; file: string }> = [];
+        let match;
+        while ((match = categoryRegex.exec(output)) !== null) {
+            categories.push({ name: match[1], count: parseInt(match[2]), file: match[3] });
+        }
+
+        // Extract total from output
+        const totalMatch = output.match(/Total:\s+(\d+)\s+patterns/);
+        const totalPatterns = totalMatch ? parseInt(totalMatch[1]) : categories.reduce((sum, c) => sum + c.count, 0);
+
+        // Summary section
+        content += `## ✅ Summary\n\n`;
+        content += `**${totalPatterns} patterns** synced to Claude Code rules.\n\n`;
+
+        // Categories table with clickable links
+        if (categories.length > 0) {
+            content += `## 📁 Pattern Categories\n\n`;
+            content += `| Category | Patterns | File |\n`;
+            content += `|----------|----------|------|\n`;
+            for (const cat of categories) {
+                const fileName = cat.file.split('/').pop() || cat.file;
+                content += `| ${cat.name} | ${cat.count} | [${fileName}](${cat.file}) |\n`;
+            }
+            content += `\n`;
+        }
+
+        // Load and show sample patterns
+        content += `## 🔍 Sample Patterns\n\n`;
+        try {
+            const debuggingPath = path.join(workspaceFolder, '.claude', 'rules', 'empathy', 'debugging.md');
+            if (fs.existsSync(debuggingPath)) {
+                const debugContent = fs.readFileSync(debuggingPath, 'utf-8');
+                // Extract first 3 patterns (look for "### " headers after "## Bug Fix Patterns")
+                const patternRegex = /###\s+(\w+)\n-\s+\*\*Root cause\*\*:\s+(.+)\n/g;
+                const patterns: string[] = [];
+                let patMatch;
+                while ((patMatch = patternRegex.exec(debugContent)) !== null && patterns.length < 3) {
+                    patterns.push(`- **${patMatch[1]}**: ${patMatch[2]}`);
+                }
+                if (patterns.length > 0) {
+                    content += `Recent debugging patterns:\n\n${patterns.join('\n')}\n\n`;
+                } else {
+                    content += `_No sample patterns available._\n\n`;
+                }
+            } else {
+                content += `_Pattern files will be available after sync._\n\n`;
+            }
+        } catch {
+            content += `_Could not load sample patterns._\n\n`;
+        }
+
+        // Quick actions section
+        content += `## ⚡ Quick Actions\n\n`;
+        content += `- 📂 [Open Rules Folder](.claude/rules/empathy/)\n`;
+        content += `- 🔄 Run \`empathy sync-claude\` to re-sync\n`;
+        content += `- 📖 Patterns are now available to Claude Code\n\n`;
+
+        // Raw output (collapsed)
+        content += `<details>\n<summary>📋 Raw Output</summary>\n\n\`\`\`\n${output}\n\`\`\`\n</details>\n`;
 
         return content;
     }
