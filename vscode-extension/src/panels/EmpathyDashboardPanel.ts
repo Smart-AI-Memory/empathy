@@ -54,10 +54,17 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     try {
                         // Quick Actions that should open in webview instead of terminal
                         const webviewCommands: Record<string, { cmd: string; title: string }> = {
+                            // Power tab - Quick Actions
                             'morning': { cmd: 'morning', title: 'Morning Briefing' },
                             'ship': { cmd: 'ship', title: 'Pre-Ship Check' },
                             'learn': { cmd: 'learn --analyze 20', title: 'Learn Patterns' },
-                            'run-tests': { cmd: 'ship --tests-only', title: 'Test Results' }
+                            'run-tests': { cmd: 'ship --tests-only', title: 'Test Results' },
+                            // Health tab - Health Actions
+                            'runScan': { cmd: 'workflow run health-check', title: 'Deep Scan' },
+                            'runTests': { cmd: 'ship --tests-only', title: 'Test Results' },
+                            'securityScan': { cmd: 'ship --security-only', title: 'Security Scan' },
+                            'fixAll': { cmd: 'fix-all', title: 'Auto Fix Results' },
+                            'fixLint': { cmd: 'fix-all --lint-only', title: 'Lint Fix Results' },
                         };
 
                         if (webviewCommands[message.command]) {
@@ -1391,6 +1398,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             'ship': 'Pre-Ship Check',
             'learn': 'Learn Patterns',
             'sync-claude': 'Sync to Claude Code',
+            // Health Actions
+            'fix-all': 'Auto Fix',
+            'security': 'Security Scan',
         };
 
         const displayName = workflowNames[workflowName] || workflowName;
