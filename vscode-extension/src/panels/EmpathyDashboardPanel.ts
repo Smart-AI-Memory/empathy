@@ -2023,7 +2023,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         <button class="tab active" data-tab="power">Power</button>
         <button class="tab" data-tab="health">Health</button>
         <button class="tab" data-tab="costs">Costs</button>
-        <button class="tab" data-tab="workflows">Workflows <span style="font-size: 9px; opacity: 0.6; font-weight: normal;">(Beta)</span></button>
+        <button class="tab" data-tab="workflows">Workflows</button>
     </div>
 
     <!-- Power Tab -->
@@ -2082,7 +2082,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         </div>
 
         <div class="card" style="margin-top: 12px">
-            <div class="card-title">Workflows</div>
+            <div class="card-title">Workflows <span style="font-size: 10px; opacity: 0.6;">(Beta)</span></div>
             <div class="actions-grid workflow-grid">
                 <button class="action-btn workflow-btn" data-workflow="pro-review">
                     <span class="action-icon">&#x2B50;</span>
