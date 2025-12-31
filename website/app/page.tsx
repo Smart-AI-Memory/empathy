@@ -88,7 +88,7 @@ export default function Home() {
                 <TestsBadge />
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--border)] text-sm font-medium">
                   <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                  v3.4.0 Stable
+                  v3.5.6 Stable
                 </span>
               </div>
 
