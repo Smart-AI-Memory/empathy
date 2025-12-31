@@ -19,11 +19,14 @@ import * as fs from 'fs';
 import { PowerPanel } from './panels/PowerPanel';
 import { EmpathyDashboardProvider } from './panels/EmpathyDashboardPanel';
 import { MemoryPanelProvider } from './panels/MemoryPanelProvider';
-import { RefactorAdvisorPanel } from './panels/RefactorAdvisorPanel';
+// REMOVED in v3.5.5: Refactor Advisor panel - kept for future use
+// import { RefactorAdvisorPanel } from './panels/RefactorAdvisorPanel';
 import { ResearchSynthesisPanel } from './panels/ResearchSynthesisPanel';
 import { InitializeWizardPanel } from './panels/InitializeWizardPanel';
-import { TestGeneratorPanel } from './panels/TestGeneratorPanel';
-import { WorkflowWizardPanel } from './panels/WorkflowWizardPanel';
+// REMOVED in v3.5.5: Test Generator panel - kept for future use
+// import { TestGeneratorPanel } from './panels/TestGeneratorPanel';
+// HIDDEN in v3.5.5: Workflow Wizard panel - temporarily hidden
+// import { WorkflowWizardPanel } from './panels/WorkflowWizardPanel';
 import { DocAnalysisPanel } from './panels/DocAnalysisPanel';
 import { initializeProject, showWelcomeIfNeeded as showInitializeWelcome } from './commands/initializeProject';
 
@@ -102,19 +105,19 @@ export function activate(context: vscode.ExtensionContext) {
         )
     );
 
-    // Refactor Advisor panel - Interactive refactoring with 2-agent crew
-    const refactorAdvisorProvider = new RefactorAdvisorPanel(context.extensionUri, context);
-    context.subscriptions.push(
-        vscode.window.registerWebviewViewProvider(
-            RefactorAdvisorPanel.viewType,
-            refactorAdvisorProvider,
-            {
-                webviewOptions: {
-                    retainContextWhenHidden: true
-                }
-            }
-        )
-    );
+    // REMOVED in v3.5.5: Refactor Advisor panel - kept for future use
+    // const refactorAdvisorProvider = new RefactorAdvisorPanel(context.extensionUri, context);
+    // context.subscriptions.push(
+    //     vscode.window.registerWebviewViewProvider(
+    //         RefactorAdvisorPanel.viewType,
+    //         refactorAdvisorProvider,
+    //         {
+    //             webviewOptions: {
+    //                 retainContextWhenHidden: true
+    //             }
+    //         }
+    //     )
+    // );
 
     // Research Synthesis panel - Multi-document research and synthesis
     const researchSynthesisProvider = new ResearchSynthesisPanel(context.extensionUri, context);
@@ -130,27 +133,27 @@ export function activate(context: vscode.ExtensionContext) {
         )
     );
 
-    // Test Generator panel - Interactive test generation wizard
+    // REMOVED in v3.5.5: Test Generator panel - kept for future use
     // Opens in main editor area (not sidebar) using createOrShow pattern
-    context.subscriptions.push(
-        vscode.commands.registerCommand('empathy.openTestGenerator', () => {
-            TestGeneratorPanel.createOrShow(context.extensionUri);
-        })
-    );
+    // context.subscriptions.push(
+    //     vscode.commands.registerCommand('empathy.openTestGenerator', () => {
+    //         TestGeneratorPanel.createOrShow(context.extensionUri);
+    //     })
+    // );
 
-    // Workflow Wizard panel - Create new workflows from templates
-    const workflowWizardProvider = new WorkflowWizardPanel(context.extensionUri, context);
-    context.subscriptions.push(
-        vscode.window.registerWebviewViewProvider(
-            WorkflowWizardPanel.viewType,
-            workflowWizardProvider,
-            {
-                webviewOptions: {
-                    retainContextWhenHidden: true
-                }
-            }
-        )
-    );
+    // HIDDEN in v3.5.5: Workflow Wizard panel - temporarily hidden, kept for future use
+    // const workflowWizardProvider = new WorkflowWizardPanel(context.extensionUri, context);
+    // context.subscriptions.push(
+    //     vscode.window.registerWebviewViewProvider(
+    //         WorkflowWizardPanel.viewType,
+    //         workflowWizardProvider,
+    //         {
+    //             webviewOptions: {
+    //                 retainContextWhenHidden: true
+    //             }
+    //         }
+    //     )
+    // );
 
     // Register commands - existing
     const commands = [
@@ -178,8 +181,8 @@ export function activate(context: vscode.ExtensionContext) {
         { name: 'empathy.memory.refreshStatus', handler: () => { memoryProvider.refresh(); vscode.window.showInformationMessage('Memory status refreshed'); } },
         // Initialize wizard (accepts optional { force: true } to skip "already initialized" check)
         { name: 'empathy.initializeProject', handler: (options?: { force?: boolean }) => initializeProject(context, options) },
-        // Test Generator wizard
-        { name: 'empathy.testGenerator.show', handler: () => vscode.commands.executeCommand('empathy.openTestGenerator') },
+        // REMOVED in v3.5.5: Test Generator wizard
+        // { name: 'empathy.testGenerator.show', handler: () => vscode.commands.executeCommand('empathy.openTestGenerator') },
         // Workflow Wizard
         { name: 'empathy.workflowWizard.show', handler: () => vscode.commands.executeCommand('workflow-wizard.focus') },
     ];
@@ -239,6 +242,134 @@ export function activate(context: vscode.ExtensionContext) {
                 preview: false,
                 preserveFocus: false
             });
+        })
+    );
+
+    // Register quick workflow command - allows running any workflow directly with WebView output
+    context.subscriptions.push(
+        vscode.commands.registerCommand('empathy.runWorkflowQuick', async (workflowArg?: string) => {
+            const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+            if (!workspaceFolder) {
+                vscode.window.showErrorMessage('No workspace folder open');
+                return;
+            }
+
+            const workflows = [
+                { label: 'Code Review', value: 'code-review', icon: '$(eye)', type: 'file' },
+                { label: 'Bug Prediction', value: 'bug-predict', icon: '$(bug)', type: 'folder' },
+                { label: 'Security Audit', value: 'security-audit', icon: '$(shield)', type: 'folder' },
+                { label: 'Performance Audit', value: 'perf-audit', icon: '$(dashboard)', type: 'folder' },
+                { label: 'Refactoring Plan', value: 'refactor-plan', icon: '$(tools)', type: 'folder' },
+                { label: 'Health Check', value: 'health-check', icon: '$(heart)', type: 'folder' },
+                { label: 'PR Review', value: 'pr-review', icon: '$(git-pull-request)', type: 'folder' },
+                { label: 'Code Analysis', value: 'pro-review', icon: '$(code)', type: 'file' },
+                { label: 'Test Generation', value: 'test-gen', icon: '$(beaker)', type: 'folder' },
+                { label: 'Dependency Check', value: 'dependency-check', icon: '$(package)', type: 'folder' },
+                { label: 'Documentation', value: 'document-gen', icon: '$(book)', type: 'folder' },
+                { label: 'Research Synthesis', value: 'research-synthesis', icon: '$(search)', type: 'folder' },
+                { label: 'Release Prep', value: 'release-prep', icon: '$(rocket)', type: 'folder' },
+            ];
+
+            // Select workflow
+            let selectedWorkflow: typeof workflows[0] | undefined;
+            if (workflowArg) {
+                selectedWorkflow = workflows.find(w => w.value === workflowArg);
+            }
+            if (!selectedWorkflow) {
+                const pick = await vscode.window.showQuickPick(
+                    workflows.map(w => ({ ...w, label: `${w.icon} ${w.label}`, description: w.value })),
+                    { placeHolder: 'Select a workflow to run', ignoreFocusOut: true }
+                );
+                if (!pick) { return; }
+                selectedWorkflow = pick;
+            }
+
+            // Select target
+            let targetPath = '.';
+            if (selectedWorkflow.type === 'folder') {
+                const folderResult = await vscode.window.showQuickPick([
+                    { label: '$(folder) Entire Project', path: '.' },
+                    { label: '$(folder-opened) Select Folder...', path: '__browse__' }
+                ], { placeHolder: 'Select scope', ignoreFocusOut: true });
+
+                if (!folderResult) { return; }
+                if (folderResult.path === '__browse__') {
+                    const uri = await vscode.window.showOpenDialog({
+                        canSelectFiles: false, canSelectFolders: true, canSelectMany: false,
+                        defaultUri: vscode.Uri.file(workspaceFolder)
+                    });
+                    if (!uri?.[0]) { return; }
+                    targetPath = uri[0].fsPath;
+                }
+            } else {
+                const fileResult = await vscode.window.showQuickPick([
+                    { label: '$(file) Current File', path: '__active__' },
+                    { label: '$(folder) Entire Project', path: '.' },
+                    { label: '$(file-add) Select File...', path: '__browse__' }
+                ], { placeHolder: 'Select scope', ignoreFocusOut: true });
+
+                if (!fileResult) { return; }
+                if (fileResult.path === '__active__') {
+                    targetPath = vscode.window.activeTextEditor?.document.uri.fsPath || '.';
+                } else if (fileResult.path === '__browse__') {
+                    const uri = await vscode.window.showOpenDialog({
+                        canSelectFiles: true, canSelectFolders: false, canSelectMany: false,
+                        defaultUri: vscode.Uri.file(workspaceFolder)
+                    });
+                    if (!uri?.[0]) { return; }
+                    targetPath = uri[0].fsPath;
+                }
+            }
+
+            // Create WebView with loading spinner
+            const panel = vscode.window.createWebviewPanel(
+                'empathyWorkflow',
+                `${selectedWorkflow.label} Report`,
+                vscode.ViewColumn.One,
+                { enableScripts: true }
+            );
+
+            panel.webview.html = getLoadingHtml(selectedWorkflow.label, targetPath);
+
+            // Store last output for copy functionality
+            let lastOutput = '';
+
+            // Handle messages from WebView
+            panel.webview.onDidReceiveMessage(async (message) => {
+                console.log('[EmpathyWorkflow] Received message:', message);
+                switch (message.command) {
+                    case 'copy':
+                        await vscode.env.clipboard.writeText(lastOutput);
+                        vscode.window.showInformationMessage('Report copied to clipboard');
+                        break;
+                    case 'runAgain':
+                        console.log('[EmpathyWorkflow] Running workflow again');
+                        panel.webview.html = getLoadingHtml(selectedWorkflow!.label, targetPath);
+                        runWorkflow();
+                        break;
+                    case 'close':
+                        panel.dispose();
+                        break;
+                }
+            });
+
+            // Function to run the workflow
+            const runWorkflow = () => {
+                const config = vscode.workspace.getConfiguration('empathy');
+                const pythonPath = config.get<string>('pythonPath', 'python');
+                const inputKey = selectedWorkflow!.value === 'health-check' ? 'path' : 'target';
+                const args = ['-m', 'empathy_os.cli', 'workflow', 'run', selectedWorkflow!.value, '--input', JSON.stringify({ [inputKey]: targetPath })];
+
+                cp.execFile(pythonPath, args, { cwd: workspaceFolder, maxBuffer: 1024 * 1024 * 5 }, (error, stdout, stderr) => {
+                    const output = stdout || stderr || (error ? error.message : 'No output');
+                    lastOutput = output;
+                    const timestamp = new Date().toLocaleString();
+                    panel.webview.html = getReportHtml(selectedWorkflow!.label, targetPath, timestamp, output, error?.message || null, selectedWorkflow!.value);
+                });
+            };
+
+            // Run workflow initially
+            runWorkflow();
         })
     );
 
@@ -1448,4 +1579,284 @@ function showWelcomeIfNeeded(context: vscode.ExtensionContext): void {
         }
         context.globalState.update('hasShownWelcome', true);
     }
+}
+
+// ============================================================================
+// WebView HTML Helpers for Quick Workflow Command
+// ============================================================================
+
+function escapeHtml(text: string): string {
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function getLoadingHtml(displayName: string, targetPath: string): string {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${displayName} Report</title>
+    <style>
+        body {
+            font-family: var(--vscode-font-family);
+            background: var(--vscode-editor-background);
+            color: var(--vscode-editor-foreground);
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+        }
+        .container { text-align: center; max-width: 500px; }
+        h1 { color: var(--vscode-foreground); margin-bottom: 8px; font-size: 24px; }
+        .target { color: var(--vscode-descriptionForeground); font-size: 14px; margin-bottom: 40px; }
+        .spinner {
+            width: 60px; height: 60px;
+            border: 4px solid var(--vscode-input-border);
+            border-top-color: var(--vscode-button-background);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 40px auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .status { margin-top: 24px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>${displayName} Report</h1>
+        <div class="target">Target: ${escapeHtml(targetPath)}</div>
+        <div class="spinner"></div>
+        <div class="status">Generating report...</div>
+    </div>
+</body>
+</html>`;
+}
+
+function getReportHtml(displayName: string, targetPath: string, timestamp: string, output: string, errorMessage: string | null, _workflowName?: string): string {
+    const isError = errorMessage !== null;
+    const statusColor = isError ? 'var(--vscode-errorForeground)' : 'var(--vscode-testing-iconPassed)';
+    const statusText = isError ? 'Error' : 'Complete';
+    const statusIcon = isError ? '✗' : '✓';
+    const statusBg = isError ? 'rgba(241, 76, 76, 0.15)' : 'rgba(115, 201, 145, 0.15)';
+
+    // Simple markdown-like rendering for headers and code blocks
+    const formattedOutput = formatMarkdown(output);
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${displayName} Report</title>
+    <style>
+        body {
+            font-family: var(--vscode-font-family);
+            background: var(--vscode-editor-background);
+            color: var(--vscode-editor-foreground);
+            margin: 0;
+            padding: 24px;
+            line-height: 1.6;
+        }
+        .header {
+            border-bottom: 1px solid var(--vscode-input-border);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        h1 {
+            color: var(--vscode-foreground);
+            margin: 0;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+        .action-btn {
+            background: var(--vscode-button-secondaryBackground);
+            color: var(--vscode-button-secondaryForeground);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .action-btn:hover {
+            background: var(--vscode-button-secondaryHoverBackground);
+        }
+        .action-btn.primary {
+            background: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+        }
+        .action-btn.primary:hover {
+            background: var(--vscode-button-hoverBackground);
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            background: ${statusBg};
+            color: ${statusColor};
+        }
+        .meta {
+            display: flex;
+            gap: 24px;
+            font-size: 13px;
+            color: var(--vscode-descriptionForeground);
+        }
+        .content {
+            font-family: var(--vscode-editor-font-family);
+            font-size: 13px;
+        }
+        .content h2 {
+            color: var(--vscode-foreground);
+            border-bottom: 1px solid var(--vscode-input-border);
+            padding-bottom: 8px;
+            margin-top: 24px;
+        }
+        .content h3 {
+            color: var(--vscode-foreground);
+            margin-top: 20px;
+        }
+        .content pre {
+            background: var(--vscode-textCodeBlock-background);
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .content code {
+            background: var(--vscode-textCodeBlock-background);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: var(--vscode-editor-font-family);
+        }
+        .content ul, .content ol {
+            padding-left: 24px;
+        }
+        .content li {
+            margin: 4px 0;
+        }
+        .error-box {
+            background: rgba(241, 76, 76, 0.1);
+            border: 1px solid var(--vscode-errorForeground);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .error-title {
+            color: var(--vscode-errorForeground);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .footer {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--vscode-input-border);
+            font-size: 12px;
+            color: var(--vscode-descriptionForeground);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-top">
+            <h1>
+                ${displayName} Report
+                <span class="status-badge">${statusIcon} ${statusText}</span>
+            </h1>
+            <div class="actions">
+                <button class="action-btn" onclick="copyReport()">📋 Copy</button>
+                <button class="action-btn primary" onclick="runAgain()">🔄 Run Again</button>
+            </div>
+        </div>
+        <div class="meta">
+            <span>Target: ${escapeHtml(targetPath)}</span>
+            <span>Generated: ${timestamp}</span>
+        </div>
+    </div>
+    ${isError ? `
+    <div class="error-box">
+        <div class="error-title">Error Details</div>
+        <div>${escapeHtml(errorMessage)}</div>
+    </div>
+    ` : ''}
+    <div class="content">${formattedOutput}</div>
+    <div class="footer">Generated by Empathy Framework</div>
+    <script>
+        const vscode = acquireVsCodeApi();
+        function copyReport() {
+            vscode.postMessage({ command: 'copy' });
+        }
+        function runAgain() {
+            vscode.postMessage({ command: 'runAgain' });
+        }
+    </script>
+</body>
+</html>`;
+}
+
+function formatMarkdown(text: string): string {
+    // Escape HTML first
+    let html = escapeHtml(text);
+
+    // Code blocks (```...```)
+    html = html.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+
+    // Inline code (`...`)
+    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+    // Headers
+    html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+    html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+    html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+    // Bold (**...**)
+    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+    // Italic (*...*)
+    html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+    // Unordered lists (- item)
+    html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+    html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
+
+    // Line breaks
+    html = html.replace(/\n\n/g, '</p><p>');
+    html = '<p>' + html + '</p>';
+
+    // Clean up empty paragraphs
+    html = html.replace(/<p><\/p>/g, '');
+    html = html.replace(/<p>(<h[123]>)/g, '$1');
+    html = html.replace(/(<\/h[123]>)<\/p>/g, '$1');
+    html = html.replace(/<p>(<ul>)/g, '$1');
+    html = html.replace(/(<\/ul>)<\/p>/g, '$1');
+    html = html.replace(/<p>(<pre>)/g, '$1');
+    html = html.replace(/(<\/pre>)<\/p>/g, '$1');
+
+    return html;
 }

@@ -62,6 +62,60 @@
   <!-- Plausible Analytics - Privacy-respecting, no cookies -->
   <script defer data-domain="smartaimemory.com" src="https://plausible.io/js/script.js"></script>
 
+  <!-- Custom styles for "Run in Empathy" buttons -->
+  <style>
+    /* VS Code "Run in Empathy" button */
+    .empathy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      margin: 0.5rem 0.25rem;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: white !important;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 0.875rem;
+      text-decoration: none !important;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(79, 70, 229, 0.3);
+    }
+    .empathy-btn:hover {
+      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(79, 70, 229, 0.4);
+    }
+    .empathy-btn::before {
+      content: "▶";
+      font-size: 0.75rem;
+    }
+
+    /* Secondary style for terminal commands */
+    .empathy-btn-secondary {
+      background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+      box-shadow: 0 2px 4px rgba(71, 85, 105, 0.3);
+    }
+    .empathy-btn-secondary:hover {
+      background: linear-gradient(135deg, #475569 0%, #334155 100%);
+      box-shadow: 0 4px 8px rgba(71, 85, 105, 0.4);
+    }
+
+    /* Button group for multiple actions */
+    .empathy-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    /* Note about VS Code requirement */
+    .empathy-note {
+      font-size: 0.75rem;
+      color: var(--md-default-fg-color--light);
+      margin-top: 0.25rem;
+    }
+  </style>
+
   </head>
   
   
@@ -3185,10 +3239,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#empathy_os.config.EmpathyConfig.__post_init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __post_init__
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#empathy_os.config.EmpathyConfig.__repr__" class="md-nav__link">
     <span class="md-ellipsis">
       
         __repr__
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#empathy_os.config.EmpathyConfig.from_dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        from_dict
       
     </span>
   </a>
@@ -3796,6 +3872,24 @@
 <div class="doc doc-object doc-function">
 
 
+<h3 id="empathy_os.config.EmpathyConfig.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+<a href="#empathy_os.config.EmpathyConfig.__post_init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Post-initialization validation.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h3 id="empathy_os.config.EmpathyConfig.__repr__" class="doc doc-heading">
             <code class="highlight language-python"><span class="fm">__repr__</span><span class="p">()</span></code>
 
@@ -3805,6 +3899,28 @@
     <div class="doc doc-contents ">
 
         <p>String representation</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="empathy_os.config.EmpathyConfig.from_dict" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#empathy_os.config.EmpathyConfig.from_dict" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create an EmpathyConfig from a dictionary, ignoring unknown fields.</p>
 
 
     </div>
@@ -4089,6 +4205,11 @@ empathy = EmpathyOS(config=config)</p>
 </blockquote>
 </details>
 
+<details class="note" open>
+  <summary>Note</summary>
+  <p>Unknown fields in the JSON file are silently ignored.</p>
+</details>
+
     </div>
 
 </div>
@@ -4208,6 +4329,14 @@ empathy = EmpathyOS(config=config)</p>
 </blockquote>
 </blockquote>
 </blockquote>
+</details>
+
+<details class="note" open>
+  <summary>Note</summary>
+  <p>Unknown fields in the YAML file are silently ignored.
+This allows config files to contain settings for other
+components (e.g., model_preferences, workflows) without
+breaking EmpathyConfig loading.</p>
 </details>
 
     </div>

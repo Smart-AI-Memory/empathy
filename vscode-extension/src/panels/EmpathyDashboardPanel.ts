@@ -125,6 +125,11 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 case 'openDocAnalysis':
                     vscode.commands.executeCommand('empathy.openDocAnalysis');
                     break;
+                case 'openTestGenerator':
+                    // Run test-gen workflow directly (panel removed in v3.5.5)
+                    console.log('[EmpathyDashboard] Running test-gen workflow directly');
+                    await this._runWorkflow('test-gen');
+                    break;
                 case 'runWorkflowInEditor':
                     console.log('[EmpathyDashboard] Received runWorkflowInEditor:', message.workflow);
                     await this._runWorkflowInEditor(message.workflow, message.input);
@@ -784,6 +789,8 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             return;
         }
 
+        // v3.5.5: test-gen now runs workflow directly (panel removed)
+
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
         if (!workspaceFolder) {
             vscode.window.showErrorMessage('No workspace folder open');
@@ -860,8 +867,6 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
 
             // For report workflows, open output in editor instead of panel
             let openedInEditor = false;
-            // DEBUG: Show what's happening
-            vscode.window.showInformationMessage(`DEBUG: workflow=${workflowName}, success=${success}, opensInEditor=${opensInEditor}`);
 
             if (success && opensInEditor && output.trim()) {
                 try {
@@ -897,6 +902,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
      */
     private async _runWorkflowInEditor(workflowName: string, _defaultInput: string): Promise<void> {
         console.log('[EmpathyDashboard] _runWorkflowInEditor called:', workflowName);
+
+        // v3.5.5: test-gen now runs workflow directly (panel removed)
+
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
         if (!workspaceFolder) {
             vscode.window.showErrorMessage('No workspace folder open');
@@ -1001,8 +1009,28 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             { enableScripts: true }
         );
 
+        // Collapse sidebar to give more space to the report
+        vscode.commands.executeCommand('workbench.action.closeSidebar');
+
         // Show loading spinner
         panel.webview.html = this._getLoadingHtml(displayName, selectedPath);
+
+        // Store output for copy functionality
+        let lastOutput = '';
+
+        // Handle messages from WebView
+        panel.webview.onDidReceiveMessage(async (message) => {
+            switch (message.command) {
+                case 'copy':
+                    await vscode.env.clipboard.writeText(lastOutput);
+                    vscode.window.showInformationMessage('Report copied to clipboard');
+                    break;
+                case 'runAgain':
+                    panel.webview.html = this._getLoadingHtml(displayName, selectedPath);
+                    runWorkflow();
+                    break;
+            }
+        });
 
         // Build arguments
         const inputKeys: Record<string, string> = {
@@ -1023,14 +1051,18 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         const config = vscode.workspace.getConfiguration('empathy');
         const pythonPath = config.get<string>('pythonPath', 'python');
 
-        // Run workflow and update WebView when done
-        cp.execFile(pythonPath, args, { cwd: workspaceFolder, maxBuffer: 1024 * 1024 * 5 }, async (error, stdout, stderr) => {
-            const output = stdout || stderr || (error ? error.message : 'No output');
-            const timestamp = new Date().toLocaleString();
+        // Function to run the workflow
+        const runWorkflow = () => {
+            cp.execFile(pythonPath, args, { cwd: workspaceFolder, maxBuffer: 1024 * 1024 * 5 }, async (error, stdout, stderr) => {
+                const output = stdout || stderr || (error ? error.message : 'No output');
+                lastOutput = output;
+                const timestamp = new Date().toLocaleString();
+                panel.webview.html = this._getReportHtml(displayName, selectedPath, timestamp, output, error ? error.message : null);
+            });
+        };
 
-            // Update WebView with final report
-            panel.webview.html = this._getReportHtml(displayName, selectedPath, timestamp, output, error ? error.message : null);
-        });
+        // Run workflow initially
+        runWorkflow();
     }
 
     /**
@@ -1154,13 +1186,45 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             padding-bottom: 16px;
             margin-bottom: 24px;
         }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
         h1 {
             color: var(--vscode-foreground, #fff);
-            margin: 0 0 12px 0;
+            margin: 0;
             font-size: 24px;
             display: flex;
             align-items: center;
             gap: 12px;
+        }
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+        .action-btn {
+            background: var(--vscode-button-secondaryBackground, #3c3c3c);
+            color: var(--vscode-button-secondaryForeground, #fff);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .action-btn:hover {
+            background: var(--vscode-button-secondaryHoverBackground, #505050);
+        }
+        .action-btn.primary {
+            background: var(--vscode-button-background, #0e639c);
+            color: var(--vscode-button-foreground, #fff);
+        }
+        .action-btn.primary:hover {
+            background: var(--vscode-button-hoverBackground, #1177bb);
         }
         .status-badge {
             display: inline-flex;
@@ -1217,10 +1281,16 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
 </head>
 <body>
     <div class="header">
-        <h1>
-            ${displayName} Report
-            <span class="status-badge">${statusIcon} ${statusText}</span>
-        </h1>
+        <div class="header-top">
+            <h1>
+                ${displayName} Report
+                <span class="status-badge">${statusIcon} ${statusText}</span>
+            </h1>
+            <div class="actions">
+                <button class="action-btn" onclick="copyReport()">📋 Copy</button>
+                <button class="action-btn primary" onclick="runAgain()">🔄 Run Again</button>
+            </div>
+        </div>
         <div class="meta">
             <div class="meta-item">📁 ${this._escapeHtml(targetPath)}</div>
             <div class="meta-item">🕐 ${timestamp}</div>
@@ -1234,6 +1304,15 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
     ` : ''}
     <div class="content">${this._escapeHtml(output)}</div>
     <div class="footer">Generated by Empathy Framework</div>
+    <script>
+        const vscode = acquireVsCodeApi();
+        function copyReport() {
+            vscode.postMessage({ command: 'copy' });
+        }
+        function runAgain() {
+            vscode.postMessage({ command: 'runAgain' });
+        }
+    </script>
 </body>
 </html>`;
     }
@@ -1539,8 +1618,11 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
         const projectName = workspaceFolder ? path.basename(workspaceFolder.uri.fsPath) : 'project';
         const projectPath = './' + projectName;
+        // Cache-busting timestamp ensures webview reloads with new content
+        const cacheBuster = Date.now();
 
         return `<!DOCTYPE html>
+<!-- Cache: ${cacheBuster} - Version 4 -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1917,22 +1999,22 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         }
 
         .new-workflow-btn {
-            background: var(--vscode-button-background);
-            color: var(--vscode-button-foreground);
+            background: var(--vscode-button-secondaryBackground);
+            color: var(--vscode-button-secondaryForeground);
         }
         .new-workflow-btn:hover {
-            background: var(--vscode-button-hoverBackground);
+            background: var(--vscode-button-secondaryHoverBackground);
         }
         .new-workflow-btn-large {
-            background: var(--vscode-button-background);
-            color: var(--vscode-button-foreground);
+            background: var(--vscode-button-secondaryBackground);
+            color: var(--vscode-button-secondaryForeground);
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 12px;
         }
         .new-workflow-btn-large:hover {
-            background: var(--vscode-button-hoverBackground);
+            background: var(--vscode-button-secondaryHoverBackground);
         }
     </style>
 </head>
@@ -2022,7 +2104,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     <span class="action-icon">&#x26A1;</span>
                     <span>Perf Audit</span>
                 </button>
-                <button class="action-btn workflow-btn" data-workflow="test-gen">
+                <button class="action-btn workflow-btn" id="btn-test-gen-direct" data-workflow="test-gen">
                     <span class="action-icon">&#x1F9EA;</span>
                     <span>Generate Tests</span>
                 </button>
@@ -2042,7 +2124,8 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     <span class="action-icon">&#x1F50D;</span>
                     <span>Review PR</span>
                 </button>
-                <button class="action-btn workflow-btn new-workflow-btn" id="btn-new-workflow" title="Create a new workflow from template">
+                <!-- Hidden for v3.5.5 release - TODO: enable after workflow wizard is complete -->
+                <button class="action-btn workflow-btn new-workflow-btn" id="btn-new-workflow" title="Create a new workflow from template" style="display: none;">
                     <span class="action-icon">&#x2795;</span>
                     <span>New Workflow</span>
                 </button>
@@ -2388,8 +2471,8 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
 
     <!-- Workflows Tab -->
     <div id="tab-workflows" class="tab-content">
-        <!-- New Workflow Button -->
-        <button class="btn new-workflow-btn-large" id="btn-new-workflow-tab" title="Create a new workflow from template" style="width: 100%; margin-bottom: 12px; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <!-- Hidden for v3.5.5 release - TODO: enable after workflow wizard is complete -->
+        <button class="btn new-workflow-btn-large" id="btn-new-workflow-tab" title="Create a new workflow from template" style="display: none; width: 100%; margin-bottom: 12px; padding: 10px; align-items: center; justify-content: center; gap: 8px;">
             <span style="font-size: 16px;">&#x2795;</span>
             <span>Create New Workflow</span>
         </button>
@@ -2442,7 +2525,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
     </div>
 
     <script nonce="${nonce}">
-        console.log('[EmpathyDashboard] WEBVIEW SCRIPT LOADED - VERSION 2');
+        console.log('[EmpathyDashboard] WEBVIEW SCRIPT LOADED - VERSION 4 - TEST GEN FIX');
         const vscode = acquireVsCodeApi();
         const PROJECT_PATH = '${projectPath}';
 
@@ -2624,12 +2707,12 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 }
 
                 if (type === 'folder') {
-                    // For folders: default to project root "." unless user has history
-                    pathField.value = lastInput || '.';
-                    pathField.placeholder = 'Project root (.) or Browse...';
+                    // For folders: default to full project path unless user has history
+                    pathField.value = lastInput || PROJECT_PATH;
+                    pathField.placeholder = 'Project path or Browse...';
                 } else {
-                    // For files: use history or request active file
-                    pathField.value = lastInput || '';
+                    // For files: default to project path or use history
+                    pathField.value = lastInput || PROJECT_PATH;
                     if (!lastInput) {
                         vscode.postMessage({ type: 'getActiveFile', workflow: currentWorkflow });
                     }
@@ -2643,6 +2726,19 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     selectBtn.textContent = lastInput;
                 }
             }
+        }
+
+        // Direct handler for test-gen button (bypasses general workflow handler)
+        const testGenBtn = document.getElementById('btn-test-gen-direct');
+        if (testGenBtn) {
+            console.log('[EmpathyDashboard] Found test-gen button, attaching direct handler');
+            testGenBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('[EmpathyDashboard] Test-gen button clicked directly');
+                vscode.postMessage({ type: 'openTestGenerator' });
+            });
+        } else {
+            console.log('[EmpathyDashboard] WARNING: test-gen button not found!');
         }
 
         // Workflow button click handlers - show input panel first
@@ -2666,6 +2762,14 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 // Special case: doc-orchestrator opens the Documentation Analysis panel directly
                 if (wf === 'doc-orchestrator') {
                     vscode.postMessage({ type: 'openDocAnalysis' });
+                    return;
+                }
+
+                // Special case: test-gen opens the Test Generator panel directly
+                if (wf === 'test-gen') {
+                    console.log('[EmpathyDashboard] Sending openTestGenerator message');
+                    vscode.postMessage({ type: 'openTestGenerator' });
+                    console.log('[EmpathyDashboard] Message sent');
                     return;
                 }
 

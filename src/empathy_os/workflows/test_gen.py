@@ -25,6 +25,53 @@ from .base import BaseWorkflow, ModelTier
 from .step_config import WorkflowStepConfig
 
 # =============================================================================
+# Default Configuration
+# =============================================================================
+
+# Directories to skip during file scanning (configurable via input_data["skip_patterns"])
+DEFAULT_SKIP_PATTERNS = [
+    # Version control
+    ".git",
+    ".hg",
+    ".svn",
+    # Dependencies
+    "node_modules",
+    "bower_components",
+    "vendor",
+    # Python caches
+    "__pycache__",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".hypothesis",
+    # Virtual environments
+    "venv",
+    ".venv",
+    "env",
+    ".env",
+    "virtualenv",
+    ".virtualenv",
+    # Build tools
+    ".tox",
+    ".nox",
+    # Build outputs
+    "build",
+    "dist",
+    "eggs",
+    ".eggs",
+    "site-packages",
+    # IDE
+    ".idea",
+    ".vscode",
+    # Framework-specific
+    "migrations",
+    "alembic",
+    # Documentation
+    "_build",
+    "docs/_build",
+]
+
+# =============================================================================
 # AST-Based Function Analysis
 # =============================================================================
 
@@ -53,6 +100,9 @@ class ClassSignature:
     init_params: list[tuple[str, str, str | None]]  # Constructor params
     base_classes: list[str]
     docstring: str | None
+    is_enum: bool = False  # True if class inherits from Enum
+    is_dataclass: bool = False  # True if class has @dataclass decorator
+    required_init_params: int = 0  # Number of params without defaults
 
 
 class ASTFunctionAnalyzer(ast.NodeVisitor):
@@ -64,22 +114,42 @@ class ASTFunctionAnalyzer(ast.NodeVisitor):
     - Exception types raised
     - Side effects detection
     - Complexity estimation
+
+    Parse errors are tracked in the `last_error` attribute for debugging.
     """
 
     def __init__(self):
         self.functions: list[FunctionSignature] = []
         self.classes: list[ClassSignature] = []
         self._current_class: str | None = None
+        self.last_error: str | None = None  # Track parse errors for debugging
 
-    def analyze(self, code: str) -> tuple[list[FunctionSignature], list[ClassSignature]]:
-        """Analyze code and extract function/class signatures."""
+    def analyze(
+        self, code: str, file_path: str = ""
+    ) -> tuple[list[FunctionSignature], list[ClassSignature]]:
+        """
+        Analyze code and extract function/class signatures.
+
+        Args:
+            code: Python source code to analyze
+            file_path: Optional file path for error reporting
+
+        Returns:
+            Tuple of (functions, classes) lists. If parsing fails,
+            returns empty lists and sets self.last_error with details.
+        """
+        self.last_error = None
         try:
             tree = ast.parse(code)
             self.functions = []
             self.classes = []
             self.visit(tree)
             return self.functions, self.classes
-        except SyntaxError:
+        except SyntaxError as e:
+            # Track the error for debugging instead of silent failure
+            location = f" at line {e.lineno}" if e.lineno else ""
+            file_info = f" in {file_path}" if file_path else ""
+            self.last_error = f"SyntaxError{file_info}{location}: {e.msg}"
             return [], []
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
@@ -110,6 +180,19 @@ class ASTFunctionAnalyzer(ast.NodeVisitor):
             elif isinstance(base, ast.Attribute):
                 base_classes.append(ast.unparse(base))
 
+        # Detect if this is an Enum
+        enum_bases = {"Enum", "IntEnum", "StrEnum", "Flag", "IntFlag", "auto"}
+        is_enum = any(b in enum_bases for b in base_classes)
+
+        # Detect if this is a dataclass
+        is_dataclass = False
+        for decorator in node.decorator_list:
+            if isinstance(decorator, ast.Name) and decorator.id == "dataclass":
+                is_dataclass = True
+            elif isinstance(decorator, ast.Call):
+                if isinstance(decorator.func, ast.Name) and decorator.func.id == "dataclass":
+                    is_dataclass = True
+
         # Process methods
         for item in node.body:
             if isinstance(item, ast.FunctionDef | ast.AsyncFunctionDef):
@@ -122,6 +205,9 @@ class ASTFunctionAnalyzer(ast.NodeVisitor):
                 if item.name == "__init__":
                     init_params = method_sig.params[1:]  # Skip 'self'
 
+        # Count required init params (those without defaults)
+        required_init_params = sum(1 for p in init_params if p[2] is None)
+
         self.classes.append(
             ClassSignature(
                 name=node.name,
@@ -129,6 +215,9 @@ class ASTFunctionAnalyzer(ast.NodeVisitor):
                 init_params=init_params,
                 base_classes=base_classes,
                 docstring=ast.get_docstring(node),
+                is_enum=is_enum,
+                is_dataclass=is_dataclass,
+                required_init_params=required_init_params,
             )
         )
 
@@ -298,6 +387,8 @@ class TestGenerationWorkflow(BaseWorkflow):
         self,
         patterns_dir: str = "./patterns",
         min_tests_for_review: int = 10,
+        write_tests: bool = False,
+        output_dir: str = "tests/generated",
         **kwargs: Any,
     ):
         """
@@ -306,11 +397,15 @@ class TestGenerationWorkflow(BaseWorkflow):
         Args:
             patterns_dir: Directory containing learned patterns
             min_tests_for_review: Minimum tests generated to trigger premium review
+            write_tests: If True, write generated tests to output_dir
+            output_dir: Directory to write generated test files
             **kwargs: Additional arguments passed to BaseWorkflow
         """
         super().__init__(**kwargs)
         self.patterns_dir = patterns_dir
         self.min_tests_for_review = min_tests_for_review
+        self.write_tests = write_tests
+        self.output_dir = output_dir
         self._test_count: int = 0
         self._bug_hotspots: list[str] = []
         self._load_bug_hotspots()
@@ -320,14 +415,16 @@ class TestGenerationWorkflow(BaseWorkflow):
         debugging_file = Path(self.patterns_dir) / "debugging.json"
         if debugging_file.exists():
             try:
-                with open(debugging_file) as f:
-                    data = json.load(f)
+                with open(debugging_file) as fh:
+                    data = json.load(fh)
                     patterns = data.get("patterns", [])
                     # Extract files from bug patterns
                     files = set()
                     for p in patterns:
-                        for f in p.get("files_affected", []):
-                            files.add(f)
+                        for file_entry in p.get("files_affected", []):
+                            if file_entry is None:
+                                continue
+                            files.add(str(file_entry))
                     self._bug_hotspots = list(files)
             except (json.JSONDecodeError, OSError):
                 pass
@@ -371,9 +468,23 @@ class TestGenerationWorkflow(BaseWorkflow):
 
         Finds files with low coverage, historical bugs, or
         no existing tests.
+
+        Configurable options via input_data:
+            max_files_to_scan: Maximum files to scan before stopping (default: 1000)
+            max_file_size_kb: Skip files larger than this (default: 200)
+            max_candidates: Maximum candidates to return (default: 50)
+            skip_patterns: List of directory patterns to skip (default: DEFAULT_SKIP_PATTERNS)
+            include_all_files: Include files with priority=0 (default: False)
         """
         target_path = input_data.get("path", ".")
         file_types = input_data.get("file_types", [".py"])
+
+        # Parse configurable limits with sensible defaults
+        max_files_to_scan = input_data.get("max_files_to_scan", 1000)
+        max_file_size_kb = input_data.get("max_file_size_kb", 200)
+        max_candidates = input_data.get("max_candidates", 50)
+        skip_patterns = input_data.get("skip_patterns", DEFAULT_SKIP_PATTERNS)
+        include_all_files = input_data.get("include_all_files", False)
 
         target = Path(target_path)
         candidates: list[dict] = []
@@ -382,33 +493,63 @@ class TestGenerationWorkflow(BaseWorkflow):
         total_source_files = 0
         existing_test_files = 0
 
+        # Track scan summary for debugging/visibility
+        scan_summary = {
+            "files_scanned": 0,
+            "files_too_large": 0,
+            "files_read_error": 0,
+            "files_excluded_by_pattern": 0,
+            "early_exit_reason": None,
+        }
+
+        max_file_size_bytes = max_file_size_kb * 1024
+        scan_limit_reached = False
+
         if target.exists():
             for ext in file_types:
+                if scan_limit_reached:
+                    break
+
                 for file_path in target.rglob(f"*{ext}"):
-                    # Skip non-code directories
-                    if any(
-                        skip in str(file_path)
-                        for skip in [".git", "node_modules", "__pycache__", "venv"]
-                    ):
+                    # Check if we've hit the scan limit
+                    if scan_summary["files_scanned"] >= max_files_to_scan:
+                        scan_summary["early_exit_reason"] = (
+                            f"max_files_to_scan ({max_files_to_scan}) reached"
+                        )
+                        scan_limit_reached = True
+                        break
+
+                    # Skip non-code directories using configurable patterns
+                    file_str = str(file_path)
+                    if any(skip in file_str for skip in skip_patterns):
+                        scan_summary["files_excluded_by_pattern"] += 1
                         continue
 
                     # Count test files separately for scope awareness
-                    file_str = str(file_path)
                     if "test_" in file_str or "_test." in file_str or "/tests/" in file_str:
                         existing_test_files += 1
                         continue
 
-                    # Count source files
+                    # Check file size before reading
+                    try:
+                        file_size = file_path.stat().st_size
+                        if file_size > max_file_size_bytes:
+                            scan_summary["files_too_large"] += 1
+                            continue
+                    except OSError:
+                        scan_summary["files_read_error"] += 1
+                        continue
+
+                    # Count source files and increment scan counter
                     total_source_files += 1
+                    scan_summary["files_scanned"] += 1
 
                     try:
                         content = file_path.read_text(errors="ignore")
                         lines = len(content.splitlines())
 
                         # Check if in bug hotspots
-                        is_hotspot = any(
-                            hotspot in str(file_path) for hotspot in self._bug_hotspots
-                        )
+                        is_hotspot = any(hotspot in file_str for hotspot in self._bug_hotspots)
 
                         # Check for existing tests
                         test_file = self._find_test_file(file_path)
@@ -425,10 +566,11 @@ class TestGenerationWorkflow(BaseWorkflow):
                         if lines > 300:
                             priority += 10
 
-                        if priority > 0:
+                        # Include if priority > 0 OR include_all_files is set
+                        if priority > 0 or include_all_files:
                             candidates.append(
                                 {
-                                    "file": str(file_path),
+                                    "file": file_str,
                                     "lines": lines,
                                     "is_hotspot": is_hotspot,
                                     "has_tests": has_tests,
@@ -436,6 +578,7 @@ class TestGenerationWorkflow(BaseWorkflow):
                                 }
                             )
                     except OSError:
+                        scan_summary["files_read_error"] += 1
                         continue
 
         # Sort by priority
@@ -445,12 +588,12 @@ class TestGenerationWorkflow(BaseWorkflow):
         output_tokens = len(str(candidates)) // 4
 
         # Calculate scope metrics for enterprise reporting
-        analyzed_count = min(30, len(candidates))
+        analyzed_count = min(max_candidates, len(candidates))
         coverage_pct = (analyzed_count / len(candidates) * 100) if candidates else 100
 
         return (
             {
-                "candidates": candidates[:30],  # Top 30
+                "candidates": candidates[:max_candidates],
                 "total_candidates": len(candidates),
                 "hotspot_count": len([c for c in candidates if c["is_hotspot"]]),
                 "untested_count": len([c for c in candidates if not c["has_tests"]]),
@@ -459,6 +602,17 @@ class TestGenerationWorkflow(BaseWorkflow):
                 "existing_test_files": existing_test_files,
                 "large_project_warning": len(candidates) > 100,
                 "analysis_coverage_percent": coverage_pct,
+                # Scan summary for debugging/visibility
+                "scan_summary": scan_summary,
+                # Pass through config for subsequent stages
+                "config": {
+                    "max_files_to_analyze": input_data.get("max_files_to_analyze", 20),
+                    "max_functions_per_file": input_data.get("max_functions_per_file", 30),
+                    "max_classes_per_file": input_data.get("max_classes_per_file", 15),
+                    "max_files_to_generate": input_data.get("max_files_to_generate", 15),
+                    "max_functions_to_generate": input_data.get("max_functions_to_generate", 8),
+                    "max_classes_to_generate": input_data.get("max_classes_to_generate", 4),
+                },
                 **input_data,
             },
             input_tokens,
@@ -489,9 +643,21 @@ class TestGenerationWorkflow(BaseWorkflow):
 
         Examines functions, classes, and patterns to determine
         what tests should be generated.
+
+        Uses config from _identify stage for limits:
+            max_files_to_analyze: Maximum files to analyze (default: 20)
+            max_functions_per_file: Maximum functions per file (default: 30)
+            max_classes_per_file: Maximum classes per file (default: 15)
         """
-        candidates = input_data.get("candidates", [])[:15]  # Top 15
+        # Get config from previous stage or use defaults
+        config = input_data.get("config", {})
+        max_files_to_analyze = config.get("max_files_to_analyze", 20)
+        max_functions_per_file = config.get("max_functions_per_file", 30)
+        max_classes_per_file = config.get("max_classes_per_file", 15)
+
+        candidates = input_data.get("candidates", [])[:max_files_to_analyze]
         analysis: list[dict] = []
+        parse_errors: list[str] = []  # Track files that failed to parse
 
         for candidate in candidates:
             file_path = Path(candidate["file"])
@@ -501,9 +667,19 @@ class TestGenerationWorkflow(BaseWorkflow):
             try:
                 content = file_path.read_text(errors="ignore")
 
-                # Extract testable items (simplified analysis)
-                functions = self._extract_functions(content)
-                classes = self._extract_classes(content)
+                # Extract testable items with configurable limits and error tracking
+                functions, func_error = self._extract_functions(
+                    content, candidate["file"], max_functions_per_file
+                )
+                classes, class_error = self._extract_classes(
+                    content, candidate["file"], max_classes_per_file
+                )
+
+                # Track parse errors for visibility
+                if func_error:
+                    parse_errors.append(func_error)
+                if class_error and class_error != func_error:
+                    parse_errors.append(class_error)
 
                 analysis.append(
                     {
@@ -527,19 +703,32 @@ class TestGenerationWorkflow(BaseWorkflow):
                 "analysis": analysis,
                 "total_functions": sum(a["function_count"] for a in analysis),
                 "total_classes": sum(a["class_count"] for a in analysis),
+                "parse_errors": parse_errors,  # Expose errors for debugging
                 **input_data,
             },
             input_tokens,
             output_tokens,
         )
 
-    def _extract_functions(self, content: str) -> list[dict]:
-        """Extract function definitions from Python code using AST analysis."""
+    def _extract_functions(
+        self, content: str, file_path: str = "", max_functions: int = 30
+    ) -> tuple[list[dict], str | None]:
+        """
+        Extract function definitions from Python code using AST analysis.
+
+        Args:
+            content: Python source code
+            file_path: File path for error reporting
+            max_functions: Maximum functions to extract (configurable)
+
+        Returns:
+            Tuple of (functions list, error message or None)
+        """
         analyzer = ASTFunctionAnalyzer()
-        functions, _ = analyzer.analyze(content)
+        functions, _ = analyzer.analyze(content, file_path)
 
         result = []
-        for sig in functions[:20]:  # Limit
+        for sig in functions[:max_functions]:
             if not sig.name.startswith("_") or sig.name.startswith("__"):
                 result.append(
                     {
@@ -554,15 +743,31 @@ class TestGenerationWorkflow(BaseWorkflow):
                         "docstring": sig.docstring,
                     }
                 )
-        return result
+        return result, analyzer.last_error
 
-    def _extract_classes(self, content: str) -> list[dict]:
-        """Extract class definitions from Python code using AST analysis."""
+    def _extract_classes(
+        self, content: str, file_path: str = "", max_classes: int = 15
+    ) -> tuple[list[dict], str | None]:
+        """
+        Extract class definitions from Python code using AST analysis.
+
+        Args:
+            content: Python source code
+            file_path: File path for error reporting
+            max_classes: Maximum classes to extract (configurable)
+
+        Returns:
+            Tuple of (classes list, error message or None)
+        """
         analyzer = ASTFunctionAnalyzer()
-        _, classes = analyzer.analyze(content)
+        _, classes = analyzer.analyze(content, file_path)
 
         result = []
-        for sig in classes[:10]:  # Limit
+        for sig in classes[:max_classes]:
+            # Skip enums - they don't need traditional class tests
+            if sig.is_enum:
+                continue
+
             methods = [
                 {
                     "name": m.name,
@@ -580,9 +785,11 @@ class TestGenerationWorkflow(BaseWorkflow):
                     "methods": methods,
                     "base_classes": sig.base_classes,
                     "docstring": sig.docstring,
+                    "is_dataclass": sig.is_dataclass,
+                    "required_init_params": sig.required_init_params,
                 }
             )
-        return result
+        return result, analyzer.last_error
 
     def _generate_suggestions(self, functions: list[dict], classes: list[dict]) -> list[str]:
         """Generate test suggestions based on code structure."""
@@ -607,16 +814,27 @@ class TestGenerationWorkflow(BaseWorkflow):
 
         Creates test code targeting identified functions
         and classes, focusing on edge cases.
+
+        Uses config from _identify stage for limits:
+            max_files_to_generate: Maximum files to generate tests for (default: 15)
+            max_functions_to_generate: Maximum functions per file (default: 8)
+            max_classes_to_generate: Maximum classes per file (default: 4)
         """
+        # Get config from previous stages or use defaults
+        config = input_data.get("config", {})
+        max_files_to_generate = config.get("max_files_to_generate", 15)
+        max_functions_to_generate = config.get("max_functions_to_generate", 8)
+        max_classes_to_generate = config.get("max_classes_to_generate", 4)
+
         analysis = input_data.get("analysis", [])
         generated_tests: list[dict] = []
 
-        for item in analysis[:10]:  # Top 10 files
+        for item in analysis[:max_files_to_generate]:
             file_path = item["file"]
             module_name = Path(file_path).stem
 
             tests = []
-            for func in item.get("functions", [])[:5]:
+            for func in item.get("functions", [])[:max_functions_to_generate]:
                 test_code = self._generate_test_for_function(module_name, func)
                 tests.append(
                     {
@@ -626,7 +844,7 @@ class TestGenerationWorkflow(BaseWorkflow):
                     }
                 )
 
-            for cls in item.get("classes", [])[:2]:
+            for cls in item.get("classes", [])[:max_classes_to_generate]:
                 test_code = self._generate_test_for_class(module_name, cls)
                 tests.append(
                     {
@@ -648,6 +866,39 @@ class TestGenerationWorkflow(BaseWorkflow):
 
         self._test_count = sum(t["test_count"] for t in generated_tests)
 
+        # Write tests to files if enabled (via input_data or instance config)
+        write_tests = input_data.get("write_tests", self.write_tests)
+        output_dir = input_data.get("output_dir", self.output_dir)
+        written_files: list[str] = []
+
+        if write_tests and generated_tests:
+            output_path = Path(output_dir)
+            output_path.mkdir(parents=True, exist_ok=True)
+
+            for test_item in generated_tests:
+                test_filename = test_item["test_file"]
+                test_file_path = output_path / test_filename
+
+                # Combine all test code for this file
+                combined_code = []
+                imports_added = set()
+
+                for test in test_item["tests"]:
+                    code = test["code"]
+                    # Extract and dedupe imports
+                    for line in code.split("\n"):
+                        if line.startswith("import ") or line.startswith("from "):
+                            if line not in imports_added:
+                                imports_added.add(line)
+                        elif line.strip():
+                            combined_code.append(line)
+
+                # Write the combined test file
+                final_code = "\n".join(sorted(imports_added)) + "\n\n" + "\n".join(combined_code)
+                test_file_path.write_text(final_code)
+                written_files.append(str(test_file_path))
+                test_item["written_to"] = str(test_file_path)
+
         input_tokens = len(str(input_data)) // 4
         output_tokens = sum(len(str(t)) for t in generated_tests) // 4
 
@@ -655,6 +906,8 @@ class TestGenerationWorkflow(BaseWorkflow):
             {
                 "generated_tests": generated_tests,
                 "total_tests_generated": self._test_count,
+                "written_files": written_files,
+                "tests_written": len(written_files) > 0,
                 **input_data,
             },
             input_tokens,
@@ -887,16 +1140,41 @@ def test_{name}_returns_correct_type():
                 return assertion
         return None
 
+    def _get_param_test_values(self, type_hint: str) -> list[str]:
+        """Get test values for a single parameter based on its type."""
+        type_hint_lower = type_hint.lower()
+        if "str" in type_hint_lower:
+            return ['"hello"', '"world"', '"test_string"']
+        elif "int" in type_hint_lower:
+            return ["0", "1", "42", "-1"]
+        elif "float" in type_hint_lower:
+            return ["0.0", "1.0", "3.14"]
+        elif "bool" in type_hint_lower:
+            return ["True", "False"]
+        elif "list" in type_hint_lower:
+            return ["[]", "[1, 2, 3]"]
+        elif "dict" in type_hint_lower:
+            return ["{}", '{"key": "value"}']
+        else:
+            return ['"test_value"']
+
     def _generate_test_for_class(self, module: str, cls: dict) -> str:
         """Generate executable test class based on AST analysis."""
         name = cls["name"]
         init_params = cls.get("init_params", [])
         methods = cls.get("methods", [])
+        required_params = cls.get("required_init_params", 0)
         _docstring = cls.get("docstring", "")  # Reserved for future use  # noqa: F841
 
-        # Generate constructor arguments
+        # Generate constructor arguments - ensure we have values for ALL required params
         init_args = self._generate_test_cases_for_params(init_params)
-        init_arg_str = ", ".join(init_args.get("valid_args", []))
+        valid_args = init_args.get("valid_args", [])
+
+        # Ensure we have enough args for required params
+        while len(valid_args) < required_params:
+            valid_args.append('"test_value"')
+
+        init_arg_str = ", ".join(valid_args)
 
         tests = []
         tests.append(f"import pytest\nfrom {module} import {name}\n")
@@ -924,23 +1202,25 @@ class Test{name}:
 '''
         )
 
-        # Test with parametrized init args if we have multiple cases
-        if init_params and len(init_args.get("parametrize_cases", [])) > 1:
-            param_names = [p[0] for p in init_params]
-            param_names_str = ", ".join(param_names)
-            cases = init_args.get("parametrize_cases", [])[:3]
-            cases_str = ",\n        ".join(cases)
-            tests.append(
-                f'''
-    @pytest.mark.parametrize("{param_names_str}", [
+        # Only generate parametrized tests for single-param classes to avoid tuple mismatches
+        if len(init_params) == 1 and init_params[0][2] is None:
+            # Single required param - safe to parametrize
+            param_name = init_params[0][0]
+            param_type = init_params[0][1]
+            cases = self._get_param_test_values(param_type)
+            if len(cases) > 1:
+                cases_str = ",\n        ".join(cases)
+                tests.append(
+                    f'''
+    @pytest.mark.parametrize("{param_name}", [
         {cases_str},
     ])
-    def test_initialization_with_various_args(self, {param_names_str}):
+    def test_initialization_with_various_args(self, {param_name}):
         """Test {name} initialization with various arguments."""
-        instance = {name}({param_names_str})
+        instance = {name}({param_name})
         assert instance is not None
 '''
-            )
+                )
 
         # Generate tests for each public method
         for method in methods[:5]:  # Limit to 5 methods
@@ -1017,41 +1297,67 @@ class Test{name}:
 
         # Prepare the context for the LLM by formatting the generated test code
         test_context = "<generated_tests>\n"
+        total_test_count = 0
         for test_item in generated_tests:
             test_context += f'  <file path="{test_item["source_file"]}">\n'
             for test in test_item["tests"]:
-                # Extract test name from code for the report
-                test_name = "unnamed"
+                # Extract ALL test names from code (not just the first one)
+                test_names = []
                 try:
-                    match = re.search(r"def\s+(test_\w+)", test["code"])
-                    if match:
-                        test_name = match.group(1)
+                    # Use findall to get ALL test functions
+                    matches = re.findall(r"def\s+(test_\w+)", test["code"])
+                    test_names = matches if matches else ["unnamed"]
                 except Exception:
-                    pass
-                test_context += f'    <test name="{test_name}" target="{test["target"]}" />\n'
+                    test_names = ["unnamed"]
+
+                # Report each test function found
+                for test_name in test_names:
+                    test_context += f'    <test name="{test_name}" target="{test["target"]}" type="{test.get("type", "unknown")}" />\n'
+                    total_test_count += 1
             test_context += "  </file>\n"
         test_context += "</generated_tests>\n"
+        test_context += f"\n<summary>Total test functions: {total_test_count}</summary>\n"
 
         # Build the system prompt directly for the review stage
         target_files = [item["source_file"] for item in generated_tests]
         file_list = "\n".join(f"  - {f}" for f in target_files)
 
-        system_prompt = f"""You are an expert test engineer specializing in Python test coverage analysis.
+        system_prompt = f"""You are an automated test coverage analysis tool. You MUST output a report directly - no conversation, no questions, no preamble.
 
-Your task is to review the generated test structure and produce a comprehensive test gap analysis report.
+CRITICAL RULES (VIOLATIONS WILL CAUSE SYSTEM FAILURE):
+1. START your response with "# Test Gap Analysis Report" - no other text before this
+2. NEVER ask questions or seek clarification
+3. NEVER use phrases like "let me ask", "what's your goal", "would you like"
+4. NEVER offer to expand or provide more information
+5. Output ONLY the structured report - nothing else
 
 Target files ({len(generated_tests)}):
 {file_list}
 
-Provide a detailed analysis including:
-1. Summary of tests generated
-2. Coverage assessment
-3. Any identified gaps or missing edge cases
-4. Recommendations for additional tests
+REQUIRED OUTPUT FORMAT (follow exactly):
 
-Format your response as a clear, structured report."""
+# Test Gap Analysis Report
 
-        user_message = f"Please generate a test gap analysis report based on the following test structure:\n{test_context}"
+## Executive Summary
+| Metric | Value |
+|--------|-------|
+| **Total Test Functions** | [count] |
+| **Files Covered** | [count] |
+| **Classes Tested** | [count] |
+| **Functions Tested** | [count] |
+
+## Coverage by File
+[For each file, show a table with Target, Type, Tests count, and Gap Assessment]
+
+## Identified Gaps
+[List specific missing tests with severity: HIGH/MEDIUM/LOW]
+
+## Prioritized Recommendations
+[Numbered list of specific tests to add, ordered by priority]
+
+END OF REQUIRED FORMAT - output nothing after recommendations."""
+
+        user_message = f"Generate the test gap analysis report for:\n{test_context}"
 
         # Call the LLM using the provider-agnostic executor from BaseWorkflow
         step_config = TEST_GEN_STEPS["review"]
@@ -1061,9 +1367,140 @@ Format your response as a clear, structured report."""
             system=system_prompt,
         )
 
+        # Validate response - check for question patterns that indicate non-compliance
+        total_in = in_tokens
+        total_out = out_tokens
+
+        if self._response_contains_questions(report):
+            # Retry with even stricter prompt
+            retry_prompt = f"""OUTPUT ONLY THIS EXACT FORMAT - NO OTHER TEXT:
+
+# Test Gap Analysis Report
+
+## Executive Summary
+| Metric | Value |
+|--------|-------|
+| **Total Test Functions** | {total_test_count} |
+| **Files Covered** | {len(generated_tests)} |
+
+## Coverage by File
+
+{self._generate_coverage_table(generated_tests)}
+
+## Identified Gaps
+- Missing error handling tests
+- Missing edge case tests
+- Missing integration tests
+
+## Prioritized Recommendations
+1. Add exception/error tests for each class
+2. Add boundary condition tests
+3. Add integration tests between components"""
+
+            report, retry_in, retry_out, _ = await self.run_step_with_executor(
+                step=step_config,
+                prompt=retry_prompt,
+                system="You are a report formatter. Output ONLY the text provided. Do not add any commentary.",
+            )
+            total_in += retry_in
+            total_out += retry_out
+
+            # If still asking questions, use fallback programmatic report
+            if self._response_contains_questions(report):
+                report = self._generate_fallback_report(generated_tests, total_test_count)
+
         # Replace the previous analysis with the final, accurate report
         input_data["analysis_report"] = report
-        return input_data, in_tokens, out_tokens
+        return input_data, total_in, total_out
+
+    def _response_contains_questions(self, response: str) -> bool:
+        """Check if response contains question patterns indicating non-compliance."""
+        if not response:
+            return True
+
+        # Check first 500 chars for question patterns
+        first_part = response[:500].lower()
+
+        question_patterns = [
+            "let me ask",
+            "what's your",
+            "what is your",
+            "would you like",
+            "do you have",
+            "could you",
+            "can you",
+            "clarifying question",
+            "before i generate",
+            "before generating",
+            "i need to know",
+            "please provide",
+            "please clarify",
+            "?",  # Questions in first 500 chars is suspicious
+        ]
+
+        # Also check if it doesn't start with expected format
+        if not response.strip().startswith("#"):
+            return True
+
+        return any(pattern in first_part for pattern in question_patterns)
+
+    def _generate_coverage_table(self, generated_tests: list[dict]) -> str:
+        """Generate a simple coverage table for the retry prompt."""
+        lines = []
+        for item in generated_tests[:10]:
+            file_name = Path(item["source_file"]).name
+            test_count = item.get("test_count", 0)
+            lines.append(f"| {file_name} | {test_count} tests | Basic coverage |")
+        return "| File | Tests | Coverage |\n|------|-------|----------|\n" + "\n".join(lines)
+
+    def _generate_fallback_report(self, generated_tests: list[dict], total_test_count: int) -> str:
+        """Generate a programmatic fallback report when LLM fails to comply."""
+        lines = ["# Test Gap Analysis Report", ""]
+        lines.append("## Executive Summary")
+        lines.append("| Metric | Value |")
+        lines.append("|--------|-------|")
+        lines.append(f"| **Total Test Functions** | {total_test_count} |")
+        lines.append(f"| **Files Covered** | {len(generated_tests)} |")
+
+        # Count classes and functions
+        total_classes = sum(
+            len([t for t in item.get("tests", []) if t.get("type") == "class"])
+            for item in generated_tests
+        )
+        total_functions = sum(
+            len([t for t in item.get("tests", []) if t.get("type") == "function"])
+            for item in generated_tests
+        )
+        lines.append(f"| **Classes Tested** | {total_classes} |")
+        lines.append(f"| **Functions Tested** | {total_functions} |")
+        lines.append("")
+
+        lines.append("## Coverage by File")
+        lines.append("| File | Tests | Targets |")
+        lines.append("|------|-------|---------|")
+        for item in generated_tests:
+            file_name = Path(item["source_file"]).name
+            test_count = item.get("test_count", 0)
+            targets = ", ".join(t.get("target", "?") for t in item.get("tests", [])[:3])
+            if len(item.get("tests", [])) > 3:
+                targets += "..."
+            lines.append(f"| {file_name} | {test_count} | {targets} |")
+        lines.append("")
+
+        lines.append("## Identified Gaps")
+        lines.append("- **HIGH**: Missing error/exception handling tests")
+        lines.append("- **MEDIUM**: Missing boundary condition tests")
+        lines.append("- **MEDIUM**: Missing async behavior tests")
+        lines.append("- **LOW**: Missing integration tests")
+        lines.append("")
+
+        lines.append("## Prioritized Recommendations")
+        lines.append("1. Add `pytest.raises` tests for each function that can throw exceptions")
+        lines.append("2. Add edge case tests (empty inputs, None values, large data)")
+        lines.append("3. Add concurrent/async tests for async functions")
+        lines.append("4. Add integration tests between related classes")
+
+        return "\n".join(lines)
 
     def get_max_tokens(self, stage_name: str) -> int:
         """Get the maximum token limit for a stage."""
@@ -1286,6 +1723,30 @@ def format_test_gen_report(result: dict, input_data: dict) -> str:
             )
         if len(generated_tests) > 10:
             lines.append(f"  ... and {len(generated_tests) - 10} more files")
+        lines.append("")
+
+    # Written files section
+    written_files = input_data.get("written_files", [])
+    if written_files:
+        lines.append("-" * 60)
+        lines.append("TESTS WRITTEN TO DISK")
+        lines.append("-" * 60)
+        for file_path in written_files[:10]:
+            # Shorten path for display
+            if len(file_path) > 55:
+                file_path = "..." + file_path[-52:]
+            lines.append(f"  ✅ {file_path}")
+        if len(written_files) > 10:
+            lines.append(f"  ... and {len(written_files) - 10} more files")
+        lines.append("")
+        lines.append("  Run: pytest <file> to execute these tests")
+        lines.append("")
+    elif input_data.get("tests_written") is False and total_tests > 0:
+        lines.append("-" * 60)
+        lines.append("GENERATED TESTS (NOT WRITTEN)")
+        lines.append("-" * 60)
+        lines.append("  ⚠️  Tests were generated but not written to disk.")
+        lines.append("  To write tests, run with: write_tests=True")
         lines.append("")
 
     # Recommendations

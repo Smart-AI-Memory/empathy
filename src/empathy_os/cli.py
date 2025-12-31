@@ -1874,8 +1874,17 @@ def cmd_workflow(args):
             if args.input:
                 input_data = json_mod.loads(args.input)
 
-            print(f"\n Running workflow: {name} (provider: {provider})")
-            print("=" * 50)
+            # Add test-gen specific flags to input_data (only for test-gen workflow)
+            if name == "test-gen":
+                if getattr(args, "write_tests", False):
+                    input_data["write_tests"] = True
+                if getattr(args, "output_dir", None):
+                    input_data["output_dir"] = args.output_dir
+
+            # Only print header when not in JSON mode
+            if not args.json:
+                print(f"\n Running workflow: {name} (provider: {provider})")
+                print("=" * 50)
 
             # Execute workflow
             result = asyncio.run(workflow.execute(**input_data))
@@ -1920,9 +1929,29 @@ def cmd_workflow(args):
                         error = metadata.get("error") if isinstance(metadata, dict) else None
 
                 # JSON output includes both content and metadata
+                # Include final_output for programmatic access (VSCode panels, etc.)
+                raw_final_output = getattr(result, "final_output", None)
+                if raw_final_output and isinstance(raw_final_output, dict):
+                    # Make a copy to avoid modifying the original
+                    final_output_serializable = {}
+                    for k, v in raw_final_output.items():
+                        # Skip non-serializable items
+                        if isinstance(v, set):
+                            final_output_serializable[k] = list(v)
+                        elif v is None or isinstance(v, str | int | float | bool | list | dict):
+                            final_output_serializable[k] = v
+                        else:
+                            try:
+                                final_output_serializable[k] = str(v)
+                            except Exception:
+                                pass
+                else:
+                    final_output_serializable = None
+
                 output = {
                     "success": result.success,
                     "output": output_content,
+                    "final_output": final_output_serializable,
                     "cost": total_cost,
                     "savings": savings,
                     "duration_ms": duration_ms or 0,
@@ -2476,6 +2505,16 @@ def main():
         help="Force overwrite existing config file",
     )
     parser_workflow.add_argument("--json", action="store_true", help="Output as JSON")
+    parser_workflow.add_argument(
+        "--write-tests",
+        action="store_true",
+        help="(test-gen workflow) Write generated tests to disk",
+    )
+    parser_workflow.add_argument(
+        "--output-dir",
+        default="tests/generated",
+        help="(test-gen workflow) Output directory for generated tests",
+    )
     parser_workflow.set_defaults(func=cmd_workflow)
 
     # Sync-claude command (sync patterns to Claude Code)

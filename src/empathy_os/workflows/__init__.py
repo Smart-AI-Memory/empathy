@@ -58,7 +58,9 @@ from .code_review_pipeline import CodeReviewPipeline, CodeReviewPipelineResult
 from .config import DEFAULT_MODELS, ModelConfig, WorkflowConfig, create_example_config, get_model
 from .dependency_check import DependencyCheckWorkflow
 from .document_gen import DocumentGenerationWorkflow
+from .documentation_orchestrator import DocumentationOrchestrator, OrchestratorResult
 from .health_check import HealthCheckWorkflow
+from .manage_documentation import ManageDocumentationCrew, ManageDocumentationCrewResult
 from .perf_audit import PerformanceAuditWorkflow
 from .pr_review import PRReviewResult, PRReviewWorkflow
 from .refactor_plan import RefactorPlanWorkflow
@@ -116,6 +118,9 @@ _DEFAULT_WORKFLOWS: dict[str, type] = {
     "pr-review": PRReviewWorkflow,
     # Health check crew integration (v3.1)
     "health-check": HealthCheckWorkflow,
+    # Documentation management (v3.5)
+    "doc-orchestrator": DocumentationOrchestrator,
+    "manage-docs": ManageDocumentationCrew,
 }
 
 # Opt-in workflows - not included by default, must be explicitly enabled
@@ -323,6 +328,11 @@ __all__ = [
     "PRReviewResult",
     # Health check crew integration (v3.1)
     "HealthCheckWorkflow",
+    # Documentation management (v3.5)
+    "DocumentationOrchestrator",
+    "OrchestratorResult",
+    "ManageDocumentationCrew",
+    "ManageDocumentationCrewResult",
     # Registry and discovery
     "WORKFLOW_REGISTRY",
     "get_workflow",

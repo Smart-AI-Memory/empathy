@@ -120,15 +120,14 @@ function generateUUID(): string {
 }
 
 // =============================================================================
-// TestGeneratorPanel Class
+// TestGeneratorPanel Class - Editor Panel (opens in main editor area)
 // =============================================================================
 
-export class TestGeneratorPanel implements vscode.WebviewViewProvider {
-    public static readonly viewType = 'test-generator';
+export class TestGeneratorPanel {
+    public static currentPanel: TestGeneratorPanel | undefined;
 
-    private _view?: vscode.WebviewView;
-    private _extensionUri: vscode.Uri;
-    private _context: vscode.ExtensionContext;
+    private readonly _panel: vscode.WebviewPanel;
+    private readonly _extensionUri: vscode.Uri;
     private _session: TestGenSession | null = null;
     private _disposables: vscode.Disposable[] = [];
     private _activeProcess: cp.ChildProcess | null = null;
@@ -142,37 +141,47 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
         lastError: null,
     };
 
-    constructor(extensionUri: vscode.Uri, context: vscode.ExtensionContext) {
-        this._extensionUri = extensionUri;
-        this._context = context;
-        this._filePickerService = getFilePickerService();
-    }
+    /**
+     * Create or reveal the Test Generator panel
+     */
+    public static createOrShow(extensionUri: vscode.Uri): TestGeneratorPanel {
+        const column = vscode.window.activeTextEditor?.viewColumn || vscode.ViewColumn.One;
 
-    public dispose() {
-        if (this._activeProcess) {
-            this._activeProcess.kill();
+        // If panel already exists, reveal it and reset to initial state
+        if (TestGeneratorPanel.currentPanel) {
+            TestGeneratorPanel.currentPanel._panel.reveal(column);
+            // Reset session so user can start fresh
+            TestGeneratorPanel.currentPanel._resetSession();
+            TestGeneratorPanel.currentPanel._panel.webview.postMessage({ type: 'sessionReset' });
+            return TestGeneratorPanel.currentPanel;
         }
-        while (this._disposables.length) {
-            const disposable = this._disposables.pop();
-            if (disposable) {
-                disposable.dispose();
+
+        // Create new panel
+        const panel = vscode.window.createWebviewPanel(
+            'empathyTestGenerator',
+            'Test Generator',
+            column,
+            {
+                enableScripts: true,
+                retainContextWhenHidden: true,
+                localResourceRoots: [extensionUri]
             }
-        }
+        );
+
+        TestGeneratorPanel.currentPanel = new TestGeneratorPanel(panel, extensionUri);
+        return TestGeneratorPanel.currentPanel;
     }
 
-    public resolveWebviewView(
-        webviewView: vscode.WebviewView,
-        _context: vscode.WebviewViewResolveContext,
-        _token: vscode.CancellationToken
-    ) {
-        this._view = webviewView;
+    private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
+        this._panel = panel;
+        this._extensionUri = extensionUri;
+        this._filePickerService = getFilePickerService();
 
-        webviewView.webview.options = {
-            enableScripts: true,
-            localResourceRoots: [this._extensionUri],
-        };
+        // Set initial HTML
+        this._panel.webview.html = this._getHtmlForWebview(this._panel.webview);
 
-        webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+        // Handle panel disposal
+        this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
         // Set up file picker message handler
         this._handleFilePicker = createFilePickerMessageHandler(
@@ -181,7 +190,7 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
                 // Convert filePicker:result to pathSelected for compatibility
                 if (msg.type === 'filePicker:result' && msg.success && msg.result) {
                     const result = Array.isArray(msg.result) ? msg.result[0] : msg.result;
-                    webviewView.webview.postMessage({
+                    this._panel.webview.postMessage({
                         type: 'pathSelected',
                         path: result.path,
                         isDirectory: result.isDirectory
@@ -193,55 +202,116 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
         );
 
         // Handle messages from webview
-        const messageDisposable = webviewView.webview.onDidReceiveMessage(async (message) => {
-            // Route file picker messages through the service
-            if (message.type?.startsWith('filePicker:')) {
-                await this._handleFilePicker?.(message);
-                return;
-            }
+        this._panel.webview.onDidReceiveMessage(
+            message => this._handleMessage(message),
+            null,
+            this._disposables
+        );
 
-            switch (message.type) {
-                case 'scanWorkspace':
-                    await this._scanWorkspace(message.targetPath);
-                    break;
-                case 'selectFile':
-                    this._selectFile(message.file, message.selected);
-                    break;
-                case 'selectTarget':
-                    this._selectTarget(message.file, message.target, message.selected);
-                    break;
-                case 'selectAllInFile':
-                    this._selectAllInFile(message.file, message.selected);
-                    break;
-                case 'analyzeSelected':
-                    await this._analyzeSelected();
-                    break;
-                case 'generateTests':
-                    await this._generateTests();
-                    break;
-                case 'applyTest':
-                    await this._applyTest(message.sourceFile, message.testIndex);
-                    break;
-                case 'applyAllSelected':
-                    await this._applyAllSelected();
-                    break;
-                case 'cancelOperation':
-                    this._cancelOperation();
-                    break;
-                case 'resetSession':
-                    this._resetSession();
-                    break;
-                case 'getSessionState':
-                    this._sendSessionState();
-                    this._sendHealthStatus();
-                    break;
-                case 'goBack':
-                    this._goBack(message.fromStage);
-                    break;
-            }
-        });
+        // Track active file changes
+        this._disposables.push(
+            vscode.window.onDidChangeActiveTextEditor(editor => {
+                this._sendActiveFile(editor);
+            })
+        );
 
-        this._disposables.push(messageDisposable);
+        // Send initial active file
+        this._sendActiveFile(vscode.window.activeTextEditor);
+
+        // Pre-fill with project root
+        this._sendProjectRoot();
+    }
+
+    private _sendProjectRoot(): void {
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+        if (workspaceFolder) {
+            this._panel.webview.postMessage({
+                type: 'pathSelected',
+                path: workspaceFolder,
+                isDirectory: true
+            });
+        }
+    }
+
+    private _sendActiveFile(editor: vscode.TextEditor | undefined): void {
+        if (editor) {
+            const fileName = path.basename(editor.document.uri.fsPath);
+            this._panel.webview.postMessage({
+                type: 'activeFileChanged',
+                fileName,
+                filePath: editor.document.uri.fsPath
+            });
+        } else {
+            this._panel.webview.postMessage({
+                type: 'activeFileChanged',
+                fileName: null
+            });
+        }
+    }
+
+    public dispose() {
+        TestGeneratorPanel.currentPanel = undefined;
+
+        if (this._activeProcess) {
+            this._activeProcess.kill();
+        }
+
+        this._panel.dispose();
+
+        while (this._disposables.length) {
+            const disposable = this._disposables.pop();
+            if (disposable) {
+                disposable.dispose();
+            }
+        }
+    }
+
+    private async _handleMessage(message: any) {
+        // Route file picker messages through the service
+        if (message.type?.startsWith('filePicker:')) {
+            await this._handleFilePicker?.(message);
+            return;
+        }
+
+        switch (message.type) {
+            case 'scanWorkspace':
+                await this._scanWorkspace(message.targetPath);
+                break;
+            case 'selectFile':
+                this._selectFile(message.file, message.selected);
+                break;
+            case 'selectTarget':
+                this._selectTarget(message.file, message.target, message.selected);
+                break;
+            case 'selectAllInFile':
+                this._selectAllInFile(message.file, message.selected);
+                break;
+            case 'analyzeSelected':
+                await this._analyzeSelected();
+                break;
+            case 'generateTests':
+                await this._generateTests();
+                break;
+            case 'applyTest':
+                await this._applyTest(message.sourceFile, message.testIndex);
+                break;
+            case 'applyAllSelected':
+                await this._applyAllSelected();
+                break;
+            case 'cancelOperation':
+                this._cancelOperation();
+                break;
+            case 'resetSession':
+                this._resetSession();
+                break;
+            case 'getSessionState':
+                this._sendSessionState();
+                this._sendHealthStatus();
+                break;
+            case 'goBack':
+                this._goBack(message.fromStage);
+                break;
+        }
     }
 
     // =========================================================================
@@ -275,15 +345,33 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
             appliedTests: []
         };
 
-        this._view?.webview.postMessage({ type: 'scanning', targetPath });
+        this._panel.webview.postMessage({ type: 'scanning', targetPath });
 
         const config = vscode.workspace.getConfiguration('empathy');
         const pythonPath = config.get<string>('pythonPath', 'python');
 
+        // Get configurable limits from settings with sensible defaults
+        const testGenConfig = vscode.workspace.getConfiguration('empathy.testGen');
+        const inputData = {
+            path: targetPath,
+            file_types: ['.py'],
+            // Configurable limits - users can override in settings
+            max_files_to_scan: testGenConfig.get<number>('maxFilesToScan', 1000),
+            max_file_size_kb: testGenConfig.get<number>('maxFileSizeKb', 200),
+            max_candidates: testGenConfig.get<number>('maxCandidates', 50),
+            max_files_to_analyze: testGenConfig.get<number>('maxFilesToAnalyze', 20),
+            max_functions_per_file: testGenConfig.get<number>('maxFunctionsPerFile', 30),
+            max_classes_per_file: testGenConfig.get<number>('maxClassesPerFile', 15),
+            max_files_to_generate: testGenConfig.get<number>('maxFilesToGenerate', 15),
+            max_functions_to_generate: testGenConfig.get<number>('maxFunctionsToGenerate', 8),
+            max_classes_to_generate: testGenConfig.get<number>('maxClassesToGenerate', 4),
+            include_all_files: testGenConfig.get<boolean>('includeAllFiles', false),
+        };
+
         // Run test-gen workflow identify stage
         const args = [
             '-m', 'empathy_os.cli', 'workflow', 'run', 'test-gen',
-            '--input', JSON.stringify({ path: targetPath, file_types: ['.py'] }),
+            '--input', JSON.stringify(inputData),
             '--json'
         ];
 
@@ -305,7 +393,12 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
             try {
                 const output = JSON.parse(stdout);
                 // The workflow returns final_output which contains candidates from identify stage
-                const candidates = output.final_output?.candidates || output.candidates || [];
+                const finalOutput = output.final_output || output;
+                const candidates = finalOutput.candidates || [];
+
+                // Extract scan summary for visibility
+                const scanSummary = finalOutput.scan_summary || {};
+                const parseErrors = finalOutput.parse_errors || [];
 
                 if (this._session) {
                     this._session.candidates = candidates;
@@ -321,10 +414,25 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
                 const hotspots = candidates.filter((c: TestCandidate) => c.is_hotspot).length;
                 const untested = candidates.filter((c: TestCandidate) => !c.has_tests).length;
 
-                this._view?.webview.postMessage({
+                this._panel.webview.postMessage({
                     type: 'candidates',
                     candidates,
-                    summary: { total: candidates.length, hotspots, untested }
+                    summary: {
+                        total: candidates.length,
+                        hotspots,
+                        untested,
+                        // Include scan summary for UI display
+                        scanSummary: {
+                            filesScanned: scanSummary.files_scanned || 0,
+                            filesTooLarge: scanSummary.files_too_large || 0,
+                            filesReadError: scanSummary.files_read_error || 0,
+                            filesExcluded: scanSummary.files_excluded_by_pattern || 0,
+                            earlyExitReason: scanSummary.early_exit_reason || null,
+                        },
+                        parseErrors: parseErrors.slice(0, 5), // Limit to 5 errors for UI
+                        totalSourceFiles: finalOutput.total_source_files || 0,
+                        existingTestFiles: finalOutput.existing_test_files || 0,
+                    }
                 });
             } catch (parseErr) {
                 this._sendError('Failed to parse scan results');
@@ -345,7 +453,7 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
         this._session.stage = 'analyzing';
         const selectedFiles = Array.from(this._session.selectedFiles);
 
-        this._view?.webview.postMessage({ type: 'analyzing', files: selectedFiles });
+        this._panel.webview.postMessage({ type: 'analyzing', files: selectedFiles });
 
         const config = vscode.workspace.getConfiguration('empathy');
         const pythonPath = config.get<string>('pythonPath', 'python');
@@ -396,7 +504,7 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
                 const totalFunctions = analysis.reduce((sum: number, a: FileAnalysis) => sum + a.function_count, 0);
                 const totalClasses = analysis.reduce((sum: number, a: FileAnalysis) => sum + a.class_count, 0);
 
-                this._view?.webview.postMessage({
+                this._panel.webview.postMessage({
                     type: 'analysis',
                     analysis,
                     totals: { functions: totalFunctions, classes: totalClasses }
@@ -425,7 +533,7 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
             targetsList.push({ file, targets: Array.from(targets) });
         });
 
-        this._view?.webview.postMessage({ type: 'generating', targets: targetsList });
+        this._panel.webview.postMessage({ type: 'generating', targets: targetsList });
 
         const config = vscode.workspace.getConfiguration('empathy');
         const pythonPath = config.get<string>('pythonPath', 'python');
@@ -466,23 +574,29 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
 
                 const totalTests = generatedTests.reduce((sum: number, g: GeneratedTestFile) => sum + g.test_count, 0);
 
-                this._view?.webview.postMessage({
+                this._panel.webview.postMessage({
                     type: 'generated',
                     tests: generatedTests,
                     totalTests
                 });
             } catch (parseErr) {
                 this._sendError('Failed to parse generated tests');
-                console.error('Parse error:', parseErr);
+                console.error('TestGeneratorPanel: Parse error', parseErr);
             }
         });
     }
 
     private async _applyTest(sourceFile: string, testIndex: number): Promise<void> {
-        if (!this._session) return;
+        if (!this._session) {
+            this._sendError('No active session');
+            return;
+        }
 
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-        if (!workspaceFolder) return;
+        if (!workspaceFolder) {
+            this._sendError('No workspace folder open');
+            return;
+        }
 
         const testFile = this._session.generatedTests.find(t => t.source_file === sourceFile);
         if (!testFile || !testFile.tests[testIndex]) {
@@ -494,6 +608,12 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
         const testFilePath = this._resolveTestFilePath(workspaceFolder, sourceFile, testFile.test_file);
 
         try {
+            // Ensure parent directory exists
+            const parentDir = path.dirname(testFilePath);
+            if (!fs.existsSync(parentDir)) {
+                fs.mkdirSync(parentDir, { recursive: true });
+            }
+
             let existingContent = '';
             if (fs.existsSync(testFilePath)) {
                 existingContent = fs.readFileSync(testFilePath, 'utf8');
@@ -507,28 +627,45 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
             fs.writeFileSync(testFilePath, newContent);
             this._session.appliedTests.push(testFilePath);
 
-            this._view?.webview.postMessage({
+            this._panel.webview.postMessage({
                 type: 'testApplied',
                 testFile: testFilePath,
+                sourceFile,
+                testIndex,
                 success: true
             });
 
             vscode.window.showInformationMessage(`Test applied to ${path.basename(testFilePath)}`);
         } catch (err) {
-            this._view?.webview.postMessage({
+            const errorMsg = (err as Error).message;
+            this._panel.webview.postMessage({
                 type: 'testApplied',
                 testFile: testFilePath,
+                sourceFile,
+                testIndex,
                 success: false,
-                error: (err as Error).message
+                error: errorMsg
             });
+            vscode.window.showErrorMessage(`Failed to apply test: ${errorMsg}`);
         }
     }
 
     private async _applyAllSelected(): Promise<void> {
-        if (!this._session) return;
+        if (!this._session) {
+            this._sendError('No active session');
+            return;
+        }
 
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-        if (!workspaceFolder) return;
+        if (!workspaceFolder) {
+            this._sendError('No workspace folder open');
+            return;
+        }
+
+        if (!this._session.generatedTests || this._session.generatedTests.length === 0) {
+            this._sendError('No tests have been generated yet');
+            return;
+        }
 
         let applied = 0;
         let failed = 0;
@@ -537,13 +674,20 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
             const testFilePath = this._resolveTestFilePath(workspaceFolder, testFile.source_file, testFile.test_file);
 
             try {
+                // Ensure parent directory exists
+                const parentDir = path.dirname(testFilePath);
+                if (!fs.existsSync(parentDir)) {
+                    fs.mkdirSync(parentDir, { recursive: true });
+                }
+
                 let existingContent = '';
                 if (fs.existsSync(testFilePath)) {
                     existingContent = fs.readFileSync(testFilePath, 'utf8');
                 }
 
                 // Combine all tests for this file
-                const allTestCode = testFile.tests.map(t => t.code).join('\n\n');
+                const allTestCode = testFile.tests.map((t: GeneratedTest) => t.code).join('\n\n');
+
                 const newContent = existingContent
                     ? `${existingContent}\n\n${allTestCode}`
                     : allTestCode;
@@ -553,11 +697,11 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
                 applied++;
             } catch (err) {
                 failed++;
-                console.error(`Failed to apply test to ${testFilePath}:`, err);
+                console.error('TestGeneratorPanel: Failed to apply test', testFilePath, err);
             }
         }
 
-        this._view?.webview.postMessage({
+        this._panel.webview.postMessage({
             type: 'allTestsApplied',
             applied,
             failed
@@ -676,7 +820,7 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
     }
 
     private _sendHealthStatus(): void {
-        this._view?.webview.postMessage({
+        this._panel.webview.postMessage({
             type: 'healthStatus',
             health: this._backendHealth
         });
@@ -684,7 +828,7 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
 
     private _sendSessionState(): void {
         if (this._session) {
-            this._view?.webview.postMessage({
+            this._panel.webview.postMessage({
                 type: 'sessionState',
                 session: {
                     ...this._session,
@@ -700,7 +844,7 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
     }
 
     private _sendError(message: string): void {
-        this._view?.webview.postMessage({ type: 'error', message });
+        this._panel.webview.postMessage({ type: 'error', message });
         vscode.window.showErrorMessage(`Test Generator: ${message}`);
     }
 
@@ -708,14 +852,14 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
         if (this._activeProcess) {
             this._activeProcess.kill();
             this._activeProcess = null;
-            this._view?.webview.postMessage({ type: 'operationCancelled' });
+            this._panel.webview.postMessage({ type: 'operationCancelled' });
             vscode.window.showInformationMessage('Operation cancelled');
         }
     }
 
     private _resetSession(): void {
         this._session = null;
-        this._view?.webview.postMessage({ type: 'sessionReset' });
+        this._panel.webview.postMessage({ type: 'sessionReset' });
     }
 
     private _goBack(fromStage: string): void {
@@ -1012,6 +1156,12 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
         <span id="health-text">Backend: Checking...</span>
     </div>
 
+    <!-- Current File Indicator -->
+    <div id="current-file" class="section" style="padding: 8px 12px; background: var(--vscode-editor-background); border-radius: 4px; margin-bottom: 12px; font-size: 11px;">
+        <span style="color: var(--vscode-descriptionForeground);">Active file:</span>
+        <span id="active-file-name" style="color: var(--vscode-textLink-foreground); margin-left: 4px;">None</span>
+    </div>
+
     <!-- Step 1: Target Selection -->
     <div id="step-target" class="section">
         <h2>Test Generator Wizard</h2>
@@ -1038,8 +1188,12 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
             <div class="spinner"></div>
             <span id="loading-text">Scanning...</span>
         </div>
-        <div style="text-align: center;">
+        <div id="loading-timeout" class="hidden" style="text-align: center; color: var(--vscode-errorForeground); margin-bottom: 10px;">
+            ⚠️ Operation taking longer than expected...
+        </div>
+        <div style="text-align: center; display: flex; gap: 8px; justify-content: center;">
             <button class="button button-secondary" id="btn-cancel">Cancel</button>
+            <button class="button button-secondary" id="btn-reset" title="Reset wizard to start over">Reset</button>
         </div>
     </div>
 
@@ -1095,6 +1249,7 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
         let generatedTests = [];
         let selectedFiles = new Set();
         let selectedTargets = {};
+        let loadingTimeoutId = null;
 
         // Elements
         const stepTarget = document.getElementById('step-target');
@@ -1135,6 +1290,22 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
         document.getElementById('btn-cancel').addEventListener('click', () => {
             vscode.postMessage({ type: 'cancelOperation' });
         });
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            // Hard reset - clear all state and go back to start
+            clearTimeout(loadingTimeoutId);
+            loadingTimeoutId = null;
+            targetPath = '';
+            candidates = [];
+            analysis = [];
+            generatedTests = [];
+            selectedFiles = new Set();
+            selectedTargets = {};
+            targetInput.value = '';
+            document.getElementById('btn-scan').disabled = true;
+            document.getElementById('loading-timeout').classList.add('hidden');
+            vscode.postMessage({ type: 'resetSession' });
+            showStep('target');
+        });
         document.getElementById('btn-back-target').addEventListener('click', () => {
             showStep('target');
         });
@@ -1173,7 +1344,24 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
 
         function showLoading(text) {
             loadingText.textContent = text;
+            document.getElementById('loading-timeout').classList.add('hidden');
+            // Clear any previous timeout
+            if (loadingTimeoutId) {
+                clearTimeout(loadingTimeoutId);
+            }
+            // Show warning after 30 seconds
+            loadingTimeoutId = setTimeout(() => {
+                document.getElementById('loading-timeout').classList.remove('hidden');
+            }, 30000);
             showStep('loading');
+        }
+
+        function hideLoading() {
+            if (loadingTimeoutId) {
+                clearTimeout(loadingTimeoutId);
+                loadingTimeoutId = null;
+            }
+            document.getElementById('loading-timeout').classList.add('hidden');
         }
 
         // Message handler
@@ -1191,6 +1379,7 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
                     break;
 
                 case 'candidates':
+                    hideLoading();
                     candidates = message.candidates;
                     selectedFiles = new Set(candidates.filter(c => c.priority >= 50 || c.is_hotspot).map(c => c.file));
                     document.getElementById('stat-total').textContent = message.summary.total;
@@ -1205,6 +1394,7 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
                     break;
 
                 case 'analysis':
+                    hideLoading();
                     analysis = message.analysis;
                     selectedTargets = {};
                     analysis.forEach(a => {
@@ -1224,6 +1414,7 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
                     break;
 
                 case 'generated':
+                    hideLoading();
                     generatedTests = message.tests;
                     document.getElementById('stat-tests').textContent = message.totalTests;
                     renderPreview();
@@ -1231,26 +1422,53 @@ export class TestGeneratorPanel implements vscode.WebviewViewProvider {
                     break;
 
                 case 'testApplied':
+                    // Update the Apply button for this specific test
                     if (message.success) {
-                        // Update UI to show applied
+                        // Find and update the button that was clicked
+                        const buttons = document.querySelectorAll('.preview-test button');
+                        buttons.forEach((btn, idx) => {
+                            // Match by checking sourceFile and testIndex from the onclick
+                            const onclickAttr = btn.getAttribute('onclick') || '';
+                            if (onclickAttr.includes(message.sourceFile) && onclickAttr.includes(message.testIndex.toString())) {
+                                btn.textContent = '✓ Applied';
+                                btn.disabled = true;
+                                btn.classList.add('button-success');
+                            }
+                        });
                     }
                     break;
 
                 case 'allTestsApplied':
                     // Show completion state
+                    const resultMsg = message.applied > 0
+                        ? 'Successfully applied ' + message.applied + ' test file(s)!' + (message.failed > 0 ? ' (' + message.failed + ' failed)' : '')
+                        : message.failed > 0 ? 'Failed to apply ' + message.failed + ' test file(s)' : 'No tests to apply';
+                    alert(resultMsg);
+                    // Update button to show completed state
+                    const applyBtn = document.getElementById('btn-apply-all');
+                    if (applyBtn && message.applied > 0) {
+                        applyBtn.textContent = '✓ Applied ' + message.applied + ' Files';
+                        applyBtn.disabled = true;
+                    }
                     break;
 
                 case 'operationCancelled':
+                    hideLoading();
                     showStep('target');
                     break;
 
                 case 'error':
+                    hideLoading();
                     alert(message.message);
                     showStep('target');
                     break;
 
                 case 'healthStatus':
                     updateHealthIndicator(message.health);
+                    break;
+
+                case 'activeFileChanged':
+                    document.getElementById('active-file-name').textContent = message.fileName || 'None';
                     break;
             }
         });

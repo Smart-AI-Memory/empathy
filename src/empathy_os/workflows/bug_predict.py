@@ -14,13 +14,208 @@ Copyright 2025 Smart-AI-Memory
 Licensed under Fair Source License 0.9
 """
 
+import fnmatch
 import json
 import re
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 from .base import BaseWorkflow, ModelTier
 from .step_config import WorkflowStepConfig
+
+
+def _load_bug_predict_config() -> dict:
+    """
+    Load bug_predict configuration from empathy.config.yml.
+
+    Returns:
+        Dict with bug_predict settings, or defaults if not found.
+    """
+    defaults = {
+        "risk_threshold": 0.7,
+        "exclude_files": [],
+        "acceptable_exception_contexts": ["version", "config", "cleanup", "optional"],
+    }
+
+    config_paths = [
+        Path("empathy.config.yml"),
+        Path("empathy.config.yaml"),
+        Path(".empathy.yml"),
+        Path(".empathy.yaml"),
+    ]
+
+    for config_path in config_paths:
+        if config_path.exists():
+            try:
+                with open(config_path) as f:
+                    config = yaml.safe_load(f)
+                    if config and "bug_predict" in config:
+                        bug_config = config["bug_predict"]
+                        return {
+                            "risk_threshold": bug_config.get(
+                                "risk_threshold", defaults["risk_threshold"]
+                            ),
+                            "exclude_files": bug_config.get(
+                                "exclude_files", defaults["exclude_files"]
+                            ),
+                            "acceptable_exception_contexts": bug_config.get(
+                                "acceptable_exception_contexts",
+                                defaults["acceptable_exception_contexts"],
+                            ),
+                        }
+            except (yaml.YAMLError, OSError):
+                pass
+
+    return defaults
+
+
+def _should_exclude_file(file_path: str, exclude_patterns: list[str]) -> bool:
+    """
+    Check if a file should be excluded based on glob patterns.
+
+    Args:
+        file_path: Path to the file
+        exclude_patterns: List of glob patterns (e.g., "**/test_*.py")
+
+    Returns:
+        True if the file matches any exclusion pattern.
+    """
+    for pattern in exclude_patterns:
+        # Handle ** patterns for recursive matching
+        if "**" in pattern:
+            # Convert ** glob to fnmatch-compatible pattern
+            parts = pattern.split("**")
+            if len(parts) == 2:
+                prefix, suffix = parts
+                # Check if file path contains the pattern structure
+                if prefix and not file_path.startswith(prefix.rstrip("/")):
+                    continue
+                if suffix and fnmatch.fnmatch(file_path, f"*{suffix}"):
+                    return True
+                if not suffix and fnmatch.fnmatch(file_path, f"*{prefix}*"):
+                    return True
+        else:
+            if fnmatch.fnmatch(file_path, pattern) or fnmatch.fnmatch(
+                Path(file_path).name, pattern
+            ):
+                return True
+
+    return False
+
+
+def _is_acceptable_broad_exception(
+    line: str,
+    context_before: list[str],
+    context_after: list[str],
+    acceptable_contexts: list[str] | None = None,
+) -> bool:
+    """
+    Check if a broad exception handler is acceptable based on context.
+
+    Acceptable patterns (configurable via acceptable_contexts):
+    - version: Version/metadata detection with fallback
+    - config: Config loading with default fallback
+    - optional: Optional feature detection (imports, hasattr)
+    - cleanup: Cleanup/teardown code
+    - logging: Logging-only handlers that re-raise
+
+    Args:
+        line: The line containing the except clause
+        context_before: Lines before the except
+        context_after: Lines after the except (the handler body)
+        acceptable_contexts: List of context types to accept (from config)
+
+    Returns:
+        True if the exception handler is acceptable, False if problematic.
+    """
+    # Default acceptable contexts if not provided
+    if acceptable_contexts is None:
+        acceptable_contexts = ["version", "config", "cleanup", "optional"]
+
+    # Join context for pattern matching
+    before_text = "\n".join(context_before[-5:]).lower()
+    after_text = "\n".join(context_after[:5]).lower()
+
+    # Acceptable: Version/metadata detection
+    if "version" in acceptable_contexts:
+        if any(kw in before_text for kw in ["get_version", "version", "metadata", "__version__"]):
+            if any(kw in after_text for kw in ["return", "dev", "unknown", "0.0.0"]):
+                return True
+
+    # Acceptable: Config loading with fallback to defaults
+    if "config" in acceptable_contexts:
+        if any(kw in before_text for kw in ["config", "settings", "yaml", "json", "load"]):
+            if "pass" in after_text or "default" in after_text or "fallback" in after_text:
+                return True
+
+    # Acceptable: Optional import/feature detection
+    if "optional" in acceptable_contexts:
+        if "import" in before_text or "hasattr" in before_text:
+            if "pass" in after_text or "none" in after_text or "false" in after_text:
+                return True
+
+    # Acceptable: Cleanup with pass (often in __del__ or context managers)
+    if "cleanup" in acceptable_contexts:
+        if any(kw in before_text for kw in ["__del__", "__exit__", "cleanup", "close", "teardown"]):
+            return True
+
+    # Acceptable: Explicit logging then re-raise or return error
+    if "logging" in acceptable_contexts:
+        if "log" in after_text and ("raise" in after_text or "return" in after_text):
+            return True
+
+    # Always accept: Comment explains the broad catch is intentional
+    if "# " in after_text and any(
+        kw in after_text
+        for kw in ["fallback", "ignore", "optional", "best effort", "graceful", "intentional"]
+    ):
+        return True
+
+    return False
+
+
+def _has_problematic_exception_handlers(
+    content: str,
+    file_path: str,
+    acceptable_contexts: list[str] | None = None,
+) -> bool:
+    """
+    Check if file has problematic broad exception handlers.
+
+    Filters out acceptable uses like version detection, config fallbacks,
+    and optional feature detection.
+
+    Args:
+        content: File content to check
+        file_path: Path to the file
+        acceptable_contexts: List of acceptable context types from config
+
+    Returns:
+        True if problematic exception handlers found, False otherwise.
+    """
+    if "except:" not in content and "except Exception:" not in content:
+        return False
+
+    lines = content.splitlines()
+    problematic_count = 0
+
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+
+        # Check for broad exception patterns
+        if stripped.startswith("except:") or stripped.startswith("except Exception"):
+            context_before = lines[max(0, i - 5) : i]
+            context_after = lines[i + 1 : min(len(lines), i + 6)]
+
+            if not _is_acceptable_broad_exception(
+                stripped, context_before, context_after, acceptable_contexts
+            ):
+                problematic_count += 1
+
+    # Only flag if there are problematic handlers
+    return problematic_count > 0
 
 
 def _is_dangerous_eval_usage(content: str, file_path: str) -> bool:
@@ -32,6 +227,8 @@ def _is_dangerous_eval_usage(content: str, file_path: str) -> bool:
     - Comments mentioning eval/exec (e.g., '# SECURITY FIX: Use json.loads() instead of eval()')
     - JavaScript's safe regex.exec() method
     - Pattern definitions for security scanners
+    - Test fixtures: code written via write_text() or similar for testing
+    - Scanner test files that deliberately contain example bad patterns
 
     Returns:
         True if dangerous eval/exec usage is found, False otherwise.
@@ -39,6 +236,39 @@ def _is_dangerous_eval_usage(content: str, file_path: str) -> bool:
     # Check if file even contains eval or exec
     if "eval(" not in content and "exec(" not in content:
         return False
+
+    # Exclude scanner test files (they deliberately contain example bad patterns)
+    scanner_test_patterns = [
+        "test_bug_predict",
+        "test_scanner",
+        "test_security_scan",
+    ]
+    file_name = file_path.lower()
+    if any(pattern in file_name for pattern in scanner_test_patterns):
+        return False
+
+    # Check for test fixture patterns - eval/exec inside write_text() or heredoc strings
+    # These are test data being written to temp files, not actual dangerous code
+    fixture_patterns = [
+        r'write_text\s*\(\s*["\'][\s\S]*?(?:eval|exec)\s*\(',  # write_text("...eval(...")
+        r'write_text\s*\(\s*"""[\s\S]*?(?:eval|exec)\s*\(',  # write_text("""...eval(...""")
+        r"write_text\s*\(\s*'''[\s\S]*?(?:eval|exec)\s*\(",  # write_text('''...eval(...''')
+    ]
+    for pattern in fixture_patterns:
+        if re.search(pattern, content, re.MULTILINE):
+            # All eval/exec occurrences might be in fixtures - do deeper check
+            # Remove fixture content and see if any eval/exec remains
+            content_without_fixtures = re.sub(
+                r"write_text\s*\([^)]*\)", "", content, flags=re.DOTALL
+            )
+            content_without_fixtures = re.sub(
+                r'write_text\s*\("""[\s\S]*?"""\)', "", content_without_fixtures
+            )
+            content_without_fixtures = re.sub(
+                r"write_text\s*\('''[\s\S]*?'''\)", "", content_without_fixtures
+            )
+            if "eval(" not in content_without_fixtures and "exec(" not in content_without_fixtures:
+                return False
 
     # For JavaScript/TypeScript files, check for regex.exec() which is safe
     if file_path.endswith((".js", ".ts", ".tsx", ".jsx")):
@@ -136,7 +366,7 @@ class BugPredictionWorkflow(BaseWorkflow):
 
     def __init__(
         self,
-        risk_threshold: float = 0.7,
+        risk_threshold: float | None = None,
         patterns_dir: str = "./patterns",
         **kwargs: Any,
     ):
@@ -145,11 +375,21 @@ class BugPredictionWorkflow(BaseWorkflow):
 
         Args:
             risk_threshold: Minimum risk score to trigger premium recommendations
+                           (defaults to config value or 0.7)
             patterns_dir: Directory containing learned patterns
             **kwargs: Additional arguments passed to BaseWorkflow
         """
         super().__init__(**kwargs)
-        self.risk_threshold = risk_threshold
+
+        # Load bug_predict config from empathy.config.yml
+        self._bug_predict_config = _load_bug_predict_config()
+
+        # Use provided risk_threshold or fall back to config
+        self.risk_threshold = (
+            risk_threshold
+            if risk_threshold is not None
+            else self._bug_predict_config["risk_threshold"]
+        )
         self.patterns_dir = patterns_dir
         self._risk_score: float = 0.0
         self._bug_patterns: list[dict] = []
@@ -240,6 +480,10 @@ class BugPredictionWorkflow(BaseWorkflow):
             "*.egg-info",
         ]
 
+        # Get config options
+        config_exclude_patterns = self._bug_predict_config.get("exclude_files", [])
+        acceptable_contexts = self._bug_predict_config.get("acceptable_exception_contexts", None)
+
         # Walk directory and collect file info
         target = Path(target_path)
         if target.exists():
@@ -249,6 +493,11 @@ class BugPredictionWorkflow(BaseWorkflow):
                     path_str = str(file_path)
                     if any(excl in path_str for excl in exclude_dirs):
                         continue
+
+                    # Skip files matching config exclude patterns
+                    if _should_exclude_file(path_str, config_exclude_patterns):
+                        continue
+
                     try:
                         content = file_path.read_text(errors="ignore")
                         scanned_files.append(
@@ -260,7 +509,10 @@ class BugPredictionWorkflow(BaseWorkflow):
                         )
 
                         # Look for common bug-prone patterns
-                        if "except:" in content or "except Exception:" in content:
+                        # Use smart detection with configurable acceptable contexts
+                        if _has_problematic_exception_handlers(
+                            content, str(file_path), acceptable_contexts
+                        ):
                             patterns_found.append(
                                 {
                                     "file": str(file_path),

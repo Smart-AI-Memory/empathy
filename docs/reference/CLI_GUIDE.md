@@ -37,20 +37,27 @@ Licensed under Fair Source 0.9
 
 ### Init
 
-Initialize a new project with a configuration file:
+Initialize a new project with an interactive configuration wizard:
 
 ```bash
-# Create YAML config (default)
-empathy-framework init
+# Interactive setup wizard (recommended)
+empathy init
 
-# Create JSON config
-empathy-framework init --format json
+# Non-interactive with defaults
+empathy init --non-interactive
 
-# Specify output path
-empathy-framework init --format yaml --output my-config.yml
+# Overwrite existing config
+empathy init --force
 ```
 
-This creates a configuration file with default settings that you can customize.
+The wizard guides you through:
+
+- **Provider selection** - Anthropic, OpenAI, Google, Ollama, or Hybrid
+- **API key configuration** - Environment variable or direct input
+- **Model tier preferences** - Cheap, Capable, Premium model mapping
+- **Compliance mode** - Standard or HIPAA
+
+This creates `empathy.config.yml` with your settings.
 
 ---
 
@@ -877,6 +884,73 @@ The code review automatically detects file languages and applies appropriate pat
 | `.kt` | Kotlin |
 
 ---
+
+### Bug Prediction Workflow (New in v3.5.5)
+
+Predict bugs by analyzing code against learned patterns:
+
+```bash
+# Scan current directory
+empathy workflow run bug-predict
+
+# Scan specific path
+empathy workflow run bug-predict --input '{"path":"./src"}'
+
+# JSON output for CI/CD
+empathy workflow run bug-predict --json
+```
+
+#### Understanding Scanner Results
+
+The bug prediction scanner detects patterns that historically correlate with bugs:
+
+| Pattern | Severity | Description |
+|---------|----------|-------------|
+| `dangerous_eval` | High | Use of `eval()` or `exec()` on untrusted input |
+| `broad_exception` | Medium | Bare `except:` or `except Exception:` that may mask errors |
+| `incomplete_code` | Low | TODO/FIXME comments indicating unfinished work |
+
+#### Smart False Positive Filtering
+
+The scanner automatically filters acceptable patterns:
+
+**Acceptable `broad_exception` uses (not flagged):**
+- Version detection with fallback: `except: return "dev"`
+- Config loading with defaults: `except: pass  # Fall back to default`
+- Optional feature detection: `try: import optional_lib`
+- Cleanup/teardown code: `__del__`, `__exit__`, `close()`
+- Logging with re-raise: `except: log.error(...); raise`
+
+**Acceptable `dangerous_eval` uses (not flagged):**
+- Test fixtures: Code inside `write_text()` for testing
+- Scanner test files: `test_bug_predict*`, `test_scanner*`
+- Detection code: `if "eval(" in content`
+
+#### Risk Scores
+
+Files are scored 0-100% based on pattern severity and historical correlation:
+
+| Score | Risk Level | Action |
+|-------|------------|--------|
+| 80-100% | 🔴 HIGH | Immediate attention required |
+| 50-79% | 🟠 MODERATE | Review before release |
+| 30-49% | 🟡 LOW | Address when convenient |
+| 0-29% | 🟢 MINIMAL | No action needed |
+
+#### Customizing Scanner Behavior
+
+See `empathy.config.yml` for customizable exclusions:
+
+```yaml
+bug_predict:
+  exclude_files:
+    - "**/test_*.py"
+    - "**/fixtures/**"
+  acceptable_exception_contexts:
+    - version
+    - config
+    - cleanup
+```
 
 ---
 

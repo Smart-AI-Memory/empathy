@@ -2,6 +2,18 @@
 
 All notable changes to the "Empathy Framework" extension will be documented in this file.
 
+## [1.3.1] - 2025-12-31
+
+### Removed
+
+- **Refactor Advisor Panel** - Temporarily removed from sidebar (code retained for future use)
+- **Test Generator Panel** - Temporarily removed from sidebar (Generate Tests button now runs workflow directly)
+
+### Fixed
+
+- **Bug Prediction Scanner** - Smart false positive filtering now configurable via `empathy.config.yml`
+- **Workflow Execution** - Fixed `output_dir` parameter being passed to non-test-gen workflows
+
 ## [1.3.0] - 2025-12-30
 
 ### Added
@@ -24,6 +36,14 @@ All notable changes to the "Empathy Framework" extension will be documented in t
   - Four selection modes: File, Folder, Active File, Project Root
   - Predefined file filters (PYTHON, CODE_ALL, DOCUMENTS, ALL)
   - Uses OS-native dialogs via `vscode.window.showOpenDialog()`
+- **Workflow Wizard Panel** - Interactive 3-step wizard for creating new workflows
+  - Step 1: Select Pattern (Crew, Base, or Compose) with inline guidance
+  - Step 2: Configure workflow name and output directory
+  - Step 3: Preview generated template with syntax highlighting
+  - Pattern decision tree and "Best for" guidance inline in UI
+  - Respects `workflows.default_pattern` from empathy.config.yml
+  - Command: `Empathy: Workflow Wizard` in command palette
+  - **New Workflow** button in Dashboard → Workflows section for quick access
 
 ### Changed
 

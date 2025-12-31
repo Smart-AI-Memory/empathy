@@ -2,7 +2,7 @@
   "name": "empathy-framework",
   "displayName": "Empathy Framework",
   "description": "AI-powered code health, pattern learning, and cost optimization for VS Code. Learn bug patterns from git history, track API costs, sync to Claude Code.",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "publisher": "smart-ai-memory",
   "license": "SEE LICENSE IN LICENSE",
   "icon": "images/icon.png",
@@ -130,6 +130,16 @@
         "icon": "$(zap)"
       },
       {
+        "command": "empathy.openDocAnalysis",
+        "title": "Empathy: Analyze Documentation",
+        "icon": "$(book)"
+      },
+      {
+        "command": "empathy.runWorkflowQuick",
+        "title": "Empathy: Run Workflow",
+        "icon": "$(play)"
+      },
+      {
         "command": "empathy.memory.showPanel",
         "title": "Empathy: Memory Panel (Beta)",
         "icon": "$(database)"
@@ -148,6 +158,11 @@
         "command": "empathy.testGenerator.show",
         "title": "Empathy: Test Generator Wizard",
         "icon": "$(beaker)"
+      },
+      {
+        "command": "empathy.workflowWizard.show",
+        "title": "Empathy: Workflow Wizard",
+        "icon": "$(symbol-function)"
       }
     ],
     "keybindings": [
@@ -180,18 +195,8 @@
         },
         {
           "type": "webview",
-          "id": "refactor-advisor",
-          "name": "Refactor Advisor"
-        },
-        {
-          "type": "webview",
           "id": "research-synthesis",
           "name": "Research Synthesis"
-        },
-        {
-          "type": "webview",
-          "id": "test-generator",
-          "name": "Test Generator"
         }
       ]
     },
@@ -203,6 +208,10 @@
         },
         {
           "command": "empathy.ship",
+          "when": "true"
+        },
+        {
+          "command": "empathy.runWorkflowQuick",
           "when": "true"
         },
         {
@@ -290,6 +299,74 @@
           "type": "boolean",
           "default": true,
           "description": "(Beta) Show notifications for memory operations"
+        },
+        "empathy.testGen.maxFilesToScan": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 10,
+          "maximum": 10000,
+          "description": "Maximum number of files to scan before stopping (prevents timeouts on large projects)"
+        },
+        "empathy.testGen.maxFileSizeKb": {
+          "type": "number",
+          "default": 200,
+          "minimum": 10,
+          "maximum": 1000,
+          "description": "Skip files larger than this size in KB"
+        },
+        "empathy.testGen.maxCandidates": {
+          "type": "number",
+          "default": 50,
+          "minimum": 5,
+          "maximum": 500,
+          "description": "Maximum number of candidate files to return from scan"
+        },
+        "empathy.testGen.maxFilesToAnalyze": {
+          "type": "number",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum files to analyze for test generation"
+        },
+        "empathy.testGen.maxFunctionsPerFile": {
+          "type": "number",
+          "default": 30,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum functions to extract per file"
+        },
+        "empathy.testGen.maxClassesPerFile": {
+          "type": "number",
+          "default": 15,
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Maximum classes to extract per file"
+        },
+        "empathy.testGen.maxFilesToGenerate": {
+          "type": "number",
+          "default": 15,
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Maximum files to generate tests for"
+        },
+        "empathy.testGen.maxFunctionsToGenerate": {
+          "type": "number",
+          "default": 8,
+          "minimum": 1,
+          "maximum": 30,
+          "description": "Maximum functions per file to generate tests for"
+        },
+        "empathy.testGen.maxClassesToGenerate": {
+          "type": "number",
+          "default": 4,
+          "minimum": 1,
+          "maximum": 20,
+          "description": "Maximum classes per file to generate tests for"
+        },
+        "empathy.testGen.includeAllFiles": {
+          "type": "boolean",
+          "default": false,
+          "description": "Include files with low priority (tested or small files) in scan results"
         }
       }
     }

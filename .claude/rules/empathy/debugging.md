@@ -1,7 +1,7 @@
 # Debugging Patterns
 
 Auto-generated from Empathy Framework learned patterns.
-Total patterns: 11
+Total patterns: 40
 
 ---
 
@@ -63,3 +63,48 @@ When debugging similar issues, consider these historical fixes:
 - **Root cause**: feat: Release v3.0.1 - XML-Enhanced Prompts & Security Fixes
 - **Fix**: See commit 8edfb707
 - **Files**: .claude/CLAUDE.md, .gitignore, CHANGELOG.md
+
+### import_error
+- **Root cause**: fix: Resolve import conflict between workflows.py and workflows/ package
+- **Fix**: See commit 1b928aec
+- **Files**: src/empathy_os/workflows/__init__.py
+
+### unknown
+- **Root cause**: ci: Add workflow_dispatch to PyPI publish workflow
+- **Fix**: See commit 32d3adcf
+- **Files**: .github/workflows/publish-pypi.yml
+
+### type_mismatch
+- **Root cause**: fix: Convert MkDocs relative asset paths to absolute for CSS loading
+- **Fix**: See commit 2ae52706
+- **Files**: scripts/fix_mkdocs_paths.py, .../framework-docs/FOREWORD_BY_CLAUDE/index.html, .../framework-docs/about-the-author/index.html
+
+### unknown
+- **Root cause**: fix: Force trailing slashes at all levels for MkDocs CSS compatibility
+- **Fix**: See commit 4e9157ce
+- **Files**: website/middleware.ts, website/next.config.ts, website/vercel.json
+
+### unknown
+- **Root cause**: fix: Use skipTrailingSlashRedirect to stop Next.js from stripping trailing slashes
+- **Fix**: See commit 55265287
+- **Files**: website/next.config.ts, website/vercel.json
+
+### unknown
+- **Root cause**: fix: Add Next.js middleware to enforce trailing slash for framework-docs
+- **Fix**: See commit 47662816
+- **Files**: website/middleware.ts
+
+### unknown
+- **Root cause**: fix: Add Vercel trailingSlash config for framework-docs CSS
+- **Fix**: See commit 994d5ad5
+- **Files**: website/vercel.json
+
+### unknown
+- **Root cause**: fix: Add vercel.json redirect for framework-docs trailing slash
+- **Fix**: See commit 0c56cfb1
+- **Files**: website/vercel.json
+
+### unknown
+- **Root cause**: fix: Add redirect to ensure trailing slash for framework-docs CSS paths
+- **Fix**: See commit 3ba1de27
+- **Files**: website/next.config.ts

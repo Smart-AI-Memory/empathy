@@ -88,9 +88,13 @@ class PRReviewWorkflow:
         self.use_code_crew = use_code_crew
         self.use_security_crew = use_security_crew
         self.parallel = parallel
+
+        # Map "hybrid" to a real provider for crews (they don't understand "hybrid")
+        crew_provider = "anthropic" if provider == "hybrid" else provider
+
         # Inject provider into crew configs
-        self.code_crew_config = {"provider": provider, **(code_crew_config or {})}
-        self.security_crew_config = {"provider": provider, **(security_crew_config or {})}
+        self.code_crew_config = {"provider": crew_provider, **(code_crew_config or {})}
+        self.security_crew_config = {"provider": crew_provider, **(security_crew_config or {})}
 
     @classmethod
     def for_comprehensive_review(cls) -> "PRReviewWorkflow":
