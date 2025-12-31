@@ -2023,7 +2023,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         <button class="tab active" data-tab="power">Power</button>
         <button class="tab" data-tab="health">Health</button>
         <button class="tab" data-tab="costs">Costs</button>
-        <button class="tab" data-tab="workflows">Workflows</button>
+        <button class="tab" data-tab="workflows">Workflows <span style="font-size: 9px; opacity: 0.6; font-weight: normal;">(Beta)</span></button>
     </div>
 
     <!-- Power Tab -->
