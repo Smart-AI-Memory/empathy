@@ -10,6 +10,8 @@
 
 import * as vscode from 'vscode';
 import * as cp from 'child_process';
+import * as path from 'path';
+import { ServiceConfig } from './ServiceConfig';
 
 export interface ChatMessage {
     role: 'user' | 'assistant' | 'system';
@@ -36,6 +38,7 @@ export interface ChatResponse {
 export class LLMChatService {
     private static instance: LLMChatService;
     private context: vscode.ExtensionContext | null = null;
+    private extensionPath: string = '';
 
     private constructor() {}
 
@@ -51,6 +54,7 @@ export class LLMChatService {
      */
     initialize(context: vscode.ExtensionContext): void {
         this.context = context;
+        this.extensionPath = context.extensionPath;
     }
 
     /**
@@ -93,16 +97,24 @@ export class LLMChatService {
         options: ChatOptions
     ): Promise<ChatResponse> {
         return new Promise((resolve, reject) => {
-            // Build Python script to call provider directly
-            const pythonScript = this.buildProviderScript(messages, options);
+            // Path to external Python script
+            const scriptPath = path.join(this.extensionPath, 'scripts', 'llm_provider_call.py');
+
+            // Build arguments as JSON
+            const args = JSON.stringify({
+                messages,
+                system_prompt: options.systemPrompt || '',
+                max_tokens: options.maxTokens || ServiceConfig.llmDefaultMaxTokens,
+                temperature: options.temperature || ServiceConfig.llmDefaultTemperature
+            });
 
             cp.execFile(
                 pythonPath,
-                ['-c', pythonScript],
+                [scriptPath, args],
                 {
                     cwd: workspaceFolder,
-                    maxBuffer: 1024 * 1024,
-                    timeout: 60000,
+                    maxBuffer: ServiceConfig.LLM_MAX_BUFFER_SIZE,
+                    timeout: ServiceConfig.llmTimeoutMs,
                     env: { ...process.env }
                 },
                 (error, stdout, stderr) => {
@@ -118,6 +130,13 @@ export class LLMChatService {
 
                     try {
                         const result = JSON.parse(stdout.trim());
+
+                        // Check if fallback response
+                        if (result.fallback) {
+                            resolve(this.getFallbackResponse(messages, result.error || 'Unknown error'));
+                            return;
+                        }
+
                         resolve({
                             content: result.content || '',
                             inputTokens: result.input_tokens || 0,
@@ -142,94 +161,6 @@ export class LLMChatService {
                 }
             );
         });
-    }
-
-    /**
-     * Build Python script to call provider
-     */
-    private buildProviderScript(messages: ChatMessage[], options: ChatOptions): string {
-        const messagesJson = JSON.stringify(messages);
-        const systemPrompt = options.systemPrompt || '';
-        const maxTokens = options.maxTokens || 1024;
-        const temperature = options.temperature || 0.7;
-
-        return `
-import json
-import os
-import sys
-
-try:
-    from empathy_llm_toolkit.providers import AnthropicProvider, OpenAIProvider
-
-    # Try to get API key from environment
-    api_key = os.environ.get('ANTHROPIC_API_KEY') or os.environ.get('OPENAI_API_KEY')
-
-    if not api_key:
-        # Try to load from .env file
-        env_path = os.path.join(os.getcwd(), '.env')
-        if os.path.exists(env_path):
-            with open(env_path) as f:
-                for line in f:
-                    if '=' in line:
-                        key, value = line.strip().split('=', 1)
-                        if key in ('ANTHROPIC_API_KEY', 'OPENAI_API_KEY'):
-                            api_key = value.strip('"').strip("'")
-                            os.environ[key] = api_key
-                            break
-
-    if not api_key:
-        print(json.dumps({"error": "No API key found", "fallback": True}))
-        sys.exit(0)
-
-    # Determine provider
-    if os.environ.get('ANTHROPIC_API_KEY'):
-        provider = AnthropicProvider()
-        model = "claude-sonnet-4-20250514"
-    else:
-        provider = OpenAIProvider()
-        model = "gpt-4o-mini"
-
-    messages = ${messagesJson}
-    system_prompt = """${systemPrompt.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"""
-
-    # Build prompt
-    prompt_parts = []
-    if system_prompt:
-        prompt_parts.append(f"System: {system_prompt}")
-
-    for msg in messages:
-        role = msg.get('role', 'user')
-        content = msg.get('content', '')
-        if role == 'system':
-            prompt_parts.append(f"System: {content}")
-        elif role == 'assistant':
-            prompt_parts.append(f"Assistant: {content}")
-        else:
-            prompt_parts.append(f"Human: {content}")
-
-    prompt_parts.append("Assistant:")
-    full_prompt = "\\n\\n".join(prompt_parts)
-
-    # Call provider
-    response = provider.generate(
-        prompt=full_prompt,
-        max_tokens=${maxTokens},
-        temperature=${temperature}
-    )
-
-    result = {
-        "content": response.get("content", response.get("text", str(response))),
-        "input_tokens": response.get("usage", {}).get("input_tokens", 0),
-        "output_tokens": response.get("usage", {}).get("output_tokens", 0),
-        "model": model
-    }
-    print(json.dumps(result))
-
-except ImportError as e:
-    print(json.dumps({"error": f"Import error: {e}", "fallback": True}))
-except Exception as e:
-    print(json.dumps({"error": str(e), "fallback": True}))
-`;
     }
 
     /**

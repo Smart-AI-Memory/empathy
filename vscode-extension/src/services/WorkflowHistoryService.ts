@@ -59,7 +59,7 @@ export class WorkflowHistoryService {
     /**
      * Record a workflow execution
      */
-    recordExecution(execution: Omit<WorkflowExecution, 'timestamp'>): void {
+    async recordExecution(execution: Omit<WorkflowExecution, 'timestamp'>): Promise<void> {
         if (!this.context) {
             console.warn('WorkflowHistoryService not initialized');
             return;
@@ -79,7 +79,11 @@ export class WorkflowHistoryService {
         const trimmed = history.slice(0, this.MAX_HISTORY);
 
         // Persist
-        this.context.globalState.update(this.STORAGE_KEY, trimmed);
+        try {
+            await this.context.globalState.update(this.STORAGE_KEY, trimmed);
+        } catch (error) {
+            console.error('[WorkflowHistoryService] Failed to save history:', error);
+        }
     }
 
     /**
@@ -103,11 +107,15 @@ export class WorkflowHistoryService {
     /**
      * Clear history
      */
-    clearHistory(): void {
+    async clearHistory(): Promise<void> {
         if (!this.context) {
             return;
         }
-        this.context.globalState.update(this.STORAGE_KEY, []);
+        try {
+            await this.context.globalState.update(this.STORAGE_KEY, []);
+        } catch (error) {
+            console.error('[WorkflowHistoryService] Failed to clear history:', error);
+        }
     }
 
     /**

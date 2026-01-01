@@ -17,6 +17,8 @@
 import * as vscode from 'vscode';
 import * as crypto from 'crypto';
 import * as path from 'path';
+import { ContextBuilder } from './ContextBuilder';
+import { ServiceConfig } from './ServiceConfig';
 
 /**
  * Learned refinement pattern
@@ -61,8 +63,6 @@ export class PatternLearner {
     private patterns: Map<string, LearnedPattern> = new Map();
 
     private readonly STORAGE_KEY = 'empathy.refinementPatterns';
-    private readonly MAX_PATTERNS = 100;
-    private readonly PATTERN_TTL_DAYS = 90;
 
     private constructor() {}
 
@@ -108,12 +108,19 @@ export class PatternLearner {
             return;
         }
 
-        const toStore: Record<string, LearnedPattern> = {};
-        for (const [id, pattern] of this.patterns) {
-            toStore[id] = pattern;
-        }
+        try {
+            const toStore: Record<string, LearnedPattern> = {};
+            for (const [id, pattern] of this.patterns) {
+                toStore[id] = pattern;
+            }
 
-        await this.context.globalState.update(this.STORAGE_KEY, toStore);
+            await this.context.globalState.update(this.STORAGE_KEY, toStore);
+        } catch (error) {
+            console.error('[PatternLearner] Failed to save patterns:', error);
+            vscode.window.showWarningMessage(
+                'Empathy: Failed to save refinement patterns. Your preferences may not be remembered.'
+            );
+        }
     }
 
     /**
@@ -169,7 +176,7 @@ export class PatternLearner {
         this.patterns.set(id, pattern);
 
         // Prune if over limit
-        if (this.patterns.size > this.MAX_PATTERNS) {
+        if (this.patterns.size > ServiceConfig.patternMaxPatterns) {
             this.pruneLeastUsed();
         }
 
@@ -298,7 +305,7 @@ export class PatternLearner {
      * Remove patterns older than TTL
      */
     private pruneOldPatterns(): void {
-        const cutoff = Date.now() - (this.PATTERN_TTL_DAYS * 24 * 60 * 60 * 1000);
+        const cutoff = Date.now() - (ServiceConfig.patternTTLDays * 24 * 60 * 60 * 1000);
         let pruned = 0;
 
         for (const [id, pattern] of this.patterns) {
@@ -405,56 +412,17 @@ export class PatternLearner {
 
     /**
      * Detect project type from context
+     * @deprecated Use ContextBuilder.detectProjectType instead
      */
     static detectProjectType(workspacePath: string): string | undefined {
-        const fs = require('fs');
-        const indicators: Record<string, string> = {
-            'package.json': 'node',
-            'pyproject.toml': 'python',
-            'Cargo.toml': 'rust',
-            'go.mod': 'go',
-            'pom.xml': 'java-maven',
-            'build.gradle': 'java-gradle',
-            'Gemfile': 'ruby',
-            'composer.json': 'php'
-        };
-
-        for (const [file, projectType] of Object.entries(indicators)) {
-            if (fs.existsSync(path.join(workspacePath, file))) {
-                return projectType;
-            }
-        }
-
-        return undefined;
+        return ContextBuilder.detectProjectType(workspacePath);
     }
 
     /**
      * Detect file types in a directory
+     * @deprecated Use ContextBuilder.detectFileTypes instead
      */
     static detectFileTypes(targetPath: string): string[] {
-        const fs = require('fs');
-        const fileTypes = new Set<string>();
-
-        try {
-            const stat = fs.statSync(targetPath);
-            if (stat.isFile()) {
-                const ext = path.extname(targetPath).toLowerCase();
-                if (ext) {
-                    fileTypes.add(ext);
-                }
-            } else if (stat.isDirectory()) {
-                const files = fs.readdirSync(targetPath);
-                for (const file of files.slice(0, 50)) { // Limit to first 50 files
-                    const ext = path.extname(file).toLowerCase();
-                    if (ext && !ext.startsWith('.git')) {
-                        fileTypes.add(ext);
-                    }
-                }
-            }
-        } catch {
-            // Ignore errors
-        }
-
-        return Array.from(fileTypes);
+        return ContextBuilder.detectFileTypes(targetPath);
     }
 }
