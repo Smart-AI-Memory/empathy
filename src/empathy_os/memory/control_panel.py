@@ -208,12 +208,12 @@ class APIKeyAuth:
         """
         self.api_key = api_key or os.environ.get("EMPATHY_MEMORY_API_KEY")
         self.enabled = bool(self.api_key)
-        if self.enabled:
+        self._key_hash: str | None = None
+        if self.enabled and self.api_key:
             # Store hash of API key for comparison
             self._key_hash = hashlib.sha256(self.api_key.encode()).hexdigest()
             logger.info("api_key_auth_enabled")
         else:
-            self._key_hash = None
             logger.info("api_key_auth_disabled", reason="no_key_configured")
 
     def is_valid(self, provided_key: str | None) -> bool:

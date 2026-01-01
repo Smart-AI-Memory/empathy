@@ -132,7 +132,7 @@ def setup_asyncio_policy() -> None:
     if is_windows():
         # Windows requires WindowsSelectorEventLoopPolicy for compatibility
         # with many libraries and subprocess operations
-        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())  # type: ignore[attr-defined]
 
 
 def safe_run_async(coro: Any, debug: bool = False) -> Any:

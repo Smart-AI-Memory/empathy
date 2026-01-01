@@ -164,7 +164,7 @@ class ConversationSummaryIndex:
             return True
         if self._memory._client is None:
             return False
-        return bool(self._memory._client.hset(key, mapping=mapping))  # type: ignore[arg-type]
+        return bool(self._memory._client.hset(key, mapping=mapping))
 
     def _hget(self, key: str, field: str) -> str | None:
         """Get single hash field."""

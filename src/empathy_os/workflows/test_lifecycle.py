@@ -342,23 +342,27 @@ class TestLifecycleManager:
         # Limit
         tasks_to_process = tasks_to_process[:max_tasks]
 
-        results = {
-            "processed": 0,
-            "succeeded": 0,
-            "failed": 0,
-            "details": [],
-        }
+        # Use typed variables for proper type inference
+        processed = 0
+        succeeded = 0
+        failed = 0
+        details: list[dict] = []
 
         for task in tasks_to_process:
-            results["processed"] += 1
+            processed += 1
             success = await self._execute_task(task)
             if success:
-                results["succeeded"] += 1
+                succeeded += 1
             else:
-                results["failed"] += 1
-            results["details"].append(task.to_dict())
+                failed += 1
+            details.append(task.to_dict())
 
-        return results
+        return {
+            "processed": processed,
+            "succeeded": succeeded,
+            "failed": failed,
+            "details": details,
+        }
 
     # ===== Persistence =====
 

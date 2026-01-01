@@ -277,6 +277,14 @@ export class GuidedPanelProvider {
             case 'runWorkflow':
                 await vscode.commands.executeCommand('empathy.runWorkflowQuick');
                 break;
+            case 'researchSynthesis':
+                // Launch Research Synthesis workflow directly
+                await vscode.commands.executeCommand('empathy.runWorkflow', 'research-synthesis');
+                break;
+            case 'agentFactory':
+                // Launch Agent Factory (Socratic crew design flow)
+                await vscode.commands.executeCommand('empathy.agentFactory');
+                break;
             default:
                 console.log(`[GuidedPanel] Unknown action: ${action}`);
         }
@@ -716,6 +724,16 @@ export class GuidedPanelProvider {
                 <span class="icon">&#x1F9EA;</span>
                 <span class="label">Run Tests</span>
                 <span class="shortcut">Ctrl+Shift+E T</span>
+            </div>
+            <div class="action-btn" data-action="researchSynthesis">
+                <span class="icon">&#x1F50D;</span>
+                <span class="label">Research</span>
+                <span class="shortcut">Workflow</span>
+            </div>
+            <div class="action-btn" data-action="agentFactory">
+                <span class="icon">&#x1F916;</span>
+                <span class="label">Agent Factory</span>
+                <span class="shortcut">Design Crew</span>
             </div>
             <div class="action-btn" data-action="dashboard">
                 <span class="icon">&#x1F4CA;</span>

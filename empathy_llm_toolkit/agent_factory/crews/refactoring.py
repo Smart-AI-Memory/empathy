@@ -963,7 +963,7 @@ The refactored code MUST be syntactically valid and preserve all functionality.
 
         # Check metadata first
         if "after_code" in metadata:
-            return metadata["after_code"]
+            return str(metadata["after_code"])
 
         # Try to parse JSON from output
         try:
@@ -973,7 +973,7 @@ The refactored code MUST be syntactically valid and preserve all functionality.
             if json_match:
                 data = json.loads(json_match.group())
                 if "after_code" in data:
-                    return data["after_code"]
+                    return str(data["after_code"])
         except json.JSONDecodeError:
             pass
 
@@ -985,7 +985,7 @@ The refactored code MUST be syntactically valid and preserve all functionality.
             return code_match.group(1).strip()
 
         # Return raw output as fallback
-        return output.strip()
+        return str(output).strip()
 
     def _apply_user_preferences(
         self, findings: list[RefactoringFinding]
@@ -994,13 +994,15 @@ The refactored code MUST be syntactically valid and preserve all functionality.
         if not self._user_profile:
             return findings
 
+        user_profile = self._user_profile  # Capture for closure with non-None type
+
         def score(finding: RefactoringFinding) -> float:
             # Base score from impact
             impact_scores = {Impact.HIGH: 3.0, Impact.MEDIUM: 2.0, Impact.LOW: 1.0}
             base = impact_scores.get(finding.estimated_impact, 2.0)
 
             # Adjust by user preference
-            pref = self._user_profile.get_category_score(finding.category)
+            pref = user_profile.get_category_score(finding.category)
             adjusted = base * (0.5 + pref)  # Range: 0.5x to 1.5x
 
             # Adjust by confidence

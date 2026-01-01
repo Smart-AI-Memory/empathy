@@ -60,6 +60,9 @@ from .dependency_check import DependencyCheckWorkflow
 from .document_gen import DocumentGenerationWorkflow
 from .documentation_orchestrator import DocumentationOrchestrator, OrchestratorResult
 from .health_check import HealthCheckWorkflow
+
+# Keyboard Conductor (v3.6) - keyboard shortcut generation
+from .keyboard_shortcuts import KeyboardShortcutWorkflow
 from .manage_documentation import ManageDocumentationCrew, ManageDocumentationCrewResult
 from .perf_audit import PerformanceAuditWorkflow
 from .pr_review import PRReviewResult, PRReviewWorkflow
@@ -121,6 +124,8 @@ _DEFAULT_WORKFLOWS: dict[str, type] = {
     # Documentation management (v3.5)
     "doc-orchestrator": DocumentationOrchestrator,
     "manage-docs": ManageDocumentationCrew,
+    # Keyboard Conductor (v3.6) - keyboard shortcut generation
+    "keyboard-shortcuts": KeyboardShortcutWorkflow,
 }
 
 # Opt-in workflows - not included by default, must be explicitly enabled
@@ -333,6 +338,8 @@ __all__ = [
     "OrchestratorResult",
     "ManageDocumentationCrew",
     "ManageDocumentationCrewResult",
+    # Keyboard Conductor (v3.6)
+    "KeyboardShortcutWorkflow",
     # Registry and discovery
     "WORKFLOW_REGISTRY",
     "get_workflow",

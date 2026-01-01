@@ -428,6 +428,7 @@ Code:
         """
         code_to_review = input_data.get("code_to_review", input_data.get("diff", ""))
         classification = input_data.get("classification", "")
+        files_changed = input_data.get("files_changed", input_data.get("files", []))
 
         # Check for external audit results (e.g., from SecurityAuditCrew)
         external_audit = input_data.get("external_audit_results")
@@ -494,6 +495,13 @@ Code to review:
             tier, system, user_message, max_tokens=2048
         )
 
+        # Extract structured findings from LLM response
+        llm_findings = self._extract_findings_from_response(
+            response=response,
+            files_changed=files_changed or [],
+            code_context=code_to_review[:1000],  # First 1000 chars for context
+        )
+
         # Check if critical issues found in LLM response
         has_critical = "critical" in response.lower() or "high" in response.lower()
 
@@ -508,10 +516,33 @@ Code to review:
             response = merged_response
             has_critical = has_critical or external_has_critical
 
+        # Combine LLM findings with security findings
+        all_findings = llm_findings + security_findings
+
+        # Calculate summary statistics
+        summary = {
+            "total_findings": len(all_findings),
+            "by_severity": {},
+            "by_category": {},
+            "files_affected": list({f.get("file", "") for f in all_findings if f.get("file")}),
+        }
+
+        # Count by severity
+        for finding in all_findings:
+            sev = finding.get("severity", "info")
+            summary["by_severity"][sev] = summary["by_severity"].get(sev, 0) + 1
+
+        # Count by category
+        for finding in all_findings:
+            cat = finding.get("category", "other")
+            summary["by_category"][cat] = summary["by_category"].get(cat, 0) + 1
+
         return (
             {
                 "scan_results": response,
-                "security_findings": security_findings,
+                "findings": all_findings,  # NEW: structured findings for UI
+                "summary": summary,  # NEW: summary statistics
+                "security_findings": security_findings,  # Keep for backward compat
                 "bug_patterns": [],
                 "quality_issues": [],
                 "has_critical_issues": has_critical,

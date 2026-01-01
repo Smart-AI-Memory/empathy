@@ -1061,18 +1061,16 @@ class DocumentationOrchestrator:
         Returns:
             Dict with results for each file
         """
-        results = {
-            "success": True,
-            "generated": [],
-            "failed": [],
-            "skipped": [],
-            "total_cost": 0.0,
-        }
+        generated: list[dict[str, str | float | None]] = []
+        failed: list[dict[str, str]] = []
+        skipped: list[dict[str, str]] = []
+        total_cost = 0.0
+        success = True
 
         for file_path in file_paths:
             # Skip excluded files (requirements.txt, package.json, etc.)
             if self._should_exclude(file_path):
-                results["skipped"].append(
+                skipped.append(
                     {
                         "file": file_path,
                         "reason": "Excluded by pattern (dependency/config/binary file)",
@@ -1083,26 +1081,32 @@ class DocumentationOrchestrator:
             try:
                 result = await self.generate_for_file(file_path, **kwargs)
                 if isinstance(result, dict) and result.get("error"):
-                    results["failed"].append({"file": file_path, "error": result["error"]})
+                    failed.append({"file": file_path, "error": result["error"]})
                 else:
                     export_path = result.get("export_path") if isinstance(result, dict) else None
                     cost = result.get("accumulated_cost", 0) if isinstance(result, dict) else 0
-                    results["generated"].append(
+                    generated.append(
                         {
                             "file": file_path,
                             "export_path": export_path,
                             "cost": cost,
                         }
                     )
-                    results["total_cost"] += cost
+                    total_cost += cost
             except Exception as e:
-                results["failed"].append({"file": file_path, "error": str(e)})
-                results["success"] = False
+                failed.append({"file": file_path, "error": str(e)})
+                success = False
 
-        if results["failed"]:
-            results["success"] = len(results["generated"]) > 0  # Partial success
+        if failed:
+            success = len(generated) > 0  # Partial success
 
-        return results
+        return {
+            "success": success,
+            "generated": generated,
+            "failed": failed,
+            "skipped": skipped,
+            "total_cost": total_cost,
+        }
 
     async def generate_for_file(
         self,
@@ -1133,7 +1137,7 @@ class DocumentationOrchestrator:
             except Exception as e:
                 return {"error": f"Could not read file: {e}"}
 
-        result = await self._writer.execute(
+        result: dict = await self._writer.execute(
             source_code=source_content,
             target=file_path,
             doc_type=kwargs.get("doc_type", self.doc_type),

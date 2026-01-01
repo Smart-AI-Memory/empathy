@@ -593,7 +593,35 @@
         "src/empathy_os/workflows/bug_predict.py"
       ],
       "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20251231_e53e94a3",
+      "bug_type": "type_mismatch",
+      "status": "resolved",
+      "root_cause": "fix: Add type annotation to scan_summary in test_gen.py",
+      "fix": "See commit e53e94a3",
+      "resolved_by": "@geneai",
+      "resolved_at": "2025-12-31",
+      "files_affected": [
+        "src/empathy_os/workflows/test_gen.py"
+      ],
+      "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20251231_3af62faf",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "fix(vscode): Show notification feedback for sync-claude command",
+      "fix": "See commit 3af62faf",
+      "resolved_by": "@geneai",
+      "resolved_at": "2025-12-31",
+      "files_affected": [
+        ".claude/rules/empathy/debugging.md",
+        "patterns/debugging.json",
+        "vscode-extension/src/extension.ts"
+      ],
+      "source": "git_history"
     }
   ],
-  "last_updated": "2025-12-31T14:04:23.220934"
+  "last_updated": "2026-01-01T00:19:52.283382"
 }

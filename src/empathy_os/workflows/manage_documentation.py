@@ -465,8 +465,8 @@ Note: This is a mock response. Configure ANTHROPIC_API_KEY for real analysis."""
         tasks = self.define_tasks()
 
         # Execute tasks sequentially (crew pattern)
-        all_findings = []
-        all_responses = []
+        all_findings: list[dict] = []
+        all_responses: list[str] = []
 
         for i, task in enumerate(tasks):
             print(f"  [{i + 1}/{len(tasks)}] {task.agent.role}: {task.description[:50]}...")

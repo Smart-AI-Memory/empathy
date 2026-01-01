@@ -494,13 +494,14 @@ class TestGenerationWorkflow(BaseWorkflow):
         existing_test_files = 0
 
         # Track scan summary for debugging/visibility
-        scan_summary: dict[str, int | str | None] = {
+        # Use separate counters for type safety
+        scan_counts = {
             "files_scanned": 0,
             "files_too_large": 0,
             "files_read_error": 0,
             "files_excluded_by_pattern": 0,
-            "early_exit_reason": None,
         }
+        early_exit_reason: str | None = None
 
         max_file_size_bytes = max_file_size_kb * 1024
         scan_limit_reached = False
@@ -512,17 +513,15 @@ class TestGenerationWorkflow(BaseWorkflow):
 
                 for file_path in target.rglob(f"*{ext}"):
                     # Check if we've hit the scan limit
-                    if scan_summary["files_scanned"] >= max_files_to_scan:
-                        scan_summary["early_exit_reason"] = (
-                            f"max_files_to_scan ({max_files_to_scan}) reached"
-                        )
+                    if scan_counts["files_scanned"] >= max_files_to_scan:
+                        early_exit_reason = f"max_files_to_scan ({max_files_to_scan}) reached"
                         scan_limit_reached = True
                         break
 
                     # Skip non-code directories using configurable patterns
                     file_str = str(file_path)
                     if any(skip in file_str for skip in skip_patterns):
-                        scan_summary["files_excluded_by_pattern"] += 1
+                        scan_counts["files_excluded_by_pattern"] += 1
                         continue
 
                     # Count test files separately for scope awareness
@@ -534,15 +533,15 @@ class TestGenerationWorkflow(BaseWorkflow):
                     try:
                         file_size = file_path.stat().st_size
                         if file_size > max_file_size_bytes:
-                            scan_summary["files_too_large"] += 1
+                            scan_counts["files_too_large"] += 1
                             continue
                     except OSError:
-                        scan_summary["files_read_error"] += 1
+                        scan_counts["files_read_error"] += 1
                         continue
 
                     # Count source files and increment scan counter
                     total_source_files += 1
-                    scan_summary["files_scanned"] += 1
+                    scan_counts["files_scanned"] += 1
 
                     try:
                         content = file_path.read_text(errors="ignore")
@@ -578,7 +577,7 @@ class TestGenerationWorkflow(BaseWorkflow):
                                 }
                             )
                     except OSError:
-                        scan_summary["files_read_error"] += 1
+                        scan_counts["files_read_error"] += 1
                         continue
 
         # Sort by priority
@@ -603,7 +602,7 @@ class TestGenerationWorkflow(BaseWorkflow):
                 "large_project_warning": len(candidates) > 100,
                 "analysis_coverage_percent": coverage_pct,
                 # Scan summary for debugging/visibility
-                "scan_summary": scan_summary,
+                "scan_summary": {**scan_counts, "early_exit_reason": early_exit_reason},
                 # Pass through config for subsequent stages
                 "config": {
                     "max_files_to_analyze": input_data.get("max_files_to_analyze", 20),

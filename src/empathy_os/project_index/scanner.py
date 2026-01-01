@@ -483,8 +483,8 @@ class ProjectScanner:
         summary.stale_file_count = len(stale)
         if stale:
             summary.avg_staleness_days = sum(r.staleness_days for r in stale) / len(stale)
-            summary.most_stale_files = sorted(stale, key=lambda r: -r.staleness_days)[:5]
-            summary.most_stale_files = [r.path for r in summary.most_stale_files]
+            top_stale = sorted(stale, key=lambda r: -r.staleness_days)[:5]
+            summary.most_stale_files = [r.path for r in top_stale]
 
         # Code metrics
         source_records = [r for r in records if r.category == FileCategory.SOURCE]

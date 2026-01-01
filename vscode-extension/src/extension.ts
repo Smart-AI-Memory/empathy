@@ -22,6 +22,7 @@ import { MemoryPanelProvider } from './panels/MemoryPanelProvider';
 // REMOVED in v3.5.5: Refactor Advisor panel - kept for future use
 // import { RefactorAdvisorPanel } from './panels/RefactorAdvisorPanel';
 import { ResearchSynthesisPanel } from './panels/ResearchSynthesisPanel';
+import { CodeReviewPanelProvider } from './panels/CodeReviewPanelProvider';
 import { InitializeWizardPanel } from './panels/InitializeWizardPanel';
 // REMOVED in v3.5.5: Test Generator panel - kept for future use
 // import { TestGeneratorPanel } from './panels/TestGeneratorPanel';
@@ -29,9 +30,16 @@ import { InitializeWizardPanel } from './panels/InitializeWizardPanel';
 // import { WorkflowWizardPanel } from './panels/WorkflowWizardPanel';
 import { DocAnalysisPanel } from './panels/DocAnalysisPanel';
 import { initializeProject, showWelcomeIfNeeded as showInitializeWelcome } from './commands/initializeProject';
+import { WorkflowHistoryService, WORKFLOW_METADATA } from './services/WorkflowHistoryService';
+import { KeyboardLayoutDetector } from './services/KeyboardLayoutDetector';
+import { FeedbackService } from './services/FeedbackService';
+import { NextCommandHintService } from './services/NextCommandHintService';
+import { SocraticFormService } from './services/SocraticFormService';
+import { GuidedPanelProvider } from './panels/GuidedPanelProvider';
 
-// Status bar item
+// Status bar items
 let statusBarItem: vscode.StatusBarItem;
+let quickActionItems: vscode.StatusBarItem[] = [];
 
 // Health provider (used for diagnostics)
 let healthProvider: HealthTreeProvider;
@@ -63,6 +71,23 @@ export function activate(context: vscode.ExtensionContext) {
     // Store extension path for accessing bundled scripts
     extensionPath = context.extensionPath;
 
+    // Initialize workflow history service
+    WorkflowHistoryService.getInstance().initialize(context);
+
+    // Initialize next command hint service (ghost text suggestions)
+    NextCommandHintService.getInstance().initialize(context);
+
+    // Initialize Socratic form service (LLM-powered conversations)
+    SocraticFormService.getInstance().initialize(context);
+
+    // Initialize keyboard layout detector and run first-time detection
+    const keyboardDetector = KeyboardLayoutDetector.getInstance();
+    keyboardDetector.initialize(context);
+    keyboardDetector.promptFirstTimeDetection().then(async () => {
+        const layout = await keyboardDetector.detect();
+        console.log(`Empathy: Keyboard layout: ${layout}`);
+    });
+
     // Create status bar
     statusBarItem = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Right,
@@ -70,6 +95,26 @@ export function activate(context: vscode.ExtensionContext) {
     );
     statusBarItem.command = 'empathy.status';
     context.subscriptions.push(statusBarItem);
+
+    // Create quick action status bar items (Enhancement 3: Status Bar Toolbar)
+    const quickActions = [
+        { icon: '$(calendar)', tooltip: 'Morning Briefing (Ctrl+Shift+E M)', command: 'empathy.morning', priority: 99 },
+        { icon: '$(rocket)', tooltip: 'Pre-Ship Check (Ctrl+Shift+E S)', command: 'empathy.ship', priority: 98 },
+        { icon: '$(tools)', tooltip: 'Fix All Issues (Ctrl+Shift+E F)', command: 'empathy.fixAll', priority: 97 },
+        { icon: '$(play)', tooltip: 'Run Workflow (Ctrl+Shift+E W)', command: 'empathy.runWorkflowQuick', priority: 96 },
+    ];
+
+    for (const action of quickActions) {
+        const item = vscode.window.createStatusBarItem(
+            vscode.StatusBarAlignment.Right,
+            action.priority
+        );
+        item.text = action.icon;
+        item.tooltip = action.tooltip;
+        item.command = action.command;
+        quickActionItems.push(item);
+        context.subscriptions.push(item);
+    }
 
     // Create diagnostics collection (Feature F)
     diagnosticCollection = vscode.languages.createDiagnosticCollection('empathy');
@@ -92,11 +137,32 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     // Memory panel (Beta) - requires backend server for full functionality
-    const memoryProvider = new MemoryPanelProvider(context.extensionUri, context);
+    // Only register if beta features are enabled
+    const config = vscode.workspace.getConfiguration('empathy');
+    const showBetaFeatures = config.get<boolean>('showBetaFeatures', false);
+    let memoryProvider: MemoryPanelProvider | null = null;
+
+    if (showBetaFeatures) {
+        memoryProvider = new MemoryPanelProvider(context.extensionUri, context);
+        context.subscriptions.push(
+            vscode.window.registerWebviewViewProvider(
+                MemoryPanelProvider.viewType,
+                memoryProvider,
+                {
+                    webviewOptions: {
+                        retainContextWhenHidden: true
+                    }
+                }
+            )
+        );
+    }
+
+    // Register Code Review Panel (shows interactive code review findings)
+    const codeReviewProvider = CodeReviewPanelProvider.getInstance(context.extensionUri);
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider(
-            MemoryPanelProvider.viewType,
-            memoryProvider,
+            CodeReviewPanelProvider.viewType,
+            codeReviewProvider,
             {
                 webviewOptions: {
                     retainContextWhenHidden: true
@@ -119,19 +185,19 @@ export function activate(context: vscode.ExtensionContext) {
     //     )
     // );
 
-    // Research Synthesis panel - Multi-document research and synthesis
-    const researchSynthesisProvider = new ResearchSynthesisPanel(context.extensionUri, context);
-    context.subscriptions.push(
-        vscode.window.registerWebviewViewProvider(
-            ResearchSynthesisPanel.viewType,
-            researchSynthesisProvider,
-            {
-                webviewOptions: {
-                    retainContextWhenHidden: true
-                }
-            }
-        )
-    );
+    // DEPRECATED in v1.4.0: Research Synthesis panel - kept for future use
+    // const researchSynthesisProvider = new ResearchSynthesisPanel(context.extensionUri, context);
+    // context.subscriptions.push(
+    //     vscode.window.registerWebviewViewProvider(
+    //         ResearchSynthesisPanel.viewType,
+    //         researchSynthesisProvider,
+    //         {
+    //             webviewOptions: {
+    //                 retainContextWhenHidden: true
+    //             }
+    //         }
+    //     )
+    // );
 
     // REMOVED in v3.5.5: Test Generator panel - kept for future use
     // Opens in main editor area (not sidebar) using createOrShow pattern
@@ -176,15 +242,48 @@ export function activate(context: vscode.ExtensionContext) {
         { name: 'empathy.openFile', handler: cmdOpenFile },
         { name: 'empathy.ignoreIssue', handler: cmdIgnoreIssue },
         { name: 'empathy.openWebDashboard', handler: cmdOpenWebDashboard },
-        // Memory commands (Beta)
-        { name: 'empathy.memory.showPanel', handler: () => vscode.commands.executeCommand('empathy-memory.focus') },
-        { name: 'empathy.memory.refreshStatus', handler: () => { memoryProvider.refresh(); vscode.window.showInformationMessage('Memory status refreshed'); } },
+        // Memory commands (Beta) - only functional if beta features enabled
+        { name: 'empathy.memory.showPanel', handler: () => {
+            if (showBetaFeatures) {
+                vscode.commands.executeCommand('empathy-memory.focus');
+            } else {
+                vscode.window.showInformationMessage('Memory features are in beta. Enable "empathy.showBetaFeatures" in settings to use.');
+            }
+        }},
+        { name: 'empathy.memory.refreshStatus', handler: () => {
+            if (memoryProvider) {
+                memoryProvider.refresh();
+                vscode.window.showInformationMessage('Memory status refreshed');
+            } else {
+                vscode.window.showInformationMessage('Memory features are in beta. Enable "empathy.showBetaFeatures" in settings to use.');
+            }
+        }},
         // Initialize wizard (accepts optional { force: true } to skip "already initialized" check)
         { name: 'empathy.initializeProject', handler: (options?: { force?: boolean }) => initializeProject(context, options) },
         // REMOVED in v3.5.5: Test Generator wizard
         // { name: 'empathy.testGenerator.show', handler: () => vscode.commands.executeCommand('empathy.openTestGenerator') },
-        // Workflow Wizard
-        { name: 'empathy.workflowWizard.show', handler: () => vscode.commands.executeCommand('workflow-wizard.focus') },
+        // Workflow Wizard - temporarily hidden in v3.5.5
+        { name: 'empathy.workflowWizard.show', handler: () => {
+            vscode.window.showInformationMessage('Workflow Wizard is being redesigned. Use Cmd+Shift+E W for quick workflow access.');
+        }},
+        // Context menu commands (Enhancement 4)
+        { name: 'empathy.reviewFile', handler: cmdReviewFile },
+        { name: 'empathy.scanFolder', handler: cmdScanFolder },
+        { name: 'empathy.generateTests', handler: cmdGenerateTests },
+        { name: 'empathy.securityAudit', handler: cmdSecurityAudit },
+        // Workflow history (Keyboard Conductor)
+        { name: 'empathy.recentWorkflows', handler: cmdRecentWorkflows },
+        // Keyboard layout configuration
+        { name: 'empathy.applyKeyboardLayout', handler: cmdApplyKeyboardLayout },
+        { name: 'empathy.redetectKeyboardLayout', handler: cmdRedetectKeyboardLayout },
+        // Power user mode toggle
+        { name: 'empathy.togglePowerMode', handler: cmdTogglePowerMode },
+        // Guided panel (Socratic forms)
+        { name: 'empathy.openGuidedPanel', handler: () => cmdOpenGuidedPanel(context) },
+        { name: 'empathy.openPlanMode', handler: () => cmdOpenGuidedPanel(context, 'plan-refinement') },
+        { name: 'empathy.openLearnMode', handler: () => cmdOpenGuidedPanel(context, 'learning-mode') },
+        // Focus sidebar dashboard
+        { name: 'empathy.focusDashboard', handler: cmdFocusDashboard },
     ];
 
     for (const cmd of commands) {
@@ -204,6 +303,49 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('empathy.openDocAnalysis', () => {
             DocAnalysisPanel.createOrShow(context.extensionUri);
+        })
+    );
+
+    // Register Socratic Refinement / Agent Workflow Designer command
+    context.subscriptions.push(
+        vscode.commands.registerCommand('empathy.socraticRefinement', async () => {
+            const socraticService = SocraticFormService.getInstance();
+            socraticService.initialize(context);
+
+            // Show agent-design mode selection
+            const modeChoice = await vscode.window.showQuickPick(
+                [
+                    {
+                        label: '$(organization) Design Agent Crew',
+                        description: 'Create a multi-agent workflow team',
+                        value: 'crew-composition'
+                    },
+                    {
+                        label: '$(list-tree) Decompose Complex Task',
+                        description: 'Break down a task into agent-assignable subtasks',
+                        value: 'task-decomposition'
+                    },
+                    {
+                        label: '$(file-code) Engineer Agent Prompt',
+                        description: 'Create an optimized XML-enhanced prompt',
+                        value: 'prompt-engineering'
+                    }
+                ],
+                {
+                    title: 'Agent Workflow Designer',
+                    placeHolder: 'What would you like to design?'
+                }
+            );
+
+            if (!modeChoice) {
+                return;
+            }
+
+            // Start Socratic form with agent-design mode
+            await socraticService.startForm('agent-design', {
+                mode: modeChoice.value,
+                initialContext: `Design mode: ${modeChoice.label.replace(/\$\([^)]+\)\s*/, '')}`
+            });
         })
     );
 
@@ -245,6 +387,57 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
 
+    // Register goToLocation command for navigating to findings
+    context.subscriptions.push(
+        vscode.commands.registerCommand('empathy.goToLocation',
+            async (args: { file: string; line?: number; column?: number }) => {
+                try {
+                    // Handle workspace-relative paths
+                    let uri: vscode.Uri | undefined;
+                    if (path.isAbsolute(args.file)) {
+                        uri = vscode.Uri.file(args.file);
+                    } else {
+                        // Try to resolve relative to workspace folders
+                        const workspaceFolders = vscode.workspace.workspaceFolders;
+                        if (!workspaceFolders || workspaceFolders.length === 0) {
+                            vscode.window.showErrorMessage('No workspace folder open');
+                            return;
+                        }
+
+                        // Try each workspace folder until we find the file
+                        for (const wsFolder of workspaceFolders) {
+                            const candidateUri = vscode.Uri.joinPath(wsFolder.uri, args.file);
+                            try {
+                                await vscode.workspace.fs.stat(candidateUri);
+                                uri = candidateUri;
+                                break;
+                            } catch {
+                                // File not found in this workspace, try next
+                                continue;
+                            }
+                        }
+
+                        if (!uri) {
+                            vscode.window.showErrorMessage(`File not found: ${args.file}`);
+                            return;
+                        }
+                    }
+
+                    const doc = await vscode.workspace.openTextDocument(uri);
+                    const line = Math.max(0, (args.line ?? 1) - 1); // Convert to 0-indexed
+                    const col = Math.max(0, (args.column ?? 1) - 1); // Convert to 0-indexed
+
+                    await vscode.window.showTextDocument(doc, {
+                        selection: new vscode.Range(line, col, line, col),
+                        viewColumn: vscode.ViewColumn.One
+                    });
+                } catch (error) {
+                    vscode.window.showErrorMessage(`Failed to open file: ${error}`);
+                }
+            }
+        )
+    );
+
     // Register quick workflow command - allows running any workflow directly with WebView output
     context.subscriptions.push(
         vscode.commands.registerCommand('empathy.runWorkflowQuick', async (workflowArg?: string) => {
@@ -254,30 +447,89 @@ export function activate(context: vscode.ExtensionContext) {
                 return;
             }
 
-            const workflows = [
-                { label: 'Code Review', value: 'code-review', icon: '$(eye)', type: 'file' },
-                { label: 'Bug Prediction', value: 'bug-predict', icon: '$(bug)', type: 'folder' },
-                { label: 'Security Audit', value: 'security-audit', icon: '$(shield)', type: 'folder' },
-                { label: 'Performance Audit', value: 'perf-audit', icon: '$(dashboard)', type: 'folder' },
-                { label: 'Refactoring Plan', value: 'refactor-plan', icon: '$(tools)', type: 'folder' },
-                { label: 'Health Check', value: 'health-check', icon: '$(heart)', type: 'folder' },
-                { label: 'PR Review', value: 'pr-review', icon: '$(git-pull-request)', type: 'folder' },
-                { label: 'Code Analysis', value: 'pro-review', icon: '$(code)', type: 'file' },
-                { label: 'Test Generation', value: 'test-gen', icon: '$(beaker)', type: 'folder' },
-                { label: 'Dependency Check', value: 'dependency-check', icon: '$(package)', type: 'folder' },
-                { label: 'Documentation', value: 'document-gen', icon: '$(book)', type: 'folder' },
-                { label: 'Research Synthesis', value: 'research-synthesis', icon: '$(search)', type: 'folder' },
-                { label: 'Release Prep', value: 'release-prep', icon: '$(rocket)', type: 'folder' },
+            // Hierarchical workflow picker - organized by category
+            const workflowCategories = [
+                {
+                    category: 'Code Quality',
+                    categoryIcon: '$(eye)',
+                    workflows: [
+                        { label: 'Code Review', value: 'code-review', icon: '$(eye)', type: 'file' as const },
+                        { label: 'Bug Prediction', value: 'bug-predict', icon: '$(bug)', type: 'folder' as const },
+                        { label: 'Code Analysis', value: 'pro-review', icon: '$(code)', type: 'file' as const },
+                        { label: 'Refactoring Plan', value: 'refactor-plan', icon: '$(tools)', type: 'folder' as const },
+                    ]
+                },
+                {
+                    category: 'Security & Compliance',
+                    categoryIcon: '$(shield)',
+                    workflows: [
+                        { label: 'Security Audit', value: 'security-audit', icon: '$(shield)', type: 'folder' as const },
+                    ]
+                },
+                {
+                    category: 'Testing & Performance',
+                    categoryIcon: '$(beaker)',
+                    workflows: [
+                        { label: 'Test Generation', value: 'test-gen', icon: '$(beaker)', type: 'folder' as const },
+                        { label: 'Performance Audit', value: 'perf-audit', icon: '$(dashboard)', type: 'folder' as const },
+                    ]
+                },
+                {
+                    category: 'Documentation & Release',
+                    categoryIcon: '$(book)',
+                    workflows: [
+                        { label: 'Documentation', value: 'document-gen', icon: '$(book)', type: 'folder' as const },
+                        { label: 'Release Prep', value: 'release-prep', icon: '$(rocket)', type: 'folder' as const },
+                    ]
+                },
+                {
+                    category: 'Project Health',
+                    categoryIcon: '$(heart)',
+                    workflows: [
+                        { label: 'Health Check', value: 'health-check', icon: '$(heart)', type: 'folder' as const },
+                        { label: 'Dependency Check', value: 'dependency-check', icon: '$(package)', type: 'folder' as const },
+                        { label: 'PR Review', value: 'pr-review', icon: '$(git-pull-request)', type: 'folder' as const },
+                        { label: 'Research Synthesis', value: 'research-synthesis', icon: '$(search)', type: 'folder' as const },
+                    ]
+                },
             ];
 
+            // Flatten for direct lookup
+            const allWorkflows = workflowCategories.flatMap(c => c.workflows);
+
             // Select workflow
-            let selectedWorkflow: typeof workflows[0] | undefined;
+            let selectedWorkflow: typeof allWorkflows[0] | undefined;
             if (workflowArg) {
-                selectedWorkflow = workflows.find(w => w.value === workflowArg);
+                selectedWorkflow = allWorkflows.find(w => w.value === workflowArg);
             }
             if (!selectedWorkflow) {
+                // Step 1: Pick category (or show all)
+                const categoryItems = [
+                    { label: '$(list-unordered) All Workflows', description: 'Show all workflows', value: '__all__' },
+                    ...workflowCategories.map(c => ({
+                        label: `${c.categoryIcon} ${c.category}`,
+                        description: `${c.workflows.length} workflows`,
+                        value: c.category
+                    }))
+                ];
+
+                const categoryPick = await vscode.window.showQuickPick(categoryItems, {
+                    placeHolder: 'Select category or show all workflows',
+                    ignoreFocusOut: true
+                });
+                if (!categoryPick) { return; }
+
+                // Step 2: Pick workflow from category
+                let workflowsToShow: typeof allWorkflows;
+                if (categoryPick.value === '__all__') {
+                    workflowsToShow = allWorkflows;
+                } else {
+                    const selectedCategory = workflowCategories.find(c => c.category === categoryPick.value);
+                    workflowsToShow = selectedCategory?.workflows || allWorkflows;
+                }
+
                 const pick = await vscode.window.showQuickPick(
-                    workflows.map(w => ({ ...w, label: `${w.icon} ${w.label}`, description: w.value })),
+                    workflowsToShow.map(w => ({ ...w, label: `${w.icon} ${w.label}`, description: w.value })),
                     { placeHolder: 'Select a workflow to run', ignoreFocusOut: true }
                 );
                 if (!pick) { return; }
@@ -359,6 +611,19 @@ export function activate(context: vscode.ExtensionContext) {
                 const pythonPath = config.get<string>('pythonPath', 'python');
                 const inputKey = selectedWorkflow!.value === 'health-check' ? 'path' : 'target';
                 const args = ['-m', 'empathy_os.cli', 'workflow', 'run', selectedWorkflow!.value, '--input', JSON.stringify({ [inputKey]: targetPath })];
+
+                // Record in workflow history (Keyboard Conductor feature)
+                const historyService = WorkflowHistoryService.getInstance();
+                const metadata = WORKFLOW_METADATA[selectedWorkflow!.value] || {
+                    displayName: selectedWorkflow!.label,
+                    icon: '$(play)'
+                };
+                historyService.recordExecution({
+                    workflowId: selectedWorkflow!.value,
+                    displayName: metadata.displayName,
+                    target: targetPath,
+                    icon: metadata.icon,
+                });
 
                 cp.execFile(pythonPath, args, { cwd: workspaceFolder, maxBuffer: 1024 * 1024 * 5 }, (error, stdout, stderr) => {
                     const output = stdout || stderr || (error ? error.message : 'No output');
@@ -827,6 +1092,348 @@ async function cmdIgnoreIssue(item?: HealthItem) {
     );
 }
 
+// ===== Context Menu Commands (Enhancement 4) =====
+
+/**
+ * Review a file from context menu - runs code-review workflow on the file
+ */
+async function cmdReviewFile(uri?: vscode.Uri) {
+    const filePath = uri?.fsPath || vscode.window.activeTextEditor?.document.uri.fsPath;
+    if (!filePath) {
+        vscode.window.showErrorMessage('No file selected');
+        return;
+    }
+
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    if (!workspaceFolder) {
+        vscode.window.showErrorMessage('No workspace folder open');
+        return;
+    }
+
+    const relativePath = filePath.replace(workspaceFolder.uri.fsPath + '/', '');
+
+    // Run code-review workflow via the workflow command
+    await vscode.commands.executeCommand('empathy.openReportInEditor', {
+        workflowName: 'code-review',
+        output: '', // Will be filled by the command
+        input: relativePath
+    });
+
+    // Actually run the workflow
+    const config = vscode.workspace.getConfiguration('empathy');
+    const pythonPath = config.get<string>('pythonPath', 'python');
+
+    vscode.window.withProgress(
+        { location: vscode.ProgressLocation.Notification, title: `Reviewing ${relativePath}...`, cancellable: false },
+        async () => {
+            const cp = await import('child_process');
+            return new Promise<void>((resolve) => {
+                cp.execFile(
+                    pythonPath,
+                    ['-m', 'empathy_os', 'workflow', 'run', 'code-review', '--input', JSON.stringify({ path: relativePath })],
+                    { cwd: workspaceFolder.uri.fsPath, maxBuffer: 1024 * 1024 * 5 },
+                    async (error, stdout, stderr) => {
+                        const output = stdout || stderr || (error ? error.message : 'No output');
+                        await vscode.commands.executeCommand('empathy.openReportInEditor', {
+                            workflowName: 'code-review',
+                            output,
+                            input: relativePath
+                        });
+                        resolve();
+                    }
+                );
+            });
+        }
+    );
+}
+
+/**
+ * Scan a folder for bugs - runs bug-predict workflow
+ */
+async function cmdScanFolder(uri?: vscode.Uri) {
+    const folderPath = uri?.fsPath;
+    if (!folderPath) {
+        vscode.window.showErrorMessage('No folder selected');
+        return;
+    }
+
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    if (!workspaceFolder) {
+        vscode.window.showErrorMessage('No workspace folder open');
+        return;
+    }
+
+    const relativePath = folderPath.replace(workspaceFolder.uri.fsPath + '/', '');
+    const config = vscode.workspace.getConfiguration('empathy');
+    const pythonPath = config.get<string>('pythonPath', 'python');
+
+    vscode.window.withProgress(
+        { location: vscode.ProgressLocation.Notification, title: `Scanning ${relativePath} for bugs...`, cancellable: false },
+        async () => {
+            const cp = await import('child_process');
+            return new Promise<void>((resolve) => {
+                cp.execFile(
+                    pythonPath,
+                    ['-m', 'empathy_os', 'workflow', 'run', 'bug-predict', '--input', JSON.stringify({ path: relativePath })],
+                    { cwd: workspaceFolder.uri.fsPath, maxBuffer: 1024 * 1024 * 5 },
+                    async (error, stdout, stderr) => {
+                        const output = stdout || stderr || (error ? error.message : 'No output');
+                        await vscode.commands.executeCommand('empathy.openReportInEditor', {
+                            workflowName: 'bug-predict',
+                            output,
+                            input: relativePath
+                        });
+                        resolve();
+                    }
+                );
+            });
+        }
+    );
+}
+
+/**
+ * Generate tests for a file/folder
+ */
+async function cmdGenerateTests(uri?: vscode.Uri) {
+    const targetPath = uri?.fsPath || vscode.window.activeTextEditor?.document.uri.fsPath;
+    if (!targetPath) {
+        vscode.window.showErrorMessage('No file or folder selected');
+        return;
+    }
+
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    if (!workspaceFolder) {
+        vscode.window.showErrorMessage('No workspace folder open');
+        return;
+    }
+
+    const relativePath = targetPath.replace(workspaceFolder.uri.fsPath + '/', '');
+    const config = vscode.workspace.getConfiguration('empathy');
+    const pythonPath = config.get<string>('pythonPath', 'python');
+
+    vscode.window.withProgress(
+        { location: vscode.ProgressLocation.Notification, title: `Generating tests for ${relativePath}...`, cancellable: false },
+        async () => {
+            const cp = await import('child_process');
+            return new Promise<void>((resolve) => {
+                cp.execFile(
+                    pythonPath,
+                    ['-m', 'empathy_os', 'workflow', 'run', 'test-gen', '--input', JSON.stringify({ path: relativePath })],
+                    { cwd: workspaceFolder.uri.fsPath, maxBuffer: 1024 * 1024 * 5 },
+                    async (error, stdout, stderr) => {
+                        const output = stdout || stderr || (error ? error.message : 'No output');
+                        await vscode.commands.executeCommand('empathy.openReportInEditor', {
+                            workflowName: 'test-gen',
+                            output,
+                            input: relativePath
+                        });
+                        resolve();
+                    }
+                );
+            });
+        }
+    );
+}
+
+/**
+ * Run security audit on a folder
+ */
+async function cmdSecurityAudit(uri?: vscode.Uri) {
+    const folderPath = uri?.fsPath;
+    if (!folderPath) {
+        vscode.window.showErrorMessage('No folder selected');
+        return;
+    }
+
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    if (!workspaceFolder) {
+        vscode.window.showErrorMessage('No workspace folder open');
+        return;
+    }
+
+    const relativePath = folderPath.replace(workspaceFolder.uri.fsPath + '/', '');
+    const config = vscode.workspace.getConfiguration('empathy');
+    const pythonPath = config.get<string>('pythonPath', 'python');
+
+    vscode.window.withProgress(
+        { location: vscode.ProgressLocation.Notification, title: `Running security audit on ${relativePath}...`, cancellable: false },
+        async () => {
+            const cp = await import('child_process');
+            return new Promise<void>((resolve) => {
+                cp.execFile(
+                    pythonPath,
+                    ['-m', 'empathy_os', 'workflow', 'run', 'security-audit', '--input', JSON.stringify({ path: relativePath })],
+                    { cwd: workspaceFolder.uri.fsPath, maxBuffer: 1024 * 1024 * 5 },
+                    async (error, stdout, stderr) => {
+                        const output = stdout || stderr || (error ? error.message : 'No output');
+                        await vscode.commands.executeCommand('empathy.openReportInEditor', {
+                            workflowName: 'security-audit',
+                            output,
+                            input: relativePath
+                        });
+                        resolve();
+                    }
+                );
+            });
+        }
+    );
+}
+
+// ===== Recent Workflows Command (Keyboard Conductor) =====
+
+/**
+ * Show recent workflows picker and re-run selected workflow
+ * Triggered by ctrl+shift+e z
+ */
+async function cmdRecentWorkflows() {
+    const historyService = WorkflowHistoryService.getInstance();
+    const selected = await historyService.showRecentWorkflowsPicker();
+
+    if (selected) {
+        // Re-run the selected workflow
+        await vscode.commands.executeCommand('empathy.runWorkflowQuick', selected.workflowId);
+    }
+}
+
+// ===== Keyboard Layout Configuration =====
+
+/**
+ * Apply keyboard layout optimized for user's keyboard
+ * Supports QWERTY, Dvorak, and Colemak layouts
+ */
+async function cmdApplyKeyboardLayout() {
+    const config = vscode.workspace.getConfiguration('empathy');
+    const currentLayout = config.get<string>('keyboardLayout', 'qwerty');
+
+    // Show layout picker
+    const layouts = [
+        { label: '$(keyboard) QWERTY', description: 'Default layout - M-S-F-D shortcuts', value: 'qwerty' },
+        { label: '$(keyboard) Dvorak', description: 'A-O-E-U home row optimized', value: 'dvorak' },
+        { label: '$(keyboard) Colemak', description: 'A-R-S-T home row optimized', value: 'colemak' },
+    ];
+
+    const selected = await vscode.window.showQuickPick(
+        layouts.map(l => ({ ...l, picked: l.value === currentLayout })),
+        { placeHolder: `Current: ${currentLayout.toUpperCase()} - Select keyboard layout` }
+    );
+
+    if (!selected) { return; }
+
+    if (selected.value === 'qwerty') {
+        // QWERTY uses default keybindings, no action needed
+        await config.update('keyboardLayout', 'qwerty', vscode.ConfigurationTarget.Global);
+        vscode.window.showInformationMessage(
+            'QWERTY layout active. Default keybindings are already configured.'
+        );
+        return;
+    }
+
+    // For Dvorak/Colemak, show the keybindings file and guide user
+    const layoutFile = path.join(extensionPath, 'keybindings', `${selected.value}.json`);
+
+    try {
+        const doc = await vscode.workspace.openTextDocument(layoutFile);
+        await vscode.window.showTextDocument(doc, { preview: false });
+
+        // Update setting
+        await config.update('keyboardLayout', selected.value, vscode.ConfigurationTarget.Global);
+
+        const action = await vscode.window.showInformationMessage(
+            `${selected.value.toUpperCase()} layout selected. Copy the keybindings from this file to your keybindings.json.`,
+            'Open Keyboard Shortcuts',
+            'Dismiss'
+        );
+
+        if (action === 'Open Keyboard Shortcuts') {
+            await vscode.commands.executeCommand('workbench.action.openGlobalKeybindingsFile');
+        }
+    } catch (err) {
+        vscode.window.showErrorMessage(`Could not open ${selected.value} keybindings file.`);
+    }
+}
+
+/**
+ * Re-detect keyboard layout from OS
+ * Uses FeedbackService for mode-appropriate feedback
+ */
+async function cmdRedetectKeyboardLayout() {
+    const feedback = FeedbackService.getInstance();
+    const hints = NextCommandHintService.getInstance();
+
+    try {
+        const detector = KeyboardLayoutDetector.getInstance();
+        detector.clearCache();
+        const detected = await detector.detect();
+
+        const config = vscode.workspace.getConfiguration('empathy');
+        const current = config.get<string>('keyboardLayout', 'qwerty');
+
+        if (detected !== current) {
+            await config.update('keyboardLayout', detected, vscode.ConfigurationTarget.Global);
+            await feedback.notify(`Keyboard: ${detected.toUpperCase()} applied`, 'success');
+        } else {
+            await feedback.notify(`Keyboard: ${detected.toUpperCase()}`, 'success');
+        }
+
+        // Record for next command hints
+        hints.recordCommand('empathy.redetectKeyboardLayout');
+    } catch {
+        await feedback.notify('Keyboard detection failed', 'error');
+    }
+}
+
+/**
+ * Toggle between guided and power feedback modes
+ * Power mode: quick inline badges for experienced keyboard users
+ * Guided mode: modal dialogs with explanations for new users
+ */
+async function cmdTogglePowerMode() {
+    const config = vscode.workspace.getConfiguration('empathy');
+    const current = config.get<string>('feedbackMode', 'guided');
+    const newMode = current === 'guided' ? 'power' : 'guided';
+
+    await config.update('feedbackMode', newMode, vscode.ConfigurationTarget.Global);
+
+    // Use FeedbackService to show confirmation (demonstrates the mode)
+    const feedback = FeedbackService.getInstance();
+    const modeLabel = newMode === 'power' ? 'Power Mode' : 'Guided Mode';
+    const modeDesc = newMode === 'power'
+        ? 'Quick inline feedback - play your keyboard riffs!'
+        : 'Modal dialogs with explanations';
+
+    await feedback.notify(`${modeLabel}: ${modeDesc}`, 'success');
+
+    // Record for next command hints
+    NextCommandHintService.getInstance().recordCommand('empathy.togglePowerMode');
+}
+
+/**
+ * Focus the Empathy sidebar dashboard
+ */
+async function cmdFocusDashboard(): Promise<void> {
+    await vscode.commands.executeCommand('empathy-dashboard.focus');
+}
+
+/**
+ * Open the Guided Panel with Socratic forms
+ * Supports different form types: general, plan-refinement, workflow-customization, learning-mode
+ */
+function cmdOpenGuidedPanel(
+    context: vscode.ExtensionContext,
+    formType?: 'general' | 'plan-refinement' | 'workflow-customization' | 'learning-mode'
+): void {
+    console.log('[Empathy] cmdOpenGuidedPanel called with formType:', formType);
+    try {
+        GuidedPanelProvider.createOrShow(context.extensionUri, context, {
+            formType: formType || 'general',
+        });
+        console.log('[Empathy] GuidedPanelProvider.createOrShow completed');
+    } catch (error) {
+        console.error('[Empathy] Error opening guided panel:', error);
+        vscode.window.showErrorMessage(`Failed to open Guided Panel: ${error}`);
+    }
+}
+
 // Open Full Web Dashboard
 async function cmdOpenWebDashboard() {
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
@@ -1079,8 +1686,14 @@ async function getStatusData(): Promise<StatusData | null> {
 
 async function updateStatusBar(): Promise<void> {
     const config = vscode.workspace.getConfiguration('empathy');
-    if (!config.get<boolean>('showStatusBar', true)) {
+    const showStatusBar = config.get<boolean>('showStatusBar', true);
+
+    if (!showStatusBar) {
         statusBarItem.hide();
+        // Also hide quick action items
+        for (const item of quickActionItems) {
+            item.hide();
+        }
         return;
     }
 
@@ -1088,12 +1701,24 @@ async function updateStatusBar(): Promise<void> {
     if (!data) {
         statusBarItem.text = '$(pulse) Empathy';
         statusBarItem.tooltip = 'No workspace open';
+        // Hide quick actions when no workspace
+        for (const item of quickActionItems) {
+            item.hide();
+        }
     } else if (data.patterns === 0) {
         statusBarItem.text = '$(pulse) Empathy: Setup';
         statusBarItem.tooltip = 'Run "empathy learn" to get started';
+        // Show quick actions even during setup
+        for (const item of quickActionItems) {
+            item.show();
+        }
     } else {
         statusBarItem.text = `$(pulse) ${data.patterns} patterns | $${data.savings.toFixed(2)} saved`;
         statusBarItem.tooltip = `Empathy Framework\nPatterns: ${data.patterns}\nSavings: $${data.savings.toFixed(2)}`;
+        // Show quick action items
+        for (const item of quickActionItems) {
+            item.show();
+        }
     }
     statusBarItem.show();
 }

@@ -1,7 +1,7 @@
 # Debugging Patterns
 
 Auto-generated from Empathy Framework learned patterns.
-Total patterns: 43
+Total patterns: 45
 
 ---
 

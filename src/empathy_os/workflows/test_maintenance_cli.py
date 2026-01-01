@@ -205,7 +205,8 @@ async def cmd_analyze(args: argparse.Namespace) -> int:
     """Run analysis and generate plan."""
     project_root = Path(args.project).resolve()
     index = ProjectIndex(str(project_root))
-    index.load() or index.refresh()
+    if not index.load():
+        index.refresh()
 
     workflow = TestMaintenanceWorkflow(str(project_root), index)
     result = await workflow.run(
@@ -227,7 +228,8 @@ async def cmd_execute(args: argparse.Namespace) -> int:
     """Execute plan items."""
     project_root = Path(args.project).resolve()
     index = ProjectIndex(str(project_root))
-    index.load() or index.refresh()
+    if not index.load():
+        index.refresh()
 
     workflow = TestMaintenanceWorkflow(str(project_root), index)
     result = await workflow.run(
@@ -249,7 +251,8 @@ async def cmd_auto(args: argparse.Namespace) -> int:
     """Auto-execute eligible items."""
     project_root = Path(args.project).resolve()
     index = ProjectIndex(str(project_root))
-    index.load() or index.refresh()
+    if not index.load():
+        index.refresh()
 
     workflow = TestMaintenanceWorkflow(str(project_root), index)
     result = await workflow.run(
@@ -274,7 +277,8 @@ async def cmd_report(args: argparse.Namespace) -> int:
     """Generate test health report."""
     project_root = Path(args.project).resolve()
     index = ProjectIndex(str(project_root))
-    index.load() or index.refresh()
+    if not index.load():
+        index.refresh()
 
     workflow = TestMaintenanceWorkflow(str(project_root), index)
     result = await workflow.run({"mode": "report"})
@@ -291,7 +295,8 @@ async def cmd_queue(args: argparse.Namespace) -> int:
     """Manage task queue."""
     project_root = Path(args.project).resolve()
     index = ProjectIndex(str(project_root))
-    index.load() or index.refresh()
+    if not index.load():
+        index.refresh()
 
     manager = TestLifecycleManager(str(project_root), index)
 
@@ -329,7 +334,8 @@ async def cmd_crew(args: argparse.Namespace) -> int:
     """Run test maintenance crew."""
     project_root = Path(args.project).resolve()
     index = ProjectIndex(str(project_root))
-    index.load() or index.refresh()
+    if not index.load():
+        index.refresh()
 
     # Configure with CLI options
     config = CrewConfig(
@@ -361,7 +367,8 @@ async def cmd_hook(args: argparse.Namespace) -> int:
     """Process git hooks."""
     project_root = Path(args.project).resolve()
     index = ProjectIndex(str(project_root))
-    index.load() or index.refresh()
+    if not index.load():
+        index.refresh()
 
     manager = TestLifecycleManager(str(project_root), index)
 
@@ -401,7 +408,8 @@ async def cmd_status(args: argparse.Namespace) -> int:
     """Show test maintenance status."""
     project_root = Path(args.project).resolve()
     index = ProjectIndex(str(project_root))
-    index.load() or index.refresh()
+    if not index.load():
+        index.refresh()
 
     workflow = TestMaintenanceWorkflow(str(project_root), index)
     manager = TestLifecycleManager(str(project_root), index)

@@ -591,7 +591,7 @@ class RedisShortTermMemory:
             return False
         if self._client is None:
             return False
-        return self._client.delete(key) > 0
+        return bool(self._client.delete(key) > 0)
 
     def _keys(self, pattern: str) -> list[str]:
         """Get keys matching pattern"""
@@ -1457,7 +1457,7 @@ class RedisShortTermMemory:
         self._metrics.record_operation("publish", latency_ms)
 
         logger.debug("pubsub_published", channel=channel, subscribers=count)
-        return count
+        return int(count)
 
     def subscribe(
         self,
@@ -1866,7 +1866,7 @@ class RedisShortTermMemory:
         if self._client is None:
             return 0
 
-        return self._client.zcount(full_timeline, q.start_score, q.end_score)
+        return int(self._client.zcount(full_timeline, q.start_score, q.end_score))
 
     # =========================================================================
     # TASK QUEUES (LISTS)
@@ -1923,8 +1923,8 @@ class RedisShortTermMemory:
             return 0
 
         if priority:
-            return self._client.lpush(full_queue, payload)
-        return self._client.rpush(full_queue, payload)
+            return int(self._client.lpush(full_queue, payload))
+        return int(self._client.rpush(full_queue, payload))
 
     def queue_pop(
         self,
@@ -1954,7 +1954,8 @@ class RedisShortTermMemory:
             if full_queue not in self._mock_lists or not self._mock_lists[full_queue]:
                 return None
             payload = self._mock_lists[full_queue].pop(0)
-            return json.loads(payload)
+            data: dict = json.loads(payload)
+            return data
 
         if self._client is None:
             return None
@@ -1962,12 +1963,14 @@ class RedisShortTermMemory:
         if timeout > 0:
             result = self._client.blpop(full_queue, timeout=timeout)
             if result:
-                return json.loads(result[1])
+                data = json.loads(result[1])
+                return data
             return None
 
         result = self._client.lpop(full_queue)
         if result:
-            return json.loads(result)
+            data = json.loads(result)
+            return data
         return None
 
     def queue_length(self, queue_name: str) -> int:
@@ -1988,7 +1991,7 @@ class RedisShortTermMemory:
         if self._client is None:
             return 0
 
-        return self._client.llen(full_queue)
+        return int(self._client.llen(full_queue))
 
     def queue_peek(
         self,

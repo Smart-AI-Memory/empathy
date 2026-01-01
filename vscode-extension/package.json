@@ -1,8 +1,8 @@
 {
   "name": "empathy-framework",
   "displayName": "Empathy Framework",
-  "description": "AI-powered code health, pattern learning, and cost optimization for VS Code. Learn bug patterns from git history, track API costs, sync to Claude Code.",
-  "version": "1.3.1",
+  "description": "AI-powered code health, pattern learning, and cost optimization for VS Code. Features Socratic workflow refinement, multi-agent design, and intelligent prompt enhancement.",
+  "version": "1.4.0",
   "publisher": "smart-ai-memory",
   "license": "SEE LICENSE IN LICENSE",
   "icon": "images/icon.png",
@@ -31,7 +31,10 @@
     "ai",
     "patterns",
     "health",
-    "cost-optimization"
+    "cost-optimization",
+    "workflows",
+    "agent-design",
+    "socratic"
   ],
   "activationEvents": [
     "onStartupFinished"
@@ -134,7 +137,12 @@
         "title": "Empathy: Setup → Refresh Health",
         "icon": "$(refresh)"
       },
-            {
+      {
+        "command": "empathy.socraticRefinement",
+        "title": "Empathy: Design → Agent Workflow Designer",
+        "icon": "$(symbol-class)"
+      },
+      {
         "command": "empathy.testGenerator.show",
         "title": "Empathy: Wizard → Test Generator",
         "icon": "$(beaker)"
@@ -247,6 +255,11 @@
         "mac": "cmd+shift+e d"
       },
       {
+        "command": "empathy.socraticRefinement",
+        "key": "ctrl+shift+e q",
+        "mac": "cmd+shift+e q"
+      },
+      {
         "command": "empathy.costs",
         "key": "ctrl+shift+e c",
         "mac": "cmd+shift+e c"
@@ -323,10 +336,10 @@
           "id": "empathy-dashboard",
           "name": "Dashboard"
         },
-          {
+        {
           "type": "webview",
-          "id": "research-synthesis",
-          "name": "Research Synthesis"
+          "id": "empathy-code-review",
+          "name": "Code Review"
         }
       ]
     },
@@ -465,6 +478,21 @@
           "type": "boolean",
           "default": true,
           "description": "Auto-refresh pattern data"
+        },
+        "empathy.socraticRefinement.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Socratic refinement before workflows to clarify intent"
+        },
+        "empathy.socraticRefinement.showReviewBeforeRun": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show review confirmation before running refined workflows"
+        },
+        "empathy.socraticRefinement.skipForContextMenu": {
+          "type": "boolean",
+          "default": true,
+          "description": "Skip refinement when workflow triggered from context menu with explicit file"
         },
         "empathy.refreshInterval": {
           "type": "number",

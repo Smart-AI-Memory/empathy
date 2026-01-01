@@ -454,7 +454,7 @@ class GeminiProvider(BaseLLMProvider):
         response = await loop.run_in_executor(
             None,
             lambda: model.generate_content(
-                gemini_messages,
+                gemini_messages,  # type: ignore[arg-type]
                 generation_config=generation_config,
             ),
         )

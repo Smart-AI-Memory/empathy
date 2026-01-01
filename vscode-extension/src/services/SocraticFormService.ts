@@ -17,7 +17,7 @@ import * as cp from 'child_process';
 /**
  * Form types supported by the Socratic service
  */
-export type FormType = 'plan-refinement' | 'workflow-customization' | 'learning-mode' | 'general';
+export type FormType = 'plan-refinement' | 'workflow-customization' | 'learning-mode' | 'general' | 'agent-design';
 
 /**
  * A single message in the conversation
@@ -159,6 +159,30 @@ const FORM_CONFIGS: Record<FormType, FormConfig> = {
         initialQuestion: 'How can I help you with Empathy Framework today?',
         maxTurns: 20,
     },
+    'agent-design': {
+        systemPrompt: buildXMLPrompt({
+            role: 'AI Agent Architect',
+            goal: 'Help design multi-agent workflows using CrewAI/LangGraph patterns',
+            instructions: [
+                'Understand the complex task to be accomplished',
+                'Identify distinct expertise areas needed',
+                'Suggest agent roles with clear responsibilities',
+                'Design agent collaboration patterns (sequential, parallel, hierarchical)',
+                'Generate XML-enhanced prompts for each agent',
+                'Consider cost optimization - use cheaper models for simple tasks'
+            ],
+            constraints: [
+                'Keep crews to 3-5 agents maximum for manageability',
+                'Each agent should have a single clear responsibility',
+                'Prompts should follow XML-enhanced structure',
+                'Consider model tier routing: cheap (Haiku) for simple, capable (Sonnet) for complex, premium (Opus) for synthesis',
+                'Validate task dependencies before suggesting parallel execution'
+            ],
+            outputFormat: 'YAML crew config + XML prompts for each agent in code fences'
+        }),
+        initialQuestion: 'What complex task do you want to accomplish with a multi-agent crew? Describe the overall goal and any specific requirements.',
+        maxTurns: 12,
+    },
 };
 
 /**
@@ -184,6 +208,196 @@ export class SocraticFormService {
     initialize(context: vscode.ExtensionContext): void {
         this.context = context;
         this.loadPersistedConversations();
+    }
+
+    /**
+     * Start an interactive Socratic form session with QuickPick UI
+     */
+    async startForm(
+        formType: FormType,
+        options: { mode?: string; initialContext?: string } = {}
+    ): Promise<void> {
+        const conversationId = `${formType}-${Date.now()}`;
+        const config = FORM_CONFIGS[formType];
+
+        // Show initial question
+        await vscode.window.showInformationMessage(
+            config.initialQuestion,
+            { modal: false }
+        );
+
+        // Start interactive input loop
+        let turnCount = 0;
+        const maxTurns = config.maxTurns;
+        const messages: ChatMessage[] = [
+            { role: 'system', content: config.systemPrompt, timestamp: Date.now() }
+        ];
+
+        // Add mode context if provided
+        if (options.mode) {
+            messages.push({
+                role: 'user',
+                content: `I want to use ${options.mode} mode. ${options.initialContext || ''}`,
+                timestamp: Date.now()
+            });
+        }
+
+        while (turnCount < maxTurns) {
+            // Get user input
+            const userInput = await vscode.window.showInputBox({
+                title: `${this.getFormTitle(formType)} (${turnCount + 1}/${maxTurns})`,
+                prompt: turnCount === 0 ? config.initialQuestion : 'Your response',
+                placeHolder: 'Type your response...',
+                ignoreFocusOut: true
+            });
+
+            if (!userInput) {
+                // User cancelled
+                const action = await vscode.window.showQuickPick(
+                    ['Continue conversation', 'End and summarize', 'Cancel'],
+                    { title: 'What would you like to do?' }
+                );
+
+                if (action === 'Cancel') {
+                    return;
+                } else if (action === 'End and summarize') {
+                    break;
+                }
+                continue;
+            }
+
+            messages.push({ role: 'user', content: userInput, timestamp: Date.now() });
+            turnCount++;
+
+            // Get LLM response (or fallback)
+            const response = await this.generateResponse(messages, formType);
+            messages.push({ role: 'assistant', content: response, timestamp: Date.now() });
+
+            // Show response in output channel or information message
+            const outputChannel = vscode.window.createOutputChannel('Empathy Agent Designer');
+            outputChannel.clear();
+            outputChannel.appendLine(`=== ${this.getFormTitle(formType)} ===\n`);
+            outputChannel.appendLine(response);
+            outputChannel.show(true);
+
+            // Check for completion signals
+            if (this.detectCompletion(response, formType)) {
+                const result = this.extractResult(response, formType);
+                if (result) {
+                    // Offer to copy or save the result
+                    const action = await vscode.window.showQuickPick(
+                        [
+                            { label: '$(copy) Copy to Clipboard', value: 'copy' },
+                            { label: '$(new-file) Open in New File', value: 'file' },
+                            { label: '$(check) Done', value: 'done' }
+                        ],
+                        { title: 'What would you like to do with the result?' }
+                    );
+
+                    if (action?.value === 'copy') {
+                        await vscode.env.clipboard.writeText(result);
+                        vscode.window.showInformationMessage('Copied to clipboard!');
+                    } else if (action?.value === 'file') {
+                        const doc = await vscode.workspace.openTextDocument({
+                            content: result,
+                            language: 'yaml'
+                        });
+                        await vscode.window.showTextDocument(doc);
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    /**
+     * Get display title for form type
+     */
+    private getFormTitle(formType: FormType): string {
+        const titles: Record<FormType, string> = {
+            'plan-refinement': 'Plan Refinement',
+            'workflow-customization': 'Workflow Customization',
+            'learning-mode': 'Learning Mode',
+            'general': 'Empathy Assistant',
+            'agent-design': 'Agent Workflow Designer'
+        };
+        return titles[formType] || formType;
+    }
+
+    /**
+     * Generate LLM response or fallback
+     */
+    private async generateResponse(messages: ChatMessage[], formType: FormType): Promise<string> {
+        try {
+            // Try to use LLMChatService
+            const llmService = await import('./LLMChatService');
+            const service = llmService.LLMChatService.getInstance();
+
+            const response = await service.chat(
+                messages.map(m => ({ role: m.role, content: m.content })),
+                { maxTokens: 2048, temperature: 0.7 }
+            );
+
+            return response.content;
+        } catch (error) {
+            // Return contextual fallback based on form type
+            return this.getFormFallbackResponse(formType, messages);
+        }
+    }
+
+    /**
+     * Get fallback response for interactive form when LLM unavailable
+     */
+    private getFormFallbackResponse(formType: FormType, messages: ChatMessage[]): string {
+        const lastUserMessage = [...messages].reverse().find(m => m.role === 'user');
+        const userContent = lastUserMessage?.content.toLowerCase() || '';
+
+        if (formType === 'agent-design') {
+            if (userContent.includes('crew') || userContent.includes('team')) {
+                return `Based on your requirements, I suggest a crew structure:
+
+\`\`\`yaml
+crew:
+  name: custom-workflow-crew
+  agents:
+    - name: researcher
+      role: Information Gatherer
+      model_tier: cheap  # Haiku for quick lookups
+      goal: Gather and summarize relevant information
+
+    - name: analyzer
+      role: Deep Analysis Expert
+      model_tier: capable  # Sonnet for complex analysis
+      goal: Analyze gathered information for patterns and insights
+
+    - name: synthesizer
+      role: Solution Architect
+      model_tier: premium  # Opus for synthesis and decisions
+      goal: Synthesize analysis into actionable recommendations
+
+  workflow:
+    type: sequential
+    steps:
+      - agent: researcher
+      - agent: analyzer
+      - agent: synthesizer
+\`\`\`
+
+Would you like me to generate the XML-enhanced prompts for each agent?`;
+            }
+
+            return `To design an effective agent workflow, let me understand:
+
+1. **Task Complexity**: Is this a single-step task or does it require multiple specialized skills?
+2. **Expertise Areas**: What domains of knowledge are needed? (e.g., coding, research, analysis)
+3. **Collaboration Pattern**: Should agents work sequentially, in parallel, or hierarchically?
+
+What's the primary goal you're trying to accomplish?`;
+        }
+
+        return `I understand you're working on: "${userContent.substring(0, 100)}..."
+
+Let me help you clarify the next steps. What specific aspect would you like to focus on?`;
     }
 
     /**

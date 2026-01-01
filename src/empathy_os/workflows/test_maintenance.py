@@ -233,16 +233,13 @@ class TestMaintenanceWorkflow:
             TestPriority.LOW: 3,
             TestPriority.DEFERRED: 4,
         }
-        items.sort(
-            key=lambda x: (
-                priority_order[x.priority],
-                (
-                    -self.index.get_file(x.file_path).impact_score
-                    if self.index.get_file(x.file_path)
-                    else 0
-                ),
-            )
-        )
+
+        def get_sort_key(item: TestPlanItem) -> tuple[int, float]:
+            file_rec = self.index.get_file(item.file_path)
+            impact = float(-file_rec.impact_score) if file_rec else 0.0
+            return (priority_order[item.priority], impact)
+
+        items.sort(key=get_sort_key)
 
         # Limit items
         plan.items = items[:max_items]
@@ -417,13 +414,11 @@ class TestMaintenanceWorkflow:
         """Execute items in the plan."""
         items_to_execute = plan.get_auto_executable_items() if auto_only else plan.items
 
-        results = {
-            "total": len(items_to_execute),
-            "succeeded": 0,
-            "failed": 0,
-            "skipped": 0,
-            "details": [],
-        }
+        # Use typed variables for proper type inference
+        succeeded = 0
+        failed = 0
+        skipped = 0
+        details: list[dict[str, Any]] = []
 
         for item in items_to_execute:
             try:
@@ -437,11 +432,11 @@ class TestMaintenanceWorkflow:
                     success = await self._delete_orphaned_tests(item)
                 else:
                     success = False
-                    results["skipped"] += 1
+                    skipped += 1
                     continue
 
                 if success:
-                    results["succeeded"] += 1
+                    succeeded += 1
                     # Update index
                     self.index.update_file(
                         item.file_path,
@@ -451,9 +446,9 @@ class TestMaintenanceWorkflow:
                         staleness_days=0,
                     )
                 else:
-                    results["failed"] += 1
+                    failed += 1
 
-                results["details"].append(
+                details.append(
                     {
                         "file": item.file_path,
                         "action": item.action.value,
@@ -463,8 +458,8 @@ class TestMaintenanceWorkflow:
 
             except Exception as e:
                 logger.error(f"Error processing {item.file_path}: {e}")
-                results["failed"] += 1
-                results["details"].append(
+                failed += 1
+                details.append(
                     {
                         "file": item.file_path,
                         "action": item.action.value,
@@ -473,7 +468,13 @@ class TestMaintenanceWorkflow:
                     }
                 )
 
-        return results
+        return {
+            "total": len(items_to_execute),
+            "succeeded": succeeded,
+            "failed": failed,
+            "skipped": skipped,
+            "details": details,
+        }
 
     async def _create_tests_for_file(self, item: TestPlanItem) -> bool:
         """Create tests for a file using test-gen workflow."""

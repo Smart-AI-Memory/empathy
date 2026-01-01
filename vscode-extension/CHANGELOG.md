@@ -2,6 +2,43 @@
 
 All notable changes to the "Empathy Framework" extension will be documented in this file.
 
+## [1.4.0] - 2026-01-01
+
+### Added
+
+- **Socratic Workflow Refinement** - Intelligent pre-workflow questioning to clarify intent
+  - Auto-triggers for premium-tier workflows (code-review, refactor-plan, pro-review)
+  - Auto-triggers for ambiguous inputs or complex multi-stage workflows
+  - 2-5 adaptive QuickPick questions based on workflow type
+  - "Review before run" confirmation with refined settings
+  - Pattern learning - remembers preferences for similar contexts
+  - Configure via `empathy.socraticRefinement.enabled` setting
+
+- **Agent Workflow Designer** - Manual invocation for designing multi-agent workflows
+  - Keyboard shortcut: `Cmd+Shift+E Q` (Mac) / `Ctrl+Shift+E Q` (Windows/Linux)
+  - Three design modes: Crew Composition, Task Decomposition, Prompt Engineering
+  - Generates YAML crew configs + XML-enhanced prompts
+  - Supports CrewAI/LangGraph patterns with cost-optimized model tier routing
+  - Command: `Empathy: Design → Agent Workflow Designer`
+
+- **New Services**
+  - `LLMChatService` - Direct LLM integration with Python provider fallback
+  - `TriggerAnalyzer` - Determines when Socratic refinement should appear
+  - `WorkflowRefinementService` - Central orchestrator for refinement flow
+  - `PromptEnhancer` - Enhances XML prompts with refined context
+  - `PatternLearner` - Learns and recalls refinement patterns
+
+### Changed
+
+- **Beta Features** - Memory Control Panel now properly gated behind `empathy.showBetaFeatures` setting
+- **Workflow Wizard** - Temporarily hidden, redirects to quick workflow access (Cmd+Shift+E W)
+
+### Settings
+
+- `empathy.socraticRefinement.enabled` - Enable/disable Socratic refinement (default: true)
+- `empathy.socraticRefinement.showReviewBeforeRun` - Show confirmation dialog (default: true)
+- `empathy.socraticRefinement.skipForContextMenu` - Skip for explicit file targets (default: true)
+
 ## [1.3.1] - 2025-12-31
 
 ### Removed

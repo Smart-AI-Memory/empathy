@@ -327,7 +327,7 @@ class WorkflowConfig:
         # Default based on compliance mode
         return self.is_hipaa_mode()
 
-    def is_workflow_enabled(self, workflow_name: str) -> bool:
+    def is_workflow_enabled(self, workflow_name: str) -> bool | None:
         """
         Check if a specific workflow is enabled.
 
@@ -335,7 +335,7 @@ class WorkflowConfig:
             workflow_name: Name of the workflow (e.g., "test-gen")
 
         Returns:
-            True if workflow is enabled
+            True if workflow is enabled, False if disabled, None for default behavior
         """
         # Explicitly disabled takes precedence
         if workflow_name in self.disabled_workflows:

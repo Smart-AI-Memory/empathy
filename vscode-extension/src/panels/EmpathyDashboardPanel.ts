@@ -13,6 +13,9 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as cp from 'child_process';
 import { getFilePickerService, FilePickerService } from '../services/FilePickerService';
+import { WorkflowRefinementService } from '../services/WorkflowRefinementService';
+import { CodeReviewPanelProvider } from './CodeReviewPanelProvider';
+import { CodeReviewResult } from '../types/WorkflowContracts';
 
 export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'empathy-dashboard';
@@ -135,7 +138,8 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     await this._estimateCost(message.workflow, message.input);
                     break;
                 case 'openWorkflowWizard':
-                    vscode.commands.executeCommand('workflow-wizard.focus');
+                    // Workflow Wizard temporarily hidden in v3.5.5
+                    vscode.window.showInformationMessage('Workflow Wizard is being redesigned. Use Cmd+Shift+E W for quick workflow access.');
                     break;
                 case 'openDocAnalysis':
                     vscode.commands.executeCommand('empathy.openDocAnalysis');
@@ -835,6 +839,23 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
 
         // v3.5.5: test-gen now runs workflow directly (panel removed)
 
+        // Socratic Refinement: Check if we should refine this workflow before running
+        const refinementService = WorkflowRefinementService.getInstance();
+        refinementService.initialize(this._context);
+
+        const analysisResult = await refinementService.shouldRefine(workflowName, input, 'dashboard');
+        if (analysisResult.shouldRefine) {
+            console.log(`[EmpathyDashboard] Refinement triggered for ${workflowName}: ${analysisResult.reason}`);
+            const result = await refinementService.refine(workflowName, input, 'dashboard');
+            if (result.cancelled) {
+                console.log('[EmpathyDashboard] Workflow cancelled by user during refinement');
+                return;
+            }
+            // Use enhanced input from refinement
+            input = result.enhancedInput;
+            console.log(`[EmpathyDashboard] Using refined input: ${input}`);
+        }
+
         const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
         if (!workspaceFolder) {
             vscode.window.showErrorMessage('No workspace folder open');
@@ -864,7 +885,10 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             'dependency-check': 'scope',
             'health-check': 'path',
             'pro-review': 'diff',
-            'pr-review': 'target_path'
+            'pr-review': 'target_path',
+            'doc-gen': 'target',
+            'release-prep': 'target',
+            'secure-release': 'target'
         };
         const inputKey = inputKeys[workflowName] || 'query';
 
@@ -875,8 +899,8 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             args.push('--input', inputJson);
         }
 
-        // Add --json flag for security-audit to get structured output
-        if (workflowName === 'security-audit') {
+        // Add --json flag for workflows that need structured output
+        if (workflowName === 'security-audit' || workflowName === 'code-review') {
             args.push('--json');
         }
 
@@ -907,6 +931,60 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             // Special handling for security-audit: save findings and update diagnostics
             if (workflowName === 'security-audit' && stdout) {
                 this._saveSecurityFindings(workspaceFolder, stdout);
+            }
+
+            // Special handling for code-review: send findings to CodeReviewPanel
+            if (workflowName === 'code-review' && success && stdout) {
+                try {
+                    // Parse JSON output from CLI (uses --json flag)
+                    const cliOutput = JSON.parse(stdout);
+
+                    // Extract final_output which contains the full workflow result
+                    const finalOutput = cliOutput.final_output;
+
+                    if (finalOutput && finalOutput.findings && finalOutput.findings.length > 0) {
+                        // Build CodeReviewResult from final_output
+                        const result: CodeReviewResult = {
+                            findings: finalOutput.findings,
+                            summary: finalOutput.summary || {
+                                total_findings: finalOutput.findings.length,
+                                by_severity: {},
+                                by_category: {},
+                                files_affected: []
+                            },
+                            verdict: finalOutput.verdict,
+                            security_score: finalOutput.security_score,
+                            formatted_report: finalOutput.scan_results || '',
+                            model_tier_used: finalOutput.model_tier_used || 'unknown'
+                        };
+
+                        // Send findings to CodeReviewPanel
+                        const reviewPanel = CodeReviewPanelProvider.getInstance();
+                        reviewPanel.updateFindings(result);
+
+                        // Show the panel
+                        await vscode.commands.executeCommand('empathy-code-review.focus');
+
+                        // Notify user
+                        const findingCount = result.findings.length;
+                        const highSeverityCount = result.findings.filter(f =>
+                            f.severity === 'critical' || f.severity === 'high'
+                        ).length;
+
+                        const message = highSeverityCount > 0
+                            ? `Code review found ${findingCount} findings (${highSeverityCount} high severity)`
+                            : `Code review found ${findingCount} findings`;
+
+                        vscode.window.showInformationMessage(message, 'View Findings').then(selection => {
+                            if (selection === 'View Findings') {
+                                vscode.commands.executeCommand('empathy-code-review.focus');
+                            }
+                        });
+                    }
+                } catch (parseErr) {
+                    console.log('[EmpathyDashboard] Could not parse code-review JSON output:', parseErr);
+                    // Fall through to normal handling
+                }
             }
 
             // For report workflows, open output in editor instead of panel
@@ -956,7 +1034,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         }
 
         // Determine if this workflow needs a file or folder picker
-        const folderWorkflows = ['bug-predict', 'security-audit', 'perf-audit', 'refactor-plan', 'health-check', 'pr-review'];
+        const folderWorkflows = ['bug-predict', 'security-audit', 'perf-audit', 'refactor-plan', 'health-check', 'pr-review', 'doc-gen', 'release-prep', 'secure-release'];
         const fileWorkflows = ['code-review', 'pro-review'];
 
         let selectedPath: string | undefined;
@@ -1042,6 +1120,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             'health-check': 'Health Check',
             'pr-review': 'PR Review',
             'pro-review': 'Code Analysis',
+            'doc-gen': 'Document Generation',
+            'release-prep': 'Release Preparation',
+            'secure-release': 'Secure Release',
         };
         const displayName = workflowDisplayNames[workflowName] || workflowName;
 
@@ -1085,6 +1166,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             'refactor-plan': 'target',
             'health-check': 'path',
             'pr-review': 'target_path',
+            'doc-gen': 'target',
+            'release-prep': 'target',
+            'secure-release': 'target',
             'pro-review': 'diff'
         };
         const inputKey = inputKeys[workflowName] || 'target';
@@ -1389,6 +1473,9 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             'health-check': 'Health Check',
             'pr-review': 'PR Review',
             'pro-review': 'Code Analysis',
+            'doc-gen': 'Document Generation',
+            'release-prep': 'Release Preparation',
+            'secure-release': 'Secure Release',
             // Quick Actions
             'morning': 'Morning Briefing',
             'ship': 'Pre-Ship Check',
@@ -2426,6 +2513,10 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         <div class="card" style="margin-top: 12px">
             <div class="card-title">Workflows <span style="font-size: 10px; opacity: 0.6;">(Beta)</span></div>
             <div class="actions-grid workflow-grid">
+                <button class="action-btn workflow-btn" data-workflow="code-review">
+                    <span class="action-icon">&#x1F50D;</span>
+                    <span>Review File</span>
+                </button>
                 <button class="action-btn workflow-btn" data-workflow="pro-review">
                     <span class="action-icon">&#x2B50;</span>
                     <span>Run Analysis</span>
@@ -2467,7 +2558,18 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     <span>Review PR</span>
                 </button>
                 <!-- Hidden for v3.5.5 release - TODO: enable after workflow wizard is complete -->
-                <button class="action-btn workflow-btn new-workflow-btn" id="btn-new-workflow" title="Create a new workflow from template" style="display: none;">
+                <button class="action-btn workflow-btn" data-workflow="doc-gen">
+                    <span class="action-icon">&#x1F4C4;</span>
+                    <span>Generate Docs</span>
+                </button>
+                <button class="action-btn workflow-btn" data-workflow="release-prep">
+                    <span class="action-icon">&#x1F680;</span>
+                    <span>Release Prep</span>
+                </button>
+                <button class="action-btn workflow-btn" data-workflow="secure-release">
+                    <span class="action-icon">&#x1F510;</span>
+                    <span>Secure Release</span>
+                </button>                <button class="action-btn workflow-btn new-workflow-btn" id="btn-new-workflow" title="Create a new workflow from template" style="display: none;">
                     <span class="action-icon">&#x2795;</span>
                     <span>New Workflow</span>
                 </button>
@@ -2999,7 +3101,22 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 placeholder: 'e.g., src/ or .'
             },
             'pro-review': {
-                type: 'file',
+            },
+            'doc-gen': {
+                type: 'folder',
+                label: 'Select folder to generate documentation for',
+                placeholder: 'Click Browse to select folder...'
+            },
+            'release-prep': {
+                type: 'folder',
+                label: 'Select project folder for release preparation',
+                placeholder: 'Click Browse or use Project button...'
+            },
+            'secure-release': {
+                type: 'folder',
+                label: 'Select project folder for secure release pipeline',
+                placeholder: 'Click Browse or use Project button...'
+            }                type: 'file',
                 label: 'Select file or paste code diff to review',
                 placeholder: 'Click Browse or paste code diff...',
                 allowText: true
