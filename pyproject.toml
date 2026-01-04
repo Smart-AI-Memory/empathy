@@ -58,15 +58,15 @@ dependencies = [
 
 [project.optional-dependencies]
 # LLM providers (user chooses which they need)
-anthropic = ["anthropic>=0.8.0,<1.0.0"]
-openai = ["openai>=1.6.0,<2.0.0"]
+anthropic = ["anthropic>=0.25.0,<1.0.0"]
+openai = ["openai>=1.12.0,<2.0.0"]
 # Note: google-generativeai is deprecated but still works; google-genai requires
 # tenacity>=9.1.2 which conflicts with langchain<0.3.0. Will migrate when langchain updates.
-google = ["google-generativeai>=0.8.0,<1.0.0"]
+google = ["google-generativeai>=0.3.0,<1.0.0"]
 llm = [
-    "anthropic>=0.8.0,<1.0.0",
-    "openai>=1.6.0,<2.0.0",
-    "google-generativeai>=0.8.0,<1.0.0",
+    "anthropic>=0.25.0,<1.0.0",
+    "openai>=1.12.0,<2.0.0",
+    "google-generativeai>=0.3.0,<1.0.0",
 ]
 
 # MemDocs integration for long-term memory
@@ -145,9 +145,9 @@ dev = [
 # Complete installation with Claude Code + MemDocs transformative stack
 full = [
     # LLM providers
-    "anthropic>=0.8.0,<1.0.0",
-    "openai>=1.6.0,<2.0.0",
-    "google-generativeai>=0.8.0,<1.0.0",
+    "anthropic>=0.25.0,<1.0.0",
+    "openai>=1.12.0,<2.0.0",
+    "google-generativeai>=0.3.0,<1.0.0",
     # MemDocs integration
     "memdocs>=1.0.0",
     # Agents
@@ -162,9 +162,9 @@ full = [
 # Everything including development tools
 all = [
     # LLM providers
-    "anthropic>=0.8.0,<1.0.0",
-    "openai>=1.6.0,<2.0.0",
-    "google-generativeai>=0.8.0,<1.0.0",
+    "anthropic>=0.25.0,<1.0.0",
+    "openai>=1.12.0,<2.0.0",
+    "google-generativeai>=0.3.0,<1.0.0",
     # MemDocs integration
     "memdocs>=1.0.0",
     # Agents
