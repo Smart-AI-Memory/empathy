@@ -1,5 +1,4 @@
-"""
-Test Quality Analyzer for Enhanced Testing Wizard
+"""Test Quality Analyzer for Enhanced Testing Wizard
 
 Analyzes test quality including flakiness detection, assertion quality,
 test isolation, and execution performance.
@@ -49,8 +48,7 @@ class TestFunction:
 
     @property
     def quality_score(self) -> float:
-        """
-        Calculate quality score (0-100)
+        """Calculate quality score (0-100)
 
         Factors:
         - Has assertions: +30
@@ -102,8 +100,7 @@ class TestQualityReport:
 
 
 class TestQualityAnalyzer:
-    """
-    Analyzes test code quality to identify improvements.
+    """Analyzes test code quality to identify improvements.
 
     Detects:
     - Flaky tests (timing-dependent, random, external state)
@@ -140,14 +137,14 @@ class TestQualityAnalyzer:
         ]
 
     def analyze_test_file(self, file_path: Path) -> list[TestFunction]:
-        """
-        Analyze a test file for quality issues
+        """Analyze a test file for quality issues
 
         Args:
             file_path: Path to test file
 
         Returns:
             List of TestFunction objects with issues identified
+
         """
         if not file_path.exists():
             raise FileNotFoundError(f"Test file not found: {file_path}")
@@ -179,7 +176,11 @@ class TestQualityAnalyzer:
 
                 # Analyze function
                 test_func = self._analyze_test_function(
-                    func_name, file_path, line_num, func_body, is_async
+                    func_name,
+                    file_path,
+                    line_num,
+                    func_body,
+                    is_async,
                 )
                 test_functions.append(test_func)
 
@@ -190,7 +191,10 @@ class TestQualityAnalyzer:
         return test_functions
 
     def _extract_function_body(
-        self, lines: list[str], start_line: int, base_indent: int
+        self,
+        lines: list[str],
+        start_line: int,
+        base_indent: int,
     ) -> tuple[str, int]:
         """Extract the body of a function"""
         body_lines = [lines[start_line]]
@@ -218,7 +222,12 @@ class TestQualityAnalyzer:
         return "\n".join(body_lines), i
 
     def _analyze_test_function(
-        self, func_name: str, file_path: str, line_num: int, func_body: str, is_async: bool
+        self,
+        func_name: str,
+        file_path: str,
+        line_num: int,
+        func_body: str,
+        is_async: bool,
     ) -> TestFunction:
         """Analyze a single test function"""
         issues: list[TestQualityIssue] = []
@@ -307,8 +316,7 @@ class TestQualityAnalyzer:
         return fixtures
 
     def analyze_test_execution(self, test_results: list[dict[str, Any]]) -> list[TestFunction]:
-        """
-        Analyze test execution results (from pytest JSON report)
+        """Analyze test execution results (from pytest JSON report)
 
         Args:
             test_results: List of test result dicts with fields:
@@ -319,6 +327,7 @@ class TestQualityAnalyzer:
 
         Returns:
             List of TestFunction objects with execution data
+
         """
         test_functions = []
 
@@ -356,8 +365,7 @@ class TestQualityAnalyzer:
         return test_functions
 
     def detect_flaky_tests(self, historical_results: list[list[dict[str, Any]]]) -> list[str]:
-        """
-        Detect flaky tests from historical test runs
+        """Detect flaky tests from historical test runs
 
         A test is considered flaky if it has inconsistent results across runs
         with the same code.
@@ -367,6 +375,7 @@ class TestQualityAnalyzer:
 
         Returns:
             List of test names that are flaky
+
         """
         if len(historical_results) < 2:
             return []
@@ -399,14 +408,14 @@ class TestQualityAnalyzer:
         return flaky_tests
 
     def generate_quality_report(self, test_functions: list[TestFunction]) -> TestQualityReport:
-        """
-        Generate comprehensive quality report
+        """Generate comprehensive quality report
 
         Args:
             test_functions: List of analyzed test functions
 
         Returns:
             TestQualityReport with statistics and categorization
+
         """
         high_quality = []
         medium_quality = []

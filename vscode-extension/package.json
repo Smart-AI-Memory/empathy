@@ -135,6 +135,21 @@
         "icon": "$(zap)"
       },
       {
+        "command": "empathy.openHealthPanel",
+        "title": "Empathy: Health Metrics",
+        "icon": "$(heart)"
+      },
+      {
+        "command": "empathy.openCostsPanel",
+        "title": "Empathy: Cost Metrics",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "empathy.openWorkflowHistory",
+        "title": "Empathy: Workflow History",
+        "icon": "$(history)"
+      },
+      {
         "command": "empathy.openDocAnalysis",
         "title": "Empathy: Analyze Documentation",
         "icon": "$(book)"
@@ -172,6 +187,9 @@
     ],
     "keybindings": [
       {"command": "empathy.openPowerPanel", "key": "ctrl+shift+e p", "mac": "cmd+shift+e p"},
+      {"command": "empathy.openHealthPanel", "key": "ctrl+shift+e 1", "mac": "cmd+shift+e 1"},
+      {"command": "empathy.openCostsPanel", "key": "ctrl+shift+e 2", "mac": "cmd+shift+e 2"},
+      {"command": "empathy.openWorkflowHistory", "key": "ctrl+shift+e 3", "mac": "cmd+shift+e 3"},
       {"command": "empathy.focusSidebarDashboard", "key": "ctrl+shift+e d", "mac": "cmd+shift+e d"},
       {"command": "empathy.morning", "key": "ctrl+shift+e m", "mac": "cmd+shift+e m"},
       {"command": "empathy.ship", "key": "ctrl+shift+e s", "mac": "cmd+shift+e s"},

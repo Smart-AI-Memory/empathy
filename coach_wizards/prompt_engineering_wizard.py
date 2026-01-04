@@ -1,5 +1,4 @@
-"""
-Prompt Engineering Wizard
+"""Prompt Engineering Wizard
 
 Helps developers craft better prompts for any AI task.
 Can also optimize prompts used internally by other wizards.
@@ -59,8 +58,7 @@ class OptimizedPrompt:
 
 
 class PromptEngineeringWizard(BaseCoachWizard):
-    """
-    Wizard for crafting and optimizing prompts.
+    """Wizard for crafting and optimizing prompts.
 
     Provides tools for:
     - Analyzing existing prompts for improvements
@@ -166,7 +164,7 @@ class PromptEngineeringWizard(BaseCoachWizard):
                     fix_suggestion="Consider restructuring with role, context, and output format",
                     category="prompt_quality",
                     confidence=0.9,
-                )
+                ),
             )
 
         if not analysis.has_role:
@@ -180,7 +178,7 @@ class PromptEngineeringWizard(BaseCoachWizard):
                     fix_suggestion="Add 'You are a...' or 'Act as a...' at the start",
                     category="prompt_structure",
                     confidence=0.8,
-                )
+                ),
             )
 
         if not analysis.has_output_format:
@@ -194,7 +192,7 @@ class PromptEngineeringWizard(BaseCoachWizard):
                     fix_suggestion="Add output format specification (JSON, markdown, etc.)",
                     category="prompt_structure",
                     confidence=0.7,
-                )
+                ),
             )
 
         for suggestion in analysis.suggestions:
@@ -208,7 +206,7 @@ class PromptEngineeringWizard(BaseCoachWizard):
                     fix_suggestion=None,
                     category="prompt_improvement",
                     confidence=0.6,
-                )
+                ),
             )
 
         return issues
@@ -238,7 +236,7 @@ class PromptEngineeringWizard(BaseCoachWizard):
                         "Create test cases for expected outputs",
                     ],
                     reasoning="Low clarity prompts tend to drift from intended behavior over time",
-                )
+                ),
             )
 
         # Predict cost issues for verbose prompts
@@ -255,7 +253,7 @@ class PromptEngineeringWizard(BaseCoachWizard):
                         "Cache common responses",
                     ],
                     reasoning=f"Prompt uses {analysis.token_count} tokens - costs will escalate with scale",
-                )
+                ),
             )
 
         return predictions
@@ -278,7 +276,7 @@ class PromptEngineeringWizard(BaseCoachWizard):
    "Important: Focus only on security-related issues. Do not suggest style changes."
 """
 
-        elif issue.category == "prompt_structure":
+        if issue.category == "prompt_structure":
             if "role" in issue.message.lower():
                 return """Add a role definition at the start of your prompt:
 
@@ -288,7 +286,7 @@ Examples:
 - "As an experienced technical writer, help document this API."
 """
 
-            elif "output" in issue.message.lower():
+            if "output" in issue.message.lower():
                 return """Specify the output format clearly:
 
 Examples:
@@ -300,14 +298,14 @@ Examples:
         return issue.fix_suggestion or "Review and improve the prompt structure."
 
     def analyze_prompt(self, prompt: str) -> PromptAnalysis:
-        """
-        Analyze an existing prompt for improvements.
+        """Analyze an existing prompt for improvements.
 
         Args:
             prompt: The prompt to analyze
 
         Returns:
             PromptAnalysis with scores and suggestions
+
         """
         prompt_lower = prompt.lower()
         token_count = len(prompt) // self.CHARS_PER_TOKEN
@@ -434,8 +432,7 @@ Examples:
         constraints: list[str] | None = None,
         examples: list[dict[str, str]] | None = None,
     ) -> str:
-        """
-        Generate an optimized prompt for a task.
+        """Generate an optimized prompt for a task.
 
         Args:
             task: The main task to accomplish
@@ -447,6 +444,7 @@ Examples:
 
         Returns:
             Generated prompt string
+
         """
         parts = []
 
@@ -491,8 +489,7 @@ Examples:
         examples: list[dict[str, str]],
         position: str = "end",
     ) -> str:
-        """
-        Add few-shot examples to a prompt.
+        """Add few-shot examples to a prompt.
 
         Args:
             prompt: Original prompt
@@ -501,6 +498,7 @@ Examples:
 
         Returns:
             Prompt with examples added
+
         """
         example_section = "\n## Examples\n"
         for i, ex in enumerate(examples, 1):
@@ -512,7 +510,7 @@ Examples:
 
         if position == "start":
             return example_section + "\n" + prompt
-        elif position == "after_context" and "Context" in prompt:
+        if position == "after_context" and "Context" in prompt:
             # Insert after context section
             parts = prompt.split("## Task")
             if len(parts) == 2:
@@ -525,8 +523,7 @@ Examples:
         prompt: str,
         target_reduction: float = 0.2,
     ) -> OptimizedPrompt:
-        """
-        Reduce token count while preserving intent.
+        """Reduce token count while preserving intent.
 
         Args:
             prompt: Original prompt
@@ -534,6 +531,7 @@ Examples:
 
         Returns:
             OptimizedPrompt with original and optimized versions
+
         """
         original_tokens = len(prompt) // self.CHARS_PER_TOKEN
         changes = []
@@ -593,8 +591,7 @@ Examples:
         prompt: str,
         reasoning_type: str = "step_by_step",
     ) -> str:
-        """
-        Add Chain-of-Thought scaffolding for complex reasoning.
+        """Add Chain-of-Thought scaffolding for complex reasoning.
 
         Args:
             prompt: Original prompt
@@ -606,6 +603,7 @@ Examples:
 
         Returns:
             Prompt with CoT scaffolding
+
         """
         cot_scaffolds = {
             "step_by_step": """
@@ -660,5 +658,4 @@ Present your findings systematically.""",
         if "## Task" in prompt:
             parts = prompt.split("## Task")
             return parts[0] + "\n## Reasoning Process" + scaffold + "\n\n## Task" + parts[1]
-        else:
-            return prompt + "\n\n## Reasoning Process" + scaffold
+        return prompt + "\n\n## Reasoning Process" + scaffold

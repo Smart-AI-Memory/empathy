@@ -1,5 +1,4 @@
-"""
-Empathy Memory Dashboard API
+"""Empathy Memory Dashboard API
 
 FastAPI backend for managing and monitoring Empathy Framework memory system.
 Provides REST API and WebSocket endpoints for real-time monitoring.
@@ -48,8 +47,7 @@ logger = structlog.get_logger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Lifespan context manager for startup/shutdown events.
+    """Lifespan context manager for startup/shutdown events.
 
     Startup:
     - Log configuration
@@ -125,8 +123,7 @@ async def internal_error_handler(request, exc):
 # Health check endpoint (no prefix)
 @app.get("/", tags=["System"])
 async def root():
-    """
-    Root endpoint - API information.
+    """Root endpoint - API information.
 
     Returns basic API info and health status.
     """
@@ -141,11 +138,11 @@ async def root():
 
 @app.get("/ping", tags=["System"])
 async def ping():
-    """
-    Simple ping endpoint for health checks.
+    """Simple ping endpoint for health checks.
 
     Returns:
         pong message with timestamp
+
     """
     from datetime import datetime
 
@@ -160,8 +157,7 @@ app.include_router(api_router)
 
 
 def main():
-    """
-    Main entry point for running the API server.
+    """Main entry point for running the API server.
 
     Usage:
         python -m dashboard.backend.main

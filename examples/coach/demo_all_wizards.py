@@ -1,5 +1,4 @@
-"""
-Comprehensive Coach Demo - All 6 Wizards + Multi-Agent Learning
+"""Comprehensive Coach Demo - All 6 Wizards + Multi-Agent Learning
 
 Demonstrates all wizards and how they learn from each other.
 
@@ -310,7 +309,7 @@ def main():
         demo_func()
         if demo_func != demo_8_learning_summary:
             input(
-                f"\n{'─' * 80}\n Press Enter for next demo: {demos[demos.index((name, demo_func)) + 1][0] if demos.index((name, demo_func)) < len(demos) - 1 else 'Summary'}..."
+                f"\n{'─' * 80}\n Press Enter for next demo: {demos[demos.index((name, demo_func)) + 1][0] if demos.index((name, demo_func)) < len(demos) - 1 else 'Summary'}...",
             )
 
     print_section("DEMO COMPLETE")

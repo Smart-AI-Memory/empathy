@@ -1,5 +1,4 @@
-"""
-LSP Protocol Extensions
+"""LSP Protocol Extensions
 Custom protocol definitions for Coach
 """
 

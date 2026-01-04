@@ -1,5 +1,4 @@
-"""
-Project Index Data Models
+"""Project Index Data Models
 
 Defines the structure of file metadata and project summaries.
 
@@ -37,8 +36,7 @@ class TestRequirement(str, Enum):
 
 @dataclass
 class FileRecord:
-    """
-    Metadata record for a single file in the project.
+    """Metadata record for a single file in the project.
 
     This is the core data structure that workflows and agents
     can read and write to track file state.
@@ -172,8 +170,7 @@ class FileRecord:
 
 @dataclass
 class ProjectSummary:
-    """
-    High-level summary of project health.
+    """High-level summary of project health.
 
     Updated each time the index is regenerated.
     """
@@ -278,8 +275,7 @@ class ProjectSummary:
 
 @dataclass
 class IndexConfig:
-    """
-    Configuration for the project index.
+    """Configuration for the project index.
 
     Defines exclusion patterns, staleness thresholds, etc.
     """
@@ -370,7 +366,7 @@ class IndexConfig:
             "**/Pipfile.lock",
             # Archive directories
             "**/archived_wizards/**",
-        ]
+        ],
     )
 
     # Patterns for files that don't require tests
@@ -436,7 +432,7 @@ class IndexConfig:
             "**/prompts/**",
             # Vscode extension (separate project)
             "**/vscode-extension/**",
-        ]
+        ],
     )
 
     # Staleness threshold in days
@@ -456,7 +452,7 @@ class IndexConfig:
             "coach_wizards",
             "empathy_software_plugin",
             "empathy_healthcare_plugin",
-        ]
+        ],
     )
 
     # Test directory

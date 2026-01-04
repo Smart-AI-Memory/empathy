@@ -1,5 +1,4 @@
-"""
-PR Review Workflow
+"""PR Review Workflow
 
 A comprehensive PR review workflow that combines CodeReviewCrew and
 SecurityAuditCrew for thorough code and security analysis.
@@ -49,8 +48,7 @@ class PRReviewResult:
 
 
 class PRReviewWorkflow:
-    """
-    Combined code review + security audit for comprehensive PR analysis.
+    """Combined code review + security audit for comprehensive PR analysis.
 
     Runs CodeReviewCrew and SecurityAuditCrew in parallel for maximum
     speed while providing thorough analysis from both perspectives.
@@ -73,8 +71,7 @@ class PRReviewWorkflow:
         code_crew_config: dict | None = None,
         security_crew_config: dict | None = None,
     ):
-        """
-        Initialize the workflow.
+        """Initialize the workflow.
 
         Args:
             provider: LLM provider to use (anthropic, openai, etc.)
@@ -83,6 +80,7 @@ class PRReviewWorkflow:
             parallel: Run crews in parallel (recommended)
             code_crew_config: Configuration for CodeReviewCrew
             security_crew_config: Configuration for SecurityAuditCrew
+
         """
         self.provider = provider
         self.use_code_crew = use_code_crew
@@ -130,8 +128,7 @@ class PRReviewWorkflow:
         target_path: str = ".",
         context: dict | None = None,
     ) -> PRReviewResult:
-        """
-        Execute comprehensive PR review with both crews.
+        """Execute comprehensive PR review with both crews.
 
         Args:
             diff: PR diff content (auto-generated from git if not provided)
@@ -141,6 +138,7 @@ class PRReviewWorkflow:
 
         Returns:
             PRReviewResult with combined analysis
+
         """
         start_time = time.time()
         files_changed = files_changed or []
@@ -154,6 +152,7 @@ class PRReviewWorkflow:
                 # Get diff of staged and unstaged changes
                 git_result = subprocess.run(
                     ["git", "diff", "HEAD"],
+                    check=False,
                     cwd=target_path,
                     capture_output=True,
                     text=True,
@@ -165,6 +164,7 @@ class PRReviewWorkflow:
                     for branch in ["main", "master"]:
                         git_result = subprocess.run(
                             ["git", "diff", branch],
+                            check=False,
                             cwd=target_path,
                             capture_output=True,
                             text=True,
@@ -192,7 +192,9 @@ class PRReviewWorkflow:
             if self.parallel and self.use_code_crew and self.use_security_crew:
                 # Run both crews in parallel
                 code_review, security_audit = await self._run_parallel(
-                    diff, files_changed, target_path
+                    diff,
+                    files_changed,
+                    target_path,
                 )
             else:
                 # Run sequentially
@@ -310,10 +312,10 @@ class PRReviewWorkflow:
                 security_findings=[],
                 critical_count=0,
                 high_count=0,
-                blockers=[f"Review failed: {str(e)}"],
+                blockers=[f"Review failed: {e!s}"],
                 warnings=[],
                 recommendations=[],
-                summary=f"PR review failed with error: {str(e)}",
+                summary=f"PR review failed with error: {e!s}",
                 agents_used=[],
                 duration_seconds=duration,
                 cost=0.0,
@@ -438,8 +440,7 @@ class PRReviewWorkflow:
         code_quality: float,
         security_risk: float,
     ) -> float:
-        """
-        Calculate combined score.
+        """Calculate combined score.
 
         Higher is better. Combines code quality (0-100, higher=better)
         with security risk (0-100, lower=better).
@@ -595,14 +596,14 @@ def main():
 
 
 def format_pr_review_report(result: PRReviewResult) -> str:
-    """
-    Format PR review result as a human-readable report.
+    """Format PR review result as a human-readable report.
 
     Args:
         result: The PRReviewResult dataclass
 
     Returns:
         Formatted report string
+
     """
     lines = []
 

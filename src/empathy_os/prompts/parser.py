@@ -1,5 +1,4 @@
-"""
-XML Response Parser
+"""XML Response Parser
 
 Parses structured XML responses from LLMs for dashboard display
 and workflow automation.
@@ -20,8 +19,7 @@ import defusedxml.ElementTree as DefusedET
 
 @dataclass
 class Finding:
-    """
-    Structured finding from XML response.
+    """Structured finding from XML response.
 
     Represents a single issue, vulnerability, or code review comment
     extracted from an LLM response.
@@ -57,8 +55,7 @@ class Finding:
 
 @dataclass
 class ParsedResponse:
-    """
-    Result of parsing an XML response.
+    """Result of parsing an XML response.
 
     Contains extracted structured data or fallback raw text
     if parsing fails.
@@ -110,32 +107,31 @@ class ParsedResponse:
 
 
 class XmlResponseParser:
-    """
-    Parse LLM responses containing XML.
+    """Parse LLM responses containing XML.
 
     Extracts structured data from XML-formatted responses while
     gracefully handling malformed or missing XML.
     """
 
     def __init__(self, fallback_on_error: bool = True):
-        """
-        Initialize the parser.
+        """Initialize the parser.
 
         Args:
             fallback_on_error: If True, return raw text on parse failure
                               instead of raising an exception.
+
         """
         self.fallback_on_error = fallback_on_error
 
     def parse(self, response: str) -> ParsedResponse:
-        """
-        Parse XML response, with graceful fallback.
+        """Parse XML response, with graceful fallback.
 
         Args:
             response: The LLM response text, potentially containing XML.
 
         Returns:
             ParsedResponse with extracted data or fallback raw text.
+
         """
         if not response:
             return ParsedResponse.from_raw("", ["Empty response"])
@@ -166,8 +162,7 @@ class XmlResponseParser:
             raise
 
     def _extract_xml(self, response: str) -> str | None:
-        """
-        Extract XML content from response.
+        """Extract XML content from response.
 
         Handles various formats:
         - Direct XML

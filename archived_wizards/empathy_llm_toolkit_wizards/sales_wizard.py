@@ -1,5 +1,4 @@
-"""
-Sales/Marketing Wizard - CRM Privacy Compliant AI Assistant
+"""Sales/Marketing Wizard - CRM Privacy Compliant AI Assistant
 
 Specialized wizard for sales and marketing with customer PII protection,
 CRM data handling, and comprehensive audit logging.
@@ -41,8 +40,7 @@ SALES_PII_PATTERNS = [
 
 
 class SalesWizard(BaseWizard):
-    """
-    CRM privacy compliant sales and marketing AI assistant
+    """CRM privacy compliant sales and marketing AI assistant
 
     Implements customer PII protection for sales operations:
     1. Customer PII detection and scrubbing
@@ -68,6 +66,7 @@ class SalesWizard(BaseWizard):
         ...     user_input="Help me draft an email for this prospect",
         ...     user_id="sales@company.com"
         ... )
+
     """
 
     def __init__(
@@ -75,12 +74,12 @@ class SalesWizard(BaseWizard):
         llm: EmpathyLLM,
         custom_pii_patterns: list[str] | None = None,
     ):
-        """
-        Initialize sales/marketing wizard
+        """Initialize sales/marketing wizard
 
         Args:
             llm: EmpathyLLM instance (security recommended)
             custom_pii_patterns: Additional company-specific PII patterns
+
         """
         pii_patterns = SALES_PII_PATTERNS.copy()
 
@@ -106,7 +105,7 @@ class SalesWizard(BaseWizard):
 
         logger.info(
             f"SalesWizard initialized: {len(pii_patterns)} PII patterns, "
-            f"empathy level={config.default_empathy_level}, security={llm.enable_security}"
+            f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
     def _build_system_prompt(self) -> str:

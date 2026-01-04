@@ -1,5 +1,4 @@
-"""
-Code Review Crew
+"""Code Review Crew
 
 A multi-agent crew that performs comprehensive code reviews.
 Demonstrates CrewAI's hierarchical collaboration patterns with:
@@ -188,7 +187,7 @@ class CodeReviewConfig:
     # Review Configuration
     review_depth: str = "standard"  # "quick", "standard", "thorough"
     focus_areas: list[str] = field(
-        default_factory=lambda: ["security", "architecture", "quality", "performance"]
+        default_factory=lambda: ["security", "architecture", "quality", "performance"],
     )
     check_tests: bool = True
     check_docs: bool = False
@@ -419,8 +418,7 @@ XML_PROMPT_TEMPLATES = {
 
 
 class CodeReviewCrew:
-    """
-    Multi-agent crew for comprehensive code reviews.
+    """Multi-agent crew for comprehensive code reviews.
 
     The crew consists of 5 specialized agents:
 
@@ -468,15 +466,16 @@ class CodeReviewCrew:
 
         # Get quality score
         print(f"Quality Score: {report.quality_score}/100")
+
     """
 
     def __init__(self, config: CodeReviewConfig | None = None, **kwargs: Any):
-        """
-        Initialize the Code Review Crew.
+        """Initialize the Code Review Crew.
 
         Args:
             config: CodeReviewConfig or pass individual params as kwargs
             **kwargs: Individual config parameters (api_key, provider, etc.)
+
         """
         if config:
             self.config = config
@@ -751,8 +750,7 @@ Provide optimization suggestions with expected impact."""
         target: str = "",
         context: dict | None = None,
     ) -> CodeReviewReport:
-        """
-        Perform a comprehensive code review.
+        """Perform a comprehensive code review.
 
         Args:
             diff: Git diff or code changes to review
@@ -762,6 +760,7 @@ Provide optimization suggestions with expected impact."""
 
         Returns:
             CodeReviewReport with findings and verdict
+
         """
         import time
 

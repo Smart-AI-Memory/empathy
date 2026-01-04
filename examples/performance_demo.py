@@ -1,5 +1,4 @@
-"""
-Performance Profiling Wizard - Live Demonstration
+"""Performance Profiling Wizard - Live Demonstration
 
 Shows performance analysis and bottleneck prediction.
 
@@ -54,8 +53,8 @@ MOCK_PROFILE_DATA = json.dumps(
                 "cumulative_time": 0.4,
                 "percent": 7.0,
             },
-        ]
-    }
+        ],
+    },
 )
 
 # Mock performance metrics over time
@@ -88,7 +87,7 @@ async def demo_basic_profiling():
     wizard = PerformanceProfilingWizard()
 
     result = await wizard.analyze(
-        {"profiler_data": MOCK_PROFILE_DATA, "profiler_type": "simple_json"}
+        {"profiler_data": MOCK_PROFILE_DATA, "profiler_type": "simple_json"},
     )
 
     summary = result["profiling_summary"]
@@ -121,7 +120,7 @@ async def demo_bottleneck_detection():
             "profiler_data": MOCK_PROFILE_DATA,
             "profiler_type": "simple_json",
             "threshold_percent": 5.0,
-        }
+        },
     )
 
     bottlenecks = result["bottlenecks"]
@@ -132,7 +131,7 @@ async def demo_bottleneck_detection():
         print(f"  [{bottleneck['severity']}] {bottleneck['type'].upper()}")
         print(f"      Function: {bottleneck['function_name']}")
         print(
-            f"      Time Cost: {bottleneck['time_cost']:.2f}s ({bottleneck['percent_total']:.1f}%)"
+            f"      Time Cost: {bottleneck['time_cost']:.2f}s ({bottleneck['percent_total']:.1f}%)",
         )
         print(f"      Reason: {bottleneck['reasoning']}")
         print(f"      Fix: {bottleneck['fix_suggestion']}")
@@ -159,7 +158,7 @@ async def demo_trajectory_prediction():
             "profiler_type": "simple_json",
             "current_metrics": CURRENT_METRICS,
             "historical_metrics": MOCK_METRICS_HISTORY,
-        }
+        },
     )
 
     trajectory = result["trajectory"]
@@ -204,7 +203,7 @@ async def demo_predictions():
             "profiler_type": "simple_json",
             "current_metrics": CURRENT_METRICS,
             "historical_metrics": MOCK_METRICS_HISTORY,
-        }
+        },
     )
 
     print("\n🔮 PREDICTIONS:\n")
@@ -241,7 +240,7 @@ async def demo_insights():
     wizard = PerformanceProfilingWizard()
 
     result = await wizard.analyze(
-        {"profiler_data": MOCK_PROFILE_DATA, "profiler_type": "simple_json"}
+        {"profiler_data": MOCK_PROFILE_DATA, "profiler_type": "simple_json"},
     )
 
     insights = result["insights"]
@@ -275,22 +274,22 @@ async def demo_the_value():
     print("-" * 70)
     print("✓ process_user_data: 2.5s")
     print("✓ fetch_user_posts: 1.8s")
-    print("")
+    print()
     print("Status: Profiled ✓")
-    print("")
+    print()
     print("...but what do you do with this information?")
 
     print("\n" + "PERFORMANCE PROFILING WIZARD".center(70))
     print("-" * 70)
     print("✓ process_user_data: 2.5s (45% of total)")
     print("✓ fetch_user_posts: 1.8s (32% of total, 1500 calls)")
-    print("")
+    print()
     print("⚠️  CRITICAL: Hot path detected - 45% of execution time")
     print("⚠️  HIGH: N+1 query pattern - 1500 database calls")
     print("⚠️  TRAJECTORY: Response time trending toward timeout")
-    print("")
+    print()
     print("PREDICTION: Will hit 1s timeout in ~2 days at current rate")
-    print("")
+    print()
     print("In our experience, N+1 database queries cause exponential")
     print("slowdown as data grows. Fix now to prevent outages.")
 
@@ -298,7 +297,7 @@ async def demo_the_value():
     print("-" * 70)
     print("Profiling tells you WHERE time is spent.")
     print("Performance Wizard tells you WHAT to fix and WHY it matters.")
-    print("")
+    print()
     print("It predicts performance problems BEFORE they cause outages.")
 
     print("\n" + "=" * 70)

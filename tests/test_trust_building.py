@@ -1,5 +1,4 @@
-"""
-Tests for Trust-Building Behaviors
+"""Tests for Trust-Building Behaviors
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
@@ -49,7 +48,9 @@ class TestTrustBuildingBehaviors:
         data = {"tasks": 10, "completed": 7, "metrics": {"speed": 0.8}}
 
         formatted = behaviors.pre_format_for_handoff(
-            data=data, recipient_role="executive", context="board_meeting"
+            data=data,
+            recipient_role="executive",
+            context="board_meeting",
         )
 
         assert "original_data" in formatted
@@ -69,7 +70,9 @@ class TestTrustBuildingBehaviors:
         data = {"code": "test", "lines": 100}
 
         formatted = behaviors.pre_format_for_handoff(
-            data=data, recipient_role="developer", context="code_review"
+            data=data,
+            recipient_role="developer",
+            context="code_review",
         )
 
         assert formatted["format"] == "technical_detail"
@@ -82,7 +85,9 @@ class TestTrustBuildingBehaviors:
         data = {"tasks": ["T1", "T2", "T3"]}
 
         formatted = behaviors.pre_format_for_handoff(
-            data=data, recipient_role="team_lead", context="sprint_planning"
+            data=data,
+            recipient_role="team_lead",
+            context="sprint_planning",
         )
 
         assert formatted["format"] == "action_oriented"
@@ -95,7 +100,9 @@ class TestTrustBuildingBehaviors:
         data = {"info": "data"}
 
         formatted = behaviors.pre_format_for_handoff(
-            data=data, recipient_role="unknown_role", context="general"
+            data=data,
+            recipient_role="unknown_role",
+            context="general",
         )
 
         assert formatted["format"] == "general"
@@ -109,7 +116,8 @@ class TestTrustBuildingBehaviors:
         ambiguities = ["which environment?", "which changes?"]
 
         clarification = behaviors.clarify_before_acting(
-            instruction=instruction, detected_ambiguities=ambiguities
+            instruction=instruction,
+            detected_ambiguities=ambiguities,
         )
 
         assert clarification["original_instruction"] == instruction
@@ -130,7 +138,9 @@ class TestTrustBuildingBehaviors:
         context = {"project": "backend", "urgency": "high"}
 
         clarification = behaviors.clarify_before_acting(
-            instruction=instruction, detected_ambiguities=ambiguities, context=context
+            instruction=instruction,
+            detected_ambiguities=ambiguities,
+            context=context,
         )
 
         assert len(clarification["clarifying_questions"]) == 1
@@ -151,7 +161,8 @@ class TestTrustBuildingBehaviors:
         scaffolding = ["prioritization", "breakdown", "templates"]
 
         support = behaviors.volunteer_structure_during_stress(
-            stress_indicators=stress_indicators, available_scaffolding=scaffolding
+            stress_indicators=stress_indicators,
+            available_scaffolding=scaffolding,
         )
 
         assert support["stress_assessment"]["level"] == "critical"
@@ -173,7 +184,8 @@ class TestTrustBuildingBehaviors:
         scaffolding = ["prioritization", "templates"]
 
         support = behaviors.volunteer_structure_during_stress(
-            stress_indicators=stress_indicators, available_scaffolding=scaffolding
+            stress_indicators=stress_indicators,
+            available_scaffolding=scaffolding,
         )
 
         assert support["stress_assessment"]["level"] == "high"
@@ -187,7 +199,8 @@ class TestTrustBuildingBehaviors:
         scaffolding = ["templates"]
 
         support = behaviors.volunteer_structure_during_stress(
-            stress_indicators=stress_indicators, available_scaffolding=scaffolding
+            stress_indicators=stress_indicators,
+            available_scaffolding=scaffolding,
         )
 
         assert support["stress_assessment"]["level"] == "moderate"
@@ -200,7 +213,8 @@ class TestTrustBuildingBehaviors:
         available_help = ["explanation", "examples", "guidance"]
 
         offer = behaviors.offer_proactive_help(
-            struggle_indicators=struggle_indicators, available_help=available_help
+            struggle_indicators=struggle_indicators,
+            available_help=available_help,
         )
 
         assert offer["struggle_assessment"]["type"] == "comprehension"
@@ -222,7 +236,8 @@ class TestTrustBuildingBehaviors:
         available_help = ["debugging", "guidance", "examples"]
 
         offer = behaviors.offer_proactive_help(
-            struggle_indicators=struggle_indicators, available_help=available_help
+            struggle_indicators=struggle_indicators,
+            available_help=available_help,
         )
 
         assert offer["struggle_assessment"]["type"] == "execution"
@@ -361,7 +376,9 @@ class TestTrustBuildingBehaviors:
         assert len(behaviors.trust_signals) == 0
 
         behaviors._record_trust_signal(
-            signal_type="building", behavior="helpful_action", evidence="Did something helpful"
+            signal_type="building",
+            behavior="helpful_action",
+            evidence="Did something helpful",
         )
 
         assert len(behaviors.trust_signals) == 1
@@ -390,13 +407,16 @@ class TestTrustBuildingBehaviors:
         # 1. Pre-format data for handoff
         data = {"tasks": 10, "completed": 7}
         formatted = behaviors.pre_format_for_handoff(
-            data=data, recipient_role="manager", context="status_update"
+            data=data,
+            recipient_role="manager",
+            context="status_update",
         )
         assert "summary" in formatted
 
         # 2. Clarify ambiguous instruction
         clarification = behaviors.clarify_before_acting(
-            instruction="Update the report", detected_ambiguities=["which report?", "when?"]
+            instruction="Update the report",
+            detected_ambiguities=["which report?", "when?"],
         )
         assert clarification["status"] == "needs_clarification"
 
@@ -409,7 +429,8 @@ class TestTrustBuildingBehaviors:
 
         # 4. Offer proactive help
         help_offer = behaviors.offer_proactive_help(
-            struggle_indicators={"repeated_errors": 3}, available_help=["debugging", "explanation"]
+            struggle_indicators={"repeated_errors": 3},
+            available_help=["debugging", "explanation"],
         )
         assert len(help_offer["help_offered"]) > 0
 

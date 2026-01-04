@@ -1,5 +1,4 @@
-"""
-XML-Enhanced Prompt System for Empathy Framework
+"""XML-Enhanced Prompt System for Empathy Framework
 
 Provides structured XML-based prompts for consistent LLM interactions
 and response parsing across workflows.
@@ -42,20 +41,20 @@ from .registry import BUILTIN_TEMPLATES, get_template, list_templates, register_
 from .templates import PlainTextPromptTemplate, PromptTemplate, XmlPromptTemplate
 
 __all__ = [
-    # Config
-    "XmlPromptConfig",
+    # Registry
+    "BUILTIN_TEMPLATES",
+    "Finding",
+    "ParsedResponse",
+    "PlainTextPromptTemplate",
     # Context
     "PromptContext",
     # Templates
     "PromptTemplate",
-    "PlainTextPromptTemplate",
+    # Config
+    "XmlPromptConfig",
     "XmlPromptTemplate",
     # Parser
     "XmlResponseParser",
-    "ParsedResponse",
-    "Finding",
-    # Registry
-    "BUILTIN_TEMPLATES",
     "get_template",
     "list_templates",
     "register_template",

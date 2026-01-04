@@ -1,5 +1,4 @@
-"""
-Contextual Pattern Injection
+"""Contextual Pattern Injection
 
 Filters and injects only relevant patterns based on current context.
 Instead of loading all patterns, this module selects patterns that
@@ -33,8 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 class ContextualPatternInjector:
-    """
-    Injects only relevant patterns based on context.
+    """Injects only relevant patterns based on context.
 
     Reduces cognitive load by filtering patterns to those
     most likely to help with the current task.
@@ -54,8 +52,7 @@ class ContextualPatternInjector:
         max_patterns: int = 5,
         include_security: bool = True,
     ) -> str:
-        """
-        Get relevant patterns formatted as markdown.
+        """Get relevant patterns formatted as markdown.
 
         Args:
             file_path: Current file being worked on
@@ -66,6 +63,7 @@ class ContextualPatternInjector:
 
         Returns:
             Markdown string with relevant patterns
+
         """
         all_bugs = self._load_all_bugs()
         all_security = self._load_all_security() if include_security else []
@@ -84,8 +82,7 @@ class ContextualPatternInjector:
         files: list[str],
         max_per_file: int = 3,
     ) -> dict[str, list[dict]]:
-        """
-        Get relevant patterns for code review of multiple files.
+        """Get relevant patterns for code review of multiple files.
 
         Args:
             files: List of file paths being reviewed
@@ -93,6 +90,7 @@ class ContextualPatternInjector:
 
         Returns:
             Dict mapping file paths to relevant patterns
+
         """
         all_bugs = self._load_all_bugs()
         result = {}
@@ -110,11 +108,11 @@ class ContextualPatternInjector:
         return result
 
     def get_patterns_from_git_changes(self, max_patterns: int = 5) -> str:
-        """
-        Get relevant patterns based on recently changed files.
+        """Get relevant patterns based on recently changed files.
 
         Returns:
             Markdown with patterns relevant to git changes
+
         """
         changed_files = self._get_git_changed_files()
         if not changed_files:
@@ -267,6 +265,7 @@ class ContextualPatternInjector:
         try:
             result = subprocess.run(
                 ["git", "diff", "--name-only", "HEAD~5", "HEAD"],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=5,
@@ -312,7 +311,7 @@ class ContextualPatternInjector:
             lines.append("")
             for decision in security:
                 lines.append(
-                    f"- **{decision.get('finding_hash', '?')}**: {decision.get('decision', '?')}"
+                    f"- **{decision.get('finding_hash', '?')}**: {decision.get('decision', '?')}",
                 )
                 lines.append(f"  - Reason: {decision.get('reason', 'N/A')}")
                 lines.append("")
@@ -351,7 +350,7 @@ def main():
                 error_type=args.error_type,
                 error_message=args.error_message,
                 max_patterns=args.max,
-            )
+            ),
         )
 
 

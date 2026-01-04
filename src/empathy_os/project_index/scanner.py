@@ -1,5 +1,4 @@
-"""
-Project Scanner - Scans codebase to build file index.
+"""Project Scanner - Scans codebase to build file index.
 
 Analyzes source files, matches them to tests, calculates metrics.
 
@@ -18,8 +17,7 @@ from .models import FileCategory, FileRecord, IndexConfig, ProjectSummary, TestR
 
 
 class ProjectScanner:
-    """
-    Scans a project directory and builds file metadata.
+    """Scans a project directory and builds file metadata.
 
     Used by ProjectIndex to populate and update the index.
     """
@@ -30,11 +28,11 @@ class ProjectScanner:
         self._test_file_map: dict[str, str] = {}  # source -> test mapping
 
     def scan(self) -> tuple[list[FileRecord], ProjectSummary]:
-        """
-        Scan the entire project and return file records and summary.
+        """Scan the entire project and return file records and summary.
 
         Returns:
             Tuple of (list of FileRecords, ProjectSummary)
+
         """
         records: list[FileRecord] = []
 
@@ -334,7 +332,7 @@ class ProjectScanner:
             content = path.read_text(encoding="utf-8", errors="ignore")
             lines = content.split("\n")
             metrics["lines_of_code"] = len(
-                [line for line in lines if line.strip() and not line.strip().startswith("#")]
+                [line for line in lines if line.strip() and not line.strip().startswith("#")],
             )
 
             # Parse AST for Python files
@@ -377,7 +375,8 @@ class ProjectScanner:
                 # Simple complexity: count branches
                 for child in ast.walk(node):
                     if isinstance(
-                        child, ast.If | ast.For | ast.While | ast.Try | ast.ExceptHandler
+                        child,
+                        ast.If | ast.For | ast.While | ast.Try | ast.ExceptHandler,
                     ):
                         result["complexity"] += 1.0
 
@@ -496,7 +495,7 @@ class ProjectScanner:
             summary.test_to_code_ratio = summary.total_lines_of_test / summary.total_lines_of_code
         if source_records:
             summary.avg_complexity = sum(r.complexity_score for r in source_records) / len(
-                source_records
+                source_records,
             )
 
         # Quality

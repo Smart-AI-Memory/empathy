@@ -1,5 +1,4 @@
-"""
-Linting Configuration Loaders
+"""Linting Configuration Loaders
 
 Reads linting configuration files to understand project standards.
 
@@ -16,8 +15,7 @@ from typing import Any
 
 @dataclass
 class LintConfig:
-    """
-    Standardized linting configuration.
+    """Standardized linting configuration.
 
     Unified format across all linters.
     """
@@ -40,9 +38,9 @@ class LintConfig:
         # Handle different config formats
         if isinstance(rule_config, str):
             return rule_config
-        elif isinstance(rule_config, list) and len(rule_config) > 0:
+        if isinstance(rule_config, list) and len(rule_config) > 0:
             return str(rule_config[0])
-        elif isinstance(rule_config, int):
+        if isinstance(rule_config, int):
             # ESLint: 0=off, 1=warn, 2=error
             return ["off", "warn", "error"][rule_config] if 0 <= rule_config <= 2 else None
 
@@ -70,8 +68,7 @@ class BaseConfigLoader:
 
 
 class ESLintConfigLoader(BaseConfigLoader):
-    """
-    Load ESLint configuration.
+    """Load ESLint configuration.
 
     Supports:
     - .eslintrc.json
@@ -140,8 +137,7 @@ class ESLintConfigLoader(BaseConfigLoader):
         return self._parse_config(eslint_config, str(path))
 
     def _load_js_config(self, path: Path) -> LintConfig:
-        """
-        Load ESLint config from .js file.
+        """Load ESLint config from .js file.
 
         Limited support - extracts JSON-like objects.
         """
@@ -188,16 +184,15 @@ class ESLintConfigLoader(BaseConfigLoader):
         """Normalize extends to list"""
         if extends_value is None:
             return []
-        elif isinstance(extends_value, str):
+        if isinstance(extends_value, str):
             return [extends_value]
-        elif isinstance(extends_value, list):
+        if isinstance(extends_value, list):
             return extends_value
         return []
 
 
 class PylintConfigLoader(BaseConfigLoader):
-    """
-    Load Pylint configuration.
+    """Load Pylint configuration.
 
     Supports:
     - pyproject.toml (tool.pylint section)
@@ -237,8 +232,7 @@ class PylintConfigLoader(BaseConfigLoader):
 
         if path.name == "pyproject.toml":
             return self._load_pyproject(path)
-        else:
-            return self._load_ini_style(path)
+        return self._load_ini_style(path)
 
     def _load_pyproject(self, path: Path) -> LintConfig:
         """Load from pyproject.toml"""
@@ -317,8 +311,7 @@ class PylintConfigLoader(BaseConfigLoader):
 
 
 class TypeScriptConfigLoader(BaseConfigLoader):
-    """
-    Load TypeScript configuration.
+    """Load TypeScript configuration.
 
     Supports tsconfig.json
     """
@@ -394,7 +387,7 @@ class ConfigLoaderFactory:
         if not loader_class:
             raise ValueError(
                 f"Unsupported linter config: {linter_name}. "
-                f"Supported: {', '.join(cls._loaders.keys())}"
+                f"Supported: {', '.join(cls._loaders.keys())}",
             )
 
         return loader_class()
@@ -406,10 +399,11 @@ class ConfigLoaderFactory:
 
 
 def load_config(
-    linter_name: str, config_path: str | None = None, start_dir: str | None = None
+    linter_name: str,
+    config_path: str | None = None,
+    start_dir: str | None = None,
 ) -> LintConfig | None:
-    """
-    Load linting configuration.
+    """Load linting configuration.
 
     Args:
         linter_name: Name of linter
@@ -423,6 +417,7 @@ def load_config(
         >>> config = load_config("eslint", start_dir="/path/to/project")
         >>> if config:
         ...     print(f"Rules: {len(config.rules)}")
+
     """
     loader = ConfigLoaderFactory.create(linter_name)
 

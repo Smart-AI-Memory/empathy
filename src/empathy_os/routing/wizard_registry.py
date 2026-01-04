@@ -1,5 +1,4 @@
-"""
-Wizard Registry
+"""Wizard Registry
 
 Central registry of available wizards with their descriptions,
 capabilities, and auto-chain rules.
@@ -251,8 +250,7 @@ WIZARD_REGISTRY: dict[str, WizardInfo] = {
 
 
 class WizardRegistry:
-    """
-    Registry for managing available wizards.
+    """Registry for managing available wizards.
 
     Usage:
         registry = WizardRegistry()

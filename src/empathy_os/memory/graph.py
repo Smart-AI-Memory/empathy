@@ -1,5 +1,4 @@
-"""
-Memory Graph - Cross-Wizard Knowledge Base
+"""Memory Graph - Cross-Wizard Knowledge Base
 
 A knowledge graph that connects findings across all wizards,
 enabling intelligent correlation and learning.
@@ -28,8 +27,7 @@ from .nodes import Node, NodeType
 
 
 class MemoryGraph:
-    """
-    Knowledge graph for cross-wizard intelligence.
+    """Knowledge graph for cross-wizard intelligence.
 
     Stores nodes (findings) and edges (relationships) discovered
     by wizards, enabling pattern correlation across sessions.
@@ -66,11 +64,11 @@ class MemoryGraph:
     """
 
     def __init__(self, path: str | Path = "patterns/memory_graph.json"):
-        """
-        Initialize the memory graph.
+        """Initialize the memory graph.
 
         Args:
             path: Path to JSON storage file
+
         """
         self.path = Path(path)
         self.nodes: dict[str, Node] = {}
@@ -151,8 +149,7 @@ class MemoryGraph:
         return f"{finding.get('type', 'node')}_{timestamp}_{hash_val}"
 
     def add_finding(self, wizard: str, finding: dict[str, Any]) -> str:
-        """
-        Add a finding from any wizard, return node ID.
+        """Add a finding from any wizard, return node ID.
 
         Args:
             wizard: Name of the wizard adding this finding
@@ -173,6 +170,7 @@ class MemoryGraph:
                     "severity": "critical"
                 }
             )
+
         """
         node_id = self._generate_id(finding)
 
@@ -213,8 +211,7 @@ class MemoryGraph:
         weight: float = 1.0,
         bidirectional: bool = False,
     ) -> str:
-        """
-        Add an edge between two nodes.
+        """Add an edge between two nodes.
 
         Args:
             source_id: Source node ID
@@ -227,6 +224,7 @@ class MemoryGraph:
 
         Returns:
             Edge ID
+
         """
         if source_id not in self.nodes:
             raise ValueError(f"Source node not found: {source_id}")
@@ -273,8 +271,7 @@ class MemoryGraph:
         direction: str = "outgoing",
         max_depth: int = 1,
     ) -> list[Node]:
-        """
-        Find related nodes via specified edge types.
+        """Find related nodes via specified edge types.
 
         Args:
             node_id: Starting node ID
@@ -284,6 +281,7 @@ class MemoryGraph:
 
         Returns:
             List of related nodes
+
         """
         if node_id not in self.nodes:
             return []
@@ -328,8 +326,7 @@ class MemoryGraph:
         threshold: float = 0.5,
         limit: int = 10,
     ) -> list[tuple[Node, float]]:
-        """
-        Find similar past findings.
+        """Find similar past findings.
 
         Uses simple text similarity on name and description.
 
@@ -340,6 +337,7 @@ class MemoryGraph:
 
         Returns:
             List of (node, similarity_score) tuples
+
         """
         query_name = finding.get("name", "").lower()
         query_desc = finding.get("description", "").lower()
@@ -420,8 +418,7 @@ class MemoryGraph:
         edge_types: list[EdgeType] | None = None,
         max_depth: int = 5,
     ) -> list[tuple[Node, Edge | None]]:
-        """
-        Find a path between two nodes using BFS.
+        """Find a path between two nodes using BFS.
 
         Args:
             source_id: Starting node ID
@@ -431,6 +428,7 @@ class MemoryGraph:
 
         Returns:
             List of (node, edge_to_node) tuples representing the path
+
         """
         if source_id not in self.nodes or target_id not in self.nodes:
             return []
@@ -487,8 +485,7 @@ class MemoryGraph:
         }
 
     def update_node(self, node_id: str, updates: dict[str, Any]) -> bool:
-        """
-        Update a node's properties.
+        """Update a node's properties.
 
         Args:
             node_id: Node to update
@@ -496,6 +493,7 @@ class MemoryGraph:
 
         Returns:
             True if updated, False if node not found
+
         """
         if node_id not in self.nodes:
             return False
@@ -518,14 +516,14 @@ class MemoryGraph:
         return True
 
     def delete_node(self, node_id: str) -> bool:
-        """
-        Delete a node and its connected edges.
+        """Delete a node and its connected edges.
 
         Args:
             node_id: Node to delete
 
         Returns:
             True if deleted, False if not found
+
         """
         if node_id not in self.nodes:
             return False

@@ -1,5 +1,4 @@
-"""
-Custom exceptions for the Empathy Framework
+"""Custom exceptions for the Empathy Framework
 
 Provides domain-specific exceptions for better error handling and debugging.
 
@@ -9,36 +8,31 @@ Licensed under Fair Source 0.9
 
 
 class EmpathyFrameworkError(Exception):
-    """
-    Base exception for all Empathy Framework errors
+    """Base exception for all Empathy Framework errors
 
     All custom exceptions in the framework inherit from this class,
     making it easy to catch any framework-specific error.
     """
 
-    pass
-
 
 class ValidationError(EmpathyFrameworkError):
-    """
-    Raised when input validation fails
+    """Raised when input validation fails
 
     Examples:
         - Empty strings when non-empty required
         - Wrong type provided
         - Invalid value ranges
-    """
 
-    pass
+    """
 
 
 class PatternNotFoundError(EmpathyFrameworkError):
-    """
-    Raised when a pattern lookup fails
+    """Raised when a pattern lookup fails
 
     Examples:
         - Pattern ID doesn't exist in library
         - No patterns match query criteria
+
     """
 
     def __init__(self, pattern_id: str, message: str | None = None):
@@ -49,12 +43,12 @@ class PatternNotFoundError(EmpathyFrameworkError):
 
 
 class TrustThresholdError(EmpathyFrameworkError):
-    """
-    Raised when trust level is insufficient for an operation
+    """Raised when trust level is insufficient for an operation
 
     Examples:
         - Trust too low for proactive actions
         - Erosion loop detected
+
     """
 
     def __init__(self, current_trust: float, required_trust: float, message: str | None = None):
@@ -66,12 +60,12 @@ class TrustThresholdError(EmpathyFrameworkError):
 
 
 class ConfidenceThresholdError(EmpathyFrameworkError):
-    """
-    Raised when confidence is too low for proactive action
+    """Raised when confidence is too low for proactive action
 
     Examples:
         - Pattern confidence below threshold
         - Prediction uncertainty too high
+
     """
 
     def __init__(self, confidence: float, threshold: float, message: str | None = None):
@@ -83,13 +77,13 @@ class ConfidenceThresholdError(EmpathyFrameworkError):
 
 
 class EmpathyLevelError(EmpathyFrameworkError):
-    """
-    Raised when empathy level operations fail
+    """Raised when empathy level operations fail
 
     Examples:
         - Invalid level number
         - Level not yet achieved
         - Cannot regress to lower level
+
     """
 
     def __init__(self, level: int, message: str | None = None):
@@ -100,36 +94,30 @@ class EmpathyLevelError(EmpathyFrameworkError):
 
 
 class LeveragePointError(EmpathyFrameworkError):
-    """
-    Raised when leverage point analysis fails
+    """Raised when leverage point analysis fails
 
     Examples:
         - No leverage points found
         - Intervention feasibility too low
-    """
 
-    pass
+    """
 
 
 class FeedbackLoopError(EmpathyFrameworkError):
-    """
-    Raised when feedback loop detection or management fails
+    """Raised when feedback loop detection or management fails
 
     Examples:
         - Vicious cycle detected but cannot break
         - Insufficient history for loop detection
-    """
 
-    pass
+    """
 
 
 class CollaborationStateError(EmpathyFrameworkError):
-    """
-    Raised when collaboration state operations fail
+    """Raised when collaboration state operations fail
 
     Examples:
         - Invalid state transition
         - State corruption detected
-    """
 
-    pass
+    """

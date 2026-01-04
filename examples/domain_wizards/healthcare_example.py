@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-Healthcare Wizard Example - HIPAA-Compliant Clinical Assistant
+"""Healthcare Wizard Example - HIPAA-Compliant Clinical Assistant
 
 Demonstrates the Healthcare Wizard with HIPAA++ features:
 - Enhanced PHI detection and de-identification

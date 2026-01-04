@@ -1,5 +1,4 @@
-"""
-Tests for Healthcare Wizard - HIPAA Compliance
+"""Tests for Healthcare Wizard - HIPAA Compliance
 
 Verifies:
 - PHI detection and scrubbing

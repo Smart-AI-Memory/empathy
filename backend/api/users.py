@@ -1,5 +1,4 @@
-"""
-Users API endpoints.
+"""Users API endpoints.
 Handles user profile management and settings.
 """
 
@@ -23,14 +22,14 @@ class UpdateProfileRequest(BaseModel):
 
 @router.get("/profile")
 async def get_profile(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """
-    Get user profile information.
+    """Get user profile information.
 
     Args:
         credentials: Bearer token
 
     Returns:
         User profile data
+
     """
     return {
         "id": "user_123",
@@ -44,10 +43,10 @@ async def get_profile(credentials: HTTPAuthorizationCredentials = Depends(securi
 
 @router.put("/profile")
 async def update_profile(
-    request: UpdateProfileRequest, credentials: HTTPAuthorizationCredentials = Depends(security)
+    request: UpdateProfileRequest,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
-    """
-    Update user profile.
+    """Update user profile.
 
     Args:
         request: Profile update data
@@ -55,6 +54,7 @@ async def update_profile(
 
     Returns:
         Updated profile
+
     """
     return {
         "success": True,
@@ -69,14 +69,14 @@ async def update_profile(
 
 @router.get("/usage")
 async def get_usage_stats(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """
-    Get user usage statistics.
+    """Get user usage statistics.
 
     Args:
         credentials: Bearer token
 
     Returns:
         Usage statistics
+
     """
     return {
         "analyses_count": 42,
@@ -88,14 +88,14 @@ async def get_usage_stats(credentials: HTTPAuthorizationCredentials = Depends(se
 
 @router.delete("/account")
 async def delete_account(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """
-    Delete user account.
+    """Delete user account.
 
     Args:
         credentials: Bearer token
 
     Returns:
         Deletion confirmation
+
     """
     return {
         "success": True,

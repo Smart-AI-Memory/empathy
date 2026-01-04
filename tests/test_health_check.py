@@ -1,5 +1,4 @@
-"""
-Tests for empathy_llm_toolkit/agent_factory/crews/health_check.py
+"""Tests for empathy_llm_toolkit/agent_factory/crews/health_check.py
 
 Tests the health check crew including:
 - HealthCategory enum
@@ -605,7 +604,10 @@ class TestReportScenarios:
         issues = [
             HealthIssue("Critical Bug", "Desc", HealthCategory.TESTS, IssueSeverity.CRITICAL),
             HealthIssue(
-                "Another Critical", "Desc", HealthCategory.SECURITY, IssueSeverity.CRITICAL
+                "Another Critical",
+                "Desc",
+                HealthCategory.SECURITY,
+                IssueSeverity.CRITICAL,
             ),
         ]
         report = HealthCheckReport(

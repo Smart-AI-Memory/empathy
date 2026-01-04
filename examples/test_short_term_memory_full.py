@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Comprehensive Test of Short-Term Memory Capabilities
+"""Comprehensive Test of Short-Term Memory Capabilities
 
 Tests all new features:
 1. EmpathyOS core integration
@@ -494,13 +493,19 @@ async def test_real_world_scenario(memory):
     # Create specialized agents
     agents = {
         "security": EmpathyOS(
-            "security_bot", short_term_memory=memory, access_tier=AccessTier.CONTRIBUTOR
+            "security_bot",
+            short_term_memory=memory,
+            access_tier=AccessTier.CONTRIBUTOR,
         ),
         "perf": EmpathyOS(
-            "performance_bot", short_term_memory=memory, access_tier=AccessTier.CONTRIBUTOR
+            "performance_bot",
+            short_term_memory=memory,
+            access_tier=AccessTier.CONTRIBUTOR,
         ),
         "lead": EmpathyOS(
-            "lead_reviewer", short_term_memory=memory, access_tier=AccessTier.VALIDATOR
+            "lead_reviewer",
+            short_term_memory=memory,
+            access_tier=AccessTier.VALIDATOR,
         ),
     }
 

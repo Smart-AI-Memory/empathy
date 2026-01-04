@@ -1,5 +1,4 @@
-"""
-Empathy LLM Wizards - Security-Aware AI Assistants
+"""Empathy LLM Wizards - Security-Aware AI Assistants
 
 Specialized AI wizards built on EmpathyLLM with integrated security controls.
 Each wizard is optimized for specific domains with appropriate security policies.
@@ -45,17 +44,16 @@ from .sales_wizard import SalesWizard
 from .technology_wizard import TechnologyWizard
 
 __all__ = [
-    # Base classes
-    "BaseWizard",
-    "WizardConfig",
     # Domain-specific wizards (alphabetical)
     "AccountingWizard",
+    # Base classes
+    "BaseWizard",
     "CustomerSupportWizard",
     "EducationWizard",
     "FinanceWizard",
     "GovernmentWizard",
-    "HealthcareWizard",
     "HRWizard",
+    "HealthcareWizard",
     "InsuranceWizard",
     "LegalWizard",
     "LogisticsWizard",
@@ -65,4 +63,5 @@ __all__ = [
     "RetailWizard",
     "SalesWizard",
     "TechnologyWizard",
+    "WizardConfig",
 ]

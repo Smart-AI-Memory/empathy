@@ -1,5 +1,4 @@
-"""
-Project Index - Codebase Intelligence Layer
+"""Project Index - Codebase Intelligence Layer
 
 Tracks metadata about all files in a project to enable:
 - Test coverage gap analysis
@@ -22,10 +21,10 @@ from .reports import ReportGenerator
 from .scanner import ProjectScanner
 
 __all__ = [
-    "ProjectIndex",
     "FileRecord",
-    "ProjectSummary",
     "IndexConfig",
+    "ProjectIndex",
     "ProjectScanner",
+    "ProjectSummary",
     "ReportGenerator",
 ]

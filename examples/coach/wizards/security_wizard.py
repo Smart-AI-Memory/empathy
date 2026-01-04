@@ -1,5 +1,4 @@
-"""
-Security Wizard
+"""Security Wizard
 
 Conducts security reviews, identifies vulnerabilities, and creates security checklists.
 Uses Empathy Framework Level 4 (Anticipatory) to prevent future security incidents
@@ -23,8 +22,7 @@ from .base_wizard import (
 
 
 class SecurityWizard(BaseWizard):
-    """
-    Wizard for security analysis and vulnerability assessment
+    """Wizard for security analysis and vulnerability assessment
 
     Uses:
     - Level 3: Proactively identify security patterns and anti-patterns
@@ -82,7 +80,6 @@ class SecurityWizard(BaseWizard):
 
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute security review workflow"""
-
         # Step 1: Assess context
         self._extract_constraints(task)
         self._assess_emotional_state(task)
@@ -101,7 +98,9 @@ class SecurityWizard(BaseWizard):
 
         # Step 6: Generate security checklist
         security_checklist = self._generate_security_checklist(
-            security_scope, vulnerabilities, compliance
+            security_scope,
+            vulnerabilities,
+            compliance,
         )
 
         # Step 7: Create diagnosis
@@ -110,7 +109,9 @@ class SecurityWizard(BaseWizard):
         # Step 8: Create artifacts
         artifacts = [
             WizardArtifact(
-                type="doc", title="Threat Model", content=self._format_threat_model(threat_model)
+                type="doc",
+                title="Threat Model",
+                content=self._format_threat_model(threat_model),
             ),
             WizardArtifact(
                 type="doc",
@@ -118,7 +119,9 @@ class SecurityWizard(BaseWizard):
                 content=self._format_vulnerabilities(vulnerabilities),
             ),
             WizardArtifact(
-                type="checklist", title="Security Checklist", content=security_checklist
+                type="checklist",
+                title="Security Checklist",
+                content=security_checklist,
             ),
             WizardArtifact(
                 type="doc",
@@ -158,7 +161,7 @@ class SecurityWizard(BaseWizard):
                     owner="security_team",
                     what="Review and validate security fixes",
                     when="Before deployment",
-                )
+                ),
             )
         if compliance:
             handoffs.append(
@@ -166,7 +169,7 @@ class SecurityWizard(BaseWizard):
                     owner="compliance_officer",
                     what="Verify compliance requirements met",
                     when="Before go-live",
-                )
+                ),
             )
 
         # Step 12: Assess risks
@@ -247,7 +250,7 @@ class SecurityWizard(BaseWizard):
                         "threat": "Credential theft or session hijacking",
                         "likelihood": "medium",
                         "impact": "high",
-                    }
+                    },
                 )
                 threats.append(
                     {
@@ -255,7 +258,7 @@ class SecurityWizard(BaseWizard):
                         "threat": "Authentication bypass",
                         "likelihood": "low",
                         "impact": "critical",
-                    }
+                    },
                 )
 
             if "API" in attack_surface_item:
@@ -265,7 +268,7 @@ class SecurityWizard(BaseWizard):
                         "threat": "API exposes sensitive data without authorization",
                         "likelihood": "medium",
                         "impact": "high",
-                    }
+                    },
                 )
                 threats.append(
                     {
@@ -273,7 +276,7 @@ class SecurityWizard(BaseWizard):
                         "threat": "API rate limiting bypass or resource exhaustion",
                         "likelihood": "medium",
                         "impact": "medium",
-                    }
+                    },
                 )
 
             if "File upload" in attack_surface_item:
@@ -283,7 +286,7 @@ class SecurityWizard(BaseWizard):
                         "threat": "Malicious file upload (malware, scripts)",
                         "likelihood": "high",
                         "impact": "high",
-                    }
+                    },
                 )
 
         # Generic threats
@@ -319,7 +322,7 @@ class SecurityWizard(BaseWizard):
                     "severity": "critical",
                     "description": "User input may not be properly sanitized before database queries",
                     "remediation": "Use parameterized queries/prepared statements, ORM, input validation",
-                }
+                },
             )
 
         if "auth" in context_lower:
@@ -329,7 +332,7 @@ class SecurityWizard(BaseWizard):
                     "severity": "critical",
                     "description": "Weak password policies, session management issues, or missing MFA",
                     "remediation": "Implement strong password policies, secure session management, MFA",
-                }
+                },
             )
 
         if "api" in context_lower:
@@ -339,7 +342,7 @@ class SecurityWizard(BaseWizard):
                     "severity": "high",
                     "description": "Users may access resources they shouldn't have permission for",
                     "remediation": "Implement proper authorization checks, principle of least privilege",
-                }
+                },
             )
 
         if "encrypt" not in context_lower and (
@@ -351,7 +354,7 @@ class SecurityWizard(BaseWizard):
                     "severity": "high",
                     "description": "Sensitive data may be transmitted or stored without encryption",
                     "remediation": "Use TLS for transport, encrypt data at rest, proper key management",
-                }
+                },
             )
 
         if "xml" in context_lower or "deserialize" in context_lower:
@@ -361,7 +364,7 @@ class SecurityWizard(BaseWizard):
                     "severity": "high",
                     "description": "Unsafe parsing of XML or deserialization of untrusted data",
                     "remediation": "Disable XML external entities, validate deserialization input",
-                }
+                },
             )
 
         if "log" in context_lower:
@@ -371,7 +374,7 @@ class SecurityWizard(BaseWizard):
                     "severity": "medium",
                     "description": "Security events may not be logged or monitored",
                     "remediation": "Implement comprehensive logging, set up alerts, log retention",
-                }
+                },
             )
 
         # Generic vulnerabilities if none found
@@ -382,7 +385,7 @@ class SecurityWizard(BaseWizard):
                     "severity": "medium",
                     "description": "General security hardening needed",
                     "remediation": "Follow OWASP guidelines, security code review, penetration testing",
-                }
+                },
             ]
 
         return vulns[:6]  # Top 6 vulnerabilities
@@ -406,7 +409,10 @@ class SecurityWizard(BaseWizard):
         return compliance_reqs
 
     def _assess_security_risks(
-        self, task: WizardTask, vulnerabilities: list[dict], threat_model: dict
+        self,
+        task: WizardTask,
+        vulnerabilities: list[dict],
+        threat_model: dict,
     ) -> list[WizardRisk]:
         """Assess security risks"""
         risks = []
@@ -419,7 +425,7 @@ class SecurityWizard(BaseWizard):
                     risk=f"{len(critical_vulns)} critical vulnerabilities could lead to data breach",
                     mitigation="Immediate remediation of critical issues, security code review, penetration testing",
                     severity="critical",
-                )
+                ),
             )
 
         # Check for high-impact threats
@@ -432,7 +438,7 @@ class SecurityWizard(BaseWizard):
                     risk=f"{len(high_impact_threats)} high-impact threats identified",
                     mitigation="Implement security controls, monitoring, and incident response plan",
                     severity="high",
-                )
+                ),
             )
 
         risks.append(
@@ -440,7 +446,7 @@ class SecurityWizard(BaseWizard):
                 risk="Security debt accumulation over time",
                 mitigation="Regular security reviews, automated scanning, security training",
                 severity="medium",
-            )
+            ),
         )
 
         risks.append(
@@ -448,13 +454,16 @@ class SecurityWizard(BaseWizard):
                 risk="Insider threats or compromised credentials",
                 mitigation="Principle of least privilege, audit logging, MFA, background checks",
                 severity="medium",
-            )
+            ),
         )
 
         return risks[:5]
 
     def _create_diagnosis(
-        self, scope: dict, vulnerabilities: list[dict], threat_model: dict
+        self,
+        scope: dict,
+        vulnerabilities: list[dict],
+        threat_model: dict,
     ) -> str:
         """Create security diagnosis"""
         critical_count = len([v for v in vulnerabilities if v["severity"] == "critical"])
@@ -487,12 +496,11 @@ class SecurityWizard(BaseWizard):
 
         if score >= 9:
             return "CRITICAL"
-        elif score >= 6:
+        if score >= 6:
             return "HIGH"
-        elif score >= 3:
+        if score >= 3:
             return "MEDIUM"
-        else:
-            return "LOW"
+        return "LOW"
 
     def _format_vulnerabilities(self, vulnerabilities: list[dict]) -> str:
         """Format vulnerabilities as documentation"""
@@ -512,7 +520,10 @@ class SecurityWizard(BaseWizard):
         return content
 
     def _generate_security_checklist(
-        self, scope: dict, vulnerabilities: list[dict], compliance: list[str]
+        self,
+        scope: dict,
+        vulnerabilities: list[dict],
+        compliance: list[str],
     ) -> str:
         """Generate security checklist"""
         compliance_str = ", ".join(compliance) if compliance else "N/A"

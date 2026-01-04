@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-Quick benchmark to measure parallelization improvement
+"""Quick benchmark to measure parallelization improvement
 
 Compares performance before/after parallel PII + secrets detection
 """
@@ -15,7 +14,6 @@ from empathy_llm_toolkit.security import SecureMemDocsIntegration
 
 def benchmark_pipeline(iterations=100):
     """Benchmark the complete pipeline with parallel execution"""
-
     # Test content with PII
     test_content = (
         """

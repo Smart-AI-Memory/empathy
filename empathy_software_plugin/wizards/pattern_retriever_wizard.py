@@ -1,5 +1,4 @@
-"""
-Pattern Retriever Wizard
+"""Pattern Retriever Wizard
 
 Retrieves relevant patterns from storage based on context.
 Level 3 (Proactive) - anticipates pattern needs.
@@ -33,8 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 class PatternRetrieverWizard(BaseWizard):
-    """
-    Pattern Retriever Wizard - Level 3 (Proactive)
+    """Pattern Retriever Wizard - Level 3 (Proactive)
 
     Retrieves relevant patterns from storage for given context.
     Searches across bug patterns, security decisions, and tech debt history.
@@ -59,20 +57,19 @@ class PatternRetrieverWizard(BaseWizard):
         pattern_storage_path: str = "./patterns",
         **kwargs,
     ):
-        """
-        Initialize Pattern Retriever Wizard.
+        """Initialize Pattern Retriever Wizard.
 
         Args:
             pattern_storage_path: Path to patterns directory
             **kwargs: Passed to BaseWizard
+
         """
         super().__init__(**kwargs)
         self.pattern_storage_path = Path(pattern_storage_path)
         self.pattern_storage_path.mkdir(parents=True, exist_ok=True)
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Retrieve relevant patterns for given context.
+        """Retrieve relevant patterns for given context.
 
         Args:
             context: Dictionary with:
@@ -89,6 +86,7 @@ class PatternRetrieverWizard(BaseWizard):
                 - predictions: Level 3 predictions
                 - recommendations: Usage recommendations
                 - confidence: Retrieval confidence
+
         """
         query = context.get("query", "")
         pattern_type = context.get("pattern_type")
@@ -328,7 +326,7 @@ class PatternRetrieverWizard(BaseWizard):
                     "type": "no_matches",
                     "severity": "info",
                     "description": f"No patterns match query '{context.get('query')}'. Consider storing relevant patterns.",
-                }
+                },
             )
             return predictions
 
@@ -339,7 +337,7 @@ class PatternRetrieverWizard(BaseWizard):
                     "type": "low_relevance",
                     "severity": "info",
                     "description": "Top results have low relevance. Consider refining your query.",
-                }
+                },
             )
 
         # Check pattern age (if dates available)
@@ -354,7 +352,7 @@ class PatternRetrieverWizard(BaseWizard):
                                 "type": "stale_pattern",
                                 "severity": "warning",
                                 "description": f"Pattern '{p.get('_id')}' is {age_days} days old. Verify it's still relevant.",
-                            }
+                            },
                         )
                         break
                 except (ValueError, TypeError):
@@ -395,7 +393,7 @@ if __name__ == "__main__":
             {
                 "query": "null reference",
                 "limit": 5,
-            }
+            },
         )
         print(json.dumps(result, indent=2, default=str))
 

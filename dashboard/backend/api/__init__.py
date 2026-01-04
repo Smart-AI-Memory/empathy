@@ -1,5 +1,4 @@
-"""
-API routes for Empathy Memory Dashboard.
+"""API routes for Empathy Memory Dashboard.
 
 This package contains all API endpoint definitions organized by domain:
 - memory: Memory system operations (status, Redis control)

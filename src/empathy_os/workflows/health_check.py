@@ -1,5 +1,4 @@
-"""
-Health Check Workflow
+"""Health Check Workflow
 
 A workflow wrapper for HealthCheckCrew that provides project health
 diagnosis and fixing capabilities.
@@ -48,8 +47,7 @@ class HealthCheckResult:
 
 
 class HealthCheckWorkflow(BaseWorkflow):
-    """
-    Workflow wrapper for HealthCheckCrew.
+    """Workflow wrapper for HealthCheckCrew.
 
     Provides comprehensive project health diagnosis and fixing using
     5 specialized agents with XML-enhanced prompts.
@@ -91,8 +89,7 @@ class HealthCheckWorkflow(BaseWorkflow):
         xml_prompts: bool = True,
         **kwargs: Any,
     ):
-        """
-        Initialize health check workflow.
+        """Initialize health check workflow.
 
         Args:
             auto_fix: Automatically apply safe fixes
@@ -102,6 +99,7 @@ class HealthCheckWorkflow(BaseWorkflow):
             check_deps: Run dependency checks
             xml_prompts: Use XML-enhanced prompts
             **kwargs: Additional arguments passed to BaseWorkflow
+
         """
         super().__init__(**kwargs)
         self.auto_fix = auto_fix
@@ -143,19 +141,20 @@ class HealthCheckWorkflow(BaseWorkflow):
             self._crew_available = False
 
     async def run_stage(
-        self, stage_name: str, tier: ModelTier, input_data: Any
+        self,
+        stage_name: str,
+        tier: ModelTier,
+        input_data: Any,
     ) -> tuple[Any, int, int]:
         """Route to specific stage implementation."""
         if stage_name == "diagnose":
             return await self._diagnose(input_data, tier)
-        elif stage_name == "fix":
+        if stage_name == "fix":
             return await self._fix(input_data, tier)
-        else:
-            raise ValueError(f"Unknown stage: {stage_name}")
+        raise ValueError(f"Unknown stage: {stage_name}")
 
     async def _diagnose(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Run health diagnosis using HealthCheckCrew.
+        """Run health diagnosis using HealthCheckCrew.
 
         Falls back to basic checks if crew not available.
         """
@@ -218,6 +217,7 @@ class HealthCheckWorkflow(BaseWorkflow):
             try:
                 result = subprocess.run(
                     ["python", "-m", "ruff", "check", path],
+                    check=False,
                     capture_output=True,
                     text=True,
                     timeout=60,
@@ -231,7 +231,7 @@ class HealthCheckWorkflow(BaseWorkflow):
                             "title": f"Lint: {lint_errors} issues found",
                             "category": "lint",
                             "severity": "medium",
-                        }
+                        },
                     )
             except Exception:
                 checks_run["lint"] = {"passed": True, "skipped": True}
@@ -241,6 +241,7 @@ class HealthCheckWorkflow(BaseWorkflow):
             try:
                 result = subprocess.run(
                     ["python", "-m", "mypy", path, "--ignore-missing-imports"],
+                    check=False,
                     capture_output=True,
                     text=True,
                     timeout=120,
@@ -254,7 +255,7 @@ class HealthCheckWorkflow(BaseWorkflow):
                             "title": f"Types: {type_errors} errors found",
                             "category": "types",
                             "severity": "medium",
-                        }
+                        },
                     )
             except Exception:
                 checks_run["types"] = {"passed": True, "skipped": True}
@@ -266,6 +267,7 @@ class HealthCheckWorkflow(BaseWorkflow):
                 # Don't pass path="." which overrides testpaths and causes collection errors
                 result = subprocess.run(
                     ["python", "-m", "pytest", "tests/", "-q", "--tb=no", "--no-cov"],
+                    check=False,
                     capture_output=True,
                     text=True,
                     timeout=180,
@@ -278,7 +280,7 @@ class HealthCheckWorkflow(BaseWorkflow):
                             "title": "Tests: Some tests failing",
                             "category": "tests",
                             "severity": "high",
-                        }
+                        },
                     )
             except Exception:
                 checks_run["tests"] = {"passed": True, "skipped": True}
@@ -292,8 +294,7 @@ class HealthCheckWorkflow(BaseWorkflow):
         }
 
     async def _fix(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Apply fixes for identified issues.
+        """Apply fixes for identified issues.
 
         Only runs if auto_fix is enabled and issues were found.
         """
@@ -318,28 +319,28 @@ class HealthCheckWorkflow(BaseWorkflow):
                 auto_fix=True,
             )
             fixes = [f.to_dict() for f in report.fixes]
-        else:
-            # Basic auto-fix with ruff
-            if self.check_lint:
-                import subprocess
+        # Basic auto-fix with ruff
+        elif self.check_lint:
+            import subprocess
 
-                try:
-                    result = subprocess.run(
-                        ["python", "-m", "ruff", "check", path, "--fix"],
-                        capture_output=True,
-                        text=True,
-                        timeout=60,
+            try:
+                result = subprocess.run(
+                    ["python", "-m", "ruff", "check", path, "--fix"],
+                    check=False,
+                    capture_output=True,
+                    text=True,
+                    timeout=60,
+                )
+                if "fixed" in result.stdout.lower():
+                    fixes.append(
+                        {
+                            "title": "Lint auto-fixes applied",
+                            "category": "lint",
+                            "status": "applied",
+                        },
                     )
-                    if "fixed" in result.stdout.lower():
-                        fixes.append(
-                            {
-                                "title": "Lint auto-fixes applied",
-                                "category": "lint",
-                                "status": "applied",
-                            }
-                        )
-                except Exception:
-                    pass
+            except Exception:
+                pass
 
         return (
             {
@@ -352,8 +353,7 @@ class HealthCheckWorkflow(BaseWorkflow):
         )
 
     async def execute(self, **kwargs: Any) -> HealthCheckResult:  # type: ignore[override]
-        """
-        Execute the health check workflow.
+        """Execute the health check workflow.
 
         Args:
             path: Path to check (default: ".")
@@ -362,6 +362,7 @@ class HealthCheckWorkflow(BaseWorkflow):
 
         Returns:
             HealthCheckResult with health score and findings
+
         """
         start_time = time.time()
 
@@ -465,14 +466,14 @@ class HealthCheckWorkflow(BaseWorkflow):
 
 
 def format_health_check_report(result: HealthCheckResult) -> str:
-    """
-    Format health check output as a human-readable report.
+    """Format health check output as a human-readable report.
 
     Args:
         result: The HealthCheckResult dataclass
 
     Returns:
         Formatted report string
+
     """
     lines = []
 
@@ -542,7 +543,8 @@ def format_health_check_report(result: HealthCheckResult) -> str:
                 severity = issue.get("severity", "unknown").upper()
                 title = issue.get("title", "Unknown issue")
                 sev_icon = {"CRITICAL": "🔴", "HIGH": "🟠", "MEDIUM": "🟡", "LOW": "🟢"}.get(
-                    severity, "⚪"
+                    severity,
+                    "⚪",
                 )
                 lines.append(f"    {sev_icon} [{severity}] {title}")
             if len(issues) > 5:
@@ -600,7 +602,7 @@ def main():
             print("\nTop Issues:")
             for issue in result.issues[:5]:
                 print(
-                    f"  - [{issue.get('severity', 'N/A').upper()}] {issue.get('title', 'Unknown')}"
+                    f"  - [{issue.get('severity', 'N/A').upper()}] {issue.get('title', 'Unknown')}",
                 )
 
         print(f"\nChecks Run: {list(result.checks_run.keys())}")

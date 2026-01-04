@@ -1,5 +1,4 @@
-"""
-Tests for CrewAI Adapter
+"""Tests for CrewAI Adapter
 
 Tests the CrewAI adapter for the Agent Factory.
 

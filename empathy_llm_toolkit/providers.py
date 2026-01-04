@@ -1,5 +1,4 @@
-"""
-LLM Provider Adapters
+"""LLM Provider Adapters
 
 Unified interface for different LLM providers (OpenAI, Anthropic, local models).
 
@@ -24,8 +23,7 @@ class LLMResponse:
 
 
 class BaseLLMProvider(ABC):
-    """
-    Base class for all LLM providers.
+    """Base class for all LLM providers.
 
     Provides unified interface regardless of backend.
     """
@@ -43,8 +41,7 @@ class BaseLLMProvider(ABC):
         max_tokens: int = 1024,
         **kwargs,
     ) -> LLMResponse:
-        """
-        Generate response from LLM.
+        """Generate response from LLM.
 
         Args:
             messages: List of {"role": "user/assistant", "content": "..."}
@@ -55,17 +52,15 @@ class BaseLLMProvider(ABC):
 
         Returns:
             LLMResponse with standardized format
+
         """
-        pass
 
     @abstractmethod
     def get_model_info(self) -> dict[str, Any]:
         """Get information about the model being used"""
-        pass
 
     def estimate_tokens(self, text: str) -> int:
-        """
-        Estimate token count for text.
+        """Estimate token count for text.
 
         Rough approximation: ~4 chars per token
         """
@@ -73,8 +68,7 @@ class BaseLLMProvider(ABC):
 
 
 class AnthropicProvider(BaseLLMProvider):
-    """
-    Anthropic (Claude) provider with enhanced features.
+    """Anthropic (Claude) provider with enhanced features.
 
     Supports Claude 3 family models with advanced capabilities:
     - Extended context windows (200K tokens)
@@ -100,7 +94,7 @@ class AnthropicProvider(BaseLLMProvider):
         if not api_key or not api_key.strip():
             raise ValueError(
                 "API key is required for Anthropic provider. "
-                "Provide via api_key parameter or ANTHROPIC_API_KEY environment variable"
+                "Provide via api_key parameter or ANTHROPIC_API_KEY environment variable",
             )
 
         # Lazy import to avoid requiring anthropic if not used
@@ -110,7 +104,7 @@ class AnthropicProvider(BaseLLMProvider):
             self.client = anthropic.Anthropic(api_key=api_key)
         except ImportError as e:
             raise ImportError(
-                "anthropic package required. Install with: pip install anthropic"
+                "anthropic package required. Install with: pip install anthropic",
             ) from e
 
     async def generate(
@@ -121,15 +115,13 @@ class AnthropicProvider(BaseLLMProvider):
         max_tokens: int = 1024,
         **kwargs,
     ) -> LLMResponse:
-        """
-        Generate response using Anthropic API with enhanced features.
+        """Generate response using Anthropic API with enhanced features.
 
         Claude-specific enhancements:
         - Prompt caching for repeated system prompts (90% cost reduction)
         - Extended context (200K tokens) for large codebase analysis
         - Thinking mode for complex reasoning tasks
         """
-
         # Build kwargs for Anthropic
         api_kwargs = {
             "model": self.model,
@@ -145,7 +137,7 @@ class AnthropicProvider(BaseLLMProvider):
                     "type": "text",
                     "text": system_prompt,
                     "cache_control": {"type": "ephemeral"},  # Cache for 5 minutes
-                }
+                },
             ]
         elif system_prompt:
             api_kwargs["system"] = system_prompt
@@ -202,10 +194,12 @@ class AnthropicProvider(BaseLLMProvider):
         )
 
     async def analyze_large_codebase(
-        self, codebase_files: list[dict[str, str]], analysis_prompt: str, **kwargs
+        self,
+        codebase_files: list[dict[str, str]],
+        analysis_prompt: str,
+        **kwargs,
     ) -> LLMResponse:
-        """
-        Analyze large codebases using Claude's 200K context window.
+        """Analyze large codebases using Claude's 200K context window.
 
         Claude-specific feature: Can process entire repositories in one call.
 
@@ -216,10 +210,11 @@ class AnthropicProvider(BaseLLMProvider):
 
         Returns:
             LLMResponse with analysis results
+
         """
         # Build context from all files
         file_context = "\n\n".join(
-            [f"# File: {file['path']}\n{file['content']}" for file in codebase_files]
+            [f"# File: {file['path']}\n{file['content']}" for file in codebase_files],
         )
 
         # Create system prompt with caching for file context
@@ -287,8 +282,7 @@ class AnthropicProvider(BaseLLMProvider):
 
 
 class OpenAIProvider(BaseLLMProvider):
-    """
-    OpenAI provider.
+    """OpenAI provider.
 
     Supports GPT-4, GPT-3.5, and other OpenAI models.
     """
@@ -301,7 +295,7 @@ class OpenAIProvider(BaseLLMProvider):
         if not api_key or not api_key.strip():
             raise ValueError(
                 "API key is required for OpenAI provider. "
-                "Provide via api_key parameter or OPENAI_API_KEY environment variable"
+                "Provide via api_key parameter or OPENAI_API_KEY environment variable",
             )
 
         # Lazy import
@@ -321,7 +315,6 @@ class OpenAIProvider(BaseLLMProvider):
         **kwargs,
     ) -> LLMResponse:
         """Generate response using OpenAI API"""
-
         # Add system prompt if provided
         if system_prompt:
             messages = [{"role": "system", "content": system_prompt}] + messages
@@ -373,8 +366,7 @@ class OpenAIProvider(BaseLLMProvider):
 
 
 class GeminiProvider(BaseLLMProvider):
-    """
-    Google Gemini provider with cost tracking integration.
+    """Google Gemini provider with cost tracking integration.
 
     Supports Gemini models:
     - gemini-2.0-flash-exp: Fast, cheap tier (1M context)
@@ -395,7 +387,7 @@ class GeminiProvider(BaseLLMProvider):
         if not api_key or not api_key.strip():
             raise ValueError(
                 "API key is required for Gemini provider. "
-                "Provide via api_key parameter or GOOGLE_API_KEY environment variable"
+                "Provide via api_key parameter or GOOGLE_API_KEY environment variable",
             )
 
         # Lazy import to avoid requiring google-generativeai if not used
@@ -407,7 +399,7 @@ class GeminiProvider(BaseLLMProvider):
             self.client = genai.GenerativeModel(model)
         except ImportError as e:
             raise ImportError(
-                "google-generativeai package required. Install with: pip install google-generativeai"
+                "google-generativeai package required. Install with: pip install google-generativeai",
             ) from e
 
     async def generate(
@@ -418,8 +410,7 @@ class GeminiProvider(BaseLLMProvider):
         max_tokens: int = 1024,
         **kwargs,
     ) -> LLMResponse:
-        """
-        Generate response using Google Gemini API.
+        """Generate response using Google Gemini API.
 
         Gemini-specific features:
         - Large context windows (1M-2M tokens)
@@ -507,10 +498,9 @@ class GeminiProvider(BaseLLMProvider):
         """Determine tier from model name."""
         if "flash" in self.model.lower():
             return "cheap"
-        elif "2.5" in self.model or "ultra" in self.model.lower():
+        if "2.5" in self.model or "ultra" in self.model.lower():
             return "premium"
-        else:
-            return "capable"
+        return "capable"
 
     def get_model_info(self) -> dict[str, Any]:
         """Get Gemini model information"""
@@ -550,8 +540,7 @@ class GeminiProvider(BaseLLMProvider):
 
 
 class LocalProvider(BaseLLMProvider):
-    """
-    Local model provider (Ollama, LM Studio, etc.).
+    """Local model provider (Ollama, LM Studio, etc.).
 
     For running models locally.
     """

@@ -1,5 +1,4 @@
-"""
-Agent Factory Decorators
+"""Agent Factory Decorators
 
 Standardized decorators for agent operations including error handling,
 logging, and performance monitoring.
@@ -23,8 +22,7 @@ F = TypeVar("F", bound=Callable[..., Any])
 
 
 def safe_agent_operation(operation_name: str):
-    """
-    Decorator for safe agent operations with logging and error handling.
+    """Decorator for safe agent operations with logging and error handling.
 
     Wraps async agent methods to:
     - Log operation start/end
@@ -41,6 +39,7 @@ def safe_agent_operation(operation_name: str):
             async def invoke(self, input_data, context=None):
                 # Operation code here
                 pass
+
     """
 
     def decorator(func: F) -> F:
@@ -97,8 +96,7 @@ def retry_on_failure(
     backoff: float = 2.0,
     exceptions: tuple = (Exception,),
 ):
-    """
-    Decorator to retry failed operations with exponential backoff.
+    """Decorator to retry failed operations with exponential backoff.
 
     Args:
         max_attempts: Maximum number of attempts
@@ -111,6 +109,7 @@ def retry_on_failure(
         async def call_external_api(self):
             # Flaky operation
             pass
+
     """
 
     def decorator(func: F) -> F:
@@ -127,14 +126,14 @@ def retry_on_failure(
                     if attempt < max_attempts - 1:
                         logger.warning(
                             f"Attempt {attempt + 1}/{max_attempts} failed: {e}. "
-                            f"Retrying in {current_delay:.1f}s..."
+                            f"Retrying in {current_delay:.1f}s...",
                         )
                         await asyncio.sleep(current_delay)
                         current_delay *= backoff
                     else:
                         logger.error(f"All {max_attempts} attempts failed. Last error: {e}")
 
-            raise last_exception  # noqa: B904 - reraise without from is intentional
+            raise last_exception
 
         return wrapper  # type: ignore
 
@@ -142,8 +141,7 @@ def retry_on_failure(
 
 
 def log_performance(threshold_seconds: float = 1.0):
-    """
-    Decorator to log slow operations.
+    """Decorator to log slow operations.
 
     Args:
         threshold_seconds: Log warning if operation exceeds this duration
@@ -153,6 +151,7 @@ def log_performance(threshold_seconds: float = 1.0):
         async def heavy_computation(self):
             # Potentially slow operation
             pass
+
     """
 
     def decorator(func: F) -> F:
@@ -168,7 +167,7 @@ def log_performance(threshold_seconds: float = 1.0):
             if elapsed > threshold_seconds:
                 logger.warning(
                     f"Slow operation: {func_name} took {elapsed:.2f}s "
-                    f"(threshold: {threshold_seconds}s)"
+                    f"(threshold: {threshold_seconds}s)",
                 )
             else:
                 logger.debug(f"{func_name} completed in {elapsed:.2f}s")
@@ -181,8 +180,7 @@ def log_performance(threshold_seconds: float = 1.0):
 
 
 def validate_input(required_fields: list[str]):
-    """
-    Decorator to validate required fields in input data.
+    """Decorator to validate required fields in input data.
 
     Args:
         required_fields: List of required field names
@@ -192,6 +190,7 @@ def validate_input(required_fields: list[str]):
         async def process(self, input_data: dict):
             # input_data is guaranteed to have query and context
             pass
+
     """
 
     def decorator(func: F) -> F:
@@ -212,8 +211,7 @@ def validate_input(required_fields: list[str]):
 
 
 def with_cost_tracking(operation_type: str = "agent_call"):
-    """
-    Decorator to track API costs for operations.
+    """Decorator to track API costs for operations.
 
     Args:
         operation_type: Type of operation for cost categorization
@@ -223,6 +221,7 @@ def with_cost_tracking(operation_type: str = "agent_call"):
         async def research(self, query: str):
             # LLM call that should be tracked
             pass
+
     """
 
     def decorator(func: F) -> F:
@@ -256,8 +255,7 @@ def with_cost_tracking(operation_type: str = "agent_call"):
 
 
 def graceful_degradation(fallback_value: Any = None, log_level: str = "warning"):
-    """
-    Decorator for graceful degradation on failure.
+    """Decorator for graceful degradation on failure.
 
     Instead of raising an exception, returns a fallback value.
 
@@ -270,6 +268,7 @@ def graceful_degradation(fallback_value: Any = None, log_level: str = "warning")
         async def get_optional_data(self):
             # If this fails, return empty list instead of crashing
             pass
+
     """
 
     def decorator(func: F) -> F:

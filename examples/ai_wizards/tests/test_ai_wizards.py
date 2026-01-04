@@ -1,5 +1,4 @@
-"""
-Tests for AI Development Wizards
+"""Tests for AI Development Wizards
 
 These tests validate Level 4 Anticipatory Empathy in action.
 
@@ -42,7 +41,7 @@ You are a helpful assistant.
 Please help the user with their task.
 
 Try to be as helpful as possible.
-            """
+            """,
             )
             temp_path = f.name
 
@@ -94,7 +93,10 @@ Try to be as helpful as possible.
 
     @pytest.mark.asyncio
     async def test_analyze_detects_missing_structure(
-        self, wizard, temp_prompt_file, temp_project_dir
+        self,
+        wizard,
+        temp_prompt_file,
+        temp_project_dir,
     ):
         """Test wizard detects unclear prompt structure"""
         context = {
@@ -211,7 +213,7 @@ class TestAIContextWindowWizard:
                     "location": "main.py:42",
                     "prompt_size": 80000,  # High usage
                     "code_snippet": "ai.generate(prompt + context)",
-                }
+                },
             ],
             "context_sources": [],
             "ai_provider": "anthropic",
@@ -235,7 +237,7 @@ class TestAIContextWindowWizard:
                     "location": "main.py:42",
                     "prompt_size": 1000,
                     "code_snippet": "prompt = base_prompt + user_input + data",
-                }
+                },
             ],
             "context_sources": [],
             "ai_provider": "openai",
@@ -312,7 +314,7 @@ def analyze_code(code):
         messages=[{"role": "user", "content": code}]
     )
     return response
-            """
+            """,
             )
             temp_path = f.name
 
@@ -414,7 +416,7 @@ pip install myproject
 ## Usage
 
 Run the thing.
-            """
+            """,
             )
 
         yield temp_path
@@ -466,7 +468,7 @@ Run the thing.
 You should usually call this function first.
 Normally you want to initialize the system.
 Try to handle errors gracefully.
-            """
+            """,
             )
             temp_ambiguous = f.name
 
@@ -490,7 +492,10 @@ Try to handle errors gracefully.
 
     @pytest.mark.asyncio
     async def test_level_4_predicts_missing_why_context(
-        self, wizard, temp_readme, temp_project_dir
+        self,
+        wizard,
+        temp_readme,
+        temp_project_dir,
     ):
         """Test Level 4 prediction about missing 'why' context"""
         context = {

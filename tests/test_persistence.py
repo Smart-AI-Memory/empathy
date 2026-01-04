@@ -1,5 +1,4 @@
-"""
-Tests for Persistence Module
+"""Tests for Persistence Module
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
@@ -453,7 +452,10 @@ class TestMetricsCollector:
         for level in [1, 2, 3, 4, 5]:
             for _ in range(level * 2):  # More operations at higher levels
                 collector.record_metric(
-                    user_id="test_user", empathy_level=level, success=True, response_time_ms=100.0
+                    user_id="test_user",
+                    empathy_level=level,
+                    success=True,
+                    response_time_ms=100.0,
                 )
 
         stats = collector.get_user_stats("test_user")

@@ -1,5 +1,4 @@
-"""
-Tests for SecurityAuditCrew Workflow Integration
+"""Tests for SecurityAuditCrew Workflow Integration
 
 Tests all 4 integration options:
 1. ReleasePreparationWorkflow with crew_security stage
@@ -97,7 +96,7 @@ class TestSecurityAdapters:
                 "category": "injection",
                 "file": "test.py",
                 "line": 10,
-            }
+            },
         ]
 
         result = workflow_findings_to_crew_format(workflow_findings)
@@ -121,7 +120,7 @@ class TestSecurityAdapters:
                     "type": "injection",
                     "file": "api.py",
                     "line": 10,
-                }
+                },
             ],
             "assessment": {"risk_score": 60.0, "severity_breakdown": {"critical": 1}},
         }
@@ -135,7 +134,7 @@ class TestSecurityAdapters:
                     "type": "xss",
                     "file": "view.py",
                     "line": 20,
-                }
+                },
             ],
             "assessment": {"risk_score": 40.0, "severity_breakdown": {"high": 1}},
         }
@@ -229,12 +228,14 @@ class TestReleasePreparationCrewIntegration:
 
         # Mock _check_crew_available to return False at the security_adapters level
         with patch(
-            "empathy_os.workflows.security_adapters._check_crew_available", return_value=False
+            "empathy_os.workflows.security_adapters._check_crew_available",
+            return_value=False,
         ):
             input_data = {"path": "./src", "security": {"issues": []}}
 
             result, input_tokens, output_tokens = await workflow._crew_security(
-                input_data, workflow.tier_map["crew_security"]
+                input_data,
+                workflow.tier_map["crew_security"],
             )
 
             assert "crew_security" in result
@@ -260,7 +261,8 @@ class TestReleasePreparationCrewIntegration:
 
         with (
             patch(
-                "empathy_os.workflows.security_adapters._check_crew_available", return_value=True
+                "empathy_os.workflows.security_adapters._check_crew_available",
+                return_value=True,
             ),
             patch(
                 "empathy_os.workflows.security_adapters._get_crew_audit",
@@ -271,7 +273,8 @@ class TestReleasePreparationCrewIntegration:
             input_data = {"path": "./src", "security": {"issues": []}}
 
             result, input_tokens, output_tokens = await workflow._crew_security(
-                input_data, workflow.tier_map["crew_security"]
+                input_data,
+                workflow.tier_map["crew_security"],
             )
 
             assert "crew_security" in result
@@ -336,7 +339,8 @@ class TestCodeReviewExternalAudit:
         }
 
         merged, findings, has_critical = workflow._merge_external_audit(
-            llm_response, external_audit
+            llm_response,
+            external_audit,
         )
 
         assert llm_response in merged
@@ -358,7 +362,8 @@ class TestCodeReviewExternalAudit:
         }
 
         merged, findings, has_critical = workflow._merge_external_audit(
-            llm_response, external_audit
+            llm_response,
+            external_audit,
         )
 
         assert has_critical is False
@@ -390,7 +395,8 @@ class TestCodeReviewExternalAudit:
             return_value=("No issues found", 100, 50),
         ):
             result, input_tokens, output_tokens = await workflow._scan(
-                input_data, ModelTier.CAPABLE
+                input_data,
+                ModelTier.CAPABLE,
             )
 
             assert "scan_results" in result
@@ -528,7 +534,7 @@ class TestSecureReleasePipeline:
             with (
                 patch("empathy_os.workflows.security_audit.SecurityAuditWorkflow") as MockSecurity,
                 patch(
-                    "empathy_os.workflows.release_prep.ReleasePreparationWorkflow"
+                    "empathy_os.workflows.release_prep.ReleasePreparationWorkflow",
                 ) as MockRelease,
             ):
                 # Setup mocks
@@ -621,7 +627,8 @@ class TestSecurityAuditCrewRemediation:
             return_value=("Fix: Update the code", 100, 50),
         ):
             result, input_tokens, output_tokens = await workflow._remediate(
-                input_data, ModelTier.CAPABLE
+                input_data,
+                ModelTier.CAPABLE,
             )
 
             # Check for correct result key

@@ -1,5 +1,4 @@
-"""
-Pattern management API endpoints.
+"""Pattern management API endpoints.
 
 Provides REST API for:
 - Listing patterns with filtering
@@ -39,12 +38,12 @@ router = APIRouter()
 async def list_patterns(
     service: Annotated[MemoryService, Depends(get_memory_service)],
     classification: Annotated[
-        ClassificationEnum | None, Query(description="Filter by classification level")
+        ClassificationEnum | None,
+        Query(description="Filter by classification level"),
     ] = None,
     limit: Annotated[int, Query(ge=1, le=1000, description="Maximum patterns to return")] = 100,
 ) -> PatternListResponse:
-    """
-    List patterns.
+    """List patterns.
 
     Query Parameters:
     - classification: Filter by PUBLIC, INTERNAL, or SENSITIVE
@@ -91,7 +90,7 @@ async def list_patterns(
         logger.error("pattern_list_failed", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to list patterns: {str(e)}",
+            detail=f"Failed to list patterns: {e!s}",
         )
 
 
@@ -105,8 +104,7 @@ async def export_patterns(
     request: ExportPatternsRequest,
     service: Annotated[MemoryService, Depends(get_memory_service)],
 ) -> ExportPatternsResponse:
-    """
-    Export patterns to JSON file.
+    """Export patterns to JSON file.
 
     Request body:
     - classification: Optional filter (PUBLIC/INTERNAL/SENSITIVE)
@@ -144,7 +142,7 @@ async def export_patterns(
         logger.error("pattern_export_failed", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to export patterns: {str(e)}",
+            detail=f"Failed to export patterns: {e!s}",
         )
 
 
@@ -154,8 +152,7 @@ async def export_patterns(
     description="Download a previously exported pattern file.",
 )
 async def download_export(filename: str) -> FileResponse:
-    """
-    Download exported pattern file.
+    """Download exported pattern file.
 
     Path Parameters:
     - filename: Name of the exported file
@@ -184,7 +181,7 @@ async def download_export(filename: str) -> FileResponse:
         logger.error("export_download_failed", filename=filename, error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to download export: {str(e)}",
+            detail=f"Failed to download export: {e!s}",
         )
 
 
@@ -198,8 +195,7 @@ async def delete_pattern(
     service: Annotated[MemoryService, Depends(get_memory_service)],
     user_id: Annotated[str, Query(description="User performing deletion")] = "admin@system",
 ) -> dict[str, bool]:
-    """
-    Delete a pattern.
+    """Delete a pattern.
 
     Path Parameters:
     - pattern_id: ID of pattern to delete
@@ -227,5 +223,5 @@ async def delete_pattern(
         logger.error("pattern_delete_failed", pattern_id=pattern_id, error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to delete pattern: {str(e)}",
+            detail=f"Failed to delete pattern: {e!s}",
         )

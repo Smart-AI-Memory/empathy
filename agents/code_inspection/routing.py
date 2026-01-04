@@ -1,5 +1,4 @@
-"""
-Routing Logic for Code Inspection Pipeline
+"""Routing Logic for Code Inspection Pipeline
 
 Conditional routing functions that determine the pipeline path
 based on Phase 1 results.
@@ -21,8 +20,7 @@ logger = logging.getLogger(__name__)
 def should_run_dynamic_analysis(
     state: CodeInspectionState,
 ) -> Literal["skip_critical_security", "skip_type_errors", "deep_dive", "proceed"]:
-    """
-    Routing function: Decide whether to proceed with dynamic analysis.
+    """Routing function: Decide whether to proceed with dynamic analysis.
 
     Routes based on Phase 1 static analysis results:
     - Skip if critical security issues found
@@ -35,6 +33,7 @@ def should_run_dynamic_analysis(
 
     Returns:
         Route name: skip_critical_security, skip_type_errors, deep_dive, proceed
+
     """
     # Check for critical security issues
     security_result = state.get("security_scan_result")
@@ -79,14 +78,14 @@ def should_run_dynamic_analysis(
 def should_continue_to_learning(
     state: CodeInspectionState,
 ) -> Literal["learn", "skip_learning"]:
-    """
-    Routing function: Decide whether to run learning phase.
+    """Routing function: Decide whether to run learning phase.
 
     Args:
         state: Current inspection state after Phase 3
 
     Returns:
         Route name: learn or skip_learning
+
     """
     if not state.get("learning_enabled", True):
         logger.info("Routing: skip_learning (learning disabled)")
@@ -104,22 +103,21 @@ def should_continue_to_learning(
 def get_severity_route(
     state: CodeInspectionState,
 ) -> Literal["critical", "high", "medium", "low"]:
-    """
-    Get route based on highest severity finding.
+    """Get route based on highest severity finding.
 
     Args:
         state: Current inspection state
 
     Returns:
         Severity level: critical, high, medium, low
+
     """
     findings_by_severity = state.get("findings_by_severity", {})
 
     if findings_by_severity.get("critical", 0) > 0:
         return "critical"
-    elif findings_by_severity.get("high", 0) > 0:
+    if findings_by_severity.get("high", 0) > 0:
         return "high"
-    elif findings_by_severity.get("medium", 0) > 0:
+    if findings_by_severity.get("medium", 0) > 0:
         return "medium"
-    else:
-        return "low"
+    return "low"

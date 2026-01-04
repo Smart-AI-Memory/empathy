@@ -1,5 +1,4 @@
-"""
-Security Analysis Wizard (Level 4)
+"""Security Analysis Wizard (Level 4)
 
 Predicts which security vulnerabilities are actually exploitable.
 
@@ -21,8 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class SecurityAnalysisWizard(BaseWizard):
-    """
-    Security Analysis Wizard - Level 4
+    """Security Analysis Wizard - Level 4
 
     Beyond finding vulnerabilities:
     - Predicts which are actually exploitable
@@ -46,8 +44,7 @@ class SecurityAnalysisWizard(BaseWizard):
         self.exploit_analyzer = ExploitAnalyzer()
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze code for security vulnerabilities.
+        """Analyze code for security vulnerabilities.
 
         Context expects:
             - source_files: List of source file paths to scan
@@ -57,6 +54,7 @@ class SecurityAnalysisWizard(BaseWizard):
 
         Returns:
             Analysis with vulnerabilities, exploitability, predictions
+
         """
         source_files = context.get("source_files", [])
         project_path = context.get("project_path", ".")
@@ -98,7 +96,7 @@ class SecurityAnalysisWizard(BaseWizard):
             key=lambda a: (
                 {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3}.get(a.exploitability, 4),
                 -a.exploit_likelihood,
-            )
+            ),
         )
 
         # Phase 3: Generate insights
@@ -179,10 +177,11 @@ class SecurityAnalysisWizard(BaseWizard):
         return by_category
 
     def _generate_insights(
-        self, vulnerabilities: list[dict[str, Any]], assessments: list[ExploitabilityAssessment]
+        self,
+        vulnerabilities: list[dict[str, Any]],
+        assessments: list[ExploitabilityAssessment],
     ) -> dict[str, Any]:
         """Generate security insights"""
-
         # Most common vulnerability type
         by_category = self._group_by_category(vulnerabilities)
         most_common = max(by_category.items(), key=lambda x: x[1])[0] if by_category else "none"
@@ -208,10 +207,11 @@ class SecurityAnalysisWizard(BaseWizard):
         }
 
     def _generate_predictions(
-        self, assessments: list[ExploitabilityAssessment], insights: dict[str, Any]
+        self,
+        assessments: list[ExploitabilityAssessment],
+        insights: dict[str, Any],
     ) -> list[dict[str, Any]]:
         """Generate Level 4 predictions"""
-
         predictions = []
 
         # Prediction 1: Imminent exploitation risk
@@ -231,7 +231,7 @@ class SecurityAnalysisWizard(BaseWizard):
                         a.vulnerability.get("example_safe", "Fix vulnerability")
                         for a in immediate_risks[:3]
                     ],
-                }
+                },
             )
 
         # Prediction 2: Public exposure risk
@@ -254,7 +254,7 @@ class SecurityAnalysisWizard(BaseWizard):
                         "Implement rate limiting",
                         "Add input validation",
                     ],
-                }
+                },
             )
 
         # Prediction 3: Attack pattern concentration
@@ -272,23 +272,24 @@ class SecurityAnalysisWizard(BaseWizard):
                         "Add automated security scanning to CI/CD",
                         "Conduct security training",
                     ],
-                }
+                },
             )
 
         return predictions
 
     def _generate_recommendations(
-        self, assessments: list[ExploitabilityAssessment], insights: dict[str, Any]
+        self,
+        assessments: list[ExploitabilityAssessment],
+        insights: dict[str, Any],
     ) -> list[str]:
         """Generate actionable recommendations"""
-
         recommendations = []
 
         # Immediate actions
         if insights["immediate_action_required"] > 0:
             recommendations.append(
                 f"🚨 CRITICAL: Fix {insights['immediate_action_required']} "
-                "vulnerabilities BEFORE next deployment"
+                "vulnerabilities BEFORE next deployment",
             )
 
         # Category-specific recommendations
@@ -304,7 +305,7 @@ class SecurityAnalysisWizard(BaseWizard):
         if insights["public_exposure"] > 0:
             recommendations.append(
                 f"{insights['public_exposure']} publicly exposed endpoints - "
-                "Add authentication and rate limiting"
+                "Add authentication and rate limiting",
             )
 
         # Top priority fixes
@@ -312,7 +313,7 @@ class SecurityAnalysisWizard(BaseWizard):
             if assessment.exploitability in ["CRITICAL", "HIGH"]:
                 vuln = assessment.vulnerability
                 recommendations.append(
-                    f"{assessment.exploitability}: {vuln['name']} in {Path(vuln['file_path']).name}:{vuln['line_number']}"
+                    f"{assessment.exploitability}: {vuln['name']} in {Path(vuln['file_path']).name}:{vuln['line_number']}",
                 )
 
         # General best practices

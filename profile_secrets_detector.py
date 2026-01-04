@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-Performance profiling for Secrets Detector module
+"""Performance profiling for Secrets Detector module
 
 Profiles secrets detection performance to identify optimization targets.
 Target: <8ms/KB (current: 10-20ms/KB)

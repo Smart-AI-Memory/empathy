@@ -1,5 +1,4 @@
-"""
-LangGraph Adapter
+"""LangGraph Adapter
 
 Creates stateful multi-agent workflows using LangGraph's graph primitives.
 Best for complex workflows with cycles, conditional routing, and state management.
@@ -79,7 +78,7 @@ class LangGraphAgent(BaseAgent):
 
             # Extract output from messages or output key
             if isinstance(result, dict):
-                if "messages" in result and result["messages"]:
+                if result.get("messages"):
                     output = result["messages"][-1].get("content", str(result["messages"][-1]))
                 else:
                     output = result.get("output", str(result))
@@ -154,7 +153,7 @@ class LangGraphWorkflow(BaseWorkflow):
 
             # Extract output
             if isinstance(result, dict):
-                if "messages" in result and result["messages"]:
+                if result.get("messages"):
                     output = result["messages"][-1].get("content", "")
                 else:
                     output = result.get("output", str(result))
@@ -198,7 +197,7 @@ class LangGraphAdapter(BaseAdapter):
     def __init__(self, provider: str = "anthropic", api_key: str | None = None):
         self.provider = provider
         self.api_key = api_key or os.getenv(
-            "ANTHROPIC_API_KEY" if provider == "anthropic" else "OPENAI_API_KEY"
+            "ANTHROPIC_API_KEY" if provider == "anthropic" else "OPENAI_API_KEY",
         )
 
     @property
@@ -211,7 +210,8 @@ class LangGraphAdapter(BaseAdapter):
     def _get_llm(self, config: AgentConfig) -> Any:
         """Get LangChain LLM for use in LangGraph."""
         model_id = config.model_override or self.get_model_for_tier(
-            config.model_tier, self.provider
+            config.model_tier,
+            self.provider,
         )
 
         if self.provider == "anthropic":
@@ -224,7 +224,7 @@ class LangGraphAdapter(BaseAdapter):
                 temperature=config.temperature,
                 max_tokens_to_sample=config.max_tokens,  # Anthropic uses max_tokens_to_sample
             )
-        elif self.provider == "openai":
+        if self.provider == "openai":
             from langchain_openai import ChatOpenAI
 
             return ChatOpenAI(
@@ -233,8 +233,7 @@ class LangGraphAdapter(BaseAdapter):
                 temperature=config.temperature,
                 max_tokens=config.max_tokens,
             )
-        else:
-            raise ValueError(f"Unsupported provider: {self.provider}")
+        raise ValueError(f"Unsupported provider: {self.provider}")
 
     def create_agent(self, config: AgentConfig) -> LangGraphAgent:
         """Create a LangGraph-compatible agent."""
@@ -251,7 +250,7 @@ class LangGraphAdapter(BaseAdapter):
             [
                 ("system", system),
                 MessagesPlaceholder(variable_name="messages"),
-            ]
+            ],
         )
 
         # Create runnable
@@ -314,7 +313,11 @@ class LangGraphAdapter(BaseAdapter):
         return LangGraphWorkflow(config, agents, graph=graph)
 
     def create_tool(
-        self, name: str, description: str, func: Callable, args_schema: dict | None = None
+        self,
+        name: str,
+        description: str,
+        func: Callable,
+        args_schema: dict | None = None,
     ) -> Any:
         """Create a tool (same as LangChain)."""
         if not self.is_available():

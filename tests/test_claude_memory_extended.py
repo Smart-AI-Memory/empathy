@@ -1,5 +1,4 @@
-"""
-Extended Tests for Claude Memory Integration - Coverage Improvement
+"""Extended Tests for Claude Memory Integration - Coverage Improvement
 
 This test suite focuses on improving coverage from 72% to 95% by testing:
 1. Enterprise memory loading from multiple sources
@@ -309,7 +308,7 @@ class TestImportProcessing:
 
 ## Content after import
 Regular content
-"""
+""",
         )
 
         config = ClaudeMemoryConfig(enabled=True, load_enterprise=False, load_user=False)
@@ -936,7 +935,7 @@ class TestMultipleImportsInSingleFile:
 Some content in between
 @./file2.md
 More content
-"""
+""",
         )
 
         config = ClaudeMemoryConfig(enabled=True, load_enterprise=False, load_user=False)

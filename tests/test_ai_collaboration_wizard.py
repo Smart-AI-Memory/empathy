@@ -1,5 +1,4 @@
-"""
-Tests for AICollaborationWizard - Level 4 Anticipatory Empathy.
+"""Tests for AICollaborationWizard - Level 4 Anticipatory Empathy.
 
 Tests cover:
 - Initialization and configuration
@@ -59,7 +58,7 @@ def get_response(prompt):
         model="gpt-4",
         messages=[{"role": "user", "content": prompt}]
     )
-"""
+""",
         )
         return {
             "ai_integration_files": [str(test_file)],
@@ -142,7 +141,7 @@ def call_ai(prompt):
         model="gpt-4",
         messages=[{"role": "user", "content": prompt}]
     )
-"""
+""",
             )
 
         files = [str(f) for f in tmp_path.glob("*.py")]
@@ -204,7 +203,7 @@ class AdvancedAI:
 
     def analyze_trajectory(self):
         return self.trajectory.predict_bottleneck()
-"""
+""",
         )
 
         issues = await wizard._analyze_collaboration_maturity([str(advanced_file)], [])
@@ -313,7 +312,7 @@ class MatureAI:
 
     def contribute_patterns(self, pattern):
         self.patterns.add_cross_domain(pattern)
-"""
+""",
         )
 
         predictions = await wizard._predict_collaboration_bottlenecks([str(mature_file)], [], {})
@@ -345,7 +344,7 @@ class TestRecommendations:
                 "alert": "Test alert message",
                 "impact": "high",
                 "prevention_steps": ["Step 1", "Step 2"],
-            }
+            },
         ]
 
         recommendations = wizard._generate_recommendations(issues, predictions)
@@ -450,7 +449,7 @@ class Analyzer:
         return self.growth_rate()
     def anticipatory(self):
         pass
-"""
+""",
         )
 
         level = wizard._assess_maturity_level_numeric([str(test_file)])
@@ -464,7 +463,7 @@ class Analyzer:
 from patterns import PatternLibrary
 def detect_patterns():
     pass
-"""
+""",
         )
 
         level = wizard._assess_maturity_level_numeric([str(test_file)])
@@ -477,7 +476,7 @@ def detect_patterns():
             """
 state = CollaborationState()
 context_history = []
-"""
+""",
         )
 
         level = wizard._assess_maturity_level_numeric([str(test_file)])
@@ -507,7 +506,7 @@ class TestHelperDetectionMethods:
 import openai
 def simple_call():
     return openai.chat.completions.create()
-"""
+""",
         )
 
         count = wizard._detect_reactive_patterns([str(test_file)])
@@ -521,7 +520,7 @@ def simple_call():
 import openai
 def call_with_context(context):
     return openai.chat.completions.create(context=context)
-"""
+""",
         )
 
         count = wizard._detect_reactive_patterns([str(test_file)])
@@ -562,7 +561,7 @@ def call_with_context(context):
             """
 def analyze_trajectory():
     return growth_rate()
-"""
+""",
         )
 
         assert wizard._has_trajectory_analysis([str(test_file)]) is True
@@ -611,7 +610,7 @@ state = CollaborationState()
 context_history = []
 self.trust_level = 0.5
 feedback = QualityTracker()
-"""
+""",
         )
 
         assert wizard._ai_used_as_tool([str(test_file)]) is False
@@ -716,7 +715,7 @@ class AIService:
             model="gpt-4",
             messages=[{"role": "user", "content": prompt}]
         )
-"""
+""",
         )
 
         context = {
@@ -761,7 +760,7 @@ class MatureAICollaboration:
     def contribute_patterns(self, pattern):
         self.patterns.add_cross_domain(pattern)
         self.shared_patterns.publish(pattern)
-"""
+""",
         )
 
         context = {

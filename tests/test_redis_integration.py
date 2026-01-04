@@ -1,5 +1,4 @@
-"""
-Integration Tests for Redis Short-Term Memory
+"""Integration Tests for Redis Short-Term Memory
 
 These tests run against a REAL Redis instance, not the mock.
 They verify that all features work correctly with actual Redis.

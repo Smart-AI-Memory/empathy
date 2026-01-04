@@ -1,5 +1,4 @@
-"""
-Comprehensive QA Tests for New Wizards (10 wizards)
+"""Comprehensive QA Tests for New Wizards (10 wizards)
 
 Tests all 10 new wizards with various inputs, edge cases, and collaboration patterns.
 
@@ -55,7 +54,10 @@ class TestNewWizardRouting:
 
         for task_desc in test_cases:
             task = WizardTask(
-                role="developer", task=task_desc, context="Code quality", risk_tolerance="low"
+                role="developer",
+                task=task_desc,
+                context="Code quality",
+                risk_tolerance="low",
             )
             result = await coach.process(task, multi_wizard=False)
             assert "RefactoringWizard" in result.routing, f"Failed for: {task_desc}"
@@ -76,7 +78,10 @@ class TestNewWizardRouting:
 
         for task_desc in test_cases:
             task = WizardTask(
-                role="developer", task=task_desc, context="API development", risk_tolerance="medium"
+                role="developer",
+                task=task_desc,
+                context="API development",
+                risk_tolerance="medium",
             )
             result = await coach.process(task, multi_wizard=False)
             assert "APIWizard" in result.routing, f"Failed for: {task_desc}"
@@ -97,7 +102,10 @@ class TestNewWizardRouting:
 
         for task_desc in test_cases:
             task = WizardTask(
-                role="developer", task=task_desc, context="Database work", risk_tolerance="low"
+                role="developer",
+                task=task_desc,
+                context="Database work",
+                risk_tolerance="low",
             )
             result = await coach.process(task, multi_wizard=False)
             assert "DatabaseWizard" in result.routing, f"Failed for: {task_desc}"
@@ -118,7 +126,10 @@ class TestNewWizardRouting:
 
         for task_desc in test_cases:
             task = WizardTask(
-                role="developer", task=task_desc, context="Infrastructure", risk_tolerance="medium"
+                role="developer",
+                task=task_desc,
+                context="Infrastructure",
+                risk_tolerance="medium",
             )
             result = await coach.process(task, multi_wizard=False)
             assert "DevOpsWizard" in result.routing, f"Failed for: {task_desc}"
@@ -139,7 +150,10 @@ class TestNewWizardRouting:
 
         for task_desc in test_cases:
             task = WizardTask(
-                role="team_lead", task=task_desc, context="Team growth", risk_tolerance="low"
+                role="team_lead",
+                task=task_desc,
+                context="Team growth",
+                risk_tolerance="low",
             )
             result = await coach.process(task, multi_wizard=False)
             assert "OnboardingWizard" in result.routing, f"Failed for: {task_desc}"
@@ -408,7 +422,10 @@ class TestEdgeCases:
         coach = Coach()
 
         task = WizardTask(
-            role="developer", task="Fix the thing", context="It's broken", risk_tolerance="medium"
+            role="developer",
+            task="Fix the thing",
+            context="It's broken",
+            risk_tolerance="medium",
         )
 
         result = await coach.process(task, multi_wizard=False)
@@ -481,7 +498,8 @@ class TestLevel4Anticipatory:
 
         # Should have scaling forecast artifact
         scaling_artifact = next(
-            (a for a in output.artifacts if "Scaling" in a.title or "Projection" in a.title), None
+            (a for a in output.artifacts if "Scaling" in a.title or "Projection" in a.title),
+            None,
         )
         assert scaling_artifact is not None, "Should predict future scaling issues"
         assert "days" in scaling_artifact.content.lower(), "Should include timeline predictions"

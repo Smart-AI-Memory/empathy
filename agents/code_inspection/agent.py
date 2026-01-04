@@ -1,5 +1,4 @@
-"""
-Code Inspection Agent - LangGraph Implementation
+"""Code Inspection Agent - LangGraph Implementation
 
 Multi-agent orchestrated code inspection pipeline with parallel execution,
 cross-tool intelligence, and pattern learning.
@@ -51,8 +50,7 @@ except ImportError:
 
 
 class CodeInspectionAgent:
-    """
-    Code Inspection Agent with parallel execution and cross-tool intelligence.
+    """Code Inspection Agent with parallel execution and cross-tool intelligence.
 
     Uses LangGraph for orchestration when available, falls back to
     simple sequential execution otherwise.
@@ -72,14 +70,14 @@ class CodeInspectionAgent:
         use_langgraph: bool = True,
         baseline_enabled: bool = True,
     ):
-        """
-        Initialize the Code Inspection Agent.
+        """Initialize the Code Inspection Agent.
 
         Args:
             parallel_mode: Run Phase 1 tools in parallel
             learning_enabled: Extract patterns for future use
             use_langgraph: Use LangGraph for orchestration (if available)
             baseline_enabled: Apply baseline suppression filtering
+
         """
         self.parallel_mode = parallel_mode
         self.learning_enabled = learning_enabled
@@ -92,8 +90,7 @@ class CodeInspectionAgent:
             self._agent = None
 
     def _create_langgraph_agent(self) -> Any:
-        """
-        Create LangGraph StateGraph for pipeline orchestration.
+        """Create LangGraph StateGraph for pipeline orchestration.
 
         Following the pattern from compliance_anticipation_agent.py.
         """
@@ -143,8 +140,7 @@ class CodeInspectionAgent:
         exclude_patterns: list[str] | None = None,
         output_format: str = "terminal",
     ) -> CodeInspectionState:
-        """
-        Run code inspection pipeline.
+        """Run code inspection pipeline.
 
         Args:
             project_path: Root path to inspect
@@ -155,6 +151,7 @@ class CodeInspectionAgent:
 
         Returns:
             Final inspection state with all results
+
         """
         logger.info(f"Starting code inspection for {project_path}")
 
@@ -179,7 +176,7 @@ class CodeInspectionAgent:
         logger.info(
             f"Inspection complete: Score={final_state['overall_health_score']}/100, "
             f"Status={final_state['health_status']}, "
-            f"Findings={final_state['total_findings']}"
+            f"Findings={final_state['total_findings']}",
         )
 
         return final_state
@@ -233,8 +230,7 @@ class CodeInspectionAgent:
         state: CodeInspectionState,
         output_format: str = "terminal",
     ) -> str:
-        """
-        Format inspection report for output.
+        """Format inspection report for output.
 
         Args:
             state: Final inspection state
@@ -242,17 +238,17 @@ class CodeInspectionAgent:
 
         Returns:
             Formatted report string
+
         """
         if output_format == "json":
             return format_report_json(state)
-        elif output_format == "markdown":
+        if output_format == "markdown":
             return format_report_markdown(state)
-        elif output_format == "sarif":
+        if output_format == "sarif":
             return format_report_sarif(state)
-        elif output_format == "html":
+        if output_format == "html":
             return format_report_html(state)
-        else:
-            return format_report_terminal(state)
+        return format_report_terminal(state)
 
 
 # =============================================================================
@@ -266,8 +262,7 @@ async def run_inspection(
     learning_enabled: bool = True,
     output_format: str = "terminal",
 ) -> CodeInspectionState:
-    """
-    Convenience function to run code inspection.
+    """Convenience function to run code inspection.
 
     Args:
         project_path: Root path to inspect
@@ -277,6 +272,7 @@ async def run_inspection(
 
     Returns:
         Final inspection state
+
     """
     agent = CodeInspectionAgent(
         parallel_mode=parallel_mode,

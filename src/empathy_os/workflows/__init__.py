@@ -1,5 +1,4 @@
-"""
-Multi-Model Workflow Templates for Empathy Framework
+"""Multi-Model Workflow Templates for Empathy Framework
 
 Cost-optimized workflow patterns that leverage 3-tier model routing:
 - Haiku (cheap): Summarization, classification, triage
@@ -141,8 +140,7 @@ def discover_workflows(
     include_defaults: bool = True,
     config: "WorkflowConfig | None" = None,
 ) -> dict[str, type[BaseWorkflow]]:
-    """
-    Discover workflows via entry points and config.
+    """Discover workflows via entry points and config.
 
     This function loads workflows registered as entry points under the
     'empathy.workflows' group. This allows third-party packages to register
@@ -175,6 +173,7 @@ def discover_workflows(
         # With HIPAA mode (enables test-gen):
         config = WorkflowConfig.load()  # compliance_mode: hipaa
         workflows = discover_workflows(config=config)
+
     """
     discovered: dict[str, type[BaseWorkflow]] = {}
 
@@ -219,14 +218,14 @@ def discover_workflows(
 
 
 def refresh_workflow_registry(config: "WorkflowConfig | None" = None) -> None:
-    """
-    Refresh the global WORKFLOW_REGISTRY by re-discovering all workflows.
+    """Refresh the global WORKFLOW_REGISTRY by re-discovering all workflows.
 
     Call this after installing new packages that register workflows,
     or after changing the WorkflowConfig (e.g., enabling HIPAA mode).
 
     Args:
         config: Optional WorkflowConfig for enabled/disabled workflows
+
     """
     global WORKFLOW_REGISTRY
     WORKFLOW_REGISTRY.clear()
@@ -234,11 +233,11 @@ def refresh_workflow_registry(config: "WorkflowConfig | None" = None) -> None:
 
 
 def get_opt_in_workflows() -> dict[str, type]:
-    """
-    Get the list of opt-in workflows that require explicit enabling.
+    """Get the list of opt-in workflows that require explicit enabling.
 
     Returns:
         Dictionary of workflow name to class for opt-in workflows
+
     """
     return dict(_OPT_IN_WORKFLOWS)
 
@@ -248,8 +247,7 @@ WORKFLOW_REGISTRY.update(discover_workflows())
 
 
 def get_workflow(name: str) -> type[BaseWorkflow]:
-    """
-    Get a workflow class by name.
+    """Get a workflow class by name.
 
     Args:
         name: Workflow name (e.g., "research", "code-review", "doc-gen")
@@ -259,6 +257,7 @@ def get_workflow(name: str) -> type[BaseWorkflow]:
 
     Raises:
         KeyError: If workflow not found
+
     """
     if name not in WORKFLOW_REGISTRY:
         available = ", ".join(WORKFLOW_REGISTRY.keys())
@@ -267,11 +266,11 @@ def get_workflow(name: str) -> type[BaseWorkflow]:
 
 
 def list_workflows() -> list[dict]:
-    """
-    List all available workflows with descriptions.
+    """List all available workflows with descriptions.
 
     Returns:
         List of workflow info dicts
+
     """
     workflows = []
     for name, cls in WORKFLOW_REGISTRY.items():
@@ -287,70 +286,70 @@ def list_workflows() -> list[dict]:
                 "description": description,
                 "stages": stages,
                 "tier_map": {k: v.value for k, v in tier_map.items()} if tier_map else {},
-            }
+            },
         )
     return workflows
 
 
 __all__ = [
+    "DEFAULT_MODELS",
+    "PROVIDER_MODELS",
+    # Registry and discovery
+    "WORKFLOW_REGISTRY",
     # Base classes
     "BaseWorkflow",
-    "ModelTier",
-    "ModelProvider",
-    "PROVIDER_MODELS",
-    "WorkflowStage",
-    "CostReport",
-    "WorkflowResult",
-    # Step configuration (new)
-    "WorkflowStepConfig",
-    "validate_step_config",
-    "steps_from_tier_map",
-    # Configuration
-    "WorkflowConfig",
-    "ModelConfig",
-    "DEFAULT_MODELS",
-    "get_model",
-    "create_example_config",
-    # Workflow implementations
-    "ResearchSynthesisWorkflow",
-    "CodeReviewWorkflow",
-    "DocumentGenerationWorkflow",
     # New high-value workflows
     "BugPredictionWorkflow",
-    "SecurityAuditWorkflow",
-    "TestGenerationWorkflow",
-    "RefactorPlanWorkflow",
-    "DependencyCheckWorkflow",
-    "ReleasePreparationWorkflow",
-    "PerformanceAuditWorkflow",
-    # Security crew integration (v3.0)
-    "SecureReleasePipeline",
-    "SecureReleaseResult",
     # Code review crew integration (v3.1)
     "CodeReviewPipeline",
     "CodeReviewPipelineResult",
-    "PRReviewWorkflow",
-    "PRReviewResult",
-    # Health check crew integration (v3.1)
-    "HealthCheckWorkflow",
+    "CodeReviewWorkflow",
+    "CostReport",
+    "DependencyCheckWorkflow",
+    "DocumentGenerationWorkflow",
     # Documentation management (v3.5)
     "DocumentationOrchestrator",
-    "OrchestratorResult",
-    "ManageDocumentationCrew",
-    "ManageDocumentationCrewResult",
+    # Health check crew integration (v3.1)
+    "HealthCheckWorkflow",
     # Keyboard Conductor (v3.6)
     "KeyboardShortcutWorkflow",
-    # Registry and discovery
-    "WORKFLOW_REGISTRY",
-    "get_workflow",
-    "list_workflows",
-    "discover_workflows",
-    "refresh_workflow_registry",
-    # Stats for dashboard
-    "get_workflow_stats",
+    "ManageDocumentationCrew",
+    "ManageDocumentationCrewResult",
+    "ModelConfig",
+    "ModelProvider",
+    "ModelTier",
+    "OrchestratorResult",
+    "PRReviewResult",
+    "PRReviewWorkflow",
+    "PerformanceAuditWorkflow",
+    "RefactorPlanWorkflow",
+    "ReleasePreparationWorkflow",
+    # Workflow implementations
+    "ResearchSynthesisWorkflow",
+    # Security crew integration (v3.0)
+    "SecureReleasePipeline",
+    "SecureReleaseResult",
+    "SecurityAuditWorkflow",
+    "TestGenerationWorkflow",
+    # Configuration
+    "WorkflowConfig",
+    "WorkflowResult",
+    "WorkflowStage",
+    # Step configuration (new)
+    "WorkflowStepConfig",
+    "cmd_fix_all",
+    "cmd_learn",
     # CLI commands (re-exported from workflow_commands.py)
     "cmd_morning",
     "cmd_ship",
-    "cmd_fix_all",
-    "cmd_learn",
+    "create_example_config",
+    "discover_workflows",
+    "get_model",
+    "get_workflow",
+    # Stats for dashboard
+    "get_workflow_stats",
+    "list_workflows",
+    "refresh_workflow_registry",
+    "steps_from_tier_map",
+    "validate_step_config",
 ]

@@ -1,5 +1,4 @@
-"""
-Context Collector
+"""Context Collector
 Gathers IDE context (current file, git status, project structure) for wizards
 
 Copyright 2025 Deep Study AI, LLC
@@ -19,8 +18,7 @@ class ContextCollector:
     """Collects context from IDE environment"""
 
     async def collect(self, document_uri: str, position: dict[str, int] | None = None) -> str:
-        """
-        Collect context for a single file
+        """Collect context for a single file
 
         Args:
             document_uri: File URI (file:///path/to/file.py)
@@ -28,6 +26,7 @@ class ContextCollector:
 
         Returns:
             Rich context string for wizards
+
         """
         file_path = self._uri_to_path(document_uri)
 
@@ -110,7 +109,10 @@ Recent commits: {git_info["recent_commits"]}
             ).strip()
 
             status = subprocess.check_output(
-                ["git", "status", "--short"], cwd=repo_root, text=True, stderr=subprocess.DEVNULL
+                ["git", "status", "--short"],
+                cwd=repo_root,
+                text=True,
+                stderr=subprocess.DEVNULL,
             ).strip()
 
             commits = subprocess.check_output(

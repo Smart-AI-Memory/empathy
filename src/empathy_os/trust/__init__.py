@@ -1,5 +1,4 @@
-"""
-Trust Management Module
+"""Trust Management Module
 
 Cross-domain transfer of reliability patterns to human-AI trust management.
 Implements Level 5 (Systems Thinking) capability.
@@ -20,10 +19,10 @@ from .circuit_breaker import (
 
 __all__ = [
     "TrustCircuitBreaker",
-    "TrustState",
+    "TrustConfig",
     "TrustDamageEvent",
     "TrustDamageType",
     "TrustRecoveryEvent",
-    "TrustConfig",
+    "TrustState",
     "create_trust_breaker",
 ]

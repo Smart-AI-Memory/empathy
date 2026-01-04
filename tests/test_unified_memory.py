@@ -1,5 +1,4 @@
-"""
-Comprehensive tests for Unified Memory Module
+"""Comprehensive tests for Unified Memory Module
 
 Tests cover:
 - UnifiedMemory initialization
@@ -844,7 +843,8 @@ class TestUnifiedMemoryIntegration:
 
             # Long-term operation
             pattern_result = memory.persist_pattern(
-                content="Permanent knowledge", pattern_type="knowledge"
+                content="Permanent knowledge",
+                pattern_type="knowledge",
             )
 
             # Both should succeed

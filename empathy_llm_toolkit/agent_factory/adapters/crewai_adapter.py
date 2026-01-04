@@ -1,5 +1,4 @@
-"""
-CrewAI Adapter
+"""CrewAI Adapter
 
 Creates agents using CrewAI's role/goal/backstory pattern while integrating
 with Empathy's cost optimization and pattern learning.
@@ -50,19 +49,18 @@ class CrewAIAgent(BaseAgent):
     """Agent wrapping a CrewAI Agent."""
 
     def __init__(self, config: AgentConfig, crewai_agent=None):
-        """
-        Initialize CrewAI agent wrapper.
+        """Initialize CrewAI agent wrapper.
 
         Args:
             config: Agent configuration
             crewai_agent: The underlying CrewAI Agent instance
+
         """
         super().__init__(config)
         self._crewai_agent = crewai_agent
 
     async def invoke(self, input_data: str | dict, context: dict | None = None) -> dict:
-        """
-        Invoke the CrewAI agent.
+        """Invoke the CrewAI agent.
 
         CrewAI agents work within crews/tasks, so we create a temporary
         task for standalone invocation.
@@ -112,7 +110,7 @@ class CrewAIAgent(BaseAgent):
 
         except Exception as e:
             return {
-                "output": f"Error: {str(e)}",
+                "output": f"Error: {e!s}",
                 "metadata": {"error": str(e), "framework": "crewai"},
             }
 
@@ -123,20 +121,18 @@ class CrewAIAgent(BaseAgent):
             # For standalone execution, we use the agent's execute_task method
             if hasattr(task, "execute"):
                 return task.execute()
-            elif hasattr(self._crewai_agent, "execute_task"):
+            if hasattr(self._crewai_agent, "execute_task"):
                 return self._crewai_agent.execute_task(task)
-            else:
-                # Fallback: create minimal crew
-                from crewai import Crew
+            # Fallback: create minimal crew
+            from crewai import Crew
 
-                crew = Crew(agents=[self._crewai_agent], tasks=[task], verbose=False)
-                return crew.kickoff()
+            crew = Crew(agents=[self._crewai_agent], tasks=[task], verbose=False)
+            return crew.kickoff()
         except Exception as e:
             return f"Task execution error: {e}"
 
     async def stream(self, input_data: str | dict, context: dict | None = None):
-        """
-        Stream CrewAI response.
+        """Stream CrewAI response.
 
         Note: CrewAI doesn't natively support streaming, so we simulate
         by yielding the complete response.
@@ -154,13 +150,13 @@ class CrewAIWorkflow(BaseWorkflow):
     """Workflow using CrewAI's Crew orchestration."""
 
     def __init__(self, config: WorkflowConfig, agents: list[BaseAgent], crew=None):
-        """
-        Initialize CrewAI workflow.
+        """Initialize CrewAI workflow.
 
         Args:
             config: Workflow configuration
             agents: List of CrewAIAgent instances
             crew: Optional pre-built CrewAI Crew instance
+
         """
         super().__init__(config, agents)
         self._crew = crew
@@ -204,8 +200,7 @@ class CrewAIWorkflow(BaseWorkflow):
             }
 
     async def stream(self, input_data: str | dict, initial_state: dict | None = None):
-        """
-        Stream workflow execution.
+        """Stream workflow execution.
 
         Note: CrewAI doesn't support streaming, so we yield progress updates.
         """
@@ -216,13 +211,13 @@ class CrewAIWorkflow(BaseWorkflow):
         yield {"event": "crew_end", "result": result}
 
     def add_task(self, description: str, expected_output: str, agent_name: str) -> None:
-        """
-        Add a task to the workflow.
+        """Add a task to the workflow.
 
         Args:
             description: Task description
             expected_output: Expected output description
             agent_name: Name of agent to assign task to
+
         """
         if not _check_crewai():
             return
@@ -243,16 +238,16 @@ class CrewAIAdapter(BaseAdapter):
     """Adapter for CrewAI framework."""
 
     def __init__(self, provider: str = "openai", api_key: str | None = None):
-        """
-        Initialize CrewAI adapter.
+        """Initialize CrewAI adapter.
 
         Args:
             provider: LLM provider (openai is default for CrewAI)
             api_key: API key (uses env var if not provided)
+
         """
         self.provider = provider
         self.api_key = api_key or os.getenv(
-            "OPENAI_API_KEY" if provider == "openai" else "ANTHROPIC_API_KEY"
+            "OPENAI_API_KEY" if provider == "openai" else "ANTHROPIC_API_KEY",
         )
 
     @property
@@ -328,7 +323,11 @@ class CrewAIAdapter(BaseAdapter):
         return CrewAIWorkflow(config, agents, crew)
 
     def create_tool(
-        self, name: str, description: str, func: Callable, args_schema: dict | None = None
+        self,
+        name: str,
+        description: str,
+        func: Callable,
+        args_schema: dict | None = None,
     ) -> Any:
         """Create a CrewAI tool."""
         if not self.is_available():

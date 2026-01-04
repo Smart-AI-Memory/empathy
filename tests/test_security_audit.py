@@ -1,5 +1,4 @@
-"""
-Tests for src/empathy_os/workflows/security_audit.py
+"""Tests for src/empathy_os/workflows/security_audit.py
 
 Comprehensive tests covering:
 - SKIP_DIRECTORIES set
@@ -115,7 +114,7 @@ def mock_team_decisions(temp_dir):
             }
         ]
     }
-    """
+    """,
     )
     return temp_dir
 
@@ -735,7 +734,8 @@ class TestWorkflowInit:
     def test_crew_config(self):
         """Should accept crew configuration."""
         workflow = SecurityAuditWorkflow(
-            use_crew_for_remediation=True, crew_config={"scan_depth": "deep"}
+            use_crew_for_remediation=True,
+            crew_config={"scan_depth": "deep"},
         )
         assert workflow.use_crew_for_remediation is True
         assert workflow.crew_config == {"scan_depth": "deep"}
@@ -925,7 +925,8 @@ class TestIntegration:
         test_file.write_text('password = "hardcoded123"')
 
         result, in_tokens, out_tokens = await workflow._triage(
-            {"path": str(temp_dir), "file_types": [".py"]}, ModelTier.CHEAP
+            {"path": str(temp_dir), "file_types": [".py"]},
+            ModelTier.CHEAP,
         )
 
         assert "findings" in result
@@ -940,7 +941,8 @@ class TestIntegration:
         (node_modules / "vulnerable.py").write_text('password = "secret123"')
 
         result, _, _ = await workflow._triage(
-            {"path": str(temp_dir), "file_types": [".py"]}, ModelTier.CHEAP
+            {"path": str(temp_dir), "file_types": [".py"]},
+            ModelTier.CHEAP,
         )
 
         # The file in node_modules should be skipped
@@ -954,8 +956,8 @@ class TestIntegration:
 
         input_data = {
             "findings": [
-                {"type": "insecure_random", "file": "test.py", "line": 1, "severity": "medium"}
-            ]
+                {"type": "insecure_random", "file": "test.py", "line": 1, "severity": "medium"},
+            ],
         }
 
         result, _, _ = await workflow._analyze(input_data, ModelTier.CAPABLE)
@@ -971,7 +973,7 @@ class TestIntegration:
             "needs_review": [
                 {"type": "sql_injection", "severity": "critical", "owasp": "A03:2021 Injection"},
                 {"type": "xss", "severity": "high", "owasp": "A03:2021 Injection"},
-            ]
+            ],
         }
 
         result, _, _ = await workflow._assess(input_data, ModelTier.CAPABLE)
@@ -986,8 +988,8 @@ class TestIntegration:
         """Assess stage should set _has_critical flag."""
         input_data = {
             "needs_review": [
-                {"type": "sql_injection", "severity": "critical", "owasp": "A03:2021 Injection"}
-            ]
+                {"type": "sql_injection", "severity": "critical", "owasp": "A03:2021 Injection"},
+            ],
         }
 
         await workflow._assess(input_data, ModelTier.CAPABLE)
@@ -1040,7 +1042,7 @@ class TestIntegration:
                     "severity": "critical",
                     "remediation": "Use parameterized queries",
                     "cwe_id": "CWE-89",
-                }
+                },
             ],
             "agents_used": ["vulnerability_scanner", "remediation_expert"],
         }

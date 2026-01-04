@@ -1,5 +1,4 @@
-"""
-Prompt Templates
+"""Prompt Templates
 
 Provides protocol and implementations for prompt templates,
 including XML-structured prompts.
@@ -20,22 +19,21 @@ class PromptTemplate(Protocol):
     """Protocol for prompt templates."""
 
     def render(self, context: PromptContext) -> str:
-        """
-        Render the template with given context.
+        """Render the template with given context.
 
         Args:
             context: The prompt context containing role, goal, instructions, etc.
 
         Returns:
             The rendered prompt string.
+
         """
         ...
 
 
 @dataclass
 class PlainTextPromptTemplate:
-    """
-    Simple plain text prompt template.
+    """Simple plain text prompt template.
 
     Renders prompts in a straightforward text format without XML structure.
     """
@@ -76,8 +74,7 @@ class PlainTextPromptTemplate:
 
 @dataclass
 class XmlPromptTemplate:
-    """
-    XML-structured prompt template.
+    """XML-structured prompt template.
 
     Renders prompts in XML format for consistent parsing and
     structured LLM interactions.
@@ -89,14 +86,14 @@ class XmlPromptTemplate:
     extra_tags: dict[str, str] = field(default_factory=dict)
 
     def render(self, context: PromptContext) -> str:
-        """
-        Render XML prompt from context.
+        """Render XML prompt from context.
 
         Args:
             context: The prompt context.
 
         Returns:
             XML-formatted prompt string.
+
         """
         # Build instructions XML
         instructions_xml = self._render_instructions(context.instructions)
@@ -192,8 +189,7 @@ Important:
         )
 
     def _escape_cdata(self, text: str) -> str:
-        """
-        Escape text for use in CDATA section.
+        """Escape text for use in CDATA section.
 
         CDATA sections can contain anything except the closing sequence ]]>
         """

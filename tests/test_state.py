@@ -1,5 +1,4 @@
-"""
-Comprehensive tests for Collaboration State Management
+"""Comprehensive tests for Collaboration State Management
 
 Tests cover:
 - UserPattern class and should_act method
@@ -158,7 +157,10 @@ class TestCollaborationState:
         state = CollaborationState(user_id="user123")
 
         state.add_interaction(
-            role="user", content="Can you help me?", empathy_level=1, metadata={"type": "question"}
+            role="user",
+            content="Can you help me?",
+            empathy_level=1,
+            metadata={"type": "question"},
         )
 
         assert len(state.interactions) == 1

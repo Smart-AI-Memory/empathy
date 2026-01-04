@@ -1,5 +1,4 @@
-"""
-Tests for Redis Short-Term Memory
+"""Tests for Redis Short-Term Memory
 
 Tests cover:
 - Role-based access control

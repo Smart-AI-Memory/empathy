@@ -1,5 +1,4 @@
-"""
-Educational Tests for Long-Term Memory (Phase 2 Completion)
+"""Educational Tests for Long-Term Memory (Phase 2 Completion)
 
 Learning Objectives:
 - Testing encryption and decryption (AES-256-GCM)
@@ -30,8 +29,7 @@ class TestClassificationSystem:
     """Educational tests for three-tier classification."""
 
     def test_classification_enum_values(self):
-        """
-        Teaching Pattern: Testing security classification levels.
+        """Teaching Pattern: Testing security classification levels.
 
         Three-tier system: PUBLIC → INTERNAL → SENSITIVE
         """
@@ -40,8 +38,7 @@ class TestClassificationSystem:
         assert Classification.SENSITIVE.value == "SENSITIVE"
 
     def test_default_classification_rules(self):
-        """
-        Teaching Pattern: Testing security policy defaults.
+        """Teaching Pattern: Testing security policy defaults.
 
         Each classification has different security requirements.
         """
@@ -57,8 +54,7 @@ class TestClassificationSystem:
         assert sensitive_rules.audit_all_access is True
 
     def test_sensitive_requires_encryption(self):
-        """
-        Teaching Pattern: Testing security requirements.
+        """Teaching Pattern: Testing security requirements.
 
         SENSITIVE classification MUST have encryption enabled.
         """
@@ -66,8 +62,7 @@ class TestClassificationSystem:
         assert rules.encryption_required is True
 
     def test_public_has_longest_retention(self):
-        """
-        Teaching Pattern: Testing business logic.
+        """Teaching Pattern: Testing business logic.
 
         PUBLIC data (anonymized) can be kept longer than SENSITIVE data.
         """
@@ -85,8 +80,7 @@ class TestEncryption:
     """Educational tests for encryption (when available)."""
 
     def test_has_encryption_available(self):
-        """
-        Teaching Pattern: Testing optional dependencies.
+        """Teaching Pattern: Testing optional dependencies.
 
         Skip encryption tests if cryptography library unavailable.
         """
@@ -98,8 +92,7 @@ class TestClassificationRules:
     """Educational tests for classification rule creation."""
 
     def test_create_custom_classification_rule(self):
-        """
-        Teaching Pattern: Testing dataclass creation.
+        """Teaching Pattern: Testing dataclass creation.
 
         Custom security rules for different environments.
         """

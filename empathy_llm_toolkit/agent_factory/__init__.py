@@ -1,5 +1,4 @@
-"""
-Empathy Framework - Universal Agent Factory
+"""Empathy Framework - Universal Agent Factory
 
 Create agents using your preferred framework while retaining Empathy's
 cost optimization, pattern learning, and memory features.
@@ -43,12 +42,12 @@ from empathy_llm_toolkit.agent_factory.factory import AgentFactory
 from empathy_llm_toolkit.agent_factory.framework import Framework
 
 __all__ = [
+    "AgentCapability",
+    "AgentConfig",
     "AgentFactory",
-    "Framework",
+    "AgentRole",
     "BaseAdapter",
     "BaseAgent",
-    "AgentConfig",
-    "AgentRole",
-    "AgentCapability",
+    "Framework",
     "WorkflowConfig",
 ]

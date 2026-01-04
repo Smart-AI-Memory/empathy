@@ -1,5 +1,4 @@
-"""
-Tests for HealthCheckWorkflow.
+"""Tests for HealthCheckWorkflow.
 
 Tests the workflow wrapper for project health diagnosis and fixing.
 """

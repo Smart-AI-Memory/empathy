@@ -1,5 +1,4 @@
-"""
-Tests for Multi-Model Telemetry Module
+"""Tests for Multi-Model Telemetry Module
 
 Tests the telemetry storage and analytics functionality:
 - LLMCallRecord and WorkflowRunRecord dataclasses
@@ -348,7 +347,7 @@ class TestTelemetryAnalytics:
             tiers = ["capable", "capable", "cheap", "premium"]
 
             for i, (wf, prov, cost, tier) in enumerate(
-                zip(workflows, providers, costs, tiers, strict=False)
+                zip(workflows, providers, costs, tiers, strict=False),
             ):
                 record = LLMCallRecord(
                     call_id=f"call-{i}",
@@ -369,7 +368,7 @@ class TestTelemetryAnalytics:
 
             # Add workflow runs
             for i, (wf, cost) in enumerate(
-                [("code_review", 0.08), ("deploy", 0.02), ("analysis", 0.08)]
+                [("code_review", 0.08), ("deploy", 0.02), ("analysis", 0.08)],
             ):
                 run = WorkflowRunRecord(
                     run_id=f"run-{i}",

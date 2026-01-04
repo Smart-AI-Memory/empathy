@@ -1,5 +1,4 @@
-"""
-Advanced Debugging Wizard - Sub-package
+"""Advanced Debugging Wizard - Sub-package
 
 Protocol-based debugging using linting configuration pattern.
 
@@ -20,32 +19,32 @@ from .linter_parsers import LinterParserFactory, LintIssue, Severity, parse_lint
 from .verification import VerificationResult, compare_issue_lists, run_linter, verify_fixes
 
 __all__ = [
-    # Parsing
-    "LintIssue",
-    "Severity",
-    "parse_linter_output",
-    "LinterParserFactory",
-    # Config
-    "LintConfig",
-    "load_config",
-    "ConfigLoaderFactory",
-    # Fixing
-    "FixResult",
-    "apply_fixes",
-    "group_issues_by_fixability",
-    "FixApplierFactory",
-    # Verification
-    "VerificationResult",
-    "run_linter",
-    "verify_fixes",
-    "compare_issue_lists",
     # Risk Analysis (Level 4)
     "BugRisk",
-    "RiskAssessment",
     "BugRiskAnalyzer",
+    "ConfigLoaderFactory",
+    "CrossLanguagePatternLibrary",
+    "FixApplierFactory",
+    # Fixing
+    "FixResult",
+    # Config
+    "LintConfig",
+    # Parsing
+    "LintIssue",
+    "LinterParserFactory",
+    "PatternCategory",
+    "RiskAssessment",
+    "Severity",
     # Cross-Language Patterns (Level 5)
     "UniversalPattern",
-    "PatternCategory",
-    "CrossLanguagePatternLibrary",
+    # Verification
+    "VerificationResult",
+    "apply_fixes",
+    "compare_issue_lists",
     "get_pattern_library",
+    "group_issues_by_fixability",
+    "load_config",
+    "parse_linter_output",
+    "run_linter",
+    "verify_fixes",
 ]

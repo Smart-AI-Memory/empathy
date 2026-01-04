@@ -1,5 +1,4 @@
-"""
-Example: EmpathyLLM with Phase 3 Security Integration
+"""Example: EmpathyLLM with Phase 3 Security Integration
 
 Demonstrates how to use EmpathyLLM with security controls:
 - PII Scrubbing: Automatic detection and redaction
@@ -43,7 +42,9 @@ async def example_1_basic_security():
 
     try:
         result = await llm.interact(
-            user_id="demo_user@company.com", user_input=user_input, force_level=1
+            user_id="demo_user@company.com",
+            user_input=user_input,
+            force_level=1,
         )
 
         print("✓ Request succeeded")
@@ -111,7 +112,9 @@ async def example_3_log_without_blocking():
 
     try:
         result = await llm.interact(
-            user_id="demo_user@company.com", user_input=user_input, force_level=2
+            user_id="demo_user@company.com",
+            user_input=user_input,
+            force_level=2,
         )
         print("✓ Request succeeded (logged but not blocked)")
         print(f"  Secrets detected: {result['security']['secrets_detected']}")
@@ -156,7 +159,7 @@ async def example_4_all_empathy_levels():
             )
             print(
                 f"Level {level}: ✓ PII={result['security']['pii_detected']}, "
-                f"Secrets={result['security']['secrets_detected']}"
+                f"Secrets={result['security']['secrets_detected']}",
             )
         except Exception as e:
             print(f"Level {level}: ✗ Error: {e}")
@@ -196,7 +199,9 @@ async def example_5_custom_configuration():
 
     try:
         result = await llm.interact(
-            user_id="demo_user@company.com", user_input=user_input, force_level=3
+            user_id="demo_user@company.com",
+            user_input=user_input,
+            force_level=3,
         )
         print("✓ Request succeeded with custom config")
         print(f"  Security metadata: {result['security']}")
@@ -232,7 +237,9 @@ async def example_6_backward_compatibility():
 
     try:
         result = await llm.interact(
-            user_id="demo_user@company.com", user_input=user_input, force_level=2
+            user_id="demo_user@company.com",
+            user_input=user_input,
+            force_level=2,
         )
         print("✓ Request succeeded without security")
         print(f"  'security' in result: {'security' in result}")
@@ -302,7 +309,7 @@ async def example_7_audit_log_inspection():
                 print(f"    Empathy Level: {log_entry['llm']['empathy_level']}")
                 print(
                     f"    Security: PII={log_entry['security']['pii_detected']}, "
-                    f"Secrets={log_entry['security']['secrets_detected']}"
+                    f"Secrets={log_entry['security']['secrets_detected']}",
                 )
     else:
         print(f"\n✗ Audit log not found at: {audit_log_path}")

@@ -1,5 +1,4 @@
-"""
-Centralized Logging Configuration for Empathy Framework
+"""Centralized Logging Configuration for Empathy Framework
 
 Provides professional logging setup with:
 - Console and file logging
@@ -32,12 +31,12 @@ class StructuredFormatter(logging.Formatter):
     BOLD = "\033[1m"
 
     def __init__(self, use_color: bool = True, include_context: bool = False):
-        """
-        Initialize formatter.
+        """Initialize formatter.
 
         Args:
             use_color: Whether to use colored output
             include_context: Whether to include contextual information
+
         """
         self.use_color = use_color and sys.stderr.isatty()
         self.include_context = include_context
@@ -80,8 +79,7 @@ def create_logger(
     max_bytes: int = 10 * 1024 * 1024,  # 10MB
     backup_count: int = 5,
 ) -> logging.Logger:
-    """
-    Create a configured logger instance.
+    """Create a configured logger instance.
 
     Args:
         name: Logger name (typically __name__)
@@ -100,6 +98,7 @@ def create_logger(
         >>> logger = create_logger(__name__, level=logging.DEBUG)
         >>> logger.info("Application started")
         >>> logger.debug("Detailed debug information")
+
     """
     logger = logging.getLogger(name)
 
@@ -157,8 +156,7 @@ class LoggingConfig:
         use_color: bool = True,
         include_context: bool = False,
     ) -> None:
-        """
-        Configure global logging settings.
+        """Configure global logging settings.
 
         Args:
             level: Default logging level
@@ -172,6 +170,7 @@ class LoggingConfig:
             ...     log_dir="./logs",
             ...     use_color=True
             ... )
+
         """
         cls._level = level
         cls._log_dir = log_dir
@@ -185,8 +184,7 @@ class LoggingConfig:
         name: str,
         level: int | None = None,
     ) -> logging.Logger:
-        """
-        Get or create a logger instance.
+        """Get or create a logger instance.
 
         Args:
             name: Logger name (typically __name__)
@@ -198,6 +196,7 @@ class LoggingConfig:
         Example:
             >>> logger = LoggingConfig.get_logger(__name__)
             >>> logger.info("Processing data")
+
         """
         if name not in cls._loggers:
             if not cls._configured:
@@ -224,8 +223,7 @@ class LoggingConfig:
 
 
 def get_logger(name: str) -> logging.Logger:
-    """
-    Convenience function to get a logger.
+    """Convenience function to get a logger.
 
     This is the primary function to use throughout the codebase.
 
@@ -240,6 +238,7 @@ def get_logger(name: str) -> logging.Logger:
         >>> logger = get_logger(__name__)
         >>> logger.info("Starting process")
         >>> logger.debug("Processing item", extra={"context": {"item_id": 123}})
+
     """
     return LoggingConfig.get_logger(name)
 

@@ -1,5 +1,4 @@
-"""
-Dashboard Server for Empathy Framework
+"""Dashboard Server for Empathy Framework
 
 Lightweight web server for viewing patterns, costs, and health.
 Uses built-in http.server to avoid external dependencies.
@@ -52,7 +51,6 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
 
     def log_message(self, format, *args):
         """Suppress default logging."""
-        pass
 
     def do_GET(self):
         """Handle GET requests."""
@@ -596,7 +594,7 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
                     <td><span class="status {status_class}">{status_class}</span></td>
                     <td>{date_display}</td>
                 </tr>
-            """
+            """,
             )
 
         return "".join(rows)
@@ -619,7 +617,7 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
                     <div class="runs">{runs}</div>
                     <div class="savings">${savings:.4f} saved</div>
                 </div>
-            """
+            """,
             )
 
         return "".join(cards)
@@ -681,7 +679,7 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
                         <span class="time">{time_str}</span>
                     </span>
                 </div>
-            """
+            """,
             )
 
         return "".join(runs_html)
@@ -699,14 +697,14 @@ def run_dashboard(
     empathy_dir: str = ".empathy",
     open_browser: bool = True,
 ) -> None:
-    """
-    Run the dashboard server.
+    """Run the dashboard server.
 
     Args:
         port: Port to run on (default: 8765)
         patterns_dir: Path to patterns directory
         empathy_dir: Path to empathy data directory
         open_browser: Open browser automatically
+
     """
     # Configure handler
     DashboardHandler.patterns_dir = patterns_dir
@@ -737,6 +735,9 @@ def cmd_dashboard(args):
     no_browser = getattr(args, "no_browser", False)
 
     run_dashboard(
-        port=port, patterns_dir=patterns_dir, empathy_dir=empathy_dir, open_browser=not no_browser
+        port=port,
+        patterns_dir=patterns_dir,
+        empathy_dir=empathy_dir,
+        open_browser=not no_browser,
     )
     return 0

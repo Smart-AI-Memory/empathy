@@ -1,5 +1,4 @@
-"""
-Epic Integration Wizard - LangChain Agent
+"""Epic Integration Wizard - LangChain Agent
 Multi-step wizard for configuring and testing Epic FHIR integration
 
 Copyright 2025 Smart AI Memory, LLC
@@ -26,8 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 class WizardState(TypedDict):
-    """
-    State for Epic Integration Wizard
+    """State for Epic Integration Wizard
 
     Tracks all wizard steps, user inputs, validation results, and progress.
     Microsoft-style linear progression with validation at each step.
@@ -114,8 +112,7 @@ def create_initial_state() -> WizardState:
 
 
 async def step_1_prerequisites(state: WizardState) -> WizardState:
-    """
-    Step 1: Check Prerequisites
+    """Step 1: Check Prerequisites
 
     Validates system readiness:
     - Python version
@@ -142,7 +139,7 @@ async def step_1_prerequisites(state: WizardState) -> WizardState:
         if not settings.database_url:
             missing.append("Database configuration")
     except Exception as e:
-        missing.append(f"Configuration error: {str(e)}")
+        missing.append(f"Configuration error: {e!s}")
 
     state["prerequisites_checked"] = True
     state["prerequisites_passed"] = len(missing) == 0
@@ -153,7 +150,7 @@ async def step_1_prerequisites(state: WizardState) -> WizardState:
     # Even if automated prerequisites fail, user can still configure Epic manually
     if state["prerequisites_passed"]:
         state["messages"].append(
-            AIMessage(content="✅ All prerequisites met. Ready to configure Epic integration.")
+            AIMessage(content="✅ All prerequisites met. Ready to configure Epic integration."),
         )
     else:
         # Don't block progression - just warn user
@@ -164,8 +161,7 @@ async def step_1_prerequisites(state: WizardState) -> WizardState:
 
 
 async def step_2_credentials(state: WizardState) -> WizardState:
-    """
-    Step 2: Epic Credentials Input
+    """Step 2: Epic Credentials Input
 
     Collects and validates:
     - Epic Client ID
@@ -192,15 +188,14 @@ async def step_2_credentials(state: WizardState) -> WizardState:
     state["completed_steps"].append(2)
     state["current_step"] = 3
     state["messages"].append(
-        AIMessage(content="✅ Epic credentials collected. Ready to test connection.")
+        AIMessage(content="✅ Epic credentials collected. Ready to test connection."),
     )
 
     return state
 
 
 async def step_3_connection_test(state: WizardState) -> WizardState:
-    """
-    Step 3: Test Epic FHIR Connection
+    """Step 3: Test Epic FHIR Connection
 
     Validates:
     - OAuth token can be obtained
@@ -226,13 +221,13 @@ async def step_3_connection_test(state: WizardState) -> WizardState:
             state["oauth_token_obtained"] = True
             state["connection_test_passed"] = True
             state["messages"].append(
-                AIMessage(content="✅ Successfully connected to Epic FHIR API")
+                AIMessage(content="✅ Successfully connected to Epic FHIR API"),
             )
         except Exception as e:
             state["connection_test_error"] = str(e)
             state["connection_test_passed"] = False
-            state["errors"].append(f"OAuth token request failed: {str(e)}")
-            state["messages"].append(AIMessage(content=f"❌ Connection failed: {str(e)}"))
+            state["errors"].append(f"OAuth token request failed: {e!s}")
+            state["messages"].append(AIMessage(content=f"❌ Connection failed: {e!s}"))
             return state
 
         state["completed_steps"].append(3)
@@ -242,14 +237,13 @@ async def step_3_connection_test(state: WizardState) -> WizardState:
         logger.error(f"Connection test failed: {e}", exc_info=True)
         state["connection_test_error"] = str(e)
         state["connection_test_passed"] = False
-        state["errors"].append(f"Connection test error: {str(e)}")
+        state["errors"].append(f"Connection test error: {e!s}")
 
     return state
 
 
 async def step_4_resource_permissions(state: WizardState) -> WizardState:
-    """
-    Step 4: Select FHIR Resources and Scopes
+    """Step 4: Select FHIR Resources and Scopes
 
     User selects which FHIR resources to enable:
     - Patient (demographics)
@@ -284,15 +278,14 @@ async def step_4_resource_permissions(state: WizardState) -> WizardState:
     state["completed_steps"].append(4)
     state["current_step"] = 5
     state["messages"].append(
-        AIMessage(content=f"✅ Configured {len(scopes)} resource permissions: {', '.join(scopes)}")
+        AIMessage(content=f"✅ Configured {len(scopes)} resource permissions: {', '.join(scopes)}"),
     )
 
     return state
 
 
 async def step_5_test_patient_lookup(state: WizardState) -> WizardState:
-    """
-    Step 5: Test Patient Lookup
+    """Step 5: Test Patient Lookup
 
     Validates end-to-end functionality:
     - Search patient by MRN
@@ -316,7 +309,8 @@ async def step_5_test_patient_lookup(state: WizardState) -> WizardState:
         )
 
         epic_client = EpicFHIRClient(
-            base_url=state["epic_fhir_base_url"], oauth_manager=oauth_manager
+            base_url=state["epic_fhir_base_url"],
+            oauth_manager=oauth_manager,
         )
 
         # Search for patient
@@ -332,13 +326,13 @@ async def step_5_test_patient_lookup(state: WizardState) -> WizardState:
             state["patient_data_retrieved"] = True
             state["retrieved_patient_name"] = patient_name
             state["messages"].append(
-                AIMessage(content=f"✅ Successfully retrieved patient: {patient_name}")
+                AIMessage(content=f"✅ Successfully retrieved patient: {patient_name}"),
             )
         else:
             state["patient_test_error"] = "Patient not found"
             state["errors"].append(f"Patient with MRN {state['test_mrn']} not found")
             state["messages"].append(
-                AIMessage(content=f"❌ Patient not found: MRN {state['test_mrn']}")
+                AIMessage(content=f"❌ Patient not found: MRN {state['test_mrn']}"),
             )
             return state
 
@@ -348,15 +342,14 @@ async def step_5_test_patient_lookup(state: WizardState) -> WizardState:
     except Exception as e:
         logger.error(f"Patient lookup failed: {e}", exc_info=True)
         state["patient_test_error"] = str(e)
-        state["errors"].append(f"Patient lookup error: {str(e)}")
-        state["messages"].append(AIMessage(content=f"❌ Patient lookup failed: {str(e)}"))
+        state["errors"].append(f"Patient lookup error: {e!s}")
+        state["messages"].append(AIMessage(content=f"❌ Patient lookup failed: {e!s}"))
 
     return state
 
 
 async def step_6_review_confirm(state: WizardState) -> WizardState:
-    """
-    Step 6: Review and Confirm Configuration
+    """Step 6: Review and Confirm Configuration
 
     Shows summary of all settings for final review:
     - Epic endpoint and credentials
@@ -390,15 +383,14 @@ Please confirm to activate integration.
     state["completed_steps"].append(6)
     state["current_step"] = 7
     state["messages"].append(
-        AIMessage(content="✅ Configuration confirmed. Activating integration...")
+        AIMessage(content="✅ Configuration confirmed. Activating integration..."),
     )
 
     return state
 
 
 async def step_7_complete(state: WizardState) -> WizardState:
-    """
-    Step 7: Complete Integration Setup
+    """Step 7: Complete Integration Setup
 
     Finalizes configuration:
     - Saves settings to database/config
@@ -442,14 +434,14 @@ Next steps:
 1. Train your staff on the Epic integration workflow
 2. Review HIPAA compliance documentation
 3. Monitor integration logs for any issues
-            """
-            )
+            """,
+            ),
         )
 
     except Exception as e:
         logger.error(f"Integration activation failed: {e}", exc_info=True)
-        state["errors"].append(f"Activation error: {str(e)}")
-        state["messages"].append(AIMessage(content=f"❌ Activation failed: {str(e)}"))
+        state["errors"].append(f"Activation error: {e!s}")
+        state["messages"].append(AIMessage(content=f"❌ Activation failed: {e!s}"))
 
     return state
 
@@ -460,8 +452,7 @@ Next steps:
 
 
 def should_continue(state: WizardState) -> str:
-    """
-    Determine next step based on current state
+    """Determine next step based on current state
 
     Microsoft wizard pattern: linear progression with error handling
     """
@@ -482,20 +473,19 @@ def should_continue(state: WizardState) -> str:
 
     if current_step == 1:
         return "prerequisites"
-    elif current_step == 2:
+    if current_step == 2:
         return "credentials"
-    elif current_step == 3:
+    if current_step == 3:
         return "connection_test"
-    elif current_step == 4:
+    if current_step == 4:
         return "resource_permissions"
-    elif current_step == 5:
+    if current_step == 5:
         return "test_patient_lookup"
-    elif current_step == 6:
+    if current_step == 6:
         return "review_confirm"
-    elif current_step == 7:
+    if current_step == 7:
         return "complete"
-    else:
-        return END
+    return END
 
 
 # =============================================================================
@@ -504,8 +494,7 @@ def should_continue(state: WizardState) -> str:
 
 
 def create_epic_wizard_graph():
-    """
-    Create LangGraph workflow for Epic Integration Wizard
+    """Create LangGraph workflow for Epic Integration Wizard
 
     Microsoft-style multi-step wizard:
     Prerequisites → Credentials → Connection Test → Permissions → Patient Test → Review → Complete

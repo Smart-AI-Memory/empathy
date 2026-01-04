@@ -1,5 +1,4 @@
-"""
-Tests for src/empathy_os/workflows/secure_release.py
+"""Tests for src/empathy_os/workflows/secure_release.py
 
 Tests the SecureReleasePipeline including:
 - SecureReleaseResult dataclass

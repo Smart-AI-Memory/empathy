@@ -1,5 +1,4 @@
-"""
-Book Production Pipeline - State Management
+"""Book Production Pipeline - State Management
 
 Defines the shared state structure for multi-agent book production.
 Follows the pattern from compliance_anticipation_agent.py using TypedDict
@@ -74,8 +73,7 @@ class QualityScore(TypedDict):
 
 
 class ChapterProductionState(TypedDict):
-    """
-    Shared state for chapter production pipeline.
+    """Shared state for chapter production pipeline.
 
     Design Philosophy (following compliance_anticipation_agent.py):
     - Each field answers a specific question
@@ -168,8 +166,7 @@ def create_initial_state(
     book_context: str = "",
     target_word_count: int = 4000,
 ) -> ChapterProductionState:
-    """
-    Create initial state for chapter production.
+    """Create initial state for chapter production.
 
     Args:
         chapter_number: Chapter number (e.g., 23)
@@ -180,6 +177,7 @@ def create_initial_state(
 
     Returns:
         Initialized ChapterProductionState
+
     """
     import uuid
 

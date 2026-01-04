@@ -1,5 +1,4 @@
-"""
-Wizard AI Service using LangChain
+"""Wizard AI Service using LangChain
 Provides AI-powered assistance for clinical wizards
 """
 
@@ -23,7 +22,7 @@ class SepsisAssessment(BaseModel):
     risk_factors_present: list[str] = Field(description="List of identified risk factors")
     qsofa_prediction: dict[str, Any] = Field(description="Predicted qSOFA score components")
     recommended_interventions: list[str] = Field(
-        description="Recommended sepsis bundle interventions"
+        description="Recommended sepsis bundle interventions",
     )
     clinical_reasoning: str = Field(description="Brief clinical reasoning for suggestions")
 
@@ -51,9 +50,7 @@ class CardiacAssessment(BaseModel):
 
 
 class WizardAIService:
-    """
-    Service for providing AI-powered assistance to clinical wizards using LangChain
-    """
+    """Service for providing AI-powered assistance to clinical wizards using LangChain"""
 
     def __init__(self):
         """Initialize the wizard AI service with LangChain"""
@@ -70,8 +67,7 @@ class WizardAIService:
         current_vitals: dict[str, Any] | None = None,
         recent_labs: dict[str, Any] | None = None,
     ) -> SepsisAssessment:
-        """
-        Provide AI-powered suggestions for sepsis screening wizard
+        """Provide AI-powered suggestions for sepsis screening wizard
 
         Args:
             patient_context: Patient demographics, history, medications
@@ -80,6 +76,7 @@ class WizardAIService:
 
         Returns:
             SepsisAssessment with AI-generated suggestions
+
         """
         parser = JsonOutputParser(pydantic_object=SepsisAssessment)
 
@@ -111,7 +108,7 @@ Recent Labs:
 
 Provide sepsis screening suggestions with clear clinical reasoning.""",
                 ),
-            ]
+            ],
         )
 
         chain = prompt | self.llm | parser
@@ -123,7 +120,7 @@ Provide sepsis screening suggestions with clear clinical reasoning.""",
                     "current_vitals": str(current_vitals or "Not provided"),
                     "recent_labs": str(recent_labs or "Not provided"),
                     "format_instructions": parser.get_format_instructions(),
-                }
+                },
             )
 
             return SepsisAssessment(**result)
@@ -149,8 +146,7 @@ Provide sepsis screening suggestions with clear clinical reasoning.""",
         symptom_onset_time: str,
         current_symptoms: dict[str, Any],
     ) -> StrokeAssessment:
-        """
-        Provide AI-powered suggestions for stroke assessment wizard
+        """Provide AI-powered suggestions for stroke assessment wizard
 
         Args:
             patient_context: Patient demographics and history
@@ -159,6 +155,7 @@ Provide sepsis screening suggestions with clear clinical reasoning.""",
 
         Returns:
             StrokeAssessment with AI-generated suggestions
+
         """
         parser = JsonOutputParser(pydantic_object=StrokeAssessment)
 
@@ -190,7 +187,7 @@ Current Symptoms:
 
 Provide stroke assessment suggestions with focus on tPA eligibility.""",
                 ),
-            ]
+            ],
         )
 
         chain = prompt | self.llm | parser
@@ -202,7 +199,7 @@ Provide stroke assessment suggestions with focus on tPA eligibility.""",
                     "symptom_onset_time": symptom_onset_time,
                     "current_symptoms": str(current_symptoms),
                     "format_instructions": parser.get_format_instructions(),
-                }
+                },
             )
 
             return StrokeAssessment(**result)
@@ -224,8 +221,7 @@ Provide stroke assessment suggestions with focus on tPA eligibility.""",
         chest_pain_characteristics: dict[str, Any],
         vital_signs: dict[str, Any],
     ) -> CardiacAssessment:
-        """
-        Provide AI-powered suggestions for cardiac assessment wizard
+        """Provide AI-powered suggestions for cardiac assessment wizard
 
         Args:
             patient_context: Patient demographics, history, risk factors
@@ -234,6 +230,7 @@ Provide stroke assessment suggestions with focus on tPA eligibility.""",
 
         Returns:
             CardiacAssessment with AI-generated suggestions
+
         """
         parser = JsonOutputParser(pydantic_object=CardiacAssessment)
 
@@ -266,7 +263,7 @@ Vital Signs:
 
 Provide cardiac assessment suggestions with HEART score and disposition recommendation.""",
                 ),
-            ]
+            ],
         )
 
         chain = prompt | self.llm | parser
@@ -278,7 +275,7 @@ Provide cardiac assessment suggestions with HEART score and disposition recommen
                     "chest_pain_characteristics": str(chest_pain_characteristics),
                     "vital_signs": str(vital_signs),
                     "format_instructions": parser.get_format_instructions(),
-                }
+                },
             )
 
             return CardiacAssessment(**result)
@@ -301,8 +298,7 @@ Provide cardiac assessment suggestions with HEART score and disposition recommen
         patient_context: dict[str, Any],
         current_wizard_data: dict[str, Any],
     ) -> dict[str, Any]:
-        """
-        Provide AI suggestion for a specific wizard field
+        """Provide AI suggestion for a specific wizard field
 
         Args:
             wizard_type: Type of wizard (sepsis, stroke, cardiac, etc.)
@@ -312,6 +308,7 @@ Provide cardiac assessment suggestions with HEART score and disposition recommen
 
         Returns:
             Dict with suggested value and reasoning
+
         """
         prompt = ChatPromptTemplate.from_messages(
             [
@@ -330,7 +327,7 @@ Current Data: {current_wizard_data}
 
 Suggest an appropriate value for this field with brief clinical reasoning.""",
                 ),
-            ]
+            ],
         )
 
         chain = prompt | self.llm | JsonOutputParser()
@@ -342,7 +339,7 @@ Suggest an appropriate value for this field with brief clinical reasoning.""",
                     "field_name": field_name,
                     "patient_context": str(patient_context),
                     "current_wizard_data": str(current_wizard_data),
-                }
+                },
             )
 
             return result

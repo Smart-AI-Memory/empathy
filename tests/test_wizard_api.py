@@ -1,5 +1,4 @@
-"""
-Tests for wizard_api error handling and edge cases.
+"""Tests for wizard_api error handling and edge cases.
 
 Tests cover:
 - HTTP 400: Malformed JSON, validation errors, empty body
@@ -31,7 +30,7 @@ class TestWizardAPIErrorHandling:
                 "response": "Test response",
                 "classification": "general",
                 "confidence": 0.95,
-            }
+            },
         )
 
         # Coach wizard with analyze_code method only
@@ -44,7 +43,7 @@ class TestWizardAPIErrorHandling:
             return_value={
                 "issues": [],
                 "recommendations": ["Test recommendation"],
-            }
+            },
         )
 
         return {
@@ -151,7 +150,7 @@ class TestWizardAPIErrorHandling:
                             output=result.get("response", ""),
                             analysis={"confidence": result.get("confidence", 0.0)},
                         )
-                    elif hasattr(wizard, "analyze_code"):
+                    if hasattr(wizard, "analyze_code"):
                         issues = wizard.analyze_code(
                             code=request.input,
                             file_path=(
@@ -170,17 +169,17 @@ class TestWizardAPIErrorHandling:
                             output="No issues found" if not issues else "Issues found",
                             analysis={"issues_found": len(issues)},
                         )
-                    elif hasattr(wizard, "analyze"):
+                    if hasattr(wizard, "analyze"):
                         result = await wizard.analyze(request.context or {})
                         return WizardResponse(
                             success=True,
                             output="Analysis complete",
                             analysis=result,
                         )
-                    else:
-                        raise HTTPException(
-                            status_code=500, detail=f"Wizard '{wizard_id}' has unknown interface"
-                        )
+                    raise HTTPException(
+                        status_code=500,
+                        detail=f"Wizard '{wizard_id}' has unknown interface",
+                    )
                 except HTTPException:
                     raise
                 except Exception as e:
@@ -195,7 +194,8 @@ class TestWizardAPIErrorHandling:
     def test_404_unknown_wizard(self, client):
         """Test 404 response for unknown wizard ID."""
         response = client.post(
-            "/api/wizard/nonexistent_wizard/process", json={"input": "test input"}
+            "/api/wizard/nonexistent_wizard/process",
+            json={"input": "test input"},
         )
         assert response.status_code == 404
         assert "not found" in response.json()["detail"].lower()
@@ -219,7 +219,8 @@ class TestWizardAPIErrorHandling:
     def test_422_missing_required_field(self, client):
         """Test 422 response when required 'input' field is missing."""
         response = client.post(
-            "/api/wizard/test_domain/process", json={"context": {"some": "data"}}
+            "/api/wizard/test_domain/process",
+            json={"context": {"some": "data"}},
         )
         assert response.status_code == 422
 
@@ -234,14 +235,16 @@ class TestWizardAPIErrorHandling:
     def test_422_wrong_type_for_context(self, client):
         """Test 422 response when context is wrong type."""
         response = client.post(
-            "/api/wizard/test_domain/process", json={"input": "test", "context": "not a dict"}
+            "/api/wizard/test_domain/process",
+            json={"input": "test", "context": "not a dict"},
         )
         assert response.status_code == 422
 
     def test_success_domain_wizard(self, client):
         """Test successful request to domain wizard."""
         response = client.post(
-            "/api/wizard/test_domain/process", json={"input": "test input", "user_id": "test_user"}
+            "/api/wizard/test_domain/process",
+            json={"input": "test input", "user_id": "test_user"},
         )
         assert response.status_code == 200
         data = response.json()
@@ -261,7 +264,8 @@ class TestWizardAPIErrorHandling:
     def test_success_ai_wizard(self, client):
         """Test successful request to AI wizard."""
         response = client.post(
-            "/api/wizard/test_ai/process", json={"input": "analyze this", "context": {}}
+            "/api/wizard/test_ai/process",
+            json={"input": "analyze this", "context": {}},
         )
         assert response.status_code == 200
         data = response.json()
@@ -314,7 +318,8 @@ class TestWizardAPIErrorHandling:
     def test_null_user_id_uses_default(self, client):
         """Test null user_id uses default value."""
         response = client.post(
-            "/api/wizard/test_domain/process", json={"input": "test", "user_id": None}
+            "/api/wizard/test_domain/process",
+            json={"input": "test", "user_id": None},
         )
         assert response.status_code == 200
 
@@ -322,7 +327,8 @@ class TestWizardAPIErrorHandling:
         """Test deeply nested context is accepted."""
         nested_context = {"level1": {"level2": {"level3": {"data": "value"}}}}
         response = client.post(
-            "/api/wizard/test_domain/process", json={"input": "test", "context": nested_context}
+            "/api/wizard/test_domain/process",
+            json={"input": "test", "context": nested_context},
         )
         assert response.status_code == 200
 
@@ -376,10 +382,10 @@ class TestWizardAPIInternalErrors:
                         context=request.context or {},
                     )
                     return WizardResponse(success=True, output=str(result))
-                else:
-                    raise HTTPException(
-                        status_code=500, detail=f"Wizard '{wizard_id}' has unknown interface"
-                    )
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Wizard '{wizard_id}' has unknown interface",
+                )
             except HTTPException:
                 raise
             except Exception as e:
@@ -390,7 +396,8 @@ class TestWizardAPIInternalErrors:
     def test_500_unknown_interface(self, client_with_failing_wizard):
         """Test 500 response for wizard with unknown interface."""
         response = client_with_failing_wizard.post(
-            "/api/wizard/no_interface/process", json={"input": "test"}
+            "/api/wizard/no_interface/process",
+            json={"input": "test"},
         )
         assert response.status_code == 500
         assert "unknown interface" in response.json()["detail"].lower()
@@ -398,7 +405,8 @@ class TestWizardAPIInternalErrors:
     def test_wizard_exception_returns_error_response(self, client_with_failing_wizard):
         """Test wizard exception returns error in response body."""
         response = client_with_failing_wizard.post(
-            "/api/wizard/failing/process", json={"input": "test"}
+            "/api/wizard/failing/process",
+            json={"input": "test"},
         )
         assert response.status_code == 200  # Returns 200 with error in body
         data = response.json()

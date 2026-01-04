@@ -1,5 +1,4 @@
-"""
-Tests for src/empathy_os/memory/long_term.py
+"""Tests for src/empathy_os/memory/long_term.py
 
 Tests the secure MemDocs integration including:
 - Classification enum (PUBLIC, INTERNAL, SENSITIVE)

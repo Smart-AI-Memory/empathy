@@ -17,6 +17,9 @@ import * as cp from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
 import { PowerPanel } from './panels/PowerPanel';
+import { HealthPanel } from './panels/HealthPanel';
+import { CostsPanel } from './panels/CostsPanel';
+import { WorkflowHistoryPanel } from './panels/WorkflowHistoryPanel';
 import { EmpathyDashboardProvider } from './panels/EmpathyDashboardPanel';
 import { MemoryPanelProvider } from './panels/MemoryPanelProvider';
 // REMOVED in v3.5.5: Refactor Advisor panel - kept for future use
@@ -197,6 +200,27 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('empathy.openPowerPanel', () => {
             PowerPanel.createOrShow(context.extensionUri);
+        })
+    );
+
+    // Register Health Panel command
+    context.subscriptions.push(
+        vscode.commands.registerCommand('empathy.openHealthPanel', () => {
+            HealthPanel.createOrShow(context.extensionUri);
+        })
+    );
+
+    // Register Costs Panel command
+    context.subscriptions.push(
+        vscode.commands.registerCommand('empathy.openCostsPanel', () => {
+            CostsPanel.createOrShow(context.extensionUri);
+        })
+    );
+
+    // Register Workflow History Panel command
+    context.subscriptions.push(
+        vscode.commands.registerCommand('empathy.openWorkflowHistory', () => {
+            WorkflowHistoryPanel.createOrShow(context.extensionUri);
         })
     );
 

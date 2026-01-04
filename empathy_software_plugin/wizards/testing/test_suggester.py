@@ -1,5 +1,4 @@
-"""
-Test Suggester for Enhanced Testing Wizard
+"""Test Suggester for Enhanced Testing Wizard
 
 Generates smart test suggestions based on code analysis and coverage gaps.
 Uses pattern recognition to suggest high-value tests.
@@ -54,8 +53,7 @@ class CodeElement:
 
 
 class TestSuggester:
-    """
-    Analyzes code to suggest high-value tests.
+    """Analyzes code to suggest high-value tests.
 
     Uses static analysis to:
     - Identify untested functions
@@ -80,8 +78,7 @@ class TestSuggester:
         ]
 
     def analyze_file(self, file_path: Path) -> list[CodeElement]:
-        """
-        Analyze a Python file to extract testable elements
+        """Analyze a Python file to extract testable elements
 
         Args:
             file_path: Path to Python file
@@ -92,6 +89,7 @@ class TestSuggester:
         Raises:
             FileNotFoundError: If file doesn't exist
             SyntaxError: If file has syntax errors
+
         """
         if not file_path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
@@ -157,7 +155,10 @@ class TestSuggester:
         )
 
     def _analyze_method(
-        self, node: ast.FunctionDef, class_name: str, file_path: str
+        self,
+        node: ast.FunctionDef,
+        class_name: str,
+        file_path: str,
     ) -> CodeElement:
         """Analyze a class method"""
         element = self._analyze_function(node, file_path)
@@ -166,8 +167,7 @@ class TestSuggester:
         return element
 
     def _estimate_complexity(self, node: ast.FunctionDef) -> int:
-        """
-        Estimate cyclomatic complexity
+        """Estimate cyclomatic complexity
 
         Counts decision points: if, for, while, and, or, except
         """
@@ -190,10 +190,11 @@ class TestSuggester:
         return False
 
     def suggest_tests(
-        self, code_elements: list[CodeElement], covered_lines: set[int]
+        self,
+        code_elements: list[CodeElement],
+        covered_lines: set[int],
     ) -> list[TestSuggestion]:
-        """
-        Generate test suggestions for code elements
+        """Generate test suggestions for code elements
 
         Args:
             code_elements: List of code elements from analysis
@@ -201,6 +202,7 @@ class TestSuggester:
 
         Returns:
             List of TestSuggestion objects, sorted by priority
+
         """
         suggestions = []
 
@@ -223,7 +225,9 @@ class TestSuggester:
         return suggestions
 
     def _generate_element_suggestions(
-        self, element: CodeElement, is_covered: bool
+        self,
+        element: CodeElement,
+        is_covered: bool,
     ) -> list[TestSuggestion]:
         """Generate suggestions for a single code element"""
         suggestions = []
@@ -305,7 +309,9 @@ class TestSuggester:
         )
 
     def _suggest_edge_case_tests(
-        self, element: CodeElement, priority: TestPriority
+        self,
+        element: CodeElement,
+        priority: TestPriority,
     ) -> TestSuggestion:
         """Generate edge case test suggestions"""
         edge_cases = self._identify_edge_cases(element)
@@ -341,7 +347,9 @@ class TestSuggester:
         )
 
     def _suggest_parameter_tests(
-        self, element: CodeElement, priority: TestPriority
+        self,
+        element: CodeElement,
+        priority: TestPriority,
     ) -> TestSuggestion:
         """Generate parameter validation test suggestion"""
         template = self._generate_parameter_template(element)

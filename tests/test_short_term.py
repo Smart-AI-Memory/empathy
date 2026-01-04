@@ -1,5 +1,4 @@
-"""
-Tests for src/empathy_os/memory/short_term.py
+"""Tests for src/empathy_os/memory/short_term.py
 
 Tests the Redis-backed short-term memory system including:
 - AccessTier enum and role-based permissions
@@ -261,7 +260,9 @@ class TestAgentCredentials:
     def test_with_roles(self):
         """Test credentials with roles."""
         creds = AgentCredentials(
-            "agent_001", AccessTier.VALIDATOR, roles=["code_review", "security"]
+            "agent_001",
+            AccessTier.VALIDATOR,
+            roles=["code_review", "security"],
         )
         assert len(creds.roles) == 2
         assert "code_review" in creds.roles
@@ -486,7 +487,10 @@ class TestPaginatedResult:
     def test_basic_creation(self):
         """Test basic paginated result."""
         result = PaginatedResult(
-            items=["a", "b", "c"], cursor="next_cursor", has_more=True, total_scanned=10
+            items=["a", "b", "c"],
+            cursor="next_cursor",
+            has_more=True,
+            total_scanned=10,
         )
         assert len(result.items) == 3
         assert result.cursor == "next_cursor"

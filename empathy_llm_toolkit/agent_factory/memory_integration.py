@@ -1,5 +1,4 @@
-"""
-Memory-Aware Agent Wrapper
+"""Memory-Aware Agent Wrapper
 
 Integrates agents with the Memory Graph for cross-agent learning.
 Agents can query for similar past findings and store new findings
@@ -33,8 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 class MemoryAwareAgent(BaseAgent):
-    """
-    Agent wrapper that integrates with Memory Graph.
+    """Agent wrapper that integrates with Memory Graph.
 
     Enables cross-agent learning by:
     - Querying similar past findings before invocation
@@ -51,8 +49,7 @@ class MemoryAwareAgent(BaseAgent):
         similarity_threshold: float = 0.4,
         max_similar_results: int = 5,
     ):
-        """
-        Initialize memory-aware agent wrapper.
+        """Initialize memory-aware agent wrapper.
 
         Args:
             agent: The underlying agent to wrap
@@ -61,6 +58,7 @@ class MemoryAwareAgent(BaseAgent):
             query_similar: Whether to query for similar findings
             similarity_threshold: Minimum similarity score for results
             max_similar_results: Maximum similar findings to return
+
         """
         super().__init__(agent.config)
         self._wrapped = agent
@@ -86,8 +84,7 @@ class MemoryAwareAgent(BaseAgent):
             logger.warning(f"Failed to load memory graph: {e}")
 
     async def invoke(self, input_data: str | dict, context: dict | None = None) -> dict:
-        """
-        Invoke the agent with memory graph integration.
+        """Invoke the agent with memory graph integration.
 
         1. Query for similar past findings
         2. Add context from similar findings
@@ -100,6 +97,7 @@ class MemoryAwareAgent(BaseAgent):
 
         Returns:
             Dict with at least {"output": str, "metadata": dict}
+
         """
         context = context or {}
 
@@ -131,8 +129,7 @@ class MemoryAwareAgent(BaseAgent):
         return result
 
     async def stream(self, input_data: str | dict, context: dict | None = None):
-        """
-        Stream agent response with memory integration.
+        """Stream agent response with memory integration.
 
         Note: Memory integration for streaming works at the full response
         level - similar findings are added to context before streaming starts.
@@ -242,7 +239,7 @@ class MemoryAwareAgent(BaseAgent):
                         "type": self._infer_finding_type(result.get("output", "")),
                         "name": f"{self.name}: {task_name}",
                         "description": result.get("output", "")[:500],
-                    }
+                    },
                 ]
 
             # Store findings
@@ -280,14 +277,13 @@ class MemoryAwareAgent(BaseAgent):
         # Check for fix/resolution first (takes precedence)
         if any(x in text_lower for x in ["fix", "fixed", "resolved", "patched"]):
             return "fix"
-        elif any(x in text_lower for x in ["vulnerability", "security", "injection", "xss"]):
+        if any(x in text_lower for x in ["vulnerability", "security", "injection", "xss"]):
             return "vulnerability"
-        elif any(x in text_lower for x in ["bug", "error", "exception", "crash"]):
+        if any(x in text_lower for x in ["bug", "error", "exception", "crash"]):
             return "bug"
-        elif any(x in text_lower for x in ["performance", "slow", "latency", "memory"]):
+        if any(x in text_lower for x in ["performance", "slow", "latency", "memory"]):
             return "performance_issue"
-        else:
-            return "pattern"
+        return "pattern"
 
     # Delegate other methods to wrapped agent
     def add_tool(self, tool: Any) -> None:

@@ -1,5 +1,4 @@
-"""
-Tests for Leverage Point Analysis
+"""Tests for Leverage Point Analysis
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
@@ -46,7 +45,9 @@ class TestLeveragePoint:
     def test_leverage_point_defaults(self):
         """Test default values"""
         point = LeveragePoint(
-            level=LeverageLevel.PARAMETERS, description="Test", problem_domain="test"
+            level=LeverageLevel.PARAMETERS,
+            description="Test",
+            problem_domain="test",
         )
 
         assert point.impact_potential == 0.5
@@ -157,13 +158,19 @@ class TestLeveragePointAnalyzer:
 
         points = [
             LeveragePoint(
-                level=LeverageLevel.PARAMETERS, description="Low leverage", problem_domain="test"
+                level=LeverageLevel.PARAMETERS,
+                description="Low leverage",
+                problem_domain="test",
             ),
             LeveragePoint(
-                level=LeverageLevel.PARADIGM, description="High leverage", problem_domain="test"
+                level=LeverageLevel.PARADIGM,
+                description="High leverage",
+                problem_domain="test",
             ),
             LeveragePoint(
-                level=LeverageLevel.GOALS, description="Medium-high leverage", problem_domain="test"
+                level=LeverageLevel.GOALS,
+                description="Medium-high leverage",
+                problem_domain="test",
             ),
         ]
 

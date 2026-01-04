@@ -1,5 +1,4 @@
-"""
-Manage_Documentation - Multi-Agent Workflow
+"""Manage_Documentation - Multi-Agent Workflow
 
 Makes sure that new program files are fully documented and existing documents
 are updated when associate program files are changed.
@@ -119,8 +118,7 @@ Expected output format: {self.expected_output}"""
 
 
 class ManageDocumentationCrew:
-    """
-    Manage_Documentation - Documentation management crew.
+    """Manage_Documentation - Documentation management crew.
 
     Makes sure that new program files are fully documented and existing
     documents are updated when associated program files are changed.
@@ -234,8 +232,7 @@ class ManageDocumentationCrew:
         context: dict,
         task_type: str = "code_analysis",
     ) -> tuple[str, int, int, float]:
-        """
-        Call the LLM with agent/task configuration.
+        """Call the LLM with agent/task configuration.
 
         Returns: (response_text, input_tokens, output_tokens, cost)
         """
@@ -368,8 +365,7 @@ Note: This is a mock response. Configure ANTHROPIC_API_KEY for real analysis."""
         context: dict | None = None,
         **kwargs: Any,
     ) -> ManageDocumentationCrewResult:
-        """
-        Execute the documentation management crew.
+        """Execute the documentation management crew.
 
         Args:
             path: Path to analyze for documentation gaps
@@ -378,6 +374,7 @@ Note: This is a mock response. Configure ANTHROPIC_API_KEY for real analysis."""
 
         Returns:
             ManageDocumentationCrewResult with findings and recommendations
+
         """
         started_at = datetime.now()
         context = context or {}
@@ -401,7 +398,8 @@ Note: This is a mock response. Configure ANTHROPIC_API_KEY for real analysis."""
                 "total_loc_undocumented": doc_stats.get("loc_undocumented", 0),
                 # New: modification tracking
                 "recently_modified_source_count": doc_stats.get(
-                    "recently_modified_source_count", 0
+                    "recently_modified_source_count",
+                    0,
                 ),
                 "stale_docs_count": doc_stats.get("stale_docs_count", 0),
                 **context,
@@ -503,7 +501,7 @@ Note: This is a mock response. Configure ANTHROPIC_API_KEY for real analysis."""
                     "response": response[:1000],  # Truncate for result
                     "tokens": {"input": in_tokens, "output": out_tokens},
                     "cost": cost,
-                }
+                },
             )
 
         # Manager coordination (final synthesis)

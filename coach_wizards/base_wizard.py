@@ -1,5 +1,4 @@
-"""
-Base Coach Wizard - Foundation for all Coach wizards
+"""Base Coach Wizard - Foundation for all Coach wizards
 
 Level 4 Anticipatory Empathy implementation using the Empathy Framework.
 
@@ -56,8 +55,7 @@ class WizardResult:
 
 
 class BaseCoachWizard(ABC):
-    """
-    Base class for all Coach wizards
+    """Base class for all Coach wizards
 
     Implements Level 4 Anticipatory Empathy:
     - Analyzes current code
@@ -73,8 +71,7 @@ class BaseCoachWizard(ABC):
 
     @abstractmethod
     def analyze_code(self, code: str, file_path: str, language: str) -> list[WizardIssue]:
-        """
-        Analyze code for current issues
+        """Analyze code for current issues
 
         Args:
             code: Source code to analyze
@@ -83,15 +80,18 @@ class BaseCoachWizard(ABC):
 
         Returns:
             List of issues found
+
         """
-        pass
 
     @abstractmethod
     def predict_future_issues(
-        self, code: str, file_path: str, project_context: dict[str, Any], timeline_days: int = 90
+        self,
+        code: str,
+        file_path: str,
+        project_context: dict[str, Any],
+        timeline_days: int = 90,
     ) -> list[WizardPrediction]:
-        """
-        Level 4 Anticipatory: Predict issues 30-90 days ahead
+        """Level 4 Anticipatory: Predict issues 30-90 days ahead
 
         Args:
             code: Source code to analyze
@@ -101,21 +101,20 @@ class BaseCoachWizard(ABC):
 
         Returns:
             List of predicted future issues
+
         """
-        pass
 
     @abstractmethod
     def suggest_fixes(self, issue: WizardIssue) -> str:
-        """
-        Suggest how to fix an issue
+        """Suggest how to fix an issue
 
         Args:
             issue: The issue to fix
 
         Returns:
             Fix suggestion with code examples
+
         """
-        pass
 
     def run_full_analysis(
         self,
@@ -124,8 +123,7 @@ class BaseCoachWizard(ABC):
         language: str,
         project_context: dict[str, Any] | None = None,
     ) -> WizardResult:
-        """
-        Run complete analysis: current issues + future predictions
+        """Run complete analysis: current issues + future predictions
 
         Args:
             code: Source code to analyze
@@ -135,6 +133,7 @@ class BaseCoachWizard(ABC):
 
         Returns:
             Complete wizard result
+
         """
         start_time = datetime.now()
 
@@ -145,7 +144,10 @@ class BaseCoachWizard(ABC):
         predictions = []
         if project_context:
             predictions = self.predict_future_issues(
-                code, file_path, project_context, timeline_days=90
+                code,
+                file_path,
+                project_context,
+                timeline_days=90,
             )
 
         # Generate recommendations
@@ -167,7 +169,9 @@ class BaseCoachWizard(ABC):
         )
 
     def _generate_recommendations(
-        self, issues: list[WizardIssue], predictions: list[WizardPrediction]
+        self,
+        issues: list[WizardIssue],
+        predictions: list[WizardPrediction],
     ) -> list[str]:
         """Generate actionable recommendations"""
         recommendations = []
@@ -181,13 +185,15 @@ class BaseCoachWizard(ABC):
         high_probability_predictions = [p for p in predictions if p.probability > 0.7]
         if high_probability_predictions:
             recommendations.append(
-                f"Prevent {len(high_probability_predictions)} predicted issues with high probability"
+                f"Prevent {len(high_probability_predictions)} predicted issues with high probability",
             )
 
         return recommendations
 
     def _generate_summary(
-        self, issues: list[WizardIssue], predictions: list[WizardPrediction]
+        self,
+        issues: list[WizardIssue],
+        predictions: list[WizardPrediction],
     ) -> str:
         """Generate human-readable summary"""
         error_count = len([i for i in issues if i.severity == "error"])

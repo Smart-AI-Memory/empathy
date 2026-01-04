@@ -1,5 +1,4 @@
-"""
-Quick API test script for Empathy Memory Dashboard.
+"""Quick API test script for Empathy Memory Dashboard.
 
 Tests all major endpoints to verify the API is working correctly.
 

@@ -1,5 +1,4 @@
-"""
-Logistics/Supply Chain Wizard - Shipment Data Privacy Compliant AI Assistant
+"""Logistics/Supply Chain Wizard - Shipment Data Privacy Compliant AI Assistant
 
 Specialized wizard for logistics and supply chain with shipment tracking,
 customer PII protection, and comprehensive audit logging.
@@ -41,8 +40,7 @@ LOGISTICS_PII_PATTERNS = [
 
 
 class LogisticsWizard(BaseWizard):
-    """
-    Shipment data privacy compliant logistics AI assistant
+    """Shipment data privacy compliant logistics AI assistant
 
     Implements data protection for logistics operations:
     1. Customer and shipment data detection and protection
@@ -68,6 +66,7 @@ class LogisticsWizard(BaseWizard):
         ...     user_input="Help me optimize this shipping route",
         ...     user_id="logistics@company.com"
         ... )
+
     """
 
     def __init__(
@@ -75,12 +74,12 @@ class LogisticsWizard(BaseWizard):
         llm: EmpathyLLM,
         custom_pii_patterns: list[str] | None = None,
     ):
-        """
-        Initialize logistics wizard
+        """Initialize logistics wizard
 
         Args:
             llm: EmpathyLLM instance (security recommended)
             custom_pii_patterns: Additional company-specific PII patterns
+
         """
         pii_patterns = LOGISTICS_PII_PATTERNS.copy()
 
@@ -106,7 +105,7 @@ class LogisticsWizard(BaseWizard):
 
         logger.info(
             f"LogisticsWizard initialized: {len(pii_patterns)} PII patterns, "
-            f"empathy level={config.default_empathy_level}, security={llm.enable_security}"
+            f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
     def _build_system_prompt(self) -> str:

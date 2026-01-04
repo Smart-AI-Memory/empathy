@@ -1,5 +1,4 @@
-"""
-Tests for PII Scrubber Module
+"""Tests for PII Scrubber Module
 
 Comprehensive tests for PII detection and scrubbing functionality.
 

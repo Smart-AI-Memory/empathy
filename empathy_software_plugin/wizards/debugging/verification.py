@@ -1,5 +1,4 @@
-"""
-Verification Module
+"""Verification Module
 
 Re-runs linters to verify fixes were successful.
 
@@ -16,8 +15,7 @@ from .linter_parsers import LintIssue, parse_linter_output
 
 
 def _validate_target_path(target: str) -> bool:
-    """
-    Validate target path is safe for linter subprocess execution.
+    """Validate target path is safe for linter subprocess execution.
 
     SECURITY: Prevents command injection via malicious file/directory paths.
     Checks that path exists and doesn't contain shell metacharacters.
@@ -74,8 +72,7 @@ class BaseLinterRunner:
         self.linter_name = linter_name
 
     def run(self, target: str, output_format: str = "json") -> list[LintIssue]:
-        """
-        Run linter on target.
+        """Run linter on target.
 
         Args:
             target: File or directory to lint
@@ -83,6 +80,7 @@ class BaseLinterRunner:
 
         Returns:
             List of LintIssue objects
+
         """
         raise NotImplementedError
 
@@ -95,7 +93,6 @@ class ESLintRunner(BaseLinterRunner):
 
     def run(self, target: str, output_format: str = "json") -> list[LintIssue]:
         """Run ESLint"""
-
         # SECURITY: Validate target path before subprocess execution
         if not _validate_target_path(target):
             raise ValueError(f"Invalid or unsafe target path: {target}")
@@ -108,15 +105,14 @@ class ESLintRunner(BaseLinterRunner):
         cmd.append(target)
 
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+            result = subprocess.run(cmd, check=False, capture_output=True, text=True, timeout=60)
 
             # ESLint exits with 1 if there are violations (expected)
             output = result.stdout
 
             if output_format == "json":
                 return parse_linter_output(self.linter_name, output, "json")
-            else:
-                return parse_linter_output(self.linter_name, output, "text")
+            return parse_linter_output(self.linter_name, output, "text")
 
         except subprocess.TimeoutExpired:
             return []
@@ -132,7 +128,6 @@ class PylintRunner(BaseLinterRunner):
 
     def run(self, target: str, output_format: str = "json") -> list[LintIssue]:
         """Run Pylint"""
-
         # SECURITY: Validate target path before subprocess execution
         if not _validate_target_path(target):
             raise ValueError(f"Invalid or unsafe target path: {target}")
@@ -145,15 +140,14 @@ class PylintRunner(BaseLinterRunner):
         cmd.append(target)
 
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+            result = subprocess.run(cmd, check=False, capture_output=True, text=True, timeout=60)
 
             # Pylint exits with non-zero if violations (expected)
             output = result.stdout
 
             if output_format == "json":
                 return parse_linter_output(self.linter_name, output, "json")
-            else:
-                return parse_linter_output(self.linter_name, output, "text")
+            return parse_linter_output(self.linter_name, output, "text")
 
         except subprocess.TimeoutExpired:
             return []
@@ -169,7 +163,6 @@ class MyPyRunner(BaseLinterRunner):
 
     def run(self, target: str, output_format: str = "json") -> list[LintIssue]:
         """Run mypy"""
-
         # SECURITY: Validate target path before subprocess execution
         if not _validate_target_path(target):
             raise ValueError(f"Invalid or unsafe target path: {target}")
@@ -177,7 +170,7 @@ class MyPyRunner(BaseLinterRunner):
         cmd = ["mypy", target]
 
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+            result = subprocess.run(cmd, check=False, capture_output=True, text=True, timeout=60)
 
             output = result.stdout
 
@@ -197,7 +190,6 @@ class TypeScriptRunner(BaseLinterRunner):
 
     def run(self, target: str, output_format: str = "json") -> list[LintIssue]:
         """Run tsc"""
-
         cmd = ["npx", "tsc", "--noEmit"]
 
         # If target is a directory, use project mode
@@ -207,7 +199,7 @@ class TypeScriptRunner(BaseLinterRunner):
             cmd.append(target)
 
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+            result = subprocess.run(cmd, check=False, capture_output=True, text=True, timeout=60)
 
             output = result.stdout
 
@@ -238,15 +230,14 @@ class LinterRunnerFactory:
         if not runner_class:
             raise ValueError(
                 f"Unsupported linter runner: {linter_name}. "
-                f"Supported: {', '.join(cls._runners.keys())}"
+                f"Supported: {', '.join(cls._runners.keys())}",
             )
 
         return runner_class()
 
 
 def run_linter(linter_name: str, target: str, output_format: str = "json") -> list[LintIssue]:
-    """
-    Run linter on target.
+    """Run linter on target.
 
     Args:
         linter_name: Name of linter
@@ -259,16 +250,18 @@ def run_linter(linter_name: str, target: str, output_format: str = "json") -> li
     Example:
         >>> issues = run_linter("eslint", "/path/to/project")
         >>> print(f"Found {len(issues)} issues")
+
     """
     runner = LinterRunnerFactory.create(linter_name)
     return runner.run(target, output_format)
 
 
 def verify_fixes(
-    linter_name: str, target: str, issues_before: list[LintIssue]
+    linter_name: str,
+    target: str,
+    issues_before: list[LintIssue],
 ) -> VerificationResult:
-    """
-    Verify that fixes were successful by re-running linter.
+    """Verify that fixes were successful by re-running linter.
 
     Args:
         linter_name: Name of linter
@@ -282,8 +275,8 @@ def verify_fixes(
         >>> result = verify_fixes("eslint", "/path/to/project", original_issues)
         >>> if result.success:
         ...     print(f"Fixed {result.issues_fixed} issues!")
-    """
 
+    """
     try:
         # Re-run linter
         issues_after = run_linter(linter_name, target)
@@ -328,8 +321,7 @@ def verify_fixes(
 
 
 def compare_issue_lists(before: list[LintIssue], after: list[LintIssue]) -> dict[str, Any]:
-    """
-    Detailed comparison of issue lists.
+    """Detailed comparison of issue lists.
 
     Args:
         before: Issues before fixes
@@ -337,8 +329,8 @@ def compare_issue_lists(before: list[LintIssue], after: list[LintIssue]) -> dict
 
     Returns:
         Dictionary with detailed comparison
-    """
 
+    """
     before_set = {(i.file_path, i.line, i.column, i.rule) for i in before}
     after_set = {(i.file_path, i.line, i.column, i.rule) for i in after}
 

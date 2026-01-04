@@ -1,5 +1,4 @@
-"""
-Leverage Point Analysis for System Interventions
+"""Leverage Point Analysis for System Interventions
 
 Identifies high-leverage intervention points based on Donella Meadows's
 seminal work "Leverage Points: Places to Intervene in a System".
@@ -17,8 +16,7 @@ from typing import Any
 
 
 class LeverageLevel(IntEnum):
-    """
-    Donella Meadows's 12 Leverage Points (ordered by effectiveness)
+    """Donella Meadows's 12 Leverage Points (ordered by effectiveness)
 
     Higher numbers = More effective leverage points
     Lower numbers = Less effective (but often easier to implement)
@@ -45,8 +43,7 @@ class LeverageLevel(IntEnum):
 
 @dataclass
 class LeveragePoint:
-    """
-    A specific leverage point identified in the system
+    """A specific leverage point identified in the system
 
     Represents a place where intervention can create significant change
     in system behavior.
@@ -64,8 +61,7 @@ class LeveragePoint:
 
 
 class LeveragePointAnalyzer:
-    """
-    Identifies high-leverage intervention points in AI-human systems
+    """Identifies high-leverage intervention points in AI-human systems
 
     Based on Donella Meadows's 12 leverage points. Helps identify where
     to intervene in a system for maximum effectiveness.
@@ -118,6 +114,7 @@ class LeveragePointAnalyzer:
         >>> points = analyzer.find_leverage_points(problem)
         >>> for point in points:
         ...     print(f"{point.level.name}: {point.description}")
+
     """
 
     def __init__(self):
@@ -125,8 +122,7 @@ class LeveragePointAnalyzer:
         self.identified_points: list[LeveragePoint] = []
 
     def find_leverage_points(self, problem_class: dict[str, Any]) -> list[LeveragePoint]:
-        """
-        Find high-leverage intervention points for a problem class
+        """Find high-leverage intervention points for a problem class
 
         Analyzes the problem and identifies leverage points at different
         levels of the Meadows hierarchy.
@@ -148,6 +144,7 @@ class LeveragePointAnalyzer:
             ...     "instances": 50
             ... }
             >>> points = analyzer.find_leverage_points(problem)
+
         """
         points: list[LeveragePoint] = []
         problem_type = problem_class.get("class", "unknown")
@@ -174,8 +171,7 @@ class LeveragePointAnalyzer:
         return points_ranked
 
     def rank_by_effectiveness(self, points: list[LeveragePoint]) -> list[LeveragePoint]:
-        """
-        Rank leverage points by Meadows's hierarchy
+        """Rank leverage points by Meadows's hierarchy
 
         Higher leverage levels (paradigms, goals) ranked before lower
         levels (parameters, buffers).
@@ -185,6 +181,7 @@ class LeveragePointAnalyzer:
 
         Returns:
             Sorted list with most effective points first
+
         """
         return sorted(points, key=lambda p: p.level, reverse=True)
 
@@ -206,7 +203,7 @@ class LeveragePointAnalyzer:
                     "Documentation becomes natural part of workflow",
                     "Quality improves as purpose clarifies",
                 ],
-            )
+            ),
         )
 
         # High leverage: Change goal
@@ -223,7 +220,7 @@ class LeveragePointAnalyzer:
                     "Less redundant documentation",
                     "More collaboration",
                 ],
-            )
+            ),
         )
 
         # Medium leverage: Self-organization (Level 5 systems thinking)
@@ -240,7 +237,7 @@ class LeveragePointAnalyzer:
                     "Free developers for creative work",
                     "Maintain quality through pattern detection",
                 ],
-            )
+            ),
         )
 
         # Low leverage: Parameters (quickest but least impactful)
@@ -253,7 +250,7 @@ class LeveragePointAnalyzer:
                 implementation_difficulty=0.1,
                 proposed_intervention="Cut required fields from 20 to 8",
                 expected_outcomes=["Faster documentation", "May not address root cause"],
-            )
+            ),
         )
 
         return points
@@ -276,7 +273,7 @@ class LeveragePointAnalyzer:
                     "Set appropriate expectations",
                     "Build genuine partnership",
                 ],
-            )
+            ),
         )
 
         # High leverage: Information flows
@@ -293,7 +290,7 @@ class LeveragePointAnalyzer:
                     "Can verify AI logic",
                     "Trust through transparency",
                 ],
-            )
+            ),
         )
 
         # Medium leverage: Reinforcing feedback loops
@@ -310,7 +307,7 @@ class LeveragePointAnalyzer:
                     "Positive feedback loop activated",
                     "Natural progression to harder tasks",
                 ],
-            )
+            ),
         )
 
         return points
@@ -329,7 +326,7 @@ class LeveragePointAnalyzer:
                 implementation_difficulty=0.6,
                 proposed_intervention="Optimize for long-term throughput not short-term speed",
                 expected_outcomes=["Prevent burnout", "Sustainable productivity", "Higher quality"],
-            )
+            ),
         )
 
         # Medium leverage: Delays
@@ -342,7 +339,7 @@ class LeveragePointAnalyzer:
                 implementation_difficulty=0.4,
                 proposed_intervention="Implement continuous testing with instant feedback",
                 expected_outcomes=["Faster iteration", "Catch errors early", "Better learning"],
-            )
+            ),
         )
 
         return points
@@ -360,7 +357,7 @@ class LeveragePointAnalyzer:
                 impact_potential=0.8,
                 implementation_difficulty=0.8,
                 proposed_intervention="Examine and challenge fundamental beliefs about problem",
-            )
+            ),
         )
 
         # Consider information flows
@@ -372,16 +369,17 @@ class LeveragePointAnalyzer:
                 impact_potential=0.6,
                 implementation_difficulty=0.4,
                 proposed_intervention="Make relevant information more accessible to stakeholders",
-            )
+            ),
         )
 
         return points
 
     def get_top_leverage_points(
-        self, n: int = 3, min_level: LeverageLevel | None = None
+        self,
+        n: int = 3,
+        min_level: LeverageLevel | None = None,
     ) -> list[LeveragePoint]:
-        """
-        Get top N leverage points, optionally filtered by minimum level
+        """Get top N leverage points, optionally filtered by minimum level
 
         Args:
             n: Number of top points to return
@@ -389,6 +387,7 @@ class LeveragePointAnalyzer:
 
         Returns:
             Top N leverage points
+
         """
         points = self.identified_points
 
@@ -398,8 +397,7 @@ class LeveragePointAnalyzer:
         return sorted(points, key=lambda p: p.level, reverse=True)[:n]
 
     def analyze_intervention_feasibility(self, point: LeveragePoint) -> dict[str, Any]:
-        """
-        Analyze feasibility of intervening at a leverage point
+        """Analyze feasibility of intervening at a leverage point
 
         Considers:
         - Impact potential
@@ -412,6 +410,7 @@ class LeveragePointAnalyzer:
 
         Returns:
             Feasibility analysis with recommendation
+
         """
         # Calculate feasibility score (impact vs difficulty)
         feasibility_score = point.impact_potential / max(point.implementation_difficulty, 0.1)

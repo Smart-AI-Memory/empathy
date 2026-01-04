@@ -1,5 +1,4 @@
-"""
-Persistence Layer for Empathy Framework
+"""Persistence Layer for Empathy Framework
 
 Provides:
 - Pattern library save/load (JSON, SQLite)
@@ -21,8 +20,7 @@ from .pattern_library import Pattern, PatternLibrary
 
 
 class PatternPersistence:
-    """
-    Save and load PatternLibrary to/from files
+    """Save and load PatternLibrary to/from files
 
     Supports:
     - JSON format (human-readable, good for backups)
@@ -31,8 +29,7 @@ class PatternPersistence:
 
     @staticmethod
     def save_to_json(library: PatternLibrary, filepath: str):
-        """
-        Save pattern library to JSON file
+        """Save pattern library to JSON file
 
         Args:
             library: PatternLibrary instance to save
@@ -41,6 +38,7 @@ class PatternPersistence:
         Example:
             >>> library = PatternLibrary()
             >>> PatternPersistence.save_to_json(library, "patterns.json")
+
         """
         patterns_list: list[dict[str, Any]] = []
         data: dict[str, Any] = {
@@ -71,7 +69,7 @@ class PatternPersistence:
                     "tags": pattern.tags,
                     "discovered_at": pattern.discovered_at.isoformat(),
                     "last_used": pattern.last_used.isoformat() if pattern.last_used else None,
-                }
+                },
             )
 
         # Write to file
@@ -80,8 +78,7 @@ class PatternPersistence:
 
     @staticmethod
     def load_from_json(filepath: str) -> PatternLibrary:
-        """
-        Load pattern library from JSON file
+        """Load pattern library from JSON file
 
         Args:
             filepath: Path to JSON file
@@ -95,6 +92,7 @@ class PatternPersistence:
 
         Example:
             >>> library = PatternPersistence.load_from_json("patterns.json")
+
         """
         with open(filepath) as f:
             data = json.load(f)
@@ -132,8 +130,7 @@ class PatternPersistence:
 
     @staticmethod
     def save_to_sqlite(library: PatternLibrary, db_path: str):
-        """
-        Save pattern library to SQLite database
+        """Save pattern library to SQLite database
 
         Args:
             library: PatternLibrary instance to save
@@ -146,6 +143,7 @@ class PatternPersistence:
         Example:
             >>> library = PatternLibrary()
             >>> PatternPersistence.save_to_sqlite(library, "patterns.db")
+
         """
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
@@ -170,7 +168,7 @@ class PatternPersistence:
                 last_used TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-        """
+        """,
         )
 
         cursor.execute(
@@ -183,7 +181,7 @@ class PatternPersistence:
                 used_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (pattern_id) REFERENCES patterns(id)
             )
-        """
+        """,
         )
 
         # Insert or update patterns
@@ -219,8 +217,7 @@ class PatternPersistence:
 
     @staticmethod
     def load_from_sqlite(db_path: str) -> PatternLibrary:
-        """
-        Load pattern library from SQLite database
+        """Load pattern library from SQLite database
 
         Args:
             db_path: Path to SQLite database file
@@ -230,6 +227,7 @@ class PatternPersistence:
 
         Example:
             >>> library = PatternPersistence.load_from_sqlite("patterns.db")
+
         """
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row  # Access columns by name
@@ -265,8 +263,7 @@ class PatternPersistence:
 
 
 class StateManager:
-    """
-    Persist collaboration state across sessions
+    """Persist collaboration state across sessions
 
     Enables:
     - Long-term trust tracking
@@ -279,8 +276,7 @@ class StateManager:
         self.storage_path.mkdir(exist_ok=True, parents=True)
 
     def save_state(self, user_id: str, state: CollaborationState):
-        """
-        Save user's collaboration state to JSON
+        """Save user's collaboration state to JSON
 
         Args:
             user_id: User identifier
@@ -289,6 +285,7 @@ class StateManager:
         Example:
             >>> manager = StateManager()
             >>> manager.save_state("user123", empathy.collaboration_state)
+
         """
         filepath = self.storage_path / f"{user_id}.json"
 
@@ -308,8 +305,7 @@ class StateManager:
             json.dump(data, f, indent=2)
 
     def load_state(self, user_id: str) -> CollaborationState | None:
-        """
-        Load user's previous state
+        """Load user's previous state
 
         Args:
             user_id: User identifier
@@ -323,6 +319,7 @@ class StateManager:
             >>> if state:
             ...     empathy = EmpathyOS(user_id="user123", target_level=4)
             ...     empathy.collaboration_state = state
+
         """
         filepath = self.storage_path / f"{user_id}.json"
 
@@ -349,8 +346,7 @@ class StateManager:
             return None
 
     def list_users(self) -> list[str]:
-        """
-        List all users with saved state
+        """List all users with saved state
 
         Returns:
             List of user IDs
@@ -359,12 +355,12 @@ class StateManager:
             >>> manager = StateManager()
             >>> users = manager.list_users()
             >>> print(f"Found {len(users)} users")
+
         """
         return [p.stem for p in self.storage_path.glob("*.json")]
 
     def delete_state(self, user_id: str) -> bool:
-        """
-        Delete user's saved state
+        """Delete user's saved state
 
         Args:
             user_id: User identifier
@@ -375,6 +371,7 @@ class StateManager:
         Example:
             >>> manager = StateManager()
             >>> deleted = manager.delete_state("user123")
+
         """
         filepath = self.storage_path / f"{user_id}.json"
 
@@ -385,8 +382,7 @@ class StateManager:
 
 
 class MetricsCollector:
-    """
-    Collect and persist empathy framework metrics
+    """Collect and persist empathy framework metrics
 
     Tracks:
     - Empathy level usage
@@ -415,21 +411,21 @@ class MetricsCollector:
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 metadata TEXT
             )
-        """
+        """,
         )
 
         cursor.execute(
             """
             CREATE INDEX IF NOT EXISTS idx_user_level
             ON metrics(user_id, empathy_level)
-        """
+        """,
         )
 
         cursor.execute(
             """
             CREATE INDEX IF NOT EXISTS idx_timestamp
             ON metrics(timestamp)
-        """
+        """,
         )
 
         conn.commit()
@@ -443,8 +439,7 @@ class MetricsCollector:
         response_time_ms: float,
         metadata: dict | None = None,
     ):
-        """
-        Record a single metric event
+        """Record a single metric event
 
         Args:
             user_id: User identifier
@@ -462,6 +457,7 @@ class MetricsCollector:
             ...     response_time_ms=250.5,
             ...     metadata={"bottlenecks_predicted": 3}
             ... )
+
         """
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
@@ -485,8 +481,7 @@ class MetricsCollector:
         conn.close()
 
     def get_user_stats(self, user_id: str) -> dict:
-        """
-        Get aggregated statistics for a user
+        """Get aggregated statistics for a user
 
         Args:
             user_id: User identifier
@@ -498,6 +493,7 @@ class MetricsCollector:
             >>> collector = MetricsCollector()
             >>> stats = collector.get_user_stats("user123")
             >>> print(f"Success rate: {stats['success_rate']:.1%}")
+
         """
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row

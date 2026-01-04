@@ -1,5 +1,4 @@
-"""
-Tests for XML-Enhanced Prompts System
+"""Tests for XML-Enhanced Prompts System
 
 Tests the core prompt templates, parser, and configuration.
 

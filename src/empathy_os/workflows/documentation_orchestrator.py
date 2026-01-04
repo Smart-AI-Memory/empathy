@@ -1,5 +1,4 @@
-"""
-Documentation Orchestrator - Combined Scout + Writer Workflow
+"""Documentation Orchestrator - Combined Scout + Writer Workflow
 
 Combines ManageDocumentationCrew (scout/analyst) with DocumentGenerationWorkflow
 (writer) to provide an end-to-end documentation management solution:
@@ -139,8 +138,7 @@ class OrchestratorResult:
 
 
 class DocumentationOrchestrator:
-    """
-    End-to-end documentation management orchestrator.
+    """End-to-end documentation management orchestrator.
 
     Combines the ManageDocumentationCrew (scout) with DocumentGenerationWorkflow
     (writer) to provide intelligent, automated documentation maintenance.
@@ -257,8 +255,7 @@ class DocumentationOrchestrator:
         exclude_patterns: list[str] | None = None,
         **kwargs: Any,
     ):
-        """
-        Initialize the orchestrator.
+        """Initialize the orchestrator.
 
         Args:
             project_root: Root directory of the project
@@ -273,6 +270,7 @@ class DocumentationOrchestrator:
             audience: Target audience for documentation
             dry_run: If True, scout only without generating
             exclude_patterns: Additional patterns to exclude (merged with defaults)
+
         """
         self.project_root = Path(project_root)
         self.max_items = max_items
@@ -364,8 +362,7 @@ class DocumentationOrchestrator:
         return item_level <= min_level
 
     def _should_exclude(self, file_path: str, track: bool = False) -> bool:
-        """
-        Check if a file should be excluded from documentation generation.
+        """Check if a file should be excluded from documentation generation.
 
         Uses fnmatch-style pattern matching against exclude_patterns.
 
@@ -375,6 +372,7 @@ class DocumentationOrchestrator:
 
         Returns:
             True if file should be excluded
+
         """
         import fnmatch
 
@@ -392,7 +390,7 @@ class DocumentationOrchestrator:
                             "file_path": path_str,
                             "matched_pattern": pattern,
                             "reason": self._get_exclusion_reason(pattern),
-                        }
+                        },
                     )
                 return True
             # Check just filename
@@ -403,7 +401,7 @@ class DocumentationOrchestrator:
                             "file_path": path_str,
                             "matched_pattern": pattern,
                             "reason": self._get_exclusion_reason(pattern),
-                        }
+                        },
                     )
                 return True
             # Check if path contains the pattern (for directory patterns)
@@ -417,7 +415,7 @@ class DocumentationOrchestrator:
                                 "file_path": path_str,
                                 "matched_pattern": pattern,
                                 "reason": self._get_exclusion_reason(pattern),
-                            }
+                            },
                         )
                     return True
 
@@ -483,8 +481,7 @@ class DocumentationOrchestrator:
         return "Excluded by pattern"
 
     def _is_allowed_output(self, file_path: str) -> bool:
-        """
-        Check if a file is allowed to be created/modified.
+        """Check if a file is allowed to be created/modified.
 
         Uses the ALLOWED_OUTPUT_EXTENSIONS whitelist - this is the PRIMARY
         safety mechanism to ensure only documentation files can be written.
@@ -494,16 +491,17 @@ class DocumentationOrchestrator:
 
         Returns:
             True if the file extension is in the allowed whitelist
+
         """
         ext = Path(file_path).suffix.lower()
         return ext in self.ALLOWED_OUTPUT_EXTENSIONS
 
     async def _run_scout_phase(self) -> tuple[list[DocumentationItem], float]:
-        """
-        Run the scout phase to identify documentation gaps.
+        """Run the scout phase to identify documentation gaps.
 
         Returns:
             Tuple of (items found, cost)
+
         """
         items: list[DocumentationItem] = []
         cost = 0.0
@@ -565,7 +563,7 @@ class DocumentationOrchestrator:
                             priority=2,
                             details=f"Missing docstring - {f.get('loc', 0)} LOC",
                             loc=f.get("loc", 0),
-                        )
+                        ),
                     )
 
             # Get stale docs
@@ -585,7 +583,7 @@ class DocumentationOrchestrator:
                                 details="Source modified after doc update",
                                 related_source=d.get("related_source_files", [])[:3],
                                 days_stale=d.get("days_since_doc_update", 0),
-                            )
+                            ),
                         )
         except Exception as e:
             logger.warning(f"Error extracting items from index: {e}")
@@ -641,14 +639,13 @@ class DocumentationOrchestrator:
                             severity=severity,
                             priority=self._severity_to_priority(severity),
                             details=f"Found by {agent}",
-                        )
+                        ),
                     )
 
         return items
 
     def _prioritize_items(self, items: list[DocumentationItem]) -> list[DocumentationItem]:
-        """
-        Prioritize items for generation.
+        """Prioritize items for generation.
 
         Priority order:
         1. Stale docs (source changed) - highest urgency
@@ -672,11 +669,11 @@ class DocumentationOrchestrator:
         self,
         items: list[DocumentationItem],
     ) -> tuple[list[str], list[str], list[str], float]:
-        """
-        Run the generation phase for prioritized items.
+        """Run the generation phase for prioritized items.
 
         Returns:
             Tuple of (generated, updated, skipped, cost)
+
         """
         generated: list[str] = []
         updated: list[str] = []
@@ -742,7 +739,7 @@ class DocumentationOrchestrator:
                 skipped.append(item.file_path)
 
         logger.info(
-            f"Generation phase: {len(generated)} generated, {len(updated)} updated, {len(skipped)} skipped"
+            f"Generation phase: {len(generated)} generated, {len(updated)} updated, {len(skipped)} skipped",
         )
         return generated, updated, skipped, cost
 
@@ -763,7 +760,7 @@ class DocumentationOrchestrator:
             # Save index
             self._project_index.save()
             logger.info(
-                f"ProjectIndex updated with {len(generated) + len(updated)} documented files"
+                f"ProjectIndex updated with {len(generated) + len(updated)} documented files",
             )
         except Exception as e:
             logger.warning(f"Could not update ProjectIndex: {e}")
@@ -796,7 +793,7 @@ class DocumentationOrchestrator:
             lines.extend(
                 [
                     "Priority Items:",
-                ]
+                ],
             )
             for i, item in enumerate(items[:10]):
                 lines.append(f"  {i + 1}. [{item.severity.upper()}] {item.file_path}")
@@ -817,7 +814,7 @@ class DocumentationOrchestrator:
                     f"  Skipped: {len(result.docs_skipped)}",
                     f"  Cost: ${result.generation_cost:.4f}",
                     "",
-                ]
+                ],
             )
 
             if result.docs_generated:
@@ -840,7 +837,7 @@ class DocumentationOrchestrator:
                     "-" * 60,
                     "ERRORS",
                     "-" * 60,
-                ]
+                ],
             )
             for error in result.errors:
                 lines.append(f"  ! {error}")
@@ -852,7 +849,7 @@ class DocumentationOrchestrator:
                     "-" * 60,
                     "WARNINGS",
                     "-" * 60,
-                ]
+                ],
             )
             for warning in result.warnings:
                 lines.append(f"  * {warning}")
@@ -868,7 +865,7 @@ class DocumentationOrchestrator:
                 f"  Export path: {self.export_path}",
                 "",
                 "=" * 60,
-            ]
+            ],
         )
 
         return "\n".join(lines)
@@ -878,8 +875,7 @@ class DocumentationOrchestrator:
         context: dict | None = None,
         **kwargs: Any,
     ) -> OrchestratorResult:
-        """
-        Execute the full documentation orchestration pipeline.
+        """Execute the full documentation orchestration pipeline.
 
         Args:
             context: Additional context for the workflows
@@ -887,6 +883,7 @@ class DocumentationOrchestrator:
 
         Returns:
             OrchestratorResult with full details
+
         """
         started_at = datetime.now()
         result = OrchestratorResult(success=False, phase="scout")
@@ -997,13 +994,13 @@ class DocumentationOrchestrator:
         return await self.execute()
 
     async def scout_as_json(self) -> dict:
-        """
-        Run scout phase and return JSON-serializable results.
+        """Run scout phase and return JSON-serializable results.
 
         Used by VSCode extension to display results in Documentation Analysis panel.
 
         Returns:
             Dict with stats and items list ready for JSON serialization
+
         """
         import io
         import sys
@@ -1049,8 +1046,7 @@ class DocumentationOrchestrator:
         file_paths: list[str],
         **kwargs: Any,
     ) -> dict:
-        """
-        Generate documentation for a list of specific files.
+        """Generate documentation for a list of specific files.
 
         Bypasses scout phase and generates directly for each file.
 
@@ -1060,6 +1056,7 @@ class DocumentationOrchestrator:
 
         Returns:
             Dict with results for each file
+
         """
         generated: list[dict[str, str | float | None]] = []
         failed: list[dict[str, str]] = []
@@ -1074,7 +1071,7 @@ class DocumentationOrchestrator:
                     {
                         "file": file_path,
                         "reason": "Excluded by pattern (dependency/config/binary file)",
-                    }
+                    },
                 )
                 continue
 
@@ -1090,7 +1087,7 @@ class DocumentationOrchestrator:
                             "file": file_path,
                             "export_path": export_path,
                             "cost": cost,
-                        }
+                        },
                     )
                     total_cost += cost
             except Exception as e:
@@ -1113,8 +1110,7 @@ class DocumentationOrchestrator:
         file_path: str,
         **kwargs: Any,
     ) -> dict:
-        """
-        Generate documentation for a specific file.
+        """Generate documentation for a specific file.
 
         Bypasses scout phase and generates directly.
 
@@ -1124,6 +1120,7 @@ class DocumentationOrchestrator:
 
         Returns:
             Generation result dict
+
         """
         if self._writer is None:
             return {"error": "DocumentGenerationWorkflow not available"}

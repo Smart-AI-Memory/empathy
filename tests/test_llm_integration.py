@@ -1,5 +1,4 @@
-"""
-LLM Integration Tests - Real API Calls
+"""LLM Integration Tests - Real API Calls
 
 These tests make actual calls to LLM providers (Anthropic Claude).
 Run with: pytest -m llm
@@ -53,7 +52,10 @@ def anthropic_provider(api_key):
 def empathy_llm(api_key):
     """Create EmpathyLLM with real provider"""
     return EmpathyLLM(
-        provider="anthropic", api_key=api_key, model="claude-sonnet-4-5-20250929", target_level=4
+        provider="anthropic",
+        api_key=api_key,
+        model="claude-sonnet-4-5-20250929",
+        target_level=4,
     )
 
 
@@ -67,7 +69,9 @@ class TestAnthropicProviderIntegration:
         messages = [{"role": "user", "content": "Say 'Hello from Claude!' and nothing else."}]
 
         response = await anthropic_provider.generate(
-            messages=messages, temperature=0.0, max_tokens=50
+            messages=messages,
+            temperature=0.0,
+            max_tokens=50,
         )
 
         assert response.content is not None
@@ -103,7 +107,9 @@ class TestAnthropicProviderIntegration:
         ]
 
         response = await anthropic_provider.generate(
-            messages=messages, temperature=0.0, max_tokens=50
+            messages=messages,
+            temperature=0.0,
+            max_tokens=50,
         )
 
         assert response.content is not None
@@ -146,7 +152,7 @@ class TestAnthropicProviderIntegration:
             {
                 "role": "user",
                 "content": "If I have 3 apples and buy 2 more, then give away 1, how many do I have?",
-            }
+            },
         ]
 
         # Thinking mode requires temperature=1 and max_tokens > thinking.budget_tokens
@@ -185,14 +191,16 @@ class TestEmpathyLLMIntegration:
         # Multiple successful interactions should build trust
         for i in range(5):
             result = await empathy_llm.interact(
-                user_id=user_id, user_input=f"Task {i}: Generate a hello world function"
+                user_id=user_id,
+                user_input=f"Task {i}: Generate a hello world function",
             )
             assert result is not None
             assert "content" in result
 
         # Later interactions should use higher levels
         final_result = await empathy_llm.interact(
-            user_id=user_id, user_input="Generate another function"
+            user_id=user_id,
+            user_input="Generate another function",
         )
         # Should have progressed beyond level 1
         assert final_result["level_used"] >= 1
@@ -213,7 +221,9 @@ class TestEmpathyLLMIntegration:
 
         # Second interaction - reference previous context
         result2 = await empathy_llm.interact(
-            user_id=user_id, user_input="What is my project called?", force_level=2
+            user_id=user_id,
+            user_input="What is my project called?",
+            force_level=2,
         )
         assert result2 is not None
         assert "superapp" in result2["content"].lower()
@@ -249,19 +259,25 @@ class TestMultiUserScenarios:
         """Test that different users have separate contexts"""
         # User 1 provides information
         result1 = await empathy_llm.interact(
-            user_id="user_1", user_input="My name is Alice.", force_level=2
+            user_id="user_1",
+            user_input="My name is Alice.",
+            force_level=2,
         )
         assert result1 is not None
 
         # User 2 provides different information
         result2 = await empathy_llm.interact(
-            user_id="user_2", user_input="My name is Bob.", force_level=2
+            user_id="user_2",
+            user_input="My name is Bob.",
+            force_level=2,
         )
         assert result2 is not None
 
         # User 1 asks about their name
         result3 = await empathy_llm.interact(
-            user_id="user_1", user_input="What is my name?", force_level=2
+            user_id="user_1",
+            user_input="What is my name?",
+            force_level=2,
         )
         assert result3 is not None
         assert "alice" in result3["content"].lower()
@@ -274,12 +290,16 @@ class TestMultiUserScenarios:
         # User 1 has many interactions (should progress)
         for i in range(10):
             await empathy_llm.interact(
-                user_id="advanced_user", user_input=f"Task {i}", force_level=None
+                user_id="advanced_user",
+                user_input=f"Task {i}",
+                force_level=None,
             )
 
         # User 2 is new (should start at level 1)
         result = await empathy_llm.interact(
-            user_id="new_user", user_input="First task", force_level=None
+            user_id="new_user",
+            user_input="First task",
+            force_level=None,
         )
 
         # New user should start at lower level

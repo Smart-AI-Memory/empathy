@@ -1,5 +1,4 @@
-"""
-XML-Enhanced Prompts for Keyboard Shortcut Generation.
+"""XML-Enhanced Prompts for Keyboard Shortcut Generation.
 
 These prompts follow the Keyboard Conductor design principles:
 - Musical scale pattern (Scale 1: Daily, Scale 2: Frequent, Scale 3: Advanced)

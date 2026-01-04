@@ -1,5 +1,4 @@
-"""
-Empathy Framework Resilience Module
+"""Empathy Framework Resilience Module
 
 Provides reliability patterns for fault-tolerant wizard operations.
 
@@ -32,26 +31,26 @@ from .timeout import TimeoutError as ResilienceTimeoutError
 from .timeout import timeout, with_timeout
 
 __all__ = [
-    # Retry
-    "retry",
-    "retry_with_backoff",
-    "RetryConfig",
-    # Circuit Breaker
-    "circuit_breaker",
     "CircuitBreaker",
-    "CircuitState",
     "CircuitOpenError",
-    "get_circuit_breaker",
-    # Timeout
-    "timeout",
-    "with_timeout",
-    "ResilienceTimeoutError",
-    # Fallback
-    "fallback",
-    "with_fallback",
+    "CircuitState",
     "Fallback",
     # Health
     "HealthCheck",
     "HealthStatus",
+    "ResilienceTimeoutError",
+    "RetryConfig",
     "SystemHealth",
+    # Circuit Breaker
+    "circuit_breaker",
+    # Fallback
+    "fallback",
+    "get_circuit_breaker",
+    # Retry
+    "retry",
+    "retry_with_backoff",
+    # Timeout
+    "timeout",
+    "with_fallback",
+    "with_timeout",
 ]

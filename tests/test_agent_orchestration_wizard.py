@@ -1,5 +1,4 @@
-"""
-Tests for empathy_software_plugin/wizards/agent_orchestration_wizard.py
+"""Tests for empathy_software_plugin/wizards/agent_orchestration_wizard.py
 
 Tests the AgentOrchestrationWizard including:
 - Initialization and properties
@@ -163,7 +162,7 @@ class TestAnalyze:
                 ],
                 "orchestration_code": [],
                 "project_path": ".",
-            }
+            },
         )
         assert "issues" in result
         assert result["metadata"]["agent_count"] == 2
@@ -314,7 +313,7 @@ class TestGenerateRecommendations:
                 "alert": "Alert message",
                 "impact": "high",
                 "prevention_steps": ["Step 1", "Step 2"],
-            }
+            },
         ]
         recommendations = wizard._generate_recommendations(issues, predictions)
         assert any("ALERT" in r for r in recommendations)
@@ -330,7 +329,7 @@ class TestGenerateRecommendations:
                 "impact": "high",
                 "prevention_steps": ["Step 1"],
                 "personal_experience": "We learned this the hard way",
-            }
+            },
         ]
         recommendations = wizard._generate_recommendations(issues, predictions)
         assert any("Experience:" in r for r in recommendations)
@@ -509,7 +508,7 @@ class TestIntegration:
                 ],
                 "orchestration_code": [],
                 "project_path": ".",
-            }
+            },
         )
         assert "issues" in result
         assert "predictions" in result

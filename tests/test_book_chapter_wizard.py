@@ -1,5 +1,4 @@
-"""
-Tests for BookChapterWizard
+"""Tests for BookChapterWizard
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
@@ -97,7 +96,8 @@ class TestBookChapterWizard:
 
     @pytest.mark.asyncio
     @pytest.mark.skipif(
-        sys.platform == "win32", reason="UnicodeEncodeError with charmap codec on Windows"
+        sys.platform == "win32",
+        reason="UnicodeEncodeError with charmap codec on Windows",
     )
     async def test_analyze_basic(self, wizard, sample_source_doc):
         """Test basic analysis of source document."""
@@ -121,7 +121,8 @@ class TestBookChapterWizard:
 
     @pytest.mark.asyncio
     @pytest.mark.skipif(
-        sys.platform == "win32", reason="UnicodeEncodeError with charmap codec on Windows"
+        sys.platform == "win32",
+        reason="UnicodeEncodeError with charmap codec on Windows",
     )
     async def test_extract_elements(self, wizard, sample_source_doc):
         """Test element extraction from source."""
@@ -289,7 +290,8 @@ class TestBookChapterWizardIntegration:
 
     @pytest.mark.asyncio
     @pytest.mark.skipif(
-        sys.platform == "win32", reason="UnicodeEncodeError with charmap codec on Windows"
+        sys.platform == "win32",
+        reason="UnicodeEncodeError with charmap codec on Windows",
     )
     async def test_full_transformation_flow(self, wizard, sample_source_doc):
         """Test complete transformation workflow."""

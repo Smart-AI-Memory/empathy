@@ -1,5 +1,4 @@
-"""
-CLI for Test Maintenance Workflow
+"""CLI for Test Maintenance Workflow
 
 Commands for managing the test lifecycle:
 - analyze: Generate maintenance plan
@@ -183,19 +182,19 @@ Examples:
     # Run appropriate command
     if args.command == "analyze":
         return asyncio.run(cmd_analyze(args))
-    elif args.command == "execute":
+    if args.command == "execute":
         return asyncio.run(cmd_execute(args))
-    elif args.command == "auto":
+    if args.command == "auto":
         return asyncio.run(cmd_auto(args))
-    elif args.command == "report":
+    if args.command == "report":
         return asyncio.run(cmd_report(args))
-    elif args.command == "queue":
+    if args.command == "queue":
         return asyncio.run(cmd_queue(args))
-    elif args.command == "crew":
+    if args.command == "crew":
         return asyncio.run(cmd_crew(args))
-    elif args.command == "hook":
+    if args.command == "hook":
         return asyncio.run(cmd_hook(args))
-    elif args.command == "status":
+    if args.command == "status":
         return asyncio.run(cmd_status(args))
 
     return 0
@@ -213,7 +212,7 @@ async def cmd_analyze(args: argparse.Namespace) -> int:
         {
             "mode": "analyze",
             "max_items": args.max_items,
-        }
+        },
     )
 
     if args.json:
@@ -236,7 +235,7 @@ async def cmd_execute(args: argparse.Namespace) -> int:
         {
             "mode": "execute",
             "dry_run": args.dry_run,
-        }
+        },
     )
 
     if args.json:
@@ -260,7 +259,7 @@ async def cmd_auto(args: argparse.Namespace) -> int:
             "mode": "auto",
             "max_items": args.max_items,
             "dry_run": args.dry_run,
-        }
+        },
     )
 
     if args.json:
@@ -379,18 +378,17 @@ async def cmd_hook(args: argparse.Namespace) -> int:
 
         if args.json:
             print(json.dumps(result, indent=2))
-        else:
-            if result.get("blocking"):
-                print("COMMIT BLOCKED")
-                print("=" * 40)
-                for item in result["blocking"]:
-                    print(f"  {item['file']}: {item['reason']}")
-                return 1
-            elif result.get("warnings"):
-                print("COMMIT ALLOWED (with warnings)")
-                print("=" * 40)
-                for item in result["warnings"]:
-                    print(f"  WARNING: {item['file']}: {item['reason']}")
+        elif result.get("blocking"):
+            print("COMMIT BLOCKED")
+            print("=" * 40)
+            for item in result["blocking"]:
+                print(f"  {item['file']}: {item['reason']}")
+            return 1
+        elif result.get("warnings"):
+            print("COMMIT ALLOWED (with warnings)")
+            print("=" * 40)
+            for item in result["warnings"]:
+                print(f"  WARNING: {item['file']}: {item['reason']}")
 
     elif args.hook_type == "post-commit":
         result = await manager.process_git_post_commit(files)
@@ -425,7 +423,7 @@ async def cmd_status(args: argparse.Namespace) -> int:
                     "queue": queue_status,
                 },
                 indent=2,
-            )
+            ),
         )
     else:
         print("TEST MAINTENANCE STATUS")
@@ -526,7 +524,7 @@ def _print_report(report: dict, report_type: str, markdown: bool) -> None:
         print("TEST HEALTH REPORT")
         print("=" * 60)
         print(
-            f"  Health Score: {health.get('health_score', 0):.1f}/100 ({health.get('health_grade', 'N/A')})"
+            f"  Health Score: {health.get('health_score', 0):.1f}/100 ({health.get('health_grade', 'N/A')})",
         )
         print()
 

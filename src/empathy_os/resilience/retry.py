@@ -1,5 +1,4 @@
-"""
-Retry Pattern Implementation
+"""Retry Pattern Implementation
 
 Provides exponential backoff retry logic for transient failures.
 
@@ -52,8 +51,7 @@ def retry(
     retryable_exceptions: tuple[type[Exception], ...] | None = None,
     on_retry: Callable[[Exception, int], None] | None = None,
 ) -> Callable:
-    """
-    Decorator for retrying functions with exponential backoff.
+    """Decorator for retrying functions with exponential backoff.
 
     Args:
         max_attempts: Maximum number of retry attempts
@@ -69,6 +67,7 @@ def retry(
         async def call_api():
             response = await httpx.get("https://api.example.com")
             return response.json()
+
     """
     if retryable_exceptions is None:
         retryable_exceptions = (Exception,)
@@ -96,14 +95,14 @@ def retry(
 
                     if attempt == config.max_attempts:
                         logger.error(
-                            f"All {config.max_attempts} retries failed for {func.__name__}: {e}"
+                            f"All {config.max_attempts} retries failed for {func.__name__}: {e}",
                         )
                         raise
 
                     delay = config.get_delay(attempt)
                     logger.warning(
                         f"Attempt {attempt}/{config.max_attempts} failed for {func.__name__}: {e}. "
-                        f"Retrying in {delay:.2f}s"
+                        f"Retrying in {delay:.2f}s",
                     )
 
                     if on_retry:
@@ -130,14 +129,14 @@ def retry(
 
                     if attempt == config.max_attempts:
                         logger.error(
-                            f"All {config.max_attempts} retries failed for {func.__name__}: {e}"
+                            f"All {config.max_attempts} retries failed for {func.__name__}: {e}",
                         )
                         raise
 
                     delay = config.get_delay(attempt)
                     logger.warning(
                         f"Attempt {attempt}/{config.max_attempts} failed for {func.__name__}: {e}. "
-                        f"Retrying in {delay:.2f}s"
+                        f"Retrying in {delay:.2f}s",
                     )
 
                     if on_retry:
@@ -163,8 +162,7 @@ async def retry_with_backoff(
     config: RetryConfig | None = None,
     **kwargs: Any,
 ) -> T:
-    """
-    Execute a function with retry logic.
+    """Execute a function with retry logic.
 
     Args:
         func: Function to execute
@@ -181,6 +179,7 @@ async def retry_with_backoff(
             "https://api.example.com",
             config=RetryConfig(max_attempts=5)
         )
+
     """
     if config is None:
         config = RetryConfig()
@@ -201,7 +200,7 @@ async def retry_with_backoff(
 
             delay = config.get_delay(attempt)
             logger.warning(
-                f"Attempt {attempt}/{config.max_attempts} failed: {e}. Retrying in {delay:.2f}s"
+                f"Attempt {attempt}/{config.max_attempts} failed: {e}. Retrying in {delay:.2f}s",
             )
             await asyncio.sleep(delay)
 

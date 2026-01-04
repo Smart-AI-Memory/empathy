@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Coach Language Server Protocol (LSP) Server
+"""Coach Language Server Protocol (LSP) Server
 
 This server implements the LSP protocol with custom Coach methods for
 code analysis using 16 specialized AI wizards.
@@ -43,8 +42,7 @@ server = LanguageServer("coach-language-server", "v0.1.0")
 
 
 class CoachWizardEngine:
-    """
-    Mock implementation of Coach wizard engine.
+    """Mock implementation of Coach wizard engine.
     In production, this would integrate with actual AI/LLM services.
     """
 
@@ -77,8 +75,7 @@ class CoachWizardEngine:
         task: str = "",
         context: str = "",
     ) -> dict[str, Any]:
-        """
-        Analyze code with a specific wizard.
+        """Analyze code with a specific wizard.
 
         In production, this would:
         1. Send code to LLM with wizard-specific prompts
@@ -133,7 +130,7 @@ class CoachWizardEngine:
                             "before": 'SELECT * FROM users WHERE id = " + user_id',
                             "after": "SELECT * FROM users WHERE id = ?",
                             "explanation": "Use parameterized queries to prevent SQL injection",
-                        }
+                        },
                     ],
                 }
 
@@ -186,7 +183,12 @@ class CoachWizardEngine:
         }
 
     def multi_wizard_review(
-        self, wizards: list[str], code: str, file_path: str, scenario: str = "", context: str = ""
+        self,
+        wizards: list[str],
+        code: str,
+        file_path: str,
+        scenario: str = "",
+        context: str = "",
     ) -> dict[str, Any]:
         """Run multiple wizards in collaboration mode."""
         logger.info(f"Multi-wizard review: {scenario} with {wizards}")
@@ -203,7 +205,7 @@ class CoachWizardEngine:
                 {
                     "wizards": wizards[:2],
                     "insight": "Security and performance concerns should be addressed together for optimal results",
-                }
+                },
             )
 
         return {
@@ -215,10 +217,12 @@ class CoachWizardEngine:
         }
 
     def predict_future_issues(
-        self, code: str, file_path: str, timeframe: int = 60
+        self,
+        code: str,
+        file_path: str,
+        timeframe: int = 60,
     ) -> list[dict[str, Any]]:
-        """
-        Generate Level 4 predictions.
+        """Generate Level 4 predictions.
 
         In production, this would use ML models to predict future issues.
         For now, returns mock predictions.
@@ -238,7 +242,7 @@ class CoachWizardEngine:
                     "impact": "Service degradation, 503 errors, timeout issues",
                     "preventiveAction": "Increase connection pool size to 50 connections now, implement auto-scaling",
                     "confidence": 0.85,
-                }
+                },
             )
 
         if "cache" not in code_lower and "database" in code_lower:
@@ -250,7 +254,7 @@ class CoachWizardEngine:
                     "impact": "Slow response times, potential database crashes",
                     "preventiveAction": "Implement Redis caching layer for frequently accessed data",
                     "confidence": 0.78,
-                }
+                },
             )
 
         if len(predictions) == 0:
@@ -263,7 +267,7 @@ class CoachWizardEngine:
                     "impact": "System should remain stable",
                     "preventiveAction": "Continue monitoring and regular code reviews",
                     "confidence": 0.92,
-                }
+                },
             )
 
         return predictions
@@ -287,9 +291,9 @@ def initialize(params: InitializeParams) -> InitializeResult:
                     "coach/multiWizardReview",
                     "coach/predict",
                     "coach/healthCheck",
-                ]
+                ],
             },
-        )
+        ),
     )
 
 
@@ -339,7 +343,7 @@ def execute_command(params: ExecuteCommandParams) -> Any:
                 context=options.get("context", ""),
             )
 
-        elif command == "coach/multiWizardReview":
+        if command == "coach/multiWizardReview":
             wizards = args[0]
             options = args[1] if len(args) > 1 else {}
 
@@ -351,7 +355,7 @@ def execute_command(params: ExecuteCommandParams) -> Any:
                 context=options.get("context", ""),
             )
 
-        elif command == "coach/predict":
+        if command == "coach/predict":
             options = args[0] if len(args) > 0 else {}
 
             return wizard_engine.predict_future_issues(
@@ -360,14 +364,13 @@ def execute_command(params: ExecuteCommandParams) -> Any:
                 timeframe=options.get("timeframe", 60),
             )
 
-        elif command == "coach/healthCheck":
+        if command == "coach/healthCheck":
             import time
 
             return {"status": "healthy", "version": "0.1.0", "uptime": int(time.time())}
 
-        else:
-            logger.error(f"Unknown command: {command}")
-            return {"error": f"Unknown command: {command}"}
+        logger.error(f"Unknown command: {command}")
+        return {"error": f"Unknown command: {command}"}
 
     except Exception as e:
         logger.error(f"Error executing command {command}: {e}", exc_info=True)

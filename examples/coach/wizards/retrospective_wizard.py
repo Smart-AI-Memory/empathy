@@ -1,5 +1,4 @@
-"""
-Retrospective Wizard
+"""Retrospective Wizard
 
 Extracts lessons learned, proposes process improvements, recognizes contributions.
 Uses Empathy Framework Level 2 (Guided) for facilitation and Level 4 (Anticipatory)
@@ -23,8 +22,7 @@ from .base_wizard import (
 
 
 class RetrospectiveWizard(BaseWizard):
-    """
-    Wizard for team retrospectives and process improvements
+    """Wizard for team retrospectives and process improvements
 
     Uses:
     - Level 2: Guide structured retrospective facilitation
@@ -54,7 +52,6 @@ class RetrospectiveWizard(BaseWizard):
 
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute retrospective workflow"""
-
         # Step 1: Assess team context
         self._extract_constraints(task)
         team_context = self._assess_team_context(task)
@@ -80,13 +77,19 @@ class RetrospectiveWizard(BaseWizard):
         # Step 8: Create artifacts
         artifacts = [
             WizardArtifact(
-                type="doc", title=f"{retro_format} Retrospective Template", content=retro_structure
+                type="doc",
+                title=f"{retro_format} Retrospective Template",
+                content=retro_structure,
             ),
             WizardArtifact(
-                type="doc", title="Team Patterns Analysis", content=self._format_patterns(patterns)
+                type="doc",
+                title="Team Patterns Analysis",
+                content=self._format_patterns(patterns),
             ),
             WizardArtifact(
-                type="doc", title="Action Items", content=self._format_action_items(action_items)
+                type="doc",
+                title="Action Items",
+                content=self._format_action_items(action_items),
             ),
             WizardArtifact(type="doc", title="Team Health Dashboard", content=team_health),
         ]
@@ -117,7 +120,9 @@ class RetrospectiveWizard(BaseWizard):
         # Step 11: Create handoffs
         handoffs = [
             WizardHandoff(
-                owner="team_lead", what="Facilitate retrospective meeting", when="Within 2 weeks"
+                owner="team_lead",
+                what="Facilitate retrospective meeting",
+                when="Within 2 weeks",
             ),
             WizardHandoff(owner="team", what="Implement agreed action items", when="Next sprint"),
         ]
@@ -198,12 +203,11 @@ class RetrospectiveWizard(BaseWizard):
         # Choose based on team context
         if team_context["morale"] == "low":
             return "Mad Sad Glad"  # Good for processing emotions
-        elif "timeline_pressure" in team_context["issues"]:
+        if "timeline_pressure" in team_context["issues"]:
             return "Start Stop Continue"  # Good for quick process changes
-        elif team_context["team_size"].startswith("large"):
+        if team_context["team_size"].startswith("large"):
             return "4Ls (Liked, Learned, Lacked, Longed For)"  # Scalable format
-        else:
-            return "What Went Well / What Didn't / Action Items"  # Classic format
+        return "What Went Well / What Didn't / Action Items"  # Classic format
 
     def _generate_retro_structure(self, retro_format: str) -> str:
         """Generate retrospective meeting structure"""
@@ -405,7 +409,7 @@ Recognize individual contributions.
                     "impact": "Misalignment, rework, frustration",
                     "root_cause": "Async-first culture, timezone differences, or unclear channels",
                     "suggestion": "Daily standups, use of project management tools, clear ownership",
-                }
+                },
             )
 
         if "timeline_pressure" in issues:
@@ -415,7 +419,7 @@ Recognize individual contributions.
                     "impact": "Burnout, technical debt, quality issues",
                     "root_cause": "Underestimation, scope creep, or external pressure",
                     "suggestion": "Better estimation, buffer time, say no to scope changes",
-                }
+                },
             )
 
         if "team_conflict" in issues:
@@ -425,7 +429,7 @@ Recognize individual contributions.
                     "impact": "Slow decision-making, low morale, attrition risk",
                     "root_cause": "Unclear roles, different values, or lack of psychological safety",
                     "suggestion": "Team charter, conflict resolution process, 1-on-1s",
-                }
+                },
             )
 
         if "technical_debt" in issues:
@@ -435,7 +439,7 @@ Recognize individual contributions.
                     "impact": "Slower velocity, more bugs, developer frustration",
                     "root_cause": "Pressure to ship, lack of refactoring time",
                     "suggestion": "Dedicated refactoring time, tech debt tracking, quality metrics",
-                }
+                },
             )
 
         # Generic patterns
@@ -446,13 +450,15 @@ Recognize individual contributions.
                     "impact": "Potential for increased efficiency",
                     "root_cause": "Normal team evolution",
                     "suggestion": "Regular retrospectives to identify specific areas",
-                }
+                },
             ]
 
         return patterns
 
     def _generate_action_items(
-        self, task: WizardTask, patterns: list[dict]
+        self,
+        task: WizardTask,
+        patterns: list[dict],
     ) -> list[dict[str, str]]:
         """Generate action items from patterns"""
         actions = []
@@ -464,7 +470,7 @@ Recognize individual contributions.
                     "owner": "Team Lead",
                     "timeline": "Next sprint",
                     "success_criteria": f"Reduced {pattern['pattern'].lower()}",
-                }
+                },
             )
 
         return actions

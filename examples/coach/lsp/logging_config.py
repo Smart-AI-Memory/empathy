@@ -1,5 +1,4 @@
-"""
-Logging Configuration for Coach LSP Server
+"""Logging Configuration for Coach LSP Server
 Structured logging with multiple outputs
 """
 
@@ -11,10 +10,11 @@ from pathlib import Path
 
 
 def setup_logging(
-    level: str = "INFO", log_file: str = None, enable_file_logging: bool = True
+    level: str = "INFO",
+    log_file: str = None,
+    enable_file_logging: bool = True,
 ) -> logging.Logger:
-    """
-    Set up comprehensive logging for LSP server
+    """Set up comprehensive logging for LSP server
 
     Args:
         level: Log level (DEBUG, INFO, WARNING, ERROR)
@@ -23,6 +23,7 @@ def setup_logging(
 
     Returns:
         Configured logger
+
     """
     # Create logger
     logger = logging.getLogger("coach_lsp")
@@ -79,7 +80,7 @@ def log_wizard_execution(
         f"Task: {task[:50]}... | "
         f"Duration: {duration:.2f}s | "
         f"Confidence: {confidence:.2f} | "
-        f"Success: {success}"
+        f"Success: {success}",
     )
 
 
@@ -97,12 +98,15 @@ def log_cache_stats(logger: logging.Logger, cache):
     logger.info(
         f"Cache: {stats['total_entries']} entries | "
         f"TTL: {stats['ttl']}s | "
-        f"Oldest: {stats['oldest_entry_age']:.1f}s"
+        f"Oldest: {stats['oldest_entry_age']:.1f}s",
     )
 
 
 def log_error_with_context(
-    logger: logging.Logger, error: Exception, context: str = "", wizard_name: str = None
+    logger: logging.Logger,
+    error: Exception,
+    context: str = "",
+    wizard_name: str = None,
 ):
     """Log error with full context"""
     import traceback

@@ -1,5 +1,4 @@
-"""
-Visual Dashboard for Empathy Framework
+"""Visual Dashboard for Empathy Framework
 
 Web-based view of patterns, costs, and health trends.
 
@@ -13,4 +12,4 @@ Licensed under Fair Source License 0.9
 
 from empathy_os.dashboard.server import cmd_dashboard, run_dashboard
 
-__all__ = ["run_dashboard", "cmd_dashboard"]
+__all__ = ["cmd_dashboard", "run_dashboard"]

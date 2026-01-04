@@ -1,5 +1,4 @@
-"""
-Empathy Framework - AI-Human Collaboration Library
+"""Empathy Framework - AI-Human Collaboration Library
 
 A five-level maturity model for building AI systems that progress from
 reactive responses to anticipatory problem prevention.
@@ -132,94 +131,94 @@ from .persistence import MetricsCollector, PatternPersistence, StateManager
 from .trust_building import TrustBuildingBehaviors
 
 __all__ = [
+    "AccessTier",
+    "AgentCoordinator",
+    "AgentCredentials",
+    "AgentMetrics",
+    # Monitoring (Multi-Agent)
+    "AgentMonitor",
+    "AgentTask",
+    "AuditEvent",
+    # Security - Audit
+    "AuditLogger",
+    "Classification",
+    "ClassificationRules",
+    # Claude Memory
+    "ClaudeMemoryConfig",
+    "ClaudeMemoryLoader",
+    "CollaborationStateError",
+    "ConfidenceThresholdError",
+    "ConflictContext",
+    # Coordination (Multi-Agent)
+    "ConflictResolver",
+    "EmergenceDetector",
+    # Configuration
+    "EmpathyConfig",
+    # Exceptions
+    "EmpathyFrameworkError",
+    "EmpathyLevelError",
     "EmpathyOS",
-    # Unified Memory Interface
-    "UnifiedMemory",
-    "MemoryConfig",
+    "EncryptionManager",
     "Environment",
+    "FeedbackLoopDetector",
+    "FeedbackLoopError",
     "Level1Reactive",
     "Level2Guided",
     "Level3Proactive",
     "Level4Anticipatory",
     "Level5Systems",
-    "FeedbackLoopDetector",
     "LeveragePointAnalyzer",
-    "EmergenceDetector",
-    # Pattern Library
-    "PatternLibrary",
-    "Pattern",
-    "PatternMatch",
-    # Coordination (Multi-Agent)
-    "ConflictResolver",
-    "ResolutionResult",
-    "ResolutionStrategy",
-    "TeamPriorities",
-    "AgentCoordinator",
-    "AgentTask",
-    "TeamSession",
-    # Monitoring (Multi-Agent)
-    "AgentMonitor",
-    "AgentMetrics",
-    "TeamMetrics",
-    # Redis Short-Term Memory
-    "RedisShortTermMemory",
-    "AccessTier",
-    "AgentCredentials",
-    "StagedPattern",
-    "ConflictContext",
-    "TTLStrategy",
-    # Redis Configuration
-    "get_redis_memory",
-    "get_redis_config",
-    "get_railway_redis",
-    "check_redis_connection",
-    # Trust
-    "TrustBuildingBehaviors",
-    # Persistence
-    "PatternPersistence",
-    "StateManager",
-    "MetricsCollector",
-    # Configuration
-    "EmpathyConfig",
-    "load_config",
-    # Logging
-    "get_logger",
-    "LoggingConfig",
-    # Exceptions
-    "EmpathyFrameworkError",
-    "ValidationError",
-    "PatternNotFoundError",
-    "TrustThresholdError",
-    "ConfidenceThresholdError",
-    "EmpathyLevelError",
     "LeveragePointError",
-    "FeedbackLoopError",
-    "CollaborationStateError",
-    # Long-term Memory
-    "SecureMemDocsIntegration",
-    "Classification",
-    "ClassificationRules",
-    "PatternMetadata",
-    "SecurePattern",
+    "LoggingConfig",
     "MemDocsStorage",
-    "EncryptionManager",
-    "SecurityError",
+    "MemoryConfig",
     "MemoryPermissionError",
-    # Claude Memory
-    "ClaudeMemoryConfig",
-    "ClaudeMemoryLoader",
-    # Security - PII
-    "PIIScrubber",
+    "MetricsCollector",
     "PIIDetection",
     "PIIPattern",
-    # Security - Secrets
-    "SecretsDetector",
+    # Security - PII
+    "PIIScrubber",
+    "Pattern",
+    # Pattern Library
+    "PatternLibrary",
+    "PatternMatch",
+    "PatternMetadata",
+    "PatternNotFoundError",
+    # Persistence
+    "PatternPersistence",
+    # Redis Short-Term Memory
+    "RedisShortTermMemory",
+    "ResolutionResult",
+    "ResolutionStrategy",
     "SecretDetection",
     "SecretType",
-    "Severity",
-    "detect_secrets",
-    # Security - Audit
-    "AuditLogger",
-    "AuditEvent",
+    # Security - Secrets
+    "SecretsDetector",
+    # Long-term Memory
+    "SecureMemDocsIntegration",
+    "SecurePattern",
+    "SecurityError",
     "SecurityViolation",
+    "Severity",
+    "StagedPattern",
+    "StateManager",
+    "TTLStrategy",
+    "TeamMetrics",
+    "TeamPriorities",
+    "TeamSession",
+    # Trust
+    "TrustBuildingBehaviors",
+    "TrustThresholdError",
+    # Unified Memory Interface
+    "UnifiedMemory",
+    "ValidationError",
+    "check_redis_connection",
+    "detect_secrets",
+    # Logging
+    "get_logger",
+    "get_railway_redis",
+    "get_redis_config",
+    # Redis Configuration
+    "get_redis_memory",
+    "load_config",
 ]

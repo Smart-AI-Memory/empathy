@@ -1,5 +1,4 @@
-"""
-LangChain Adapter
+"""LangChain Adapter
 
 Creates agents using LangChain's primitives while integrating
 with Empathy's cost optimization and pattern learning.
@@ -99,7 +98,7 @@ class LangChainAgent(BaseAgent):
 
         except Exception as e:
             return {
-                "output": f"Error: {str(e)}",
+                "output": f"Error: {e!s}",
                 "metadata": {"error": str(e), "framework": "langchain"},
             }
 
@@ -186,16 +185,16 @@ class LangChainAdapter(BaseAdapter):
     """Adapter for LangChain framework."""
 
     def __init__(self, provider: str = "anthropic", api_key: str | None = None):
-        """
-        Initialize LangChain adapter.
+        """Initialize LangChain adapter.
 
         Args:
             provider: LLM provider (anthropic, openai)
             api_key: API key (uses env var if not provided)
+
         """
         self.provider = provider
         self.api_key = api_key or os.getenv(
-            "ANTHROPIC_API_KEY" if provider == "anthropic" else "OPENAI_API_KEY"
+            "ANTHROPIC_API_KEY" if provider == "anthropic" else "OPENAI_API_KEY",
         )
 
     @property
@@ -210,11 +209,12 @@ class LangChainAdapter(BaseAdapter):
         """Get LangChain LLM based on config."""
         if not self.is_available():
             raise ImportError(
-                "LangChain not installed. Run: pip install langchain langchain-anthropic"
+                "LangChain not installed. Run: pip install langchain langchain-anthropic",
             )
 
         model_id = config.model_override or self.get_model_for_tier(
-            config.model_tier, self.provider
+            config.model_tier,
+            self.provider,
         )
 
         if self.provider == "anthropic":
@@ -227,7 +227,7 @@ class LangChainAdapter(BaseAdapter):
                 temperature=config.temperature,
                 max_tokens_to_sample=config.max_tokens,
             )
-        elif self.provider == "openai":
+        if self.provider == "openai":
             from langchain_openai import ChatOpenAI
 
             return ChatOpenAI(
@@ -236,8 +236,7 @@ class LangChainAdapter(BaseAdapter):
                 temperature=config.temperature,
                 max_tokens=config.max_tokens,
             )
-        else:
-            raise ValueError(f"Unsupported provider for LangChain: {self.provider}")
+        raise ValueError(f"Unsupported provider for LangChain: {self.provider}")
 
     def create_agent(self, config: AgentConfig) -> LangChainAgent:
         """Create a LangChain-based agent."""
@@ -251,7 +250,7 @@ class LangChainAdapter(BaseAdapter):
             from langchain.agents import AgentExecutor, create_tool_calling_agent
         except (ImportError, AttributeError):
             # Newer versions may have different import paths
-            from langgraph.prebuilt import create_react_agent  # noqa: F401
+            from langgraph.prebuilt import create_react_agent
 
             create_tool_calling_agent = create_react_agent
         from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -268,7 +267,7 @@ class LangChainAdapter(BaseAdapter):
                 MessagesPlaceholder(variable_name="chat_history", optional=True),
                 ("human", "{input}"),
                 MessagesPlaceholder(variable_name="agent_scratchpad", optional=True),
-            ]
+            ],
         )
 
         # Convert tools to LangChain format
@@ -283,10 +282,9 @@ class LangChainAdapter(BaseAdapter):
             agent = create_tool_calling_agent(llm, lc_tools, prompt)
             executor = AgentExecutor(agent=agent, tools=lc_tools, verbose=False)
             return LangChainAgent(config, agent_executor=executor)
-        else:
-            # Create simple chain (prompt | llm)
-            chain = prompt | llm
-            return LangChainAgent(config, chain=chain)
+        # Create simple chain (prompt | llm)
+        chain = prompt | llm
+        return LangChainAgent(config, chain=chain)
 
     def create_workflow(self, config: WorkflowConfig, agents: list[BaseAgent]) -> LangChainWorkflow:
         """Create a LangChain workflow."""
@@ -295,7 +293,11 @@ class LangChainAdapter(BaseAdapter):
         return LangChainWorkflow(config, agents)
 
     def create_tool(
-        self, name: str, description: str, func: Callable, args_schema: dict | None = None
+        self,
+        name: str,
+        description: str,
+        func: Callable,
+        args_schema: dict | None = None,
     ) -> Any:
         """Create a LangChain tool."""
         if not self.is_available():

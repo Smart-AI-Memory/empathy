@@ -1,5 +1,4 @@
-"""
-Real Estate Wizard - Property Data Privacy Compliant AI Assistant
+"""Real Estate Wizard - Property Data Privacy Compliant AI Assistant
 
 Specialized wizard for real estate with property and client PII protection,
 MLS data handling, and comprehensive audit logging.
@@ -43,8 +42,7 @@ REAL_ESTATE_PII_PATTERNS = [
 
 
 class RealEstateWizard(BaseWizard):
-    """
-    Property data privacy compliant real estate AI assistant
+    """Property data privacy compliant real estate AI assistant
 
     Implements PII protection for real estate operations:
     1. Property and client PII detection and scrubbing
@@ -70,6 +68,7 @@ class RealEstateWizard(BaseWizard):
         ...     user_input="Help me prepare a market analysis for this property",
         ...     user_id="agent@realty.com"
         ... )
+
     """
 
     def __init__(
@@ -77,12 +76,12 @@ class RealEstateWizard(BaseWizard):
         llm: EmpathyLLM,
         custom_pii_patterns: list[str] | None = None,
     ):
-        """
-        Initialize real estate wizard
+        """Initialize real estate wizard
 
         Args:
             llm: EmpathyLLM instance (security recommended)
             custom_pii_patterns: Additional brokerage-specific PII patterns
+
         """
         pii_patterns = REAL_ESTATE_PII_PATTERNS.copy()
 
@@ -108,7 +107,7 @@ class RealEstateWizard(BaseWizard):
 
         logger.info(
             f"RealEstateWizard initialized: {len(pii_patterns)} PII patterns, "
-            f"empathy level={config.default_empathy_level}, security={llm.enable_security}"
+            f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
     def _build_system_prompt(self) -> str:

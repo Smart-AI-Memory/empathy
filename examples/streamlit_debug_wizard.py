@@ -1,5 +1,4 @@
-"""
-Streamlit Prototype - Memory-Enhanced Debugging Wizard
+"""Streamlit Prototype - Memory-Enhanced Debugging Wizard
 
 Interactive web interface for the Memory-Enhanced Debugging Wizard,
 demonstrating Level 4+ Anticipatory Empathy with persistent memory.
@@ -92,13 +91,13 @@ def render_sidebar():
                 "**Web Demo Mode**\n\n"
                 "- Maximum 5 files\n"
                 "- 1MB per file limit\n"
-                "- Pattern storage in memory only"
+                "- Pattern storage in memory only",
             )
             st.markdown("---")
             st.markdown("### Upgrade to Full Version")
             st.markdown(
                 "Get unlimited file analysis, persistent pattern storage, "
-                "and team collaboration features."
+                "and team collaboration features.",
             )
             if st.button("Learn More", type="primary"):
                 st.markdown("[Visit Empathy Framework](https://github.com/empathy-framework)")
@@ -107,7 +106,7 @@ def render_sidebar():
                 "**Local Mode**\n\n"
                 "- Unlimited files\n"
                 "- Folder path support\n"
-                "- Persistent pattern storage"
+                "- Persistent pattern storage",
             )
 
             # Pattern storage path
@@ -125,7 +124,7 @@ def render_sidebar():
             "**Memory-Enhanced Debugging Wizard**\n\n"
             "Level 4+ Anticipatory Empathy\n\n"
             "Correlates current bugs with historical patterns "
-            "to recommend proven fixes."
+            "to recommend proven fixes.",
         )
 
         st.markdown("---")
@@ -154,8 +153,7 @@ def render_file_upload(deployment_mode: str):
             uploaded_files = uploaded_files[:5]
 
         return uploaded_files
-    else:
-        return None
+    return None
 
 
 def render_folder_input(deployment_mode: str):
@@ -200,7 +198,10 @@ def render_error_input():
 
     with col2:
         line_number = st.number_input(
-            "Line Number (optional)", min_value=0, value=0, help="Line number of the error"
+            "Line Number (optional)",
+            min_value=0,
+            value=0,
+            help="Line number of the error",
         )
 
         correlate_history = st.checkbox(
@@ -268,7 +269,7 @@ def render_results(results: dict):
                 cause_text = cause.get("cause", "Unknown")
                 check_text = cause.get("check", "")
                 st.markdown(
-                    f"- **{cause_text}** ({likelihood:.0%} likelihood)\n  - Check: {check_text}"
+                    f"- **{cause_text}** ({likelihood:.0%} likelihood)\n  - Check: {check_text}",
                 )
 
     # Historical Matches
@@ -318,7 +319,7 @@ def render_results(results: dict):
 
             st.markdown(f"**Original Fix:** {recommended_fix.get('original_fix', 'N/A')}")
             st.markdown(
-                f"**Expected Resolution Time:** {recommended_fix.get('expected_resolution_time', 'N/A')}"
+                f"**Expected Resolution Time:** {recommended_fix.get('expected_resolution_time', 'N/A')}",
             )
             st.markdown(f"**Confidence:** {recommended_fix.get('confidence', 0):.0%}")
 
@@ -394,7 +395,7 @@ def render_demo_mode_fallback():
     st.warning(
         "The Memory-Enhanced Debugging Wizard could not be imported. "
         "Running in demo mode with simulated results.\n\n"
-        f"Import error: {IMPORT_ERROR}"
+        f"Import error: {IMPORT_ERROR}",
     )
 
     return {
@@ -432,7 +433,7 @@ def render_demo_mode_fallback():
                     "Same file type: .py",
                     "Similar error message (72% match)",
                 ],
-            }
+            },
         ],
         "matches_found": 1,
         "recommended_fix": {
@@ -456,7 +457,7 @@ def render_demo_mode_fallback():
                     "Consider TypeScript strict null checks",
                     "Review API contract for nullable fields",
                 ],
-            }
+            },
         ],
         "recommendations": [
             "Historical match found! Try: Added default empty array fallback",
@@ -501,7 +502,7 @@ def main():
         uploaded_files = render_file_upload(deployment_mode)
 
         # Folder input (Local mode)
-        _folder_path = render_folder_input(deployment_mode)  # noqa: F841
+        _folder_path = render_folder_input(deployment_mode)
 
     with col2:
         # Display uploaded files
@@ -538,7 +539,7 @@ def main():
                     results = asyncio.run(run_analysis(wizard, error_context))
                     st.session_state.analysis_results = results
                     st.session_state.analysis_history.append(
-                        {"context": error_context, "results": results}
+                        {"context": error_context, "results": results},
                     )
                 except Exception as e:
                     st.error(f"Analysis failed: {e}")

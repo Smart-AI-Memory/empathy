@@ -1,5 +1,4 @@
-"""
-Comprehensive QA Tests for Coach Wizards
+"""Comprehensive QA Tests for Coach Wizards
 
 Tests all 6 wizards with various inputs, edge cases, and scenarios.
 
@@ -32,7 +31,10 @@ class TestWizardRouting:
 
         for task_desc in test_cases:
             task = WizardTask(
-                role="developer", task=task_desc, context="Production issue", risk_tolerance="low"
+                role="developer",
+                task=task_desc,
+                context="Production issue",
+                risk_tolerance="low",
             )
             result = await coach.process(task, multi_wizard=False)
             assert "DebuggingWizard" in result.routing, f"Failed for: {task_desc}"
@@ -125,7 +127,10 @@ class TestWizardRouting:
 
         for task_desc in test_cases:
             task = WizardTask(
-                role="team_lead", task=task_desc, context="Team improvement", risk_tolerance="low"
+                role="team_lead",
+                task=task_desc,
+                context="Team improvement",
+                risk_tolerance="low",
             )
             result = await coach.process(task, multi_wizard=False)
             assert "RetrospectiveWizard" in result.routing, f"Failed for: {task_desc}"
@@ -146,7 +151,10 @@ class TestWizardRouting:
 
         for task_desc in test_cases:
             task = WizardTask(
-                role="developer", task=task_desc, context="Security concern", risk_tolerance="low"
+                role="developer",
+                task=task_desc,
+                context="Security concern",
+                risk_tolerance="low",
             )
             result = await coach.process(task, multi_wizard=False)
             assert "SecurityWizard" in result.routing, f"Failed for: {task_desc}"
@@ -336,7 +344,10 @@ class TestEdgeCases:
         """Should handle empty task gracefully"""
         coach = Coach()
         task = WizardTask(
-            role="developer", task="", context="Some context", risk_tolerance="medium"
+            role="developer",
+            task="",
+            context="Some context",
+            risk_tolerance="medium",
         )
 
         result = await coach.process(task)
@@ -350,7 +361,10 @@ class TestEdgeCases:
         long_context = "Context " * 1000  # Very long context
 
         task = WizardTask(
-            role="developer", task="Bug in system", context=long_context, risk_tolerance="medium"
+            role="developer",
+            task="Bug in system",
+            context=long_context,
+            risk_tolerance="medium",
         )
 
         result = await coach.process(task)
@@ -402,7 +416,10 @@ class TestEmpathyChecks:
 
         for role in roles:
             task = WizardTask(
-                role=role, task="Bug in system", context="500 error", risk_tolerance="low"
+                role=role,
+                task="Bug in system",
+                context="500 error",
+                risk_tolerance="low",
             )
             output = wizard.execute(task)
             outputs.append(output)
@@ -463,7 +480,10 @@ class TestPerformance:
 
         coach = Coach()
         task = WizardTask(
-            role="developer", task="Bug fix needed", context="Simple bug", risk_tolerance="medium"
+            role="developer",
+            task="Bug fix needed",
+            context="Simple bug",
+            risk_tolerance="medium",
         )
 
         start = time.time()

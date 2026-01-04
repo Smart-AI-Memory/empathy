@@ -1,5 +1,4 @@
-"""
-Coverage Analyzer for Enhanced Testing Wizard
+"""Coverage Analyzer for Enhanced Testing Wizard
 
 Parses coverage reports and provides intelligent analysis of test coverage gaps,
 including branch coverage, critical path identification, and trend analysis.
@@ -77,8 +76,7 @@ class CoverageReport:
 
 
 class CoverageAnalyzer:
-    """
-    Analyzes test coverage reports to identify gaps and provide recommendations.
+    """Analyzes test coverage reports to identify gaps and provide recommendations.
 
     Supports multiple formats:
     - Coverage.py XML (pytest --cov)
@@ -92,8 +90,7 @@ class CoverageAnalyzer:
         self.target_threshold = 80.0  # Target coverage percentage
 
     def parse_coverage_xml(self, xml_path: Path) -> CoverageReport:
-        """
-        Parse coverage.xml format (Coverage.py / pytest-cov output)
+        """Parse coverage.xml format (Coverage.py / pytest-cov output)
 
         Args:
             xml_path: Path to coverage.xml file
@@ -104,6 +101,7 @@ class CoverageAnalyzer:
         Raises:
             FileNotFoundError: If XML file doesn't exist
             ValueError: If XML is malformed
+
         """
         if not xml_path.exists():
             raise FileNotFoundError(f"Coverage XML not found: {xml_path}")
@@ -206,14 +204,14 @@ class CoverageAnalyzer:
         )
 
     def parse_coverage_json(self, json_path: Path) -> CoverageReport:
-        """
-        Parse coverage.json format (Coverage.py JSON output)
+        """Parse coverage.json format (Coverage.py JSON output)
 
         Args:
             json_path: Path to coverage.json file
 
         Returns:
             CoverageReport with full analysis
+
         """
         if not json_path.exists():
             raise FileNotFoundError(f"Coverage JSON not found: {json_path}")
@@ -292,14 +290,14 @@ class CoverageAnalyzer:
         )
 
     def identify_critical_gaps(self, report: CoverageReport) -> list[str]:
-        """
-        Identify files that critically need testing (below threshold)
+        """Identify files that critically need testing (below threshold)
 
         Args:
             report: Coverage report to analyze
 
         Returns:
             List of file paths sorted by priority (worst coverage first)
+
         """
         critical = [
             (file_path, file_cov.percentage)
@@ -313,10 +311,11 @@ class CoverageAnalyzer:
         return [file_path for file_path, _ in critical]
 
     def suggest_priority_files(
-        self, report: CoverageReport, top_n: int = 10
+        self,
+        report: CoverageReport,
+        top_n: int = 10,
     ) -> list[dict[str, Any]]:
-        """
-        Suggest which files to test next for maximum impact
+        """Suggest which files to test next for maximum impact
 
         Prioritizes based on:
         1. Current coverage (lower is higher priority)
@@ -329,6 +328,7 @@ class CoverageAnalyzer:
 
         Returns:
             List of suggestions with reasoning
+
         """
         suggestions = []
 
@@ -351,7 +351,7 @@ class CoverageAnalyzer:
                     "lines_missing": file_cov.lines_uncovered,
                     "impact_score": impact_score,
                     "reason": self._generate_suggestion_reason(file_cov),
-                }
+                },
             )
 
         # Sort by impact score (highest first)
@@ -363,26 +363,26 @@ class CoverageAnalyzer:
         """Generate human-readable reason for testing suggestion"""
         if file_cov.percentage == 0.0:
             return "No tests exist - critical gap"
-        elif file_cov.percentage < 30:
+        if file_cov.percentage < 30:
             return "Very low coverage - high priority"
-        elif file_cov.percentage < 50:
+        if file_cov.percentage < 50:
             return "Below critical threshold"
-        elif file_cov.percentage < 70:
+        if file_cov.percentage < 70:
             return "Moderate gap - good opportunity for improvement"
-        else:
-            return "Close to target - finish with targeted tests"
+        return "Close to target - finish with targeted tests"
 
     def calculate_coverage_trend(
-        self, historical_reports: list[tuple[str, CoverageReport]]
+        self,
+        historical_reports: list[tuple[str, CoverageReport]],
     ) -> dict[str, float]:
-        """
-        Calculate coverage trends over time
+        """Calculate coverage trends over time
 
         Args:
             historical_reports: List of (timestamp, report) tuples in chronological order
 
         Returns:
             Dict mapping file paths to trend percentage (positive = improving)
+
         """
         if len(historical_reports) < 2:
             return {}
@@ -413,14 +413,14 @@ class CoverageAnalyzer:
         return trends
 
     def generate_summary(self, report: CoverageReport) -> str:
-        """
-        Generate human-readable coverage summary
+        """Generate human-readable coverage summary
 
         Args:
             report: Coverage report to summarize
 
         Returns:
             Formatted summary string
+
         """
         summary = []
         summary.append("=" * 60)
@@ -446,7 +446,8 @@ class CoverageAnalyzer:
         if report.critical_gaps:
             summary.append("🔴 CRITICAL GAPS (<50% coverage):")
             critical_sorted = sorted(
-                [(f, report.files[f].percentage) for f in report.critical_gaps], key=lambda x: x[1]
+                [(f, report.files[f].percentage) for f in report.critical_gaps],
+                key=lambda x: x[1],
             )
             for file_path, pct in critical_sorted[:5]:
                 summary.append(f"  - {file_path}: {pct:.1f}%")

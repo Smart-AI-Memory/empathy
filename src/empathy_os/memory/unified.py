@@ -1,5 +1,4 @@
-"""
-Unified Memory Interface for Empathy Framework
+"""Unified Memory Interface for Empathy Framework
 
 Provides a single API for both short-term (Redis) and long-term (persistent) memory,
 with automatic pattern promotion and environment-aware storage backend selection.
@@ -89,8 +88,7 @@ class MemoryConfig:
 
     @classmethod
     def from_environment(cls) -> "MemoryConfig":
-        """
-        Create configuration from environment variables.
+        """Create configuration from environment variables.
 
         Environment Variables:
             EMPATHY_ENV: Environment (development/staging/production)
@@ -121,8 +119,7 @@ class MemoryConfig:
 
 @dataclass
 class UnifiedMemory:
-    """
-    Unified interface for short-term and long-term memory.
+    """Unified interface for short-term and long-term memory.
 
     Provides:
     - Short-term memory (Redis): Fast, TTL-based working memory
@@ -166,30 +163,29 @@ class UnifiedMemory:
                     method=RedisStartMethod.ALREADY_RUNNING,
                     message="Connected via REDIS_URL",
                 )
-            else:
-                # Use auto-start if enabled
-                if self.config.redis_auto_start:
-                    self._redis_status = ensure_redis(
+            # Use auto-start if enabled
+            elif self.config.redis_auto_start:
+                self._redis_status = ensure_redis(
+                    host=self.config.redis_host,
+                    port=self.config.redis_port,
+                    auto_start=True,
+                    verbose=True,
+                )
+                if self._redis_status.available:
+                    self._short_term = RedisShortTermMemory(
                         host=self.config.redis_host,
                         port=self.config.redis_port,
-                        auto_start=True,
-                        verbose=True,
+                        use_mock=False,
                     )
-                    if self._redis_status.available:
-                        self._short_term = RedisShortTermMemory(
-                            host=self.config.redis_host,
-                            port=self.config.redis_port,
-                            use_mock=False,
-                        )
-                    else:
-                        self._short_term = RedisShortTermMemory(use_mock=True)
                 else:
-                    self._short_term = get_redis_memory()
-                    self._redis_status = RedisStatus(
-                        available=True,
-                        method=RedisStartMethod.ALREADY_RUNNING,
-                        message="Connected to existing Redis",
-                    )
+                    self._short_term = RedisShortTermMemory(use_mock=True)
+            else:
+                self._short_term = get_redis_memory()
+                self._redis_status = RedisStatus(
+                    available=True,
+                    method=RedisStartMethod.ALREADY_RUNNING,
+                    message="Connected to existing Redis",
+                )
 
             logger.info(
                 "short_term_memory_initialized",
@@ -237,8 +233,7 @@ class UnifiedMemory:
         return AgentCredentials(agent_id=self.user_id, tier=self.access_tier)
 
     def get_backend_status(self) -> dict[str, Any]:
-        """
-        Get the current status of all memory backends.
+        """Get the current status of all memory backends.
 
         Returns a structured dict suitable for health checks, debugging,
         and dashboard display. Can be serialized to JSON.
@@ -255,6 +250,7 @@ class UnifiedMemory:
             >>> status = memory.get_backend_status()
             >>> print(status["short_term"]["available"])
             True
+
         """
         short_term_status: dict[str, Any] = {
             "available": False,
@@ -290,8 +286,7 @@ class UnifiedMemory:
     # =========================================================================
 
     def stash(self, key: str, value: Any, ttl_seconds: int | None = None) -> bool:
-        """
-        Store data in short-term memory with TTL.
+        """Store data in short-term memory with TTL.
 
         Args:
             key: Storage key
@@ -300,6 +295,7 @@ class UnifiedMemory:
 
         Returns:
             True if stored successfully
+
         """
         if not self._short_term:
             logger.warning("short_term_memory_unavailable")
@@ -323,14 +319,14 @@ class UnifiedMemory:
         return self._short_term.stash(key, value, self.credentials, ttl_strategy)
 
     def retrieve(self, key: str) -> Any | None:
-        """
-        Retrieve data from short-term memory.
+        """Retrieve data from short-term memory.
 
         Args:
             key: Storage key
 
         Returns:
             Stored data or None if not found
+
         """
         if not self._short_term:
             return None
@@ -343,8 +339,7 @@ class UnifiedMemory:
         pattern_type: str = "general",
         ttl_hours: int = 24,
     ) -> str | None:
-        """
-        Stage a pattern for validation before long-term storage.
+        """Stage a pattern for validation before long-term storage.
 
         Args:
             pattern_data: Pattern content and metadata
@@ -353,6 +348,7 @@ class UnifiedMemory:
 
         Returns:
             Staged pattern ID or None if failed
+
         """
         if not self._short_term:
             logger.warning("short_term_memory_unavailable")
@@ -380,11 +376,11 @@ class UnifiedMemory:
         return pattern_id if success else None
 
     def get_staged_patterns(self) -> list[dict]:
-        """
-        Get all staged patterns awaiting validation.
+        """Get all staged patterns awaiting validation.
 
         Returns:
             List of staged patterns with metadata
+
         """
         if not self._short_term:
             return []
@@ -404,8 +400,7 @@ class UnifiedMemory:
         auto_classify: bool = True,
         metadata: dict[str, Any] | None = None,
     ) -> dict[str, Any] | None:
-        """
-        Store a pattern in long-term memory with security controls.
+        """Store a pattern in long-term memory with security controls.
 
         Args:
             content: Pattern content
@@ -416,6 +411,7 @@ class UnifiedMemory:
 
         Returns:
             Storage result with pattern_id and classification, or None if failed
+
         """
         if not self._long_term:
             logger.error("long_term_memory_unavailable")
@@ -453,8 +449,7 @@ class UnifiedMemory:
         pattern_id: str,
         check_permissions: bool = True,
     ) -> dict[str, Any] | None:
-        """
-        Retrieve a pattern from long-term memory.
+        """Retrieve a pattern from long-term memory.
 
         Args:
             pattern_id: ID of pattern to retrieve
@@ -462,6 +457,7 @@ class UnifiedMemory:
 
         Returns:
             Pattern data with content and metadata, or None if not found
+
         """
         if not self._long_term:
             logger.error("long_term_memory_unavailable")
@@ -484,8 +480,7 @@ class UnifiedMemory:
         classification: Classification | None = None,
         limit: int = 10,
     ) -> list[dict[str, Any]]:
-        """
-        Search patterns in long-term memory.
+        """Search patterns in long-term memory.
 
         Args:
             query: Text to search for in pattern content
@@ -495,6 +490,7 @@ class UnifiedMemory:
 
         Returns:
             List of matching patterns
+
         """
         if not self._long_term:
             return []
@@ -515,8 +511,7 @@ class UnifiedMemory:
         classification: Classification | str | None = None,
         auto_classify: bool = True,
     ) -> dict[str, Any] | None:
-        """
-        Promote a staged pattern from short-term to long-term memory.
+        """Promote a staged pattern from short-term to long-term memory.
 
         Args:
             staged_pattern_id: ID of staged pattern to promote
@@ -525,6 +520,7 @@ class UnifiedMemory:
 
         Returns:
             Long-term storage result, or None if failed
+
         """
         if not self._short_term or not self._long_term:
             logger.error("memory_backends_unavailable")
@@ -533,7 +529,8 @@ class UnifiedMemory:
         # Retrieve staged pattern
         staged_patterns = self.get_staged_patterns()
         staged = next(
-            (p for p in staged_patterns if p.get("pattern_id") == staged_pattern_id), None
+            (p for p in staged_patterns if p.get("pattern_id") == staged_pattern_id),
+            None,
         )
 
         if not staged:
@@ -596,11 +593,11 @@ class UnifiedMemory:
         )
 
     def health_check(self) -> dict[str, Any]:
-        """
-        Check health of memory backends.
+        """Check health of memory backends.
 
         Returns:
             Status of each memory backend
+
         """
         redis_info: dict[str, Any] = {
             "available": self.has_short_term,

@@ -1,5 +1,4 @@
-"""
-Tests for empathy_software_plugin CLI
+"""Tests for empathy_software_plugin CLI
 
 Focused tests for helper functions and core CLI components.
 """
@@ -364,7 +363,7 @@ class TestDisplayWizardResults:
                     "prevention_steps": ["Step 1", "Step 2", "Step 3", "Step 4"],
                     "reasoning": "Based on patterns",
                     "personal_experience": "Seen this before",
-                }
+                },
             ],
             "recommendations": [],
             "confidence": 0.9,
@@ -437,7 +436,7 @@ class TestPrintSummary:
                     {"impact": "high"},
                     {"impact": "low"},
                 ],
-            }
+            },
         }
         cli.print_summary(results)
         captured = capsys.readouterr()
@@ -450,7 +449,7 @@ class TestPrintSummary:
                 "issues": [],
                 "predictions": [],
                 "patterns": ["pattern1", "pattern2"],
-            }
+            },
         }
         cli.print_summary(results)
         captured = capsys.readouterr()

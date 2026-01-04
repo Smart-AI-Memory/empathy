@@ -1,5 +1,4 @@
-"""
-Tests for empathy_llm_toolkit/agent_factory/crews/code_review.py
+"""Tests for empathy_llm_toolkit/agent_factory/crews/code_review.py
 
 Tests the code review crew including:
 - Severity enum

@@ -1,5 +1,4 @@
-"""
-Tests for Multi-Model Configuration Validation Module
+"""Tests for Multi-Model Configuration Validation Module
 
 Tests the schema validation functionality:
 - ValidationError and ValidationResult

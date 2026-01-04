@@ -1,5 +1,4 @@
-"""
-Pattern-Based Code Review Wizard
+"""Pattern-Based Code Review Wizard
 
 Level 4 wizard that reviews code against historical bug patterns.
 Uses resolved bugs to generate detection rules, then scans
@@ -75,8 +74,7 @@ class AntiPatternRule:
 
 
 class CodeReviewWizard(BaseWizard):
-    """
-    Reviews code against historical bug patterns.
+    """Reviews code against historical bug patterns.
 
     This is the capstone wizard that brings together pattern learning
     to prevent bugs before they occur.
@@ -160,8 +158,7 @@ class CodeReviewWizard(BaseWizard):
         }
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze files for anti-patterns based on historical bugs.
+        """Analyze files for anti-patterns based on historical bugs.
 
         Args:
             context: {
@@ -179,6 +176,7 @@ class CodeReviewWizard(BaseWizard):
                 "recommendations": actionable steps,
                 "confidence": overall confidence
             }
+
         """
         # Load historical patterns if not already loaded
         if not self._bugs_loaded:
@@ -354,7 +352,11 @@ class CodeReviewWizard(BaseWizard):
                 code_line = line[1:]  # Remove + prefix
                 for rule in list(self._builtin_rules.values()) + self._rules:
                     finding = self._check_line_against_rule(
-                        current_file, line_num, code_line, rule, []
+                        current_file,
+                        line_num,
+                        code_line,
+                        rule,
+                        [],
                     )
                     if finding:
                         findings.append(finding)
@@ -418,6 +420,7 @@ class CodeReviewWizard(BaseWizard):
         try:
             result = subprocess.run(
                 ["git", "diff", "--cached", "--name-only"],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=5,
@@ -433,6 +436,7 @@ class CodeReviewWizard(BaseWizard):
         try:
             result = subprocess.run(
                 ["git", "diff", "--name-only", "HEAD~3", "HEAD"],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=5,
@@ -475,7 +479,7 @@ class CodeReviewWizard(BaseWizard):
                     "type": "clean_review",
                     "severity": "info",
                     "description": "No anti-patterns detected. Code looks clean!",
-                }
+                },
             )
             return predictions
 
@@ -495,7 +499,7 @@ class CodeReviewWizard(BaseWizard):
                         "Consider code review checklist",
                         "Add unit tests for edge cases",
                     ],
-                }
+                },
             )
 
         # High severity findings
@@ -507,7 +511,7 @@ class CodeReviewWizard(BaseWizard):
                     "severity": "error",
                     "description": f"{error_count} high-severity issue(s) found. "
                     f"These may cause runtime errors.",
-                }
+                },
             )
 
         return predictions
@@ -562,7 +566,7 @@ class CodeReviewWizard(BaseWizard):
 
         summary = result.get("summary", {})
         lines.append(
-            f"Summary: {summary.get('total_findings', 0)} findings in {summary.get('files_reviewed', 0)} file(s)"
+            f"Summary: {summary.get('total_findings', 0)} findings in {summary.get('files_reviewed', 0)} file(s)",
         )
 
         return "\n".join(lines)
@@ -585,7 +589,7 @@ if __name__ == "__main__":
             {
                 "files": files,
                 "staged_only": staged,
-            }
+            },
         )
 
         print(wizard.format_terminal_output(result))

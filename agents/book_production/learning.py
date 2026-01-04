@@ -1,5 +1,4 @@
-"""
-Learning System - MemDocs Pattern Extraction and Feedback Loops
+"""Learning System - MemDocs Pattern Extraction and Feedback Loops
 
 Enables the book production pipeline to learn from successful chapters
 and continuously improve quality through structured feedback.
@@ -40,8 +39,7 @@ class HandoffType(Enum):
 
 @dataclass
 class SBARHandoff:
-    """
-    SBAR-format handoff between agents.
+    """SBAR-format handoff between agents.
 
     Adapted from clinical SBAR (Situation, Background, Assessment, Recommendation)
     for structured agent-to-agent communication.
@@ -144,7 +142,7 @@ def create_research_to_writer_handoff(state: dict[str, Any]) -> SBARHandoff:
     low_relevance = [s for s in sources if s.get("relevance_score", 0) < 0.5]
     if low_relevance:
         known_issues.append(
-            f"{len(low_relevance)} sources have low relevance - verify applicability"
+            f"{len(low_relevance)} sources have low relevance - verify applicability",
         )
 
     return SBARHandoff(
@@ -191,11 +189,11 @@ def create_writer_to_editor_handoff(state: dict[str, Any]) -> SBARHandoff:
     focus_areas = []
     if word_count < target_count * 0.8:
         focus_areas.append(
-            f"Draft is {word_count} words, target is {target_count} - may need expansion"
+            f"Draft is {word_count} words, target is {target_count} - may need expansion",
         )
     elif word_count > target_count * 1.2:
         focus_areas.append(
-            f"Draft is {word_count} words, target is {target_count} - consider tightening"
+            f"Draft is {word_count} words, target is {target_count} - consider tightening",
         )
 
     if sections < 5:
@@ -363,8 +361,7 @@ class GapSeverity(Enum):
 
 @dataclass
 class QualityGap:
-    """
-    Structured quality gap with severity and remediation.
+    """Structured quality gap with severity and remediation.
 
     Inspired by healthcare gap detection systems that track
     patient care gaps with severity and follow-up protocols.
@@ -415,8 +412,7 @@ class QualityGap:
 
 
 class QualityGapDetector:
-    """
-    Detects and categorizes quality gaps in chapter content.
+    """Detects and categorizes quality gaps in chapter content.
 
     Uses structured analysis to identify specific issues,
     estimate remediation effort, and prioritize fixes.
@@ -445,8 +441,7 @@ class QualityGapDetector:
         draft: str,
         chapter_title: str,
     ) -> list[QualityGap]:
-        """
-        Detect all quality gaps in a chapter.
+        """Detect all quality gaps in a chapter.
 
         Args:
             scores: Quality scores by dimension
@@ -455,6 +450,7 @@ class QualityGapDetector:
 
         Returns:
             List of QualityGap objects, sorted by severity
+
         """
         gaps = []
         gap_counter = 0
@@ -469,7 +465,12 @@ class QualityGapDetector:
             if score < target:
                 # Get dimension-specific gaps
                 dimension_gaps = self._analyze_dimension(
-                    dimension, score, target, weight, draft, gap_counter
+                    dimension,
+                    score,
+                    target,
+                    weight,
+                    draft,
+                    gap_counter,
                 )
                 gaps.extend(dimension_gaps)
                 gap_counter += len(dimension_gaps)
@@ -489,12 +490,11 @@ class QualityGapDetector:
         """Determine gap severity based on score."""
         if score < self.THRESHOLDS["critical"]:
             return GapSeverity.CRITICAL
-        elif score < self.THRESHOLDS["high"]:
+        if score < self.THRESHOLDS["high"]:
             return GapSeverity.HIGH
-        elif score < self.THRESHOLDS["medium"]:
+        if score < self.THRESHOLDS["medium"]:
             return GapSeverity.MEDIUM
-        else:
-            return GapSeverity.LOW
+        return GapSeverity.LOW
 
     def _analyze_dimension(
         self,
@@ -523,7 +523,12 @@ class QualityGapDetector:
         return gaps
 
     def _analyze_structure(
-        self, draft: str, score: float, target: float, impact: float, start_id: int
+        self,
+        draft: str,
+        score: float,
+        target: float,
+        impact: float,
+        start_id: int,
     ) -> list[QualityGap]:
         """Analyze structure dimension for specific gaps."""
         gaps = []
@@ -548,7 +553,7 @@ class QualityGapDetector:
                     estimated_effort_minutes=5,
                     auto_fixable=False,
                     detected_by="QualityGapDetector",
-                )
+                ),
             )
             gap_id += 1
 
@@ -572,7 +577,7 @@ class QualityGapDetector:
                     estimated_effort_minutes=15,
                     auto_fixable=False,
                     detected_by="QualityGapDetector",
-                )
+                ),
             )
             gap_id += 1
 
@@ -596,7 +601,7 @@ class QualityGapDetector:
                     estimated_effort_minutes=20,
                     auto_fixable=False,
                     detected_by="QualityGapDetector",
-                )
+                ),
             )
             gap_id += 1
 
@@ -620,13 +625,18 @@ class QualityGapDetector:
                     estimated_effort_minutes=30 * (5 - section_count),
                     auto_fixable=False,
                     detected_by="QualityGapDetector",
-                )
+                ),
             )
 
         return gaps
 
     def _analyze_voice(
-        self, draft: str, score: float, target: float, impact: float, start_id: int
+        self,
+        draft: str,
+        score: float,
+        target: float,
+        impact: float,
+        start_id: int,
     ) -> list[QualityGap]:
         """Analyze voice consistency for specific gaps."""
         gaps = []
@@ -655,13 +665,18 @@ class QualityGapDetector:
                     estimated_effort_minutes=hedging_count * 2,
                     auto_fixable=True,
                     detected_by="QualityGapDetector",
-                )
+                ),
             )
 
         return gaps
 
     def _analyze_code(
-        self, draft: str, score: float, target: float, impact: float, start_id: int
+        self,
+        draft: str,
+        score: float,
+        target: float,
+        impact: float,
+        start_id: int,
     ) -> list[QualityGap]:
         """Analyze code quality for specific gaps."""
         gaps = []
@@ -690,7 +705,7 @@ class QualityGapDetector:
                     estimated_effort_minutes=15 * (5 - code_count),
                     auto_fixable=False,
                     detected_by="QualityGapDetector",
-                )
+                ),
             )
             gap_id += 1
 
@@ -714,7 +729,7 @@ class QualityGapDetector:
                     estimated_effort_minutes=unlabeled * 2,
                     auto_fixable=True,
                     detected_by="QualityGapDetector",
-                )
+                ),
             )
             gap_id += 1
 
@@ -746,13 +761,18 @@ class QualityGapDetector:
                     estimated_effort_minutes=syntax_errors * 10,
                     auto_fixable=False,
                     detected_by="QualityGapDetector",
-                )
+                ),
             )
 
         return gaps
 
     def _analyze_engagement(
-        self, draft: str, score: float, target: float, impact: float, start_id: int
+        self,
+        draft: str,
+        score: float,
+        target: float,
+        impact: float,
+        start_id: int,
     ) -> list[QualityGap]:
         """Analyze reader engagement for specific gaps."""
         gaps = []
@@ -789,13 +809,18 @@ class QualityGapDetector:
                     estimated_effort_minutes=20,
                     auto_fixable=False,
                     detected_by="QualityGapDetector",
-                )
+                ),
             )
 
         return gaps
 
     def _analyze_accuracy(
-        self, draft: str, score: float, target: float, impact: float, start_id: int
+        self,
+        draft: str,
+        score: float,
+        target: float,
+        impact: float,
+        start_id: int,
     ) -> list[QualityGap]:
         """Analyze technical accuracy for specific gaps."""
         # Technical accuracy is harder to detect automatically
@@ -878,8 +903,7 @@ class ExtractedPattern:
 
 
 class PatternExtractor:
-    """
-    Extracts successful patterns from approved chapters.
+    """Extracts successful patterns from approved chapters.
 
     These patterns are stored in MemDocs and used to guide
     future chapter production.
@@ -895,8 +919,7 @@ class PatternExtractor:
         chapter_title: str,
         quality_scores: dict[str, float],
     ) -> list[ExtractedPattern]:
-        """
-        Extract patterns from a high-quality chapter.
+        """Extract patterns from a high-quality chapter.
 
         Only called for chapters scoring >= 0.85 overall.
 
@@ -908,6 +931,7 @@ class PatternExtractor:
 
         Returns:
             List of extracted patterns
+
         """
         patterns = []
         overall = quality_scores.get("overall", 0.0)
@@ -922,32 +946,36 @@ class PatternExtractor:
         # Extract structure patterns
         if quality_scores.get("structure", 0) >= 0.85:
             patterns.extend(
-                self._extract_structure_patterns(draft, chapter_number, chapter_title, overall)
+                self._extract_structure_patterns(draft, chapter_number, chapter_title, overall),
             )
 
         # Extract voice patterns
         if quality_scores.get("voice_consistency", 0) >= 0.85:
             patterns.extend(
-                self._extract_voice_patterns(draft, chapter_number, chapter_title, overall)
+                self._extract_voice_patterns(draft, chapter_number, chapter_title, overall),
             )
 
         # Extract code patterns
         if quality_scores.get("code_quality", 0) >= 0.85:
             patterns.extend(
-                self._extract_code_patterns(draft, chapter_number, chapter_title, overall)
+                self._extract_code_patterns(draft, chapter_number, chapter_title, overall),
             )
 
         # Extract engagement patterns
         if quality_scores.get("reader_engagement", 0) >= 0.85:
             patterns.extend(
-                self._extract_engagement_patterns(draft, chapter_number, chapter_title, overall)
+                self._extract_engagement_patterns(draft, chapter_number, chapter_title, overall),
             )
 
         self.logger.info(f"Extracted {len(patterns)} patterns from Chapter {chapter_number}")
         return patterns
 
     def _extract_structure_patterns(
-        self, draft: str, chapter_number: int, chapter_title: str, score: float
+        self,
+        draft: str,
+        chapter_number: int,
+        chapter_title: str,
+        score: float,
     ) -> list[ExtractedPattern]:
         """Extract successful structure patterns."""
         patterns = []
@@ -964,7 +992,7 @@ class PatternExtractor:
                     source_chapter=chapter_number,
                     source_title=chapter_title,
                     quality_score=score,
-                )
+                ),
             )
 
         # Extract key takeaways pattern
@@ -985,7 +1013,7 @@ class PatternExtractor:
                         source_chapter=chapter_number,
                         source_title=chapter_title,
                         quality_score=score,
-                    )
+                    ),
                 )
 
         # Extract exercise pattern
@@ -1006,13 +1034,17 @@ class PatternExtractor:
                         source_chapter=chapter_number,
                         source_title=chapter_title,
                         quality_score=score,
-                    )
+                    ),
                 )
 
         return patterns
 
     def _extract_voice_patterns(
-        self, draft: str, chapter_number: int, chapter_title: str, score: float
+        self,
+        draft: str,
+        chapter_number: int,
+        chapter_title: str,
+        score: float,
     ) -> list[ExtractedPattern]:
         """Extract successful voice/tone patterns."""
         patterns = []
@@ -1043,13 +1075,17 @@ class PatternExtractor:
                     source_chapter=chapter_number,
                     source_title=chapter_title,
                     quality_score=score,
-                )
+                ),
             )
 
         return patterns
 
     def _extract_code_patterns(
-        self, draft: str, chapter_number: int, chapter_title: str, score: float
+        self,
+        draft: str,
+        chapter_number: int,
+        chapter_title: str,
+        score: float,
     ) -> list[ExtractedPattern]:
         """Extract successful code example patterns."""
         patterns = []
@@ -1075,13 +1111,17 @@ class PatternExtractor:
                             source_chapter=chapter_number,
                             source_title=chapter_title,
                             quality_score=score,
-                        )
+                        ),
                     )
 
         return patterns[:3]  # Limit to top 3 code patterns
 
     def _extract_engagement_patterns(
-        self, draft: str, chapter_number: int, chapter_title: str, score: float
+        self,
+        draft: str,
+        chapter_number: int,
+        chapter_title: str,
+        score: float,
     ) -> list[ExtractedPattern]:
         """Extract successful engagement patterns."""
         patterns = []
@@ -1102,7 +1142,7 @@ class PatternExtractor:
                     source_chapter=chapter_number,
                     source_title=chapter_title,
                     quality_score=score,
-                )
+                ),
             )
 
         # Extract real-world context
@@ -1121,7 +1161,7 @@ class PatternExtractor:
                     source_chapter=chapter_number,
                     source_title=chapter_title,
                     quality_score=score,
-                )
+                ),
             )
 
         return patterns
@@ -1147,8 +1187,7 @@ class FeedbackEntry:
 
 
 class FeedbackLoop:
-    """
-    Manages the feedback loop for continuous pattern improvement.
+    """Manages the feedback loop for continuous pattern improvement.
 
     Collects feedback from:
     - ReviewerAgent quality assessments
@@ -1173,8 +1212,7 @@ class FeedbackLoop:
         patterns_used: list[str],
         approved: bool,
     ) -> list[FeedbackEntry]:
-        """
-        Record feedback from a review cycle.
+        """Record feedback from a review cycle.
 
         Args:
             chapter_number: Chapter that was reviewed
@@ -1185,6 +1223,7 @@ class FeedbackLoop:
 
         Returns:
             List of feedback entries created
+
         """
         entries = []
         overall = quality_scores.get("overall", 0.0)
@@ -1205,7 +1244,7 @@ class FeedbackLoop:
                             "quality_scores": quality_scores,
                             "approved": approved,
                         },
-                    )
+                    ),
                 )
             elif not approved:
                 # Determine which dimension failed
@@ -1227,7 +1266,7 @@ class FeedbackLoop:
                             "quality_scores": quality_scores,
                             "failed_dimensions": failed_dims,
                         },
-                    )
+                    ),
                 )
 
         self.pending_feedback.extend(entries)
@@ -1241,8 +1280,7 @@ class FeedbackLoop:
         gaps: list[QualityGap],
         patterns_used: list[str],
     ) -> list[FeedbackEntry]:
-        """
-        Record feedback from quality gap detection.
+        """Record feedback from quality gap detection.
 
         If gaps are found, patterns used should be updated
         to prevent similar issues.
@@ -1265,18 +1303,18 @@ class FeedbackLoop:
                                     "gap": gap.to_dict(),
                                     "chapter_number": chapter_number,
                                 },
-                            )
+                            ),
                         )
 
         self.pending_feedback.extend(entries)
         return entries
 
     def update_pattern_scores(self) -> dict[str, float]:
-        """
-        Process pending feedback to update pattern effectiveness scores.
+        """Process pending feedback to update pattern effectiveness scores.
 
         Returns:
             Updated pattern scores
+
         """
         for entry in self.pending_feedback:
             if entry.processed or not entry.pattern_id:

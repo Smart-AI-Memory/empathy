@@ -1,5 +1,4 @@
-"""
-Comprehensive tests for Software Plugin CLI
+"""Comprehensive tests for Software Plugin CLI
 
 Tests coverage for empathy_software_plugin/cli.py including:
 - analyze_project() - Plugin registry, wizard execution
@@ -207,7 +206,7 @@ import openai
 def generate_text():
     response = openai.chat.completions.create()
     return response
-"""
+""",
     )
 
     context = await gather_project_context(str(tmp_path))
@@ -292,7 +291,7 @@ async def test_gather_project_context_langchain_detection(tmp_path):
         """
 from langchain.llms import OpenAI
 from langchain.chains import LLMChain
-"""
+""",
     )
 
     context = await gather_project_context(str(tmp_path))
@@ -437,7 +436,7 @@ def test_display_wizard_results_with_predictions(capsys):
                 "reasoning": "Based on trend analysis",
                 "personal_experience": "We've seen this before",
                 "prevention_steps": ["Step 1", "Step 2", "Step 3"],
-            }
+            },
         ],
         "recommendations": [],
         "confidence": 0.90,
@@ -481,14 +480,14 @@ def test_display_wizard_results_verbose_mode(capsys):
                 "severity": "info",
                 "message": "Info message",
                 "suggestion": "This is a suggestion",
-            }
+            },
         ],
         "predictions": [
             {
                 "alert": "Future issue",
                 "reasoning": "Detailed reasoning",
                 "prevention_steps": ["Fix it"],
-            }
+            },
         ],
         "recommendations": [],
         "confidence": 0.80,
@@ -592,7 +591,7 @@ async def test_analyze_project_success(tmp_path):
             "predictions": [],
             "recommendations": [],
             "confidence": 0.9,
-        }
+        },
     )
     mock_wizard_class.return_value = mock_wizard
     mock_plugin.get_wizard.return_value = mock_wizard_class
@@ -616,7 +615,7 @@ async def test_analyze_project_json_output(tmp_path, capsys):
             "issues": [{"message": "test issue"}],
             "predictions": [],
             "recommendations": [],
-        }
+        },
     )
     mock_wizard_class.return_value = mock_wizard
     mock_plugin.get_wizard.return_value = mock_wizard_class
@@ -689,7 +688,7 @@ async def test_analyze_project_verbose_mode(tmp_path, capsys):
             "predictions": [],
             "recommendations": [],
             "confidence": 0.8,
-        }
+        },
     )
     mock_wizard_class.return_value = mock_wizard
     mock_plugin.get_wizard.return_value = mock_wizard_class
@@ -722,7 +721,7 @@ async def test_analyze_project_default_wizards(tmp_path):
             "issues": [],
             "predictions": [],
             "recommendations": [],
-        }
+        },
     )
     mock_wizard_class.return_value = mock_wizard
     mock_plugin.get_wizard.return_value = mock_wizard_class
@@ -871,7 +870,7 @@ def test_scan_command_security_single_file(tmp_path):
         """
 def process_data(user_input):
     exec(user_input)  # Security issue
-"""
+""",
     )
 
     mock_security_wizard = Mock()
@@ -1033,36 +1032,38 @@ def test_main_no_command():
 
 def test_main_analyze_command(tmp_path, capsys):
     """Test main() with analyze command"""
-    with patch.object(
-        sys,
-        "argv",
-        ["empathy-software", "analyze", str(tmp_path)],
+    with (
+        patch.object(
+            sys,
+            "argv",
+            ["empathy-software", "analyze", str(tmp_path)],
+        ),
+        patch("empathy_os.plugins.get_global_registry") as mock_reg,
     ):
-        with patch("empathy_os.plugins.get_global_registry") as mock_reg:
-            mock_plugin = Mock()
-            mock_wizard_class = Mock()
-            mock_wizard = Mock()
-            mock_wizard.analyze = AsyncMock(
-                return_value={
-                    "issues": [],
-                    "predictions": [],
-                    "recommendations": [],
-                    "confidence": 0.9,
-                }
-            )
-            mock_wizard_class.return_value = mock_wizard
-            mock_plugin.get_wizard.return_value = mock_wizard_class
-            mock_plugin.list_wizards.return_value = ["prompt_engineering"]
-            mock_plugin.get_wizard_info.return_value = {
-                "id": "prompt_engineering",
-                "name": "Test Wizard",
-            }
-            mock_reg.return_value.get_plugin.return_value = mock_plugin
+        mock_plugin = Mock()
+        mock_wizard_class = Mock()
+        mock_wizard = Mock()
+        mock_wizard.analyze = AsyncMock(
+            return_value={
+                "issues": [],
+                "predictions": [],
+                "recommendations": [],
+                "confidence": 0.9,
+            },
+        )
+        mock_wizard_class.return_value = mock_wizard
+        mock_plugin.get_wizard.return_value = mock_wizard_class
+        mock_plugin.list_wizards.return_value = ["prompt_engineering"]
+        mock_plugin.get_wizard_info.return_value = {
+            "id": "prompt_engineering",
+            "name": "Test Wizard",
+        }
+        mock_reg.return_value.get_plugin.return_value = mock_plugin
 
-            main()
-            # Verify analyze ran by checking output
-            captured = capsys.readouterr()
-            assert "Empathy Framework" in captured.out or "Analysis" in captured.out
+        main()
+        # Verify analyze ran by checking output
+        captured = capsys.readouterr()
+        assert "Empathy Framework" in captured.out or "Analysis" in captured.out
 
 
 def test_main_analyze_with_wizards(tmp_path):
@@ -1084,13 +1085,15 @@ def test_main_analyze_with_wizards(tmp_path):
             assert kwargs.get("wizard_names") == ["security", "performance"]
             return 0
 
-        with patch(
-            "empathy_software_plugin.cli.analyze_project",
-            side_effect=mock_analyze_project,
+        with (
+            patch(
+                "empathy_software_plugin.cli.analyze_project",
+                side_effect=mock_analyze_project,
+            ),
+            patch("empathy_os.plugins.get_global_registry"),
         ):
-            with patch("empathy_os.plugins.get_global_registry"):
-                main()
-                # Should complete successfully
+            main()
+            # Should complete successfully
 
 
 def test_main_analyze_verbose():
@@ -1105,12 +1108,14 @@ def test_main_analyze_verbose():
             assert kwargs.get("verbose") is True
             return 0
 
-        with patch(
-            "empathy_software_plugin.cli.analyze_project",
-            side_effect=mock_analyze_project,
+        with (
+            patch(
+                "empathy_software_plugin.cli.analyze_project",
+                side_effect=mock_analyze_project,
+            ),
+            patch("empathy_os.plugins.get_global_registry"),
         ):
-            with patch("empathy_os.plugins.get_global_registry"):
-                main()
+            main()
 
 
 def test_main_analyze_json_output():
@@ -1125,12 +1130,14 @@ def test_main_analyze_json_output():
             assert kwargs.get("output_format") == "json"
             return 0
 
-        with patch(
-            "empathy_software_plugin.cli.analyze_project",
-            side_effect=mock_analyze_project,
+        with (
+            patch(
+                "empathy_software_plugin.cli.analyze_project",
+                side_effect=mock_analyze_project,
+            ),
+            patch("empathy_os.plugins.get_global_registry"),
         ):
-            with patch("empathy_os.plugins.get_global_registry"):
-                main()
+            main()
 
 
 def test_main_list_wizards_command(capsys):

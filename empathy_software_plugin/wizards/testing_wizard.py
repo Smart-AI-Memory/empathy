@@ -1,5 +1,4 @@
-"""
-Testing Wizard - Level 4 Anticipatory Empathy
+"""Testing Wizard - Level 4 Anticipatory Empathy
 
 Alerts developers to testing bottlenecks before they become critical.
 
@@ -21,8 +20,7 @@ from empathy_os.plugins import BaseWizard
 
 
 class TestingWizard(BaseWizard):
-    """
-    Wizard that analyzes testing patterns and alerts to bottlenecks.
+    """Wizard that analyzes testing patterns and alerts to bottlenecks.
 
     Level 4 Anticipatory: Detects when testing burden will become
     unsustainable based on growth trajectory, and suggests automation
@@ -48,8 +46,7 @@ class TestingWizard(BaseWizard):
         ]
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze testing patterns and predict bottlenecks.
+        """Analyze testing patterns and predict bottlenecks.
 
         Args:
             context: Must contain fields from get_required_context()
@@ -61,6 +58,7 @@ class TestingWizard(BaseWizard):
                 - recommendations: Actionable steps
                 - patterns: Detected patterns for pattern library
                 - confidence: Analysis confidence (0.0-1.0)
+
         """
         # Validate context
         self.validate_context(context)
@@ -100,10 +98,11 @@ class TestingWizard(BaseWizard):
         }
 
     async def _analyze_current_tests(
-        self, test_files: list[str], framework: str
+        self,
+        test_files: list[str],
+        framework: str,
     ) -> list[dict[str, Any]]:
-        """
-        Analyze current testing state (Level 1-3).
+        """Analyze current testing state (Level 1-3).
 
         Returns list of current issues.
         """
@@ -117,7 +116,7 @@ class TestingWizard(BaseWizard):
                     "type": "low_test_coverage",
                     "message": "Low test count - consider adding more tests",
                     "impact": "medium",
-                }
+                },
             )
 
         # Check for test organization
@@ -128,16 +127,18 @@ class TestingWizard(BaseWizard):
                     "type": "test_organization",
                     "message": "Tests lack clear organization structure",
                     "impact": "low",
-                }
+                },
             )
 
         return issues
 
     async def _predict_bottlenecks(
-        self, test_files: list[str], team_size: int, context: dict[str, Any]
+        self,
+        test_files: list[str],
+        team_size: int,
+        context: dict[str, Any],
     ) -> list[dict[str, Any]]:
-        """
-        Level 4 Anticipatory: Predict future testing bottlenecks.
+        """Level 4 Anticipatory: Predict future testing bottlenecks.
 
         Based on our experience: manual testing becomes unsustainable
         when test count exceeds ~25 or execution time > 15 minutes.
@@ -170,7 +171,7 @@ class TestingWizard(BaseWizard):
                         "will become bottleneck. Proactive automation prevents "
                         "future crisis."
                     ),
-                }
+                },
             )
 
         # Check for test duplication patterns
@@ -189,7 +190,7 @@ class TestingWizard(BaseWizard):
                         "Create test base classes",
                         "Implement fixture library",
                     ],
-                }
+                },
             )
 
         return predictions
@@ -212,10 +213,12 @@ class TestingWizard(BaseWizard):
         return recommendations
 
     def _extract_patterns(
-        self, test_files: list[str], issues: list[dict], predictions: list[dict]
+        self,
+        test_files: list[str],
+        issues: list[dict],
+        predictions: list[dict],
     ) -> list[dict[str, Any]]:
-        """
-        Extract patterns for cross-domain learning (Level 5).
+        """Extract patterns for cross-domain learning (Level 5).
 
         These patterns can be applied across software, healthcare, finance, etc.
         """
@@ -237,14 +240,13 @@ class TestingWizard(BaseWizard):
                         "compliance tracking",
                         "any growing system",
                     ],
-                }
+                },
             )
 
         return patterns
 
     def _calculate_confidence(self, context: dict[str, Any]) -> float:
-        """
-        Calculate confidence in analysis.
+        """Calculate confidence in analysis.
 
         Higher confidence when we have more context (team size, history, etc.)
         """

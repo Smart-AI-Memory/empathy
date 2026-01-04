@@ -1,5 +1,4 @@
-"""
-Output generators for keyboard shortcut files.
+"""Output generators for keyboard shortcut files.
 
 Generates:
 - VSCode keybindings.json (per layout)
@@ -27,8 +26,7 @@ class VSCodeKeybindingsGenerator:
         shortcuts: GeneratedShortcuts,
         output_dir: Path,
     ) -> dict[str, Path]:
-        """
-        Generate keybindings files for all layouts.
+        """Generate keybindings files for all layouts.
 
         Returns dict of layout -> output file path.
         """
@@ -64,7 +62,7 @@ class VSCodeKeybindingsGenerator:
                     "mac": f"{prefix.replace('ctrl', 'cmd')} {shortcut.key}",
                     "command": command,
                     "// mnemonic": shortcut.mnemonic,
-                }
+                },
             )
 
         return bindings
@@ -113,7 +111,7 @@ class CLIAliasGenerator:
                 project_name=shortcuts.manifest.project_name,
                 output_file=output_file.name,
                 mnemonic=layout_shortcuts.phrase_mnemonic,
-            )
+            ),
         ]
 
         for shortcut in layout_shortcuts.shortcuts:
@@ -363,8 +361,7 @@ class ComprehensiveGenerator:
         shortcuts: GeneratedShortcuts,
         output_dir: Path,
     ) -> dict[str, Path]:
-        """
-        Generate all output formats.
+        """Generate all output formats.
 
         Returns dict of format -> output path(s).
         """

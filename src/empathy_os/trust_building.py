@@ -1,5 +1,4 @@
-"""
-Trust-Building Behaviors for Anticipatory AI Agents
+"""Trust-Building Behaviors for Anticipatory AI Agents
 
 Implements behaviors that build trust through anticipatory actions:
 - Pre-format data for handoffs (reduce cognitive load)
@@ -29,8 +28,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class TrustSignal:
-    """
-    A signal that indicates trust is building or eroding
+    """A signal that indicates trust is building or eroding
 
     Trust signals help track how trust evolves over time based on
     observable behaviors and outcomes.
@@ -44,8 +42,7 @@ class TrustSignal:
 
 
 class TrustBuildingBehaviors:
-    """
-    Level 4 Anticipatory trust-building behaviors
+    """Level 4 Anticipatory trust-building behaviors
 
     Philosophy: Trust is earned through consistent, helpful actions that
     demonstrate understanding of collaboration dynamics and proactive
@@ -76,6 +73,7 @@ class TrustBuildingBehaviors:
         ...     instruction=instruction,
         ...     ambiguities=["which system?", "what changes?"]
         ... )
+
     """
 
     def __init__(self):
@@ -83,10 +81,12 @@ class TrustBuildingBehaviors:
         self.trust_signals: list[TrustSignal] = []
 
     def pre_format_for_handoff(
-        self, data: dict[str, Any], recipient_role: str, context: str
+        self,
+        data: dict[str, Any],
+        recipient_role: str,
+        context: str,
     ) -> dict[str, Any]:
-        """
-        Pre-format data for handoff to reduce recipient's cognitive load
+        """Pre-format data for handoff to reduce recipient's cognitive load
 
         **Trust Built:**
         - "This AI understands my workflow"
@@ -109,6 +109,7 @@ class TrustBuildingBehaviors:
             ...     context="board_meeting"
             ... )
             >>> # Returns: executive summary format with key highlights
+
         """
         logger.info(f"Pre-formatting data for handoff to {recipient_role} (context: {context})")
 
@@ -148,8 +149,7 @@ class TrustBuildingBehaviors:
         detected_ambiguities: list[str],
         context: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        """
-        Clarify ambiguous instructions before execution to prevent wasted effort
+        """Clarify ambiguous instructions before execution to prevent wasted effort
 
         **Trust Built:**
         - "This AI doesn't make dangerous assumptions"
@@ -171,6 +171,7 @@ class TrustBuildingBehaviors:
             ...     instruction=instruction,
             ...     detected_ambiguities=ambiguities
             ... )
+
         """
         logger.info(f"Clarifying ambiguous instruction: {instruction}")
 
@@ -202,10 +203,11 @@ class TrustBuildingBehaviors:
         return clarification
 
     def volunteer_structure_during_stress(
-        self, stress_indicators: dict[str, Any], available_scaffolding: list[str]
+        self,
+        stress_indicators: dict[str, Any],
+        available_scaffolding: list[str],
     ) -> dict[str, Any]:
-        """
-        Volunteer structure/scaffolding during stressful situations
+        """Volunteer structure/scaffolding during stressful situations
 
         **Not pep talks, actual structural help:**
         - Break down overwhelming tasks
@@ -232,6 +234,7 @@ class TrustBuildingBehaviors:
             ...     stress_indicators=stress,
             ...     available_scaffolding=scaffolding
             ... )
+
         """
         logger.info("Volunteering structure during detected stress")
 
@@ -256,7 +259,7 @@ class TrustBuildingBehaviors:
                         "type": "prioritization",
                         "description": "Help prioritize tasks using urgency-importance matrix",
                         "immediate": True,
-                    }
+                    },
                 )
 
             if "breakdown" in available_scaffolding:
@@ -265,7 +268,7 @@ class TrustBuildingBehaviors:
                         "type": "task_breakdown",
                         "description": "Break overwhelming tasks into smaller, manageable steps",
                         "immediate": True,
-                    }
+                    },
                 )
 
         if "templates" in available_scaffolding:
@@ -274,7 +277,7 @@ class TrustBuildingBehaviors:
                     "type": "templates",
                     "description": "Provide templates to reduce creation effort",
                     "immediate": False,
-                }
+                },
             )
 
         # Record trust signal
@@ -287,10 +290,11 @@ class TrustBuildingBehaviors:
         return support
 
     def offer_proactive_help(
-        self, struggle_indicators: dict[str, Any], available_help: list[str]
+        self,
+        struggle_indicators: dict[str, Any],
+        available_help: list[str],
     ) -> dict[str, Any]:
-        """
-        Proactively offer help when collaborator is struggling
+        """Proactively offer help when collaborator is struggling
 
         **Trust Built:**
         - "This AI notices when I'm stuck"
@@ -311,6 +315,7 @@ class TrustBuildingBehaviors:
             ...     struggle_indicators=indicators,
             ...     available_help=help_types
             ... )
+
         """
         logger.info("Offering proactive help based on struggle indicators")
 
@@ -332,7 +337,10 @@ class TrustBuildingBehaviors:
         if struggle_type == "comprehension":
             if "explanation" in available_help:
                 help_offered.append(
-                    {"type": "explanation", "description": "Provide clearer explanation of concept"}
+                    {
+                        "type": "explanation",
+                        "description": "Provide clearer explanation of concept",
+                    },
                 )
             if "examples" in available_help:
                 help_offered.append({"type": "examples", "description": "Show concrete examples"})
@@ -342,7 +350,7 @@ class TrustBuildingBehaviors:
                 help_offered.append({"type": "debugging", "description": "Help debug the issue"})
             if "guidance" in available_help:
                 help_offered.append(
-                    {"type": "step_by_step", "description": "Provide step-by-step guidance"}
+                    {"type": "step_by_step", "description": "Provide step-by-step guidance"},
                 )
 
         # Record trust signal
@@ -355,11 +363,11 @@ class TrustBuildingBehaviors:
         return offer
 
     def get_trust_trajectory(self) -> dict[str, Any]:
-        """
-        Get trust trajectory based on recorded signals
+        """Get trust trajectory based on recorded signals
 
         Returns:
             Analysis of trust evolution over time
+
         """
         if not self.trust_signals:
             return {"status": "insufficient_data", "trajectory": "unknown", "signal_count": 0}
@@ -395,12 +403,11 @@ class TrustBuildingBehaviors:
         """Determine appropriate format based on role and context"""
         if role in ["executive", "manager", "director"]:
             return "executive_summary"
-        elif role in ["developer", "engineer", "analyst"]:
+        if role in ["developer", "engineer", "analyst"]:
             return "technical_detail"
-        elif role in ["team_lead", "coordinator"]:
+        if role in ["team_lead", "coordinator"]:
             return "action_oriented"
-        else:
-            return "general"
+        return "general"
 
     def _create_executive_summary(self, data: dict, context: str) -> dict:
         """Create executive summary format"""
@@ -469,7 +476,10 @@ class TrustBuildingBehaviors:
         return []
 
     def _generate_clarifying_question(
-        self, instruction: str, ambiguity: str, context: dict | None
+        self,
+        instruction: str,
+        ambiguity: str,
+        context: dict | None,
     ) -> dict[str, str]:
         """Generate a specific clarifying question"""
         return {
@@ -485,21 +495,19 @@ class TrustBuildingBehaviors:
 
         if stress_score >= 4:
             return "critical"
-        elif stress_score >= 3:
+        if stress_score >= 3:
             return "high"
-        elif stress_score >= 2:
+        if stress_score >= 2:
             return "moderate"
-        else:
-            return "low"
+        return "low"
 
     def _classify_struggle(self, indicators: dict) -> str:
         """Classify type of struggle"""
         if "repeated_errors" in indicators:
             return "execution"
-        elif "time_on_task" in indicators:
+        if "time_on_task" in indicators:
             return "comprehension"
-        else:
-            return "general"
+        return "general"
 
     def _record_trust_signal(self, signal_type: str, behavior: str, evidence: str | None = None):
         """Record a trust signal"""

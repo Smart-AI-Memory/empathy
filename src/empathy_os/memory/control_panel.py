@@ -1,5 +1,4 @@
-"""
-Memory Control Panel for Empathy Framework
+"""Memory Control Panel for Empathy Framework
 
 Enterprise-grade control panel for managing AI memory systems.
 Provides both programmatic API and CLI interface.
@@ -84,14 +83,14 @@ RATE_LIMIT_MAX_REQUESTS = 100  # Per IP per window
 
 
 def _validate_pattern_id(pattern_id: str) -> bool:
-    """
-    Validate pattern ID to prevent path traversal and injection attacks.
+    """Validate pattern ID to prevent path traversal and injection attacks.
 
     Args:
         pattern_id: The pattern ID to validate
 
     Returns:
         True if valid, False otherwise
+
     """
     if not pattern_id or not isinstance(pattern_id, str):
         return False
@@ -113,14 +112,14 @@ def _validate_pattern_id(pattern_id: str) -> bool:
 
 
 def _validate_agent_id(agent_id: str) -> bool:
-    """
-    Validate agent ID format.
+    """Validate agent ID format.
 
     Args:
         agent_id: The agent ID to validate
 
     Returns:
         True if valid, False otherwise
+
     """
     if not agent_id or not isinstance(agent_id, str):
         return False
@@ -138,14 +137,14 @@ def _validate_agent_id(agent_id: str) -> bool:
 
 
 def _validate_classification(classification: str | None) -> bool:
-    """
-    Validate classification parameter.
+    """Validate classification parameter.
 
     Args:
         classification: The classification to validate
 
     Returns:
         True if valid, False otherwise
+
     """
     if classification is None:
         return True
@@ -163,14 +162,14 @@ class RateLimiter:
         self._requests: dict[str, list[float]] = defaultdict(list)
 
     def is_allowed(self, client_ip: str) -> bool:
-        """
-        Check if request is allowed for this IP.
+        """Check if request is allowed for this IP.
 
         Args:
             client_ip: The client IP address
 
         Returns:
             True if allowed, False if rate limited
+
         """
         now = time.time()
         window_start = now - self.window_seconds
@@ -199,12 +198,12 @@ class APIKeyAuth:
     """Simple API key authentication."""
 
     def __init__(self, api_key: str | None = None):
-        """
-        Initialize API key auth.
+        """Initialize API key auth.
 
         Args:
             api_key: The API key to require. If None, reads from
                      EMPATHY_MEMORY_API_KEY env var. If still None, auth is disabled.
+
         """
         self.api_key = api_key or os.environ.get("EMPATHY_MEMORY_API_KEY")
         self.enabled = bool(self.api_key)
@@ -217,14 +216,14 @@ class APIKeyAuth:
             logger.info("api_key_auth_disabled", reason="no_key_configured")
 
     def is_valid(self, provided_key: str | None) -> bool:
-        """
-        Check if provided API key is valid.
+        """Check if provided API key is valid.
 
         Args:
             provided_key: The key provided in the request
 
         Returns:
             True if valid or auth disabled, False otherwise
+
         """
         if not self.enabled:
             return True
@@ -278,8 +277,7 @@ class ControlPanelConfig:
 
 
 class MemoryControlPanel:
-    """
-    Enterprise control panel for Empathy memory management.
+    """Enterprise control panel for Empathy memory management.
 
     Provides unified management interface for:
     - Short-term memory (Redis)
@@ -291,14 +289,15 @@ class MemoryControlPanel:
         >>> status = panel.status()
         >>> print(f"Redis: {status['redis']['status']}")
         >>> print(f"Patterns: {status['long_term']['pattern_count']}")
+
     """
 
     def __init__(self, config: ControlPanelConfig | None = None):
-        """
-        Initialize control panel.
+        """Initialize control panel.
 
         Args:
             config: Configuration options (uses defaults if None)
+
         """
         self.config = config or ControlPanelConfig()
         self._redis_status: RedisStatus | None = None
@@ -306,11 +305,11 @@ class MemoryControlPanel:
         self._long_term: SecureMemDocsIntegration | None = None
 
     def status(self) -> dict[str, Any]:
-        """
-        Get comprehensive status of memory system.
+        """Get comprehensive status of memory system.
 
         Returns:
             Dictionary with status of all memory components
+
         """
         redis_running = _check_redis_running(self.config.redis_host, self.config.redis_port)
 
@@ -338,14 +337,14 @@ class MemoryControlPanel:
         return result
 
     def start_redis(self, verbose: bool = True) -> RedisStatus:
-        """
-        Start Redis if not running.
+        """Start Redis if not running.
 
         Args:
             verbose: Print status messages
 
         Returns:
             RedisStatus with result
+
         """
         self._redis_status = ensure_redis(
             host=self.config.redis_host,
@@ -356,22 +355,22 @@ class MemoryControlPanel:
         return self._redis_status
 
     def stop_redis(self) -> bool:
-        """
-        Stop Redis if we started it.
+        """Stop Redis if we started it.
 
         Returns:
             True if stopped successfully
+
         """
         if self._redis_status and self._redis_status.method != RedisStartMethod.ALREADY_RUNNING:
             return stop_redis(self._redis_status.method)
         return False
 
     def get_statistics(self) -> MemoryStats:
-        """
-        Collect comprehensive statistics.
+        """Collect comprehensive statistics.
 
         Returns:
             MemoryStats with all metrics
+
         """
         start_time = time.perf_counter()
         stats = MemoryStats(collected_at=datetime.utcnow().isoformat() + "Z")
@@ -431,8 +430,7 @@ class MemoryControlPanel:
         classification: str | None = None,
         limit: int = 100,
     ) -> list[dict[str, Any]]:
-        """
-        List patterns in long-term storage.
+        """List patterns in long-term storage.
 
         Args:
             classification: Filter by classification (PUBLIC/INTERNAL/SENSITIVE)
@@ -440,6 +438,7 @@ class MemoryControlPanel:
 
         Returns:
             List of pattern summaries
+
         """
         long_term = self._get_long_term()
 
@@ -456,8 +455,7 @@ class MemoryControlPanel:
         return patterns[:limit]
 
     def delete_pattern(self, pattern_id: str, user_id: str = "admin@system") -> bool:
-        """
-        Delete a pattern from long-term storage.
+        """Delete a pattern from long-term storage.
 
         Args:
             pattern_id: Pattern to delete
@@ -465,6 +463,7 @@ class MemoryControlPanel:
 
         Returns:
             True if deleted
+
         """
         long_term = self._get_long_term()
         try:
@@ -474,22 +473,21 @@ class MemoryControlPanel:
             return False
 
     def clear_short_term(self, agent_id: str = "admin") -> int:
-        """
-        Clear all short-term memory for an agent.
+        """Clear all short-term memory for an agent.
 
         Args:
             agent_id: Agent whose memory to clear
 
         Returns:
             Number of keys deleted
+
         """
         memory = self._get_short_term()
         creds = AgentCredentials(agent_id=agent_id, tier=AccessTier.STEWARD)
         return memory.clear_working_memory(creds)
 
     def export_patterns(self, output_path: str, classification: str | None = None) -> int:
-        """
-        Export patterns to JSON file.
+        """Export patterns to JSON file.
 
         Args:
             output_path: Path to output file
@@ -497,6 +495,7 @@ class MemoryControlPanel:
 
         Returns:
             Number of patterns exported
+
         """
         patterns = self.list_patterns(classification=classification)
 
@@ -513,11 +512,11 @@ class MemoryControlPanel:
         return len(patterns)
 
     def health_check(self) -> dict[str, Any]:
-        """
-        Perform comprehensive health check.
+        """Perform comprehensive health check.
 
         Returns:
             Health status with recommendations
+
         """
         status = self.status()
         stats = self.get_statistics()
@@ -543,7 +542,7 @@ class MemoryControlPanel:
             checks.append({"name": "long_term", "status": "pass", "message": "Storage available"})
         else:
             checks.append(
-                {"name": "long_term", "status": "warn", "message": "Storage not initialized"}
+                {"name": "long_term", "status": "warn", "message": "Storage not initialized"},
             )
             recommendations.append("Initialize long-term storage directory")
             health["overall"] = "degraded"
@@ -555,11 +554,11 @@ class MemoryControlPanel:
                     "name": "patterns",
                     "status": "pass",
                     "message": f"{stats.patterns_total} patterns stored",
-                }
+                },
             )
         else:
             checks.append(
-                {"name": "patterns", "status": "info", "message": "No patterns stored yet"}
+                {"name": "patterns", "status": "info", "message": "No patterns stored yet"},
             )
 
         # Check encryption
@@ -569,7 +568,7 @@ class MemoryControlPanel:
                     "name": "encryption",
                     "status": "fail",
                     "message": "Some sensitive patterns are not encrypted",
-                }
+                },
             )
             recommendations.append("Enable encryption for sensitive patterns")
             health["overall"] = "unhealthy"
@@ -579,7 +578,7 @@ class MemoryControlPanel:
                     "name": "encryption",
                     "status": "pass",
                     "message": "All sensitive patterns encrypted",
-                }
+                },
             )
 
         return health
@@ -914,7 +913,7 @@ class MemoryAPIHandler(BaseHTTPRequestHandler):
                 {
                     "success": status.available,
                     "message": f"Redis {'OK' if status.available else 'failed'} via {status.method.value}",
-                }
+                },
             )
 
         elif path == "/api/redis/stop":
@@ -923,7 +922,7 @@ class MemoryAPIHandler(BaseHTTPRequestHandler):
                 {
                     "success": stopped,
                     "message": "Redis stopped" if stopped else "Could not stop Redis",
-                }
+                },
             )
 
         elif path == "/api/memory/clear":
@@ -981,8 +980,7 @@ def run_api_server(
     ssl_keyfile: str | None = None,
     allowed_origins: list[str] | None = None,
 ):
-    """
-    Run the Memory API server with security features.
+    """Run the Memory API server with security features.
 
     Args:
         panel: MemoryControlPanel instance
@@ -995,6 +993,7 @@ def run_api_server(
         ssl_certfile: Path to SSL certificate file for HTTPS
         ssl_keyfile: Path to SSL key file for HTTPS
         allowed_origins: List of allowed CORS origins (None = localhost only)
+
     """
     # Set up handler class attributes
     MemoryAPIHandler.panel = panel
@@ -1003,7 +1002,8 @@ def run_api_server(
     # Set up rate limiting
     if enable_rate_limit:
         MemoryAPIHandler.rate_limiter = RateLimiter(
-            window_seconds=rate_limit_window, max_requests=rate_limit_requests
+            window_seconds=rate_limit_window,
+            max_requests=rate_limit_requests,
         )
     else:
         MemoryAPIHandler.rate_limiter = None
@@ -1051,7 +1051,7 @@ def run_api_server(
     print(f"  HTTPS:        {'✓ Enabled' if use_https else '✗ Disabled'}")
     print(f"  API Key Auth: {'✓ Enabled' if MemoryAPIHandler.api_auth.enabled else '✗ Disabled'}")
     print(
-        f"  Rate Limit:   {'✓ Enabled (' + str(rate_limit_requests) + '/min)' if enable_rate_limit else '✗ Disabled'}"
+        f"  Rate Limit:   {'✓ Enabled (' + str(rate_limit_requests) + '/min)' if enable_rate_limit else '✗ Disabled'}",
     )
     print(f"  CORS Origins: {allowed_origins or ['localhost']}")
 
@@ -1132,17 +1132,26 @@ Quick Start:
         version=f"empathy-memory {__version__}",
     )
     parser.add_argument(
-        "--host", default="localhost", help="Redis host (or API host for 'api' command)"
+        "--host",
+        default="localhost",
+        help="Redis host (or API host for 'api' command)",
     )
     parser.add_argument("--port", type=int, default=6379, help="Redis port")
     parser.add_argument(
-        "--api-port", type=int, default=8765, help="API server port (for 'api' command)"
+        "--api-port",
+        type=int,
+        default=8765,
+        help="API server port (for 'api' command)",
     )
     parser.add_argument(
-        "--storage", default="./memdocs_storage", help="Long-term storage directory"
+        "--storage",
+        default="./memdocs_storage",
+        help="Long-term storage directory",
     )
     parser.add_argument(
-        "--classification", "-c", help="Filter by classification (PUBLIC/INTERNAL/SENSITIVE)"
+        "--classification",
+        "-c",
+        help="Filter by classification (PUBLIC/INTERNAL/SENSITIVE)",
     )
     parser.add_argument("--output", "-o", help="Output file for export")
     parser.add_argument("--json", action="store_true", help="Output in JSON format")
@@ -1150,16 +1159,21 @@ Quick Start:
 
     # Security options (for api/serve commands)
     parser.add_argument(
-        "--api-key", help="API key for authentication (or set EMPATHY_MEMORY_API_KEY env var)"
+        "--api-key",
+        help="API key for authentication (or set EMPATHY_MEMORY_API_KEY env var)",
     )
     parser.add_argument("--no-rate-limit", action="store_true", help="Disable rate limiting")
     parser.add_argument(
-        "--rate-limit", type=int, default=100, help="Max requests per minute per IP (default: 100)"
+        "--rate-limit",
+        type=int,
+        default=100,
+        help="Max requests per minute per IP (default: 100)",
     )
     parser.add_argument("--ssl-cert", help="Path to SSL certificate file for HTTPS")
     parser.add_argument("--ssl-key", help="Path to SSL key file for HTTPS")
     parser.add_argument(
-        "--cors-origins", help="Comma-separated list of allowed CORS origins (default: localhost)"
+        "--cors-origins",
+        help="Comma-separated list of allowed CORS origins (default: localhost)",
     )
 
     args = parser.parse_args()
@@ -1221,7 +1235,7 @@ Quick Start:
             print(f"\nPatterns ({len(patterns)} found):")
             for p in patterns:
                 print(
-                    f"  [{p.get('classification', '?')}] {p.get('pattern_id', '?')} ({p.get('pattern_type', '?')})"
+                    f"  [{p.get('classification', '?')}] {p.get('pattern_id', '?')} ({p.get('pattern_type', '?')})",
                 )
 
     elif args.command == "export":

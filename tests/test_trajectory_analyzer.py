@@ -1,5 +1,4 @@
-"""
-Tests for Healthcare Plugin Trajectory Analyzer (Level 4)
+"""Tests for Healthcare Plugin Trajectory Analyzer (Level 4)
 
 Copyright 2025 Smart-AI-Memory
 Licensed under Fair Source License 0.9
@@ -573,7 +572,8 @@ class TestIsTrendConcerningEdgeCases:
         prediction = analyzer.analyze_trajectory(current, history)
 
         rr_trend = next(
-            (t for t in prediction.vital_trends if t.parameter == "respiratory_rate"), None
+            (t for t in prediction.vital_trends if t.parameter == "respiratory_rate"),
+            None,
         )
         assert rr_trend is not None
         assert rr_trend.concerning is True
@@ -923,7 +923,8 @@ class TestMissingLineCoverage:
         prediction = analyzer.analyze_trajectory(current, history)
 
         rr_trend = next(
-            (t for t in prediction.vital_trends if t.parameter == "respiratory_rate"), None
+            (t for t in prediction.vital_trends if t.parameter == "respiratory_rate"),
+            None,
         )
         assert rr_trend is not None
         # Should trigger rapid increase detection (line 246-247)
@@ -991,7 +992,8 @@ class TestMissingLineCoverage:
 
         if prediction.trajectory_state in ["concerning", "critical"]:
             bp_trend = next(
-                (t for t in prediction.vital_trends if t.parameter == "systolic_bp"), None
+                (t for t in prediction.vital_trends if t.parameter == "systolic_bp"),
+                None,
             )
             if bp_trend and bp_trend.direction == "decreasing" and bp_trend.rate_of_change > 0:
                 # Should calculate time to critical (lines 306-309)
@@ -1142,7 +1144,8 @@ class TestPreciseBranchCoverage:
         prediction = analyzer.analyze_trajectory(current, history)
 
         rr_trend = next(
-            (t for t in prediction.vital_trends if t.parameter == "respiratory_rate"), None
+            (t for t in prediction.vital_trends if t.parameter == "respiratory_rate"),
+            None,
         )
         assert rr_trend is not None
         assert rr_trend.rate_of_change > 5
@@ -1195,7 +1198,8 @@ class TestPreciseBranchCoverage:
         # Should trigger lines 306-309
         if prediction.trajectory_state in ["concerning", "critical"]:
             bp_trend = next(
-                (t for t in prediction.vital_trends if t.parameter == "systolic_bp"), None
+                (t for t in prediction.vital_trends if t.parameter == "systolic_bp"),
+                None,
             )
             if bp_trend and bp_trend.direction == "decreasing" and bp_trend.rate_of_change > 0:
                 hours = (bp_trend.current_value - 90) / bp_trend.rate_of_change
@@ -1323,7 +1327,8 @@ class TestExactBranchHits:
         prediction = analyzer.analyze_trajectory(current, history)
 
         rr_trend = next(
-            (t for t in prediction.vital_trends if t.parameter == "respiratory_rate"), None
+            (t for t in prediction.vital_trends if t.parameter == "respiratory_rate"),
+            None,
         )
         # Verify conditions that trigger line 247
         assert rr_trend.direction == "increasing"

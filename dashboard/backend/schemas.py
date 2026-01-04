@@ -1,5 +1,4 @@
-"""
-Pydantic schemas for request/response validation.
+"""Pydantic schemas for request/response validation.
 
 All API endpoints use these schemas for type-safe validation and
 automatic OpenAPI documentation generation.
@@ -70,7 +69,7 @@ class RedisStatusResponse(BaseModel):
                 "host": "localhost",
                 "port": 6379,
                 "method": "already_running",
-            }
+            },
         }
 
 
@@ -87,7 +86,7 @@ class LongTermStatusResponse(BaseModel):
                 "status": "available",
                 "storage_dir": "./memdocs_storage",
                 "pattern_count": 42,
-            }
+            },
         }
 
 
@@ -125,7 +124,7 @@ class SystemStatusResponse(BaseModel):
                     "pattern_count": 42,
                 },
                 "config": {"auto_start_redis": True, "audit_dir": "./logs"},
-            }
+            },
         }
 
 
@@ -172,7 +171,7 @@ class MemoryStatsResponse(BaseModel):
                 "patterns_sensitive": 2,
                 "patterns_encrypted": 2,
                 "collected_at": "2025-01-15T12:34:56.789Z",
-            }
+            },
         }
 
 
@@ -190,7 +189,7 @@ class HealthCheckItem(BaseModel):
 
     class Config:
         json_schema_extra = {
-            "example": {"name": "redis", "status": "pass", "message": "Redis is running"}
+            "example": {"name": "redis", "status": "pass", "message": "Redis is running"},
         }
 
 
@@ -210,7 +209,7 @@ class HealthCheckResponse(BaseModel):
                     {"name": "long_term", "status": "pass", "message": "Storage available"},
                 ],
                 "recommendations": [],
-            }
+            },
         }
 
 
@@ -236,7 +235,7 @@ class PatternSummary(BaseModel):
                 "classification": "INTERNAL",
                 "created_at": "2025-01-15T12:34:56.789Z",
                 "user_id": "dev@company.com",
-            }
+            },
         }
 
 
@@ -258,10 +257,10 @@ class PatternListResponse(BaseModel):
                         "classification": "INTERNAL",
                         "created_at": "2025-01-15T12:34:56.789Z",
                         "user_id": "dev@company.com",
-                    }
+                    },
                 ],
                 "classification_filter": None,
-            }
+            },
         }
 
 
@@ -269,7 +268,8 @@ class ExportPatternsRequest(BaseModel):
     """Request to export patterns."""
 
     classification: ClassificationEnum | None = Field(
-        None, description="Filter patterns by classification"
+        None,
+        description="Filter patterns by classification",
     )
     output_filename: str | None = Field(None, description="Custom output filename (optional)")
 
@@ -289,7 +289,7 @@ class ExportPatternsResponse(BaseModel):
                 "pattern_count": 42,
                 "output_path": "/tmp/patterns_export_20250115.json",
                 "exported_at": "2025-01-15T12:34:56.789Z",
-            }
+            },
         }
 
 
@@ -319,7 +319,7 @@ class RedisStartResponse(BaseModel):
                 "available": True,
                 "method": "homebrew",
                 "message": "Redis started via homebrew",
-            }
+            },
         }
 
 
@@ -365,7 +365,7 @@ class MetricsUpdate(BaseModel):
                 "redis_memory_used": "2.5M",
                 "patterns_total": 42,
                 "timestamp": "2025-01-15T12:34:56.789Z",
-            }
+            },
         }
 
 
@@ -387,7 +387,7 @@ class ErrorResponse(BaseModel):
                 "detail": "Resource not found",
                 "error_code": "NOT_FOUND",
                 "timestamp": "2025-01-15T12:34:56.789Z",
-            }
+            },
         }
 
 

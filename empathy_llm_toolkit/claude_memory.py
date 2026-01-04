@@ -1,5 +1,4 @@
-"""
-Claude Memory Integration Module
+"""Claude Memory Integration Module
 
 Reads and integrates Claude Code's CLAUDE.md memory files with the Empathy Framework.
 Supports hierarchical memory loading (Enterprise → Project → User) and @import directives.
@@ -64,8 +63,7 @@ class MemoryFile:
 
 
 class ClaudeMemoryLoader:
-    """
-    Loads and manages Claude Code memory files (CLAUDE.md).
+    """Loads and manages Claude Code memory files (CLAUDE.md).
 
     Follows Claude Code's hierarchical memory system:
     1. Enterprise memory (organization-wide)
@@ -81,8 +79,7 @@ class ClaudeMemoryLoader:
         self._import_stack: list[str] = []  # Track imports to detect cycles
 
     def load_all_memory(self, project_root: str | None = None) -> str:
-        """
-        Load all Claude memory files and return combined content.
+        """Load all Claude memory files and return combined content.
 
         Args:
             project_root: Project root directory (defaults to cwd)
@@ -94,6 +91,7 @@ class ClaudeMemoryLoader:
             loader = ClaudeMemoryLoader(ClaudeMemoryConfig(enabled=True))
             memory = loader.load_all_memory("/path/to/project")
             # Use memory in LLM system prompt
+
         """
         if not self.config.enabled:
             logger.debug("claude_memory_disabled")
@@ -185,8 +183,7 @@ class ClaudeMemoryLoader:
         return None
 
     def _load_memory_file(self, file_path: str, level: str, depth: int = 0) -> MemoryFile | None:
-        """
-        Load a single memory file and process imports.
+        """Load a single memory file and process imports.
 
         Args:
             file_path: Path to CLAUDE.md file
@@ -195,6 +192,7 @@ class ClaudeMemoryLoader:
 
         Returns:
             MemoryFile object or None if failed
+
         """
         # Check depth limit
         if depth > self.config.max_import_depth:
@@ -270,8 +268,7 @@ class ClaudeMemoryLoader:
             return None
 
     def _process_imports(self, content: str, base_dir: Path, depth: int) -> tuple[str, list[str]]:
-        """
-        Process @import directives in memory content.
+        """Process @import directives in memory content.
 
         Supports syntax: @path/to/file.md
 
@@ -282,6 +279,7 @@ class ClaudeMemoryLoader:
 
         Returns:
             (processed_content, list_of_imported_paths)
+
         """
         # Match @import syntax: @path/to/file
         import_pattern = re.compile(r"^@([^\s]+)$", re.MULTILINE)
@@ -301,7 +299,9 @@ class ClaudeMemoryLoader:
                 if resolved_path.exists():
                     # Recursively load imported file
                     imported_file = self._load_memory_file(
-                        str(resolved_path), level="import", depth=depth + 1
+                        str(resolved_path),
+                        level="import",
+                        depth=depth + 1,
                     )
 
                     if imported_file:
@@ -322,8 +322,7 @@ class ClaudeMemoryLoader:
         return "\n".join(processed_lines), imports
 
     def _combine_memory_files(self, memory_files: list[MemoryFile]) -> str:
-        """
-        Combine multiple memory files into a single memory string.
+        """Combine multiple memory files into a single memory string.
 
         Files are combined in load order with clear section markers.
         """
@@ -355,8 +354,7 @@ class ClaudeMemoryLoader:
 
 
 def create_default_project_memory(project_root: str, framework: str = "empathy"):
-    """
-    Create a default .claude/CLAUDE.md file for a project.
+    """Create a default .claude/CLAUDE.md file for a project.
 
     Args:
         project_root: Project root directory
@@ -364,6 +362,7 @@ def create_default_project_memory(project_root: str, framework: str = "empathy")
 
     Example:
         create_default_project_memory("/path/to/project")
+
     """
     project_path = Path(project_root)
     claude_dir = project_path / ".claude"

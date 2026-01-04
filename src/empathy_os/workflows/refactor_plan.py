@@ -1,5 +1,4 @@
-"""
-Refactor Planning Workflow
+"""Refactor Planning Workflow
 
 Prioritizes tech debt based on trajectory analysis and impact assessment.
 Uses historical tech debt data to identify trends and hotspots.
@@ -46,8 +45,7 @@ DEBT_MARKERS = {
 
 
 class RefactorPlanWorkflow(BaseWorkflow):
-    """
-    Prioritize tech debt with trajectory analysis.
+    """Prioritize tech debt with trajectory analysis.
 
     Analyzes tech debt trends over time to identify growing
     problem areas and generate prioritized refactoring plans.
@@ -69,13 +67,13 @@ class RefactorPlanWorkflow(BaseWorkflow):
         min_debt_for_premium: int = 50,
         **kwargs: Any,
     ):
-        """
-        Initialize refactor planning workflow.
+        """Initialize refactor planning workflow.
 
         Args:
             patterns_dir: Directory containing tech debt history
             min_debt_for_premium: Minimum debt items to use premium planning
             **kwargs: Additional arguments passed to BaseWorkflow
+
         """
         super().__init__(**kwargs)
         self.patterns_dir = patterns_dir
@@ -96,8 +94,7 @@ class RefactorPlanWorkflow(BaseWorkflow):
                 pass
 
     def should_skip_stage(self, stage_name: str, input_data: Any) -> tuple[bool, str | None]:
-        """
-        Downgrade plan stage if debt is low.
+        """Downgrade plan stage if debt is low.
 
         Args:
             stage_name: Name of the stage to check
@@ -105,6 +102,7 @@ class RefactorPlanWorkflow(BaseWorkflow):
 
         Returns:
             Tuple of (should_skip, reason)
+
         """
         if stage_name == "plan":
             if self._total_debt < self.min_debt_for_premium:
@@ -113,23 +111,24 @@ class RefactorPlanWorkflow(BaseWorkflow):
         return False, None
 
     async def run_stage(
-        self, stage_name: str, tier: ModelTier, input_data: Any
+        self,
+        stage_name: str,
+        tier: ModelTier,
+        input_data: Any,
     ) -> tuple[Any, int, int]:
         """Route to specific stage implementation."""
         if stage_name == "scan":
             return await self._scan(input_data, tier)
-        elif stage_name == "analyze":
+        if stage_name == "analyze":
             return await self._analyze(input_data, tier)
-        elif stage_name == "prioritize":
+        if stage_name == "prioritize":
             return await self._prioritize(input_data, tier)
-        elif stage_name == "plan":
+        if stage_name == "plan":
             return await self._plan(input_data, tier)
-        else:
-            raise ValueError(f"Unknown stage: {stage_name}")
+        raise ValueError(f"Unknown stage: {stage_name}")
 
     async def _scan(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Scan codebase for tech debt markers.
+        """Scan codebase for tech debt markers.
 
         Finds TODOs, FIXMEs, HACKs and other debt indicators.
         """
@@ -165,7 +164,7 @@ class RefactorPlanWorkflow(BaseWorkflow):
                                         "message": match.group(1).strip()[:100],
                                         "severity": info["severity"],
                                         "weight": info["weight"],
-                                    }
+                                    },
                                 )
                     except OSError:
                         continue
@@ -201,8 +200,7 @@ class RefactorPlanWorkflow(BaseWorkflow):
         )
 
     async def _analyze(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Analyze debt trajectory from historical data.
+        """Analyze debt trajectory from historical data.
 
         Compares current debt with historical snapshots to
         identify trends and growing problem areas.
@@ -235,7 +233,7 @@ class RefactorPlanWorkflow(BaseWorkflow):
                     "file": file_path,
                     "debt_count": count,
                     "trend": "stable",  # Would compare with history
-                }
+                },
             )
 
         analysis = {
@@ -259,8 +257,7 @@ class RefactorPlanWorkflow(BaseWorkflow):
         )
 
     async def _prioritize(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Score debt items by impact, effort, and risk.
+        """Score debt items by impact, effort, and risk.
 
         Calculates priority scores considering multiple factors.
         """
@@ -290,7 +287,7 @@ class RefactorPlanWorkflow(BaseWorkflow):
                     **item,
                     "priority_score": priority_score,
                     "is_hotspot": item["file"] in hotspots,
-                }
+                },
             )
 
         # Sort by priority
@@ -325,8 +322,7 @@ class RefactorPlanWorkflow(BaseWorkflow):
         )
 
     async def _plan(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Generate prioritized refactoring roadmap using LLM.
+        """Generate prioritized refactoring roadmap using LLM.
 
         Creates actionable refactoring plan based on priorities.
 
@@ -342,7 +338,7 @@ class RefactorPlanWorkflow(BaseWorkflow):
         for item in high_priority[:15]:
             high_summary.append(
                 f"- {item.get('file')}:{item.get('line')} [{item.get('marker')}] "
-                f"{item.get('message', '')[:50]}"
+                f"{item.get('message', '')[:50]}",
             )
 
         # Build input payload for prompt
@@ -415,12 +411,18 @@ Create a phased approach to reduce debt sustainably."""
             except Exception:
                 # Fall back to legacy _call_llm if executor fails
                 response, input_tokens, output_tokens = await self._call_llm(
-                    tier, system or "", user_message, max_tokens=3000
+                    tier,
+                    system or "",
+                    user_message,
+                    max_tokens=3000,
                 )
         else:
             # Legacy path for backward compatibility
             response, input_tokens, output_tokens = await self._call_llm(
-                tier, system or "", user_message, max_tokens=3000
+                tier,
+                system or "",
+                user_message,
+                max_tokens=3000,
             )
 
         # Parse XML response if enforcement is enabled
@@ -447,7 +449,7 @@ Create a phased approach to reduce debt sustainably."""
                     "plan_summary": parsed_data.get("summary"),
                     "findings": parsed_data.get("findings", []),
                     "checklist": parsed_data.get("checklist", []),
-                }
+                },
             )
 
         # Add formatted report for human readability
@@ -461,8 +463,7 @@ Create a phased approach to reduce debt sustainably."""
 
 
 def format_refactor_plan_report(result: dict, input_data: dict) -> str:
-    """
-    Format refactor plan output as a human-readable report.
+    """Format refactor plan output as a human-readable report.
 
     Args:
         result: The plan stage result
@@ -470,6 +471,7 @@ def format_refactor_plan_report(result: dict, input_data: dict) -> str:
 
     Returns:
         Formatted report string
+
     """
     lines = []
 

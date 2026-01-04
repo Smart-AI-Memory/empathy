@@ -1,5 +1,4 @@
-"""
-DevOps Wizard
+"""DevOps Wizard
 
 CI/CD pipelines, infrastructure as code, deployment automation, and container orchestration.
 Uses Empathy Framework Level 3 (Proactive) for pipeline design and Level 4
@@ -23,8 +22,7 @@ from .base_wizard import (
 
 
 class DevOpsWizard(BaseWizard):
-    """
-    Wizard for CI/CD, infrastructure, and deployment automation
+    """Wizard for CI/CD, infrastructure, and deployment automation
 
     Uses:
     - Level 2: Guide user through infrastructure decisions
@@ -70,7 +68,6 @@ class DevOpsWizard(BaseWizard):
 
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute DevOps workflow"""
-
         # Step 1: Assess emotional context
         emotional_state = self._assess_emotional_state(task)
 
@@ -109,10 +106,14 @@ class DevOpsWizard(BaseWizard):
                 content=self._generate_strategy_document(diagnosis, deployment_strategy),
             ),
             WizardArtifact(
-                type="code", title="CI/CD Pipeline (GitHub Actions)", content=pipeline_config
+                type="code",
+                title="CI/CD Pipeline (GitHub Actions)",
+                content=pipeline_config,
             ),
             WizardArtifact(
-                type="code", title="Infrastructure as Code (Terraform)", content=infrastructure_code
+                type="code",
+                title="Infrastructure as Code (Terraform)",
+                content=infrastructure_code,
             ),
             WizardArtifact(
                 type="code",
@@ -764,7 +765,7 @@ class DevOpsWizard(BaseWizard):
                 risk="Deployment may fail and cause downtime",
                 mitigation="Use blue-green deployment for zero-downtime. Keep previous version running for fast rollback.",
                 severity="high",
-            )
+            ),
         )
 
         # Configuration drift risk
@@ -773,7 +774,7 @@ class DevOpsWizard(BaseWizard):
                 risk="Manual infrastructure changes cause configuration drift",
                 mitigation="Use Terraform for ALL infrastructure changes. Enable drift detection in CI/CD.",
                 severity="medium",
-            )
+            ),
         )
 
         # Security vulnerability risk
@@ -782,7 +783,7 @@ class DevOpsWizard(BaseWizard):
                 risk="Docker images may contain security vulnerabilities",
                 mitigation="Add container scanning to CI/CD (Trivy, Snyk). Fail builds on high/critical vulnerabilities.",
                 severity="high",
-            )
+            ),
         )
 
         # Cost overrun risk
@@ -791,7 +792,7 @@ class DevOpsWizard(BaseWizard):
                 risk="Auto-scaling may cause unexpected cloud costs",
                 mitigation="Set up cost monitoring alerts. Configure maximum scaling limits. Review costs weekly.",
                 severity="medium",
-            )
+            ),
         )
 
         return risks
@@ -806,14 +807,14 @@ class DevOpsWizard(BaseWizard):
                     owner="DevOps / Platform Team",
                     what="Review infrastructure code, set up monitoring, configure secrets management",
                     when="Before production deployment",
-                )
+                ),
             )
             handoffs.append(
                 WizardHandoff(
                     owner="Security Team",
                     what="Review security configurations, approve container images, validate network policies",
                     when="Before production deployment",
-                )
+                ),
             )
 
         return handoffs

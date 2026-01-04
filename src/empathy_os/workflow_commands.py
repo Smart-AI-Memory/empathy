@@ -1,5 +1,4 @@
-"""
-One-Command Workflows for Empathy Framework
+"""One-Command Workflows for Empathy Framework
 
 Power-user commands that automate common developer workflows:
 - morning: Start-of-day briefing with patterns, debt, and focus areas
@@ -30,7 +29,7 @@ def _load_patterns(patterns_dir: str = "./patterns") -> dict[str, list]:
     if not patterns_path.exists():
         return patterns
 
-    for pattern_type in patterns.keys():
+    for pattern_type in patterns:
         file_path = patterns_path / f"{pattern_type}.json"
         if file_path.exists():
             try:
@@ -68,7 +67,7 @@ def _save_stats(stats: dict, empathy_dir: str = ".empathy") -> None:
 def _run_command(cmd: list, capture: bool = True) -> tuple:
     """Run a shell command and return (success, output)."""
     try:
-        result = subprocess.run(cmd, capture_output=capture, text=True, timeout=300)
+        result = subprocess.run(cmd, check=False, capture_output=capture, text=True, timeout=300)
         return result.returncode == 0, result.stdout + result.stderr
     except subprocess.TimeoutExpired:
         return False, "Command timed out"
@@ -97,19 +96,19 @@ def _get_tech_debt_trend(patterns_dir: str = "./patterns") -> str:
 
         if recent > previous:
             return "increasing"
-        elif recent < previous:
+        if recent < previous:
             return "decreasing"
-        else:
-            return "stable"
+        return "stable"
     except (OSError, json.JSONDecodeError, KeyError):
         return "unknown"
 
 
 def morning_workflow(
-    patterns_dir: str = "./patterns", project_root: str = ".", verbose: bool = False
+    patterns_dir: str = "./patterns",
+    project_root: str = ".",
+    verbose: bool = False,
 ) -> int:
-    """
-    Start-of-day developer briefing.
+    """Start-of-day developer briefing.
 
     Shows:
     - Health check summary
@@ -231,7 +230,7 @@ def morning_workflow(
     ]
     if investigating_bugs:
         suggestions.append(
-            f"Resolve {len(investigating_bugs)} investigating bug(s) via 'empathy patterns resolve'"
+            f"Resolve {len(investigating_bugs)} investigating bug(s) via 'empathy patterns resolve'",
         )
 
     if trend == "increasing":
@@ -271,12 +270,11 @@ def _run_tests_only(project_root: str = ".", verbose: bool = False) -> int:
         print("All tests passed!")
         print("\n" + "=" * 60 + "\n")
         return 0
-    else:
-        print("Test Results:")
-        print("-" * 40)
-        print(output)
-        print("\n" + "=" * 60 + "\n")
-        return 1
+    print("Test Results:")
+    print("-" * 40)
+    print(output)
+    print("\n" + "=" * 60 + "\n")
+    return 1
 
 
 def _run_security_only(project_root: str = ".", verbose: bool = False) -> int:
@@ -292,20 +290,19 @@ def _run_security_only(project_root: str = ".", verbose: bool = False) -> int:
     success, output = _run_command(["bandit", "-r", project_root, "-ll", "-q"])
     if success:
         print("   PASS - No high/medium security issues")
+    elif "bandit" in output.lower() and "not found" in output.lower():
+        print("   SKIP - Bandit not installed (pip install bandit)")
     else:
-        if "bandit" in output.lower() and "not found" in output.lower():
-            print("   SKIP - Bandit not installed (pip install bandit)")
-        else:
-            issue_count = output.count(">> Issue:")
-            issues.append(f"Bandit: {issue_count} security issues")
-            print(f"   WARN - {issue_count} issues found")
-            if verbose:
-                print(output)
+        issue_count = output.count(">> Issue:")
+        issues.append(f"Bandit: {issue_count} security issues")
+        print(f"   WARN - {issue_count} issues found")
+        if verbose:
+            print(output)
 
     # Check for secrets in code
     print("2. Checking for hardcoded secrets...")
     success, output = _run_command(
-        ["grep", "-rn", "--include=*.py", "password.*=.*['\"]", project_root]
+        ["grep", "-rn", "--include=*.py", "password.*=.*['\"]", project_root],
     )
     if not success or not output.strip():
         print("   PASS - No obvious hardcoded secrets")
@@ -346,8 +343,7 @@ def ship_workflow(
     security_only: bool = False,
     verbose: bool = False,
 ) -> int:
-    """
-    Pre-commit validation pipeline.
+    """Pre-commit validation pipeline.
 
     Runs:
     1. empathy inspect (code analysis)
@@ -364,6 +360,7 @@ def ship_workflow(
         verbose: Show detailed output
 
     Returns exit code (0 = ready to ship, non-zero = issues found).
+
     """
     if tests_only:
         return _run_tests_only(project_root, verbose)
@@ -385,7 +382,7 @@ def ship_workflow(
         print("   PASS - No lint issues")
     else:
         issue_count = len(
-            [line for line in output.split("\n") if line.strip() and not line.startswith("Found")]
+            [line for line in output.split("\n") if line.strip() and not line.startswith("Found")],
         )
         issues.append(f"Lint: {issue_count} issues")
         print(f"   FAIL - {issue_count} issues found")
@@ -403,7 +400,7 @@ def ship_workflow(
                 line
                 for line in output.split("\n")
                 if "would be reformatted" in line.lower() or line.strip().endswith(".py")
-            ]
+            ],
         )
         warnings.append(f"Format: {files} files need formatting")
         print(f"   WARN - {files} files need formatting (run 'empathy fix-all')")
@@ -426,7 +423,7 @@ def ship_workflow(
     success, output = _run_command(["git", "status", "--porcelain"])
     if success:
         staged = len(
-            [line for line in output.split("\n") if line.startswith(("A ", "M ", "D ", "R "))]
+            [line for line in output.split("\n") if line.startswith(("A ", "M ", "D ", "R "))],
         )
         unstaged = len([line for line in output.split("\n") if line.startswith((" M", " D", "??"))])
         if staged > 0:
@@ -446,7 +443,7 @@ def ship_workflow(
 
             from empathy_llm_toolkit.cli.sync_claude import sync_patterns
 
-            result = sync_patterns(project_root=Path("."), verbose=False)
+            result = sync_patterns(project_root=Path(), verbose=False)
             synced_count = len(result.get("synced", []))
             if synced_count > 0:
                 print(f"   PASS - {synced_count} patterns synced")
@@ -490,8 +487,7 @@ def ship_workflow(
 
 
 def fix_all_workflow(project_root: str = ".", dry_run: bool = False, verbose: bool = False) -> int:
-    """
-    Auto-fix all fixable issues.
+    """Auto-fix all fixable issues.
 
     Runs:
     1. ruff --fix (lint fixes)
@@ -539,7 +535,7 @@ def fix_all_workflow(project_root: str = ".", dry_run: bool = False, verbose: bo
                 line
                 for line in output.split("\n")
                 if line.strip().endswith(".py") and "reformatted" in output.lower()
-            ]
+            ],
         )
 
     print(f"   Formatted {formatted} files")
@@ -583,8 +579,7 @@ def learn_workflow(
     watch: bool = False,
     verbose: bool = False,
 ) -> int:
-    """
-    Watch for bug fixes and extract patterns.
+    """Watch for bug fixes and extract patterns.
 
     Modes:
     - analyze: Analyze recent commits for bug fix patterns
@@ -611,7 +606,7 @@ def learn_workflow(
 
     # Get recent commits
     success, output = _run_command(
-        ["git", "log", f"-{commit_count}", "--oneline", "--format=%H|%s|%an|%ai"]
+        ["git", "log", f"-{commit_count}", "--oneline", "--format=%H|%s|%an|%ai"],
     )
 
     if not success:

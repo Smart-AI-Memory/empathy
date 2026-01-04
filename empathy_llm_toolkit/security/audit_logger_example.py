@@ -1,5 +1,4 @@
-"""
-Example usage of the AuditLogger
+"""Example usage of the AuditLogger
 
 Demonstrates how to use the audit logging framework for compliance tracking.
 
@@ -12,7 +11,6 @@ from audit_logger import AuditLogger
 
 def main():
     """Demonstrate audit logger functionality"""
-
     # Initialize audit logger
     # In production, use /var/log/empathy
     # For testing, use local directory

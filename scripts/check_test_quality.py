@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Test Quality Checker
+"""Test Quality Checker
 
 Analyzes test files for common quality issues:
 - Tests with only `pass` statements (placeholders)
@@ -54,7 +53,8 @@ class TestQualityChecker:
         if total > 0:
             self.stats["pass_only_percent"] = round(self.stats["pass_only_tests"] / total * 100, 1)
             self.stats["parametrized_percent"] = round(
-                self.stats["parametrized_tests"] / total * 100, 1
+                self.stats["parametrized_tests"] / total * 100,
+                1,
             )
         else:
             self.stats["pass_only_percent"] = 0
@@ -84,7 +84,7 @@ class TestQualityChecker:
                             "function": node.name,
                             "line": node.lineno,
                             "issue": "pass_only",
-                        }
+                        },
                     )
 
                 # Check for TODO comments
@@ -96,7 +96,7 @@ class TestQualityChecker:
                             "function": node.name,
                             "line": node.lineno,
                             "issue": "has_todo",
-                        }
+                        },
                     )
 
                 # Check for parametrization
@@ -150,11 +150,11 @@ class TestQualityChecker:
 
         print("\n--- Quality Metrics ---")
         print(
-            f"Pass-only tests: {self.stats['pass_only_tests']} ({self.stats['pass_only_percent']}%)"
+            f"Pass-only tests: {self.stats['pass_only_tests']} ({self.stats['pass_only_percent']}%)",
         )
         print(f"Tests with TODOs: {self.stats['todo_tests']}")
         print(
-            f"Parametrized tests: {self.stats['parametrized_tests']} ({self.stats['parametrized_percent']}%)"
+            f"Parametrized tests: {self.stats['parametrized_tests']} ({self.stats['parametrized_percent']}%)",
         )
         print(f"Duplicate test names: {len(self.stats['duplicate_names'])}")
 

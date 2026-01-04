@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-VSCode Dashboard Testing Script
+"""VSCode Dashboard Testing Script
 
 Tests the data loading and CLI integration for the Empathy Dashboard.
 Run from the Empathy-framework root directory.
@@ -29,6 +28,7 @@ def test_cli_telemetry_costs():
                 "-d",
                 "30",
             ],
+            check=False,
             capture_output=True,
             text=True,
             timeout=10,
@@ -41,10 +41,9 @@ def test_cli_telemetry_costs():
             print(f"  - total_savings: ${data.get('total_savings', 0):.4f}")
             print(f"  - savings_percent: {data.get('savings_percent', 0):.1f}%")
             return True
-        else:
-            print(f"✗ CLI failed with code {result.returncode}")
-            print(f"  stderr: {result.stderr[:200]}")
-            return False
+        print(f"✗ CLI failed with code {result.returncode}")
+        print(f"  stderr: {result.stderr[:200]}")
+        return False
     except subprocess.TimeoutExpired:
         print("✗ CLI timed out after 10 seconds")
         return False
@@ -144,7 +143,7 @@ def test_health_file():
         print(f"  - Lint errors: {data.get('lint', {}).get('errors', 'N/A')}")
         print(f"  - Type errors: {data.get('types', {}).get('errors', 'N/A')}")
         print(
-            f"  - Tests: {data.get('tests', {}).get('passed', 0)}/{data.get('tests', {}).get('total', 0)}"
+            f"  - Tests: {data.get('tests', {}).get('passed', 0)}/{data.get('tests', {}).get('total', 0)}",
         )
         print(f"  - Coverage: {data.get('tests', {}).get('coverage', 0)}%")
         return True
@@ -172,8 +171,8 @@ def test_patterns_file():
                     "fix": "Added optional chaining",
                     "files_affected": ["src/example.ts"],
                     "timestamp": "2025-12-22T10:00:00Z",
-                }
-            ]
+                },
+            ],
         }
         with open(patterns_file, "w") as f:
             json.dump(sample_data, f, indent=2)
@@ -255,6 +254,7 @@ def test_dashboard_server():
                 "-c",
                 "from empathy_os.dashboard.server import run_dashboard, DashboardHandler; print('OK')",
             ],
+            check=False,
             capture_output=True,
             text=True,
             timeout=5,
@@ -264,10 +264,9 @@ def test_dashboard_server():
             print("  - run_dashboard function available")
             print("  - DashboardHandler class available")
             return True
-        else:
-            print("✗ Dashboard server import failed")
-            print(f"  stderr: {result.stderr[:200]}")
-            return False
+        print("✗ Dashboard server import failed")
+        print(f"  stderr: {result.stderr[:200]}")
+        return False
     except Exception as e:
         print(f"✗ Error: {e}")
         return False

@@ -1,5 +1,4 @@
-"""
-CLI for Multi-Model Configuration Inspection
+"""CLI for Multi-Model Configuration Inspection
 
 Provides commands to:
 - Print effective model registry
@@ -38,12 +37,12 @@ from .validation import validate_yaml_file
 
 
 def print_registry(provider: str | None = None, format: str = "table") -> None:
-    """
-    Print the model registry.
+    """Print the model registry.
 
     Args:
         provider: Optional provider to filter by
         format: Output format ("table" or "json")
+
     """
     registry = get_all_models()
 
@@ -87,19 +86,19 @@ def print_registry(provider: str | None = None, format: str = "table") -> None:
                     print(
                         f"{tier:<10} {info.id:<35} "
                         f"${info.input_cost_per_million:<9.2f} "
-                        f"${info.output_cost_per_million:<9.2f}"
+                        f"${info.output_cost_per_million:<9.2f}",
                     )
 
         print("\n" + "=" * 80)
 
 
 def print_tasks(tier: str | None = None, format: str = "table") -> None:
-    """
-    Print task-to-tier mappings.
+    """Print task-to-tier mappings.
 
     Args:
         tier: Optional tier to filter by
         format: Output format ("table" or "json")
+
     """
     all_tasks = get_all_tasks()
 
@@ -132,14 +131,14 @@ def print_costs(
     provider: str | None = None,
     format: str = "table",
 ) -> None:
-    """
-    Print cost estimates for all tiers.
+    """Print cost estimates for all tiers.
 
     Args:
         input_tokens: Number of input tokens
         output_tokens: Number of output tokens
         provider: Optional provider to filter by
         format: Output format
+
     """
     registry = get_all_models()
 
@@ -189,8 +188,7 @@ def print_costs(
 
 
 def validate_file(file_path: str, format: str = "table") -> int:
-    """
-    Validate a configuration file.
+    """Validate a configuration file.
 
     Args:
         file_path: Path to YAML config file
@@ -198,6 +196,7 @@ def validate_file(file_path: str, format: str = "table") -> int:
 
     Returns:
         Exit code (0 = valid, 1 = errors)
+
     """
     result = validate_yaml_file(file_path)
 
@@ -217,11 +216,11 @@ def validate_file(file_path: str, format: str = "table") -> int:
 
 
 def print_effective_config(provider: str = "anthropic") -> None:
-    """
-    Print the effective configuration for a provider.
+    """Print the effective configuration for a provider.
 
     Args:
         provider: Provider to show config for
+
     """
     registry = get_all_models()
 
@@ -263,13 +262,13 @@ def print_telemetry_summary(
     format: str = "table",
     storage_dir: str = ".empathy",
 ) -> None:
-    """
-    Print telemetry summary.
+    """Print telemetry summary.
 
     Args:
         days: Number of days to look back
         format: Output format
         storage_dir: Directory containing telemetry files
+
     """
     store = TelemetryStore(storage_dir)
     analytics = TelemetryAnalytics(store)
@@ -315,13 +314,13 @@ def print_telemetry_costs(
     format: str = "table",
     storage_dir: str = ".empathy",
 ) -> None:
-    """
-    Print cost savings report.
+    """Print cost savings report.
 
     Args:
         days: Number of days to look back
         format: Output format
         storage_dir: Directory containing telemetry files
+
     """
     store = TelemetryStore(storage_dir)
     analytics = TelemetryAnalytics(store)
@@ -359,13 +358,13 @@ def print_telemetry_providers(
     format: str = "table",
     storage_dir: str = ".empathy",
 ) -> None:
-    """
-    Print provider usage summary.
+    """Print provider usage summary.
 
     Args:
         days: Number of days to look back
         format: Output format
         storage_dir: Directory containing telemetry files
+
     """
     store = TelemetryStore(storage_dir)
     analytics = TelemetryAnalytics(store)
@@ -396,13 +395,13 @@ def print_telemetry_fallbacks(
     format: str = "table",
     storage_dir: str = ".empathy",
 ) -> None:
-    """
-    Print fallback statistics.
+    """Print fallback statistics.
 
     Args:
         days: Number of days to look back
         format: Output format
         storage_dir: Directory containing telemetry files
+
     """
     store = TelemetryStore(storage_dir)
     analytics = TelemetryAnalytics(store)
@@ -433,11 +432,11 @@ def print_telemetry_fallbacks(
 
 
 def print_provider_config(format: str = "table") -> None:
-    """
-    Print current provider configuration.
+    """Print current provider configuration.
 
     Args:
         format: Output format ("table" or "json")
+
     """
     config = get_provider_config()
 
@@ -490,8 +489,7 @@ def configure_provider(
     mode: str | None = None,
     interactive: bool = False,
 ) -> int:
-    """
-    Configure provider settings.
+    """Configure provider settings.
 
     Args:
         provider: Provider to set (anthropic, openai, google, ollama, hybrid)
@@ -500,6 +498,7 @@ def configure_provider(
 
     Returns:
         Exit code (0 for success)
+
     """
     if interactive:
         configure_provider_interactive()
@@ -592,10 +591,16 @@ Examples:
         help="Set provider (anthropic, openai, google, ollama, hybrid)",
     )
     prov_parser.add_argument(
-        "--mode", "-m", choices=["single", "hybrid"], help="Set mode (single or hybrid)"
+        "--mode",
+        "-m",
+        choices=["single", "hybrid"],
+        help="Set mode (single or hybrid)",
     )
     prov_parser.add_argument(
-        "--interactive", "-i", action="store_true", help="Interactive configuration wizard"
+        "--interactive",
+        "-i",
+        action="store_true",
+        help="Interactive configuration wizard",
     )
     prov_parser.add_argument("--format", "-f", choices=["table", "json"], default="table")
 
@@ -609,22 +614,22 @@ Examples:
         print_registry(args.provider, args.format)
         return 0
 
-    elif args.command == "tasks":
+    if args.command == "tasks":
         print_tasks(args.tier, args.format)
         return 0
 
-    elif args.command == "costs":
+    if args.command == "costs":
         print_costs(args.input_tokens, args.output_tokens, args.provider, args.format)
         return 0
 
-    elif args.command == "validate":
+    if args.command == "validate":
         return validate_file(args.file, args.format)
 
-    elif args.command == "effective":
+    if args.command == "effective":
         print_effective_config(args.provider)
         return 0
 
-    elif args.command == "telemetry":
+    if args.command == "telemetry":
         if args.costs:
             print_telemetry_costs(args.days, args.format, args.storage_dir)
         elif args.providers:
@@ -635,14 +640,13 @@ Examples:
             print_telemetry_summary(args.days, args.format, args.storage_dir)
         return 0
 
-    elif args.command == "provider":
+    if args.command == "provider":
         if args.interactive:
             return configure_provider(interactive=True)
-        elif args.provider_set or args.mode:
+        if args.provider_set or args.mode:
             return configure_provider(provider=args.provider_set, mode=args.mode)
-        else:
-            print_provider_config(args.format)
-            return 0
+        print_provider_config(args.format)
+        return 0
 
     return 1
 

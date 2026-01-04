@@ -1,5 +1,4 @@
-"""
-Tests for src/empathy_os/workflows/dependency_check.py
+"""Tests for src/empathy_os/workflows/dependency_check.py
 
 Tests the DependencyCheckWorkflow and its supporting constants:
 - DEPENDENCY_CHECK_STEPS configuration
@@ -179,7 +178,10 @@ class TestDependencyCheckWorkflowRunStage:
         """Test run_stage routes to inventory."""
         workflow = DependencyCheckWorkflow()
         with patch.object(
-            workflow, "_inventory", new_callable=AsyncMock, return_value=({}, 100, 200)
+            workflow,
+            "_inventory",
+            new_callable=AsyncMock,
+            return_value=({}, 100, 200),
         ):
             await workflow.run_stage("inventory", ModelTier.CHEAP, {"path": "."})
             workflow._inventory.assert_called_once()
@@ -278,7 +280,7 @@ class TestDependencyCheckWorkflowAssess:
             "dependencies": {
                 "python": [{"name": "pyyaml", "version": "5.3"}],
                 "node": [],
-            }
+            },
         }
         result, _, _ = await workflow._assess(input_data, ModelTier.CAPABLE)
 
@@ -294,7 +296,7 @@ class TestDependencyCheckWorkflowAssess:
             "dependencies": {
                 "python": [{"name": "pytest", "version": "7.4.0"}],
                 "node": [],
-            }
+            },
         }
         result, _, _ = await workflow._assess(input_data, ModelTier.CAPABLE)
 
@@ -325,7 +327,7 @@ class TestDependencyCheckWorkflowReport:
                     "vulnerabilities": [],
                     "total_packages": 10,
                     "vulnerable_count": 0,
-                }
+                },
             }
             await workflow._report(input_data, ModelTier.CAPABLE)
 
@@ -388,7 +390,8 @@ class TestDependencyCheckWorkflowErrorHandling:
         workflow = DependencyCheckWorkflow()
 
         result, _, _ = await workflow._inventory(
-            {"path": "/nonexistent/path/abc123"}, ModelTier.CHEAP
+            {"path": "/nonexistent/path/abc123"},
+            ModelTier.CHEAP,
         )
 
         # Should not crash, return empty or error result

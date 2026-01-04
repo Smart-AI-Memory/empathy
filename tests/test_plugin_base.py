@@ -1,5 +1,4 @@
-"""
-Comprehensive tests for Plugin System Base Classes
+"""Comprehensive tests for Plugin System Base Classes
 
 Tests cover:
 - PluginMetadata dataclass
@@ -80,7 +79,10 @@ class TestBaseWizard:
                 return ["input_data"]
 
         wizard = ConcreteWizard(
-            name="Test Wizard", domain="test", empathy_level=3, category="testing"
+            name="Test Wizard",
+            domain="test",
+            empathy_level=3,
+            category="testing",
         )
 
         assert wizard.name == "Test Wizard"
@@ -133,7 +135,8 @@ class TestBaseWizard:
         context = {"code": "test"}
 
         with pytest.raises(
-            ValueError, match="missing required context: \\['file_path', 'language'\\]"
+            ValueError,
+            match="missing required context: \\['file_path', 'language'\\]",
         ):
             wizard.validate_context(context)
 
@@ -388,7 +391,10 @@ class TestBasePlugin:
         class TestWizard(BaseWizard):
             def __init__(self):
                 super().__init__(
-                    name="Info Wizard", domain="test", empathy_level=3, category="info"
+                    name="Info Wizard",
+                    domain="test",
+                    empathy_level=3,
+                    category="info",
                 )
 
             async def analyze(self, context):

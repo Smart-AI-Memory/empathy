@@ -1,5 +1,4 @@
-"""
-Tests for Custom Exceptions
+"""Tests for Custom Exceptions
 
 Tests all custom exception classes in the Empathy Framework.
 
@@ -374,9 +373,9 @@ class TestExceptionUsagePatterns:
         def risky_operation(scenario: str):
             if scenario == "validation":
                 raise ValidationError("Bad input")
-            elif scenario == "trust":
+            if scenario == "trust":
                 raise TrustThresholdError(0.3, 0.7)
-            elif scenario == "pattern":
+            if scenario == "pattern":
                 raise PatternNotFoundError("test_pattern")
 
         # Test each scenario

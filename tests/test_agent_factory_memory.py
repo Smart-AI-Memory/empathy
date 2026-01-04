@@ -1,5 +1,4 @@
-"""
-Tests for Agent Factory Memory Graph Integration
+"""Tests for Agent Factory Memory Graph Integration
 
 Tests the memory-aware agent wrapper that integrates agents
 with the Memory Graph for cross-agent learning.

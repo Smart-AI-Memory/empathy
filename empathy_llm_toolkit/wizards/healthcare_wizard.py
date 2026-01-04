@@ -1,5 +1,4 @@
-"""
-Healthcare Wizard - HIPAA-Compliant AI Assistant
+"""Healthcare Wizard - HIPAA-Compliant AI Assistant
 
 Specialized wizard for healthcare applications with enhanced PHI protection,
 mandatory encryption, comprehensive audit logging, and HIPAA compliance features.
@@ -54,8 +53,7 @@ HEALTHCARE_PHI_PATTERNS = [
 
 
 class HealthcareWizard(BaseWizard):
-    """
-    HIPAA-compliant healthcare AI assistant
+    """HIPAA-compliant healthcare AI assistant
 
     Implements defense-in-depth security for Protected Health Information (PHI):
     1. Enhanced PHI detection and scrubbing
@@ -83,6 +81,7 @@ class HealthcareWizard(BaseWizard):
         ... )
         >>>
         >>> print(result['security_report']['phi_removed'])  # PHI was scrubbed
+
     """
 
     def __init__(
@@ -92,8 +91,7 @@ class HealthcareWizard(BaseWizard):
         enable_diagnosis_scrubbing: bool = False,
         custom_phi_patterns: list[str] | None = None,
     ):
-        """
-        Initialize HIPAA-compliant healthcare wizard
+        """Initialize HIPAA-compliant healthcare wizard
 
         Args:
             llm: EmpathyLLM instance (security should be enabled)
@@ -105,6 +103,7 @@ class HealthcareWizard(BaseWizard):
             For maximum HIPAA compliance, llm should be initialized with
             enable_security=True. This wizard enforces SENSITIVE classification
             and 90-day retention regardless of LLM security settings.
+
         """
         # Build PHI pattern list
         phi_patterns = HEALTHCARE_PHI_PATTERNS.copy()
@@ -146,12 +145,12 @@ class HealthcareWizard(BaseWizard):
         if not llm.enable_security:
             logger.warning(
                 "HealthcareWizard initialized with security DISABLED. "
-                "HIPAA compliance requires enable_security=True in EmpathyLLM."
+                "HIPAA compliance requires enable_security=True in EmpathyLLM.",
             )
 
         logger.info(
             f"HealthcareWizard initialized: {len(phi_patterns)} PHI patterns, "
-            f"empathy level={config.default_empathy_level}, security={llm.enable_security}"
+            f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
     async def process(
@@ -162,8 +161,7 @@ class HealthcareWizard(BaseWizard):
         session_context: dict[str, Any] | None = None,
         patient_id: str | None = None,
     ) -> dict[str, Any]:
-        """
-        Process healthcare request with HIPAA compliance
+        """Process healthcare request with HIPAA compliance
 
         Args:
             user_input: Healthcare professional's message (may contain PHI)
@@ -183,6 +181,7 @@ class HealthcareWizard(BaseWizard):
         Raises:
             SecurityError: If secrets detected in input
             ValueError: If invalid user_id or parameters
+
         """
         # Enhance session context with patient ID for audit trail
         if patient_id:
@@ -193,7 +192,7 @@ class HealthcareWizard(BaseWizard):
         # Log PHI access
         self.logger.info(
             f"PHI access: user={user_id}, wizard={self.config.name}, "
-            f"patient={patient_id}, audit=True"
+            f"patient={patient_id}, audit=True",
         )
 
         # Process through base wizard (handles security pipeline)
@@ -218,14 +217,13 @@ class HealthcareWizard(BaseWizard):
         self.logger.info(
             f"PHI processing complete: user={user_id}, "
             f"detected={result['hipaa_compliance']['phi_detected']}, "
-            f"scrubbed={result['hipaa_compliance']['phi_scrubbed']}"
+            f"scrubbed={result['hipaa_compliance']['phi_scrubbed']}",
         )
 
         return result
 
     def _build_system_prompt(self) -> str:
-        """
-        Build HIPAA-aware system prompt for healthcare domain
+        """Build HIPAA-aware system prompt for healthcare domain
 
         Includes:
         - Healthcare domain knowledge
@@ -275,11 +273,11 @@ Remember: Patient safety and privacy are paramount. Interactions are logged for 
         return self.config.pii_patterns.copy()
 
     def get_hipaa_compliance_status(self) -> dict[str, Any]:
-        """
-        Get HIPAA compliance status for this wizard
+        """Get HIPAA compliance status for this wizard
 
         Returns:
             Dict with compliance checks and recommendations
+
         """
         status: dict[str, Any] = {
             "compliant": True,
@@ -292,7 +290,7 @@ Remember: Patient safety and privacy are paramount. Interactions are logged for 
         if not self.llm.enable_security:
             status["compliant"] = False
             status["recommendations"].append(
-                "Enable security in EmpathyLLM (enable_security=True) for HIPAA compliance"
+                "Enable security in EmpathyLLM (enable_security=True) for HIPAA compliance",
             )
 
         # Check 2: Encryption for SENSITIVE data
@@ -300,7 +298,7 @@ Remember: Patient safety and privacy are paramount. Interactions are logged for 
         status["checks"]["encryption_enabled"] = self.llm.enable_security
         if not status["checks"]["encryption_enabled"]:
             status["recommendations"].append(
-                "Enable encryption for SENSITIVE data (HIPAA §164.312(a)(2)(iv))"
+                "Enable encryption for SENSITIVE data (HIPAA §164.312(a)(2)(iv))",
             )
 
         # Check 3: Audit logging
@@ -310,7 +308,7 @@ Remember: Patient safety and privacy are paramount. Interactions are logged for 
         if not status["checks"]["audit_logging"]:
             status["compliant"] = False
             status["recommendations"].append(
-                "Enable comprehensive audit logging (HIPAA §164.312(b))"
+                "Enable comprehensive audit logging (HIPAA §164.312(b))",
             )
 
         # Check 4: PHI detection
@@ -322,7 +320,7 @@ Remember: Patient safety and privacy are paramount. Interactions are logged for 
         status["checks"]["retention_policy"] = self.config.retention_days >= 90
         if not status["checks"]["retention_policy"]:
             status["recommendations"].append(
-                "Set minimum 90-day retention for audit logs (HIPAA §164.528)"
+                "Set minimum 90-day retention for audit logs (HIPAA §164.528)",
             )
 
         return status

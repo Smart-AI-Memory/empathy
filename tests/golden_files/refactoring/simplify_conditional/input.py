@@ -13,18 +13,12 @@ def check_eligibility(user: dict) -> bool:
                     if user.get("status"):
                         if user["status"] == "active":
                             return True
-                        else:
-                            return False
-                    else:
                         return False
-                else:
                     return False
-            else:
                 return False
-        else:
             return False
-    else:
         return False
+    return False
 
 
 def get_discount(order: dict) -> float:
@@ -40,9 +34,8 @@ def get_discount(order: dict) -> float:
             discount = 0.02
         else:
             discount = 0.0
-    else:
-        if order.get("is_member") == False:  # noqa: E712
-            discount = 0.0
+    elif order.get("is_member") == False:  # noqa: E712
+        discount = 0.0
 
     return discount
 
@@ -54,11 +47,7 @@ def is_valid_input(value: str) -> bool:
             if len(value) > 0:
                 if value.strip() != "":
                     return True
-                else:
-                    return False
-            else:
                 return False
-        else:
             return False
-    else:
         return False
+    return False

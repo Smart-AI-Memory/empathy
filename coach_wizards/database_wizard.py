@@ -1,5 +1,4 @@
-"""
-DatabaseWizard - Database optimization and schema analysis
+"""DatabaseWizard - Database optimization and schema analysis
 
 Level 4 Anticipatory Empathy for Database using the Empathy Framework.
 
@@ -13,8 +12,7 @@ from .base_wizard import BaseCoachWizard, WizardIssue, WizardPrediction
 
 
 class DatabaseWizard(BaseCoachWizard):
-    """
-    Database optimization and schema analysis
+    """Database optimization and schema analysis
 
     Detects:
     - missing indexes
@@ -36,8 +34,7 @@ class DatabaseWizard(BaseCoachWizard):
         )
 
     def analyze_code(self, code: str, file_path: str, language: str) -> list[WizardIssue]:
-        """
-        Analyze code for database issues
+        """Analyze code for database issues
 
         This is a reference implementation. In production, integrate with:
         - Static analysis tools
@@ -57,10 +54,13 @@ class DatabaseWizard(BaseCoachWizard):
         return issues
 
     def predict_future_issues(
-        self, code: str, file_path: str, project_context: dict[str, Any], timeline_days: int = 90
+        self,
+        code: str,
+        file_path: str,
+        project_context: dict[str, Any],
+        timeline_days: int = 90,
     ) -> list[WizardPrediction]:
-        """
-        Level 4 Anticipatory: Predict database issues {timeline_days} days ahead
+        """Level 4 Anticipatory: Predict database issues {timeline_days} days ahead
 
         Uses:
         - Historical patterns
@@ -76,16 +76,16 @@ class DatabaseWizard(BaseCoachWizard):
 
         self.logger.info(
             f"{self.name} predicted {len(predictions)} future issues "
-            f"for {file_path} ({timeline_days} days ahead)"
+            f"for {file_path} ({timeline_days} days ahead)",
         )
         return predictions
 
     def suggest_fixes(self, issue: WizardIssue) -> str:
-        """
-        Suggest how to fix a database issue
+        """Suggest how to fix a database issue
 
         Returns:
             Detailed fix suggestion with code examples
+
         """
         # Implementation depends on issue type
         return f"Fix suggestion for {issue.category} issue: {issue.message}"

@@ -1,5 +1,4 @@
-"""
-Result Cache
+"""Result Cache
 Caches wizard results to avoid redundant computations
 
 Copyright 2025 Deep Study AI, LLC
@@ -17,11 +16,11 @@ class ResultCache:
     """Simple in-memory cache with TTL"""
 
     def __init__(self, ttl: int = 300):
-        """
-        Initialize cache
+        """Initialize cache
 
         Args:
             ttl: Time-to-live in seconds (default 5 minutes)
+
         """
         self.ttl = ttl
         self._cache: dict[str, dict[str, Any]] = {}
@@ -34,10 +33,9 @@ class ResultCache:
             if time.time() - entry["timestamp"] < self.ttl:
                 logger.debug(f"Cache hit: {key}")
                 return entry["value"]
-            else:
-                # Expired, remove
-                logger.debug(f"Cache expired: {key}")
-                del self._cache[key]
+            # Expired, remove
+            logger.debug(f"Cache expired: {key}")
+            del self._cache[key]
         return None
 
     def set(self, key: str, value: Any):
@@ -76,6 +74,7 @@ class ResultCache:
             "total_entries": len(self._cache),
             "ttl": self.ttl,
             "oldest_entry_age": min(
-                (time.time() - entry["timestamp"] for entry in self._cache.values()), default=0
+                (time.time() - entry["timestamp"] for entry in self._cache.values()),
+                default=0,
             ),
         }

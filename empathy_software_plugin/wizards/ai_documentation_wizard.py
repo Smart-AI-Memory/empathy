@@ -1,5 +1,4 @@
-"""
-AI-First Documentation Wizard - Level 4 Anticipatory Empathy
+"""AI-First Documentation Wizard - Level 4 Anticipatory Empathy
 
 Alerts developers when documentation patterns will limit AI effectiveness.
 
@@ -21,8 +20,7 @@ from empathy_os.plugins import BaseWizard
 
 
 class AIDocumentationWizard(BaseWizard):
-    """
-    Level 4 Anticipatory: Ensures documentation serves AI and humans.
+    """Level 4 Anticipatory: Ensures documentation serves AI and humans.
 
     Key Insight from Experience:
     When we started using AI coding assistants heavily, we discovered our
@@ -50,8 +48,7 @@ class AIDocumentationWizard(BaseWizard):
         ]
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze documentation quality for AI collaboration.
+        """Analyze documentation quality for AI collaboration.
 
         In our experience: Documentation gaps only become obvious when
         AI gives wrong answers. This wizard alerts you proactively.
@@ -85,10 +82,11 @@ class AIDocumentationWizard(BaseWizard):
         }
 
     async def _analyze_ai_documentation_quality(
-        self, doc_files: list[str], code_files: list[str]
+        self,
+        doc_files: list[str],
+        code_files: list[str],
     ) -> list[dict[str, Any]]:
-        """
-        Analyze current documentation from AI perspective.
+        """Analyze current documentation from AI perspective.
 
         Checks what AI needs to give good recommendations.
         """
@@ -118,7 +116,7 @@ class AIDocumentationWizard(BaseWizard):
                                 "Add ## Architecture section explaining: "
                                 "components, data flow, key abstractions"
                             ),
-                        }
+                        },
                     )
 
                 # AI needs explicit technology choices explained
@@ -136,7 +134,7 @@ class AIDocumentationWizard(BaseWizard):
                                 "Add ## Technology Choices section explaining WHY you chose "
                                 "specific libraries/frameworks (not just WHAT you use)"
                             ),
-                        }
+                        },
                     )
 
             # Check for ambiguous language (confuses AI)
@@ -153,7 +151,7 @@ class AIDocumentationWizard(BaseWizard):
                         ),
                         "examples": ambiguous_phrases[:3],
                         "suggestion": "Be explicit. Replace 'usually', 'normally', 'try to' with precise rules.",
-                    }
+                    },
                 )
 
         # Check code documentation
@@ -177,7 +175,7 @@ class AIDocumentationWizard(BaseWizard):
                                 "suggestions when types are explicit."
                             ),
                             "suggestion": "Add type hints to function signatures and class attributes",
-                        }
+                        },
                     )
 
             # Check for missing docstrings with examples
@@ -192,16 +190,18 @@ class AIDocumentationWizard(BaseWizard):
                             "Without them, AI guesses based on generic knowledge."
                         ),
                         "suggestion": ("Add Examples section to docstrings showing actual usage"),
-                    }
+                    },
                 )
 
         return issues
 
     async def _predict_ai_confusion_points(
-        self, doc_files: list[str], code_files: list[str], full_context: dict[str, Any]
+        self,
+        doc_files: list[str],
+        code_files: list[str],
+        full_context: dict[str, Any],
     ) -> list[dict[str, Any]]:
-        """
-        Level 4: Predict where documentation gaps will confuse AI.
+        """Level 4: Predict where documentation gaps will confuse AI.
 
         Based on our experience: AI confusion follows predictable patterns.
         """
@@ -235,7 +235,7 @@ class AIDocumentationWizard(BaseWizard):
                         "Before documenting these, AI would suggest generic patterns. "
                         "After documenting, AI suggestions matched our architecture 90%+ of time."
                     ),
-                }
+                },
             )
 
         # Pattern 2: Missing 'why' context
@@ -267,7 +267,7 @@ class AIDocumentationWizard(BaseWizard):
                         "AI started suggesting features that fit the framework. "
                         "Before, it suggested generic improvements that didn't align."
                     ),
-                }
+                },
             )
 
         # Pattern 3: No decision log
@@ -293,7 +293,7 @@ class AIDocumentationWizard(BaseWizard):
                         "AI doesn't know your history. It will confidently suggest "
                         "the approach you spent 2 weeks discovering doesn't work."
                     ),
-                }
+                },
             )
 
         # Pattern 4: Documentation-code drift
@@ -321,7 +321,7 @@ class AIDocumentationWizard(BaseWizard):
                             "Code evolves faster than docs. Without active maintenance, "
                             "docs describe the system you HAD, not the one you HAVE."
                         ),
-                    }
+                    },
                 )
 
         # Pattern 5: No AI-specific guidance
@@ -352,7 +352,7 @@ class AIDocumentationWizard(BaseWizard):
                         "Result: AI suggestions became 3x more relevant because we taught it "
                         "our patterns explicitly."
                     ),
-                }
+                },
             )
 
         return predictions
@@ -366,7 +366,7 @@ class AIDocumentationWizard(BaseWizard):
         if type_hint_issues:
             recommendations.append(
                 f"[QUICK WIN] Add type hints to {len(type_hint_issues)} files. "
-                "In our experience, this immediately improves AI suggestion quality 60-80%."
+                "In our experience, this immediately improves AI suggestion quality 60-80%.",
             )
 
         # High-impact predictions
@@ -382,7 +382,9 @@ class AIDocumentationWizard(BaseWizard):
         return recommendations
 
     def _extract_patterns(
-        self, issues: list[dict], predictions: list[dict]
+        self,
+        issues: list[dict],
+        predictions: list[dict],
     ) -> list[dict[str, Any]]:
         """Extract cross-domain patterns"""
         return [
@@ -406,7 +408,7 @@ class AIDocumentationWizard(BaseWizard):
                     "Examples of desired patterns",
                     "AI collaboration guidance",
                 ],
-            }
+            },
         ]
 
     # Helper methods

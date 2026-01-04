@@ -1,5 +1,4 @@
-"""
-Token Estimation Service
+"""Token Estimation Service
 
 Pre-flight token estimation for cost prediction using tiktoken.
 Provides accurate token counts before workflow execution.
@@ -36,18 +35,14 @@ def _get_encoding(model_id: str) -> Any:
     if "claude" in model_id.lower() or "anthropic" in model_id.lower():
         # Claude uses cl100k_base-like encoding
         return tiktoken.get_encoding("cl100k_base")
-    elif "gpt-4" in model_id.lower() or "gpt-3.5" in model_id.lower():
+    if "gpt-4" in model_id.lower() or "gpt-3.5" in model_id.lower() or "o1" in model_id.lower():
         return tiktoken.encoding_for_model("gpt-4")
-    elif "o1" in model_id.lower():
-        return tiktoken.encoding_for_model("gpt-4")
-    else:
-        # Default to cl100k_base for unknown models
-        return tiktoken.get_encoding("cl100k_base")
+    # Default to cl100k_base for unknown models
+    return tiktoken.get_encoding("cl100k_base")
 
 
 def estimate_tokens(text: str, model_id: str = "claude-sonnet-4-5-20250514") -> int:
-    """
-    Estimate token count for text.
+    """Estimate token count for text.
 
     Uses tiktoken for accurate counting, falls back to heuristic if unavailable.
 
@@ -57,6 +52,7 @@ def estimate_tokens(text: str, model_id: str = "claude-sonnet-4-5-20250514") -> 
 
     Returns:
         Estimated token count
+
     """
     if not text:
         return 0
@@ -79,8 +75,7 @@ def estimate_workflow_cost(
     provider: str = "anthropic",
     target_path: str | None = None,
 ) -> dict[str, Any]:
-    """
-    Estimate total workflow cost before execution.
+    """Estimate total workflow cost before execution.
 
     Analyzes workflow stages and estimates token usage and cost for each,
     providing a cost range for the full workflow.
@@ -103,6 +98,7 @@ def estimate_workflow_cost(
             "display": str,
             "risk": "low" | "medium" | "high"
         }
+
     """
     from .registry import get_model, get_supported_providers
 
@@ -253,7 +249,7 @@ def estimate_workflow_cost(
                 "estimated_input_tokens": input_tokens,
                 "estimated_output_tokens": est_output,
                 "estimated_cost": round(cost, 6),
-            }
+            },
         )
 
         # Accumulate with variance (80% - 120%)
@@ -286,8 +282,7 @@ def estimate_single_call_cost(
     task_type: str,
     provider: str = "anthropic",
 ) -> dict[str, Any]:
-    """
-    Estimate cost for a single LLM call.
+    """Estimate cost for a single LLM call.
 
     Args:
         text: Input text
@@ -296,6 +291,7 @@ def estimate_single_call_cost(
 
     Returns:
         Cost estimate dictionary
+
     """
     from .registry import get_model
     from .tasks import get_tier_for_task

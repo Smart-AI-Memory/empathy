@@ -1,5 +1,4 @@
-"""
-Comprehensive tests for TestSuggester
+"""Comprehensive tests for TestSuggester
 
 Tests the test suggestion generation system including AST analysis,
 priority determination, template generation, and suggestion ranking.

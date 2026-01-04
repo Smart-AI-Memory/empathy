@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Document Generation Workflow Example
+"""Document Generation Workflow Example
 
 Demonstrates cost-optimized documentation generation using the 3-tier model system:
 1. Haiku (cheap): Generate outline from code/specs
@@ -64,7 +63,9 @@ class EmpathyOS:
 '''
 
     result = await workflow.execute(
-        source_code=source_code, doc_type="api_reference", audience="developers"
+        source_code=source_code,
+        doc_type="api_reference",
+        audience="developers",
     )
 
     _print_result(result, "API Reference")
@@ -96,7 +97,9 @@ os.record_success(True)
 """
 
     result = await workflow.execute(
-        source_code=source_code, doc_type="tutorial", audience="beginners"
+        source_code=source_code,
+        doc_type="tutorial",
+        audience="beginners",
     )
 
     _print_result(result, "Tutorial")
@@ -128,7 +131,9 @@ User Request → EmpathyOS → Model Router → LLM
 """
 
     result = await workflow.execute(
-        source_code=source_code, doc_type="architecture", audience="architects"
+        source_code=source_code,
+        doc_type="architecture",
+        audience="architects",
     )
 
     _print_result(result, "Architecture")

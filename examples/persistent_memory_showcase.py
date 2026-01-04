@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Persistent Memory Showcase
+"""Persistent Memory Showcase
 ==========================
 
 Demonstrates 3 things that weren't possible before persistent memory:
@@ -72,8 +71,7 @@ def print_json(data: dict, indent: int = 2) -> None:
 
 
 async def demo_bug_correlation() -> None:
-    """
-    Demonstrate bug pattern correlation.
+    """Demonstrate bug pattern correlation.
 
     Shows how persistent memory enables:
     - Finding similar bugs from the past
@@ -85,7 +83,7 @@ async def demo_bug_correlation() -> None:
     print(
         """
 What's now possible that wasn't before:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"""
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""",
     )
     print_comparison(
         "Every debugging session starts from zero",
@@ -147,7 +145,6 @@ What's now possible that wasn't before:
 
 async def seed_historical_bugs(wizard: MemoryEnhancedDebuggingWizard) -> None:
     """Seed historical bug patterns for demo"""
-
     historical_bugs = [
         {
             "bug_id": "bug_20250915_abc123",
@@ -206,8 +203,7 @@ async def seed_historical_bugs(wizard: MemoryEnhancedDebuggingWizard) -> None:
 
 
 async def demo_tech_debt() -> None:
-    """
-    Demonstrate tech debt trajectory tracking.
+    """Demonstrate tech debt trajectory tracking.
 
     Shows how persistent memory enables:
     - Tracking debt over time
@@ -219,7 +215,7 @@ async def demo_tech_debt() -> None:
     print(
         """
 What's now possible that wasn't before:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"""
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""",
     )
     print_comparison(
         "Debt count is just a number (no context)",
@@ -244,7 +240,7 @@ What's now possible that wasn't before:
             "project_path": ".",
             "track_history": True,
             "exclude_patterns": ["node_modules", "venv", ".git", "__pycache__", "patterns"],
-        }
+        },
     )
 
     print_section("Step 3: Results - Current Debt")
@@ -295,7 +291,6 @@ What's now possible that wasn't before:
 
 def seed_debt_history(wizard: TechDebtWizard) -> None:
     """Seed historical debt snapshots for demo"""
-
     # Create increasing debt trend
     history_data = {
         "snapshots": [
@@ -324,7 +319,7 @@ def seed_debt_history(wizard: TechDebtWizard) -> None:
                     "src/utils/helpers.py",
                 ],
             },
-        ]
+        ],
     }
 
     history_file = wizard.pattern_storage_path / "debt_history.json"
@@ -341,8 +336,7 @@ def seed_debt_history(wizard: TechDebtWizard) -> None:
 
 
 async def demo_security() -> None:
-    """
-    Demonstrate security false positive learning.
+    """Demonstrate security false positive learning.
 
     Shows how persistent memory enables:
     - Learning from team decisions
@@ -354,7 +348,7 @@ async def demo_security() -> None:
     print(
         """
 What's now possible that wasn't before:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"""
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━""",
     )
     print_comparison(
         "Same false positives flagged every scan",
@@ -380,7 +374,7 @@ What's now possible that wasn't before:
             "apply_learned_patterns": True,
             "exclude_patterns": ["node_modules", "venv", ".git", "__pycache__", "patterns", "test"],
             "scan_depth": "quick",
-        }
+        },
     )
 
     print_section("Step 3: Results - With Learning Applied")
@@ -426,7 +420,6 @@ What's now possible that wasn't before:
 
 def seed_security_decisions(wizard: SecurityLearningWizard) -> None:
     """Seed team security decisions for demo"""
-
     decisions_data = {
         "decisions": [
             {
@@ -470,7 +463,7 @@ def seed_security_decisions(wizard: SecurityLearningWizard) -> None:
                 "applies_to": "pattern",
                 "expiration": (datetime.now() + timedelta(days=90)).isoformat(),
             },
-        ]
+        ],
     }
 
     decisions_file = wizard.pattern_storage_path / "team_decisions.json"
@@ -488,7 +481,6 @@ def seed_security_decisions(wizard: SecurityLearningWizard) -> None:
 
 async def demo_all() -> None:
     """Run all three demos"""
-
     print_header("PERSISTENT MEMORY SHOWCASE")
     print(
         """
@@ -504,7 +496,7 @@ This demo shows 3 things that weren't possible before persistent memory:
      "Suppressing 8 warnings you've previously marked as acceptable"
 
 Each demo shows the BEFORE (stateless) vs AFTER (memory-enhanced) experience.
-"""
+""",
     )
 
     input("Press Enter to start Demo 1: Bug Pattern Correlation...")
@@ -552,7 +544,7 @@ Get started:
     empathy-memory serve
 
 GitHub: https://github.com/Smart-AI-Memory/empathy
-"""
+""",
     )
 
 
@@ -563,7 +555,7 @@ GitHub: https://github.com/Smart-AI-Memory/empathy
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Persistent Memory Showcase - 3 things that weren't possible before"
+        description="Persistent Memory Showcase - 3 things that weren't possible before",
     )
     parser.add_argument(
         "--demo",

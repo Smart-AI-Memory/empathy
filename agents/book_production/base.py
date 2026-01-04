@@ -1,5 +1,4 @@
-"""
-Book Production Pipeline - Base Agent
+"""Book Production Pipeline - Base Agent
 
 Provides the foundation for all book production agents (Research, Writer, Editor, Reviewer).
 Integrates with Redis for state management and MemDocs for pattern storage.
@@ -39,8 +38,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class AgentConfig:
-    """
-    Legacy configuration for book production agent.
+    """Legacy configuration for book production agent.
 
     DEPRECATED: Use UnifiedAgentConfig or BookProductionConfig instead.
     This class is maintained for backward compatibility.
@@ -96,8 +94,7 @@ class AgentConfig:
 
 @dataclass
 class MemDocsConfig:
-    """
-    Legacy MemDocs configuration.
+    """Legacy MemDocs configuration.
 
     DEPRECATED: Use empathy_llm_toolkit.config.MemDocsConfig instead.
     """
@@ -110,7 +107,7 @@ class MemDocsConfig:
             "exemplars": "exemplar_chapters",
             "transformations": "transformation_examples",
             "feedback": "quality_feedback",
-        }
+        },
     )
 
     def to_unified(self) -> UnifiedMemDocsConfig:
@@ -124,8 +121,7 @@ class MemDocsConfig:
 
 @dataclass
 class RedisConfig:
-    """
-    Legacy Redis configuration.
+    """Legacy Redis configuration.
 
     DEPRECATED: Use empathy_llm_toolkit.config.RedisConfig instead.
     """
@@ -150,8 +146,7 @@ class RedisConfig:
 
 
 class BaseAgent(ABC):
-    """
-    Base class for all book production agents.
+    """Base class for all book production agents.
 
     Provides common functionality:
     - LLM interaction with model selection
@@ -183,14 +178,14 @@ class BaseAgent(ABC):
         redis_config: RedisConfig | None = None,
         llm_provider: Any | None = None,
     ):
-        """
-        Initialize the agent.
+        """Initialize the agent.
 
         Args:
             config: Agent configuration (model, tokens, etc.)
             memdocs_config: MemDocs integration configuration
             redis_config: Redis state management configuration
             llm_provider: Optional LLM provider (for testing/injection)
+
         """
         self.config = config or AgentConfig(model=self.DEFAULT_MODEL)
         self.memdocs_config = memdocs_config or MemDocsConfig()
@@ -209,8 +204,7 @@ class BaseAgent(ABC):
 
     @abstractmethod
     async def process(self, state: dict[str, Any]) -> dict[str, Any]:
-        """
-        Process the state and return updated state.
+        """Process the state and return updated state.
 
         This is the main entry point for the agent. Each agent type
         implements this with its specific logic.
@@ -220,19 +214,17 @@ class BaseAgent(ABC):
 
         Returns:
             Updated state with agent's contributions
+
         """
-        pass
 
     @abstractmethod
     def get_system_prompt(self) -> str:
-        """
-        Return the system prompt for this agent.
+        """Return the system prompt for this agent.
 
         The system prompt defines the agent's personality, capabilities,
         and constraints. It should encode the patterns that make for
         successful book chapters.
         """
-        pass
 
     # =========================================================================
     # LLM Interaction
@@ -245,8 +237,7 @@ class BaseAgent(ABC):
         max_tokens: int | None = None,
         temperature: float | None = None,
     ) -> str:
-        """
-        Generate text using the configured LLM.
+        """Generate text using the configured LLM.
 
         Args:
             prompt: User prompt
@@ -256,13 +247,14 @@ class BaseAgent(ABC):
 
         Returns:
             Generated text content
+
         """
         system = system or self.get_system_prompt()
         max_tokens = max_tokens or self.config.max_tokens
         temperature = temperature or self.config.temperature
 
         self.logger.info(
-            f"Generating with {self.config.model} (max_tokens={max_tokens}, temp={temperature})"
+            f"Generating with {self.config.model} (max_tokens={max_tokens}, temp={temperature})",
         )
 
         # If we have an injected provider, use it
@@ -324,7 +316,7 @@ class BaseAgent(ABC):
             except Exception as e:
                 last_error = e
                 self.logger.warning(
-                    f"LLM call failed (attempt {attempt + 1}/{self.config.retry_attempts}): {e}"
+                    f"LLM call failed (attempt {attempt + 1}/{self.config.retry_attempts}): {e}",
                 )
                 if attempt < self.config.retry_attempts - 1:
                     import asyncio
@@ -332,7 +324,7 @@ class BaseAgent(ABC):
                     await asyncio.sleep(self.config.retry_delay)
 
         raise RuntimeError(
-            f"LLM generation failed after {self.config.retry_attempts} attempts: {last_error}"
+            f"LLM generation failed after {self.config.retry_attempts} attempts: {last_error}",
         )
 
     # =========================================================================
@@ -340,14 +332,14 @@ class BaseAgent(ABC):
     # =========================================================================
 
     async def get_state(self, key: str) -> dict[str, Any] | None:
-        """
-        Retrieve state from Redis.
+        """Retrieve state from Redis.
 
         Args:
             key: State key
 
         Returns:
             State dictionary or None if not found
+
         """
         if not self.redis_config.enabled:
             return None
@@ -369,8 +361,7 @@ class BaseAgent(ABC):
         state: dict[str, Any],
         ttl: int | None = None,
     ) -> bool:
-        """
-        Store state in Redis.
+        """Store state in Redis.
 
         Args:
             key: State key
@@ -379,6 +370,7 @@ class BaseAgent(ABC):
 
         Returns:
             True if successful
+
         """
         if not self.redis_config.enabled:
             return False
@@ -427,8 +419,7 @@ class BaseAgent(ABC):
         limit: int = 5,
         min_confidence: float = 0.7,
     ) -> list[dict[str, Any]]:
-        """
-        Search for patterns in MemDocs.
+        """Search for patterns in MemDocs.
 
         Args:
             query: Search query
@@ -438,6 +429,7 @@ class BaseAgent(ABC):
 
         Returns:
             List of matching patterns
+
         """
         if not self.memdocs_config.enabled:
             return []
@@ -455,8 +447,7 @@ class BaseAgent(ABC):
         pattern: dict[str, Any],
         collection: str = "patterns",
     ) -> str:
-        """
-        Store a pattern in MemDocs.
+        """Store a pattern in MemDocs.
 
         Args:
             pattern: Pattern dictionary with content and metadata
@@ -464,6 +455,7 @@ class BaseAgent(ABC):
 
         Returns:
             Pattern ID
+
         """
         if not self.memdocs_config.enabled:
             return ""
@@ -537,8 +529,7 @@ class BaseAgent(ABC):
         action: str,
         details: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        """
-        Add an entry to the audit trail.
+        """Add an entry to the audit trail.
 
         Args:
             state: Current state
@@ -547,6 +538,7 @@ class BaseAgent(ABC):
 
         Returns:
             Updated state with audit entry
+
         """
         entry = {
             "timestamp": datetime.now().isoformat(),
@@ -579,8 +571,7 @@ class BaseAgent(ABC):
 
 
 class OpusAgent(BaseAgent):
-    """
-    Base class for agents that use Claude Opus 4.5.
+    """Base class for agents that use Claude Opus 4.5.
 
     Use Opus for:
     - Creative writing (Writer Agent)
@@ -592,8 +583,7 @@ class OpusAgent(BaseAgent):
 
 
 class SonnetAgent(BaseAgent):
-    """
-    Base class for agents that use Claude Sonnet.
+    """Base class for agents that use Claude Sonnet.
 
     Use Sonnet for:
     - Structured extraction (Research Agent)

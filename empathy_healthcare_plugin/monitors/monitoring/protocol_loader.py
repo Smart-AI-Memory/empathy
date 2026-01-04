@@ -1,5 +1,4 @@
-"""
-Protocol Loader
+"""Protocol Loader
 
 Loads clinical pathway protocols from JSON files.
 
@@ -39,8 +38,7 @@ class ProtocolIntervention:
 
 @dataclass
 class ClinicalProtocol:
-    """
-    Clinical pathway protocol.
+    """Clinical pathway protocol.
 
     This is the "linting config" for healthcare - defines the rules.
     """
@@ -71,8 +69,7 @@ class ClinicalProtocol:
 
 
 class ProtocolLoader:
-    """
-    Loads clinical protocols from JSON files.
+    """Loads clinical protocols from JSON files.
 
     Similar to loading .eslintrc or pyproject.toml - we're loading
     the protocol configuration.
@@ -87,8 +84,7 @@ class ProtocolLoader:
             self.protocol_dir = plugin_dir / "protocols"
 
     def load_protocol(self, protocol_name: str) -> ClinicalProtocol:
-        """
-        Load protocol by name.
+        """Load protocol by name.
 
         Args:
             protocol_name: Name of protocol (e.g., "sepsis", "post_operative")
@@ -100,12 +96,13 @@ class ProtocolLoader:
             >>> loader = ProtocolLoader()
             >>> protocol = loader.load_protocol("sepsis")
             >>> print(f"Loaded: {protocol.name} v{protocol.version}")
+
         """
         protocol_file = self.protocol_dir / f"{protocol_name}.json"
 
         if not protocol_file.exists():
             raise FileNotFoundError(
-                f"Protocol not found: {protocol_name}\nLooked in: {self.protocol_dir}"
+                f"Protocol not found: {protocol_name}\nLooked in: {self.protocol_dir}",
             )
 
         with open(protocol_file) as f:
@@ -115,7 +112,6 @@ class ProtocolLoader:
 
     def _parse_protocol(self, data: dict[str, Any]) -> ClinicalProtocol:
         """Parse protocol JSON into ClinicalProtocol object"""
-
         # Parse screening criteria
         screening_data = data.get("screening_criteria", {})
         criteria = []
@@ -128,7 +124,7 @@ class ProtocolLoader:
                     value=crit.get("value"),
                     points=crit.get("points", 0),
                     description=crit.get("description"),
-                )
+                ),
             )
 
         # Parse interventions
@@ -141,7 +137,7 @@ class ProtocolLoader:
                     timing=interv["timing"],
                     required=interv.get("required", True),
                     parameters=interv.get("parameters"),
-                )
+                ),
             )
 
         # Parse monitoring requirements
@@ -173,8 +169,7 @@ class ProtocolLoader:
         return sorted(protocols)
 
     def validate_protocol(self, protocol: ClinicalProtocol) -> list[str]:
-        """
-        Validate protocol structure.
+        """Validate protocol structure.
 
         Returns list of validation errors (empty if valid)
         """
@@ -201,8 +196,7 @@ class ProtocolLoader:
 
 
 def load_protocol(protocol_name: str, protocol_dir: str | None = None) -> ClinicalProtocol:
-    """
-    Convenience function to load a protocol.
+    """Convenience function to load a protocol.
 
     Args:
         protocol_name: Name of protocol
@@ -214,6 +208,7 @@ def load_protocol(protocol_name: str, protocol_dir: str | None = None) -> Clinic
     Example:
         >>> protocol = load_protocol("sepsis")
         >>> print(f"{protocol.name}: {len(protocol.interventions)} interventions")
+
     """
     loader = ProtocolLoader(protocol_dir)
     return loader.load_protocol(protocol_name)

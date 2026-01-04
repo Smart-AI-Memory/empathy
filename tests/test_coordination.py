@@ -1,5 +1,4 @@
-"""
-Tests for Multi-Agent Coordination (ConflictResolver)
+"""Tests for Multi-Agent Coordination (ConflictResolver)
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9

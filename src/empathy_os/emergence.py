@@ -1,5 +1,4 @@
-"""
-Emergence Detection for AI-Human Collaboration
+"""Emergence Detection for AI-Human Collaboration
 
 Detects emergent properties in AI-human collaboration - system-level behaviors
 that arise from component interactions but aren't properties of components.
@@ -17,8 +16,7 @@ from typing import Any
 
 @dataclass
 class EmergentProperty:
-    """
-    An emergent property discovered in the system
+    """An emergent property discovered in the system
 
     Emergent properties are behaviors or patterns that arise from the
     interactions of system components but cannot be predicted from
@@ -34,8 +32,7 @@ class EmergentProperty:
 
 
 class EmergenceDetector:
-    """
-    Detects emergent properties in AI-human collaboration
+    """Detects emergent properties in AI-human collaboration
 
     Emergent properties are system-level behaviors that arise from
     component interactions but aren't properties of the components themselves.
@@ -57,6 +54,7 @@ class EmergenceDetector:
         >>> current = {"trust": 0.8, "interactions": 50, "shared_patterns": 5}
         >>> score = detector.measure_emergence(baseline, current)
         >>> print(f"Emergence score: {score:.2f}")
+
     """
 
     def __init__(self):
@@ -65,10 +63,10 @@ class EmergenceDetector:
         self.baseline_metrics: dict[str, Any] = {}
 
     def detect_emergent_norms(
-        self, team_interactions: list[dict[str, Any]]
+        self,
+        team_interactions: list[dict[str, Any]],
     ) -> list[EmergentProperty]:
-        """
-        Detect team norms that emerged organically
+        """Detect team norms that emerged organically
 
         Analyzes interaction history to identify behavioral patterns that:
         1. Were not explicitly programmed or prescribed
@@ -88,6 +86,7 @@ class EmergenceDetector:
             ...     {"type": "help_request", "response_time": 4}
             ... ]
             >>> norms = detector.detect_emergent_norms(interactions)
+
         """
         norms: list[EmergentProperty] = []
 
@@ -131,8 +130,7 @@ class EmergenceDetector:
         return norms
 
     def measure_emergence(self, baseline: dict[str, Any], current: dict[str, Any]) -> float:
-        """
-        Quantify emergence by comparing baseline to current state
+        """Quantify emergence by comparing baseline to current state
 
         Measures how much new system-level properties have emerged that
         weren't present in the baseline state.
@@ -151,6 +149,7 @@ class EmergenceDetector:
             >>> baseline = {"trust": 0.3, "interactions": 10}
             >>> current = {"trust": 0.8, "interactions": 50, "patterns": 5}
             >>> score = detector.measure_emergence(baseline, current)
+
         """
         emergence_score = 0.0
         max_score = 0.0
@@ -191,10 +190,10 @@ class EmergenceDetector:
         return 0.0
 
     def detect_emergent_capabilities(
-        self, historical_states: list[dict[str, Any]]
+        self,
+        historical_states: list[dict[str, Any]],
     ) -> list[EmergentProperty]:
-        """
-        Detect new capabilities that emerged over time
+        """Detect new capabilities that emerged over time
 
         Analyzes historical system states to identify capabilities that:
         1. Weren't present initially
@@ -206,6 +205,7 @@ class EmergenceDetector:
 
         Returns:
             List of emergent capabilities detected
+
         """
         if len(historical_states) < 2:
             return []
@@ -231,8 +231,7 @@ class EmergenceDetector:
         return capabilities
 
     def _calculate_consistency(self, values: list[float]) -> float:
-        """
-        Calculate consistency of a set of values (0.0-1.0)
+        """Calculate consistency of a set of values (0.0-1.0)
 
         Uses coefficient of variation: lower variation = higher consistency
         """
@@ -252,10 +251,10 @@ class EmergenceDetector:
         return consistency
 
     def _analyze_communication_patterns(
-        self, interactions: list[dict[str, Any]]
+        self,
+        interactions: list[dict[str, Any]],
     ) -> dict[str, dict[str, Any]]:
-        """
-        Analyze communication patterns in interactions
+        """Analyze communication patterns in interactions
 
         Returns dict of pattern_name -> {frequency, examples}
         """
@@ -288,14 +287,14 @@ class EmergenceDetector:
         return patterns
 
     def get_detected_properties(self, property_type: str | None = None) -> list[EmergentProperty]:
-        """
-        Get all detected emergent properties, optionally filtered by type
+        """Get all detected emergent properties, optionally filtered by type
 
         Args:
             property_type: Optional filter ("norm", "pattern", "behavior", "capability")
 
         Returns:
             List of emergent properties
+
         """
         if property_type:
             return [p for p in self.detected_properties if p.property_type == property_type]

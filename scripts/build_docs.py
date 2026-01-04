@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Empathy Framework Documentation Builder
+"""Empathy Framework Documentation Builder
 
 Builds documentation for multiple output targets:
 1. PyPI/GitHub - Minimal docs for package distribution

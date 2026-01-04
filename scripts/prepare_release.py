@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Release Preparation Script
+"""Release Preparation Script
 Automates version bumping and CHANGELOG updates for empathy-framework releases.
 
 Usage:
@@ -36,14 +35,13 @@ def bump_version(current: str, bump_type: str) -> str:
 
     if bump_type == "major":
         return f"{major + 1}.0.0"
-    elif bump_type == "minor":
+    if bump_type == "minor":
         return f"{major}.{minor + 1}.0"
-    elif bump_type == "patch":
+    if bump_type == "patch":
         return f"{major}.{minor}.{patch + 1}"
-    else:
-        raise ValueError(
-            f"Invalid bump type: {bump_type}. Use major, minor, patch, or a version number."
-        )
+    raise ValueError(
+        f"Invalid bump type: {bump_type}. Use major, minor, patch, or a version number.",
+    )
 
 
 def update_pyproject(new_version: str):
@@ -51,7 +49,10 @@ def update_pyproject(new_version: str):
     pyproject = Path("pyproject.toml")
     content = pyproject.read_text()
     updated = re.sub(
-        r'^version = "[^"]+"', f'version = "{new_version}"', content, flags=re.MULTILINE
+        r'^version = "[^"]+"',
+        f'version = "{new_version}"',
+        content,
+        flags=re.MULTILINE,
     )
     pyproject.write_text(updated)
     print(f"✓ Updated pyproject.toml to {new_version}")

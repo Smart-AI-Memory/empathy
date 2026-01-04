@@ -1,5 +1,4 @@
-"""
-Database Wizard
+"""Database Wizard
 
 Schema design, migrations, query optimization, and database architecture.
 Uses Empathy Framework Level 3 (Proactive) for query analysis and Level 4
@@ -23,8 +22,7 @@ from .base_wizard import (
 
 
 class DatabaseWizard(BaseWizard):
-    """
-    Wizard for database design, migrations, and optimization
+    """Wizard for database design, migrations, and optimization
 
     Uses:
     - Level 2: Guide user through schema design decisions
@@ -66,7 +64,6 @@ class DatabaseWizard(BaseWizard):
 
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute database design workflow"""
-
         # Step 1: Assess emotional context
         emotional_state = self._assess_emotional_state(task)
 
@@ -111,7 +108,9 @@ class DatabaseWizard(BaseWizard):
                 content=self._generate_schema_diagram(schema_design),
             ),
             WizardArtifact(
-                type="code", title="Index Recommendations", content=index_recommendations
+                type="code",
+                title="Index Recommendations",
+                content=index_recommendations,
             ),
             WizardArtifact(
                 type="doc",
@@ -209,7 +208,7 @@ class DatabaseWizard(BaseWizard):
                         },
                     ],
                     "indexes": [{"name": "idx_users_email", "columns": ["email"], "type": "BTREE"}],
-                }
+                },
             )
 
         if "order" in task_lower or "product" in task_lower:
@@ -236,7 +235,7 @@ class DatabaseWizard(BaseWizard):
                             "type": "BTREE",
                         },
                     ],
-                }
+                },
             )
 
             schema["relationships"].append(
@@ -245,7 +244,7 @@ class DatabaseWizard(BaseWizard):
                     "to_table": "users",
                     "type": "many-to-one",
                     "foreign_key": "user_id",
-                }
+                },
             )
 
         # Default table if none detected
@@ -262,7 +261,7 @@ class DatabaseWizard(BaseWizard):
                             "constraints": ["DEFAULT NOW()"],
                         },
                     ],
-                }
+                },
             )
 
         return schema
@@ -280,7 +279,7 @@ class DatabaseWizard(BaseWizard):
                     "pattern": "Filtering/Search",
                     "example": "SELECT * FROM users WHERE email LIKE '%@example.com'",
                     "recommendation": "Add GIN index for text search or BTREE for exact matches",
-                }
+                },
             )
 
         if "join" in task_lower or "relationship" in task_lower:
@@ -289,7 +288,7 @@ class DatabaseWizard(BaseWizard):
                     "pattern": "Join Queries",
                     "example": "SELECT * FROM orders o JOIN users u ON o.user_id = u.id",
                     "recommendation": "Ensure foreign key columns are indexed",
-                }
+                },
             )
 
         if "aggregate" in task_lower or "count" in task_lower or "sum" in task_lower:
@@ -298,7 +297,7 @@ class DatabaseWizard(BaseWizard):
                     "pattern": "Aggregation",
                     "example": "SELECT user_id, COUNT(*) FROM orders GROUP BY user_id",
                     "recommendation": "Consider materialized views for frequently computed aggregates",
-                }
+                },
             )
 
         # Default pattern
@@ -308,7 +307,7 @@ class DatabaseWizard(BaseWizard):
                     "pattern": "Standard CRUD",
                     "example": "SELECT, INSERT, UPDATE, DELETE operations",
                     "recommendation": "Ensure primary keys and commonly filtered columns are indexed",
-                }
+                },
             )
 
         return patterns
@@ -661,7 +660,7 @@ class DatabaseWizard(BaseWizard):
                 risk="Migration may cause data loss or corruption",
                 mitigation="Create full database backup before migration. Test migration on copy of production data in staging.",
                 severity="high",
-            )
+            ),
         )
 
         # Downtime risk
@@ -670,7 +669,7 @@ class DatabaseWizard(BaseWizard):
                 risk="Migration may require downtime (table locks during ALTER)",
                 mitigation="Use online DDL operations: CREATE INDEX CONCURRENTLY (PostgreSQL) or pt-online-schema-change (MySQL)",
                 severity="medium",
-            )
+            ),
         )
 
         # Performance impact
@@ -679,7 +678,7 @@ class DatabaseWizard(BaseWizard):
                 risk="New indexes may slow down write operations",
                 mitigation="Monitor write throughput after migration. Consider adding indexes during low-traffic periods.",
                 severity="low",
-            )
+            ),
         )
 
         # Rollback complexity
@@ -688,7 +687,7 @@ class DatabaseWizard(BaseWizard):
                 risk="Some migrations are difficult or impossible to rollback (data type changes)",
                 mitigation="Test rollback procedure in staging. Keep detailed rollback plan ready.",
                 severity="high",
-            )
+            ),
         )
 
         return risks
@@ -703,14 +702,14 @@ class DatabaseWizard(BaseWizard):
                     owner="DBA / Database Administrator",
                     what="Review migration scripts, approve index strategy, verify backup procedures",
                     when="Before production migration",
-                )
+                ),
             )
             handoffs.append(
                 WizardHandoff(
                     owner="DevOps / SRE",
                     what="Set up database monitoring, configure backup automation, prepare rollback plan",
                     when="Before production deployment",
-                )
+                ),
             )
 
         return handoffs

@@ -1,5 +1,4 @@
-"""
-Native Empathy Adapter
+"""Native Empathy Adapter
 
 Creates agents using Empathy's built-in EmpathyLLM system.
 No external dependencies required.
@@ -67,7 +66,9 @@ class NativeAgent(BaseAgent):
         # Use EmpathyLLM if available
         if self._llm:
             response = await self._llm.interact(
-                user_id=f"agent_{self.name}", user_input=user_input, context=ctx
+                user_id=f"agent_{self.name}",
+                user_input=user_input,
+                context=ctx,
             )
             output = response.get("response", "")
             metadata = {
@@ -171,16 +172,16 @@ class NativeAdapter(BaseAdapter):
     """Adapter for Empathy's native agent system."""
 
     def __init__(self, provider: str = "anthropic", api_key: str | None = None):
-        """
-        Initialize native adapter.
+        """Initialize native adapter.
 
         Args:
             provider: LLM provider (anthropic, openai, local)
             api_key: API key (uses env var if not provided)
+
         """
         self.provider = provider
         self.api_key = api_key or os.getenv(
-            "ANTHROPIC_API_KEY" if provider == "anthropic" else "OPENAI_API_KEY"
+            "ANTHROPIC_API_KEY" if provider == "anthropic" else "OPENAI_API_KEY",
         )
         self._llm: Any = None  # EmpathyLLM instance or None
 
@@ -199,7 +200,9 @@ class NativeAdapter(BaseAdapter):
                 from empathy_llm_toolkit.core import EmpathyLLM
 
                 self._llm = EmpathyLLM(
-                    provider=self.provider, api_key=self.api_key, target_level=config.empathy_level
+                    provider=self.provider,
+                    api_key=self.api_key,
+                    target_level=config.empathy_level,
                 )
             except ImportError:
                 pass
@@ -215,7 +218,11 @@ class NativeAdapter(BaseAdapter):
         return NativeWorkflow(config, agents)
 
     def create_tool(
-        self, name: str, description: str, func: Callable, args_schema: dict | None = None
+        self,
+        name: str,
+        description: str,
+        func: Callable,
+        args_schema: dict | None = None,
     ) -> dict:
         """Create a tool dict for native agents."""
         return {"name": name, "description": description, "func": func, "args_schema": args_schema}

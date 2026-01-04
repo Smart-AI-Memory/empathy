@@ -1,5 +1,4 @@
-"""
-Structured Telemetry for Multi-Model Workflows
+"""Structured Telemetry for Multi-Model Workflows
 
 Provides normalized schemas for tracking LLM calls and workflow runs:
 - LLMCallRecord: Per-call metrics (model, tokens, cost, latency)
@@ -21,8 +20,7 @@ from typing import Any, Protocol, runtime_checkable
 
 @dataclass
 class LLMCallRecord:
-    """
-    Record of a single LLM API call.
+    """Record of a single LLM API call.
 
     Captures all relevant metrics for cost tracking, performance analysis,
     and debugging.
@@ -100,8 +98,7 @@ class WorkflowStageRecord:
 
 @dataclass
 class WorkflowRunRecord:
-    """
-    Record of a complete workflow execution.
+    """Record of a complete workflow execution.
 
     Aggregates stage-level metrics and provides workflow-level analytics.
     """
@@ -153,8 +150,7 @@ class WorkflowRunRecord:
 
 @runtime_checkable
 class TelemetryBackend(Protocol):
-    """
-    Protocol for telemetry storage backends.
+    """Protocol for telemetry storage backends.
 
     Implementations can store telemetry data in different backends:
     - JSONL files (default, via TelemetryStore)
@@ -209,19 +205,18 @@ class TelemetryBackend(Protocol):
 
 
 class TelemetryStore:
-    """
-    JSONL file-based telemetry backend (default implementation).
+    """JSONL file-based telemetry backend (default implementation).
 
     Stores records in JSONL format for easy streaming and analysis.
     Implements the TelemetryBackend protocol.
     """
 
     def __init__(self, storage_dir: str = ".empathy"):
-        """
-        Initialize telemetry store.
+        """Initialize telemetry store.
 
         Args:
             storage_dir: Directory for telemetry files
+
         """
         self.storage_dir = Path(storage_dir)
         self.storage_dir.mkdir(parents=True, exist_ok=True)
@@ -245,8 +240,7 @@ class TelemetryStore:
         workflow_name: str | None = None,
         limit: int = 1000,
     ) -> list[LLMCallRecord]:
-        """
-        Get LLM call records.
+        """Get LLM call records.
 
         Args:
             since: Only return records after this time
@@ -255,6 +249,7 @@ class TelemetryStore:
 
         Returns:
             List of LLMCallRecord
+
         """
         records: list[LLMCallRecord] = []
         if not self.calls_file.exists():
@@ -292,8 +287,7 @@ class TelemetryStore:
         workflow_name: str | None = None,
         limit: int = 100,
     ) -> list[WorkflowRunRecord]:
-        """
-        Get workflow run records.
+        """Get workflow run records.
 
         Args:
             since: Only return records after this time
@@ -302,6 +296,7 @@ class TelemetryStore:
 
         Returns:
             List of WorkflowRunRecord
+
         """
         records: list[WorkflowRunRecord] = []
         if not self.workflows_file.exists():
@@ -335,18 +330,17 @@ class TelemetryStore:
 
 
 class TelemetryAnalytics:
-    """
-    Analytics helpers for telemetry data.
+    """Analytics helpers for telemetry data.
 
     Provides insights into cost optimization, provider usage, and performance.
     """
 
     def __init__(self, store: TelemetryStore | None = None):
-        """
-        Initialize analytics.
+        """Initialize analytics.
 
         Args:
             store: TelemetryStore to analyze (creates default if None)
+
         """
         self.store = store or TelemetryStore()
 
@@ -355,8 +349,7 @@ class TelemetryAnalytics:
         n: int = 10,
         since: datetime | None = None,
     ) -> list[dict[str, Any]]:
-        """
-        Get the most expensive workflows.
+        """Get the most expensive workflows.
 
         Args:
             n: Number of workflows to return
@@ -364,6 +357,7 @@ class TelemetryAnalytics:
 
         Returns:
             List of dicts with workflow_name, total_cost, run_count
+
         """
         workflows = self.store.get_workflows(since=since, limit=10000)
 
@@ -395,14 +389,14 @@ class TelemetryAnalytics:
         self,
         since: datetime | None = None,
     ) -> dict[str, dict[str, Any]]:
-        """
-        Get usage summary by provider.
+        """Get usage summary by provider.
 
         Args:
             since: Only consider calls after this time
 
         Returns:
             Dict mapping provider to usage stats
+
         """
         calls = self.store.get_calls(since=since, limit=100000)
 
@@ -438,14 +432,14 @@ class TelemetryAnalytics:
         self,
         since: datetime | None = None,
     ) -> dict[str, dict[str, Any]]:
-        """
-        Get call distribution by tier.
+        """Get call distribution by tier.
 
         Args:
             since: Only consider calls after this time
 
         Returns:
             Dict mapping tier to stats
+
         """
         calls = self.store.get_calls(since=since, limit=100000)
 
@@ -471,14 +465,14 @@ class TelemetryAnalytics:
         self,
         since: datetime | None = None,
     ) -> dict[str, Any]:
-        """
-        Get fallback usage statistics.
+        """Get fallback usage statistics.
 
         Args:
             since: Only consider calls after this time
 
         Returns:
             Dict with fallback stats
+
         """
         calls = self.store.get_calls(since=since, limit=100000)
 
@@ -505,14 +499,14 @@ class TelemetryAnalytics:
         self,
         since: datetime | None = None,
     ) -> dict[str, Any]:
-        """
-        Generate cost savings report.
+        """Generate cost savings report.
 
         Args:
             since: Only consider workflows after this time
 
         Returns:
             Dict with savings analysis
+
         """
         workflows = self.store.get_workflows(since=since, limit=10000)
 

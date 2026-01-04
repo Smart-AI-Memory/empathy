@@ -1,5 +1,4 @@
-"""
-Tests for empathy_llm_toolkit/agent_factory/crews/refactoring.py
+"""Tests for empathy_llm_toolkit/agent_factory/crews/refactoring.py
 
 Tests the RefactoringCrew and its supporting dataclasses and enums.
 """
@@ -847,8 +846,8 @@ class TestRefactoringCrewParseFindings:
                         "file_path": "test.py",
                         "start_line": 1,
                         "end_line": 5,
-                    }
-                ]
+                    },
+                ],
             },
         }
         findings = crew._parse_findings(result)

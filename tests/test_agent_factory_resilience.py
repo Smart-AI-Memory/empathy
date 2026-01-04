@@ -1,5 +1,4 @@
-"""
-Tests for Agent Factory Resilience Integration
+"""Tests for Agent Factory Resilience Integration
 
 Tests the resilience wrappers (circuit breaker, retry, timeout, fallback)
 applied to agents created by the Agent Factory.

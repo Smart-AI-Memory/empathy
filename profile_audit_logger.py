@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-Performance profiling for Audit Logger module
+"""Performance profiling for Audit Logger module
 
 Profiles audit logging performance to identify optimization targets.
 Target: <1.5ms/event (current: 1-3ms/event)
@@ -21,7 +20,6 @@ from empathy_llm_toolkit.security import AuditLogger
 
 def profile_audit_logging():
     """Profile audit logging with various event types"""
-
     # Use temporary directory for test logs
     with tempfile.TemporaryDirectory() as tmpdir:
         logger = AuditLogger(log_dir=tmpdir)

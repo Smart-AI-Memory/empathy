@@ -1,5 +1,4 @@
-"""
-Empathy Framework - Plugin Registry
+"""Empathy Framework - Plugin Registry
 
 Auto-discovery and management of domain plugins.
 
@@ -16,8 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class PluginRegistry:
-    """
-    Central registry for managing domain plugins.
+    """Central registry for managing domain plugins.
 
     Features:
     - Auto-discovery via entry points
@@ -32,8 +30,7 @@ class PluginRegistry:
         self.logger = logging.getLogger("empathy.plugins.registry")
 
     def auto_discover(self) -> None:
-        """
-        Automatically discover plugins via entry points.
+        """Automatically discover plugins via entry points.
 
         Plugins register themselves in setup.py/pyproject.toml:
 
@@ -64,8 +61,7 @@ class PluginRegistry:
         self.logger.info(f"Auto-discovery complete. {len(self._plugins)} plugins loaded.")
 
     def register_plugin(self, name: str, plugin: BasePlugin) -> None:
-        """
-        Manually register a plugin.
+        """Manually register a plugin.
 
         Args:
             name: Plugin identifier (e.g., 'software', 'healthcare')
@@ -73,6 +69,7 @@ class PluginRegistry:
 
         Raises:
             PluginValidationError: If plugin is invalid
+
         """
         # Validate plugin
         try:
@@ -87,18 +84,18 @@ class PluginRegistry:
         # Register
         self._plugins[name] = plugin
         self.logger.info(
-            f"Registered plugin '{name}' (domain: {metadata.domain}, version: {metadata.version})"
+            f"Registered plugin '{name}' (domain: {metadata.domain}, version: {metadata.version})",
         )
 
     def get_plugin(self, name: str) -> BasePlugin | None:
-        """
-        Get a plugin by name.
+        """Get a plugin by name.
 
         Args:
             name: Plugin identifier
 
         Returns:
             Plugin instance or None if not found
+
         """
         if not self._auto_discovered:
             self.auto_discover()
@@ -110,11 +107,11 @@ class PluginRegistry:
         return plugin
 
     def list_plugins(self) -> list[str]:
-        """
-        List all registered plugin names.
+        """List all registered plugin names.
 
         Returns:
             List of plugin identifiers
+
         """
         if not self._auto_discovered:
             self.auto_discover()
@@ -122,11 +119,11 @@ class PluginRegistry:
         return list(self._plugins.keys())
 
     def list_all_wizards(self) -> dict[str, list[str]]:
-        """
-        List all wizards from all plugins.
+        """List all wizards from all plugins.
 
         Returns:
             Dictionary mapping plugin_name -> list of wizard_ids
+
         """
         if not self._auto_discovered:
             self.auto_discover()
@@ -138,8 +135,7 @@ class PluginRegistry:
         return result
 
     def get_wizard(self, plugin_name: str, wizard_id: str) -> type[BaseWizard] | None:
-        """
-        Get a wizard from a specific plugin.
+        """Get a wizard from a specific plugin.
 
         Args:
             plugin_name: Plugin identifier
@@ -147,6 +143,7 @@ class PluginRegistry:
 
         Returns:
             Wizard class or None if not found
+
         """
         plugin = self.get_plugin(plugin_name)
         if not plugin:
@@ -156,8 +153,7 @@ class PluginRegistry:
         return plugin.get_wizard(wizard_id)
 
     def get_wizard_info(self, plugin_name: str, wizard_id: str) -> dict | None:
-        """
-        Get information about a wizard.
+        """Get information about a wizard.
 
         Args:
             plugin_name: Plugin identifier
@@ -165,6 +161,7 @@ class PluginRegistry:
 
         Returns:
             Dictionary with wizard metadata or None
+
         """
         plugin = self.get_plugin(plugin_name)
         if not plugin:
@@ -173,14 +170,14 @@ class PluginRegistry:
         return plugin.get_wizard_info(wizard_id)
 
     def find_wizards_by_level(self, empathy_level: int) -> list[dict]:
-        """
-        Find all wizards operating at a specific empathy level.
+        """Find all wizards operating at a specific empathy level.
 
         Args:
             empathy_level: Target empathy level (1-5)
 
         Returns:
             List of wizard info dictionaries
+
         """
         if not self._auto_discovered:
             self.auto_discover()
@@ -196,14 +193,14 @@ class PluginRegistry:
         return results
 
     def find_wizards_by_domain(self, domain: str) -> list[dict]:
-        """
-        Find all wizards for a specific domain.
+        """Find all wizards for a specific domain.
 
         Args:
             domain: Domain identifier (e.g., 'software', 'healthcare')
 
         Returns:
             List of wizard info dictionaries
+
         """
         if not self._auto_discovered:
             self.auto_discover()
@@ -221,11 +218,11 @@ class PluginRegistry:
         return results
 
     def get_statistics(self) -> dict:
-        """
-        Get registry statistics.
+        """Get registry statistics.
 
         Returns:
             Dictionary with counts and metadata
+
         """
         if not self._auto_discovered:
             self.auto_discover()
@@ -258,11 +255,11 @@ _global_registry: PluginRegistry | None = None
 
 
 def get_global_registry() -> PluginRegistry:
-    """
-    Get the global plugin registry instance (singleton).
+    """Get the global plugin registry instance (singleton).
 
     Returns:
         Global PluginRegistry instance
+
     """
     global _global_registry
     if _global_registry is None:

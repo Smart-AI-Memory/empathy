@@ -1,5 +1,4 @@
-"""
-Cost Tracking for Empathy Framework
+"""Cost Tracking for Empathy Framework
 
 Tracks API costs across model tiers and calculates savings from
 smart model routing (Haiku/Sonnet/Opus selection).
@@ -61,8 +60,7 @@ BASELINE_MODEL = "claude-opus-4-5-20251101"
 
 
 class CostTracker:
-    """
-    Tracks API costs and calculates savings from model routing.
+    """Tracks API costs and calculates savings from model routing.
 
     Usage:
         tracker = CostTracker()
@@ -71,11 +69,11 @@ class CostTracker:
     """
 
     def __init__(self, storage_dir: str = ".empathy"):
-        """
-        Initialize cost tracker.
+        """Initialize cost tracker.
 
         Args:
             storage_dir: Directory for cost data storage
+
         """
         self.storage_dir = Path(storage_dir)
         self.storage_dir.mkdir(parents=True, exist_ok=True)
@@ -109,8 +107,7 @@ class CostTracker:
             json.dump(self.data, f, indent=2)
 
     def _calculate_cost(self, model: str, input_tokens: int, output_tokens: int) -> float:
-        """
-        Calculate cost for a request.
+        """Calculate cost for a request.
 
         Args:
             model: Model name or tier
@@ -119,6 +116,7 @@ class CostTracker:
 
         Returns:
             Cost in USD
+
         """
         pricing = MODEL_PRICING.get(model) or MODEL_PRICING["capable"]
         input_cost = (input_tokens / 1_000_000) * pricing["input"]
@@ -133,8 +131,7 @@ class CostTracker:
         task_type: str = "unknown",
         tier: str | None = None,
     ) -> dict:
-        """
-        Log an API request with cost tracking.
+        """Log an API request with cost tracking.
 
         Args:
             model: Model name used
@@ -145,6 +142,7 @@ class CostTracker:
 
         Returns:
             Request record with cost information
+
         """
         actual_cost = self._calculate_cost(model, input_tokens, output_tokens)
         baseline_cost = self._calculate_cost(BASELINE_MODEL, input_tokens, output_tokens)
@@ -195,20 +193,19 @@ class CostTracker:
         """Determine tier from model name."""
         if "haiku" in model.lower():
             return "cheap"
-        elif "opus" in model.lower():
+        if "opus" in model.lower():
             return "premium"
-        else:
-            return "capable"
+        return "capable"
 
     def get_summary(self, days: int = 7) -> dict:
-        """
-        Get cost summary for recent period.
+        """Get cost summary for recent period.
 
         Args:
             days: Number of days to include
 
         Returns:
             Summary with totals and savings percentage
+
         """
         cutoff = datetime.now() - timedelta(days=days)
         cutoff_str = cutoff.strftime("%Y-%m-%d")
@@ -246,7 +243,8 @@ class CostTracker:
         # Calculate savings percentage
         if totals["baseline_cost"] > 0:
             totals["savings_percent"] = round(
-                (totals["savings"] / totals["baseline_cost"]) * 100, 1
+                (totals["savings"] / totals["baseline_cost"]) * 100,
+                1,
             )
         else:
             totals["savings_percent"] = 0
@@ -254,14 +252,14 @@ class CostTracker:
         return totals
 
     def get_report(self, days: int = 7) -> str:
-        """
-        Generate a formatted cost report.
+        """Generate a formatted cost report.
 
         Args:
             days: Number of days to include
 
         Returns:
             Formatted report string
+
         """
         summary = self.get_summary(days)
 
@@ -292,7 +290,7 @@ class CostTracker:
                 [
                     "BY MODEL TIER",
                     "-" * 40,
-                ]
+                ],
             )
             for tier, count in sorted(summary["by_tier"].items(), key=lambda x: -x[1]):
                 if count > 0:
@@ -306,7 +304,7 @@ class CostTracker:
                 [
                     "BY TASK TYPE (Top 5)",
                     "-" * 40,
-                ]
+                ],
             )
             sorted_tasks = sorted(summary["by_task"].items(), key=lambda x: -x[1])[:5]
             for task, count in sorted_tasks:
@@ -320,7 +318,7 @@ class CostTracker:
                 "  for simple tasks and Opus only when needed.",
                 "=" * 60,
                 "",
-            ]
+            ],
         )
 
         return "\n".join(lines)
@@ -377,8 +375,7 @@ def log_request(
     task_type: str = "unknown",
     tier: str | None = None,
 ) -> dict:
-    """
-    Convenience function to log a request to the global tracker.
+    """Convenience function to log a request to the global tracker.
 
     Usage:
         from empathy_os.cost_tracker import log_request

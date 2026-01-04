@@ -1,5 +1,4 @@
-"""
-Multi-Model Coordination Wizard - Level 4 Anticipatory Empathy
+"""Multi-Model Coordination Wizard - Level 4 Anticipatory Empathy
 
 Alerts developers when multi-model strategies will create complexity or cost issues.
 
@@ -22,8 +21,7 @@ from empathy_os.plugins import BaseWizard
 
 
 class MultiModelWizard(BaseWizard):
-    """
-    Level 4 Anticipatory: Predicts multi-model coordination issues.
+    """Level 4 Anticipatory: Predicts multi-model coordination issues.
 
     What We Learned About Multi-Model Systems:
     - Using "best model for task" sounds smart, adds complexity
@@ -50,8 +48,7 @@ class MultiModelWizard(BaseWizard):
         ]
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze multi-model coordination and predict issues.
+        """Analyze multi-model coordination and predict issues.
 
         In our experience: Multi-model complexity grows non-linearly.
         2 models = manageable. 4+ models = coordination nightmare without framework.
@@ -67,7 +64,10 @@ class MultiModelWizard(BaseWizard):
 
         # Level 4: Predict coordination breakdown
         predictions = await self._predict_multi_model_issues(
-            model_usage, model_count, routing, context
+            model_usage,
+            model_count,
+            routing,
+            context,
         )
 
         recommendations = self._generate_recommendations(issues, predictions)
@@ -87,7 +87,10 @@ class MultiModelWizard(BaseWizard):
         }
 
     async def _analyze_model_coordination(
-        self, model_usage: list[dict], model_count: int, routing: list[str]
+        self,
+        model_usage: list[dict],
+        model_count: int,
+        routing: list[str],
     ) -> list[dict[str, Any]]:
         """Analyze current multi-model coordination"""
         issues = []
@@ -107,7 +110,7 @@ class MultiModelWizard(BaseWizard):
                         "Create model abstraction layer (unified interface, "
                         "routing logic, fallback handling)"
                     ),
-                }
+                },
             )
 
         # Issue: No fallback strategy
@@ -121,7 +124,7 @@ class MultiModelWizard(BaseWizard):
                         "fails or is rate-limited, entire feature breaks."
                     ),
                     "suggestion": "Implement model fallback chain (primary → secondary → cached)",
-                }
+                },
             )
 
         # Issue: Inconsistent prompt templates
@@ -137,7 +140,7 @@ class MultiModelWizard(BaseWizard):
                     "suggestion": (
                         "Use model-agnostic prompt templates with model-specific adaptations"
                     ),
-                }
+                },
             )
 
         # Issue: No cost tracking per model
@@ -151,7 +154,7 @@ class MultiModelWizard(BaseWizard):
                         "Impossible to optimize spend without visibility."
                     ),
                     "suggestion": "Add cost tracking middleware (log tokens/costs per model)",
-                }
+                },
             )
 
         # Issue: No performance monitoring
@@ -165,7 +168,7 @@ class MultiModelWizard(BaseWizard):
                         "which models are slow, failing, or degrading."
                     ),
                     "suggestion": "Add per-model metrics (latency, errors, quality)",
-                }
+                },
             )
 
         return issues
@@ -177,8 +180,7 @@ class MultiModelWizard(BaseWizard):
         routing: list[str],
         full_context: dict[str, Any],
     ) -> list[dict[str, Any]]:
-        """
-        Level 4: Predict multi-model coordination breakdown.
+        """Level 4: Predict multi-model coordination breakdown.
 
         Based on our experience: Coordination complexity = O(n) × configuration.
         """
@@ -213,7 +215,7 @@ class MultiModelWizard(BaseWizard):
                         "Added GPT-3.5 for cheap tasks. Added Gemini for... "
                         "By model #5, configuration chaos. Should have built framework at #3."
                     ),
-                }
+                },
             )
 
         # Pattern 2: Cost optimization will become critical
@@ -243,7 +245,7 @@ class MultiModelWizard(BaseWizard):
                         "Our first multi-model bill: 3x expected. Turns out 90% of requests "
                         "went to most expensive model. Added smart routing, costs dropped 70%."
                     ),
-                }
+                },
             )
 
         # Pattern 3: Output consistency issues
@@ -269,7 +271,7 @@ class MultiModelWizard(BaseWizard):
                         'GPT returns {"answer": "..."}. Claude returns {"result": "..."}. '
                         "Your code expects one format. Random failures ensue."
                     ),
-                }
+                },
             )
 
         # Pattern 4: Model version drift
@@ -299,7 +301,7 @@ class MultiModelWizard(BaseWizard):
                         "Provider updated model, our outputs changed format. Took 2 days to "
                         "realize it wasn't our code. Now we pin versions and test upgrades explicitly."
                     ),
-                }
+                },
             )
 
         # Pattern 5: Lack of routing intelligence
@@ -330,7 +332,7 @@ class MultiModelWizard(BaseWizard):
                         "We route: Simple Q&A → Haiku. Long context → Claude. Code → GPT-4. "
                         "Same quality, 65% cost reduction. Should have done this from day one."
                     ),
-                }
+                },
             )
 
         return predictions
@@ -352,7 +354,9 @@ class MultiModelWizard(BaseWizard):
         return recommendations
 
     def _extract_patterns(
-        self, issues: list[dict], predictions: list[dict]
+        self,
+        issues: list[dict],
+        predictions: list[dict],
     ) -> list[dict[str, Any]]:
         """Extract cross-domain patterns"""
         return [
@@ -372,7 +376,7 @@ class MultiModelWizard(BaseWizard):
                 ],
                 "threshold": "4-5 providers",
                 "solution": "Build abstraction layer + unified interface",
-            }
+            },
         ]
 
     # Helper methods

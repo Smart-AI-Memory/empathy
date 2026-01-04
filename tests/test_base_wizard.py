@@ -1,5 +1,4 @@
-"""
-Comprehensive tests for BaseCoachWizard and related dataclasses
+"""Comprehensive tests for BaseCoachWizard and related dataclasses
 
 Tests cover:
 - WizardIssue, WizardPrediction, WizardResult dataclasses
@@ -55,7 +54,11 @@ class ConcreteWizard(BaseCoachWizard):
         ]
 
     def predict_future_issues(
-        self, code: str, file_path: str, project_context: dict, timeline_days: int = 90
+        self,
+        code: str,
+        file_path: str,
+        project_context: dict,
+        timeline_days: int = 90,
     ):
         """Test implementation returns predictions"""
         future_date = datetime.now() + timedelta(days=timeline_days // 2)
@@ -405,7 +408,7 @@ class TestBaseCoachWizard:
                 impact="medium",
                 prevention_steps=["Step"],
                 reasoning="Reason",
-            )
+            ),
         ]
 
         summary = wizard._generate_summary(issues, predictions)

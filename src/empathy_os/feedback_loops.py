@@ -1,5 +1,4 @@
-"""
-Feedback Loop Detection for AI-Human Collaboration
+"""Feedback Loop Detection for AI-Human Collaboration
 
 Detects and analyzes reinforcing and balancing feedback loops in AI-human
 collaboration based on systems thinking (Meadows, Senge).
@@ -34,8 +33,7 @@ class LoopPolarity(Enum):
 
 @dataclass
 class FeedbackLoop:
-    """
-    A detected feedback loop in the system
+    """A detected feedback loop in the system
 
     Feedback loops are circular causal chains where:
     A -> B -> C -> A (with delays and polarities)
@@ -53,8 +51,7 @@ class FeedbackLoop:
 
 
 class FeedbackLoopDetector:
-    """
-    Detects reinforcing and balancing feedback loops in AI-human collaboration
+    """Detects reinforcing and balancing feedback loops in AI-human collaboration
 
     Based on systems thinking (Meadows, Senge):
 
@@ -85,6 +82,7 @@ class FeedbackLoopDetector:
         ... ]
         >>> loops = detector.detect_active_loop(history)
         >>> print(loops["dominant_loop"])
+
     """
 
     def __init__(self):
@@ -128,8 +126,7 @@ class FeedbackLoopDetector:
         self.detected_loops.extend([trust_building, trust_erosion, quality_control])
 
     def detect_active_loop(self, session_history: list[dict[str, Any]]) -> dict[str, Any]:
-        """
-        Analyze session history for active feedback loops
+        """Analyze session history for active feedback loops
 
         Examines trends in trust, success rate, and collaboration metrics
         to determine which feedback loop is currently dominant.
@@ -151,6 +148,7 @@ class FeedbackLoopDetector:
             ...     {"trust": 0.7, "success_rate": 0.8}
             ... ]
             >>> result = detector.detect_active_loop(history)
+
         """
         if len(session_history) < 2:
             return {
@@ -183,7 +181,7 @@ class FeedbackLoopDetector:
                 "details": dominant_loop,
             }
 
-        elif trust_trend < -0.1 and success_rate < 0.4:
+        if trust_trend < -0.1 and success_rate < 0.4:
             # Trust erosion vicious cycle active
             dominant_loop = self._get_loop_by_id("R2_trust_erosion")
             return {
@@ -195,21 +193,19 @@ class FeedbackLoopDetector:
                 "details": dominant_loop,
             }
 
-        else:
-            # Quality control balancing loop active
-            dominant_loop = self._get_loop_by_id("B1_quality_control")
-            return {
-                "dominant_loop": "B1_quality_control",
-                "loop_type": "balancing",
-                "loop_strength": 0.5,
-                "trend": "stabilizing",
-                "recommendation": "System stable. Monitor for reinforcing loop activation.",
-                "details": dominant_loop,
-            }
+        # Quality control balancing loop active
+        dominant_loop = self._get_loop_by_id("B1_quality_control")
+        return {
+            "dominant_loop": "B1_quality_control",
+            "loop_type": "balancing",
+            "loop_strength": 0.5,
+            "trend": "stabilizing",
+            "recommendation": "System stable. Monitor for reinforcing loop activation.",
+            "details": dominant_loop,
+        }
 
     def detect_virtuous_cycle(self, history: list[dict[str, Any]]) -> bool:
-        """
-        Detect reinforcing positive feedback (virtuous cycle)
+        """Detect reinforcing positive feedback (virtuous cycle)
 
         A virtuous cycle is present when:
         1. Trust is increasing
@@ -230,6 +226,7 @@ class FeedbackLoopDetector:
             ... ]
             >>> detector.detect_virtuous_cycle(history)
             True
+
         """
         if len(history) < 3:
             return False
@@ -256,8 +253,7 @@ class FeedbackLoopDetector:
         return is_accelerating
 
     def detect_vicious_cycle(self, history: list[dict[str, Any]]) -> bool:
-        """
-        Detect reinforcing negative feedback (vicious cycle)
+        """Detect reinforcing negative feedback (vicious cycle)
 
         A vicious cycle is present when:
         1. Trust is decreasing
@@ -278,6 +274,7 @@ class FeedbackLoopDetector:
             ... ]
             >>> detector.detect_vicious_cycle(history)
             True
+
         """
         if len(history) < 3:
             return False
@@ -304,8 +301,7 @@ class FeedbackLoopDetector:
         return is_accelerating_down
 
     def get_intervention_recommendations(self, loop_id: str) -> list[str]:
-        """
-        Get recommended interventions for a specific loop
+        """Get recommended interventions for a specific loop
 
         Args:
             loop_id: ID of the loop (e.g., "R1_trust_building")
@@ -317,6 +313,7 @@ class FeedbackLoopDetector:
             >>> recommendations = detector.get_intervention_recommendations("R2_trust_erosion")
             >>> print(recommendations)
             ['break_cycle', 'rebuild_confidence', 'adjust_scope']
+
         """
         loop = self._get_loop_by_id(loop_id)
         if loop:
@@ -324,8 +321,7 @@ class FeedbackLoopDetector:
         return []
 
     def _calculate_trend(self, values: list[float]) -> float:
-        """
-        Calculate trend direction and magnitude
+        """Calculate trend direction and magnitude
 
         Uses simple linear regression slope as trend indicator.
 
@@ -333,6 +329,7 @@ class FeedbackLoopDetector:
             Positive value: increasing trend
             Negative value: decreasing trend
             Near zero: stable
+
         """
         if len(values) < 2:
             return 0.0
@@ -359,11 +356,11 @@ class FeedbackLoopDetector:
         return None
 
     def register_custom_loop(self, loop: FeedbackLoop):
-        """
-        Register a custom feedback loop for detection
+        """Register a custom feedback loop for detection
 
         Args:
             loop: FeedbackLoop instance to register
+
         """
         self.detected_loops.append(loop)
 

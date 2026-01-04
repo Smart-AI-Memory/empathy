@@ -1,5 +1,4 @@
-"""
-Fallback Pattern Implementation
+"""Fallback Pattern Implementation
 
 Provides graceful degradation when primary operations fail.
 
@@ -21,8 +20,7 @@ T = TypeVar("T")
 
 @dataclass
 class Fallback:
-    """
-    Fallback chain for graceful degradation.
+    """Fallback chain for graceful degradation.
 
     Tries each function in order until one succeeds.
     """
@@ -66,8 +64,7 @@ def fallback(
     default: Any | None = None,
     log_failures: bool = True,
 ) -> Callable:
-    """
-    Decorator to add fallback behavior to a function.
+    """Decorator to add fallback behavior to a function.
 
     Args:
         *fallback_funcs: Functions to try if primary fails
@@ -84,6 +81,7 @@ def fallback(
         @fallback(get_from_cache, default=None)
         async def get_data():
             return await api.fetch()
+
     """
 
     def decorator(func: Callable[..., T]) -> Callable[..., T]:
@@ -150,8 +148,7 @@ def with_fallback(
     fallbacks: list[Callable[..., T]],
     default: T | None = None,
 ) -> Callable[..., T]:
-    """
-    Create a function that tries primary then fallbacks.
+    """Create a function that tries primary then fallbacks.
 
     Args:
         primary: Primary function to try
@@ -168,6 +165,7 @@ def with_fallback(
             default={"id": "unknown"}
         )
         user = await get_user(user_id)
+
     """
     fb = Fallback(name=primary.__name__, default_value=default)
     fb.add(primary)

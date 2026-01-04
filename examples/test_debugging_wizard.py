@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Test Script for Memory-Enhanced Debugging Wizard
+"""Test Script for Memory-Enhanced Debugging Wizard
 
 Demonstrates the wizard's capabilities:
 - Error classification
@@ -44,8 +43,7 @@ def print_json(data: dict, indent: int = 2) -> None:
 
 
 async def test_null_reference_error():
-    """
-    Test 1: TypeError - Cannot read property 'map' of undefined
+    """Test 1: TypeError - Cannot read property 'map' of undefined
 
     This should match historical bug bug_20250915_abc123.json
     which had the exact same error type and message.
@@ -173,8 +171,7 @@ async def test_null_reference_error():
 
 
 async def test_async_error():
-    """
-    Test 2: Async timing error
+    """Test 2: Async timing error
 
     Tests matching against async_timing patterns.
     """
@@ -215,8 +212,7 @@ async def test_async_error():
 
 
 async def test_import_error():
-    """
-    Test 3: Import/Module Error
+    """Test 3: Import/Module Error
 
     Tests matching against import_error patterns.
     """
@@ -251,8 +247,7 @@ async def test_import_error():
 
 
 async def test_no_history_mode():
-    """
-    Test 4: Analysis without historical correlation
+    """Test 4: Analysis without historical correlation
 
     Shows what the wizard does when you disable history matching.
     """
@@ -287,8 +282,7 @@ async def test_no_history_mode():
 
 
 async def demonstrate_resolution_recording():
-    """
-    Test 5: Demonstrate recording a bug resolution
+    """Test 5: Demonstrate recording a bug resolution
 
     Shows how to store a fix for future correlation.
     """
@@ -327,7 +321,7 @@ async def demonstrate_resolution_recording():
         resolution_time_minutes=8,
         resolved_by="@developer"
     )
-    """
+    """,
     )
 
     print("\nStep 3: Future benefit")
@@ -340,7 +334,6 @@ async def demonstrate_resolution_recording():
 
 async def main():
     """Run all tests demonstrating the Memory-Enhanced Debugging Wizard."""
-
     print_section("Memory-Enhanced Debugging Wizard - Test Suite", "=")
     print(
         """
@@ -357,7 +350,7 @@ WITH PERSISTENT MEMORY (After):
   - "This looks like bug #247 from 3 months ago"
   - Recommends proven fixes
   - Team knowledge compounds over time
-"""
+""",
     )
 
     # Run tests
@@ -394,7 +387,7 @@ Key Takeaways:
    building team knowledge over time.
 
 Pattern storage location: ./patterns/debugging/
-"""
+""",
     )
 
     print("\nTest suite completed successfully!")

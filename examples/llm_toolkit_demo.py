@@ -1,5 +1,4 @@
-"""
-Empathy LLM Toolkit - Demonstration
+"""Empathy LLM Toolkit - Demonstration
 
 Shows progression from Level 1 to Level 4 empathy with an LLM.
 
@@ -19,8 +18,7 @@ from empathy_llm_toolkit import EmpathyLLM, PatternType, UserPattern
 
 
 async def demo_level_progression():
-    """
-    Demonstrate automatic progression through empathy levels.
+    """Demonstrate automatic progression through empathy levels.
 
     Shows how LLM behavior changes as trust builds and patterns emerge.
     """
@@ -58,7 +56,8 @@ async def demo_level_progression():
     print("─" * 80)
 
     response = await llm.interact(
-        user_id=user_id, user_input="Help me build a user authentication system"
+        user_id=user_id,
+        user_input="Help me build a user authentication system",
     )
 
     print(f"Level Used: {response['level_used']} - {response['level_description']}")
@@ -115,7 +114,8 @@ async def demo_level_progression():
     print("─" * 80)
 
     response = await llm.interact(
-        user_id=user_id, user_input="I'm adding my 15th API endpoint to this service"
+        user_id=user_id,
+        user_input="I'm adding my 15th API endpoint to this service",
     )
 
     print(f"Level Used: {response['level_used']} - {response['level_description']}")
@@ -139,13 +139,12 @@ Success Rate: {stats["success_rate"]:.0%}
 Patterns Detected: {stats["patterns_detected"]}
 Current Level: {stats["current_level"]}
 Average Level: {stats["average_level"]:.1f}
-    """
+    """,
     )
 
 
 async def demo_forced_levels():
-    """
-    Demonstrate forcing specific levels for comparison.
+    """Demonstrate forcing specific levels for comparison.
 
     Shows how the same question gets different treatment at each level.
     """
@@ -163,7 +162,9 @@ async def demo_forced_levels():
         print("─" * 80)
 
         response = await llm.interact(
-            user_id="comparison_user", user_input=user_input, force_level=level
+            user_id="comparison_user",
+            user_input=user_input,
+            force_level=level,
         )
 
         print(f"\nResponse:\n{response['content'][:400]}...")
@@ -171,8 +172,7 @@ async def demo_forced_levels():
 
 
 async def demo_healthcare_use_case():
-    """
-    Demonstrate healthcare application with Level 4 anticipatory.
+    """Demonstrate healthcare application with Level 4 anticipatory.
 
     Shows clinical documentation automation progressing to compliance monitoring.
     """

@@ -1,5 +1,4 @@
-"""
-Tests for One-Command Workflows.
+"""Tests for One-Command Workflows.
 
 Tests the power-user workflow commands including morning briefing,
 pre-ship validation, and pattern learning.
@@ -43,7 +42,7 @@ class TestLoadPatterns:
                 "patterns": [
                     {"id": "1", "description": "Bug fix pattern"},
                     {"id": "2", "description": "Another pattern"},
-                ]
+                ],
             }
             with open(Path(tmpdir) / "debugging.json", "w") as f:
                 json.dump(debugging_data, f)
@@ -59,7 +58,7 @@ class TestLoadPatterns:
             security_data = {
                 "items": [
                     {"id": "sec1", "type": "vulnerability"},
-                ]
+                ],
             }
             with open(Path(tmpdir) / "security.json", "w") as f:
                 json.dump(security_data, f)
@@ -214,7 +213,7 @@ class TestGetTechDebtTrend:
             data = {
                 "snapshots": [
                     {"total_items": 10, "date": "2025-01-01"},
-                ]
+                ],
             }
             with open(Path(tmpdir) / "tech_debt.json", "w") as f:
                 json.dump(data, f)
@@ -230,7 +229,7 @@ class TestGetTechDebtTrend:
                 "snapshots": [
                     {"total_items": 10, "date": "2025-01-01"},
                     {"total_items": 15, "date": "2025-01-15"},
-                ]
+                ],
             }
             with open(Path(tmpdir) / "tech_debt.json", "w") as f:
                 json.dump(data, f)
@@ -246,7 +245,7 @@ class TestGetTechDebtTrend:
                 "snapshots": [
                     {"total_items": 20, "date": "2025-01-01"},
                     {"total_items": 10, "date": "2025-01-15"},
-                ]
+                ],
             }
             with open(Path(tmpdir) / "tech_debt.json", "w") as f:
                 json.dump(data, f)
@@ -262,7 +261,7 @@ class TestGetTechDebtTrend:
                 "snapshots": [
                     {"total_items": 10, "date": "2025-01-01"},
                     {"total_items": 10, "date": "2025-01-15"},
-                ]
+                ],
             }
             with open(Path(tmpdir) / "tech_debt.json", "w") as f:
                 json.dump(data, f)

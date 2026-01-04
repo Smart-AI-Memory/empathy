@@ -1,5 +1,4 @@
-"""
-Tests for DependencyCheckWorkflow.
+"""Tests for DependencyCheckWorkflow.
 
 Tests the dependency vulnerability and update checking workflow
 with inventory, assess, and report stages.
@@ -76,7 +75,7 @@ django<4.0.0
 pyyaml
 # Comment
 -r other-requirements.txt
-"""
+""",
             )
             workflow = DependencyCheckWorkflow()
             deps = workflow._parse_requirements(req_file)
@@ -114,8 +113,8 @@ pyyaml
                         "devDependencies": {
                             "jest": "^27.0.0",
                         },
-                    }
-                )
+                    },
+                ),
             )
 
             workflow = DependencyCheckWorkflow()
@@ -134,8 +133,8 @@ pyyaml
                 json.dumps(
                     {
                         "name": "empty-project",
-                    }
-                )
+                    },
+                ),
             )
 
             workflow = DependencyCheckWorkflow()
@@ -156,7 +155,7 @@ dependencies = [
     "flask",
     "pyyaml>=5.4",
 ]
-"""
+""",
             )
 
             workflow = DependencyCheckWorkflow()
@@ -529,8 +528,8 @@ class TestDependencyCheckIntegration:
                             "lodash": "^4.17.21",
                             "axios": "0.21.1",
                         },
-                    }
-                )
+                    },
+                ),
             )
 
             workflow = DependencyCheckWorkflow()

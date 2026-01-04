@@ -1,5 +1,4 @@
-"""
-Tests for Sensor Data Parsers
+"""Tests for Sensor Data Parsers
 
 Tests the healthcare data parsers that convert various sensor formats
 (FHIR, simple JSON) into standardized vital sign readings.
@@ -103,8 +102,8 @@ class TestFHIRObservationParser:
             "resourceType": "Observation",
             "code": {
                 "coding": [
-                    {"system": "http://loinc.org", "code": "8867-4", "display": "Heart rate"}
-                ]
+                    {"system": "http://loinc.org", "code": "8867-4", "display": "Heart rate"},
+                ],
             },
             "valueQuantity": {"value": 72, "unit": "beats/min"},
             "effectiveDateTime": "2024-01-20T14:30:00Z",
@@ -735,16 +734,36 @@ class TestNormalizeVitals:
         """Test normalizing multiple vital readings"""
         readings = [
             VitalSignReading(
-                VitalSignType.HEART_RATE, 85, "bpm", datetime.now(), "monitor", "12345"
+                VitalSignType.HEART_RATE,
+                85,
+                "bpm",
+                datetime.now(),
+                "monitor",
+                "12345",
             ),
             VitalSignReading(
-                VitalSignType.OXYGEN_SATURATION, 98, "%", datetime.now(), "monitor", "12345"
+                VitalSignType.OXYGEN_SATURATION,
+                98,
+                "%",
+                datetime.now(),
+                "monitor",
+                "12345",
             ),
             VitalSignReading(
-                VitalSignType.RESPIRATORY_RATE, 16, "/min", datetime.now(), "monitor", "12345"
+                VitalSignType.RESPIRATORY_RATE,
+                16,
+                "/min",
+                datetime.now(),
+                "monitor",
+                "12345",
             ),
             VitalSignReading(
-                VitalSignType.TEMPERATURE, 98.6, "°F", datetime.now(), "monitor", "12345"
+                VitalSignType.TEMPERATURE,
+                98.6,
+                "°F",
+                datetime.now(),
+                "monitor",
+                "12345",
             ),
         ]
 
@@ -817,31 +836,76 @@ class TestNormalizeVitals:
         """Test normalizing all vital types in a single call"""
         readings = [
             VitalSignReading(
-                VitalSignType.HEART_RATE, 85, "bpm", datetime.now(), "monitor", "12345"
+                VitalSignType.HEART_RATE,
+                85,
+                "bpm",
+                datetime.now(),
+                "monitor",
+                "12345",
             ),
             VitalSignReading(
-                VitalSignType.BLOOD_PRESSURE, 120, "mmHg", datetime.now(), "monitor", "12345"
+                VitalSignType.BLOOD_PRESSURE,
+                120,
+                "mmHg",
+                datetime.now(),
+                "monitor",
+                "12345",
             ),
             VitalSignReading(
-                VitalSignType.BLOOD_PRESSURE, 60, "mmHg", datetime.now(), "monitor", "12345"
+                VitalSignType.BLOOD_PRESSURE,
+                60,
+                "mmHg",
+                datetime.now(),
+                "monitor",
+                "12345",
             ),
             VitalSignReading(
-                VitalSignType.RESPIRATORY_RATE, 16, "/min", datetime.now(), "monitor", "12345"
+                VitalSignType.RESPIRATORY_RATE,
+                16,
+                "/min",
+                datetime.now(),
+                "monitor",
+                "12345",
             ),
             VitalSignReading(
-                VitalSignType.TEMPERATURE, 98.6, "°F", datetime.now(), "monitor", "12345"
+                VitalSignType.TEMPERATURE,
+                98.6,
+                "°F",
+                datetime.now(),
+                "monitor",
+                "12345",
             ),
             VitalSignReading(
-                VitalSignType.TEMPERATURE, 37.0, "°C", datetime.now(), "monitor", "12345"
+                VitalSignType.TEMPERATURE,
+                37.0,
+                "°C",
+                datetime.now(),
+                "monitor",
+                "12345",
             ),
             VitalSignReading(
-                VitalSignType.OXYGEN_SATURATION, 98, "%", datetime.now(), "monitor", "12345"
+                VitalSignType.OXYGEN_SATURATION,
+                98,
+                "%",
+                datetime.now(),
+                "monitor",
+                "12345",
             ),
             VitalSignReading(
-                VitalSignType.MENTAL_STATUS, "alert", "text", datetime.now(), "monitor", "12345"
+                VitalSignType.MENTAL_STATUS,
+                "alert",
+                "text",
+                datetime.now(),
+                "monitor",
+                "12345",
             ),
             VitalSignReading(
-                VitalSignType.PAIN_SCORE, 2, "0-10", datetime.now(), "monitor", "12345"
+                VitalSignType.PAIN_SCORE,
+                2,
+                "0-10",
+                datetime.now(),
+                "monitor",
+                "12345",
             ),
         ]
 
@@ -862,10 +926,20 @@ class TestNormalizeVitals:
         """Test normalizing vitals ending with non-pain reading"""
         readings = [
             VitalSignReading(
-                VitalSignType.PAIN_SCORE, 2, "0-10", datetime.now(), "monitor", "12345"
+                VitalSignType.PAIN_SCORE,
+                2,
+                "0-10",
+                datetime.now(),
+                "monitor",
+                "12345",
             ),
             VitalSignReading(
-                VitalSignType.HEART_RATE, 85, "bpm", datetime.now(), "monitor", "12345"
+                VitalSignType.HEART_RATE,
+                85,
+                "bpm",
+                datetime.now(),
+                "monitor",
+                "12345",
             ),
         ]
 

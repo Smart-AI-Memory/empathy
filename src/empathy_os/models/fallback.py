@@ -1,5 +1,4 @@
-"""
-Fallback and Resilience Policies for Multi-Model Workflows
+"""Fallback and Resilience Policies for Multi-Model Workflows
 
 Provides abstractions for handling LLM failures gracefully:
 - FallbackPolicy: Define fallback chains for providers/tiers
@@ -53,8 +52,7 @@ class FallbackStep:
 
 @dataclass
 class FallbackPolicy:
-    """
-    Policy for handling LLM failures with fallback chains.
+    """Policy for handling LLM failures with fallback chains.
 
     Example:
         >>> policy = FallbackPolicy(
@@ -64,6 +62,7 @@ class FallbackPolicy:
         ... )
         >>> chain = policy.get_fallback_chain()
         >>> # Returns: [("openai", "capable"), ("ollama", "capable")]
+
     """
 
     # Primary configuration
@@ -83,11 +82,11 @@ class FallbackPolicy:
     timeout_ms: int = 30000
 
     def get_fallback_chain(self) -> list[FallbackStep]:
-        """
-        Get the fallback chain based on strategy.
+        """Get the fallback chain based on strategy.
 
         Returns:
             List of FallbackStep in order of preference
+
         """
         if self.strategy == FallbackStrategy.CUSTOM:
             return self.custom_chain
@@ -105,7 +104,7 @@ class FallbackPolicy:
                             provider=provider,
                             tier=self.primary_tier,
                             description=f"Same tier ({self.primary_tier}) on {provider}",
-                        )
+                        ),
                     )
 
         elif self.strategy == FallbackStrategy.CHEAPER_TIER_SAME_PROVIDER:
@@ -117,7 +116,7 @@ class FallbackPolicy:
                         provider=self.primary_provider,
                         tier=tier,
                         description=f"Cheaper tier ({tier}) on {self.primary_provider}",
-                    )
+                    ),
                 )
 
         elif self.strategy == FallbackStrategy.DIFFERENT_PROVIDER_ANY_TIER:
@@ -130,7 +129,7 @@ class FallbackPolicy:
                             provider=provider,
                             tier=self.primary_tier,
                             description=f"{self.primary_tier} on {provider}",
-                        )
+                        ),
                     )
                     # Then cheaper tiers
                     tier_index = (
@@ -142,7 +141,7 @@ class FallbackPolicy:
                                 provider=provider,
                                 tier=tier,
                                 description=f"{tier} on {provider}",
-                            )
+                            ),
                         )
 
         return chain
@@ -159,8 +158,7 @@ class CircuitBreakerState:
 
 
 class CircuitBreaker:
-    """
-    Circuit breaker to temporarily disable failing providers.
+    """Circuit breaker to temporarily disable failing providers.
 
     Prevents cascading failures by stopping calls to providers that
     are experiencing issues. Tracks state per provider:tier combination
@@ -174,6 +172,7 @@ class CircuitBreaker:
         ...         breaker.record_success("anthropic", "capable")
         ...     except Exception as e:
         ...         breaker.record_failure("anthropic", "capable")
+
     """
 
     def __init__(
@@ -182,13 +181,13 @@ class CircuitBreaker:
         recovery_timeout_seconds: int = 60,
         half_open_calls: int = 1,
     ):
-        """
-        Initialize circuit breaker.
+        """Initialize circuit breaker.
 
         Args:
             failure_threshold: Failures before opening circuit
             recovery_timeout_seconds: Time before trying again
             half_open_calls: Calls to allow in half-open state
+
         """
         self.failure_threshold = failure_threshold
         self.recovery_timeout = timedelta(seconds=recovery_timeout_seconds)
@@ -209,8 +208,7 @@ class CircuitBreaker:
         return self._states[key]
 
     def is_available(self, provider: str, tier: str | None = None) -> bool:
-        """
-        Check if a provider:tier is available.
+        """Check if a provider:tier is available.
 
         Args:
             provider: Provider to check
@@ -218,6 +216,7 @@ class CircuitBreaker:
 
         Returns:
             True if provider:tier can be called
+
         """
         state = self._get_state(provider, tier)
 
@@ -234,12 +233,12 @@ class CircuitBreaker:
         return False
 
     def record_success(self, provider: str, tier: str | None = None) -> None:
-        """
-        Record a successful call.
+        """Record a successful call.
 
         Args:
             provider: Provider that succeeded
             tier: Optional tier
+
         """
         state = self._get_state(provider, tier)
 
@@ -249,12 +248,12 @@ class CircuitBreaker:
         state.opened_at = None
 
     def record_failure(self, provider: str, tier: str | None = None) -> None:
-        """
-        Record a failed call.
+        """Record a failed call.
 
         Args:
             provider: Provider that failed
             tier: Optional tier
+
         """
         state = self._get_state(provider, tier)
 
@@ -278,12 +277,12 @@ class CircuitBreaker:
         }
 
     def reset(self, provider: str | None = None, tier: str | None = None) -> None:
-        """
-        Reset circuit breaker state.
+        """Reset circuit breaker state.
 
         Args:
             provider: Provider to reset (all if None)
             tier: Tier to reset (provider-level if None)
+
         """
         if provider:
             key = self._get_key(provider, tier)
@@ -295,8 +294,7 @@ class CircuitBreaker:
 
 @dataclass
 class RetryPolicy:
-    """
-    Policy for retrying failed LLM calls.
+    """Policy for retrying failed LLM calls.
 
     Configures how many times to retry and with what delays.
     """
@@ -312,18 +310,18 @@ class RetryPolicy:
             "timeout",
             "server_error",
             "connection_error",
-        ]
+        ],
     )
 
     def get_delay_ms(self, attempt: int) -> int:
-        """
-        Get delay before retry attempt.
+        """Get delay before retry attempt.
 
         Args:
             attempt: Current attempt number (1-indexed)
 
         Returns:
             Delay in milliseconds
+
         """
         if not self.exponential_backoff:
             return self.initial_delay_ms
@@ -332,8 +330,7 @@ class RetryPolicy:
         return min(int(delay), self.max_delay_ms)
 
     def should_retry(self, error_type: str, attempt: int) -> bool:
-        """
-        Check if should retry for this error.
+        """Check if should retry for this error.
 
         Args:
             error_type: Type of error encountered
@@ -341,6 +338,7 @@ class RetryPolicy:
 
         Returns:
             True if should retry
+
         """
         if attempt >= self.max_retries:
             return False
@@ -357,8 +355,7 @@ class AllProvidersFailedError(Exception):
 
 
 class ResilientExecutor:
-    """
-    Wrapper that adds resilience to LLM execution.
+    """Wrapper that adds resilience to LLM execution.
 
     Combines fallback policies, circuit breakers, and retry logic.
     Implements the LLMExecutor protocol by wrapping another executor.
@@ -368,6 +365,7 @@ class ResilientExecutor:
         >>> base_executor = EmpathyLLMExecutor(provider="anthropic")
         >>> resilient = ResilientExecutor(executor=base_executor)
         >>> response = await resilient.run("summarize", "Summarize this...")
+
     """
 
     def __init__(
@@ -377,14 +375,14 @@ class ResilientExecutor:
         circuit_breaker: CircuitBreaker | None = None,
         retry_policy: RetryPolicy | None = None,
     ):
-        """
-        Initialize resilient executor.
+        """Initialize resilient executor.
 
         Args:
             executor: Inner LLMExecutor to wrap
             fallback_policy: Fallback configuration
             circuit_breaker: Circuit breaker instance
             retry_policy: Retry configuration
+
         """
         self._executor = executor
         self.fallback_policy = fallback_policy or FallbackPolicy()
@@ -399,8 +397,7 @@ class ResilientExecutor:
         context: Any | None = None,
         **kwargs: Any,
     ) -> Any:
-        """
-        Execute LLM call with retry and fallback support.
+        """Execute LLM call with retry and fallback support.
 
         Implements the LLMExecutor protocol. Uses per-call policies from
         context.metadata if provided.
@@ -414,6 +411,7 @@ class ResilientExecutor:
 
         Returns:
             LLMResponse from the wrapped executor
+
         """
         if self._executor is None:
             raise RuntimeError("ResilientExecutor requires an inner executor")
@@ -434,7 +432,7 @@ class ResilientExecutor:
                 provider=fallback_policy.primary_provider,
                 tier=fallback_policy.primary_tier,
                 description="Primary",
-            )
+            ),
         ] + fallback_policy.get_fallback_chain()
 
         attempts: list[dict[str, Any]] = []
@@ -451,7 +449,7 @@ class ResilientExecutor:
                         "skipped": True,
                         "reason": "circuit_breaker_open",
                         "circuit_breaker_state": "open",
-                    }
+                    },
                 )
                 continue
 
@@ -510,7 +508,7 @@ class ResilientExecutor:
                             "error": str(e),
                             "error_type": error_type,
                             "attempt": attempt_num,
-                        }
+                        },
                     )
                     break
 
@@ -523,7 +521,7 @@ class ResilientExecutor:
     def get_model_for_task(self, task_type: str) -> str:
         """Delegate to inner executor."""
         if self._executor and hasattr(self._executor, "get_model_for_task"):
-            result: str = cast(str, self._executor.get_model_for_task(task_type))
+            result: str = cast("str", self._executor.get_model_for_task(task_type))
             return result
         return ""
 
@@ -536,7 +534,8 @@ class ResilientExecutor:
         """Delegate to inner executor."""
         if self._executor and hasattr(self._executor, "estimate_cost"):
             result: float = cast(
-                float, self._executor.estimate_cost(task_type, input_tokens, output_tokens)
+                "float",
+                self._executor.estimate_cost(task_type, input_tokens, output_tokens),
             )
             return result
         return 0.0
@@ -547,8 +546,7 @@ class ResilientExecutor:
         *args: Any,
         **kwargs: Any,
     ) -> tuple[Any, dict[str, Any]]:
-        """
-        Execute LLM call with fallback support (legacy API).
+        """Execute LLM call with fallback support (legacy API).
 
         Args:
             call_fn: Async function to call (takes provider, model as kwargs)
@@ -557,6 +555,7 @@ class ResilientExecutor:
 
         Returns:
             Tuple of (result, metadata) where metadata includes fallback info
+
         """
         metadata: dict[str, Any] = {
             "fallback_used": False,
@@ -572,7 +571,7 @@ class ResilientExecutor:
                 provider=self.fallback_policy.primary_provider,
                 tier=self.fallback_policy.primary_tier,
                 description="Primary",
-            )
+            ),
         ] + self.fallback_policy.get_fallback_chain()
 
         last_error: Exception | None = None
@@ -586,7 +585,7 @@ class ResilientExecutor:
                         "tier": step.tier,
                         "skipped": True,
                         "reason": "circuit_breaker_open",
-                    }
+                    },
                 )
                 continue
 
@@ -632,7 +631,7 @@ class ResilientExecutor:
                             "skipped": False,
                             "error": str(e),
                             "error_type": error_type,
-                        }
+                        },
                     )
                     break
 
@@ -648,14 +647,13 @@ class ResilientExecutor:
 
         if "rate" in error_str or "limit" in error_str:
             return "rate_limit"
-        elif "timeout" in error_str:
+        if "timeout" in error_str:
             return "timeout"
-        elif "connection" in error_str:
+        if "connection" in error_str:
             return "connection_error"
-        elif "500" in error_str or "502" in error_str or "503" in error_str:
+        if "500" in error_str or "502" in error_str or "503" in error_str:
             return "server_error"
-        else:
-            return "unknown"
+        return "unknown"
 
 
 # Default policies

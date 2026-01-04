@@ -1,5 +1,4 @@
-"""
-Educational Tests for PII Scrubber (Phase 3 - Security Testing)
+"""Educational Tests for PII Scrubber (Phase 3 - Security Testing)
 
 Learning Objectives:
 - Multi-pattern detection (emails, phones, SSNs)
@@ -28,8 +27,7 @@ class TestPIIDetection:
         return PIIScrubber()
 
     def test_scrub_email_address(self, scrubber):
-        """
-        Teaching Pattern: Testing email scrubbing.
+        """Teaching Pattern: Testing email scrubbing.
 
         Common PII type that must be detected and scrubbed.
         """
@@ -42,8 +40,7 @@ class TestPIIDetection:
         assert "user@example.com" not in scrubbed or "[EMAIL" in scrubbed
 
     def test_scrub_returns_tuple(self, scrubber):
-        """
-        Teaching Pattern: Testing API return types.
+        """Teaching Pattern: Testing API return types.
 
         scrub() returns (scrubbed_text, detections_list)
         """
@@ -57,8 +54,7 @@ class TestPIIDetection:
         assert isinstance(detections, list)
 
     def test_empty_text_handling(self, scrubber):
-        """
-        Teaching Pattern: Testing edge cases.
+        """Teaching Pattern: Testing edge cases.
 
         Empty input should not crash.
         """
@@ -80,8 +76,7 @@ class TestPIIDetection:
         ],
     )
     def test_multi_pattern_detection(self, scrubber, text, pii_type, expected_replacement):
-        """
-        Teaching Pattern: Parametrized testing for multiple PII types.
+        """Teaching Pattern: Parametrized testing for multiple PII types.
 
         Tests each PII pattern individually with expected replacement.
         """
@@ -92,8 +87,7 @@ class TestPIIDetection:
         assert any(d.pii_type == pii_type for d in detections)
 
     def test_multiple_pii_in_single_text(self, scrubber):
-        """
-        Teaching Pattern: Testing multi-pattern detection.
+        """Teaching Pattern: Testing multi-pattern detection.
 
         Real-world text often contains multiple PII types.
         """
@@ -109,8 +103,7 @@ class TestPIIDetection:
         assert "john@test.com" not in scrubbed or "[EMAIL]" in scrubbed
 
     def test_pii_detection_includes_position(self, scrubber):
-        """
-        Teaching Pattern: Testing detection metadata.
+        """Teaching Pattern: Testing detection metadata.
 
         Detection objects should include position information.
         """
@@ -126,8 +119,7 @@ class TestPIIDetection:
         assert detection.matched_text == text[detection.start_pos : detection.end_pos]
 
     def test_confidence_scoring(self, scrubber):
-        """
-        Teaching Pattern: Testing confidence values.
+        """Teaching Pattern: Testing confidence values.
 
         Different patterns have different confidence levels.
         """
@@ -142,8 +134,7 @@ class TestPIIDetection:
         assert detection.confidence > 0.5  # At least moderate confidence
 
     def test_detection_to_dict(self, scrubber):
-        """
-        Teaching Pattern: Testing serialization methods.
+        """Teaching Pattern: Testing serialization methods.
 
         PIIDetection can be converted to dictionary for logging.
         """
@@ -161,8 +152,7 @@ class TestPIIDetection:
         assert "confidence" in detection_dict
 
     def test_detection_to_audit_safe_dict(self, scrubber):
-        """
-        Teaching Pattern: Testing audit-safe serialization.
+        """Teaching Pattern: Testing audit-safe serialization.
 
         Audit logs should not contain actual PII values.
         """
@@ -190,8 +180,7 @@ class TestCustomPatterns:
         return PIIScrubber()
 
     def test_add_custom_pattern(self, scrubber):
-        """
-        Teaching Pattern: Testing custom pattern registration.
+        """Teaching Pattern: Testing custom pattern registration.
 
         Organizations need domain-specific PII patterns.
         """
@@ -210,8 +199,7 @@ class TestCustomPatterns:
         assert any(d.pii_type == "employee_id" for d in detections)
 
     def test_custom_pattern_with_confidence(self, scrubber):
-        """
-        Teaching Pattern: Custom patterns can have custom confidence.
+        """Teaching Pattern: Custom patterns can have custom confidence.
 
         Some patterns are less certain than others.
         """
@@ -231,8 +219,7 @@ class TestCustomPatterns:
         assert detection.confidence == 0.7
 
     def test_duplicate_pattern_name_raises_error(self, scrubber):
-        """
-        Teaching Pattern: Testing error conditions.
+        """Teaching Pattern: Testing error conditions.
 
         Pattern names must be unique to avoid conflicts.
         """
@@ -243,19 +230,19 @@ class TestCustomPatterns:
             scrubber.add_custom_pattern(name="test_id", pattern=r"OTHER-\d+", replacement="[OTHER]")
 
     def test_invalid_regex_pattern_raises_error(self, scrubber):
-        """
-        Teaching Pattern: Testing regex validation.
+        """Teaching Pattern: Testing regex validation.
 
         Invalid regex should be caught early.
         """
         with pytest.raises(ValueError, match="Invalid regex"):
             scrubber.add_custom_pattern(
-                name="bad_pattern", pattern=r"[unclosed", replacement="[BAD]"  # Invalid regex
+                name="bad_pattern",
+                pattern=r"[unclosed",
+                replacement="[BAD]",  # Invalid regex
             )
 
     def test_remove_custom_pattern(self, scrubber):
-        """
-        Teaching Pattern: Testing pattern removal.
+        """Teaching Pattern: Testing pattern removal.
 
         Custom patterns can be added and removed dynamically.
         """
@@ -274,8 +261,7 @@ class TestCustomPatterns:
         assert "TEMP-123" in scrubbed  # Not scrubbed anymore
 
     def test_cannot_remove_default_pattern(self, scrubber):
-        """
-        Teaching Pattern: Testing protection of default patterns.
+        """Teaching Pattern: Testing protection of default patterns.
 
         Default patterns can be disabled but not removed.
         """
@@ -293,8 +279,7 @@ class TestPatternManagement:
         return PIIScrubber()
 
     def test_disable_pattern(self, scrubber):
-        """
-        Teaching Pattern: Testing pattern disabling.
+        """Teaching Pattern: Testing pattern disabling.
 
         Patterns can be temporarily disabled without removal.
         """
@@ -309,8 +294,7 @@ class TestPatternManagement:
         assert not any(d.pii_type == "email" for d in detections)
 
     def test_enable_pattern(self, scrubber):
-        """
-        Teaching Pattern: Testing pattern re-enabling.
+        """Teaching Pattern: Testing pattern re-enabling.
 
         Disabled patterns can be re-enabled.
         """
@@ -324,8 +308,7 @@ class TestPatternManagement:
         assert "[NAME]" in scrubbed or "John Smith" not in scrubbed
 
     def test_get_statistics(self, scrubber):
-        """
-        Teaching Pattern: Testing statistics gathering.
+        """Teaching Pattern: Testing statistics gathering.
 
         Scrubber can report configuration statistics.
         """
@@ -338,8 +321,7 @@ class TestPatternManagement:
         assert stats["default_patterns"] >= 10  # We have many default patterns
 
     def test_statistics_after_adding_custom(self, scrubber):
-        """
-        Teaching Pattern: Testing dynamic statistics.
+        """Teaching Pattern: Testing dynamic statistics.
 
         Statistics update as patterns are added.
         """
@@ -353,8 +335,7 @@ class TestPatternManagement:
         assert new_stats["custom_patterns"] == initial_stats["custom_patterns"] + 1
 
     def test_get_pattern_info(self, scrubber):
-        """
-        Teaching Pattern: Testing pattern introspection.
+        """Teaching Pattern: Testing pattern introspection.
 
         Can query details about specific patterns.
         """
@@ -367,8 +348,7 @@ class TestPatternManagement:
         assert info["is_custom"] is False
 
     def test_get_pattern_info_for_nonexistent(self, scrubber):
-        """
-        Teaching Pattern: Testing error handling.
+        """Teaching Pattern: Testing error handling.
 
         Querying non-existent pattern should raise error.
         """
@@ -386,8 +366,7 @@ class TestEdgeCases:
         return PIIScrubber()
 
     def test_overlapping_patterns(self, scrubber):
-        """
-        Teaching Pattern: Testing overlap handling.
+        """Teaching Pattern: Testing overlap handling.
 
         When patterns overlap, first match wins.
         """
@@ -400,8 +379,7 @@ class TestEdgeCases:
         assert "192.168.1.1" not in scrubbed
 
     def test_very_long_text(self, scrubber):
-        """
-        Teaching Pattern: Testing performance with large inputs.
+        """Teaching Pattern: Testing performance with large inputs.
 
         Scrubber should handle large text efficiently.
         """
@@ -415,8 +393,7 @@ class TestEdgeCases:
         assert "[EMAIL]" in scrubbed
 
     def test_special_characters_in_text(self, scrubber):
-        """
-        Teaching Pattern: Testing special character handling.
+        """Teaching Pattern: Testing special character handling.
 
         Text with ASCII-compatible email addresses work.
         The email pattern uses standard ASCII characters.
@@ -429,8 +406,7 @@ class TestEdgeCases:
         assert "[EMAIL]" in scrubbed
 
     def test_text_with_no_pii(self, scrubber):
-        """
-        Teaching Pattern: Testing clean text.
+        """Teaching Pattern: Testing clean text.
 
         Text without PII should pass through unchanged.
         """
@@ -441,8 +417,7 @@ class TestEdgeCases:
         assert len(detections) == 0
 
     def test_validate_patterns(self, scrubber):
-        """
-        Teaching Pattern: Testing pattern validation.
+        """Teaching Pattern: Testing pattern validation.
 
         Scrubber can validate patterns with built-in test cases.
         """

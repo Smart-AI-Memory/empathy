@@ -1,5 +1,4 @@
-"""
-Tests for empathy_os.templates module.
+"""Tests for empathy_os.templates module.
 
 Tests cover:
 - Template definitions and structure

@@ -1,5 +1,4 @@
-"""
-Enable running the models CLI as a module.
+"""Enable running the models CLI as a module.
 
 Usage:
     python -m empathy_os.models registry

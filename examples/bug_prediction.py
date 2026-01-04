@@ -1,5 +1,4 @@
-"""
-Bug Prediction - Level 4 Anticipatory Empathy Example
+"""Bug Prediction - Level 4 Anticipatory Empathy Example
 
 Demonstrates how to use Level 4 Anticipatory Empathy to predict bugs
 BEFORE they occur, based on code trajectories and anti-patterns.
@@ -29,8 +28,7 @@ from empathy_os import (
 
 
 class BugPredictor:
-    """
-    Level 4 Anticipatory bug prediction system
+    """Level 4 Anticipatory bug prediction system
 
     Predicts bugs before they occur by analyzing:
     - Code complexity trends
@@ -53,7 +51,6 @@ class BugPredictor:
 
     def _initialize_antipatterns(self):
         """Initialize known anti-patterns that predict bugs"""
-
         # Anti-pattern 1: Growing god classes
         ap1 = Pattern(
             id="ap_god_class",
@@ -96,8 +93,7 @@ class BugPredictor:
         historical_metrics: list[dict[str, Any]],
         prediction_horizon: str = "30_days",
     ) -> dict[str, Any]:
-        """
-        Predict bugs before they occur (Level 4 Anticipatory)
+        """Predict bugs before they occur (Level 4 Anticipatory)
 
         Args:
             current_code_metrics: Current state of codebase
@@ -106,8 +102,8 @@ class BugPredictor:
 
         Returns:
             Predictions with preventive actions
-        """
 
+        """
         # Analyze trajectory
         trajectory_analysis = self._analyze_trajectory(current_code_metrics, historical_metrics)
 
@@ -117,7 +113,7 @@ class BugPredictor:
                 "current_state": current_code_metrics,
                 "trajectory": trajectory_analysis["trend"],
                 "prediction_horizon": prediction_horizon,
-            }
+            },
         )
 
         # Identify specific bug risks
@@ -141,10 +137,11 @@ class BugPredictor:
         return prediction
 
     def _analyze_trajectory(
-        self, current: dict[str, Any], historical: list[dict[str, Any]]
+        self,
+        current: dict[str, Any],
+        historical: list[dict[str, Any]],
     ) -> dict[str, Any]:
         """Analyze code metrics trajectory"""
-
         if not historical or len(historical) < 2:
             return {"trend": "unknown", "velocity": 0, "concerning": False}
 
@@ -178,7 +175,6 @@ class BugPredictor:
 
     def _calculate_metric_trend(self, historical: list[dict[str, Any]], metric_name: str) -> float:
         """Calculate trend for a specific metric (simple linear regression)"""
-
         values = [h.get(metric_name, 0) for h in historical]
 
         if len(values) < 2:
@@ -199,10 +195,11 @@ class BugPredictor:
         return numerator / denominator
 
     def _identify_bug_risks(
-        self, current: dict[str, Any], trajectory: dict[str, Any]
+        self,
+        current: dict[str, Any],
+        trajectory: dict[str, Any],
     ) -> list[dict[str, Any]]:
         """Identify specific bug risks based on current state and trajectory"""
-
         risks = []
 
         # Risk 1: Complexity explosion
@@ -223,7 +220,7 @@ class BugPredictor:
                         "Difficulty understanding code",
                         "Longer debugging sessions",
                     ],
-                }
+                },
             )
 
         # Risk 2: Test coverage gaps
@@ -244,7 +241,7 @@ class BugPredictor:
                         "Regression bugs in existing features",
                         "Fear of refactoring",
                     ],
-                }
+                },
             )
 
         # Risk 3: Integration bugs
@@ -264,7 +261,7 @@ class BugPredictor:
                         "Difficulty isolating bugs",
                         "Fragile builds",
                     ],
-                }
+                },
             )
 
         # Risk 4: Technical debt accumulation
@@ -284,14 +281,13 @@ class BugPredictor:
                         "Exponentially increasing bug rate",
                         "Developer frustration and burnout",
                     ],
-                }
+                },
             )
 
         return risks
 
     def _generate_preventive_actions(self, bug_risks: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Generate preventive actions for predicted bugs"""
-
         actions = []
 
         for risk in bug_risks:
@@ -309,7 +305,7 @@ class BugPredictor:
                             "Add unit tests for each extracted function",
                             "Document complex algorithms",
                         ],
-                    }
+                    },
                 )
 
             elif risk["type"] == "test_coverage_gaps":
@@ -326,7 +322,7 @@ class BugPredictor:
                             "Add coverage reporting to CI/CD",
                             "Block PRs with coverage decrease",
                         ],
-                    }
+                    },
                 )
 
             elif risk["type"] == "integration_bugs":
@@ -343,7 +339,7 @@ class BugPredictor:
                             "Apply dependency inversion",
                             "Add integration tests",
                         ],
-                    }
+                    },
                 )
 
             elif risk["type"] == "technical_debt_crisis":
@@ -360,14 +356,13 @@ class BugPredictor:
                             "Establish sustainable quality metrics",
                             "Implement continuous improvement practices",
                         ],
-                    }
+                    },
                 )
 
         return actions
 
     def _find_prevention_leverage(self, bug_risks: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Find high-leverage intervention points for bug prevention"""
-
         leverage_points = []
 
         for risk in bug_risks:
@@ -391,7 +386,7 @@ class BugPredictor:
                         "leverage_level": point.level.name,
                         "description": point.description,
                         "feasibility": feasibility,
-                    }
+                    },
                 )
 
         return leverage_points
@@ -399,7 +394,6 @@ class BugPredictor:
 
 def main():
     """Demonstrate bug prediction with Level 4 Anticipatory Empathy"""
-
     try:
         print("=" * 70)
         print("Bug Prediction - Level 4 Anticipatory Empathy")
@@ -447,7 +441,7 @@ def main():
             print(
                 f"  Week {i}: Complexity={metrics['avg_complexity']}, "
                 f"Coverage={metrics['test_coverage']}%, "
-                f"Bugs={metrics['bugs_per_week']}"
+                f"Bugs={metrics['bugs_per_week']}",
             )
 
         # ========================================

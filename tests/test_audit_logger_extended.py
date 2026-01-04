@@ -1,5 +1,4 @@
-"""
-Extended tests for Audit Logger Module
+"""Extended tests for Audit Logger Module
 
 Coverage boost tests targeting untested code paths:
 - Log rotation functionality

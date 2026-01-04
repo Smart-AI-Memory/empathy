@@ -1,5 +1,4 @@
-"""
-Empathy Framework Model Routing
+"""Empathy Framework Model Routing
 
 Smart routing of tasks to appropriate model tiers for cost optimization:
 - CHEAP tier: Triage, summarization, classification (Haiku/GPT-4o-mini)
@@ -21,6 +20,7 @@ Example:
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
+
 """
 
 from .model_router import ModelRouter, ModelTier, TaskRouting

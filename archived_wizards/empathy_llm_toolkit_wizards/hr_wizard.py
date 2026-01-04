@@ -1,5 +1,4 @@
-"""
-HR/Recruiting Wizard - Employee Privacy Compliant AI Assistant
+"""HR/Recruiting Wizard - Employee Privacy Compliant AI Assistant
 
 Specialized wizard for human resources with enhanced employee PII protection,
 employment law compliance, and comprehensive audit logging.
@@ -45,8 +44,7 @@ HR_PII_PATTERNS = [
 
 
 class HRWizard(BaseWizard):
-    """
-    Employee privacy compliant HR AI assistant
+    """Employee privacy compliant HR AI assistant
 
     Implements defense-in-depth security for employee records:
     1. Enhanced employee PII detection and scrubbing
@@ -72,6 +70,7 @@ class HRWizard(BaseWizard):
         ...     user_input="Help me draft a job description for software engineer",
         ...     user_id="hr@company.com"
         ... )
+
     """
 
     def __init__(
@@ -79,12 +78,12 @@ class HRWizard(BaseWizard):
         llm: EmpathyLLM,
         custom_pii_patterns: list[str] | None = None,
     ):
-        """
-        Initialize employee privacy compliant HR wizard
+        """Initialize employee privacy compliant HR wizard
 
         Args:
             llm: EmpathyLLM instance (security should be enabled)
             custom_pii_patterns: Additional company-specific PII patterns
+
         """
         pii_patterns = HR_PII_PATTERNS.copy()
 
@@ -111,12 +110,12 @@ class HRWizard(BaseWizard):
         if not llm.enable_security:
             logger.warning(
                 "HRWizard initialized with security DISABLED. "
-                "Employee privacy compliance requires enable_security=True in EmpathyLLM."
+                "Employee privacy compliance requires enable_security=True in EmpathyLLM.",
             )
 
         logger.info(
             f"HRWizard initialized: {len(pii_patterns)} PII patterns, "
-            f"empathy level={config.default_empathy_level}, security={llm.enable_security}"
+            f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
     def _build_system_prompt(self) -> str:

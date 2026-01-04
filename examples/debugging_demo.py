@@ -1,5 +1,4 @@
-"""
-Advanced Debugging Wizard - Live Demonstration
+"""Advanced Debugging Wizard - Live Demonstration
 
 Shows how to use the protocol-based debugging wizard.
 
@@ -46,8 +45,8 @@ MOCK_ESLINT_OUTPUT = json.dumps(
                     "fix": {"range": [1234, 1234], "text": ";"},
                 },
             ],
-        }
-    ]
+        },
+    ],
 )
 
 # Mock Pylint output
@@ -80,7 +79,7 @@ MOCK_PYLINT_OUTPUT = json.dumps(
             "message-id": "C0114",
             "symbol": "missing-docstring",
         },
-    ]
+    ],
 )
 
 
@@ -99,7 +98,7 @@ async def demo_basic_analysis():
         {
             "project_path": "/project",
             "linters": {"eslint": MOCK_ESLINT_OUTPUT, "pylint": MOCK_PYLINT_OUTPUT},
-        }
+        },
     )
 
     print(f"\n📊 Issues Found: {result['issues_found']}")
@@ -134,7 +133,7 @@ async def demo_risk_analysis():
         {
             "project_path": "/project",
             "linters": {"eslint": MOCK_ESLINT_OUTPUT, "pylint": MOCK_PYLINT_OUTPUT},
-        }
+        },
     )
 
     print("\n🔮 Predictions:")
@@ -185,7 +184,9 @@ async def demo_cross_language_patterns():
     # Show cross-language insight
     print("\n🔗 Cross-Language Insight Example:")
     insight = pattern_lib.suggest_cross_language_insight(
-        from_language="javascript", to_language="python", pattern_name="undefined_reference"
+        from_language="javascript",
+        to_language="python",
+        pattern_name="undefined_reference",
     )
 
     if insight:
@@ -208,7 +209,7 @@ async def demo_fixability_analysis():
         {
             "project_path": "/project",
             "linters": {"eslint": MOCK_ESLINT_OUTPUT, "pylint": MOCK_PYLINT_OUTPUT},
-        }
+        },
     )
 
     print("\n🔧 Fixability by Linter:")
@@ -247,7 +248,7 @@ async def demo_complete_workflow():
             "linters": {"eslint": MOCK_ESLINT_OUTPUT, "pylint": MOCK_PYLINT_OUTPUT},
             "auto_fix": False,  # Dry run
             "verify": False,
-        }
+        },
     )
 
     print("\n✅ Analysis Complete!\n")

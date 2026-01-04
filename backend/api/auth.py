@@ -1,5 +1,4 @@
-"""
-Authentication API endpoints.
+"""Authentication API endpoints.
 Handles user authentication, tokens, and license validation.
 """
 
@@ -37,8 +36,7 @@ class TokenResponse(BaseModel):
 
 @router.post("/login", response_model=TokenResponse)
 async def login(request: LoginRequest):
-    """
-    Authenticate user and return access token.
+    """Authenticate user and return access token.
 
     Args:
         request: Login credentials (email and password)
@@ -55,24 +53,29 @@ async def login(request: LoginRequest):
         - JWT token generation
         - Database user validation
         - Rate limiting
+
     """
     # Input validation
     if not request.email or not request.password:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Email and password are required"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email and password are required",
         )
 
     # Password length validation
     if len(request.password) < 8:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Password must be at least 8 characters"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password must be at least 8 characters",
         )
 
     # Placeholder implementation - mock authentication
     # TODO: Replace with real database validation and bcrypt password hashing
     if request.email and request.password:
         return TokenResponse(
-            access_token="mock_access_token_" + request.email, token_type="bearer", expires_in=3600
+            access_token="mock_access_token_" + request.email,
+            token_type="bearer",
+            expires_in=3600,
         )
 
     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
@@ -80,8 +83,7 @@ async def login(request: LoginRequest):
 
 @router.post("/register", response_model=TokenResponse)
 async def register(request: RegisterRequest):
-    """
-    Register new user account.
+    """Register new user account.
 
     Args:
         request: Registration details (email, password, name, optional license_key)
@@ -98,32 +100,37 @@ async def register(request: RegisterRequest):
         - Email verification
         - Database user creation
         - License key validation
+
     """
     # Input validation
     if not request.email or not request.password or not request.name:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Email, password, and name are required"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email, password, and name are required",
         )
 
     # Password length validation
     if len(request.password) < 8:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Password must be at least 8 characters"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password must be at least 8 characters",
         )
 
     # Placeholder implementation
     # TODO: Implement real user database creation, email verification, license validation
     return TokenResponse(
-        access_token="mock_access_token_new_user", token_type="bearer", expires_in=3600
+        access_token="mock_access_token_new_user",
+        token_type="bearer",
+        expires_in=3600,
     )
 
 
 @router.post("/validate-license")
 async def validate_license(
-    license_key: str, credentials: HTTPAuthorizationCredentials = Depends(security)
+    license_key: str,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
-    """
-    Validate a license key.
+    """Validate a license key.
 
     Args:
         license_key: License key to validate
@@ -131,6 +138,7 @@ async def validate_license(
 
     Returns:
         License validation result
+
     """
     # Placeholder implementation
     return {
@@ -143,28 +151,28 @@ async def validate_license(
 
 @router.post("/refresh")
 async def refresh_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """
-    Refresh access token.
+    """Refresh access token.
 
     Args:
         credentials: Current bearer token
 
     Returns:
         New access token
+
     """
     return TokenResponse(access_token="mock_refreshed_token", token_type="bearer", expires_in=3600)
 
 
 @router.get("/me")
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """
-    Get current authenticated user info.
+    """Get current authenticated user info.
 
     Args:
         credentials: Bearer token
 
     Returns:
         User information
+
     """
     return {
         "id": "user_123",

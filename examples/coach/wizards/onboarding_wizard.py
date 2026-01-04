@@ -1,5 +1,4 @@
-"""
-Onboarding Wizard
+"""Onboarding Wizard
 
 Knowledge transfer, new developer ramp-up, codebase tours, and learning paths.
 Uses Empathy Framework Level 3 (Proactive) for knowledge gap detection and Level 4
@@ -23,8 +22,7 @@ from .base_wizard import (
 
 
 class OnboardingWizard(BaseWizard):
-    """
-    Wizard for developer onboarding and knowledge transfer
+    """Wizard for developer onboarding and knowledge transfer
 
     Uses:
     - Level 2: Guide new developers through codebase
@@ -71,7 +69,6 @@ class OnboardingWizard(BaseWizard):
 
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute onboarding workflow"""
-
         # Step 1: Assess emotional context
         self._assess_emotional_state(task)
 
@@ -118,7 +115,9 @@ class OnboardingWizard(BaseWizard):
                 content=self._create_onboarding_checklist(task),
             ),
             WizardArtifact(
-                type="doc", title="Onboarding Success Forecast", content=onboarding_forecast
+                type="doc",
+                title="Onboarding Success Forecast",
+                content=onboarding_forecast,
             ),
         ]
 
@@ -199,7 +198,7 @@ class OnboardingWizard(BaseWizard):
                         "Tutorial: Build a simple REST API",
                         "Code review: Review existing API endpoints",
                     ],
-                }
+                },
             )
 
         if any(kw in task_lower for kw in ["react", "frontend", "ui"]):
@@ -213,7 +212,7 @@ class OnboardingWizard(BaseWizard):
                         "Tutorial: Build a simple component",
                         "Pair programming: Work with senior frontend dev",
                     ],
-                }
+                },
             )
 
         # Architecture knowledge gaps
@@ -227,7 +226,7 @@ class OnboardingWizard(BaseWizard):
                     "Read: Architecture Decision Records (ADRs)",
                     "Meeting: Architecture walkthrough with tech lead",
                 ],
-            }
+            },
         )
 
         # Process knowledge gaps
@@ -241,7 +240,7 @@ class OnboardingWizard(BaseWizard):
                     "Shadow: Watch a complete feature development cycle",
                     "Practice: Submit first PR with guidance",
                 ],
-            }
+            },
         )
 
         # Domain knowledge gaps
@@ -255,7 +254,7 @@ class OnboardingWizard(BaseWizard):
                     "Meeting: Product manager overview session",
                     "Hands-on: Use the product as an end-user",
                 ],
-            }
+            },
         )
 
         return gaps
@@ -733,7 +732,7 @@ class OnboardingWizard(BaseWizard):
                 risk="New hire may feel overwhelmed by information volume",
                 mitigation="Break learning into small chunks. Prioritize essential knowledge. Daily check-ins with mentor.",
                 severity="medium",
-            )
+            ),
         )
 
         # Insufficient mentorship risk
@@ -742,7 +741,7 @@ class OnboardingWizard(BaseWizard):
                 risk="Mentor may not have sufficient time to support new hire",
                 mitigation="Allocate 20% of mentor's time to onboarding support. Adjust their workload accordingly.",
                 severity="high",
-            )
+            ),
         )
 
         # Slow ramp-up risk
@@ -751,7 +750,7 @@ class OnboardingWizard(BaseWizard):
                 risk="New hire may take longer than expected to become productive",
                 mitigation="Set realistic expectations (60-90 days). Measure progress weekly. Provide additional support if needed.",
                 severity="low",
-            )
+            ),
         )
 
         # Cultural fit risk
@@ -760,7 +759,7 @@ class OnboardingWizard(BaseWizard):
                 risk="New hire may struggle with team culture or communication style",
                 mitigation="Pair with 'culture buddy' for informal questions. Regular 1:1s with manager to surface concerns early.",
                 severity="medium",
-            )
+            ),
         )
 
         return risks
@@ -775,21 +774,21 @@ class OnboardingWizard(BaseWizard):
                     owner="Assigned Mentor (Senior Developer)",
                     what="Daily check-ins, code review, technical guidance for first 90 days",
                     when="Throughout onboarding period",
-                )
+                ),
             )
             handoffs.append(
                 WizardHandoff(
                     owner="Engineering Manager",
                     what="Weekly 1:1s, progress tracking, career development discussions",
                     when="Throughout onboarding and beyond",
-                )
+                ),
             )
             handoffs.append(
                 WizardHandoff(
                     owner="HR / People Ops",
                     what="Administrative onboarding, benefits setup, equipment provisioning",
                     when="First week",
-                )
+                ),
             )
 
         return handoffs

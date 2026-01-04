@@ -1,5 +1,4 @@
-"""
-Base analyzer module for the Empathy Framework.
+"""Base analyzer module for the Empathy Framework.
 Provides foundational classes for issue detection and analysis.
 """
 
@@ -56,21 +55,22 @@ class BaseAnalyzer(ABC):
     @abstractmethod
     def name(self) -> str:
         """Analyzer name."""
-        pass
 
     @property
     @abstractmethod
     def level(self) -> int:
         """Empathy level (1-5)."""
-        pass
 
     @abstractmethod
     async def analyze(self, context: dict[str, Any]) -> list[Issue]:
         """Perform analysis and return detected issues."""
-        pass
 
     def _create_issue(
-        self, title: str, description: str, severity: IssueSeverity, **kwargs
+        self,
+        title: str,
+        description: str,
+        severity: IssueSeverity,
+        **kwargs,
     ) -> Issue:
         """Helper method to create an issue."""
         return Issue(title=title, description=description, severity=severity, **kwargs)

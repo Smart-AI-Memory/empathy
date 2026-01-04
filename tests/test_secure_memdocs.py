@@ -1,5 +1,4 @@
-"""
-Tests for Secure MemDocs Integration Module
+"""Tests for Secure MemDocs Integration Module
 
 Tests for the enterprise security pipeline including PII scrubbing,
 secrets detection, classification, and encryption.

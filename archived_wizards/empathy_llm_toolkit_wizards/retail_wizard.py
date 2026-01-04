@@ -1,5 +1,4 @@
-"""
-Retail/E-commerce Wizard - Customer Data Privacy Compliant AI Assistant
+"""Retail/E-commerce Wizard - Customer Data Privacy Compliant AI Assistant
 
 Specialized wizard for retail and e-commerce with customer PII protection,
 PCI-DSS compliance for payment data, and comprehensive audit logging.
@@ -47,8 +46,7 @@ RETAIL_PII_PATTERNS = [
 
 
 class RetailWizard(BaseWizard):
-    """
-    PCI-DSS compliant retail and e-commerce AI assistant
+    """PCI-DSS compliant retail and e-commerce AI assistant
 
     Implements customer PII protection for retail operations:
     1. Customer PII detection and scrubbing
@@ -74,6 +72,7 @@ class RetailWizard(BaseWizard):
         ...     user_input="Help me analyze customer purchasing patterns",
         ...     user_id="analyst@retailer.com"
         ... )
+
     """
 
     def __init__(
@@ -81,12 +80,12 @@ class RetailWizard(BaseWizard):
         llm: EmpathyLLM,
         custom_pii_patterns: list[str] | None = None,
     ):
-        """
-        Initialize retail/e-commerce wizard
+        """Initialize retail/e-commerce wizard
 
         Args:
             llm: EmpathyLLM instance (security should be enabled)
             custom_pii_patterns: Additional retailer-specific PII patterns
+
         """
         pii_patterns = RETAIL_PII_PATTERNS.copy()
 
@@ -113,12 +112,12 @@ class RetailWizard(BaseWizard):
         if not llm.enable_security:
             logger.warning(
                 "RetailWizard initialized with security DISABLED. "
-                "PCI-DSS compliance requires enable_security=True in EmpathyLLM."
+                "PCI-DSS compliance requires enable_security=True in EmpathyLLM.",
             )
 
         logger.info(
             f"RetailWizard initialized: {len(pii_patterns)} PII patterns, "
-            f"empathy level={config.default_empathy_level}, security={llm.enable_security}"
+            f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
     def _build_system_prompt(self) -> str:

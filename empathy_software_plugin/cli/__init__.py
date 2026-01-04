@@ -80,7 +80,6 @@ def get_logger():
     ``empathy_software_plugin.cli.get_logger`` without reaching into
     the underlying implementation module.
     """
-
     return logger
 
 
@@ -91,32 +90,31 @@ def get_global_registry() -> Any:
     module. We import lazily to avoid import cycles and to keep this
     function easy to patch in tests via ``unittest.mock.patch``.
     """
-
     from empathy_os.plugins.registry import get_global_registry as _get_global_registry
 
     return _get_global_registry()
 
 
 __all__ = [
-    "inspect_main",
-    "logger",
     "Colors",
     "analyze_project",
     "display_wizard_results",
     "gather_project_context",
+    "get_global_registry",
+    "get_logger",
+    "inspect_main",
     "list_wizards",
+    "logger",
     "main",
-    "scan_command",
-    "wizard_info",
-    "print_header",
-    "print_alert",
-    "print_success",
-    "print_error",
-    "print_info",
-    "print_summary",
     "parse_ai_calls",
     "parse_git_history",
     "prepare_wizard_context",
-    "get_logger",
-    "get_global_registry",
+    "print_alert",
+    "print_error",
+    "print_header",
+    "print_info",
+    "print_success",
+    "print_summary",
+    "scan_command",
+    "wizard_info",
 ]

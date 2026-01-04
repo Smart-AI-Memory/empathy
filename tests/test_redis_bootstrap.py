@@ -1,5 +1,4 @@
-"""
-Comprehensive tests for Redis Bootstrap Module
+"""Comprehensive tests for Redis Bootstrap Module
 
 Tests cover:
 - Platform detection
@@ -93,7 +92,9 @@ class TestCheckRedisRunning:
         result = _check_redis_running("localhost", 6379)
         assert result is True
         mock_redis_class.assert_called_once_with(
-            host="localhost", port=6379, socket_connect_timeout=1
+            host="localhost",
+            port=6379,
+            socket_connect_timeout=1,
         )
 
     @patch("redis.Redis")
@@ -124,7 +125,9 @@ class TestCheckRedisRunning:
         result = _check_redis_running("192.168.1.100", 6380)
         assert result is True
         mock_redis_class.assert_called_once_with(
-            host="192.168.1.100", port=6380, socket_connect_timeout=1
+            host="192.168.1.100",
+            port=6380,
+            socket_connect_timeout=1,
         )
 
 

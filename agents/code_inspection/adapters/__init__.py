@@ -1,5 +1,4 @@
-"""
-Tool Adapters for Code Inspection Pipeline
+"""Tool Adapters for Code Inspection Pipeline
 
 Each adapter wraps an existing inspection tool and converts its output
 to the unified ToolResult format for the pipeline.

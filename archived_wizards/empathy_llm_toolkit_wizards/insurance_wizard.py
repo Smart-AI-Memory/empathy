@@ -1,5 +1,4 @@
-"""
-Insurance Wizard - Policy Data Privacy Compliant AI Assistant
+"""Insurance Wizard - Policy Data Privacy Compliant AI Assistant
 
 Specialized wizard for insurance with policyholder PII protection,
 claims data handling, and comprehensive audit logging.
@@ -44,8 +43,7 @@ INSURANCE_PII_PATTERNS = [
 
 
 class InsuranceWizard(BaseWizard):
-    """
-    Policy data privacy compliant insurance AI assistant
+    """Policy data privacy compliant insurance AI assistant
 
     Implements PII protection for insurance operations:
     1. Policyholder PII detection and scrubbing
@@ -71,6 +69,7 @@ class InsuranceWizard(BaseWizard):
         ...     user_input="Help me review this claim for policy coverage",
         ...     user_id="adjuster@insurance.com"
         ... )
+
     """
 
     def __init__(
@@ -78,12 +77,12 @@ class InsuranceWizard(BaseWizard):
         llm: EmpathyLLM,
         custom_pii_patterns: list[str] | None = None,
     ):
-        """
-        Initialize insurance wizard
+        """Initialize insurance wizard
 
         Args:
             llm: EmpathyLLM instance (security should be enabled)
             custom_pii_patterns: Additional carrier-specific PII patterns
+
         """
         pii_patterns = INSURANCE_PII_PATTERNS.copy()
 
@@ -110,12 +109,12 @@ class InsuranceWizard(BaseWizard):
         if not llm.enable_security:
             logger.warning(
                 "InsuranceWizard initialized with security DISABLED. "
-                "Insurance compliance requires enable_security=True in EmpathyLLM."
+                "Insurance compliance requires enable_security=True in EmpathyLLM.",
             )
 
         logger.info(
             f"InsuranceWizard initialized: {len(pii_patterns)} PII patterns, "
-            f"empathy level={config.default_empathy_level}, security={llm.enable_security}"
+            f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
     def _build_system_prompt(self) -> str:

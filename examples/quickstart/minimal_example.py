@@ -1,5 +1,4 @@
-"""
-Minimal Empathy Framework Example
+"""Minimal Empathy Framework Example
 ===================================
 
 This is the simplest possible example of using a Coach wizard.
@@ -76,7 +75,7 @@ def main():
         days_ahead = (pred.predicted_date - datetime.now()).days
         print(f"\n[{i}] {pred.impact.upper()}: {pred.issue_type}")
         print(
-            f"    Predicted Date: {pred.predicted_date.strftime('%Y-%m-%d')} ({days_ahead} days from now)"
+            f"    Predicted Date: {pred.predicted_date.strftime('%Y-%m-%d')} ({days_ahead} days from now)",
         )
         print(f"    Probability: {pred.probability:.0%}")
         print(f"    Reasoning: {pred.reasoning}")

@@ -1,5 +1,4 @@
-"""
-Extended Tests for Empathy OS CLI Module
+"""Extended Tests for Empathy OS CLI Module
 
 Tests for:
 - cmd_run (Interactive REPL)
@@ -333,7 +332,10 @@ class TestCmdInspect:
     def test_inspect_patterns_not_found(self, temp_dir, capsys):
         """Test inspect patterns when file not found"""
         args = MockArgs(
-            type="patterns", user_id=None, db="/nonexistent/patterns.db", state_dir=None
+            type="patterns",
+            user_id=None,
+            db="/nonexistent/patterns.db",
+            state_dir=None,
         )
 
         with pytest.raises(SystemExit):
@@ -364,7 +366,10 @@ class TestCmdInspect:
 
         for i in range(5):
             collector.record_metric(
-                user_id="test_user", empathy_level=3, success=True, response_time_ms=100.0 + i * 10
+                user_id="test_user",
+                empathy_level=3,
+                success=True,
+                response_time_ms=100.0 + i * 10,
             )
 
         args = MockArgs(type="metrics", user_id="test_user", db=str(db_path), state_dir=None)
@@ -525,7 +530,10 @@ class TestCmdExport:
         PatternPersistence.save_to_json(sample_pattern_library, str(db_path))
 
         args = MockArgs(
-            output=str(Path(temp_dir) / "output.xml"), user_id=None, db=str(db_path), format="xml"
+            output=str(Path(temp_dir) / "output.xml"),
+            user_id=None,
+            db=str(db_path),
+            format="xml",
         )
 
         with pytest.raises(SystemExit):
@@ -818,7 +826,9 @@ class TestCmdInspectMain:
         PatternPersistence.save_to_json(sample_pattern_library, str(library_path))
 
         with patch.object(
-            sys, "argv", ["empathy", "inspect", "patterns", "--db", str(library_path)]
+            sys,
+            "argv",
+            ["empathy", "inspect", "patterns", "--db", str(library_path)],
         ):
             main()
 
@@ -830,7 +840,10 @@ class TestCmdInspectMain:
         db_path = Path(temp_dir) / "metrics.db"
         collector = MetricsCollector(str(db_path))
         collector.record_metric(
-            user_id="test", empathy_level=2, success=True, response_time_ms=50.0
+            user_id="test",
+            empathy_level=2,
+            success=True,
+            response_time_ms=50.0,
         )
 
         with patch.object(
@@ -849,7 +862,9 @@ class TestCmdInspectMain:
         state_dir.mkdir()
 
         with patch.object(
-            sys, "argv", ["empathy", "inspect", "state", "--state-dir", str(state_dir)]
+            sys,
+            "argv",
+            ["empathy", "inspect", "state", "--state-dir", str(state_dir)],
         ):
             main()
 
@@ -868,7 +883,9 @@ class TestCmdExportImportMain:
         output_path = Path(temp_dir) / "exported.json"
 
         with patch.object(
-            sys, "argv", ["empathy", "export", str(output_path), "--db", str(db_path)]
+            sys,
+            "argv",
+            ["empathy", "export", str(output_path), "--db", str(db_path)],
         ):
             main()
 
@@ -883,7 +900,9 @@ class TestCmdExportImportMain:
         db_path = Path(temp_dir) / "output.json"
 
         with patch.object(
-            sys, "argv", ["empathy", "import", str(input_path), "--db", str(db_path)]
+            sys,
+            "argv",
+            ["empathy", "import", str(input_path), "--db", str(db_path)],
         ):
             main()
 
@@ -998,7 +1017,10 @@ class TestCmdInspectEdgeCases:
         # Record metrics at different levels
         for level in [1, 2, 2, 3, 3, 3, 4, 4, 4, 4]:
             collector.record_metric(
-                user_id="test_user", empathy_level=level, success=True, response_time_ms=50.0
+                user_id="test_user",
+                empathy_level=level,
+                success=True,
+                response_time_ms=50.0,
             )
 
         args = MockArgs(type="metrics", user_id="test_user", db=str(db_path), state_dir=None)

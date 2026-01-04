@@ -1,5 +1,4 @@
-"""
-CICDWizard - CI/CD pipeline optimization
+"""CICDWizard - CI/CD pipeline optimization
 
 Level 4 Anticipatory Empathy for DevOps using the Empathy Framework.
 
@@ -13,8 +12,7 @@ from .base_wizard import BaseCoachWizard, WizardIssue, WizardPrediction
 
 
 class CICDWizard(BaseCoachWizard):
-    """
-    CI/CD pipeline optimization
+    """CI/CD pipeline optimization
 
     Detects:
     - slow pipelines
@@ -30,12 +28,13 @@ class CICDWizard(BaseCoachWizard):
 
     def __init__(self):
         super().__init__(
-            name="CICDWizard", category="DevOps", languages=["yaml", "groovy", "python", "bash"]
+            name="CICDWizard",
+            category="DevOps",
+            languages=["yaml", "groovy", "python", "bash"],
         )
 
     def analyze_code(self, code: str, file_path: str, language: str) -> list[WizardIssue]:
-        """
-        Analyze code for devops issues
+        """Analyze code for devops issues
 
         This is a reference implementation. In production, integrate with:
         - Static analysis tools
@@ -55,10 +54,13 @@ class CICDWizard(BaseCoachWizard):
         return issues
 
     def predict_future_issues(
-        self, code: str, file_path: str, project_context: dict[str, Any], timeline_days: int = 90
+        self,
+        code: str,
+        file_path: str,
+        project_context: dict[str, Any],
+        timeline_days: int = 90,
     ) -> list[WizardPrediction]:
-        """
-        Level 4 Anticipatory: Predict devops issues {timeline_days} days ahead
+        """Level 4 Anticipatory: Predict devops issues {timeline_days} days ahead
 
         Uses:
         - Historical patterns
@@ -74,16 +76,16 @@ class CICDWizard(BaseCoachWizard):
 
         self.logger.info(
             f"{self.name} predicted {len(predictions)} future issues "
-            f"for {file_path} ({timeline_days} days ahead)"
+            f"for {file_path} ({timeline_days} days ahead)",
         )
         return predictions
 
     def suggest_fixes(self, issue: WizardIssue) -> str:
-        """
-        Suggest how to fix a devops issue
+        """Suggest how to fix a devops issue
 
         Returns:
             Detailed fix suggestion with code examples
+
         """
         # Implementation depends on issue type
         return f"Fix suggestion for {issue.category} issue: {issue.message}"

@@ -1,5 +1,4 @@
-"""
-Empathy Dev Wizards - FastAPI Backend
+"""Empathy Dev Wizards - FastAPI Backend
 
 Web API for development wizards: debugging, security analysis, code review,
 and code inspection pipeline.

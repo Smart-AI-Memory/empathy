@@ -1,5 +1,4 @@
-"""
-Tests for Book Production Pipeline Agents
+"""Tests for Book Production Pipeline Agents
 
 Tests the multi-agent system for book production including:
 - State management
@@ -108,7 +107,7 @@ def mock_llm_provider():
             "This is test content with **key concepts**.\n\n"
             "```python\nprint('hello')\n```\n\n"
             "## Key Takeaways\n\n1. First point\n2. Second point"
-        )
+        ),
     )
     return provider
 
@@ -282,7 +281,8 @@ class TestResearchAgent:
 
     @pytest.mark.asyncio
     @pytest.mark.skipif(
-        sys.platform == "win32", reason="UnicodeEncodeError with charmap codec on Windows"
+        sys.platform == "win32",
+        reason="UnicodeEncodeError with charmap codec on Windows",
     )
     async def test_process_updates_state(self, research_agent, sample_source_doc):
         """Test process() updates state correctly."""
@@ -365,7 +365,8 @@ Coverage went from 32% to 90%.
 
     @pytest.mark.asyncio
     @pytest.mark.skipif(
-        sys.platform == "win32", reason="UnicodeEncodeError with charmap codec on Windows"
+        sys.platform == "win32",
+        reason="UnicodeEncodeError with charmap codec on Windows",
     )
     async def test_research_result_creation(self, research_agent, sample_source_doc):
         """Test ResearchResult is properly created."""
@@ -455,7 +456,7 @@ class TestWriterAgent:
                 key_concepts=["multi-agent systems"],
                 metrics=["80%"],
                 relevance_score=0.9,
-            )
+            ),
         ]
         state["research_summary"] = "Research summary for testing"
         state["key_concepts_extracted"] = ["multi-agent systems", "coordination"]
@@ -483,7 +484,7 @@ class TestWriterAgent:
                     key_concepts=["concept1"],
                     metrics=[],
                     relevance_score=0.8,
-                )
+                ),
             ],
             summary="Test summary",
             key_concepts=["concept1", "concept2"],
@@ -514,7 +515,8 @@ class TestAgentCoordination:
 
     @pytest.mark.asyncio
     @pytest.mark.skipif(
-        sys.platform == "win32", reason="UnicodeEncodeError with charmap codec on Windows"
+        sys.platform == "win32",
+        reason="UnicodeEncodeError with charmap codec on Windows",
     )
     async def test_research_to_writer_flow(self, research_agent, writer_agent, sample_source_doc):
         """Test data flows correctly from Research to Writer."""
@@ -541,7 +543,8 @@ class TestAgentCoordination:
 
     @pytest.mark.asyncio
     @pytest.mark.skipif(
-        sys.platform == "win32", reason="UnicodeEncodeError with charmap codec on Windows"
+        sys.platform == "win32",
+        reason="UnicodeEncodeError with charmap codec on Windows",
     )
     async def test_audit_trail_accumulates(self, research_agent, sample_source_doc):
         """Test audit trail entries are added correctly."""

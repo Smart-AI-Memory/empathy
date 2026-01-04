@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-LLM Provider Call Script
+"""LLM Provider Call Script
 
 Calls Empathy LLM providers (Anthropic/OpenAI) from VSCode extension.
 Used by LLMChatService for Socratic refinement conversations.
@@ -102,7 +101,9 @@ def main():
 
         # Call provider
         response = provider.generate(
-            prompt=full_prompt, max_tokens=max_tokens, temperature=temperature
+            prompt=full_prompt,
+            max_tokens=max_tokens,
+            temperature=temperature,
         )
 
         result = {

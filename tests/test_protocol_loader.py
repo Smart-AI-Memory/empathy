@@ -1,5 +1,4 @@
-"""
-Test Protocol Loader
+"""Test Protocol Loader
 
 Tests the clinical protocol loader that reads JSON protocol definitions.
 
@@ -316,7 +315,7 @@ class TestProtocolLoader:
             version="1.0",
             applies_to=["adult"],
             screening_criteria=[
-                ProtocolCriterion(parameter="hr", condition=">=", value=100, points=1)
+                ProtocolCriterion(parameter="hr", condition=">=", value=100, points=1),
             ],
             screening_threshold=1,
             interventions=[ProtocolIntervention(order=1, action="Check vitals", timing="now")],
@@ -468,7 +467,7 @@ class TestLoadProtocolConvenienceFunction:
                 "threshold": 1,
             },
             "interventions": [
-                {"order": 1, "action": "Test action", "timing": "now", "required": True}
+                {"order": 1, "action": "Test action", "timing": "now", "required": True},
             ],
             "monitoring_requirements": {
                 "vitals_frequency": "hourly",
@@ -581,7 +580,7 @@ class TestProtocolLoaderEdgeCases:
                 {
                     "action": "Do something",
                     # Missing 'order' and 'timing' fields
-                }
+                },
             ],
             "monitoring_requirements": {},
         }
@@ -602,8 +601,8 @@ class TestProtocolLoaderEdgeCases:
                         "parameter": "heart_rate",
                         # Missing 'condition' field
                         "value": 100,
-                    }
-                ]
+                    },
+                ],
             },
             "interventions": [],
             "monitoring_requirements": {},

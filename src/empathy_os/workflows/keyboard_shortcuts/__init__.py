@@ -1,5 +1,4 @@
-"""
-Keyboard Shortcuts Workflow Package
+"""Keyboard Shortcuts Workflow Package
 
 Generates optimized keyboard shortcuts for any project following
 the "Keyboard Conductor" musical scale pattern.
@@ -33,18 +32,18 @@ from .schema import (
 from .workflow import KeyboardShortcutWorkflow
 
 __all__ = [
-    "KeyboardShortcutWorkflow",
-    "FeatureParser",
-    "VSCodeCommandParser",
-    "PyProjectParser",
-    "YAMLManifestParser",
-    "LLMFeatureAnalyzer",
-    "VSCodeKeybindingsGenerator",
     "CLIAliasGenerator",
-    "MarkdownDocGenerator",
-    "FeatureManifest",
-    "Feature",
     "Category",
+    "Feature",
+    "FeatureManifest",
+    "FeatureParser",
+    "KeyboardShortcutWorkflow",
+    "LLMFeatureAnalyzer",
     "LayoutConfig",
+    "MarkdownDocGenerator",
+    "PyProjectParser",
     "ShortcutAssignment",
+    "VSCodeCommandParser",
+    "VSCodeKeybindingsGenerator",
+    "YAMLManifestParser",
 ]

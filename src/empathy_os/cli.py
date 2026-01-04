@@ -1,5 +1,4 @@
-"""
-Command-Line Interface for Empathy Framework
+"""Command-Line Interface for Empathy Framework
 
 Provides CLI commands for:
 - Running interactive REPL (empathy run)
@@ -482,10 +481,9 @@ for a quick reference of all commands.
             print("  Congratulations! You've completed the onboarding!")
             print()
             _show_achievements(engine)
-    else:
-        if step_data["action"]:
-            print(f"  NEXT: Run '{step_data['action']}'")
-            print("        Then run 'empathy onboard' to continue")
+    elif step_data["action"]:
+        print(f"  NEXT: Run '{step_data['action']}'")
+        print("        Then run 'empathy onboard' to continue")
 
     print()
     print("-" * 60)
@@ -783,7 +781,7 @@ def cmd_patterns_resolve(args):
     if not args.root_cause or not args.fix:
         print("✗ --root-cause and --fix are required when resolving a bug")
         print(
-            "  Example: empathy patterns resolve bug_123 --root-cause 'Null check' --fix 'Added ?.'"
+            "  Example: empathy patterns resolve bug_123 --root-cause 'Null check' --fix 'Added ?.'",
         )
         sys.exit(1)
 
@@ -870,8 +868,8 @@ def cmd_review(args):
                 "files": args.files,
                 "staged_only": args.staged,
                 "severity_threshold": args.severity,
-            }
-        )
+            },
+        ),
     )
 
     # Output results
@@ -972,7 +970,7 @@ def cmd_health(args):
                 print(f"\n⚠ Skipped {len(result['skipped'])} issue(s) (could not auto-fix)")
             else:
                 print(
-                    f"\n⚠ Skipped {len(result['skipped'])} issue(s) (use --interactive to review)"
+                    f"\n⚠ Skipped {len(result['skipped'])} issue(s) (use --interactive to review)",
                 )
 
         if result["failed"]:
@@ -1528,7 +1526,7 @@ def cmd_provider_show(args):
     # Detect available providers
     config = ProviderConfig.auto_detect()
     print(
-        f"\nDetected API keys for: {', '.join(config.available_providers) if config.available_providers else 'None'}"
+        f"\nDetected API keys for: {', '.join(config.available_providers) if config.available_providers else 'None'}",
     )
 
     # Load workflow config
@@ -1665,7 +1663,7 @@ def _generate_claude_rule(category: str, patterns: list) -> str:
                 "",
                 "When debugging similar issues, consider these historical fixes:",
                 "",
-            ]
+            ],
         )
         for p in patterns[:20]:  # Limit to 20 most recent
             bug_type = p.get("bug_type", "unknown")
@@ -1687,7 +1685,7 @@ def _generate_claude_rule(category: str, patterns: list) -> str:
                 "",
                 "Previously reviewed security items:",
                 "",
-            ]
+            ],
         )
         for p in patterns[:20]:
             decision = p.get("decision", "unknown")
@@ -1704,7 +1702,7 @@ def _generate_claude_rule(category: str, patterns: list) -> str:
                 "",
                 "Known technical debt items:",
                 "",
-            ]
+            ],
         )
         for p in patterns[:20]:
             lines.append(f"- {p.get('description', str(p))}")
@@ -1714,7 +1712,7 @@ def _generate_claude_rule(category: str, patterns: list) -> str:
             [
                 f"## {category.title()} Items",
                 "",
-            ]
+            ],
         )
         for p in patterns[:20]:
             lines.append(f"- {p.get('description', str(p)[:100])}")
@@ -1723,8 +1721,7 @@ def _generate_claude_rule(category: str, patterns: list) -> str:
 
 
 def _extract_workflow_content(final_output):
-    """
-    Extract readable content from workflow final_output.
+    """Extract readable content from workflow final_output.
 
     Workflows return their results in various formats - this extracts
     the actual content users want to see.
@@ -1759,11 +1756,11 @@ def _extract_workflow_content(final_output):
             "plan",
         ]
         for key in content_keys:
-            if key in final_output and final_output[key]:
+            if final_output.get(key):
                 val = final_output[key]
                 if isinstance(val, str):
                     return val
-                elif isinstance(val, dict):
+                if isinstance(val, dict):
                     # Recursively extract
                     return _extract_workflow_content(val)
 
@@ -1958,29 +1955,26 @@ def cmd_workflow(args):
                     "error": error,
                 }
                 print(json_mod.dumps(output, indent=2))
-            else:
-                # Display the actual results - this is what users want to see
-                if result.success:
-                    if output_content:
-                        print(f"\n{output_content}\n")
-                    else:
-                        print("\n✓ Workflow completed successfully.\n")
+            # Display the actual results - this is what users want to see
+            elif result.success:
+                if output_content:
+                    print(f"\n{output_content}\n")
                 else:
-                    # Extract error from various result types
-                    error_msg = getattr(result, "error", None)
-                    if not error_msg:
-                        # Check for blockers (CodeReviewPipelineResult)
-                        blockers = getattr(result, "blockers", [])
-                        if blockers:
-                            error_msg = "; ".join(blockers)
-                        else:
-                            # Check metadata for error
-                            metadata = getattr(result, "metadata", {})
-                            error_msg = (
-                                metadata.get("error") if isinstance(metadata, dict) else None
-                            )
-                    error_msg = error_msg or "Unknown error"
-                    print(f"\n✗ Workflow failed: {error_msg}\n")
+                    print("\n✓ Workflow completed successfully.\n")
+            else:
+                # Extract error from various result types
+                error_msg = getattr(result, "error", None)
+                if not error_msg:
+                    # Check for blockers (CodeReviewPipelineResult)
+                    blockers = getattr(result, "blockers", [])
+                    if blockers:
+                        error_msg = "; ".join(blockers)
+                    else:
+                        # Check metadata for error
+                        metadata = getattr(result, "metadata", {})
+                        error_msg = metadata.get("error") if isinstance(metadata, dict) else None
+                error_msg = error_msg or "Unknown error"
+                print(f"\n✗ Workflow failed: {error_msg}\n")
 
         except KeyError as e:
             print(f"Error: {e}")
@@ -2059,7 +2053,7 @@ def cmd_frameworks(args):
                 json_mod.dumps(
                     {"use_case": recommend_use_case, "recommended": recommended.value, **info},
                     indent=2,
-                )
+                ),
             )
         else:
             print(f"\nRecommended framework for '{recommend_use_case}': {info['name']}")
@@ -2086,7 +2080,7 @@ def cmd_frameworks(args):
                     for f in frameworks
                 ],
                 indent=2,
-            )
+            ),
         )
     else:
         print("\n" + "=" * 60)
@@ -2166,32 +2160,45 @@ def main():
     parser_patterns_export.add_argument("input", help="Input file path")
     parser_patterns_export.add_argument("output", help="Output file path")
     parser_patterns_export.add_argument(
-        "--input-format", choices=["json", "sqlite"], default="json"
+        "--input-format",
+        choices=["json", "sqlite"],
+        default="json",
     )
     parser_patterns_export.add_argument(
-        "--output-format", choices=["json", "sqlite"], default="json"
+        "--output-format",
+        choices=["json", "sqlite"],
+        default="json",
     )
     parser_patterns_export.set_defaults(func=cmd_patterns_export)
 
     # Patterns resolve - mark investigating bugs as resolved
     parser_patterns_resolve = patterns_subparsers.add_parser(
-        "resolve", help="Resolve investigating bug patterns"
+        "resolve",
+        help="Resolve investigating bug patterns",
     )
     parser_patterns_resolve.add_argument(
-        "bug_id", nargs="?", help="Bug ID to resolve (omit to list investigating)"
+        "bug_id",
+        nargs="?",
+        help="Bug ID to resolve (omit to list investigating)",
     )
     parser_patterns_resolve.add_argument("--root-cause", help="Description of the root cause")
     parser_patterns_resolve.add_argument("--fix", help="Description of the fix applied")
     parser_patterns_resolve.add_argument("--fix-code", help="Code snippet of the fix")
     parser_patterns_resolve.add_argument("--time", type=int, help="Resolution time in minutes")
     parser_patterns_resolve.add_argument(
-        "--resolved-by", default="@developer", help="Who resolved it"
+        "--resolved-by",
+        default="@developer",
+        help="Who resolved it",
     )
     parser_patterns_resolve.add_argument(
-        "--patterns-dir", default="./patterns", help="Path to patterns directory"
+        "--patterns-dir",
+        default="./patterns",
+        help="Path to patterns directory",
     )
     parser_patterns_resolve.add_argument(
-        "--no-regenerate", action="store_true", help="Skip regenerating summary"
+        "--no-regenerate",
+        action="store_true",
+        help="Skip regenerating summary",
     )
     parser_patterns_resolve.set_defaults(func=cmd_patterns_resolve)
 
@@ -2212,7 +2219,9 @@ def main():
     # State list
     parser_state_list = state_subparsers.add_parser("list", help="List saved states")
     parser_state_list.add_argument(
-        "--state-dir", default="./empathy_state", help="State directory path"
+        "--state-dir",
+        default="./empathy_state",
+        help="State directory path",
     )
     parser_state_list.set_defaults(func=cmd_state_list)
 
@@ -2221,7 +2230,10 @@ def main():
     parser_run.add_argument("--config", "-c", help="Configuration file path")
     parser_run.add_argument("--user-id", help="User ID (default: cli_user)")
     parser_run.add_argument(
-        "--level", type=int, default=4, help="Target empathy level (1-5, default: 4)"
+        "--level",
+        type=int,
+        default=4,
+        help="Target empathy level (1-5, default: 4)",
     )
     parser_run.set_defaults(func=cmd_run)
 
@@ -2235,21 +2247,27 @@ def main():
     parser_inspect.add_argument("--user-id", help="User ID to filter by (optional)")
     parser_inspect.add_argument("--db", help="Database path (default: .empathy/patterns.db)")
     parser_inspect.add_argument(
-        "--state-dir", help="State directory path (default: .empathy/state)"
+        "--state-dir",
+        help="State directory path (default: .empathy/state)",
     )
     parser_inspect.set_defaults(func=cmd_inspect)
 
     # Export command
     parser_export = subparsers.add_parser(
-        "export", help="Export patterns to file for sharing/backup"
+        "export",
+        help="Export patterns to file for sharing/backup",
     )
     parser_export.add_argument("output", help="Output file path")
     parser_export.add_argument(
-        "--user-id", help="User ID to export (optional, exports all if not specified)"
+        "--user-id",
+        help="User ID to export (optional, exports all if not specified)",
     )
     parser_export.add_argument("--db", help="Database path (default: .empathy/patterns.db)")
     parser_export.add_argument(
-        "--format", default="json", choices=["json"], help="Export format (default: json)"
+        "--format",
+        default="json",
+        choices=["json"],
+        help="Export format (default: json)",
     )
     parser_export.set_defaults(func=cmd_export)
 
@@ -2261,47 +2279,59 @@ def main():
 
     # Wizard command (Interactive setup)
     parser_wizard = subparsers.add_parser(
-        "wizard", help="Interactive setup wizard for creating configuration"
+        "wizard",
+        help="Interactive setup wizard for creating configuration",
     )
     parser_wizard.set_defaults(func=cmd_wizard)
 
     # Provider command (Model provider configuration)
     parser_provider = subparsers.add_parser(
-        "provider", help="Configure model providers and hybrid mode"
+        "provider",
+        help="Configure model providers and hybrid mode",
     )
     provider_subparsers = parser_provider.add_subparsers(dest="provider_cmd")
 
     # provider hybrid - Interactive hybrid configuration
     parser_provider_hybrid = provider_subparsers.add_parser(
-        "hybrid", help="Configure hybrid mode - pick best models for each tier"
+        "hybrid",
+        help="Configure hybrid mode - pick best models for each tier",
     )
     parser_provider_hybrid.set_defaults(func=cmd_provider_hybrid)
 
     # provider show - Show current configuration
     parser_provider_show = provider_subparsers.add_parser(
-        "show", help="Show current provider configuration"
+        "show",
+        help="Show current provider configuration",
     )
     parser_provider_show.set_defaults(func=cmd_provider_show)
 
     # provider set - Quick set single provider
     parser_provider_set = provider_subparsers.add_parser(
-        "set", help="Set default provider (anthropic, openai, google, ollama)"
+        "set",
+        help="Set default provider (anthropic, openai, google, ollama)",
     )
     parser_provider_set.add_argument(
-        "name", choices=["anthropic", "openai", "google", "ollama", "hybrid"], help="Provider name"
+        "name",
+        choices=["anthropic", "openai", "google", "ollama", "hybrid"],
+        help="Provider name",
     )
     parser_provider_set.set_defaults(func=cmd_provider_set)
 
     # Status command (Session status assistant)
     parser_status = subparsers.add_parser(
-        "status", help="Session status - prioritized project status report"
+        "status",
+        help="Session status - prioritized project status report",
     )
     parser_status.add_argument(
-        "--patterns-dir", default="./patterns", help="Path to patterns directory"
+        "--patterns-dir",
+        default="./patterns",
+        help="Path to patterns directory",
     )
     parser_status.add_argument("--project-root", default=".", help="Project root directory")
     parser_status.add_argument(
-        "--force", action="store_true", help="Force show status regardless of inactivity"
+        "--force",
+        action="store_true",
+        help="Force show status regardless of inactivity",
     )
     parser_status.add_argument("--full", action="store_true", help="Show all items (no limit)")
     parser_status.add_argument("--json", action="store_true", help="Output as JSON")
@@ -2316,7 +2346,8 @@ def main():
 
     # Review command (Pattern-based code review)
     parser_review = subparsers.add_parser(
-        "review", help="Pattern-based code review against historical bugs"
+        "review",
+        help="Pattern-based code review against historical bugs",
     )
     parser_review.add_argument("files", nargs="*", help="Files to review (default: recent changes)")
     parser_review.add_argument("--staged", action="store_true", help="Review staged changes only")
@@ -2332,10 +2363,13 @@ def main():
 
     # Health command (Code Health Assistant)
     parser_health = subparsers.add_parser(
-        "health", help="Code health assistant - run checks and auto-fix issues"
+        "health",
+        help="Code health assistant - run checks and auto-fix issues",
     )
     parser_health.add_argument(
-        "--deep", action="store_true", help="Run comprehensive checks (slower)"
+        "--deep",
+        action="store_true",
+        help="Run comprehensive checks (slower)",
     )
     parser_health.add_argument(
         "--check",
@@ -2344,20 +2378,31 @@ def main():
     )
     parser_health.add_argument("--fix", action="store_true", help="Auto-fix issues where possible")
     parser_health.add_argument(
-        "--dry-run", action="store_true", help="Show what would be fixed without applying"
+        "--dry-run",
+        action="store_true",
+        help="Show what would be fixed without applying",
     )
     parser_health.add_argument(
-        "--interactive", action="store_true", help="Prompt before applying non-safe fixes"
+        "--interactive",
+        action="store_true",
+        help="Prompt before applying non-safe fixes",
     )
     parser_health.add_argument("--details", action="store_true", help="Show detailed issue list")
     parser_health.add_argument(
-        "--full", action="store_true", help="Show full report with all details"
+        "--full",
+        action="store_true",
+        help="Show full report with all details",
     )
     parser_health.add_argument(
-        "--trends", type=int, metavar="DAYS", help="Show health trends over N days"
+        "--trends",
+        type=int,
+        metavar="DAYS",
+        help="Show health trends over N days",
     )
     parser_health.add_argument(
-        "--project-root", default=".", help="Project root directory (default: current)"
+        "--project-root",
+        default=".",
+        help="Project root directory (default: current)",
     )
     parser_health.add_argument("--json", action="store_true", help="Output as JSON")
     parser_health.set_defaults(func=cmd_health)
@@ -2368,10 +2413,13 @@ def main():
 
     # Morning command (start-of-day briefing)
     parser_morning = subparsers.add_parser(
-        "morning", help="Start-of-day briefing with patterns, debt, and focus areas"
+        "morning",
+        help="Start-of-day briefing with patterns, debt, and focus areas",
     )
     parser_morning.add_argument(
-        "--patterns-dir", default="./patterns", help="Path to patterns directory"
+        "--patterns-dir",
+        default="./patterns",
+        help="Path to patterns directory",
     )
     parser_morning.add_argument("--project-root", default=".", help="Project root directory")
     parser_morning.add_argument("--verbose", "-v", action="store_true", help="Show detailed output")
@@ -2380,54 +2428,77 @@ def main():
     # Ship command (pre-commit validation)
     parser_ship = subparsers.add_parser("ship", help="Pre-commit validation pipeline")
     parser_ship.add_argument(
-        "--patterns-dir", default="./patterns", help="Path to patterns directory"
+        "--patterns-dir",
+        default="./patterns",
+        help="Path to patterns directory",
     )
     parser_ship.add_argument("--project-root", default=".", help="Project root directory")
     parser_ship.add_argument(
-        "--skip-sync", action="store_true", help="Skip syncing patterns to Claude"
+        "--skip-sync",
+        action="store_true",
+        help="Skip syncing patterns to Claude",
     )
     parser_ship.add_argument(
-        "--tests-only", action="store_true", help="Run tests only (skip lint/format checks)"
+        "--tests-only",
+        action="store_true",
+        help="Run tests only (skip lint/format checks)",
     )
     parser_ship.add_argument(
-        "--security-only", action="store_true", help="Run security checks only"
+        "--security-only",
+        action="store_true",
+        help="Run security checks only",
     )
     parser_ship.add_argument("--verbose", "-v", action="store_true", help="Show detailed output")
     parser_ship.set_defaults(func=cmd_ship)
 
     # Fix-all command (auto-fix everything)
     parser_fix_all = subparsers.add_parser(
-        "fix-all", help="Auto-fix all fixable lint and format issues"
+        "fix-all",
+        help="Auto-fix all fixable lint and format issues",
     )
     parser_fix_all.add_argument("--project-root", default=".", help="Project root directory")
     parser_fix_all.add_argument(
-        "--dry-run", action="store_true", help="Show what would be fixed without applying"
+        "--dry-run",
+        action="store_true",
+        help="Show what would be fixed without applying",
     )
     parser_fix_all.add_argument("--verbose", "-v", action="store_true", help="Show detailed output")
     parser_fix_all.set_defaults(func=cmd_fix_all)
 
     # Learn command (pattern learning from git history)
     parser_learn = subparsers.add_parser(
-        "learn", help="Learn patterns from git history and bug fixes"
+        "learn",
+        help="Learn patterns from git history and bug fixes",
     )
     parser_learn.add_argument(
-        "--patterns-dir", default="./patterns", help="Path to patterns directory"
+        "--patterns-dir",
+        default="./patterns",
+        help="Path to patterns directory",
     )
     parser_learn.add_argument(
-        "--analyze", type=int, metavar="N", help="Analyze last N commits (default: 10)"
+        "--analyze",
+        type=int,
+        metavar="N",
+        help="Analyze last N commits (default: 10)",
     )
     parser_learn.add_argument(
-        "--watch", action="store_true", help="Watch for new commits (not yet implemented)"
+        "--watch",
+        action="store_true",
+        help="Watch for new commits (not yet implemented)",
     )
     parser_learn.add_argument("--verbose", "-v", action="store_true", help="Show detailed output")
     parser_learn.set_defaults(func=cmd_learn)
 
     # Costs command (cost tracking dashboard)
     parser_costs = subparsers.add_parser(
-        "costs", help="View API cost tracking and savings from model routing"
+        "costs",
+        help="View API cost tracking and savings from model routing",
     )
     parser_costs.add_argument(
-        "--days", type=int, default=7, help="Number of days to include (default: 7)"
+        "--days",
+        type=int,
+        default=7,
+        help="Number of days to include (default: 7)",
     )
     parser_costs.add_argument("--empathy-dir", default=".empathy", help="Empathy data directory")
     parser_costs.add_argument("--json", action="store_true", help="Output as JSON")
@@ -2449,16 +2520,25 @@ def main():
     # Dashboard command (visual web interface)
     parser_dashboard = subparsers.add_parser("dashboard", help="Launch visual dashboard in browser")
     parser_dashboard.add_argument(
-        "--port", type=int, default=8765, help="Port to run on (default: 8765)"
+        "--port",
+        type=int,
+        default=8765,
+        help="Port to run on (default: 8765)",
     )
     parser_dashboard.add_argument(
-        "--patterns-dir", default="./patterns", help="Path to patterns directory"
+        "--patterns-dir",
+        default="./patterns",
+        help="Path to patterns directory",
     )
     parser_dashboard.add_argument(
-        "--empathy-dir", default=".empathy", help="Empathy data directory"
+        "--empathy-dir",
+        default=".empathy",
+        help="Empathy data directory",
     )
     parser_dashboard.add_argument(
-        "--no-browser", action="store_true", help="Don't open browser automatically"
+        "--no-browser",
+        action="store_true",
+        help="Don't open browser automatically",
     )
     parser_dashboard.set_defaults(func=cmd_dashboard)
 
@@ -2468,7 +2548,9 @@ def main():
         help="List and manage agent frameworks (LangChain, LangGraph, AutoGen, Haystack)",
     )
     parser_frameworks.add_argument(
-        "--all", action="store_true", help="Show all frameworks including uninstalled"
+        "--all",
+        action="store_true",
+        help="Show all frameworks including uninstalled",
     )
     parser_frameworks.add_argument(
         "--recommend",
@@ -2525,10 +2607,13 @@ def main():
 
     # Sync-claude command (sync patterns to Claude Code)
     parser_sync_claude = subparsers.add_parser(
-        "sync-claude", help="Sync learned patterns to Claude Code rules"
+        "sync-claude",
+        help="Sync learned patterns to Claude Code rules",
     )
     parser_sync_claude.add_argument(
-        "--patterns-dir", default="./patterns", help="Path to patterns directory"
+        "--patterns-dir",
+        default="./patterns",
+        help="Path to patterns directory",
     )
     parser_sync_claude.add_argument(
         "--output-dir",
@@ -2549,13 +2634,16 @@ def main():
         help="Category to show (getting-started, daily-workflow, code-quality, etc.)",
     )
     parser_cheatsheet.add_argument(
-        "--compact", action="store_true", help="Show commands only without descriptions"
+        "--compact",
+        action="store_true",
+        help="Show commands only without descriptions",
     )
     parser_cheatsheet.set_defaults(func=cmd_cheatsheet)
 
     # Onboard command (interactive tutorial)
     parser_onboard = subparsers.add_parser(
-        "onboard", help="Interactive onboarding tutorial for new users"
+        "onboard",
+        help="Interactive onboarding tutorial for new users",
     )
     parser_onboard.add_argument("--step", type=int, help="Jump to a specific step (1-5)")
     parser_onboard.add_argument("--reset", action="store_true", help="Reset onboarding progress")
@@ -2563,7 +2651,8 @@ def main():
 
     # Explain command (detailed command explanations)
     parser_explain = subparsers.add_parser(
-        "explain", help="Get detailed explanation of how a command works"
+        "explain",
+        help="Get detailed explanation of how a command works",
     )
     parser_explain.add_argument(
         "command",
@@ -2574,7 +2663,8 @@ def main():
 
     # Achievements command (progress tracking)
     parser_achievements = subparsers.add_parser(
-        "achievements", help="View your usage statistics and achievements"
+        "achievements",
+        help="View your usage statistics and achievements",
     )
     parser_achievements.set_defaults(func=cmd_achievements)
 
@@ -2593,9 +2683,8 @@ def main():
                 pass  # Don't fail on discovery errors
 
         return result if result is not None else 0
-    else:
-        parser.print_help()
-        return 0
+    parser.print_help()
+    return 0
 
 
 if __name__ == "__main__":

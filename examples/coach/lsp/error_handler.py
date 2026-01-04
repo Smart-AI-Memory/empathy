@@ -1,5 +1,4 @@
-"""
-Error Handling for LSP Server
+"""Error Handling for LSP Server
 Comprehensive error handling and recovery
 """
 
@@ -95,8 +94,7 @@ class LLMAPIError(CoachLSPError):
 
 
 def handle_error(error: Exception, context: str = "") -> dict[str, Any]:
-    """
-    Handle and log errors consistently
+    """Handle and log errors consistently
 
     Args:
         error: The exception that occurred
@@ -104,6 +102,7 @@ def handle_error(error: Exception, context: str = "") -> dict[str, Any]:
 
     Returns:
         Error response dict suitable for LSP
+
     """
     # Log full traceback
     logger.error(f"Error in {context}: {error}")
@@ -121,8 +120,7 @@ def handle_error(error: Exception, context: str = "") -> dict[str, Any]:
 
 
 def safe_execute(func, *args, fallback=None, context="", **kwargs):
-    """
-    Safely execute a function with error handling
+    """Safely execute a function with error handling
 
     Args:
         func: Function to execute
@@ -133,6 +131,7 @@ def safe_execute(func, *args, fallback=None, context="", **kwargs):
 
     Returns:
         Function result or fallback value
+
     """
     try:
         return func(*args, **kwargs)

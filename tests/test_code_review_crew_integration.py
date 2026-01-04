@@ -1,5 +1,4 @@
-"""
-Tests for CodeReviewCrew Dashboard Integration
+"""Tests for CodeReviewCrew Dashboard Integration
 
 Tests the integration of CodeReviewCrew and PRReviewWorkflow
 with the Empathy Dashboard.
@@ -95,7 +94,7 @@ class TestCodeReviewAdapters:
                     "type": "security",
                     "file": "api.py",
                     "line": 10,
-                }
+                },
             ],
             "verdict": "approve_with_suggestions",
             "assessment": {"quality_score": 80.0, "severity_breakdown": {"high": 1}},
@@ -110,7 +109,7 @@ class TestCodeReviewAdapters:
                     "type": "quality",
                     "file": "utils.py",
                     "line": 20,
-                }
+                },
             ],
             "verdict": "approve",
             "assessment": {"severity_breakdown": {"medium": 1}},
@@ -197,12 +196,14 @@ class TestCodeReviewWorkflowWithCrew:
 
         # Mock _check_crew_available to return False
         with patch(
-            "empathy_os.workflows.code_review_adapters._check_crew_available", return_value=False
+            "empathy_os.workflows.code_review_adapters._check_crew_available",
+            return_value=False,
         ):
             input_data = {"diff": "test code", "files_changed": ["test.py"]}
 
             result, input_tokens, output_tokens = await workflow._crew_review(
-                input_data, workflow.tier_map["crew_review"]
+                input_data,
+                workflow.tier_map["crew_review"],
             )
 
             assert "crew_review" in result
@@ -230,7 +231,8 @@ class TestCodeReviewWorkflowWithCrew:
 
         with (
             patch(
-                "empathy_os.workflows.code_review_adapters._check_crew_available", return_value=True
+                "empathy_os.workflows.code_review_adapters._check_crew_available",
+                return_value=True,
             ),
             patch(
                 "empathy_os.workflows.code_review_adapters._get_crew_review",
@@ -241,7 +243,8 @@ class TestCodeReviewWorkflowWithCrew:
             input_data = {"diff": "test code", "files_changed": ["test.py"]}
 
             result, input_tokens, output_tokens = await workflow._crew_review(
-                input_data, workflow.tier_map["crew_review"]
+                input_data,
+                workflow.tier_map["crew_review"],
             )
 
             assert "crew_review" in result
@@ -388,7 +391,8 @@ class TestPRReviewWorkflow:
                 return_value=False,
             ),
             patch(
-                "empathy_os.workflows.security_adapters._check_crew_available", return_value=False
+                "empathy_os.workflows.security_adapters._check_crew_available",
+                return_value=False,
             ),
         ):
             result = await workflow.execute(
@@ -518,7 +522,8 @@ class TestEndToEndIntegration:
 
         with (
             patch(
-                "empathy_os.workflows.code_review_adapters._check_crew_available", return_value=True
+                "empathy_os.workflows.code_review_adapters._check_crew_available",
+                return_value=True,
             ),
             patch(
                 "empathy_os.workflows.code_review_adapters._get_crew_review",
@@ -526,7 +531,8 @@ class TestEndToEndIntegration:
                 return_value=mock_code_report,
             ),
             patch(
-                "empathy_os.workflows.security_adapters._check_crew_available", return_value=True
+                "empathy_os.workflows.security_adapters._check_crew_available",
+                return_value=True,
             ),
             patch(
                 "empathy_os.workflows.security_adapters._get_crew_audit",

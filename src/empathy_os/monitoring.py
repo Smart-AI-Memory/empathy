@@ -1,5 +1,4 @@
-"""
-Agent Monitoring for Distributed Memory Networks
+"""Agent Monitoring for Distributed Memory Networks
 
 Provides monitoring and metrics collection for multi-agent systems.
 Tracks individual agent performance, pattern contributions, and
@@ -79,8 +78,7 @@ class TeamMetrics:
 
     @property
     def collaboration_efficiency(self) -> float:
-        """
-        Measure of how effectively agents collaborate.
+        """Measure of how effectively agents collaborate.
 
         Higher values indicate more cross-agent pattern reuse,
         meaning agents are learning from each other.
@@ -91,8 +89,7 @@ class TeamMetrics:
 
 
 class AgentMonitor:
-    """
-    Monitors and tracks metrics for multi-agent systems.
+    """Monitors and tracks metrics for multi-agent systems.
 
     Provides insights into:
     - Individual agent performance
@@ -116,14 +113,15 @@ class AgentMonitor:
         >>> # Get team stats
         >>> team = monitor.get_team_stats()
         >>> print(f"Collaboration efficiency: {team['collaboration_efficiency']:.0%}")
+
     """
 
     def __init__(self, pattern_library: PatternLibrary | None = None):
-        """
-        Initialize the AgentMonitor.
+        """Initialize the AgentMonitor.
 
         Args:
             pattern_library: Optional pattern library to track for shared patterns
+
         """
         self.agents: dict[str, AgentMetrics] = {}
         self.pattern_library = pattern_library
@@ -139,12 +137,12 @@ class AgentMonitor:
         agent_id: str,
         response_time_ms: float = 0.0,
     ):
-        """
-        Record an agent interaction.
+        """Record an agent interaction.
 
         Args:
             agent_id: ID of the agent
             response_time_ms: Response time in milliseconds
+
         """
         agent = self._get_or_create_agent(agent_id)
         agent.total_interactions += 1
@@ -160,12 +158,12 @@ class AgentMonitor:
             )
 
     def record_pattern_discovery(self, agent_id: str, pattern_id: str | None = None):
-        """
-        Record that an agent discovered a new pattern.
+        """Record that an agent discovered a new pattern.
 
         Args:
             agent_id: ID of the agent that discovered the pattern
             pattern_id: Optional pattern ID for tracking
+
         """
         agent = self._get_or_create_agent(agent_id)
         agent.patterns_discovered += 1
@@ -178,14 +176,14 @@ class AgentMonitor:
         pattern_agent: str | None = None,
         success: bool = True,
     ):
-        """
-        Record that an agent used a pattern.
+        """Record that an agent used a pattern.
 
         Args:
             agent_id: ID of the agent using the pattern
             pattern_id: ID of the pattern being used
             pattern_agent: ID of the agent that contributed the pattern
             success: Whether the pattern use was successful
+
         """
         agent = self._get_or_create_agent(agent_id)
         agent.patterns_used += 1
@@ -207,18 +205,18 @@ class AgentMonitor:
                 "cross_agent": is_cross_agent,
                 "success": success,
                 "timestamp": datetime.now(),
-            }
+            },
         )
 
     def get_agent_stats(self, agent_id: str) -> dict[str, Any]:
-        """
-        Get statistics for a specific agent.
+        """Get statistics for a specific agent.
 
         Args:
             agent_id: ID of the agent
 
         Returns:
             Dictionary with agent statistics
+
         """
         agent = self.agents.get(agent_id)
 
@@ -252,11 +250,11 @@ class AgentMonitor:
         }
 
     def get_team_stats(self) -> dict[str, Any]:
-        """
-        Get aggregated statistics for the entire agent team.
+        """Get aggregated statistics for the entire agent team.
 
         Returns:
             Dictionary with team-wide statistics
+
         """
         if not self.agents:
             # Get shared patterns count from library even if no agents
@@ -319,39 +317,41 @@ class AgentMonitor:
         }
 
     def get_top_contributors(self, n: int = 5) -> list[dict[str, Any]]:
-        """
-        Get the top pattern-contributing agents.
+        """Get the top pattern-contributing agents.
 
         Args:
             n: Number of agents to return
 
         Returns:
             List of agent stats, sorted by patterns discovered
+
         """
         sorted_agents = sorted(
-            self.agents.values(), key=lambda a: a.patterns_discovered, reverse=True
+            self.agents.values(),
+            key=lambda a: a.patterns_discovered,
+            reverse=True,
         )
 
         return [self.get_agent_stats(agent.agent_id) for agent in sorted_agents[:n]]
 
     def get_alerts(self, limit: int = 100) -> list[dict[str, Any]]:
-        """
-        Get recent alerts.
+        """Get recent alerts.
 
         Args:
             limit: Maximum number of alerts to return
 
         Returns:
             List of alert dictionaries
+
         """
         return self.alerts[-limit:]
 
     def check_health(self) -> dict[str, Any]:
-        """
-        Check overall system health.
+        """Check overall system health.
 
         Returns:
             Health status dictionary
+
         """
         team_stats = self.get_team_stats()
         recent_alerts = [
@@ -400,7 +400,7 @@ class AgentMonitor:
                 "message": message,
                 "severity": severity,
                 "timestamp": datetime.now(),
-            }
+            },
         )
 
         # Keep alerts bounded

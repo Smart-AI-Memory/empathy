@@ -1,5 +1,4 @@
-"""
-Unit tests for LLM executor module
+"""Unit tests for LLM executor module
 
 Tests LLMResponse, ExecutionContext, and LLM protocol interfaces.
 """
@@ -58,7 +57,10 @@ class TestLLMResponse:
     def test_llm_response_default_values(self):
         """Test that LLMResponse has sensible defaults"""
         response = LLMResponse(
-            content="Test", model_id="test-model", provider="test", tier="capable"
+            content="Test",
+            model_id="test-model",
+            provider="test",
+            tier="capable",
         )
 
         assert response.tokens_input == 0
@@ -90,7 +92,11 @@ class TestLLMResponseBackwardCompatibility:
     def test_input_tokens_alias(self):
         """Test input_tokens property alias"""
         response = LLMResponse(
-            content="Test", model_id="test", provider="test", tier="cheap", tokens_input=100
+            content="Test",
+            model_id="test",
+            provider="test",
+            tier="cheap",
+            tokens_input=100,
         )
 
         assert response.input_tokens == 100
@@ -99,7 +105,11 @@ class TestLLMResponseBackwardCompatibility:
     def test_output_tokens_alias(self):
         """Test output_tokens property alias"""
         response = LLMResponse(
-            content="Test", model_id="test", provider="test", tier="cheap", tokens_output=50
+            content="Test",
+            model_id="test",
+            provider="test",
+            tier="cheap",
+            tokens_output=50,
         )
 
         assert response.output_tokens == 50
@@ -108,7 +118,10 @@ class TestLLMResponseBackwardCompatibility:
     def test_model_used_alias(self):
         """Test model_used property alias"""
         response = LLMResponse(
-            content="Test", model_id="claude-sonnet-3-5", provider="anthropic", tier="capable"
+            content="Test",
+            model_id="claude-sonnet-3-5",
+            provider="anthropic",
+            tier="capable",
         )
 
         assert response.model_used == "claude-sonnet-3-5"
@@ -117,7 +130,11 @@ class TestLLMResponseBackwardCompatibility:
     def test_cost_alias(self):
         """Test cost property alias"""
         response = LLMResponse(
-            content="Test", model_id="test", provider="test", tier="cheap", cost_estimate=0.005
+            content="Test",
+            model_id="test",
+            provider="test",
+            tier="cheap",
+            cost_estimate=0.005,
         )
 
         assert response.cost == pytest.approx(0.005)
@@ -172,7 +189,9 @@ class TestExecutionContext:
     def test_execution_context_with_routing_hints(self):
         """Test ExecutionContext with provider/tier hints"""
         context = ExecutionContext(
-            task_type="summarize", provider_hint="anthropic", tier_hint="cheap"
+            task_type="summarize",
+            provider_hint="anthropic",
+            tier_hint="cheap",
         )
 
         assert context.task_type == "summarize"
@@ -233,7 +252,11 @@ class TestLLMResponseCalculations:
     def test_latency_tracking(self):
         """Test latency measurement"""
         response = LLMResponse(
-            content="Fast response", model_id="test", provider="test", tier="cheap", latency_ms=1250
+            content="Fast response",
+            model_id="test",
+            provider="test",
+            tier="cheap",
+            latency_ms=1250,
         )
 
         assert response.latency_ms == 1250
@@ -258,7 +281,7 @@ class TestExecutionContextMetadata:
         context = ExecutionContext(
             workflow_name="fault-tolerant-workflow",
             metadata={
-                "fallback_policy": {"fallback_model": "claude-haiku", "fallback_on_timeout": True}
+                "fallback_policy": {"fallback_model": "claude-haiku", "fallback_on_timeout": True},
             },
         )
 

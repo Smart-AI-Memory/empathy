@@ -1,5 +1,4 @@
-"""
-CLI for Project Index
+"""CLI for Project Index
 
 Commands for generating, querying, and reporting on the project index.
 
@@ -120,13 +119,13 @@ Examples:
     # Execute command
     if args.command == "refresh":
         return cmd_refresh(index, args)
-    elif args.command == "summary":
+    if args.command == "summary":
         return cmd_summary(index, args)
-    elif args.command == "report":
+    if args.command == "report":
         return cmd_report(index, args)
-    elif args.command == "query":
+    if args.command == "query":
         return cmd_query(index, args)
-    elif args.command == "file":
+    if args.command == "file":
         return cmd_file(index, args)
 
     return 0

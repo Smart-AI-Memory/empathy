@@ -1,5 +1,4 @@
-"""
-Base Wizard Class
+"""Base Wizard Class
 
 All wizards inherit from this base class and leverage the Empathy Framework
 to provide empathetic, context-aware assistance.
@@ -82,19 +81,18 @@ class WizardOutput:
 
 
 class BaseWizard(ABC):
-    """
-    Base class for all Coach wizards
+    """Base class for all Coach wizards
 
     Each wizard leverages the Empathy Framework to provide context-aware,
     empathetic assistance for specific types of tasks.
     """
 
     def __init__(self, config: EmpathyConfig | None = None):
-        """
-        Initialize wizard with Empathy Framework
+        """Initialize wizard with Empathy Framework
 
         Args:
             config: Optional EmpathyConfig for customization
+
         """
         self.config = config or EmpathyConfig()
         self.empathy = EmpathyOS(
@@ -106,33 +104,30 @@ class BaseWizard(ABC):
 
     @abstractmethod
     def can_handle(self, task: WizardTask) -> float:
-        """
-        Determine if this wizard can handle the task
+        """Determine if this wizard can handle the task
 
         Args:
             task: WizardTask to evaluate
 
         Returns:
             Confidence score 0.0-1.0
+
         """
-        pass
 
     @abstractmethod
     def execute(self, task: WizardTask) -> WizardOutput:
-        """
-        Execute the wizard's primary function
+        """Execute the wizard's primary function
 
         Args:
             task: WizardTask to execute
 
         Returns:
             WizardOutput with results
+
         """
-        pass
 
     def _apply_empathy_level(self, task: WizardTask, content: str) -> str:
-        """
-        Apply appropriate empathy level based on task complexity
+        """Apply appropriate empathy level based on task complexity
 
         Args:
             task: Current task
@@ -140,12 +135,14 @@ class BaseWizard(ABC):
 
         Returns:
             Empathy-enhanced content
+
         """
         # Determine appropriate empathy level based on risk and role
         if task.risk_tolerance == "low" or task.role in ["pm", "team_lead"]:
             # High-stakes: Use Level 4 (Anticipatory)
             result = self.empathy.level4_anticipatory(
-                content, context={"role": task.role, "risk": task.risk_tolerance}
+                content,
+                context={"role": task.role, "risk": task.risk_tolerance},
             )
         elif "bug" in task.task.lower() or "error" in task.task.lower():
             # Problem-solving: Use Level 3 (Proactive)
@@ -157,14 +154,14 @@ class BaseWizard(ABC):
         return result["response"]
 
     def _extract_constraints(self, task: WizardTask) -> dict[str, Any]:
-        """
-        Extract constraints from task (cognitive empathy)
+        """Extract constraints from task (cognitive empathy)
 
         Args:
             task: Task to analyze
 
         Returns:
             Dict of identified constraints
+
         """
         constraints = {
             "role": task.role,
@@ -181,14 +178,14 @@ class BaseWizard(ABC):
         return constraints
 
     def _assess_emotional_state(self, task: WizardTask) -> dict[str, Any]:
-        """
-        Assess emotional context (emotional empathy)
+        """Assess emotional context (emotional empathy)
 
         Args:
             task: Task to analyze
 
         Returns:
             Dict with emotional assessment
+
         """
         emotional_state = {"pressure": "normal", "urgency": "normal", "stress_indicators": []}
 
@@ -212,14 +209,14 @@ class BaseWizard(ABC):
         return emotional_state
 
     def _generate_anticipatory_actions(self, task: WizardTask) -> list[str]:
-        """
-        Generate proactive suggestions (anticipatory empathy)
+        """Generate proactive suggestions (anticipatory empathy)
 
         Args:
             task: Task to analyze
 
         Returns:
             List of anticipatory actions
+
         """
         actions = []
 

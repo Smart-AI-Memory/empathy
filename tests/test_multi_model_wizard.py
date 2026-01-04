@@ -1,5 +1,4 @@
-"""
-Comprehensive tests for MultiModelWizard.
+"""Comprehensive tests for MultiModelWizard.
 
 Tests cover:
 - Initialization and configuration
@@ -319,7 +318,7 @@ class TestRecommendations:
                 "impact": "high",
                 "prevention_steps": ["Step 1", "Step 2", "Step 3"],
                 "personal_experience": "We learned this the hard way.",
-            }
+            },
         ]
 
         recommendations = wizard._generate_recommendations([], predictions)
@@ -337,7 +336,7 @@ class TestRecommendations:
                 "impact": "high",
                 "prevention_steps": ["Step 1"],
                 "personal_experience": "Our personal learning",
-            }
+            },
         ]
 
         recommendations = wizard._generate_recommendations([], predictions)
@@ -352,7 +351,7 @@ class TestRecommendations:
                 "alert": "Low impact alert",
                 "impact": "low",
                 "prevention_steps": ["Step"],
-            }
+            },
         ]
 
         recommendations = wizard._generate_recommendations([], predictions)

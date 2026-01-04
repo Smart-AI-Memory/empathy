@@ -1,5 +1,4 @@
-"""
-Circuit Breaker Pattern Implementation
+"""Circuit Breaker Pattern Implementation
 
 Prevents cascading failures by stopping calls to failing services.
 
@@ -45,8 +44,7 @@ class CircuitOpenError(Exception):
 
 @dataclass
 class CircuitBreaker:
-    """
-    Circuit breaker implementation.
+    """Circuit breaker implementation.
 
     Tracks failures and opens circuit when threshold is exceeded.
     """
@@ -178,8 +176,7 @@ def circuit_breaker(
     excluded_exceptions: tuple[type[Exception], ...] | None = None,
     fallback: Callable[..., T] | None = None,
 ) -> Callable:
-    """
-    Decorator to wrap a function with circuit breaker protection.
+    """Decorator to wrap a function with circuit breaker protection.
 
     Args:
         name: Circuit breaker name (defaults to function name)
@@ -197,6 +194,7 @@ def circuit_breaker(
         @circuit_breaker(fallback=lambda: {"status": "degraded"})
         async def get_status():
             ...
+
     """
     if excluded_exceptions is None:
         excluded_exceptions = ()

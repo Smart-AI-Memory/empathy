@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Code Review Workflow Example
+"""Code Review Workflow Example
 
 Demonstrates tiered code analysis using the 3-tier model system:
 1. Haiku (cheap): Classify change type (bug fix, feature, refactor)
@@ -45,7 +44,9 @@ async def review_simple_change():
 """
 
     result = await workflow.execute(
-        diff=diff, files_changed=["src/utils.py", "tests/test_utils.py"], is_core_module=False
+        diff=diff,
+        files_changed=["src/utils.py", "tests/test_utils.py"],
+        is_core_module=False,
     )
 
     _print_result(result, "Simple Bug Fix")

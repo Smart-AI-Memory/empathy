@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Smart Team Quickstart - Multi-Agent Project Analyzer
+"""Smart Team Quickstart - Multi-Agent Project Analyzer
 
 This is NOT a "hello world" - it's a genuinely useful tool.
 
@@ -155,10 +154,9 @@ class ArchitectAgent:
             if re.search(pattern, desc_lower, re.IGNORECASE):
                 # Determine complexity based on co-occurring terms
                 complexity = "medium"
-                if key == "auth" and "oauth" in desc_lower:
-                    complexity = "high"
-                elif key == "database" and any(
-                    x in desc_lower for x in ["scale", "distributed", "replica"]
+                if (key == "auth" and "oauth" in desc_lower) or (
+                    key == "database"
+                    and any(x in desc_lower for x in ["scale", "distributed", "replica"])
                 ):
                     complexity = "high"
                 elif key == "ui" and "responsive" in desc_lower:
@@ -166,7 +164,7 @@ class ArchitectAgent:
 
                 found_components.append(key)
                 components.append(
-                    Component(name=name, description=desc, complexity=complexity, dependencies=[])
+                    Component(name=name, description=desc, complexity=complexity, dependencies=[]),
                 )
 
         # Add dependencies based on common patterns
@@ -197,7 +195,8 @@ class ArchitectAgent:
 
         # Signal completion
         self.empathy.send_signal(
-            "analysis_complete", {"agent": self.agent_id, "components_found": len(components)}
+            "analysis_complete",
+            {"agent": self.agent_id, "components_found": len(components)},
         )
 
         return components
@@ -229,7 +228,7 @@ class CriticAgent:
                     severity="high",
                     mitigation="Use established auth libraries (Passport, Auth0). Never store plaintext passwords.",
                     affects_components=["Authentication"],
-                )
+                ),
             )
 
         if any(c.name == "Data Layer" for c in components):
@@ -239,7 +238,7 @@ class CriticAgent:
                     severity="medium",
                     mitigation="Design schema migrations from day one. Use versioned migrations.",
                     affects_components=["Data Layer"],
-                )
+                ),
             )
 
         if any(c.name == "Payment Processing" for c in components):
@@ -249,7 +248,7 @@ class CriticAgent:
                     severity="critical",
                     mitigation="Use Stripe/PayPal APIs - never store card numbers. Implement proper error handling for failed payments.",
                     affects_components=["Payment Processing"],
-                )
+                ),
             )
 
         if any(c.name == "Shopping Cart" for c in components):
@@ -259,7 +258,7 @@ class CriticAgent:
                     severity="medium",
                     mitigation="Persist cart state server-side. Implement recovery emails. Handle concurrent modifications.",
                     affects_components=["Shopping Cart"],
-                )
+                ),
             )
 
         if any(c.name == "Inventory System" for c in components):
@@ -269,7 +268,7 @@ class CriticAgent:
                     severity="high",
                     mitigation="Use database transactions for stock updates. Implement optimistic locking. Test concurrent purchases.",
                     affects_components=["Inventory System"],
-                )
+                ),
             )
 
         if any(c.name == "Real-Time System" for c in components):
@@ -279,7 +278,7 @@ class CriticAgent:
                     severity="medium",
                     mitigation="Plan for horizontal scaling (Redis pub/sub). Handle reconnection gracefully. Test with many concurrent connections.",
                     affects_components=["Real-Time System"],
-                )
+                ),
             )
 
         if any(c.name == "File Storage" for c in components):
@@ -289,7 +288,7 @@ class CriticAgent:
                     severity="high",
                     mitigation="Validate file types server-side. Scan for malware. Use CDN/S3 - don't store on app server.",
                     affects_components=["File Storage"],
-                )
+                ),
             )
 
         if len(components) > 4:
@@ -299,7 +298,7 @@ class CriticAgent:
                     severity="medium",
                     mitigation="Prioritize MVP. Build core functionality first, add features incrementally.",
                     affects_components=[c.name for c in components[:2]],
-                )
+                ),
             )
 
         if high_complexity_components:
@@ -309,7 +308,7 @@ class CriticAgent:
                     severity="high",
                     mitigation="Consider breaking into smaller services or using proven frameworks.",
                     affects_components=high_complexity_components,
-                )
+                ),
             )
 
         if "scale" in desc_lower or "million" in desc_lower:
@@ -319,7 +318,7 @@ class CriticAgent:
                     severity="medium",
                     mitigation="Build for current needs first. Design for scale, implement when needed.",
                     affects_components=["All"],
-                )
+                ),
             )
 
         # Always add at least one risk (there's always something)
@@ -330,7 +329,7 @@ class CriticAgent:
                     severity="low",
                     mitigation="Document specific requirements before building. Define success criteria.",
                     affects_components=["Core Logic"],
-                )
+                ),
             )
 
         # Store findings for implementer
@@ -340,13 +339,14 @@ class CriticAgent:
                 "count": len(risks),
                 "high_severity": [r.title for r in risks if r.severity in ["high", "critical"]],
                 "blocked_components": list(
-                    {c for r in risks for c in r.affects_components if r.severity == "high"}
+                    {c for r in risks for c in r.affects_components if r.severity == "high"},
                 ),
             },
         )
 
         self.empathy.send_signal(
-            "analysis_complete", {"agent": self.agent_id, "risks_found": len(risks)}
+            "analysis_complete",
+            {"agent": self.agent_id, "risks_found": len(risks)},
         )
 
         return risks
@@ -360,7 +360,10 @@ class ImplementerAgent:
         self.agent_id = "implementer"
 
     def analyze(
-        self, description: str, components: list[Component], risks: list[Risk]
+        self,
+        description: str,
+        components: list[Component],
+        risks: list[Risk],
     ) -> list[Step]:
         """Generate concrete first steps based on components and risks."""
         steps = []
@@ -381,7 +384,7 @@ class ImplementerAgent:
                 action="Set up project structure and version control",
                 rationale="Foundation for all other work. Enables collaboration and rollback.",
                 estimated_effort="quick",
-            )
+            ),
         )
         step_num += 1
 
@@ -393,7 +396,7 @@ class ImplementerAgent:
                     action=f"Research and plan mitigation for: {high_risks[0]}",
                     rationale="Addressing high risks early prevents costly rework later.",
                     estimated_effort="moderate",
-                )
+                ),
             )
             step_num += 1
 
@@ -401,7 +404,8 @@ class ImplementerAgent:
         independent = [c for c in components if not c.dependencies and c.name not in blocked]
         if independent:
             easiest = min(
-                independent, key=lambda c: {"low": 0, "medium": 1, "high": 2}[c.complexity]
+                independent,
+                key=lambda c: {"low": 0, "medium": 1, "high": 2}[c.complexity],
             )
             steps.append(
                 Step(
@@ -409,7 +413,7 @@ class ImplementerAgent:
                     action=f"Implement {easiest.name}: {easiest.description}",
                     rationale=f"No dependencies, {easiest.complexity} complexity. Quick win builds momentum.",
                     estimated_effort="moderate" if easiest.complexity != "low" else "quick",
-                )
+                ),
             )
             step_num += 1
 
@@ -421,7 +425,7 @@ class ImplementerAgent:
                     action="Set up authentication with a proven library",
                     rationale="Many features depend on auth. Using a library reduces security risk.",
                     estimated_effort="moderate",
-                )
+                ),
             )
             step_num += 1
 
@@ -433,7 +437,7 @@ class ImplementerAgent:
                     action="Design database schema with migrations",
                     rationale="Data model shapes everything else. Migrations enable safe changes.",
                     estimated_effort="moderate",
-                )
+                ),
             )
             step_num += 1
 
@@ -444,7 +448,7 @@ class ImplementerAgent:
                 action="Write tests for first implemented component",
                 rationale="Early testing catches issues before they compound. Sets quality standard.",
                 estimated_effort="quick",
-            )
+            ),
         )
 
         # Store final synthesis
@@ -458,15 +462,15 @@ class ImplementerAgent:
         )
 
         self.empathy.send_signal(
-            "analysis_complete", {"agent": self.agent_id, "steps_generated": len(steps)}
+            "analysis_complete",
+            {"agent": self.agent_id, "steps_generated": len(steps)},
         )
 
         return steps
 
 
 def analyze_project(description: str, verbose: bool = True) -> ProjectAnalysis:
-    """
-    Analyze a project description using a team of coordinating agents.
+    """Analyze a project description using a team of coordinating agents.
 
     Args:
         description: What you want to build
@@ -474,6 +478,7 @@ def analyze_project(description: str, verbose: bool = True) -> ProjectAnalysis:
 
     Returns:
         ProjectAnalysis with components, risks, and recommended steps
+
     """
     # Initialize shared memory - gracefully fall back to mock if Redis unavailable
     try:

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Research Synthesis Workflow Example
+"""Research Synthesis Workflow Example
 
 Demonstrates cost-optimized multi-source research using the 3-tier model system:
 1. Haiku (cheap): Summarize each source document
@@ -48,7 +47,8 @@ async def main():
     print("-" * 40)
 
     result = await workflow.execute(
-        sources=sources, question="What are the emerging trends in AI safety and alignment?"
+        sources=sources,
+        question="What are the emerging trends in AI safety and alignment?",
     )
 
     # Display results

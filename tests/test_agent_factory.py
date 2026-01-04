@@ -1,5 +1,4 @@
-"""
-Tests for Agent Factory
+"""Tests for Agent Factory
 
 Tests the universal agent factory's core functionality including:
 - Framework detection and selection
@@ -205,7 +204,9 @@ class TestAgentFactory:
         agent2 = factory.create_agent(name="a2")
 
         workflow = factory.create_workflow(
-            name="test_workflow", agents=[agent1, agent2], mode="sequential"
+            name="test_workflow",
+            agents=[agent1, agent2],
+            mode="sequential",
         )
 
         assert workflow.config.name == "test_workflow"
@@ -294,7 +295,8 @@ class TestNativeWorkflow:
         agent2 = adapter.create_agent(AgentConfig(name="a2"))
 
         workflow = adapter.create_workflow(
-            WorkflowConfig(name="seq", mode="sequential"), [agent1, agent2]
+            WorkflowConfig(name="seq", mode="sequential"),
+            [agent1, agent2],
         )
 
         result = await workflow.run("Start")
@@ -315,7 +317,8 @@ class TestNativeWorkflow:
         agent2 = adapter.create_agent(AgentConfig(name="a2"))
 
         workflow = adapter.create_workflow(
-            WorkflowConfig(name="par", mode="parallel"), [agent1, agent2]
+            WorkflowConfig(name="par", mode="parallel"),
+            [agent1, agent2],
         )
 
         result = await workflow.run("Input")

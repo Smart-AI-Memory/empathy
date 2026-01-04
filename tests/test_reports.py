@@ -1,5 +1,4 @@
-"""
-Tests for src/empathy_os/project_index/reports.py
+"""Tests for src/empathy_os/project_index/reports.py
 
 Tests the ReportGenerator class which creates various reports
 from project index data including test gap, staleness, coverage,
@@ -50,7 +49,9 @@ class TestReportGeneratorInit:
         records = [
             FileRecord(path="src/a.py", name="a.py", category=FileCategory.SOURCE),
             FileRecord(
-                path="config/settings.json", name="settings.json", category=FileCategory.CONFIG
+                path="config/settings.json",
+                name="settings.json",
+                category=FileCategory.CONFIG,
             ),
             FileRecord(path="assets/logo.png", name="logo.png", category=FileCategory.ASSET),
         ]

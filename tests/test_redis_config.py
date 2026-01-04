@@ -1,5 +1,4 @@
-"""
-Tests for Redis Configuration Module
+"""Tests for Redis Configuration Module
 
 Tests cover:
 - URL parsing (redis:// and rediss://)

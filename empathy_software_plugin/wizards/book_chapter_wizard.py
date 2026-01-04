@@ -1,5 +1,4 @@
-"""
-Book Chapter Wizard - Level 4 Anticipatory Empathy
+"""Book Chapter Wizard - Level 4 Anticipatory Empathy
 
 Transforms technical documentation into polished book chapters.
 
@@ -26,8 +25,7 @@ from empathy_os.plugins import BaseWizard
 
 
 class BookChapterWizard(BaseWizard):
-    """
-    Level 4 Anticipatory: Transforms technical docs into book chapters.
+    """Level 4 Anticipatory: Transforms technical docs into book chapters.
 
     Key Insight from Experience:
     When writing the MemDocs/Empathy book, we discovered that existing
@@ -85,8 +83,7 @@ class BookChapterWizard(BaseWizard):
         ]
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze source document and generate transformation plan.
+        """Analyze source document and generate transformation plan.
 
         Returns a complete blueprint for chapter creation.
         """
@@ -107,7 +104,10 @@ class BookChapterWizard(BaseWizard):
 
         # Generate transformation plan
         transformation_plan = await self._create_transformation_plan(
-            elements, chapter_num, chapter_title, book_context
+            elements,
+            chapter_num,
+            chapter_title,
+            book_context,
         )
 
         # Level 4: Predict potential issues
@@ -118,7 +118,11 @@ class BookChapterWizard(BaseWizard):
 
         # Generate draft content
         draft = await self._generate_draft(
-            elements, outline, chapter_num, chapter_title, book_context
+            elements,
+            outline,
+            chapter_num,
+            chapter_title,
+            book_context,
         )
 
         return {
@@ -165,7 +169,7 @@ class BookChapterWizard(BaseWizard):
                 {
                     "level": len(match.group(1)),
                     "text": match.group(2).strip(),
-                }
+                },
             )
         return headings
 
@@ -179,7 +183,7 @@ class BookChapterWizard(BaseWizard):
                     "language": match.group(1) or "text",
                     "code": match.group(2).strip(),
                     "lines": len(match.group(2).strip().split("\n")),
-                }
+                },
             )
         return blocks
 
@@ -218,12 +222,11 @@ class BookChapterWizard(BaseWizard):
         code_ratio = content.count("```") / max(1, len(content.split()) / 100)
         if code_ratio > 2:
             return "high_code"
-        elif "architecture" in content.lower() or "system" in content.lower():
+        if "architecture" in content.lower() or "system" in content.lower():
             return "architectural"
-        elif len(content.split()) < 500:
+        if len(content.split()) < 500:
             return "brief"
-        else:
-            return "standard"
+        return "standard"
 
     async def _create_transformation_plan(
         self,
@@ -261,12 +264,11 @@ class BookChapterWizard(BaseWizard):
         """Determine transformation approach based on content."""
         if elements["complexity"] == "high_code":
             return "code_first: Lead with examples, explain after"
-        elif elements["complexity"] == "architectural":
+        if elements["complexity"] == "architectural":
             return "concept_first: Explain architecture, then show implementation"
-        elif elements["complexity"] == "brief":
+        if elements["complexity"] == "brief":
             return "expansion: Significantly expand with examples and context"
-        else:
-            return "balanced: Mix concepts and code throughout"
+        return "balanced: Mix concepts and code throughout"
 
     def _map_headings(self, headings: list) -> list[dict]:
         """Map source headings to chapter sections."""
@@ -279,7 +281,7 @@ class BookChapterWizard(BaseWizard):
                         "source": h["text"],
                         "target_section": f"Section {section_num}: {h['text']}",
                         "recommendation": "Keep and expand",
-                    }
+                    },
                 )
                 section_num += 1
         return mapped
@@ -289,10 +291,9 @@ class BookChapterWizard(BaseWizard):
         source_words = elements["word_count"]
         if source_words < 500:
             return f"High expansion needed: {source_words} → ~3000 words (6x)"
-        elif source_words < 1500:
+        if source_words < 1500:
             return f"Moderate expansion: {source_words} → ~3500 words (2-3x)"
-        else:
-            return f"Light expansion: {source_words} → ~4000 words (1.5x)"
+        return f"Light expansion: {source_words} → ~4000 words (1.5x)"
 
     async def _predict_transformation_issues(
         self,
@@ -314,7 +315,7 @@ class BookChapterWizard(BaseWizard):
                     "probability": "high",
                     "impact": "medium",
                     "prevention": "Add additional examples during transformation",
-                }
+                },
             )
 
         # Check for missing metrics
@@ -329,7 +330,7 @@ class BookChapterWizard(BaseWizard):
                     "probability": "high",
                     "impact": "medium",
                     "prevention": "Add relevant metrics from project data",
-                }
+                },
             )
 
         # Check for concept density
@@ -344,7 +345,7 @@ class BookChapterWizard(BaseWizard):
                     "probability": "medium",
                     "impact": "high",
                     "prevention": "Focus on 8-10 core concepts, defer others",
-                }
+                },
             )
 
         # Check for missing examples
@@ -359,7 +360,7 @@ class BookChapterWizard(BaseWizard):
                     "probability": "high",
                     "impact": "high",
                     "prevention": "Create 2-3 relatable use cases",
-                }
+                },
             )
 
         return predictions

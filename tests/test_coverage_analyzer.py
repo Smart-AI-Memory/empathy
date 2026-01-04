@@ -1,5 +1,4 @@
-"""
-Test Coverage Analyzer
+"""Test Coverage Analyzer
 
 Tests the coverage analysis module for the Enhanced Testing Wizard.
 
@@ -116,7 +115,7 @@ class TestCoverageReport:
                 branches_covered=8,
                 branches_missing=[],
                 percentage=80.0,
-            )
+            ),
         }
 
         report = CoverageReport(
@@ -311,7 +310,7 @@ class TestCoverageAnalyzer:
                     },
                     "missing_lines": [10, 20, 30],
                     "missing_branches": {"15": [0, 1], "25": [1]},
-                }
+                },
             },
             "meta": {"timestamp": "2024-01-20T10:30:00"},
         }

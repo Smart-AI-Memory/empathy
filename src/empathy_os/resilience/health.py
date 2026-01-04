@@ -1,5 +1,4 @@
-"""
-Health Check Module
+"""Health Check Module
 
 Provides system health monitoring and status reporting.
 
@@ -72,8 +71,7 @@ class SystemHealth:
 
 
 class HealthCheck:
-    """
-    Health check manager for monitoring system components.
+    """Health check manager for monitoring system components.
 
     Example:
         health = HealthCheck(version="3.1.0")
@@ -90,6 +88,7 @@ class HealthCheck:
 
         status = await health.run_all()
         print(status.to_dict())
+
     """
 
     def __init__(self, version: str = "unknown"):
@@ -104,8 +103,7 @@ class HealthCheck:
         timeout: float = 10.0,
         critical: bool = False,
     ) -> Callable:
-        """
-        Decorator to register a health check.
+        """Decorator to register a health check.
 
         Args:
             name: Name of the health check
@@ -117,6 +115,7 @@ class HealthCheck:
         - Return False for unhealthy
         - Raise exception for error
         - Return dict with 'healthy' key for details
+
         """
 
         def decorator(func: Callable) -> Callable:
@@ -155,7 +154,7 @@ class HealthCheck:
                     status=status,
                     latency_ms=latency,
                 )
-            elif isinstance(result, dict):
+            if isinstance(result, dict):
                 healthy = result.get("healthy", True)
                 status = HealthStatus.HEALTHY if healthy else HealthStatus.UNHEALTHY
                 return HealthCheckResult(
@@ -165,12 +164,11 @@ class HealthCheck:
                     latency_ms=latency,
                     details=result,
                 )
-            else:
-                return HealthCheckResult(
-                    name=name,
-                    status=HealthStatus.HEALTHY,
-                    latency_ms=latency,
-                )
+            return HealthCheckResult(
+                name=name,
+                status=HealthStatus.HEALTHY,
+                latency_ms=latency,
+            )
 
         except asyncio.TimeoutError:
             return HealthCheckResult(

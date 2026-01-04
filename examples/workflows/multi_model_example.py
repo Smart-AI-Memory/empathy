@@ -1,5 +1,4 @@
-"""
-Multi-Model Architecture Example
+"""Multi-Model Architecture Example
 
 Demonstrates the unified multi-model architecture including:
 - Model Registry usage
@@ -188,7 +187,7 @@ def demo_telemetry():
 
         # Also add workflow runs for analytics
         for i, (wf, cost) in enumerate(
-            [("code_review", 0.09), ("deploy", 0.01), ("analysis", 0.12), ("triage", 0.002)]
+            [("code_review", 0.09), ("deploy", 0.01), ("analysis", 0.12), ("triage", 0.002)],
         ):
             run = WorkflowRunRecord(
                 run_id=f"run-{i}",

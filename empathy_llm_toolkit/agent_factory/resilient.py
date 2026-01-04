@@ -1,5 +1,4 @@
-"""
-Resilient Agent Wrapper
+"""Resilient Agent Wrapper
 
 Applies production-ready resilience patterns (circuit breaker, retry, timeout,
 fallback) to any agent created by the Agent Factory.
@@ -64,7 +63,7 @@ class ResilienceConfig:
         default_factory=lambda: {
             "output": "Service temporarily unavailable",
             "metadata": {"fallback": True},
-        }
+        },
     )
 
     @classmethod
@@ -81,8 +80,7 @@ class ResilienceConfig:
 
 
 class ResilientAgent(BaseAgent):
-    """
-    Agent wrapper that applies resilience patterns.
+    """Agent wrapper that applies resilience patterns.
 
     Wraps any BaseAgent implementation with:
     - Circuit breaker: Prevents cascading failures
@@ -95,12 +93,12 @@ class ResilientAgent(BaseAgent):
     """
 
     def __init__(self, agent: BaseAgent, config: ResilienceConfig | None = None):
-        """
-        Initialize resilient agent wrapper.
+        """Initialize resilient agent wrapper.
 
         Args:
             agent: The underlying agent to wrap
             config: Resilience configuration (uses defaults if not provided)
+
         """
         # Initialize with wrapped agent's config
         super().__init__(agent.config)
@@ -128,8 +126,7 @@ class ResilientAgent(BaseAgent):
                 logger.warning("empathy_os.resilience not available, circuit breaker disabled")
 
     async def invoke(self, input_data: str | dict, context: dict | None = None) -> dict:
-        """
-        Invoke the agent with resilience patterns applied.
+        """Invoke the agent with resilience patterns applied.
 
         Args:
             input_data: User input or structured data
@@ -142,6 +139,7 @@ class ResilientAgent(BaseAgent):
             CircuitOpenError: If circuit breaker is open
             asyncio.TimeoutError: If operation times out and no fallback
             Exception: If all retries exhausted and no fallback
+
         """
         config = self._resilience_config
 
@@ -189,8 +187,7 @@ class ResilientAgent(BaseAgent):
             raise
 
     async def stream(self, input_data: str | dict, context: dict | None = None):
-        """
-        Stream agent response with resilience patterns.
+        """Stream agent response with resilience patterns.
 
         Note: Streaming has limited resilience support (timeout only).
         Circuit breaker and retry work at the full response level.
@@ -257,7 +254,7 @@ class ResilientAgent(BaseAgent):
                         actual_delay = min(actual_delay, max_delay)
                         logger.debug(
                             f"Agent {self.name} attempt {attempt + 1} failed, "
-                            f"retrying in {actual_delay:.2f}s: {e}"
+                            f"retrying in {actual_delay:.2f}s: {e}",
                         )
                         await asyncio.sleep(actual_delay)
                         delay = min(delay * backoff_factor, max_delay)

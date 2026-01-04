@@ -1,5 +1,4 @@
-"""
-Healthcare Patient Handoff Protocol (Simulated)
+"""Healthcare Patient Handoff Protocol (Simulated)
 
 This code represents a typical patient handoff procedure
 with CRITICAL GAPS that cause failures.
@@ -10,8 +9,7 @@ Licensed under Fair Source 0.9 (converts to Apache 2.0 on January 1, 2029)
 
 
 class PatientHandoff:
-    """
-    Patient handoff during shift change or transfer
+    """Patient handoff during shift change or transfer
 
     WARNING: This protocol has known vulnerabilities that
     lead to information loss and patient safety risks.
@@ -25,8 +23,7 @@ class PatientHandoff:
         self.critical_info_transferred = False
 
     def perform_handoff(self, patient_data: dict):
-        """
-        Perform patient handoff during shift change
+        """Perform patient handoff during shift change
 
         CRITICAL GAP #1: No explicit verification step
         CRITICAL GAP #2: Assumes receiving nurse understands everything
@@ -58,8 +55,7 @@ class PatientHandoff:
 
 
 def shift_change_handoff(outgoing_patients: list, incoming_nurse: str):
-    """
-    Handle handoff for all patients during shift change
+    """Handle handoff for all patients during shift change
 
     PROBLEM: Time pressure leads to incomplete handoffs
     PROBLEM: No standardized checklist
@@ -68,7 +64,9 @@ def shift_change_handoff(outgoing_patients: list, incoming_nurse: str):
     for patient in outgoing_patients:
         # Quick verbal handoff under time pressure
         handoff = PatientHandoff(
-            patient_id=patient["id"], from_nurse=patient["current_nurse"], to_nurse=incoming_nurse
+            patient_id=patient["id"],
+            from_nurse=patient["current_nurse"],
+            to_nurse=incoming_nurse,
         )
 
         # CRITICAL VULNERABILITY: No verification loop
@@ -84,8 +82,7 @@ def shift_change_handoff(outgoing_patients: list, incoming_nurse: str):
 
 
 def patient_transfer_to_icu(patient_data: dict):
-    """
-    Transfer patient to ICU
+    """Transfer patient to ICU
 
     CRITICAL GAP: Handoff between departments without verification
     """

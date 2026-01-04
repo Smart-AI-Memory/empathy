@@ -1,5 +1,4 @@
-"""
-Test Maintenance Workflow - Automatic Test Lifecycle Management
+"""Test Maintenance Workflow - Automatic Test Lifecycle Management
 
 Integrates with Project Index to:
 - Track files requiring tests
@@ -105,8 +104,7 @@ class TestMaintenancePlan:
 
 
 class TestMaintenanceWorkflow:
-    """
-    Workflow for automatic test lifecycle management.
+    """Workflow for automatic test lifecycle management.
 
     Integrates with Project Index to track and manage tests.
     Can run automatically on file events or manually on demand.
@@ -132,8 +130,7 @@ class TestMaintenanceWorkflow:
             self.index.refresh()
 
     async def run(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Run the test maintenance workflow.
+        """Run the test maintenance workflow.
 
         Context options:
             mode: "analyze" | "execute" | "auto" | "report"
@@ -270,7 +267,6 @@ class TestMaintenanceWorkflow:
         event: str,
     ) -> TestPlanItem | None:
         """Create a plan item for a specific file."""
-
         # Determine action based on event and file state
         if event == "missing_tests":
             action = TestAction.CREATE
@@ -348,7 +344,7 @@ class TestMaintenanceWorkflow:
                     "item_count": auto_count,
                     "estimated_time": f"{auto_count * 5}-{auto_count * 15} minutes",
                     "command": "python -m empathy_os.workflows.test_maintenance auto",
-                }
+                },
             )
 
         # Option 2: Critical only
@@ -362,7 +358,7 @@ class TestMaintenanceWorkflow:
                     "item_count": critical_count,
                     "estimated_time": f"{critical_count * 10}-{critical_count * 20} minutes",
                     "command": "python -m empathy_os.workflows.test_maintenance execute --priority critical",
-                }
+                },
             )
 
         # Option 3: Create new tests only
@@ -376,7 +372,7 @@ class TestMaintenanceWorkflow:
                     "item_count": create_count,
                     "estimated_time": f"{create_count * 10}-{create_count * 20} minutes",
                     "command": "python -m empathy_os.workflows.test_maintenance execute --action create",
-                }
+                },
             )
 
         # Option 4: Update stale tests only
@@ -390,7 +386,7 @@ class TestMaintenanceWorkflow:
                     "item_count": update_count,
                     "estimated_time": f"{update_count * 5}-{update_count * 10} minutes",
                     "command": "python -m empathy_os.workflows.test_maintenance execute --action update",
-                }
+                },
             )
 
         # Option 5: Manual review
@@ -401,7 +397,7 @@ class TestMaintenanceWorkflow:
                 "description": "Review the plan and select specific items",
                 "item_count": len(plan.items),
                 "command": "python -m empathy_os.workflows.test_maintenance analyze --json",
-            }
+            },
         )
 
         return options
@@ -453,7 +449,7 @@ class TestMaintenanceWorkflow:
                         "file": item.file_path,
                         "action": item.action.value,
                         "success": success,
-                    }
+                    },
                 )
 
             except Exception as e:
@@ -465,7 +461,7 @@ class TestMaintenanceWorkflow:
                         "action": item.action.value,
                         "success": False,
                         "error": str(e),
-                    }
+                    },
                 )
 
         return {
@@ -560,7 +556,7 @@ class TestMaintenanceWorkflow:
                 "plan_item": item.to_dict() if item else None,
             }
 
-        elif record.test_requirement.value == "required":
+        if record.test_requirement.value == "required":
             item = self._create_plan_item_for_file(record, event="modified")
             return {
                 "status": "needs_tests",

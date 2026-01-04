@@ -1,5 +1,4 @@
-"""
-Simple Example: Using Empathy Framework without Writing Wizards
+"""Simple Example: Using Empathy Framework without Writing Wizards
 
 This is the easiest way to use the Empathy Framework.
 No need to create custom wizards - just interact with the LLM
@@ -13,8 +12,7 @@ from empathy_llm_toolkit.core import EmpathyLLM
 
 
 async def simple_example():
-    """
-    Dead simple usage - just talk to it!
+    """Dead simple usage - just talk to it!
 
     The framework automatically:
     - Starts at Level 1 (reactive)
@@ -22,7 +20,6 @@ async def simple_example():
     - Detects patterns and becomes proactive
     - Predicts future needs (Level 4)
     """
-
     # Create an instance (uses Claude by default)
     llm = EmpathyLLM(
         provider="anthropic",  # or "openai", "local"

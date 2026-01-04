@@ -1,5 +1,4 @@
-"""
-Profiler Output Parsers
+"""Profiler Output Parsers
 
 Parses output from various profilers (cProfile, perf, Chrome DevTools, etc.)
 
@@ -26,8 +25,7 @@ class ProfilerType(Enum):
 
 @dataclass
 class FunctionProfile:
-    """
-    Standardized function profile data.
+    """Standardized function profile data.
 
     Universal format across all profilers.
     """
@@ -73,8 +71,7 @@ class BaseProfilerParser:
 
 
 class CProfileParser(BaseProfilerParser):
-    """
-    Parse Python cProfile output.
+    """Parse Python cProfile output.
 
     Handles both text and pstats format.
     """
@@ -115,7 +112,7 @@ class CProfileParser(BaseProfilerParser):
                         cumulative_time=float(cumtime),
                         percent_total=0.0,  # Calculate later
                         profiler=self.profiler_name,
-                    )
+                    ),
                 )
 
         # Calculate percentages
@@ -133,8 +130,7 @@ class CProfileParser(BaseProfilerParser):
 
 
 class ChromeDevToolsParser(BaseProfilerParser):
-    """
-    Parse Chrome DevTools Performance profile.
+    """Parse Chrome DevTools Performance profile.
 
     JSON format from Chrome DevTools Performance tab.
     """
@@ -183,7 +179,7 @@ class ChromeDevToolsParser(BaseProfilerParser):
                             (data["total_time"] / total_time * 100) if total_time > 0 else 0
                         ),
                         profiler=self.profiler_name,
-                    )
+                    ),
                 )
 
             profiles.sort(key=lambda p: p.total_time, reverse=True)
@@ -195,8 +191,7 @@ class ChromeDevToolsParser(BaseProfilerParser):
 
 
 class SimpleJSONProfilerParser(BaseProfilerParser):
-    """
-    Parse simple JSON profiler format.
+    """Parse simple JSON profiler format.
 
     For custom or simplified profiling data.
     """
@@ -225,7 +220,7 @@ class SimpleJSONProfilerParser(BaseProfilerParser):
                         cumulative_time=func.get("cumulative_time", 0.0),
                         percent_total=func.get("percent", 0.0),
                         profiler=self.profiler_name,
-                    )
+                    ),
                 )
 
             profiles.sort(key=lambda p: p.total_time, reverse=True)
@@ -253,15 +248,14 @@ class ProfilerParserFactory:
         if not parser_class:
             raise ValueError(
                 f"Unsupported profiler: {profiler_type}. "
-                f"Supported: {', '.join(cls._parsers.keys())}"
+                f"Supported: {', '.join(cls._parsers.keys())}",
             )
 
         return parser_class()
 
 
 def parse_profiler_output(profiler_type: str, data: str) -> list[FunctionProfile]:
-    """
-    Convenience function to parse profiler output.
+    """Convenience function to parse profiler output.
 
     Args:
         profiler_type: Type of profiler ("cprofile", "chrome_devtools", etc.)
@@ -274,6 +268,7 @@ def parse_profiler_output(profiler_type: str, data: str) -> list[FunctionProfile
         >>> profiles = parse_profiler_output("cprofile", profile_data)
         >>> for profile in profiles[:5]:  # Top 5 slowest
         ...     print(f"{profile.function_name}: {profile.total_time:.3f}s")
+
     """
     parser = ProfilerParserFactory.create(profiler_type)
     return parser.parse(data)

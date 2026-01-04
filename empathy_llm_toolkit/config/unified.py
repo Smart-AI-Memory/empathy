@@ -1,5 +1,4 @@
-"""
-Unified Agent Configuration
+"""Unified Agent Configuration
 
 Single source of truth for all agent, wizard, and workflow configuration.
 Uses Pydantic for validation and type safety.
@@ -53,8 +52,7 @@ class AgentOperationError(Exception):
 
 
 class UnifiedAgentConfig(BaseModel):
-    """
-    Unified configuration model for all agents.
+    """Unified configuration model for all agents.
 
     This is the single source of truth for agent configuration,
     replacing duplicate definitions across the codebase.
@@ -66,6 +64,7 @@ class UnifiedAgentConfig(BaseModel):
             model_tier=ModelTier.CAPABLE,
             empathy_level=4
         )
+
     """
 
     # Identity
@@ -75,10 +74,12 @@ class UnifiedAgentConfig(BaseModel):
 
     # Model selection
     model_tier: ModelTier = Field(
-        default=ModelTier.CAPABLE, description="Model tier for cost optimization"
+        default=ModelTier.CAPABLE,
+        description="Model tier for cost optimization",
     )
     model_override: str | None = Field(
-        default=None, description="Specific model ID to use (overrides tier)"
+        default=None,
+        description="Specific model ID to use (overrides tier)",
     )
     provider: Provider = Field(default=Provider.ANTHROPIC, description="LLM provider")
 
@@ -114,12 +115,14 @@ class UnifiedAgentConfig(BaseModel):
 
     # Framework-specific options
     framework_options: dict[str, Any] = Field(
-        default_factory=dict, description="Framework-specific configuration"
+        default_factory=dict,
+        description="Framework-specific configuration",
     )
 
     # Extensions
     extra: dict[str, Any] = Field(
-        default_factory=dict, description="Additional custom configuration"
+        default_factory=dict,
+        description="Additional custom configuration",
     )
 
     @field_validator("role")
@@ -129,11 +132,11 @@ class UnifiedAgentConfig(BaseModel):
         return v.lower().strip()
 
     def get_model_id(self) -> str:
-        """
-        Get the actual model ID based on tier and provider.
+        """Get the actual model ID based on tier and provider.
 
         Returns:
             Model identifier string
+
         """
         if self.model_override:
             return self.model_override
@@ -163,11 +166,11 @@ class UnifiedAgentConfig(BaseModel):
         )
 
     def for_book_production(self) -> "BookProductionConfig":
-        """
-        Convert to BookProductionConfig for backward compatibility.
+        """Convert to BookProductionConfig for backward compatibility.
 
         Returns:
             BookProductionConfig instance
+
         """
         return BookProductionConfig(
             agent_config=self,
@@ -220,8 +223,7 @@ class RedisConfig(BaseModel):
 
 
 class BookProductionConfig(BaseModel):
-    """
-    Unified configuration for book production agents.
+    """Unified configuration for book production agents.
 
     Combines UnifiedAgentConfig with production-specific settings.
     This replaces the duplicate AgentConfig in agents/book_production/base.py.

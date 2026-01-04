@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Cross-Platform Compatibility Checker for Empathy Framework
+"""Cross-Platform Compatibility Checker for Empathy Framework
 
 Scans the codebase for common cross-platform issues:
 - Hardcoded Unix paths (/var/log, /tmp, etc.)
@@ -76,7 +75,8 @@ HARDCODED_PATHS = [
 ]
 
 OPEN_WITHOUT_ENCODING = re.compile(
-    r"\bopen\s*\([^)]*\)\s*(?:as\s+\w+)?(?!\s*#.*encoding)", re.MULTILINE
+    r"\bopen\s*\([^)]*\)\s*(?:as\s+\w+)?(?!\s*#.*encoding)",
+    re.MULTILINE,
 )
 
 ASYNCIO_RUN = re.compile(r"\basyncio\.run\s*\(")
@@ -108,7 +108,7 @@ def scan_file(filepath: Path, result: ScanResult) -> None:
                             message=message,
                             severity="warning",
                             suggestion="Use empathy_os.platform_utils for platform-appropriate paths",
-                        )
+                        ),
                     )
 
         # Check for open() without encoding
@@ -137,7 +137,7 @@ def scan_file(filepath: Path, result: ScanResult) -> None:
                             message="open() without encoding specified",
                             severity="warning",
                             suggestion='Add encoding="utf-8" parameter',
-                        )
+                        ),
                     )
 
         # Check for asyncio.run() usage
@@ -155,7 +155,7 @@ def scan_file(filepath: Path, result: ScanResult) -> None:
                             message="asyncio.run() without setup_asyncio_policy()",
                             severity="info",
                             suggestion="Call setup_asyncio_policy() before asyncio.run() for Windows compatibility",
-                        )
+                        ),
                     )
 
         # Check for os.path operations
@@ -170,7 +170,7 @@ def scan_file(filepath: Path, result: ScanResult) -> None:
                             message=message,
                             severity="info",
                             suggestion="Use pathlib.Path for cross-platform path handling",
-                        )
+                        ),
                     )
 
         result.files_scanned += 1
@@ -183,7 +183,7 @@ def scan_file(filepath: Path, result: ScanResult) -> None:
                 category="scan_error",
                 message=f"Could not scan file: {e}",
                 severity="error",
-            )
+            ),
         )
 
 
@@ -286,7 +286,7 @@ def format_json_report(result: ScanResult) -> str:
 def main() -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="Check codebase for cross-platform compatibility issues"
+        description="Check codebase for cross-platform compatibility issues",
     )
     parser.add_argument(
         "path",

@@ -1,5 +1,4 @@
-"""
-Tests for empathy_software_plugin/wizards/code_review_wizard.py
+"""Tests for empathy_software_plugin/wizards/code_review_wizard.py
 
 Tests the CodeReviewWizard including:
 - ReviewFinding dataclass
@@ -422,7 +421,7 @@ class TestAnalyze:
             {
                 "files": [],
                 "severity_threshold": "error",
-            }
+            },
         )
         # All findings should be error severity or higher
         for finding in result["findings"]:
@@ -707,7 +706,7 @@ class TestFormatTerminalOutput:
                     "suggestion": "Fix it",
                     "confidence": 0.8,
                     "severity": "warning",
-                }
+                },
             ],
             "summary": {"total_findings": 1, "files_reviewed": 1},
         }

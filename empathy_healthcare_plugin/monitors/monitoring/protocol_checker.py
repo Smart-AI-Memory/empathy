@@ -1,5 +1,4 @@
-"""
-Protocol Checker
+"""Protocol Checker
 
 Checks patient sensor data against clinical protocol criteria.
 
@@ -53,8 +52,7 @@ class ProtocolDeviation:
 
 @dataclass
 class ProtocolCheckResult:
-    """
-    Result of checking patient against protocol.
+    """Result of checking patient against protocol.
 
     This is like the output of running a linter.
     """
@@ -70,8 +68,7 @@ class ProtocolCheckResult:
 
 
 class ProtocolChecker:
-    """
-    Checks patient state against clinical protocol.
+    """Checks patient state against clinical protocol.
 
     This is the "linter engine" for healthcare.
     """
@@ -85,8 +82,7 @@ class ProtocolChecker:
         patient_data: dict[str, Any],
         intervention_status: dict[str, Any] | None = None,
     ) -> ProtocolCheckResult:
-        """
-        Check if patient data meets protocol criteria.
+        """Check if patient data meets protocol criteria.
 
         Args:
             protocol: Clinical protocol to check against
@@ -101,8 +97,8 @@ class ProtocolChecker:
             >>> result = checker.check_compliance(sepsis_protocol, patient)
             >>> if result.protocol_activated:
             ...     print(f"ALERT: {result.recommendation}")
-        """
 
+        """
         # Step 1: Evaluate screening criteria
         criteria_results = []
         total_points = 0
@@ -132,12 +128,18 @@ class ProtocolChecker:
 
         # Step 4: Determine alert level
         alert_level = self._determine_alert_level(
-            protocol_activated, deviations, total_points, protocol.screening_threshold
+            protocol_activated,
+            deviations,
+            total_points,
+            protocol.screening_threshold,
         )
 
         # Step 5: Generate recommendation
         recommendation = self._generate_recommendation(
-            protocol, protocol_activated, deviations, criteria_results
+            protocol,
+            protocol_activated,
+            deviations,
+            criteria_results,
         )
 
         return ProtocolCheckResult(
@@ -152,10 +154,11 @@ class ProtocolChecker:
         )
 
     def _evaluate_criterion(
-        self, criterion: ProtocolCriterion, patient_data: dict[str, Any]
+        self,
+        criterion: ProtocolCriterion,
+        patient_data: dict[str, Any],
     ) -> CriterionResult:
         """Evaluate a single criterion"""
-
         actual_value = patient_data.get(criterion.parameter)
 
         if actual_value is None:
@@ -180,30 +183,29 @@ class ProtocolChecker:
 
     def _evaluate_condition(self, actual: Any, condition: str, expected: Any) -> bool:
         """Evaluate a condition (like <=, >=, ==, etc.)"""
-
         if condition == "<=":
             return actual <= expected
-        elif condition == ">=":
+        if condition == ">=":
             return actual >= expected
-        elif condition == "==":
+        if condition == "==":
             return actual == expected
-        elif condition == "!=":
+        if condition == "!=":
             return actual != expected
-        elif condition == "<":
+        if condition == "<":
             return actual < expected
-        elif condition == ">":
+        if condition == ">":
             return actual > expected
-        elif condition == "altered":
+        if condition == "altered":
             # Special case for mental status
             return actual != "normal" if isinstance(actual, str) else actual < 15
-        else:
-            return False
+        return False
 
     def _check_intervention_status(
-        self, intervention: ProtocolIntervention, status: dict[str, Any]
+        self,
+        intervention: ProtocolIntervention,
+        status: dict[str, Any],
     ) -> ProtocolDeviation | None:
         """Check if intervention has been completed"""
-
         completed = status.get("completed", False)
         _time_completed = status.get("time_completed")
         time_due = status.get("time_due")
@@ -237,7 +239,6 @@ class ProtocolChecker:
         threshold: int,
     ) -> str:
         """Determine alert level"""
-
         if not protocol_activated:
             return "NONE"
 
@@ -263,7 +264,6 @@ class ProtocolChecker:
         criteria_results: list[CriterionResult],
     ) -> str:
         """Generate actionable recommendation"""
-
         if not activated:
             met_criteria = [c for c in criteria_results if c.met]
             if met_criteria:

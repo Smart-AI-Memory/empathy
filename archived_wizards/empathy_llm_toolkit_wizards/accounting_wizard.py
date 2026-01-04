@@ -1,5 +1,4 @@
-"""
-Accounting/Tax Wizard - Financial Data Privacy Compliant AI Assistant
+"""Accounting/Tax Wizard - Financial Data Privacy Compliant AI Assistant
 
 Specialized wizard for accounting and tax services with enhanced financial PII protection,
 SOX compliance, and comprehensive audit logging.
@@ -49,8 +48,7 @@ ACCOUNTING_PII_PATTERNS = [
 
 
 class AccountingWizard(BaseWizard):
-    """
-    Financial data privacy compliant accounting and tax AI assistant
+    """Financial data privacy compliant accounting and tax AI assistant
 
     Implements defense-in-depth security for financial records:
     1. Enhanced financial PII detection and scrubbing
@@ -76,6 +74,7 @@ class AccountingWizard(BaseWizard):
         ...     user_input="Help me analyze this financial statement",
         ...     user_id="cpa@firm.com"
         ... )
+
     """
 
     def __init__(
@@ -83,12 +82,12 @@ class AccountingWizard(BaseWizard):
         llm: EmpathyLLM,
         custom_pii_patterns: list[str] | None = None,
     ):
-        """
-        Initialize accounting/tax wizard
+        """Initialize accounting/tax wizard
 
         Args:
             llm: EmpathyLLM instance (security should be enabled)
             custom_pii_patterns: Additional firm-specific PII patterns
+
         """
         pii_patterns = ACCOUNTING_PII_PATTERNS.copy()
 
@@ -115,12 +114,12 @@ class AccountingWizard(BaseWizard):
         if not llm.enable_security:
             logger.warning(
                 "AccountingWizard initialized with security DISABLED. "
-                "SOX/IRS compliance requires enable_security=True in EmpathyLLM."
+                "SOX/IRS compliance requires enable_security=True in EmpathyLLM.",
             )
 
         logger.info(
             f"AccountingWizard initialized: {len(pii_patterns)} PII patterns, "
-            f"empathy level={config.default_empathy_level}, security={llm.enable_security}"
+            f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
     def _build_system_prompt(self) -> str:

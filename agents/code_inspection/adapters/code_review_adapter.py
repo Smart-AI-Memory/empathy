@@ -1,5 +1,4 @@
-"""
-Code Review Adapter
+"""Code Review Adapter
 
 Wraps empathy_software_plugin.wizards.code_review_wizard
 and converts its output to the unified ToolResult format.
@@ -41,22 +40,21 @@ EXTENSION_TO_LANGUAGE = {
 
 
 def get_file_language(file_path: str) -> str:
-    """
-    Detect programming language from file extension.
+    """Detect programming language from file extension.
 
     Args:
         file_path: Path to the file
 
     Returns:
         Language identifier (e.g., "python", "javascript") or "unknown"
+
     """
     ext = Path(file_path).suffix.lower()
     return EXTENSION_TO_LANGUAGE.get(ext, "unknown")
 
 
 class CodeReviewAdapter:
-    """
-    Adapter for the Code Review Wizard.
+    """Adapter for the Code Review Wizard.
 
     Detects anti-patterns from historical bugs, reviews code against
     known issue patterns.
@@ -71,13 +69,13 @@ class CodeReviewAdapter:
         config: dict[str, Any] | None = None,
         security_context: list[dict] | None = None,
     ):
-        """
-        Initialize the adapter.
+        """Initialize the adapter.
 
         Args:
             project_root: Root directory of the project
             config: Configuration overrides
             security_context: Security findings to inform review
+
         """
         self.project_root = Path(project_root)
         self.config = config or {}
@@ -88,8 +86,7 @@ class CodeReviewAdapter:
         target_files: list[str] | None = None,
         security_informed: bool = True,
     ) -> ToolResult:
-        """
-        Run code review and return unified result.
+        """Run code review and return unified result.
 
         Args:
             target_files: Specific files to review (default: all changed)
@@ -97,6 +94,7 @@ class CodeReviewAdapter:
 
         Returns:
             ToolResult with code review findings
+
         """
         start_time = time.time()
 

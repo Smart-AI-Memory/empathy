@@ -1,5 +1,4 @@
-"""
-Secure MemDocs Integration - Example Usage
+"""Secure MemDocs Integration - Example Usage
 
 Demonstrates Phase 2 enterprise privacy integration with:
 - PII scrubbing
@@ -94,7 +93,8 @@ def example_pii_scrubbing():
 
     # Retrieve to see scrubbed content
     pattern = integration.retrieve_pattern(
-        pattern_id=result["pattern_id"], user_id="hr@company.com"
+        pattern_id=result["pattern_id"],
+        user_id="hr@company.com",
     )
 
     print("\nRetrieved content (PII scrubbed):")
@@ -129,7 +129,7 @@ def example_secrets_blocking():
         print("ERROR: Secrets should have been blocked!")
     except SecurityError as e:
         print("Storage blocked (as expected):")
-        print(f"  Reason: {str(e)}")
+        print(f"  Reason: {e!s}")
         print("  Action: Secrets detected and storage prevented")
         print("  Audit: Security violation logged")
 
@@ -175,7 +175,8 @@ def example_healthcare_sensitive():
 
     # Retrieve (only creator can access)
     pattern = integration.retrieve_pattern(
-        pattern_id=result["pattern_id"], user_id="nurse@hospital.com"
+        pattern_id=result["pattern_id"],
+        user_id="nurse@hospital.com",
     )
 
     print("\nPattern retrieved and decrypted successfully")
@@ -184,7 +185,8 @@ def example_healthcare_sensitive():
     # Try to retrieve as different user (will be blocked)
     try:
         pattern = integration.retrieve_pattern(
-            pattern_id=result["pattern_id"], user_id="other_user@hospital.com"
+            pattern_id=result["pattern_id"],
+            user_id="other_user@hospital.com",
         )
         print("ERROR: Access should have been denied!")
     except Exception:

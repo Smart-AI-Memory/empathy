@@ -1,5 +1,4 @@
-"""
-Tests for wizards_consolidated/healthcare/sbar_wizard.py
+"""Tests for wizards_consolidated/healthcare/sbar_wizard.py
 
 Tests the SBAR Wizard step configuration.
 Note: Full integration tests require FastAPI dependencies.

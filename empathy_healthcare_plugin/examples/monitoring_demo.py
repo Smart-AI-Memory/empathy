@@ -1,5 +1,4 @@
-"""
-Clinical Protocol Monitoring - Live Demonstration
+"""Clinical Protocol Monitoring - Live Demonstration
 
 Shows protocol-based healthcare monitoring using the linting pattern.
 
@@ -90,11 +89,11 @@ async def demo_basic_monitoring():
     current_vitals = PATIENT_TIMELINE[-1]["vitals"]
 
     sensor_data = json.dumps(
-        {"patient_id": "12345", "timestamp": "2024-01-20T15:00:00Z", "vitals": current_vitals}
+        {"patient_id": "12345", "timestamp": "2024-01-20T15:00:00Z", "vitals": current_vitals},
     )
 
     result = await monitor.analyze(
-        {"patient_id": "12345", "sensor_data": sensor_data, "sensor_format": "simple_json"}
+        {"patient_id": "12345", "sensor_data": sensor_data, "sensor_format": "simple_json"},
     )
 
     print("\n📊 Current Vitals:")
@@ -133,16 +132,16 @@ async def demo_trajectory_prediction():
                 "patient_id": "12345",
                 "timestamp": f"2024-01-20T{entry['time']}:00Z",
                 "vitals": entry["vitals"],
-            }
+            },
         )
 
         result = await monitor.analyze({"patient_id": "12345", "sensor_data": sensor_data})
 
         print(
-            f"\n{entry['time']} - {['Stable', 'Early Changes', 'Concerning', 'SEPSIS CRITERIA MET'][i]}"
+            f"\n{entry['time']} - {['Stable', 'Early Changes', 'Concerning', 'SEPSIS CRITERIA MET'][i]}",
         )
         print(
-            f"  HR: {entry['vitals']['hr']}, BP: {entry['vitals']['systolic_bp']}/{entry['vitals']['diastolic_bp']}, RR: {entry['vitals']['respiratory_rate']}"
+            f"  HR: {entry['vitals']['hr']}, BP: {entry['vitals']['systolic_bp']}/{entry['vitals']['diastolic_bp']}, RR: {entry['vitals']['respiratory_rate']}",
         )
 
     # Show final trajectory analysis
@@ -185,7 +184,7 @@ async def demo_full_workflow():
                 "patient_id": "12345",
                 "timestamp": f"2024-01-20T{entry['time']}:00Z",
                 "vitals": entry["vitals"],
-            }
+            },
         )
 
         await monitor.analyze({"patient_id": "12345", "sensor_data": sensor_data})
@@ -211,10 +210,10 @@ async def demo_full_workflow():
                     "patient_id": "12345",
                     "timestamp": "2024-01-20T15:00:00Z",
                     "vitals": PATIENT_TIMELINE[-1]["vitals"],
-                }
+                },
             ),
             "intervention_status": intervention_status,
-        }
+        },
     )
 
     print("\n📝 Protocol Compliance:")
@@ -231,7 +230,7 @@ async def demo_full_workflow():
         print(f"  Type: {pred['type']}")
         print(f"  Severity: {pred['severity']}")
         print(f"  {pred['description']}")
-        if "time_horizon" in pred and pred["time_horizon"]:
+        if pred.get("time_horizon"):
             print(f"  Time Horizon: {pred['time_horizon']}")
 
     print("\n" + "=" * 70)
@@ -262,7 +261,7 @@ async def demo_the_beautiful_parallel():
     print("\n" + "LEVEL 5 SYSTEMS EMPATHY".center(70))
     print("-" * 70)
     print("The SAME PATTERN works across domains!")
-    print("")
+    print()
     print("  Protocol = Configuration")
     print("  Current State = Code/Sensor Data")
     print("  Checker = Linter/Monitor")

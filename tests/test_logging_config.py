@@ -1,5 +1,4 @@
-"""
-Tests for Logging Configuration Module
+"""Tests for Logging Configuration Module
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9

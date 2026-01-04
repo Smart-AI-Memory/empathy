@@ -1,5 +1,4 @@
-"""
-Security Audit Workflow
+"""Security Audit Workflow
 
 OWASP-focused security scan with intelligent vulnerability assessment.
 Integrates with team security decisions to filter known false positives.
@@ -174,8 +173,7 @@ SECURITY_PATTERNS = {
 
 
 class SecurityAuditWorkflow(BaseWorkflow):
-    """
-    OWASP-focused security audit with team decision integration.
+    """OWASP-focused security audit with team decision integration.
 
     Scans code for security vulnerabilities while respecting
     team decisions about false positives and accepted risks.
@@ -199,8 +197,7 @@ class SecurityAuditWorkflow(BaseWorkflow):
         crew_config: dict | None = None,
         **kwargs: Any,
     ):
-        """
-        Initialize security audit workflow.
+        """Initialize security audit workflow.
 
         Args:
             patterns_dir: Directory containing security decisions
@@ -208,6 +205,7 @@ class SecurityAuditWorkflow(BaseWorkflow):
             use_crew_for_remediation: Use SecurityAuditCrew for enhanced remediation
             crew_config: Configuration dict for SecurityAuditCrew
             **kwargs: Additional arguments passed to BaseWorkflow
+
         """
         super().__init__(**kwargs)
         self.patterns_dir = patterns_dir
@@ -232,8 +230,7 @@ class SecurityAuditWorkflow(BaseWorkflow):
                 pass
 
     def should_skip_stage(self, stage_name: str, input_data: Any) -> tuple[bool, str | None]:
-        """
-        Skip remediation stage if no critical/high findings.
+        """Skip remediation stage if no critical/high findings.
 
         Args:
             stage_name: Name of the stage to check
@@ -241,6 +238,7 @@ class SecurityAuditWorkflow(BaseWorkflow):
 
         Returns:
             Tuple of (should_skip, reason)
+
         """
         if stage_name == "remediate" and self.skip_remediate_if_clean:
             if not self._has_critical:
@@ -248,23 +246,24 @@ class SecurityAuditWorkflow(BaseWorkflow):
         return False, None
 
     async def run_stage(
-        self, stage_name: str, tier: ModelTier, input_data: Any
+        self,
+        stage_name: str,
+        tier: ModelTier,
+        input_data: Any,
     ) -> tuple[Any, int, int]:
         """Route to specific stage implementation."""
         if stage_name == "triage":
             return await self._triage(input_data, tier)
-        elif stage_name == "analyze":
+        if stage_name == "analyze":
             return await self._analyze(input_data, tier)
-        elif stage_name == "assess":
+        if stage_name == "assess":
             return await self._assess(input_data, tier)
-        elif stage_name == "remediate":
+        if stage_name == "remediate":
             return await self._remediate(input_data, tier)
-        else:
-            raise ValueError(f"Unknown stage: {stage_name}")
+        raise ValueError(f"Unknown stage: {stage_name}")
 
     async def _triage(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Quick scan for common vulnerability patterns.
+        """Quick scan for common vulnerability patterns.
 
         Uses regex patterns to identify potential security issues
         across the codebase for further analysis.
@@ -315,7 +314,8 @@ class SecurityAuditWorkflow(BaseWorkflow):
                                     # Skip command_injection in documentation strings
                                     if vuln_type == "command_injection":
                                         if self._is_documentation_or_string(
-                                            line_content, match.group()
+                                            line_content,
+                                            match.group(),
                                         ):
                                             continue
 
@@ -339,7 +339,7 @@ class SecurityAuditWorkflow(BaseWorkflow):
                                             ),
                                             "owasp": vuln_info["owasp"],
                                             "is_test": is_test_file,
-                                        }
+                                        },
                                     )
                     except OSError:
                         continue
@@ -359,8 +359,7 @@ class SecurityAuditWorkflow(BaseWorkflow):
         )
 
     async def _analyze(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Deep analysis of flagged areas.
+        """Deep analysis of flagged areas.
 
         Filters findings against team decisions and performs
         deeper analysis of genuine security concerns.
@@ -430,8 +429,7 @@ class SecurityAuditWorkflow(BaseWorkflow):
         return analyses.get(vuln_type, "Review for security implications.")
 
     def _is_detection_code(self, line_content: str, match_text: str) -> bool:
-        """
-        Check if a match is actually detection/scanning code, not a vulnerability.
+        """Check if a match is actually detection/scanning code, not a vulnerability.
 
         This prevents false positives when scanning security tools that contain
         patterns like 'if "eval(" in content:' which are detecting vulnerabilities,
@@ -450,8 +448,7 @@ class SecurityAuditWorkflow(BaseWorkflow):
         return False
 
     def _is_fake_credential(self, match_text: str) -> bool:
-        """
-        Check if a matched credential is obviously fake/for testing.
+        """Check if a matched credential is obviously fake/for testing.
 
         This prevents false positives for test fixtures using patterns like
         'AKIAIOSFODNN7EXAMPLE' (AWS official example) or 'test-key-not-real'.
@@ -462,8 +459,7 @@ class SecurityAuditWorkflow(BaseWorkflow):
         return False
 
     def _is_documentation_or_string(self, line_content: str, match_text: str) -> bool:
-        """
-        Check if a command injection match is in documentation or string literals.
+        """Check if a command injection match is in documentation or string literals.
 
         This prevents false positives for:
         - Docstrings describing security issues
@@ -510,8 +506,7 @@ class SecurityAuditWorkflow(BaseWorkflow):
         return False
 
     async def _assess(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Risk scoring and severity classification.
+        """Risk scoring and severity classification.
 
         Calculates overall security risk score and identifies
         critical issues requiring immediate attention.
@@ -576,8 +571,7 @@ class SecurityAuditWorkflow(BaseWorkflow):
         )
 
     async def _remediate(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Generate remediation plan for security issues.
+        """Generate remediation plan for security issues.
 
         Creates actionable remediation steps prioritized by
         severity and grouped by OWASP category.
@@ -607,11 +601,11 @@ class SecurityAuditWorkflow(BaseWorkflow):
         findings_summary = []
         for f in critical:
             findings_summary.append(
-                f"CRITICAL: {f.get('type')} in {f.get('file')}:{f.get('line')} - {f.get('owasp')}"
+                f"CRITICAL: {f.get('type')} in {f.get('file')}:{f.get('line')} - {f.get('owasp')}",
             )
         for f in high:
             findings_summary.append(
-                f"HIGH: {f.get('type')} in {f.get('file')}:{f.get('line')} - {f.get('owasp')}"
+                f"HIGH: {f.get('type')} in {f.get('file')}:{f.get('line')} - {f.get('owasp')}",
             )
 
         # Build input payload for prompt
@@ -683,12 +677,18 @@ Provide a detailed remediation plan with specific fixes."""
             except Exception:
                 # Fall back to legacy _call_llm if executor fails
                 response, input_tokens, output_tokens = await self._call_llm(
-                    tier, system or "", user_message, max_tokens=3000
+                    tier,
+                    system or "",
+                    user_message,
+                    max_tokens=3000,
                 )
         else:
             # Legacy path for backward compatibility
             response, input_tokens, output_tokens = await self._call_llm(
-                tier, system or "", user_message, max_tokens=3000
+                tier,
+                system or "",
+                user_message,
+                max_tokens=3000,
             )
 
         # Parse XML response if enforcement is enabled
@@ -720,16 +720,18 @@ Provide a detailed remediation plan with specific fixes."""
                     "summary": parsed_data.get("summary"),
                     "findings": parsed_data.get("findings", []),
                     "checklist": parsed_data.get("checklist", []),
-                }
+                },
             )
 
         return (result, input_tokens, output_tokens)
 
     async def _get_crew_remediation(
-        self, target: str, findings: list, assessment: dict
+        self,
+        target: str,
+        findings: list,
+        assessment: dict,
     ) -> dict | None:
-        """
-        Get remediation recommendations from SecurityAuditCrew.
+        """Get remediation recommendations from SecurityAuditCrew.
 
         Args:
             target: Path to codebase
@@ -738,6 +740,7 @@ Provide a detailed remediation plan with specific fixes."""
 
         Returns:
             Crew results dict or None if failed
+
         """
         try:
             from empathy_llm_toolkit.agent_factory.crews import (
@@ -781,8 +784,7 @@ Provide a detailed remediation plan with specific fixes."""
             return None
 
     def _merge_crew_remediation(self, llm_response: str, crew_remediation: dict) -> str:
-        """
-        Merge crew remediation recommendations with LLM response.
+        """Merge crew remediation recommendations with LLM response.
 
         Args:
             llm_response: LLM-generated remediation plan
@@ -790,6 +792,7 @@ Provide a detailed remediation plan with specific fixes."""
 
         Returns:
             Merged response with crew enhancements
+
         """
         crew_findings = crew_remediation.get("findings", [])
 
@@ -828,8 +831,7 @@ Provide a detailed remediation plan with specific fixes."""
 
 
 def format_security_report(output: dict) -> str:
-    """
-    Format security audit output as a human-readable report.
+    """Format security audit output as a human-readable report.
 
     This format is designed to be:
     - Easy for humans to read and understand
@@ -841,6 +843,7 @@ def format_security_report(output: dict) -> str:
 
     Returns:
         Formatted report string
+
     """
     lines = []
 

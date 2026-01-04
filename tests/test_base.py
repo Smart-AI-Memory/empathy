@@ -1,5 +1,4 @@
-"""
-Tests for empathy_llm_toolkit/agent_factory/base.py
+"""Tests for empathy_llm_toolkit/agent_factory/base.py
 
 Tests the base classes and enums for the Agent Factory:
 - AgentRole enum

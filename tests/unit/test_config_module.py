@@ -1,5 +1,4 @@
-"""
-Unit tests for config module
+"""Unit tests for config module
 
 Tests EmpathyConfig class including loading from YAML/JSON,
 validation, and environment variable handling.
@@ -74,7 +73,9 @@ class TestEmpathyConfigCustomization:
     def test_custom_persistence_settings(self):
         """Test customizing persistence settings"""
         config = EmpathyConfig(
-            persistence_enabled=False, persistence_backend="json", persistence_path="/custom/path"
+            persistence_enabled=False,
+            persistence_backend="json",
+            persistence_path="/custom/path",
         )
         assert config.persistence_enabled is False
         assert config.persistence_backend == "json"
@@ -128,7 +129,7 @@ user_id: yaml_test_user
 target_level: 5
 confidence_threshold: 0.85
 log_level: DEBUG
-"""
+""",
             )
             yaml_path = f.name
 
@@ -151,7 +152,7 @@ metadata:
   project: empathy_test
   environment: staging
   version: 2.0
-"""
+""",
             )
             yaml_path = f.name
 

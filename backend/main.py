@@ -1,5 +1,4 @@
-"""
-Main entry point for the Empathy Framework Backend API.
+"""Main entry point for the Empathy Framework Backend API.
 FastAPI application with all routes and middleware configured.
 """
 

@@ -1,5 +1,4 @@
-"""
-Comprehensive tests for ClinicalProtocolMonitor
+"""Comprehensive tests for ClinicalProtocolMonitor
 
 Tests cover:
 - Monitor initialization
@@ -42,7 +41,10 @@ def mock_protocol():
     criterion = ProtocolCriterion(parameter="heart_rate", condition=">=90", value=90.0, points=1)
 
     intervention = LoaderIntervention(
-        order=1, action="Blood cultures", timing="within 1 hour", required=True
+        order=1,
+        action="Blood cultures",
+        timing="within 1 hour",
+        required=True,
     )
 
     return ClinicalProtocol(
@@ -61,7 +63,10 @@ def mock_protocol():
 def mock_compliance_result():
     """Mock protocol check result"""
     intervention = ProtocolIntervention(
-        order=1, action="Blood cultures", timing="within 1 hour", required=True
+        order=1,
+        action="Blood cultures",
+        timing="within 1 hour",
+        required=True,
     )
 
     deviation = ProtocolDeviation(
@@ -201,7 +206,10 @@ class TestAnalyzeMethod:
         assert "No active protocol" in result["error"]
 
     async def test_analyze_load_protocol_on_demand(
-        self, mock_protocol, mock_compliance_result, mock_trajectory_prediction
+        self,
+        mock_protocol,
+        mock_compliance_result,
+        mock_trajectory_prediction,
     ):
         """Test that analyze loads protocol if not active"""
         monitor = ClinicalProtocolMonitor()
@@ -209,7 +217,9 @@ class TestAnalyzeMethod:
         with (
             patch.object(monitor.protocol_loader, "load_protocol", return_value=mock_protocol),
             patch.object(
-                monitor.protocol_checker, "check_compliance", return_value=mock_compliance_result
+                monitor.protocol_checker,
+                "check_compliance",
+                return_value=mock_compliance_result,
             ),
             patch.object(
                 monitor.trajectory_analyzer,
@@ -230,7 +240,10 @@ class TestAnalyzeMethod:
             assert "12345" in monitor.active_protocols
 
     async def test_analyze_with_string_sensor_data(
-        self, mock_protocol, mock_compliance_result, mock_trajectory_prediction
+        self,
+        mock_protocol,
+        mock_compliance_result,
+        mock_trajectory_prediction,
     ):
         """Test analysis with string sensor data (JSON)"""
         monitor = ClinicalProtocolMonitor()
@@ -246,7 +259,9 @@ class TestAnalyzeMethod:
                 return_value={"heart_rate": 105},
             ),
             patch.object(
-                monitor.protocol_checker, "check_compliance", return_value=mock_compliance_result
+                monitor.protocol_checker,
+                "check_compliance",
+                return_value=mock_compliance_result,
             ),
             patch.object(
                 monitor.trajectory_analyzer,
@@ -266,7 +281,10 @@ class TestAnalyzeMethod:
             assert "current_vitals" in result
 
     async def test_analyze_full_workflow(
-        self, mock_protocol, mock_compliance_result, mock_trajectory_prediction
+        self,
+        mock_protocol,
+        mock_compliance_result,
+        mock_trajectory_prediction,
     ):
         """Test complete analysis workflow"""
         monitor = ClinicalProtocolMonitor()
@@ -274,7 +292,9 @@ class TestAnalyzeMethod:
 
         with (
             patch.object(
-                monitor.protocol_checker, "check_compliance", return_value=mock_compliance_result
+                monitor.protocol_checker,
+                "check_compliance",
+                return_value=mock_compliance_result,
             ),
             patch.object(
                 monitor.trajectory_analyzer,
@@ -319,7 +339,10 @@ class TestAnalyzeMethod:
             assert "confidence" in result
 
     async def test_analyze_patient_history_storage(
-        self, mock_protocol, mock_compliance_result, mock_trajectory_prediction
+        self,
+        mock_protocol,
+        mock_compliance_result,
+        mock_trajectory_prediction,
     ):
         """Test that patient history is stored correctly"""
         monitor = ClinicalProtocolMonitor()
@@ -327,7 +350,9 @@ class TestAnalyzeMethod:
 
         with (
             patch.object(
-                monitor.protocol_checker, "check_compliance", return_value=mock_compliance_result
+                monitor.protocol_checker,
+                "check_compliance",
+                return_value=mock_compliance_result,
             ),
             patch.object(
                 monitor.trajectory_analyzer,
@@ -349,7 +374,10 @@ class TestAnalyzeMethod:
             assert len(monitor.patient_history["12345"]) == 2
 
     async def test_analyze_history_truncation(
-        self, mock_protocol, mock_compliance_result, mock_trajectory_prediction
+        self,
+        mock_protocol,
+        mock_compliance_result,
+        mock_trajectory_prediction,
     ):
         """Test that history is truncated to 24 hours"""
         monitor = ClinicalProtocolMonitor()
@@ -362,7 +390,9 @@ class TestAnalyzeMethod:
 
         with (
             patch.object(
-                monitor.protocol_checker, "check_compliance", return_value=mock_compliance_result
+                monitor.protocol_checker,
+                "check_compliance",
+                return_value=mock_compliance_result,
             ),
             patch.object(
                 monitor.trajectory_analyzer,
@@ -381,7 +411,9 @@ class TestGenerateAlerts:
     """Test alert generation"""
 
     def test_generate_alerts_protocol_activated(
-        self, mock_compliance_result, mock_trajectory_prediction
+        self,
+        mock_compliance_result,
+        mock_trajectory_prediction,
     ):
         """Test alert generation when protocol is activated"""
         monitor = ClinicalProtocolMonitor()
@@ -395,7 +427,9 @@ class TestGenerateAlerts:
         assert protocol_alerts[0]["severity"] == "high"
 
     def test_generate_alerts_overdue_interventions(
-        self, mock_compliance_result, mock_trajectory_prediction
+        self,
+        mock_compliance_result,
+        mock_trajectory_prediction,
     ):
         """Test alert generation for overdue interventions"""
         monitor = ClinicalProtocolMonitor()
@@ -446,20 +480,27 @@ class TestGenerateRecommendations:
     """Test recommendation generation"""
 
     def test_generate_recommendations_from_compliance(
-        self, mock_protocol, mock_compliance_result, mock_trajectory_prediction
+        self,
+        mock_protocol,
+        mock_compliance_result,
+        mock_trajectory_prediction,
     ):
         """Test recommendations from compliance check"""
         monitor = ClinicalProtocolMonitor()
 
         recommendations = monitor._generate_recommendations(
-            mock_compliance_result, mock_trajectory_prediction, mock_protocol
+            mock_compliance_result,
+            mock_trajectory_prediction,
+            mock_protocol,
         )
 
         assert len(recommendations) > 0
         assert mock_compliance_result.recommendation in recommendations
 
     def test_generate_recommendations_from_trajectory(
-        self, mock_protocol, mock_trajectory_prediction
+        self,
+        mock_protocol,
+        mock_trajectory_prediction,
     ):
         """Test recommendations from trajectory analysis"""
         monitor = ClinicalProtocolMonitor()
@@ -469,7 +510,9 @@ class TestGenerateRecommendations:
         compliance.recommendation = None
 
         recommendations = monitor._generate_recommendations(
-            compliance, mock_trajectory_prediction, mock_protocol
+            compliance,
+            mock_trajectory_prediction,
+            mock_protocol,
         )
 
         # Should include trajectory recommendations
@@ -477,13 +520,18 @@ class TestGenerateRecommendations:
             assert rec in recommendations
 
     def test_generate_recommendations_protocol_monitoring(
-        self, mock_protocol, mock_compliance_result, mock_trajectory_prediction
+        self,
+        mock_protocol,
+        mock_compliance_result,
+        mock_trajectory_prediction,
     ):
         """Test protocol-specific monitoring recommendations"""
         monitor = ClinicalProtocolMonitor()
 
         recommendations = monitor._generate_recommendations(
-            mock_compliance_result, mock_trajectory_prediction, mock_protocol
+            mock_compliance_result,
+            mock_trajectory_prediction,
+            mock_protocol,
         )
 
         # Should include protocol monitoring frequency
@@ -491,7 +539,9 @@ class TestGenerateRecommendations:
         assert len(monitoring_recs) > 0
 
     def test_generate_recommendations_deduplication(
-        self, mock_protocol, mock_trajectory_prediction
+        self,
+        mock_protocol,
+        mock_trajectory_prediction,
     ):
         """Test that duplicate recommendations are removed"""
         monitor = ClinicalProtocolMonitor()
@@ -508,7 +558,9 @@ class TestGenerateRecommendations:
         ]
 
         recommendations = monitor._generate_recommendations(
-            compliance, mock_trajectory_prediction, mock_protocol
+            compliance,
+            mock_trajectory_prediction,
+            mock_protocol,
         )
 
         # Should not have duplicates
@@ -519,7 +571,9 @@ class TestGeneratePredictions:
     """Test Level 4 prediction generation"""
 
     def test_generate_predictions_concerning_trajectory(
-        self, mock_trajectory_prediction, mock_compliance_result
+        self,
+        mock_trajectory_prediction,
+        mock_compliance_result,
     ):
         """Test predictions for concerning trajectory"""
         monitor = ClinicalProtocolMonitor()
@@ -528,7 +582,8 @@ class TestGeneratePredictions:
         mock_compliance_result.deviations = []
 
         predictions = monitor._generate_predictions(
-            mock_trajectory_prediction, mock_compliance_result
+            mock_trajectory_prediction,
+            mock_compliance_result,
         )
 
         deterioration_preds = [p for p in predictions if p["type"] == "patient_deterioration"]
@@ -536,7 +591,9 @@ class TestGeneratePredictions:
         assert deterioration_preds[0]["severity"] == "medium"
 
     def test_generate_predictions_critical_trajectory(
-        self, mock_trajectory_prediction, mock_compliance_result
+        self,
+        mock_trajectory_prediction,
+        mock_compliance_result,
     ):
         """Test predictions for critical trajectory"""
         monitor = ClinicalProtocolMonitor()
@@ -545,7 +602,8 @@ class TestGeneratePredictions:
         mock_compliance_result.deviations = []
 
         predictions = monitor._generate_predictions(
-            mock_trajectory_prediction, mock_compliance_result
+            mock_trajectory_prediction,
+            mock_compliance_result,
         )
 
         deterioration_preds = [p for p in predictions if p["type"] == "patient_deterioration"]
@@ -553,7 +611,9 @@ class TestGeneratePredictions:
         assert deterioration_preds[0]["severity"] == "high"
 
     def test_generate_predictions_protocol_deviation(
-        self, mock_trajectory_prediction, mock_compliance_result
+        self,
+        mock_trajectory_prediction,
+        mock_compliance_result,
     ):
         """Test predictions for protocol deviations"""
         monitor = ClinicalProtocolMonitor()
@@ -562,7 +622,8 @@ class TestGeneratePredictions:
         # mock_compliance_result.deviations already has one deviation
 
         predictions = monitor._generate_predictions(
-            mock_trajectory_prediction, mock_compliance_result
+            mock_trajectory_prediction,
+            mock_compliance_result,
         )
 
         deviation_preds = [p for p in predictions if p["type"] == "protocol_deviation_risk"]

@@ -1,5 +1,4 @@
-"""
-Finance/Banking Wizard - SOX/PCI-DSS Compliant AI Assistant
+"""Finance/Banking Wizard - SOX/PCI-DSS Compliant AI Assistant
 
 Specialized wizard for financial services with enhanced PII protection,
 mandatory encryption, comprehensive audit logging, and SOX/PCI-DSS compliance features.
@@ -54,8 +53,7 @@ FINANCE_PII_PATTERNS = [
 
 
 class FinanceWizard(BaseWizard):
-    """
-    SOX/PCI-DSS compliant financial services AI assistant
+    """SOX/PCI-DSS compliant financial services AI assistant
 
     Implements defense-in-depth security for financial PII:
     1. Enhanced financial PII detection and scrubbing
@@ -81,6 +79,7 @@ class FinanceWizard(BaseWizard):
         ...     user_input="Analyze portfolio for account 123456789",
         ...     user_id="analyst@bank.com"
         ... )
+
     """
 
     def __init__(
@@ -89,13 +88,13 @@ class FinanceWizard(BaseWizard):
         enable_transaction_scrubbing: bool = True,
         custom_pii_patterns: list[str] | None = None,
     ):
-        """
-        Initialize SOX/PCI-DSS compliant finance wizard
+        """Initialize SOX/PCI-DSS compliant finance wizard
 
         Args:
             llm: EmpathyLLM instance (security should be enabled)
             enable_transaction_scrubbing: Scrub transaction IDs
             custom_pii_patterns: Additional institution-specific PII patterns
+
         """
         # Build PII pattern list
         pii_patterns = FINANCE_PII_PATTERNS.copy()
@@ -131,12 +130,12 @@ class FinanceWizard(BaseWizard):
         if not llm.enable_security:
             logger.warning(
                 "FinanceWizard initialized with security DISABLED. "
-                "SOX/PCI-DSS compliance requires enable_security=True in EmpathyLLM."
+                "SOX/PCI-DSS compliance requires enable_security=True in EmpathyLLM.",
             )
 
         logger.info(
             f"FinanceWizard initialized: {len(pii_patterns)} PII patterns, "
-            f"empathy level={config.default_empathy_level}, security={llm.enable_security}"
+            f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
     async def process(
@@ -147,8 +146,7 @@ class FinanceWizard(BaseWizard):
         session_context: dict[str, Any] | None = None,
         account_id: str | None = None,
     ) -> dict[str, Any]:
-        """
-        Process financial request with SOX/PCI-DSS compliance
+        """Process financial request with SOX/PCI-DSS compliance
 
         Args:
             user_input: Financial professional's message (may contain PII)
@@ -164,6 +162,7 @@ class FinanceWizard(BaseWizard):
                 - empathy_level: Level used
                 - compliance: SOX/PCI-DSS compliance status
                 - audit_event_id: Audit trail event ID
+
         """
         # Enhance session context with account ID for audit trail
         if account_id:
@@ -174,7 +173,7 @@ class FinanceWizard(BaseWizard):
         # Log PII access
         self.logger.info(
             f"Financial PII access: user={user_id}, wizard={self.config.name}, "
-            f"account={account_id}, audit=True"
+            f"account={account_id}, audit=True",
         )
 
         # Process through base wizard
@@ -200,7 +199,7 @@ class FinanceWizard(BaseWizard):
         self.logger.info(
             f"Financial processing complete: user={user_id}, "
             f"detected={result['compliance']['pii_detected']}, "
-            f"scrubbed={result['compliance']['pii_scrubbed']}"
+            f"scrubbed={result['compliance']['pii_scrubbed']}",
         )
 
         return result
@@ -249,11 +248,11 @@ Remember: Client privacy and regulatory compliance are paramount. All interactio
         return self.config.pii_patterns.copy()
 
     def get_compliance_status(self) -> dict[str, Any]:
-        """
-        Get SOX/PCI-DSS compliance status for this wizard
+        """Get SOX/PCI-DSS compliance status for this wizard
 
         Returns:
             Dict with compliance checks and recommendations
+
         """
         status = {
             "compliant": True,
@@ -266,14 +265,14 @@ Remember: Client privacy and regulatory compliance are paramount. All interactio
         if not self.llm.enable_security:
             status["compliant"] = False
             status["recommendations"].append(
-                "Enable security in EmpathyLLM (enable_security=True) for SOX/PCI-DSS compliance"
+                "Enable security in EmpathyLLM (enable_security=True) for SOX/PCI-DSS compliance",
             )
 
         # Check 2: Encryption for SENSITIVE data
         status["checks"]["encryption_enabled"] = self.llm.enable_security
         if not status["checks"]["encryption_enabled"]:
             status["recommendations"].append(
-                "Enable encryption for SENSITIVE data (PCI-DSS Requirement 3)"
+                "Enable encryption for SENSITIVE data (PCI-DSS Requirement 3)",
             )
 
         # Check 3: Audit logging
@@ -283,21 +282,21 @@ Remember: Client privacy and regulatory compliance are paramount. All interactio
         if not status["checks"]["audit_logging"]:
             status["compliant"] = False
             status["recommendations"].append(
-                "Enable comprehensive audit logging (SOX §404, PCI-DSS 10.2)"
+                "Enable comprehensive audit logging (SOX §404, PCI-DSS 10.2)",
             )
 
         # Check 4: Financial PII detection
         status["checks"]["pii_detection"] = len(self.config.pii_patterns) >= 8
         if not status["checks"]["pii_detection"]:
             status["recommendations"].append(
-                "Enable comprehensive financial PII detection patterns"
+                "Enable comprehensive financial PII detection patterns",
             )
 
         # Check 5: 7-year retention for SOX
         status["checks"]["retention_policy"] = self.config.retention_days >= 2555  # 7 years
         if not status["checks"]["retention_policy"]:
             status["recommendations"].append(
-                "Set minimum 7-year retention for audit logs (SOX §802)"
+                "Set minimum 7-year retention for audit logs (SOX §802)",
             )
 
         return status

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Full Repository Test
+"""Full Repository Test
 ====================
 
 Runs all three memory-enhanced wizards against the actual Empathy Framework repo.
@@ -42,8 +41,7 @@ def print_section(title: str) -> None:
 
 
 async def stage1_bug_correlation():
-    """
-    Stage 1: Test bug correlation by:
+    """Stage 1: Test bug correlation by:
     1. Seeding realistic bug patterns
     2. Simulating a new bug
     3. Finding historical matches
@@ -145,7 +143,7 @@ async def stage1_bug_correlation():
                 "error_message": test["error_message"],
                 "file_path": test["file_path"],
                 "correlate_with_history": True,
-            }
+            },
         )
 
         results.append(
@@ -154,7 +152,7 @@ async def stage1_bug_correlation():
                 "matches": result["matches_found"],
                 "confidence": result["confidence"],
                 "recommended_fix": result.get("recommended_fix", {}).get("original_fix", "N/A"),
-            }
+            },
         )
 
         print(f"\n  Test: {test['name']}")
@@ -179,9 +177,7 @@ async def stage1_bug_correlation():
 
 
 async def stage2_tech_debt():
-    """
-    Stage 2: Scan entire repo for technical debt
-    """
+    """Stage 2: Scan entire repo for technical debt"""
     print_header("STAGE 2: Tech Debt Trajectory Analysis")
 
     pattern_path = Path("./patterns/repo_test/tech_debt")
@@ -213,7 +209,7 @@ async def stage2_tech_debt():
                 "by_severity": {"low": 120, "medium": 130, "high": 40, "critical": 10},
                 "hotspots": [],
             },
-        ]
+        ],
     }
 
     pattern_path.mkdir(parents=True, exist_ok=True)
@@ -240,7 +236,7 @@ async def stage2_tech_debt():
                 "archived_wizards",
                 "salvaged",
             ],
-        }
+        },
     )
 
     print("\n  📊 CURRENT DEBT:")
@@ -293,9 +289,7 @@ async def stage2_tech_debt():
 
 
 async def stage3_security():
-    """
-    Stage 3: Security scan with false positive learning
-    """
+    """Stage 3: Security scan with false positive learning"""
     print_header("STAGE 3: Security Scan with Learning")
 
     pattern_path = Path("./patterns/repo_test/security")
@@ -330,7 +324,7 @@ async def stage3_security():
                 "decided_at": (datetime.now() - timedelta(days=20)).isoformat(),
                 "applies_to": "pattern",
             },
-        ]
+        ],
     }
 
     pattern_path.mkdir(parents=True, exist_ok=True)
@@ -358,7 +352,7 @@ async def stage3_security():
                 "salvaged",
             ],
             "scan_depth": "standard",
-        }
+        },
     )
 
     print(f"  Raw findings: {result_without['raw_findings_count']}")
@@ -387,7 +381,7 @@ async def stage3_security():
                 "salvaged",
             ],
             "scan_depth": "standard",
-        }
+        },
     )
 
     print(f"  Raw findings: {result_with['raw_findings_count']}")
@@ -440,7 +434,7 @@ async def main():
         """
 Testing all three wizards against the actual Empathy Framework repo.
 This validates that persistent memory features work with real data.
-"""
+""",
     )
 
     results = {}
@@ -460,13 +454,13 @@ This validates that persistent memory features work with real data.
     print("\n  Stage 1 - Bug Correlation:")
     print(f"    Historical matches found: {results['bug_correlation']['total_matches']}")
     print(
-        f"    Memory correlation: {'✓ WORKING' if results['bug_correlation']['total_matches'] > 0 else '✗ FAILED'}"
+        f"    Memory correlation: {'✓ WORKING' if results['bug_correlation']['total_matches'] > 0 else '✗ FAILED'}",
     )
 
     print("\n  Stage 2 - Tech Debt Trajectory:")
     print(f"    Debt items found: {results['tech_debt']['total_items']}")
     print(
-        f"    Trajectory enabled: {'✓ WORKING' if results['tech_debt']['trajectory'] else '✗ FAILED'}"
+        f"    Trajectory enabled: {'✓ WORKING' if results['tech_debt']['trajectory'] else '✗ FAILED'}",
     )
     if results["tech_debt"]["trajectory"]:
         print(f"    Current trend: {results['tech_debt']['trajectory']['trend']}")
@@ -476,7 +470,7 @@ This validates that persistent memory features work with real data.
     print(f"    After learning: {results['security']['after_learning']}")
     print(f"    Noise reduction: {results['security']['noise_reduction_percent']:.1f}%")
     print(
-        f"    Learning applied: {'✓ WORKING' if results['security']['suppressed'] > 0 else '✗ FAILED'}"
+        f"    Learning applied: {'✓ WORKING' if results['security']['suppressed'] > 0 else '✗ FAILED'}",
     )
 
     # Overall verdict

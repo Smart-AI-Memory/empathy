@@ -1,5 +1,4 @@
-"""
-Trust Circuit Breaker
+"""Trust Circuit Breaker
 
 A cross-domain transfer of the circuit breaker pattern from reliability engineering
 to human-AI trust management. Just as circuit breakers protect systems from cascading
@@ -29,8 +28,7 @@ logger = logging.getLogger(__name__)
 
 
 class TrustState(Enum):
-    """
-    Trust states mapped from circuit breaker states.
+    """Trust states mapped from circuit breaker states.
 
     Circuit Breaker → Trust Mapping:
     - CLOSED (normal) → FULL_AUTONOMY (AI acts freely)
@@ -106,8 +104,7 @@ class TrustRecoveryEvent:
 
 @dataclass
 class TrustConfig:
-    """
-    Configuration for trust circuit breaker.
+    """Configuration for trust circuit breaker.
 
     Mapped from circuit breaker config with trust-specific adaptations.
     """
@@ -135,7 +132,7 @@ class TrustConfig:
             TrustDamageType.SLOW_RESPONSE: 0.3,  # Minor
             TrustDamageType.MISUNDERSTOOD_INTENT: 0.8,
             TrustDamageType.REPETITIVE_ERROR: 2.0,  # Very damaging
-        }
+        },
     )
 
     # Domain-specific settings
@@ -150,7 +147,7 @@ class TrustConfig:
             "git_commit",
             "external_api_call",
             "code_execution",
-        ]
+        ],
     )
 
 
@@ -160,8 +157,7 @@ class TrustConfig:
 
 
 class TrustCircuitBreaker:
-    """
-    Circuit breaker for AI autonomy based on user trust.
+    """Circuit breaker for AI autonomy based on user trust.
 
     Cross-domain transfer: Uses the same state machine as reliability
     circuit breakers, but applied to trust management.
@@ -208,8 +204,7 @@ class TrustCircuitBreaker:
 
     @property
     def damage_score(self) -> float:
-        """
-        Calculate current damage score (weighted sum of recent events).
+        """Calculate current damage score (weighted sum of recent events).
 
         Higher score = more damage. Threshold triggers state change.
         """
@@ -241,14 +236,14 @@ class TrustCircuitBreaker:
     # =========================================================================
 
     def should_require_confirmation(self, action: str) -> bool:
-        """
-        Check if an action requires user confirmation.
+        """Check if an action requires user confirmation.
 
         Args:
             action: The action being considered (e.g., "file_write", "suggest")
 
         Returns:
             True if confirmation should be requested
+
         """
         current_state = self.state
 
@@ -265,8 +260,7 @@ class TrustCircuitBreaker:
         return True  # Default to safe
 
     def get_autonomy_level(self) -> dict[str, Any]:
-        """
-        Get detailed autonomy level information for UI display.
+        """Get detailed autonomy level information for UI display.
 
         Returns dict with state, allowed actions, and recovery progress.
         """
@@ -284,7 +278,7 @@ class TrustCircuitBreaker:
                     e
                     for e in self._damage_events
                     if e.timestamp > datetime.now() - timedelta(hours=24)
-                ]
+                ],
             ),
         }
 
@@ -328,8 +322,7 @@ class TrustCircuitBreaker:
         severity: float = 1.0,
         user_explicit: bool = False,
     ) -> TrustState:
-        """
-        Record an event that damaged trust.
+        """Record an event that damaged trust.
 
         This is analogous to recording a failure in the reliability circuit breaker.
 
@@ -341,6 +334,7 @@ class TrustCircuitBreaker:
 
         Returns:
             The new trust state after recording
+
         """
         if isinstance(event_type, str):
             event_type = TrustDamageType(event_type)
@@ -355,7 +349,7 @@ class TrustCircuitBreaker:
 
         logger.info(
             f"Trust damage recorded for user {self.user_id}: "
-            f"{event_type.value} (severity={severity})"
+            f"{event_type.value} (severity={severity})",
         )
 
         # Check if we should transition to reduced autonomy
@@ -368,14 +362,13 @@ class TrustCircuitBreaker:
         elif self._state == TrustState.SUPERVISED:
             self._supervised_successes = max(0, self._supervised_successes - 2)
             logger.info(
-                f"Trust damage in supervised mode, successes reset to {self._supervised_successes}"
+                f"Trust damage in supervised mode, successes reset to {self._supervised_successes}",
             )
 
         return self._state
 
     def record_success(self, context: str = "", user_explicit: bool = False) -> TrustState:
-        """
-        Record a successful/positive interaction.
+        """Record a successful/positive interaction.
 
         This is analogous to recording a success in the reliability circuit breaker.
 
@@ -385,6 +378,7 @@ class TrustCircuitBreaker:
 
         Returns:
             The new trust state after recording
+
         """
         event = TrustRecoveryEvent(
             context=context,
@@ -397,7 +391,7 @@ class TrustCircuitBreaker:
             self._supervised_successes += 1
             logger.info(
                 f"Trust success in supervised mode: "
-                f"{self._supervised_successes}/{self.config.supervised_successes_required}"
+                f"{self._supervised_successes}/{self.config.supervised_successes_required}",
             )
 
             if self._supervised_successes >= self.config.supervised_successes_required:
@@ -428,7 +422,7 @@ class TrustCircuitBreaker:
         self._supervised_successes = 0
 
         logger.warning(
-            f"Trust circuit opened for user {self.user_id}: {old_state.value} → {self._state.value}"
+            f"Trust circuit opened for user {self.user_id}: {old_state.value} → {self._state.value}",
         )
 
         if self._on_state_change:
@@ -443,7 +437,7 @@ class TrustCircuitBreaker:
 
         logger.info(
             f"Trust circuit half-opened for user {self.user_id}: "
-            f"{old_state.value} → {self._state.value}"
+            f"{old_state.value} → {self._state.value}",
         )
 
         if self._on_state_change:
@@ -460,7 +454,7 @@ class TrustCircuitBreaker:
         self._damage_events = [e for e in self._damage_events if e.timestamp > cutoff]
 
         logger.info(
-            f"Trust circuit closed for user {self.user_id}: {old_state.value} → {self._state.value}"
+            f"Trust circuit closed for user {self.user_id}: {old_state.value} → {self._state.value}",
         )
 
         if self._on_state_change:
@@ -471,8 +465,7 @@ class TrustCircuitBreaker:
     # =========================================================================
 
     def reset(self) -> None:
-        """
-        Manually reset trust to full autonomy.
+        """Manually reset trust to full autonomy.
 
         Use with caution - this skips the normal recovery process.
         """
@@ -547,7 +540,7 @@ class TrustCircuitBreaker:
                     context=e.get("context", ""),
                     severity=e.get("severity", 1.0),
                     user_explicit=e.get("user_explicit", False),
-                )
+                ),
             )
 
         return instance
@@ -563,8 +556,7 @@ def create_trust_breaker(
     domain: str = "general",
     strict: bool = False,
 ) -> TrustCircuitBreaker:
-    """
-    Create a trust circuit breaker with preset configurations.
+    """Create a trust circuit breaker with preset configurations.
 
     Args:
         user_id: User identifier
@@ -573,6 +565,7 @@ def create_trust_breaker(
 
     Returns:
         Configured TrustCircuitBreaker instance
+
     """
     if strict:
         config = TrustConfig(

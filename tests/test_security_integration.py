@@ -1,5 +1,4 @@
-"""
-Integration tests for Phase 2 Security Controls
+"""Integration tests for Phase 2 Security Controls
 
 Tests the complete security pipeline:
 - PII scrubbing
@@ -205,21 +204,30 @@ class TestSecurityPipeline:
         # Test healthcare classification
         healthcare = "Patient diagnosis: diabetes type 2"
         result = integration.store_pattern(
-            healthcare, "medical", "doctor@hospital.com", auto_classify=True
+            healthcare,
+            "medical",
+            "doctor@hospital.com",
+            auto_classify=True,
         )
         assert result["classification"] == "SENSITIVE"
 
         # Test financial classification
         financial = "Credit card processing with PCI DSS compliance"
         result = integration.store_pattern(
-            financial, "finance", "fin@company.com", auto_classify=True
+            financial,
+            "finance",
+            "fin@company.com",
+            auto_classify=True,
         )
         assert result["classification"] == "SENSITIVE"
 
         # Test proprietary classification
         proprietary = "Our confidential trade secret algorithm"
         result = integration.store_pattern(
-            proprietary, "algorithm", "dev@company.com", auto_classify=True
+            proprietary,
+            "algorithm",
+            "dev@company.com",
+            auto_classify=True,
         )
         assert result["classification"] == "INTERNAL"
 
@@ -229,8 +237,7 @@ class TestSecurityPipeline:
         assert result["classification"] == "PUBLIC"
 
     def test_end_to_end_healthcare_workflow(self, tmp_path):
-        """
-        Test complete end-to-end workflow for healthcare scenario (HIPAA).
+        """Test complete end-to-end workflow for healthcare scenario (HIPAA).
 
         This simulates a real-world healthcare use case with full security pipeline.
         """
@@ -294,7 +301,10 @@ class TestSecurityPipeline:
         for i in range(100):
             pattern = f"Test pattern #{i} with some content"
             result = integration.store_pattern(
-                pattern, "test", "dev@company.com", auto_classify=True
+                pattern,
+                "test",
+                "dev@company.com",
+                auto_classify=True,
             )
             pattern_ids.append(result["pattern_id"])
 
@@ -304,7 +314,9 @@ class TestSecurityPipeline:
         # Retrieve all
         for pattern_id in pattern_ids:
             retrieved = integration.retrieve_pattern(
-                pattern_id, "dev@company.com", check_permissions=True
+                pattern_id,
+                "dev@company.com",
+                check_permissions=True,
             )
             assert retrieved["content"]
 
@@ -321,7 +333,10 @@ class TestSecurityPipeline:
         # Test 2: Invalid pattern type
         # Should still work but classify as PUBLIC
         result = integration.store_pattern(
-            "Content", "invalid_type", "user@company.com", auto_classify=True
+            "Content",
+            "invalid_type",
+            "user@company.com",
+            auto_classify=True,
         )
         assert result["classification"] == "PUBLIC"
 
@@ -358,12 +373,15 @@ class TestIntegrationWithClaudeMemory:
 - Healthcare patterns: SENSITIVE
 - Proprietary patterns: INTERNAL
 - General patterns: PUBLIC
-"""
+""",
         )
 
         # Load config with security policies
         config = ClaudeMemoryConfig(
-            enabled=True, load_enterprise=False, load_user=False, load_project=True
+            enabled=True,
+            load_enterprise=False,
+            load_user=False,
+            load_project=True,
         )
 
         from empathy_llm_toolkit.claude_memory import ClaudeMemoryLoader
@@ -387,7 +405,10 @@ class TestIntegrationWithClaudeMemory:
 
         # 2. Setup security integration
         config = ClaudeMemoryConfig(
-            enabled=True, load_enterprise=False, load_user=False, load_project=True
+            enabled=True,
+            load_enterprise=False,
+            load_user=False,
+            load_project=True,
         )
         integration = SecureMemDocsIntegration(config)
         integration.storage.storage_dir = tmp_path / "memdocs"
@@ -400,7 +421,10 @@ class TestIntegrationWithClaudeMemory:
         """
 
         result = integration.store_pattern(
-            pattern, "clinical", "doctor@hospital.com", auto_classify=True
+            pattern,
+            "clinical",
+            "doctor@hospital.com",
+            auto_classify=True,
         )
 
         # 4. Verify everything worked
@@ -415,7 +439,9 @@ class TestIntegrationWithClaudeMemory:
 
         # 6. Verify pattern can be retrieved with proper access
         retrieved = integration.retrieve_pattern(
-            result["pattern_id"], "doctor@hospital.com", check_permissions=True
+            result["pattern_id"],
+            "doctor@hospital.com",
+            check_permissions=True,
         )
         assert "[EMAIL]" in retrieved["content"]
         assert "[MRN]" in retrieved["content"]

@@ -1,5 +1,4 @@
-"""
-Service layer for Empathy Memory Dashboard API.
+"""Service layer for Empathy Memory Dashboard API.
 
 Provides business logic and async wrappers for memory operations.
 """

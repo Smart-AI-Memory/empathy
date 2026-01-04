@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Manual Testing Script for December 2025 Features
+"""Manual Testing Script for December 2025 Features
 
 Helps verify features implemented in recent sessions:
 - Phase 2: Dashboard interactive charts (VSCode extension)
@@ -153,7 +152,7 @@ def test_workflow_executor_migrations():
                     step = steps[step_name]
                     if hasattr(step, "task_type") and hasattr(step, "tier_hint"):
                         success(
-                            f"{module_name}.{step_name}: task_type={step.task_type}, tier={step.tier_hint}"
+                            f"{module_name}.{step_name}: task_type={step.task_type}, tier={step.tier_hint}",
                         )
                     else:
                         warning(f"{module_name}.{step_name}: missing attributes")
@@ -231,7 +230,12 @@ def test_vscode_extension_builds():
     # Try to compile
     try:
         result = subprocess.run(
-            ["npm", "run", "compile"], cwd=ext_dir, capture_output=True, text=True, timeout=60
+            ["npm", "run", "compile"],
+            check=False,
+            cwd=ext_dir,
+            capture_output=True,
+            text=True,
+            timeout=60,
         )
 
         if result.returncode == 0:
@@ -259,9 +263,8 @@ def test_vscode_extension_builds():
                         warning(f"Dashboard missing: {name}")
 
             return True
-        else:
-            error(f"Extension compile failed: {result.stderr[:200]}")
-            return False
+        error(f"Extension compile failed: {result.stderr[:200]}")
+        return False
 
     except subprocess.TimeoutExpired:
         warning("Extension compile timed out")
@@ -327,7 +330,7 @@ print('Security audit steps:')
 for name, step in SECURITY_STEPS.items():
     print(f'  {{name}}: task={{step.task_type}}, tier={{step.tier_hint}}')"
 {RESET}
-"""
+""",
     )
 
 
@@ -353,6 +356,7 @@ def run_pytest_subset():
     try:
         result = subprocess.run(
             ["python", "-m", "pytest"] + existing + ["-v", "--tb=short", "-q"],
+            check=False,
             cwd=project_root,
             capture_output=True,
             text=True,
@@ -391,7 +395,7 @@ Testing features from recent implementation sessions:
 - Phase 3: Workflow executor migrations
 - Phase 4: Dependency consolidation
 - Phase 5: Workflow plugin discovery
-"""
+""",
     )
 
     results = {}

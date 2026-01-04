@@ -1,5 +1,4 @@
-"""
-Tests for Configuration Module
+"""Tests for Configuration Module
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
@@ -76,7 +75,9 @@ class TestEmpathyConfig:
     def test_validate_success(self):
         """Test validation with valid config"""
         config = EmpathyConfig(
-            target_level=4, confidence_threshold=0.8, pattern_confidence_threshold=0.5
+            target_level=4,
+            confidence_threshold=0.8,
+            pattern_confidence_threshold=0.5,
         )
 
         assert config.validate() is True
@@ -142,7 +143,10 @@ class TestConfigJSON:
         filepath = Path(temp_dir) / "config.json"
 
         original = EmpathyConfig(
-            user_id="charlie", target_level=3, confidence_threshold=0.7, metrics_enabled=False
+            user_id="charlie",
+            target_level=3,
+            confidence_threshold=0.7,
+            metrics_enabled=False,
         )
 
         original.to_json(str(filepath))
@@ -509,7 +513,8 @@ class TestConfigAdvancedFeatures:
     def test_metadata_field(self):
         """Test metadata field with custom data"""
         config = EmpathyConfig(
-            user_id="test", metadata={"app_version": "1.0.0", "env": "production"}
+            user_id="test",
+            metadata={"app_version": "1.0.0", "env": "production"},
         )
 
         assert config.metadata["app_version"] == "1.0.0"
@@ -704,7 +709,9 @@ class TestLoadConfigAdvanced:
             json.dump({"target_level": 4}, f)
 
         config = load_config(
-            filepath=str(filepath), defaults={"user_id": "default_user_custom"}, use_env=False
+            filepath=str(filepath),
+            defaults={"user_id": "default_user_custom"},
+            use_env=False,
         )
 
         assert config.user_id == "default_user_custom"
@@ -819,7 +826,7 @@ class TestConfigJSONRoundTrip:
         filepath = Path(temp_dir) / "metadata.json"
 
         original = EmpathyConfig(
-            metadata={"version": "1.0.0", "environment": "production", "nested": {"key": "value"}}
+            metadata={"version": "1.0.0", "environment": "production", "nested": {"key": "value"}},
         )
 
         original.to_json(str(filepath))

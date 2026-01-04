@@ -1,5 +1,4 @@
-"""
-Tests for PerformanceAuditWorkflow.
+"""Tests for PerformanceAuditWorkflow.
 
 Tests the performance bottleneck identification workflow with:
 - Anti-pattern detection
@@ -203,7 +202,7 @@ class TestPerformanceAuditProfile:
             (Path(tmpdir) / "app.py").write_text(
                 """async def fetch_data(): time.sleep(1)
     return data
-"""
+""",
             )
 
             workflow = PerformanceAuditWorkflow()
@@ -228,7 +227,7 @@ class TestPerformanceAuditProfile:
 def process(text):
     if re.search("pattern", text):
         return True
-"""
+""",
             )
 
             workflow = PerformanceAuditWorkflow()
@@ -250,7 +249,7 @@ def process(text):
                 """
 async def test_something():
     time.sleep(1)  # OK in tests
-"""
+""",
             )
 
             workflow = PerformanceAuditWorkflow()
@@ -274,7 +273,7 @@ async def fetch():
 
 def process():
     x = list(data)  # Low impact
-"""
+""",
             )
 
             workflow = PerformanceAuditWorkflow()
@@ -429,7 +428,7 @@ class TestPerformanceAuditOptimize:
                 {
                     "hotspot_result": {
                         "hotspots": [
-                            {"file": "a.py", "complexity_score": 20, "concerns": ["sync_in_async"]}
+                            {"file": "a.py", "complexity_score": 20, "concerns": ["sync_in_async"]},
                         ],
                         "perf_score": 60,
                         "perf_level": "warning",
@@ -603,7 +602,7 @@ async def process_items(items):
         if re.search("pattern", item):  # Repeated regex
             results.append(item)
     return results
-"""
+""",
             )
 
             workflow = PerformanceAuditWorkflow()

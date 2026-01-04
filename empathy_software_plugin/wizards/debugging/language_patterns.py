@@ -1,5 +1,4 @@
-"""
-Cross-Language Pattern Library (Level 5)
+"""Cross-Language Pattern Library (Level 5)
 
 Universal debugging patterns that apply across programming languages.
 
@@ -30,8 +29,7 @@ class PatternCategory(Enum):
 
 @dataclass
 class UniversalPattern:
-    """
-    A pattern that exists across languages.
+    """A pattern that exists across languages.
 
     Example: "Undefined variable" exists in JavaScript, Python, Rust, Go, etc.
     The fix strategy is similar across all languages.
@@ -47,8 +45,7 @@ class UniversalPattern:
 
 
 class CrossLanguagePatternLibrary:
-    """
-    Library of patterns that exist across languages.
+    """Library of patterns that exist across languages.
 
     This enables Level 5 Systems Empathy - learning from one language
     can inform debugging in another language.
@@ -271,8 +268,7 @@ class CrossLanguagePatternLibrary:
         }
 
     def find_pattern_for_rule(self, linter: str, rule: str) -> UniversalPattern | None:
-        """
-        Find universal pattern that matches this linter rule.
+        """Find universal pattern that matches this linter rule.
 
         Args:
             linter: Linter name (eslint, pylint, etc.)
@@ -280,6 +276,7 @@ class CrossLanguagePatternLibrary:
 
         Returns:
             UniversalPattern if found, None otherwise
+
         """
         for pattern in self.patterns.values():
             if linter in pattern.language_manifestations:
@@ -288,8 +285,7 @@ class CrossLanguagePatternLibrary:
         return None
 
     def get_fix_strategy(self, pattern_name: str, language: str) -> list[str] | None:
-        """
-        Get language-specific fix strategy for pattern.
+        """Get language-specific fix strategy for pattern.
 
         Args:
             pattern_name: Name of universal pattern
@@ -297,6 +293,7 @@ class CrossLanguagePatternLibrary:
 
         Returns:
             List of fix steps, or None if not found
+
         """
         pattern = self.patterns.get(pattern_name)
         if not pattern:
@@ -305,10 +302,12 @@ class CrossLanguagePatternLibrary:
         return pattern.language_specific_fixes.get(language)
 
     def suggest_cross_language_insight(
-        self, from_language: str, to_language: str, pattern_name: str
+        self,
+        from_language: str,
+        to_language: str,
+        pattern_name: str,
     ) -> str | None:
-        """
-        Generate insight from one language to another.
+        """Generate insight from one language to another.
 
         This is Level 5 in action - cross-domain learning.
 
@@ -346,8 +345,7 @@ class CrossLanguagePatternLibrary:
         return [p for p in self.patterns.values() if p.category == category]
 
     def generate_pattern_summary(self) -> dict[str, Any]:
-        """
-        Generate summary of pattern library.
+        """Generate summary of pattern library.
 
         Useful for documentation or teaching.
         """

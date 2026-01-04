@@ -1,5 +1,4 @@
-"""
-Tests for Advanced Debugging Wizard
+"""Tests for Advanced Debugging Wizard
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
@@ -40,8 +39,8 @@ MOCK_ESLINT_JSON = json.dumps(
                     "ruleId": "semi",
                 },
             ],
-        }
-    ]
+        },
+    ],
 )
 
 MOCK_PYLINT_JSON = json.dumps(
@@ -54,8 +53,8 @@ MOCK_PYLINT_JSON = json.dumps(
             "message": "Undefined variable 'bar'",
             "message-id": "E0602",
             "symbol": "undefined-variable",
-        }
-    ]
+        },
+    ],
 )
 
 
@@ -211,7 +210,9 @@ class TestCrossLanguagePatterns:
         lib = get_pattern_library()
 
         insight = lib.suggest_cross_language_insight(
-            from_language="javascript", to_language="python", pattern_name="undefined_reference"
+            from_language="javascript",
+            to_language="python",
+            pattern_name="undefined_reference",
         )
 
         assert insight is not None
@@ -231,7 +232,7 @@ class TestAdvancedDebuggingWizard:
             {
                 "project_path": "/test",
                 "linters": {"eslint": MOCK_ESLINT_JSON, "pylint": MOCK_PYLINT_JSON},
-            }
+            },
         )
 
         # Check standard outputs
@@ -250,7 +251,7 @@ class TestAdvancedDebuggingWizard:
         wizard = AdvancedDebuggingWizard()
 
         result = await wizard.analyze(
-            {"project_path": "/test", "linters": {"eslint": MOCK_ESLINT_JSON}}
+            {"project_path": "/test", "linters": {"eslint": MOCK_ESLINT_JSON}},
         )
 
         risk = result["risk_assessment"]
@@ -265,7 +266,7 @@ class TestAdvancedDebuggingWizard:
         wizard = AdvancedDebuggingWizard()
 
         result = await wizard.analyze(
-            {"project_path": "/test", "linters": {"eslint": MOCK_ESLINT_JSON}}
+            {"project_path": "/test", "linters": {"eslint": MOCK_ESLINT_JSON}},
         )
 
         trajectory = result["trajectory"]
@@ -280,7 +281,7 @@ class TestAdvancedDebuggingWizard:
         wizard = AdvancedDebuggingWizard()
 
         result = await wizard.analyze(
-            {"project_path": "/test", "linters": {"eslint": MOCK_ESLINT_JSON}}
+            {"project_path": "/test", "linters": {"eslint": MOCK_ESLINT_JSON}},
         )
 
         predictions = result["predictions"]
@@ -295,7 +296,7 @@ class TestAdvancedDebuggingWizard:
         wizard = AdvancedDebuggingWizard()
 
         result = await wizard.analyze(
-            {"project_path": "/test", "linters": {"eslint": MOCK_ESLINT_JSON}}
+            {"project_path": "/test", "linters": {"eslint": MOCK_ESLINT_JSON}},
         )
 
         fixability = result["fixability"]
@@ -310,7 +311,7 @@ class TestAdvancedDebuggingWizard:
         wizard = AdvancedDebuggingWizard()
 
         result = await wizard.analyze(
-            {"project_path": "/test", "linters": {"eslint": MOCK_ESLINT_JSON}}
+            {"project_path": "/test", "linters": {"eslint": MOCK_ESLINT_JSON}},
         )
 
         recommendations = result["recommendations"]
@@ -324,7 +325,7 @@ class TestAdvancedDebuggingWizard:
         wizard = AdvancedDebuggingWizard()
 
         result = await wizard.analyze(
-            {"project_path": "/test", "linters": {"eslint": MOCK_ESLINT_JSON}}
+            {"project_path": "/test", "linters": {"eslint": MOCK_ESLINT_JSON}},
         )
 
         # Check standard wizard outputs
@@ -349,7 +350,7 @@ class TestIntegration:
             {
                 "project_path": "/test",
                 "linters": {"eslint": MOCK_ESLINT_JSON, "pylint": MOCK_PYLINT_JSON},
-            }
+            },
         )
 
         # Should process both linters
@@ -367,7 +368,7 @@ class TestIntegration:
         wizard = AdvancedDebuggingWizard()
 
         result = await wizard.analyze(
-            {"project_path": "/test", "linters": {"eslint": json.dumps([])}}
+            {"project_path": "/test", "linters": {"eslint": json.dumps([])}},
         )
 
         assert result["issues_found"] == 0

@@ -1,5 +1,4 @@
-"""
-Coach Wizards Package
+"""Coach Wizards Package
 
 Specialized wizards for different types of software tasks.
 
@@ -38,29 +37,29 @@ from .security_wizard import SecurityWizard
 from .testing_wizard import TestingWizard
 
 __all__ = [
+    "APIWizard",
+    "AccessibilityWizard",
     "BaseWizard",
-    "WizardTask",
-    "WizardOutput",
-    "WizardArtifact",
-    "WizardRisk",
-    "WizardHandoff",
-    "EmpathyChecks",
+    "ComplianceWizard",
+    "DatabaseWizard",
     # Original 6 wizards
     "DebuggingWizard",
-    "DocumentationWizard",
     "DesignReviewWizard",
-    "TestingWizard",
-    "RetrospectiveWizard",
-    "SecurityWizard",
+    "DevOpsWizard",
+    "DocumentationWizard",
+    "EmpathyChecks",
+    "LocalizationWizard",
+    "MonitoringWizard",
+    "OnboardingWizard",
     # New 10 wizards
     "PerformanceWizard",
     "RefactoringWizard",
-    "APIWizard",
-    "DatabaseWizard",
-    "DevOpsWizard",
-    "OnboardingWizard",
-    "AccessibilityWizard",
-    "LocalizationWizard",
-    "ComplianceWizard",
-    "MonitoringWizard",
+    "RetrospectiveWizard",
+    "SecurityWizard",
+    "TestingWizard",
+    "WizardArtifact",
+    "WizardHandoff",
+    "WizardOutput",
+    "WizardRisk",
+    "WizardTask",
 ]

@@ -1,5 +1,4 @@
-"""
-Code Inspection CLI
+"""Code Inspection CLI
 
 Command-line interface for the Code Inspection Agent Pipeline.
 
@@ -15,6 +14,7 @@ Examples:
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
+
 """
 
 import argparse
@@ -24,8 +24,7 @@ from pathlib import Path
 
 
 async def run_auto_fix(project_path: str, verbose: bool = False) -> int:
-    """
-    Run auto-fix using ruff.
+    """Run auto-fix using ruff.
 
     Args:
         project_path: Path to project to fix
@@ -33,6 +32,7 @@ async def run_auto_fix(project_path: str, verbose: bool = False) -> int:
 
     Returns:
         Number of issues fixed
+
     """
     import subprocess
 
@@ -43,6 +43,7 @@ async def run_auto_fix(project_path: str, verbose: bool = False) -> int:
         print("\nRunning ruff --fix...")
         result = subprocess.run(
             ["ruff", "check", project_path, "--fix", "--exit-zero"],
+            check=False,
             capture_output=True,
             text=True,
         )
@@ -69,6 +70,7 @@ async def run_auto_fix(project_path: str, verbose: bool = False) -> int:
         print("Running ruff format...")
         result = subprocess.run(
             ["ruff", "format", project_path],
+            check=False,
             capture_output=True,
             text=True,
         )
@@ -95,6 +97,7 @@ async def run_auto_fix(project_path: str, verbose: bool = False) -> int:
         print("Running isort...")
         result = subprocess.run(
             ["isort", project_path, "--profile", "black"],
+            check=False,
             capture_output=True,
             text=True,
         )
@@ -299,18 +302,17 @@ async def run_inspection(args: argparse.Namespace) -> int:
     # Return exit code based on health status
     if state["health_status"] == "fail":
         return 1
-    elif state["health_status"] == "warn":
+    if state["health_status"] == "warn":
         return 0  # Warn but don't fail
-    else:
-        return 0
+    return 0
 
 
 def handle_baseline_commands(args: argparse.Namespace) -> bool:
-    """
-    Handle baseline-specific commands.
+    """Handle baseline-specific commands.
 
     Returns:
         True if a baseline command was handled (and should exit)
+
     """
     from agents.code_inspection.baseline import BaselineManager, create_baseline_file
 

@@ -1,5 +1,4 @@
-"""
-Unified CLI for Empathy Framework
+"""Unified CLI for Empathy Framework
 
 A single entry point for all Empathy Framework commands using Typer.
 
@@ -60,8 +59,7 @@ def callback(
         help="Show version and exit",
     ),
 ):
-    """
-    Empathy Framework - Predictive AI-Developer Collaboration
+    """Empathy Framework - Predictive AI-Developer Collaboration
 
     The AI collaboration framework that predicts problems before they happen.
 
@@ -82,7 +80,6 @@ def callback(
         empathy scan .          Scan codebase for issues
         empathy inspect .       Deep inspection with SARIF output
     """
-    pass
 
 
 # =============================================================================
@@ -97,31 +94,33 @@ app.add_typer(memory_app, name="memory")
 def memory_status():
     """Check memory system status (Redis, patterns, stats)."""
     # Delegate to the existing CLI
-    subprocess.run([sys.executable, "-m", "empathy_os.memory.control_panel", "status"])
+    subprocess.run([sys.executable, "-m", "empathy_os.memory.control_panel", "status"], check=False)
 
 
 @memory_app.command("start")
 def memory_start():
     """Start Redis server for short-term memory."""
-    subprocess.run([sys.executable, "-m", "empathy_os.memory.control_panel", "start"])
+    subprocess.run([sys.executable, "-m", "empathy_os.memory.control_panel", "start"], check=False)
 
 
 @memory_app.command("stop")
 def memory_stop():
     """Stop Redis server."""
-    subprocess.run([sys.executable, "-m", "empathy_os.memory.control_panel", "stop"])
+    subprocess.run([sys.executable, "-m", "empathy_os.memory.control_panel", "stop"], check=False)
 
 
 @memory_app.command("stats")
 def memory_stats():
     """Show memory statistics."""
-    subprocess.run([sys.executable, "-m", "empathy_os.memory.control_panel", "stats"])
+    subprocess.run([sys.executable, "-m", "empathy_os.memory.control_panel", "stats"], check=False)
 
 
 @memory_app.command("patterns")
 def memory_patterns():
     """List stored patterns."""
-    subprocess.run([sys.executable, "-m", "empathy_os.memory.control_panel", "patterns", "--list"])
+    subprocess.run(
+        [sys.executable, "-m", "empathy_os.memory.control_panel", "patterns", "--list"], check=False
+    )
 
 
 # =============================================================================
@@ -136,7 +135,10 @@ app.add_typer(provider_app, name="provider")
 def provider_show(
     ctx: typer.Context,
     set_provider: str | None = typer.Option(
-        None, "--set", "-s", help="Set provider (anthropic, openai, google, ollama, hybrid)"
+        None,
+        "--set",
+        "-s",
+        help="Set provider (anthropic, openai, google, ollama, hybrid)",
     ),
     interactive: bool = typer.Option(False, "--interactive", "-i", help="Interactive setup wizard"),
     format_out: str = typer.Option("table", "--format", "-f", help="Output format (table, json)"),
@@ -153,7 +155,7 @@ def provider_show(
     if format_out != "table":
         args.extend(["-f", format_out])
 
-    subprocess.run(args)
+    subprocess.run(args, check=False)
 
 
 @provider_app.command("registry")
@@ -164,7 +166,7 @@ def provider_registry(
     args = [sys.executable, "-m", "empathy_os.models.cli", "registry"]
     if provider_filter:
         args.extend(["--provider", provider_filter])
-    subprocess.run(args)
+    subprocess.run(args, check=False)
 
 
 @provider_app.command("costs")
@@ -183,7 +185,8 @@ def provider_costs(
             str(input_tokens),
             "--output-tokens",
             str(output_tokens),
-        ]
+        ],
+        check=False,
     )
 
 
@@ -201,7 +204,7 @@ def provider_telemetry(
         args.append("--costs")
     if providers:
         args.append("--providers")
-    subprocess.run(args)
+    subprocess.run(args, check=False)
 
 
 # =============================================================================
@@ -211,9 +214,12 @@ def provider_telemetry(
 
 @app.command("scan")
 def scan(
-    path: Path = typer.Argument(Path("."), help="Path to scan"),
+    path: Path = typer.Argument(Path(), help="Path to scan"),
     format_out: str = typer.Option(
-        "text", "--format", "-f", help="Output format (text, json, sarif)"
+        "text",
+        "--format",
+        "-f",
+        help="Output format (text, json, sarif)",
     ),
     fix: bool = typer.Option(False, "--fix", help="Auto-fix safe issues"),
     staged: bool = typer.Option(False, "--staged", help="Only scan staged changes"),
@@ -227,7 +233,7 @@ def scan(
     if staged:
         args.append("--staged")
 
-    result = subprocess.run(args, capture_output=False)
+    result = subprocess.run(args, check=False, capture_output=False)
     if result.returncode != 0:
         console.print("[yellow]Note: empathy-scan may not be installed[/yellow]")
         console.print("Install with: pip install empathy-framework[software]")
@@ -240,9 +246,12 @@ def scan(
 
 @app.command("inspect")
 def inspect_cmd(
-    path: Path = typer.Argument(Path("."), help="Path to inspect"),
+    path: Path = typer.Argument(Path(), help="Path to inspect"),
     format_out: str = typer.Option(
-        "text", "--format", "-f", help="Output format (text, json, sarif)"
+        "text",
+        "--format",
+        "-f",
+        help="Output format (text, json, sarif)",
     ),
 ):
     """Deep inspection with code analysis."""
@@ -250,7 +259,7 @@ def inspect_cmd(
     if format_out != "text":
         args.extend(["--format", format_out])
 
-    result = subprocess.run(args, capture_output=False)
+    result = subprocess.run(args, check=False, capture_output=False)
     if result.returncode != 0:
         console.print("[yellow]Note: empathy-inspect may not be installed[/yellow]")
         console.print("Install with: pip install empathy-framework[software]")
@@ -264,11 +273,14 @@ def inspect_cmd(
 @app.command("sync-claude")
 def sync_claude(
     source: str = typer.Option(
-        "patterns", "--source", "-s", help="Source to sync (patterns, bugs)"
+        "patterns",
+        "--source",
+        "-s",
+        help="Source to sync (patterns, bugs)",
     ),
 ):
     """Sync patterns to Claude Code memory."""
-    subprocess.run(["empathy-sync-claude", "--source", source])
+    subprocess.run(["empathy-sync-claude", "--source", source], check=False)
 
 
 # =============================================================================
@@ -279,7 +291,7 @@ def sync_claude(
 @app.command("morning")
 def morning():
     """Start-of-day briefing with patterns, git context, and priorities."""
-    subprocess.run([sys.executable, "-m", "empathy_os.cli", "morning"])
+    subprocess.run([sys.executable, "-m", "empathy_os.cli", "morning"], check=False)
 
 
 @app.command("ship")
@@ -296,7 +308,7 @@ def ship(
         args.append("--security-only")
     if skip_sync:
         args.append("--skip-sync")
-    subprocess.run(args)
+    subprocess.run(args, check=False)
 
 
 @app.command("health")
@@ -310,13 +322,13 @@ def health(
         args.append("--deep")
     if fix:
         args.append("--fix")
-    subprocess.run(args)
+    subprocess.run(args, check=False)
 
 
 @app.command("fix-all")
 def fix_all():
     """Fix all lint and format issues."""
-    subprocess.run([sys.executable, "-m", "empathy_os.cli", "fix-all"])
+    subprocess.run([sys.executable, "-m", "empathy_os.cli", "fix-all"], check=False)
 
 
 @app.command("learn")
@@ -324,13 +336,15 @@ def learn(
     analyze: int = typer.Option(20, "--analyze", "-a", help="Number of commits to analyze"),
 ):
     """Learn patterns from commit history."""
-    subprocess.run([sys.executable, "-m", "empathy_os.cli", "learn", "--analyze", str(analyze)])
+    subprocess.run(
+        [sys.executable, "-m", "empathy_os.cli", "learn", "--analyze", str(analyze)], check=False
+    )
 
 
 @app.command("run")
 def run_repl():
     """Start interactive REPL mode."""
-    subprocess.run([sys.executable, "-m", "empathy_os.cli", "run"])
+    subprocess.run([sys.executable, "-m", "empathy_os.cli", "run"], check=False)
 
 
 # =============================================================================
@@ -344,18 +358,18 @@ app.add_typer(wizard_app, name="wizard")
 @wizard_app.command("list")
 def wizard_list():
     """List all available wizards."""
-    subprocess.run([sys.executable, "-m", "empathy_os.cli", "frameworks"])
+    subprocess.run([sys.executable, "-m", "empathy_os.cli", "frameworks"], check=False)
 
 
 @wizard_app.command("run")
 def wizard_run(
     name: str = typer.Argument(..., help="Wizard name to run"),
-    path: Path = typer.Option(Path("."), "--path", "-p", help="Path to analyze"),
+    path: Path = typer.Option(Path(), "--path", "-p", help="Path to analyze"),
 ):
     """Run a specific wizard on your codebase."""
     console.print(f"[yellow]Running wizard:[/yellow] {name} on {path}")
     # Delegate to empathy-scan with wizard filter
-    subprocess.run(["empathy-scan", str(path), "--wizards", name])
+    subprocess.run(["empathy-scan", str(path), "--wizards", name], check=False)
 
 
 # =============================================================================
@@ -369,16 +383,18 @@ app.add_typer(workflow_app, name="workflow")
 @workflow_app.command("list")
 def workflow_list():
     """List available multi-model workflows."""
-    subprocess.run([sys.executable, "-m", "empathy_os.cli", "workflow", "list"])
+    subprocess.run([sys.executable, "-m", "empathy_os.cli", "workflow", "list"], check=False)
 
 
 @workflow_app.command("run")
 def workflow_run(
     name: str = typer.Argument(..., help="Workflow name"),
-    path: Path = typer.Option(Path("."), "--path", "-p", help="Path to run on"),
+    path: Path = typer.Option(Path(), "--path", "-p", help="Path to run on"),
 ):
     """Run a multi-model workflow."""
-    subprocess.run([sys.executable, "-m", "empathy_os.cli", "workflow", "run", name, str(path)])
+    subprocess.run(
+        [sys.executable, "-m", "empathy_os.cli", "workflow", "run", name, str(path)], check=False
+    )
 
 
 # =============================================================================
@@ -424,32 +440,32 @@ def cheatsheet():
   empathy wizard list       Show available wizards
   empathy wizard run <name> Execute a wizard""",
             title="[bold blue]Empathy Framework Cheatsheet[/bold blue]",
-        )
+        ),
     )
 
 
 @app.command("dashboard")
 def dashboard():
     """Launch visual dashboard."""
-    subprocess.run([sys.executable, "-m", "empathy_os.cli", "dashboard"])
+    subprocess.run([sys.executable, "-m", "empathy_os.cli", "dashboard"], check=False)
 
 
 @app.command("costs")
 def costs():
     """View API cost tracking."""
-    subprocess.run([sys.executable, "-m", "empathy_os.cli", "costs"])
+    subprocess.run([sys.executable, "-m", "empathy_os.cli", "costs"], check=False)
 
 
 @app.command("init")
 def init():
     """Create a new configuration file."""
-    subprocess.run([sys.executable, "-m", "empathy_os.cli", "init"])
+    subprocess.run([sys.executable, "-m", "empathy_os.cli", "init"], check=False)
 
 
 @app.command("status")
 def status():
     """What needs attention now."""
-    subprocess.run([sys.executable, "-m", "empathy_os.cli", "status"])
+    subprocess.run([sys.executable, "-m", "empathy_os.cli", "status"], check=False)
 
 
 def main():

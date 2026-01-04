@@ -1,5 +1,4 @@
-"""
-Tests for src/empathy_os/workflows/pr_review.py
+"""Tests for src/empathy_os/workflows/pr_review.py
 
 Tests the PRReviewWorkflow and PRReviewResult classes.
 """
@@ -596,17 +595,23 @@ class TestPRReviewWorkflowExecute:
         workflow = PRReviewWorkflow()
 
         # Mock both crew methods to raise exceptions
-        with patch.object(
-            workflow, "_run_code_review", side_effect=Exception("Code review failed")
+        with (
+            patch.object(
+                workflow,
+                "_run_code_review",
+                side_effect=Exception("Code review failed"),
+            ),
+            patch.object(
+                workflow,
+                "_run_security_audit",
+                side_effect=Exception("Audit failed"),
+            ),
         ):
-            with patch.object(
-                workflow, "_run_security_audit", side_effect=Exception("Audit failed")
-            ):
-                result = await workflow.execute(
-                    diff="test diff",
-                    files_changed=["test.py"],
-                    target_path=".",
-                )
+            result = await workflow.execute(
+                diff="test diff",
+                files_changed=["test.py"],
+                target_path=".",
+            )
 
         # The workflow is resilient - it returns success even when crews fail
         # but adds warnings about unavailable crews
@@ -686,7 +691,10 @@ class TestPRReviewWorkflowExecute:
         }
 
         with patch.object(
-            workflow, "_run_code_review", new_callable=AsyncMock, return_value=mock_review
+            workflow,
+            "_run_code_review",
+            new_callable=AsyncMock,
+            return_value=mock_review,
         ):
             result = await workflow.execute(
                 diff="test diff",
@@ -713,7 +721,10 @@ class TestPRReviewWorkflowExecute:
         }
 
         with patch.object(
-            workflow, "_run_security_audit", new_callable=AsyncMock, return_value=mock_audit
+            workflow,
+            "_run_security_audit",
+            new_callable=AsyncMock,
+            return_value=mock_audit,
         ):
             result = await workflow.execute(
                 diff="test diff",
@@ -739,17 +750,25 @@ class TestPRReviewWorkflowParallel:
         mock_review = {"quality_score": 80.0, "findings": [], "agents_used": []}
         mock_audit = {"risk_score": 15.0, "findings": [], "agents_used": []}
 
-        with patch.object(
-            workflow, "_run_code_review", new_callable=AsyncMock, return_value=mock_review
+        with (
+            patch.object(
+                workflow,
+                "_run_code_review",
+                new_callable=AsyncMock,
+                return_value=mock_review,
+            ),
+            patch.object(
+                workflow,
+                "_run_security_audit",
+                new_callable=AsyncMock,
+                return_value=mock_audit,
+            ),
         ):
-            with patch.object(
-                workflow, "_run_security_audit", new_callable=AsyncMock, return_value=mock_audit
-            ):
-                code_review, security_audit = await workflow._run_parallel(
-                    diff="test",
-                    files_changed=[],
-                    target_path=".",
-                )
+            code_review, security_audit = await workflow._run_parallel(
+                diff="test",
+                files_changed=[],
+                target_path=".",
+            )
 
         assert code_review == mock_review
         assert security_audit == mock_audit
@@ -761,20 +780,25 @@ class TestPRReviewWorkflowParallel:
 
         mock_review = {"quality_score": 80.0, "findings": [], "agents_used": []}
 
-        with patch.object(
-            workflow, "_run_code_review", new_callable=AsyncMock, return_value=mock_review
-        ):
-            with patch.object(
+        with (
+            patch.object(
+                workflow,
+                "_run_code_review",
+                new_callable=AsyncMock,
+                return_value=mock_review,
+            ),
+            patch.object(
                 workflow,
                 "_run_security_audit",
                 new_callable=AsyncMock,
                 side_effect=Exception("Failed"),
-            ):
-                code_review, security_audit = await workflow._run_parallel(
-                    diff="test",
-                    files_changed=[],
-                    target_path=".",
-                )
+            ),
+        ):
+            code_review, security_audit = await workflow._run_parallel(
+                diff="test",
+                files_changed=[],
+                target_path=".",
+            )
 
         assert code_review == mock_review
         assert security_audit is None
@@ -784,23 +808,25 @@ class TestPRReviewWorkflowParallel:
         """Test parallel execution when both crews fail."""
         workflow = PRReviewWorkflow(parallel=True)
 
-        with patch.object(
-            workflow,
-            "_run_code_review",
-            new_callable=AsyncMock,
-            side_effect=Exception("Code failed"),
-        ):
-            with patch.object(
+        with (
+            patch.object(
+                workflow,
+                "_run_code_review",
+                new_callable=AsyncMock,
+                side_effect=Exception("Code failed"),
+            ),
+            patch.object(
                 workflow,
                 "_run_security_audit",
                 new_callable=AsyncMock,
                 side_effect=Exception("Audit failed"),
-            ):
-                code_review, security_audit = await workflow._run_parallel(
-                    diff="test",
-                    files_changed=[],
-                    target_path=".",
-                )
+            ),
+        ):
+            code_review, security_audit = await workflow._run_parallel(
+                diff="test",
+                files_changed=[],
+                target_path=".",
+            )
 
         assert code_review is None
         assert security_audit is None
@@ -829,7 +855,10 @@ class TestPRReviewWorkflowWarnings:
         workflow = PRReviewWorkflow(use_code_crew=False, use_security_crew=True)
 
         with patch.object(
-            workflow, "_run_security_audit", new_callable=AsyncMock, return_value=None
+            workflow,
+            "_run_security_audit",
+            new_callable=AsyncMock,
+            return_value=None,
         ):
             result = await workflow.execute(
                 diff="test",
@@ -858,7 +887,10 @@ class TestPRReviewWorkflowBlockers:
         }
 
         with patch.object(
-            workflow, "_run_code_review", new_callable=AsyncMock, return_value=mock_review
+            workflow,
+            "_run_code_review",
+            new_callable=AsyncMock,
+            return_value=mock_review,
         ):
             result = await workflow.execute(
                 diff="test",
@@ -886,7 +918,10 @@ class TestPRReviewWorkflowBlockers:
         }
 
         with patch.object(
-            workflow, "_run_code_review", new_callable=AsyncMock, return_value=mock_review
+            workflow,
+            "_run_code_review",
+            new_callable=AsyncMock,
+            return_value=mock_review,
         ):
             result = await workflow.execute(
                 diff="test",
@@ -916,7 +951,10 @@ class TestPRReviewWorkflowRecommendations:
         }
 
         with patch.object(
-            workflow, "_run_code_review", new_callable=AsyncMock, return_value=mock_review
+            workflow,
+            "_run_code_review",
+            new_callable=AsyncMock,
+            return_value=mock_review,
         ):
             result = await workflow.execute(
                 diff="test",
@@ -941,7 +979,10 @@ class TestPRReviewWorkflowRecommendations:
         }
 
         with patch.object(
-            workflow, "_run_security_audit", new_callable=AsyncMock, return_value=mock_audit
+            workflow,
+            "_run_security_audit",
+            new_callable=AsyncMock,
+            return_value=mock_audit,
         ):
             result = await workflow.execute(
                 diff="test",
@@ -966,7 +1007,10 @@ class TestPRReviewWorkflowRecommendations:
         }
 
         with patch.object(
-            workflow, "_run_code_review", new_callable=AsyncMock, return_value=mock_review
+            workflow,
+            "_run_code_review",
+            new_callable=AsyncMock,
+            return_value=mock_review,
         ):
             result = await workflow.execute(
                 diff="test",

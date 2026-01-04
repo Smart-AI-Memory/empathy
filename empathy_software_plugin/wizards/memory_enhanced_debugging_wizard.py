@@ -1,5 +1,4 @@
-"""
-Memory-Enhanced Debugging Wizard (Level 4+)
+"""Memory-Enhanced Debugging Wizard (Level 4+)
 
 Debugging wizard that correlates current errors with historical patterns.
 Demonstrates what's possible with persistent memory: AI that remembers
@@ -91,8 +90,7 @@ class HistoricalMatch:
 
 
 class MemoryEnhancedDebuggingWizard(BaseWizard):
-    """
-    Memory-Enhanced Debugging Wizard - Level 4+
+    """Memory-Enhanced Debugging Wizard - Level 4+
 
     What's now possible that wasn't before:
 
@@ -118,6 +116,7 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
         ... })
         >>> print(result["historical_matches"])
         # Shows similar bugs from the past with their fixes
+
     """
 
     @property
@@ -133,12 +132,12 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
         pattern_storage_path: str = "./patterns/debugging",
         config: DebuggingWizardConfig | None = None,
     ):
-        """
-        Initialize the memory-enhanced debugging wizard.
+        """Initialize the memory-enhanced debugging wizard.
 
         Args:
             pattern_storage_path: Path to git-based pattern storage
             config: Deployment configuration (web vs local mode)
+
         """
         super().__init__()
         self.pattern_storage_path = Path(pattern_storage_path)
@@ -183,8 +182,7 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
         files: list[dict[str, Any]],
         is_folder_upload: bool = False,
     ) -> dict[str, Any]:
-        """
-        Validate file inputs against the deployment configuration limits.
+        """Validate file inputs against the deployment configuration limits.
 
         Args:
             files: List of file dicts with 'path' and 'size_bytes' keys
@@ -195,6 +193,7 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
             - valid: bool indicating if inputs pass validation
             - errors: list of validation error messages
             - warnings: list of warning messages (e.g., upgrade CTA)
+
         """
         errors: list[str] = []
         warnings: list[str] = []
@@ -203,7 +202,7 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
         if is_folder_upload and not self.config.folder_upload_enabled:
             errors.append(
                 "Folder upload is not available in web mode. "
-                "Please upload individual files or install locally for full features."
+                "Please upload individual files or install locally for full features.",
             )
 
         # Check file count limit
@@ -211,7 +210,7 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
             if len(files) > self.config.max_files:
                 errors.append(
                     f"Too many files: {len(files)} provided, "
-                    f"maximum {self.config.max_files} allowed in {self.config.deployment_mode} mode."
+                    f"maximum {self.config.max_files} allowed in {self.config.deployment_mode} mode.",
                 )
 
         # Check individual file sizes
@@ -223,14 +222,14 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
                 if file_size > max_bytes:
                     errors.append(
                         f"File '{file_path}' exceeds size limit: "
-                        f"{file_size / (1024 * 1024):.2f}MB > {self.config.max_file_size_mb}MB"
+                        f"{file_size / (1024 * 1024):.2f}MB > {self.config.max_file_size_mb}MB",
                     )
 
         # Add upgrade CTA if configured
         if self.config.show_upgrade_cta and errors:
             warnings.append(
                 "Upgrade to local installation for unlimited files and folder uploads. "
-                "Visit https://empathy-framework.dev/install for details."
+                "Visit https://empathy-framework.dev/install for details.",
             )
 
         return {
@@ -246,8 +245,7 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
         }
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze a bug with historical correlation.
+        """Analyze a bug with historical correlation.
 
         Context expects:
             - error_message: The error message
@@ -264,6 +262,7 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
             - recommended_fix: AI-suggested fix based on history
             - confidence: Confidence in recommendation
             - predictions: Level 4 predictions
+
         """
         error_message = context.get("error_message", "")
         file_path = context.get("file_path", "unknown")
@@ -308,7 +307,9 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
 
         # Step 5: Generate recommendations
         recommendations = self._generate_recommendations(
-            current_analysis, historical_matches, recommended_fix
+            current_analysis,
+            historical_matches,
+            recommended_fix,
         )
 
         result = {
@@ -425,10 +426,12 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
         return causes_by_type.get(error_type, [{"cause": "Unknown", "likelihood": 0.3}])
 
     def _find_historical_matches(
-        self, error_type: str, error_message: str, file_path: str
+        self,
+        error_type: str,
+        error_message: str,
+        file_path: str,
     ) -> list[HistoricalMatch]:
-        """
-        Find historical bug patterns that match the current error.
+        """Find historical bug patterns that match the current error.
 
         This is where persistent memory enables what wasn't possible before:
         searching through accumulated team knowledge of past bugs.
@@ -458,7 +461,10 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
 
                 # Calculate similarity
                 similarity, factors = self._calculate_similarity(
-                    error_type, error_message, file_path, resolution
+                    error_type,
+                    error_message,
+                    file_path,
+                    resolution,
                 )
 
                 if similarity > 0.3:  # Threshold for relevance
@@ -467,7 +473,7 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
                             resolution=resolution,
                             similarity_score=similarity,
                             matching_factors=factors,
-                        )
+                        ),
                     )
 
             except (json.JSONDecodeError, KeyError) as e:
@@ -541,7 +547,9 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
         return intersection / union if union > 0 else 0.0
 
     def _generate_fix_recommendation(
-        self, match: HistoricalMatch, current_analysis: dict[str, Any]
+        self,
+        match: HistoricalMatch,
+        current_analysis: dict[str, Any],
     ) -> dict[str, Any]:
         """Generate a fix recommendation based on historical match"""
         return {
@@ -554,7 +562,9 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
         }
 
     def _generate_adaptation_notes(
-        self, match: HistoricalMatch, current_analysis: dict[str, Any]
+        self,
+        match: HistoricalMatch,
+        current_analysis: dict[str, Any],
     ) -> list[str]:
         """Generate notes on how to adapt the historical fix"""
         notes = []
@@ -562,7 +572,7 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
         if match.resolution.file_path != current_analysis.get("file_path"):
             notes.append(
                 f"Original fix was in {Path(match.resolution.file_path).name}, "
-                f"adapt for {Path(current_analysis.get('file_path', '')).name}"
+                f"adapt for {Path(current_analysis.get('file_path', '')).name}",
             )
 
         if match.similarity_score < 0.8:
@@ -594,7 +604,7 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
                         "Consider TypeScript strict null checks",
                         "Review API contract for nullable fields",
                     ],
-                }
+                },
             )
 
         # Predict based on historical patterns
@@ -612,7 +622,7 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
                         f"expect ~{int(avg_resolution_time)} minute resolution time."
                     ),
                     "prevention_steps": [],
-                }
+                },
             )
 
         # Predict recurrence if same error type appears multiple times
@@ -633,7 +643,7 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
                         "Create code review checklist item",
                         "Consider architectural change to eliminate root cause",
                     ],
-                }
+                },
             )
 
         return predictions
@@ -650,11 +660,11 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
         # Historical match recommendations
         if recommended_fix:
             recommendations.append(
-                f"📚 Historical match found! Try: {recommended_fix['original_fix']}"
+                f"📚 Historical match found! Try: {recommended_fix['original_fix']}",
             )
             if recommended_fix.get("fix_code"):
                 recommendations.append(
-                    f"💡 Example fix code available from {recommended_fix['based_on']}"
+                    f"💡 Example fix code available from {recommended_fix['based_on']}",
                 )
 
         # Likely cause recommendations
@@ -666,17 +676,18 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
         # Memory benefit reminder
         if historical_matches:
             recommendations.append(
-                f"⏱️  Memory saved you time: {len(historical_matches)} similar bugs found instantly"
+                f"⏱️  Memory saved you time: {len(historical_matches)} similar bugs found instantly",
             )
         else:
             recommendations.append(
-                "💾 Tip: After fixing, resolution will be stored for future reference"
+                "💾 Tip: After fixing, resolution will be stored for future reference",
             )
 
         return recommendations
 
     def _calculate_memory_benefit(
-        self, historical_matches: list[HistoricalMatch]
+        self,
+        historical_matches: list[HistoricalMatch],
     ) -> dict[str, Any]:
         """Calculate the benefit provided by persistent memory"""
         if not historical_matches:
@@ -754,8 +765,7 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
         resolution_time_minutes: int = 0,
         resolved_by: str = "developer",
     ) -> bool:
-        """
-        Record the resolution of a bug (updates stored pattern).
+        """Record the resolution of a bug (updates stored pattern).
 
         Call this after successfully fixing a bug to store the knowledge
         for future correlation.
@@ -770,6 +780,7 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
 
         Returns:
             True if recorded successfully
+
         """
         pattern_file = self.pattern_storage_path / f"{bug_id}.json"
 
@@ -791,7 +802,7 @@ class MemoryEnhancedDebuggingWizard(BaseWizard):
                     "resolved_by": resolved_by,
                     "status": "resolved",
                     "resolved_date": datetime.now().isoformat(),
-                }
+                },
             )
 
             with open(pattern_file, "w", encoding="utf-8") as f:

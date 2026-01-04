@@ -1,3 +1,2 @@
-"""
-Test suite for Coach Language Server
+"""Test suite for Coach Language Server
 """

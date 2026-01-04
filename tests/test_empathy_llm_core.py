@@ -1,5 +1,4 @@
-"""
-Unit tests for EmpathyLLM core
+"""Unit tests for EmpathyLLM core
 
 Tests the core EmpathyLLM orchestrator with mocked providers,
 focusing on level progression, state management, and interaction logic.

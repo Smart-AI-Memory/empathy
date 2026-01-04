@@ -1,5 +1,4 @@
-"""
-Smoke tests for production website at empathy-framework.vercel.app
+"""Smoke tests for production website at empathy-framework.vercel.app
 
 Run manually:
     python -m pytest tests/test_production_smoke.py -v

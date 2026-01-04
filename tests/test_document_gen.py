@@ -1,5 +1,4 @@
-"""
-Tests for src/empathy_os/workflows/document_gen.py
+"""Tests for src/empathy_os/workflows/document_gen.py
 
 Tests the document generation workflow including:
 - TOKEN_COSTS configuration

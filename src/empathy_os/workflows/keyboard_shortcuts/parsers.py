@@ -1,5 +1,4 @@
-"""
-Feature discovery parsers for keyboard shortcut generation.
+"""Feature discovery parsers for keyboard shortcut generation.
 
 Supports multiple input sources:
 - VSCode extension package.json
@@ -68,7 +67,7 @@ class VSCodeCommandParser(FeatureParser):
                     command=command_id,
                     icon=cmd.get("icon", "$(symbol-misc)"),
                     frequency=tier,
-                )
+                ),
             )
 
         return features
@@ -100,10 +99,9 @@ class VSCodeCommandParser(FeatureParser):
         category_lower = category.lower()
         if "quick" in category_lower or "daily" in category_lower:
             return FrequencyTier.DAILY
-        elif "view" in category_lower or "workflow" in category_lower:
+        if "view" in category_lower or "workflow" in category_lower:
             return FrequencyTier.FREQUENT
-        else:
-            return FrequencyTier.ADVANCED
+        return FrequencyTier.ADVANCED
 
 
 class PyProjectParser(FeatureParser):
@@ -134,7 +132,7 @@ class PyProjectParser(FeatureParser):
 
         # Parse [project.scripts] section
         scripts = data.get("project", {}).get("scripts", {})
-        for name, entry_point in scripts.items():
+        for name, _entry_point in scripts.items():
             features.append(
                 Feature(
                     id=name.replace("-", "_"),
@@ -143,7 +141,7 @@ class PyProjectParser(FeatureParser):
                     command=f"cli.{name}",
                     cli_alias=name,
                     frequency=FrequencyTier.FREQUENT,
-                )
+                ),
             )
 
         # Parse [project.entry-points] section
@@ -158,7 +156,7 @@ class PyProjectParser(FeatureParser):
                             description=f"Entry point: {group}.{name}",
                             command=entry_point,
                             frequency=FrequencyTier.ADVANCED,
-                        )
+                        ),
                     )
 
         return features
@@ -187,7 +185,7 @@ class YAMLManifestParser(FeatureParser):
             if not isinstance(category, dict):
                 continue
 
-            category_name = category.get("name", "General")
+            category.get("name", "General")
             tier_str = category.get("tier", "frequent")
             tier = (
                 FrequencyTier(tier_str)
@@ -216,7 +214,7 @@ class YAMLManifestParser(FeatureParser):
                         frequency=freq,
                         context=feat.get("context", "global"),
                         icon=feat.get("icon", "$(symbol-misc)"),
-                    )
+                    ),
                 )
 
         return features
@@ -261,7 +259,7 @@ class YAMLManifestParser(FeatureParser):
                         frequency=freq,
                         context=feat_data.get("context", "global"),
                         icon=feat_data.get("icon", "$(symbol-misc)"),
-                    )
+                    ),
                 )
 
             categories.append(
@@ -270,7 +268,7 @@ class YAMLManifestParser(FeatureParser):
                     icon=cat_data.get("icon", "$(folder)"),
                     tier=tier,
                     features=features,
-                )
+                ),
             )
 
         return FeatureManifest(
@@ -289,8 +287,7 @@ class LLMFeatureAnalyzer:
         self.llm_client = llm_client
 
     async def analyze_codebase(self, project_path: Path) -> list[Feature]:
-        """
-        Analyze codebase using LLM to discover features.
+        """Analyze codebase using LLM to discover features.
 
         This is a placeholder for LLM-based feature discovery.
         The actual implementation would:
@@ -315,8 +312,7 @@ class CompositeParser:
         self.llm_analyzer = LLMFeatureAnalyzer()
 
     def discover_features(self, project_path: Path) -> FeatureManifest:
-        """
-        Discover all features from a project.
+        """Discover all features from a project.
 
         Scans for:
         - VSCode package.json commands
@@ -348,14 +344,16 @@ class CompositeParser:
         """Get file patterns for a parser."""
         if isinstance(parser, VSCodeCommandParser):
             return ["package.json"]
-        elif isinstance(parser, PyProjectParser):
+        if isinstance(parser, PyProjectParser):
             return ["pyproject.toml"]
-        elif isinstance(parser, YAMLManifestParser):
+        if isinstance(parser, YAMLManifestParser):
             return ["features.yaml", "features.yml"]
         return []
 
     def _create_manifest_from_features(
-        self, project_path: Path, features: list[Feature]
+        self,
+        project_path: Path,
+        features: list[Feature],
     ) -> FeatureManifest:
         """Create a manifest from discovered features."""
         # Group features by inferred category
@@ -392,7 +390,7 @@ class CompositeParser:
                     name=name,
                     tier=tier,
                     features=feats,
-                )
+                ),
             )
 
         # Infer project name
@@ -407,7 +405,7 @@ class CompositeParser:
         elif (project_path / "pyproject.toml").exists():
             project_type_str = "python-cli"
 
-        project_type = cast(Literal["vscode-extension", "python-cli", "custom"], project_type_str)
+        project_type = cast("Literal['vscode-extension', 'python-cli', 'custom']", project_type_str)
 
         return FeatureManifest(
             project_name=project_name,

@@ -1,5 +1,4 @@
-"""
-Smart Model Router for Empathy Framework
+"""Smart Model Router for Empathy Framework
 
 Routes tasks to appropriate model tiers for optimal cost/quality tradeoff:
 
@@ -34,8 +33,7 @@ from empathy_os.models.tasks import CAPABLE_TASKS, CHEAP_TASKS, PREMIUM_TASKS, g
 
 
 class ModelTier(Enum):
-    """
-    Model tier classification for routing.
+    """Model tier classification for routing.
 
     CHEAP: Fast, low-cost models for simple tasks
     CAPABLE: Balanced models for most development work
@@ -49,8 +47,7 @@ class ModelTier(Enum):
 
 @dataclass
 class ModelConfig:
-    """
-    Configuration for a model in a tier.
+    """Configuration for a model in a tier.
 
     Note: This class is kept for backward compatibility. New code should
     use empathy_os.models.ModelInfo from the unified registry.
@@ -75,8 +72,7 @@ class ModelConfig:
 
 
 class TaskRouting:
-    """
-    Task type to model tier mappings.
+    """Task type to model tier mappings.
 
     Maps task types to appropriate model tiers based on:
     - Complexity requirements
@@ -94,14 +90,14 @@ class TaskRouting:
 
     @classmethod
     def get_tier(cls, task_type: str) -> ModelTier:
-        """
-        Get the appropriate tier for a task type.
+        """Get the appropriate tier for a task type.
 
         Args:
             task_type: Type of task to route
 
         Returns:
             ModelTier for the task
+
         """
         # Delegate to shared module
         tier = get_tier_for_task(task_type)
@@ -110,8 +106,7 @@ class TaskRouting:
 
 
 class ModelRouter:
-    """
-    Smart model router for cost-optimized task execution.
+    """Smart model router for cost-optimized task execution.
 
     Routes tasks to appropriate model tiers based on complexity and
     cost requirements. Supports Anthropic, OpenAI, and Ollama providers.
@@ -133,6 +128,7 @@ class ModelRouter:
         >>>
         >>> # Custom routing
         >>> router.add_task_routing("my_task", ModelTier.PREMIUM)
+
     """
 
     # MODELS is now sourced from the unified registry
@@ -153,12 +149,12 @@ class ModelRouter:
         default_provider: str = "anthropic",
         custom_routing: dict[str, ModelTier] | None = None,
     ):
-        """
-        Initialize the model router.
+        """Initialize the model router.
 
         Args:
             default_provider: Default provider (anthropic, openai, ollama, hybrid)
             custom_routing: Custom task type to tier mappings
+
         """
         # Ensure class-level MODELS is populated from registry
         self._ensure_models_loaded()
@@ -171,8 +167,7 @@ class ModelRouter:
         task_type: str,
         provider: str | None = None,
     ) -> str:
-        """
-        Route a task to the appropriate model.
+        """Route a task to the appropriate model.
 
         Args:
             task_type: Type of task (e.g., "summarize", "fix_bug", "coordinate")
@@ -188,6 +183,7 @@ class ModelRouter:
             'claude-sonnet-4-5-20250514'
             >>> router.route("coordinate")
             'claude-opus-4-5-20251101'
+
         """
         provider = provider or self._default_provider
         tier = self._get_tier(task_type)
@@ -207,8 +203,7 @@ class ModelRouter:
         task_type: str,
         provider: str | None = None,
     ) -> ModelConfig:
-        """
-        Get full model configuration for a task.
+        """Get full model configuration for a task.
 
         Args:
             task_type: Type of task
@@ -216,6 +211,7 @@ class ModelRouter:
 
         Returns:
             ModelConfig with model_id, costs, and limits
+
         """
         provider = provider or self._default_provider
         tier = self._get_tier(task_type)
@@ -229,8 +225,7 @@ class ModelRouter:
         output_tokens: int,
         provider: str | None = None,
     ) -> float:
-        """
-        Estimate cost for a task.
+        """Estimate cost for a task.
 
         Args:
             task_type: Type of task
@@ -244,6 +239,7 @@ class ModelRouter:
         Example:
             >>> router.estimate_cost("fix_bug", 5000, 1000)
             0.03  # $0.03 for capable tier
+
         """
         config = self.get_config(task_type, provider)
 
@@ -258,8 +254,7 @@ class ModelRouter:
         input_tokens: int,
         output_tokens: int,
     ) -> dict[str, float]:
-        """
-        Compare costs across all tiers for a task.
+        """Compare costs across all tiers for a task.
 
         Args:
             task_type: Type of task
@@ -268,6 +263,7 @@ class ModelRouter:
 
         Returns:
             Dict mapping tier to estimated cost
+
         """
         provider = self._default_provider
         costs = {}
@@ -281,24 +277,24 @@ class ModelRouter:
         return costs
 
     def add_task_routing(self, task_type: str, tier: ModelTier) -> None:
-        """
-        Add custom task routing.
+        """Add custom task routing.
 
         Args:
             task_type: Task type to route
             tier: Model tier to use
+
         """
         self._custom_routing[task_type.lower()] = tier
 
     def get_tier(self, task_type: str) -> ModelTier:
-        """
-        Get the tier for a task type.
+        """Get the tier for a task type.
 
         Args:
             task_type: Task type
 
         Returns:
             ModelTier for the task
+
         """
         return self._get_tier(task_type)
 
@@ -334,8 +330,7 @@ class ModelRouter:
         input_tokens: int,
         output_tokens: int,
     ) -> dict[str, Any]:
-        """
-        Calculate savings from smart routing vs always using premium.
+        """Calculate savings from smart routing vs always using premium.
 
         Args:
             task_type: Type of task
@@ -344,6 +339,7 @@ class ModelRouter:
 
         Returns:
             Dict with savings information
+
         """
         routed_cost = self.estimate_cost(task_type, input_tokens, output_tokens)
 

@@ -1,5 +1,4 @@
-"""
-EmpathyOS - Core Implementation
+"""EmpathyOS - Core Implementation
 
 The main entry point for the Empathy Framework, providing access to all
 5 empathy levels and system thinking integrations.
@@ -28,8 +27,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class CollaborationState:
-    """
-    Stock & Flow model of AI-human collaboration
+    """Stock & Flow model of AI-human collaboration
 
     Tracks:
     - Trust level (stock that accumulates/erodes)
@@ -72,8 +70,7 @@ class CollaborationState:
 
 
 class EmpathyOS:
-    """
-    Empathy Operating System for AI-Human Collaboration
+    """Empathy Operating System for AI-Human Collaboration
 
     Integrates:
     - 5-level Empathy Maturity Model
@@ -88,6 +85,7 @@ class EmpathyOS:
         >>> empathy = EmpathyOS(user_id="developer_123", target_level=4)
         >>> result = await empathy.level_4_anticipatory(system_trajectory)
         >>> print(result["bottlenecks_predicted"])
+
     """
 
     def __init__(
@@ -100,8 +98,7 @@ class EmpathyOS:
         short_term_memory: RedisShortTermMemory | None = None,
         access_tier: AccessTier = AccessTier.CONTRIBUTOR,
     ):
-        """
-        Initialize EmpathyOS
+        """Initialize EmpathyOS
 
         Args:
             user_id: Unique identifier for user/team
@@ -116,6 +113,7 @@ class EmpathyOS:
                               staging, and conflict resolution.
             access_tier: Access tier for this agent (Observer, Contributor, Validator, Steward).
                         Determines what operations the agent can perform on shared memory.
+
         """
         self.user_id = user_id
         self.target_level = target_level
@@ -150,8 +148,7 @@ class EmpathyOS:
 
     @property
     def memory(self) -> UnifiedMemory:
-        """
-        Unified memory interface for both short-term and long-term storage.
+        """Unified memory interface for both short-term and long-term storage.
 
         Lazily initializes on first access with environment auto-detection.
 
@@ -188,8 +185,7 @@ class EmpathyOS:
         classification: Classification | str | None = None,
         auto_classify: bool = True,
     ) -> dict | None:
-        """
-        Store a pattern in long-term memory with security controls.
+        """Store a pattern in long-term memory with security controls.
 
         This is a convenience method that delegates to memory.persist_pattern().
 
@@ -209,6 +205,7 @@ class EmpathyOS:
             ...     pattern_type="algorithm",
             ... )
             >>> print(result["classification"])  # "INTERNAL"
+
         """
         return self.memory.persist_pattern(
             content=content,
@@ -218,8 +215,7 @@ class EmpathyOS:
         )
 
     def recall_pattern(self, pattern_id: str) -> dict | None:
-        """
-        Retrieve a pattern from long-term memory.
+        """Retrieve a pattern from long-term memory.
 
         This is a convenience method that delegates to memory.recall_pattern().
 
@@ -232,12 +228,12 @@ class EmpathyOS:
         Example:
             >>> pattern = empathy.recall_pattern("pat_123")
             >>> print(pattern["content"])
+
         """
         return self.memory.recall_pattern(pattern_id)
 
     def stash(self, key: str, value: Any, ttl_seconds: int = 3600) -> bool:
-        """
-        Store data in short-term memory with TTL.
+        """Store data in short-term memory with TTL.
 
         This is a convenience method that delegates to memory.stash().
 
@@ -248,12 +244,12 @@ class EmpathyOS:
 
         Returns:
             True if stored successfully
+
         """
         return self.memory.stash(key, value, ttl_seconds)
 
     def retrieve(self, key: str) -> Any:
-        """
-        Retrieve data from short-term memory.
+        """Retrieve data from short-term memory.
 
         This is a convenience method that delegates to memory.retrieve().
 
@@ -262,24 +258,24 @@ class EmpathyOS:
 
         Returns:
             Stored data or None
+
         """
         return self.memory.retrieve(key)
 
     async def __aenter__(self):
-        """
-        Enter async context manager
+        """Enter async context manager
 
         Enables usage: async with EmpathyOS(...) as empathy:
 
         Returns:
             self: The EmpathyOS instance
+
         """
         # Initialize any async resources here if needed
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        """
-        Exit async context manager
+        """Exit async context manager
 
         Performs cleanup when exiting the context:
         - Saves patterns if persistence is enabled
@@ -293,13 +289,13 @@ class EmpathyOS:
 
         Returns:
             False to propagate exceptions (standard behavior)
+
         """
         await self._cleanup()
         return False  # Don't suppress exceptions
 
     async def _cleanup(self):
-        """
-        Cleanup resources on context exit
+        """Cleanup resources on context exit
 
         **Extension Point**: Override to add custom cleanup logic
         (e.g., save state to database, close connections, send metrics)
@@ -307,15 +303,13 @@ class EmpathyOS:
         # Future: Save patterns to disk
         # Future: Send final metrics
         # Future: Close async connections
-        pass
 
     # =========================================================================
     # SHARED PATTERN LIBRARY (Multi-Agent Collaboration)
     # =========================================================================
 
     def contribute_pattern(self, pattern) -> None:
-        """
-        Contribute a discovered pattern to the shared library.
+        """Contribute a discovered pattern to the shared library.
 
         Enables Level 5 Systems Empathy: patterns discovered by this agent
         become available to all other agents sharing the same library.
@@ -338,17 +332,17 @@ class EmpathyOS:
             ...     description="A discovered pattern",
             ... )
             >>> agent.contribute_pattern(pattern)
+
         """
         if self.shared_library is None:
             raise RuntimeError(
                 "No shared library configured. Pass shared_library to __init__ "
-                "to enable multi-agent pattern sharing."
+                "to enable multi-agent pattern sharing.",
             )
         self.shared_library.contribute_pattern(self.user_id, pattern)
 
     def query_patterns(self, context: dict, **kwargs):
-        """
-        Query the shared library for patterns relevant to the current context.
+        """Query the shared library for patterns relevant to the current context.
 
         Enables agents to benefit from patterns discovered by other agents
         in the distributed memory network.
@@ -371,11 +365,12 @@ class EmpathyOS:
             ... )
             >>> for match in matches:
             ...     print(f"{match.pattern.name}: {match.relevance_score:.0%}")
+
         """
         if self.shared_library is None:
             raise RuntimeError(
                 "No shared library configured. Pass shared_library to __init__ "
-                "to enable multi-agent pattern sharing."
+                "to enable multi-agent pattern sharing.",
             )
         return self.shared_library.query_patterns(self.user_id, context, **kwargs)
 
@@ -388,8 +383,7 @@ class EmpathyOS:
     # =========================================================================
 
     async def level_1_reactive(self, user_request: str) -> dict:
-        """
-        Level 1: Reactive Empathy
+        """Level 1: Reactive Empathy
 
         Respond to explicit request accurately and helpfully.
         No anticipation, no proactive action.
@@ -402,11 +396,12 @@ class EmpathyOS:
 
         Raises:
             ValueError: If user_request is empty or not a string
+
         """
         # Input validation
         if not isinstance(user_request, str):
             raise ValidationError(
-                f"user_request must be a string, got {type(user_request).__name__}"
+                f"user_request must be a string, got {type(user_request).__name__}",
             )
         if not user_request.strip():
             raise ValidationError("user_request cannot be empty")
@@ -446,8 +441,7 @@ class EmpathyOS:
     # =========================================================================
 
     async def level_2_guided(self, user_request: str) -> dict:
-        """
-        Level 2: Guided Empathy
+        """Level 2: Guided Empathy
 
         Use calibrated questions (Voss) to clarify intent before acting.
         Collaborative exploration to uncover hidden needs.
@@ -460,11 +454,12 @@ class EmpathyOS:
 
         Raises:
             ValueError: If user_request is empty or not a string
+
         """
         # Input validation
         if not isinstance(user_request, str):
             raise ValidationError(
-                f"user_request must be a string, got {type(user_request).__name__}"
+                f"user_request must be a string, got {type(user_request).__name__}",
             )
         if not user_request.strip():
             raise ValidationError("user_request cannot be empty")
@@ -528,8 +523,7 @@ class EmpathyOS:
     # =========================================================================
 
     async def level_3_proactive(self, context: dict) -> dict:
-        """
-        Level 3: Proactive Empathy
+        """Level 3: Proactive Empathy
 
         Detect patterns, act on leading indicators.
         Take initiative without being asked.
@@ -542,6 +536,7 @@ class EmpathyOS:
 
         Raises:
             ValueError: If context is not a dict or is empty
+
         """
         # Input validation
         if not isinstance(context, dict):
@@ -610,8 +605,7 @@ class EmpathyOS:
     # =========================================================================
 
     async def level_4_anticipatory(self, system_trajectory: dict) -> dict:
-        """
-        Level 4: Anticipatory Empathy (THE INNOVATION)
+        """Level 4: Anticipatory Empathy (THE INNOVATION)
 
         Predict future bottlenecks, design relief in advance.
 
@@ -628,11 +622,12 @@ class EmpathyOS:
 
         Raises:
             ValueError: If system_trajectory is not a dict or is empty
+
         """
         # Input validation
         if not isinstance(system_trajectory, dict):
             raise ValidationError(
-                f"system_trajectory must be a dict, got {type(system_trajectory).__name__}"
+                f"system_trajectory must be a dict, got {type(system_trajectory).__name__}",
             )
         if not system_trajectory:
             raise ValidationError("system_trajectory cannot be empty")
@@ -700,8 +695,7 @@ class EmpathyOS:
     # =========================================================================
 
     async def level_5_systems(self, domain_context: dict) -> dict:
-        """
-        Level 5: Systems Empathy
+        """Level 5: Systems Empathy
 
         Build structures that help at scale.
         Design leverage points, frameworks, self-sustaining systems.
@@ -719,11 +713,12 @@ class EmpathyOS:
 
         Raises:
             ValueError: If domain_context is not a dict or is empty
+
         """
         # Input validation
         if not isinstance(domain_context, dict):
             raise ValidationError(
-                f"domain_context must be a dict, got {type(domain_context).__name__}"
+                f"domain_context must be a dict, got {type(domain_context).__name__}",
             )
         if not domain_context:
             raise ValidationError("domain_context cannot be empty")
@@ -785,8 +780,7 @@ class EmpathyOS:
     # =========================================================================
 
     async def _process_request(self, request: str) -> dict:
-        """
-        Process user request (implement domain logic)
+        """Process user request (implement domain logic)
 
         **Extension Point**: Override this method in subclasses to implement
         your specific domain logic for processing user requests.
@@ -796,13 +790,13 @@ class EmpathyOS:
 
         Returns:
             Dict with processed result and status
+
         """
         # Placeholder - implement your actual request processing
         return {"processed": request, "status": "success"}
 
     async def _ask_calibrated_questions(self, request: str) -> dict:
-        """
-        Voss's tactical empathy: Ask calibrated questions
+        """Voss's tactical empathy: Ask calibrated questions
 
         **Extension Point**: Override to implement sophisticated clarification
         logic using NLP, LLMs, or domain-specific heuristics.
@@ -812,6 +806,7 @@ class EmpathyOS:
 
         Returns:
             Dict with needs_clarification flag and optional questions list
+
         """
         # Simple heuristic - in production, use NLP/LLM
         needs_clarification = any(
@@ -830,8 +825,7 @@ class EmpathyOS:
         return {"needs_clarification": False}
 
     def _refine_request(self, original: str, clarification: dict) -> str:
-        """
-        Refine request based on clarification responses
+        """Refine request based on clarification responses
 
         **Extension Point**: Override to implement domain-specific request refinement
         based on clarification questions and user responses.
@@ -842,6 +836,7 @@ class EmpathyOS:
 
         Returns:
             Refined request string with added context
+
         """
         # If no clarification was needed, return original
         if not clarification.get("needs_clarification", False):
@@ -870,7 +865,7 @@ class EmpathyOS:
                     "type": "sequential",
                     "pattern": "user_always_does_X_before_Y",
                     "confidence": 0.85,
-                }
+                },
             )
 
         return patterns
@@ -889,8 +884,7 @@ class EmpathyOS:
         return confidence > 0.8
 
     async def _execute_proactive_actions(self, actions: list[dict]) -> list[dict]:
-        """
-        Execute proactive actions
+        """Execute proactive actions
 
         **Extension Point**: Override to implement actual execution of proactive
         actions in your domain (e.g., file operations, API calls, UI updates).
@@ -903,13 +897,14 @@ class EmpathyOS:
 
         Returns:
             List of result dicts with action and success status
+
         """
         results = []
         for action in actions:
             # Validate action has required fields
             if not action.get("action"):
                 results.append(
-                    {"action": action, "success": False, "error": "Missing 'action' field"}
+                    {"action": action, "success": False, "error": "Missing 'action' field"},
                 )
                 continue
 
@@ -925,14 +920,13 @@ class EmpathyOS:
 
             # Simulate successful execution
             results.append(
-                {"action": action, "success": True, "executed_at": datetime.now().isoformat()}
+                {"action": action, "success": True, "executed_at": datetime.now().isoformat()},
             )
 
         return results
 
     def _predict_future_bottlenecks(self, trajectory: dict) -> list[dict]:
-        """
-        Predict where system will hit friction/overload
+        """Predict where system will hit friction/overload
 
         Uses trajectory analysis, domain knowledge, historical patterns
         """
@@ -955,14 +949,13 @@ class EmpathyOS:
                         "current_state": f"{current} features",
                         "predicted_state": f"{projected_3mo} features",
                         "impact": trajectory.get("impact", "low"),
-                    }
+                    },
                 )
 
         return bottlenecks
 
     def _should_anticipate(self, bottleneck: dict) -> bool:
-        """
-        Safety checks for Level 4 anticipatory actions
+        """Safety checks for Level 4 anticipatory actions
 
         Validates:
         1. Confidence is above threshold
@@ -989,8 +982,7 @@ class EmpathyOS:
         return True
 
     def _parse_timeframe_to_days(self, timeframe: str) -> int | None:
-        """
-        Parse timeframe string to days
+        """Parse timeframe string to days
 
         Examples:
             "2-3 months" -> 75 (midpoint)
@@ -999,6 +991,7 @@ class EmpathyOS:
 
         Returns:
             Number of days, or None if unparseable
+
         """
         import re
 
@@ -1038,8 +1031,7 @@ class EmpathyOS:
         }
 
     async def _execute_anticipatory_interventions(self, interventions: list[dict]) -> list[dict]:
-        """
-        Execute anticipatory interventions
+        """Execute anticipatory interventions
 
         **Extension Point**: Override to implement actual execution of
         anticipatory interventions (e.g., scaling resources, provisioning
@@ -1053,6 +1045,7 @@ class EmpathyOS:
 
         Returns:
             List of result dicts with intervention and success status
+
         """
         results = []
         for intervention in interventions:
@@ -1063,7 +1056,7 @@ class EmpathyOS:
                         "intervention": intervention,
                         "success": False,
                         "error": "Missing 'type' field",
-                    }
+                    },
                 )
                 continue
 
@@ -1085,14 +1078,13 @@ class EmpathyOS:
                     "success": True,
                     "executed_at": datetime.now().isoformat(),
                     "status": "intervention_deployed",
-                }
+                },
             )
 
         return results
 
     def _identify_problem_classes(self, domain_context: dict) -> list[dict]:
-        """
-        Identify recurring problem classes (not individual instances)
+        """Identify recurring problem classes (not individual instances)
 
         Use "Rule of Three":
         - Occurred at least 3 times
@@ -1108,7 +1100,7 @@ class EmpathyOS:
                     "class": "documentation_burden",
                     "instances": domain_context["instances"],
                     "frequency": "every_new_feature",
-                }
+                },
             )
 
         return problem_classes
@@ -1124,8 +1116,7 @@ class EmpathyOS:
         }
 
     async def _implement_frameworks(self, frameworks: list[dict]) -> list[dict]:
-        """
-        Implement designed frameworks
+        """Implement designed frameworks
 
         **Extension Point**: Override to implement actual framework deployment
         (e.g., generating code templates, creating CI/CD pipelines, deploying
@@ -1139,13 +1130,14 @@ class EmpathyOS:
 
         Returns:
             List of result dicts with framework and deployed status
+
         """
         results = []
         for framework in frameworks:
             # Validate framework has required fields
             if not framework.get("name"):
                 results.append(
-                    {"framework": framework, "deployed": False, "error": "Missing 'name' field"}
+                    {"framework": framework, "deployed": False, "error": "Missing 'name' field"},
                 )
                 continue
 
@@ -1168,7 +1160,7 @@ class EmpathyOS:
                     "deployed_at": datetime.now().isoformat(),
                     "status": "framework_active",
                     "impact_scope": "system_wide",
-                }
+                },
             )
 
         return results
@@ -1178,9 +1170,7 @@ class EmpathyOS:
     # =========================================================================
 
     def monitor_feedback_loops(self, session_history: list) -> dict:
-        """
-        Detect and manage feedback loops in collaboration
-        """
+        """Detect and manage feedback loops in collaboration"""
         active_loops = self.feedback_detector.detect_active_loop(session_history)
 
         # Take action based on loop type
@@ -1188,7 +1178,7 @@ class EmpathyOS:
             # URGENT: Break vicious cycle
             return self._break_trust_erosion_loop()
 
-        elif active_loops.get("dominant_loop") == "R1_trust_building":
+        if active_loops.get("dominant_loop") == "R1_trust_building":
             # MAINTAIN: Keep virtuous cycle going
             return self._maintain_trust_building_loop()
 
@@ -1258,8 +1248,7 @@ class EmpathyOS:
         return self._session_id
 
     def stage_pattern(self, pattern: StagedPattern) -> bool:
-        """
-        Stage a discovered pattern for validation.
+        """Stage a discovered pattern for validation.
 
         Patterns are held in a staging area until a Validator promotes them
         to the active pattern library. This implements the trust-but-verify
@@ -1286,17 +1275,17 @@ class EmpathyOS:
             ...     confidence=0.85,
             ... )
             >>> empathy.stage_pattern(pattern)
+
         """
         if self.short_term_memory is None:
             raise RuntimeError(
                 "No short-term memory configured. Pass short_term_memory to __init__ "
-                "to enable pattern staging."
+                "to enable pattern staging.",
             )
         return self.short_term_memory.stage_pattern(pattern, self.credentials)
 
     def get_staged_patterns(self) -> list[StagedPattern]:
-        """
-        Get all patterns currently in staging.
+        """Get all patterns currently in staging.
 
         Returns patterns staged by any agent that are awaiting validation.
         Validators use this to review and promote/reject patterns.
@@ -1306,11 +1295,12 @@ class EmpathyOS:
 
         Raises:
             RuntimeError: If no short-term memory configured
+
         """
         if self.short_term_memory is None:
             raise RuntimeError(
                 "No short-term memory configured. Pass short_term_memory to __init__ "
-                "to enable pattern staging."
+                "to enable pattern staging.",
             )
         return self.short_term_memory.list_staged_patterns(self.credentials)
 
@@ -1320,8 +1310,7 @@ class EmpathyOS:
         data: dict,
         target_agent: str | None = None,
     ) -> bool:
-        """
-        Send a coordination signal to other agents.
+        """Send a coordination signal to other agents.
 
         Use signals for real-time coordination:
         - Notify completion of tasks
@@ -1348,11 +1337,12 @@ class EmpathyOS:
             ... )
             >>> # Broadcast to all
             >>> empathy.send_signal("status_update", {"phase": "testing"})
+
         """
         if self.short_term_memory is None:
             raise RuntimeError(
                 "No short-term memory configured. Pass short_term_memory to __init__ "
-                "to enable coordination signals."
+                "to enable coordination signals.",
             )
         return self.short_term_memory.send_signal(
             signal_type=signal_type,
@@ -1362,8 +1352,7 @@ class EmpathyOS:
         )
 
     def receive_signals(self, signal_type: str | None = None) -> list[dict]:
-        """
-        Receive coordination signals from other agents.
+        """Receive coordination signals from other agents.
 
         Returns signals targeted at this agent or broadcast signals.
         Signals expire after 5 minutes (TTL).
@@ -1381,17 +1370,17 @@ class EmpathyOS:
             >>> signals = empathy.receive_signals("analysis_complete")
             >>> for sig in signals:
             ...     print(f"From {sig['sender']}: {sig['data']}")
+
         """
         if self.short_term_memory is None:
             raise RuntimeError(
                 "No short-term memory configured. Pass short_term_memory to __init__ "
-                "to enable coordination signals."
+                "to enable coordination signals.",
             )
         return self.short_term_memory.receive_signals(self.credentials, signal_type=signal_type)
 
     def persist_collaboration_state(self) -> bool:
-        """
-        Persist current collaboration state to short-term memory.
+        """Persist current collaboration state to short-term memory.
 
         Call periodically to save state that can be recovered if the agent
         restarts. State expires after 30 minutes by default.
@@ -1401,11 +1390,12 @@ class EmpathyOS:
 
         Raises:
             RuntimeError: If no short-term memory configured
+
         """
         if self.short_term_memory is None:
             raise RuntimeError(
                 "No short-term memory configured. Pass short_term_memory to __init__ "
-                "to enable state persistence."
+                "to enable state persistence.",
             )
 
         state_data = {
@@ -1424,8 +1414,7 @@ class EmpathyOS:
         )
 
     def restore_collaboration_state(self, session_id: str | None = None) -> bool:
-        """
-        Restore collaboration state from short-term memory.
+        """Restore collaboration state from short-term memory.
 
         Use to recover state after agent restart or to continue a previous
         session.
@@ -1438,11 +1427,12 @@ class EmpathyOS:
 
         Raises:
             RuntimeError: If no short-term memory configured
+
         """
         if self.short_term_memory is None:
             raise RuntimeError(
                 "No short-term memory configured. Pass short_term_memory to __init__ "
-                "to enable state persistence."
+                "to enable state persistence.",
             )
 
         sid = session_id or self.session_id
@@ -1457,7 +1447,8 @@ class EmpathyOS:
         # Restore state
         self.collaboration_state.trust_level = state_data.get("trust_level", 0.5)
         self.collaboration_state.successful_interventions = state_data.get(
-            "successful_interventions", 0
+            "successful_interventions",
+            0,
         )
         self.collaboration_state.failed_interventions = state_data.get("failed_interventions", 0)
         self.collaboration_state.total_interactions = state_data.get("total_interactions", 0)
@@ -1476,11 +1467,11 @@ class EmpathyOS:
         return True
 
     def get_memory_stats(self) -> dict | None:
-        """
-        Get statistics about the short-term memory system.
+        """Get statistics about the short-term memory system.
 
         Returns:
             Dict with memory usage, key counts, mode, or None if not configured
+
         """
         if self.short_term_memory is None:
             return None

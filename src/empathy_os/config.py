@@ -1,5 +1,4 @@
-"""
-Configuration Management for Empathy Framework
+"""Configuration Management for Empathy Framework
 
 Supports:
 - YAML configuration files
@@ -29,8 +28,7 @@ from empathy_os.workflows.config import ModelConfig
 
 @dataclass
 class EmpathyConfig:
-    """
-    Configuration for EmpathyOS instance
+    """Configuration for EmpathyOS instance
 
     Can be loaded from:
     - YAML file (.empathy.yml, empathy.config.yml)
@@ -93,8 +91,7 @@ class EmpathyConfig:
 
     @classmethod
     def from_yaml(cls, filepath: str) -> "EmpathyConfig":
-        """
-        Load configuration from YAML file
+        """Load configuration from YAML file
 
         Args:
             filepath: Path to YAML configuration file
@@ -115,10 +112,11 @@ class EmpathyConfig:
             This allows config files to contain settings for other
             components (e.g., model_preferences, workflows) without
             breaking EmpathyConfig loading.
+
         """
         if not YAML_AVAILABLE:
             raise ImportError(
-                "PyYAML is required for YAML configuration. Install with: pip install pyyaml"
+                "PyYAML is required for YAML configuration. Install with: pip install pyyaml",
             )
 
         with open(filepath) as f:
@@ -140,15 +138,14 @@ class EmpathyConfig:
         filtered_data = {k: v for k, v in data.items() if k in known_fields}
 
         # Handle nested ModelConfig objects
-        if "models" in filtered_data and filtered_data["models"]:
+        if filtered_data.get("models"):
             filtered_data["models"] = [ModelConfig(**m) for m in filtered_data["models"]]
 
         return cls(**filtered_data)
 
     @classmethod
     def from_json(cls, filepath: str) -> "EmpathyConfig":
-        """
-        Load configuration from JSON file
+        """Load configuration from JSON file
 
         Args:
             filepath: Path to JSON configuration file
@@ -162,6 +159,7 @@ class EmpathyConfig:
 
         Note:
             Unknown fields in the JSON file are silently ignored.
+
         """
         with open(filepath) as f:
             data = json.load(f)
@@ -176,8 +174,7 @@ class EmpathyConfig:
 
     @classmethod
     def from_env(cls, prefix: str = "EMPATHY_") -> "EmpathyConfig":
-        """
-        Load configuration from environment variables
+        """Load configuration from environment variables
 
         Environment variables should be prefixed with EMPATHY_
         and match config field names in uppercase.
@@ -197,6 +194,7 @@ class EmpathyConfig:
             >>> os.environ["EMPATHY_USER_ID"] = "alice"
             >>> config = EmpathyConfig.from_env()
             >>> print(config.user_id)  # "alice"
+
         """
         from dataclasses import fields as dataclass_fields
 
@@ -244,8 +242,7 @@ class EmpathyConfig:
 
     @classmethod
     def from_file(cls, filepath: str | None = None) -> "EmpathyConfig":
-        """
-        Automatically detect and load configuration from file
+        """Automatically detect and load configuration from file
 
         Looks for configuration files in this order:
         1. Provided filepath
@@ -265,6 +262,7 @@ class EmpathyConfig:
         Example:
             >>> config = EmpathyConfig.from_file()  # Auto-detect
             >>> config = EmpathyConfig.from_file("my-config.yml")
+
         """
         search_paths = [
             filepath,
@@ -280,15 +278,14 @@ class EmpathyConfig:
             if path and Path(path).exists():
                 if path.endswith((".yml", ".yaml")):
                     return cls.from_yaml(path)
-                elif path.endswith(".json"):
+                if path.endswith(".json"):
                     return cls.from_json(path)
 
         # No config file found - return default
         return cls()
 
     def to_yaml(self, filepath: str):
-        """
-        Save configuration to YAML file
+        """Save configuration to YAML file
 
         Args:
             filepath: Path to save YAML file
@@ -296,10 +293,11 @@ class EmpathyConfig:
         Example:
             >>> config = EmpathyConfig(user_id="alice", target_level=4)
             >>> config.to_yaml("my-config.yml")
+
         """
         if not YAML_AVAILABLE:
             raise ImportError(
-                "PyYAML is required for YAML export. Install with: pip install pyyaml"
+                "PyYAML is required for YAML export. Install with: pip install pyyaml",
             )
 
         data = asdict(self)
@@ -308,8 +306,7 @@ class EmpathyConfig:
             yaml.dump(data, f, default_flow_style=False, sort_keys=False)
 
     def to_json(self, filepath: str, indent: int = 2):
-        """
-        Save configuration to JSON file
+        """Save configuration to JSON file
 
         Args:
             filepath: Path to save JSON file
@@ -318,6 +315,7 @@ class EmpathyConfig:
         Example:
             >>> config = EmpathyConfig(user_id="alice", target_level=4)
             >>> config.to_json("my-config.json")
+
         """
         data = asdict(self)
 
@@ -329,8 +327,7 @@ class EmpathyConfig:
         return asdict(self)
 
     def update(self, **kwargs):
-        """
-        Update configuration fields
+        """Update configuration fields
 
         Args:
             **kwargs: Fields to update
@@ -338,14 +335,14 @@ class EmpathyConfig:
         Example:
             >>> config = EmpathyConfig()
             >>> config.update(user_id="bob", target_level=5)
+
         """
         for key, value in kwargs.items():
             if hasattr(self, key):
                 setattr(self, key, value)
 
     def merge(self, other: "EmpathyConfig") -> "EmpathyConfig":
-        """
-        Merge with another configuration (other takes precedence)
+        """Merge with another configuration (other takes precedence)
 
         Args:
             other: Configuration to merge
@@ -357,6 +354,7 @@ class EmpathyConfig:
             >>> base = EmpathyConfig(user_id="alice")
             >>> override = EmpathyConfig(target_level=5)
             >>> merged = base.merge(override)
+
         """
         # Start with base values
         base_dict = self.to_dict()
@@ -373,21 +371,21 @@ class EmpathyConfig:
         return EmpathyConfig(**base_dict)
 
     def validate(self) -> bool:
-        """
-        Validate configuration values
+        """Validate configuration values
 
         Returns:
             True if valid, raises ValueError if invalid
 
         Raises:
             ValueError: If configuration is invalid
+
         """
         if self.target_level not in range(1, 6):
             raise ValueError(f"target_level must be 1-5, got {self.target_level}")
 
         if not 0.0 <= self.confidence_threshold <= 1.0:
             raise ValueError(
-                f"confidence_threshold must be 0.0-1.0, got {self.confidence_threshold}"
+                f"confidence_threshold must be 0.0-1.0, got {self.confidence_threshold}",
             )
 
         if not 0.0 <= self.pattern_confidence_threshold <= 1.0:
@@ -397,7 +395,7 @@ class EmpathyConfig:
         if self.persistence_backend not in ("sqlite", "json", "none"):
             backend_val = self.persistence_backend
             raise ValueError(
-                f"persistence_backend must be 'sqlite', 'json', or 'none', got {backend_val}"
+                f"persistence_backend must be 'sqlite', 'json', or 'none', got {backend_val}",
             )
 
         return True
@@ -411,10 +409,11 @@ class EmpathyConfig:
 
 
 def load_config(
-    filepath: str | None = None, use_env: bool = True, defaults: dict[str, Any] | None = None
+    filepath: str | None = None,
+    use_env: bool = True,
+    defaults: dict[str, Any] | None = None,
 ) -> EmpathyConfig:
-    """
-    Load configuration with flexible precedence
+    """Load configuration with flexible precedence
 
     Precedence (highest to lowest):
     1. Environment variables (if use_env=True)
@@ -436,6 +435,7 @@ def load_config(
 
         >>> # Load with custom defaults
         >>> config = load_config(defaults={"target_level": 4})
+
     """
     # Start with built-in defaults
     config = EmpathyConfig()

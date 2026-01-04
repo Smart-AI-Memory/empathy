@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Generate Word document from the non-technical Empathy Framework guide
+"""Generate Word document from the non-technical Empathy Framework guide
 """
 
 from docx import Document
@@ -10,7 +9,6 @@ from docx.shared import Pt, RGBColor
 
 def create_empathy_framework_doc():
     """Create a professionally formatted Word document"""
-
     doc = Document()
 
     # Set default font
@@ -66,12 +64,12 @@ def create_empathy_framework_doc():
     doc.add_paragraph(
         "Most AI tools are like a vending machine—you put in a request, you get back an answer. "
         "The Empathy Framework teaches AI to act more like a great teaching assistant who "
-        "anticipates what you need before you ask."
+        "anticipates what you need before you ask.",
     )
 
     doc.add_heading("Why This Matters", 1)
     doc.add_paragraph(
-        "Imagine you're teaching a master class in music. You have three types of assistants:"
+        "Imagine you're teaching a master class in music. You have three types of assistants:",
     )
 
     # Assistant A
@@ -98,7 +96,7 @@ def create_empathy_framework_doc():
     p.add_run(
         "\"Good morning! I noticed today's lesson is on Beethoven. I've set up the sheet music, "
         "tuned the piano, and prepared the recording equipment since you mentioned wanting to "
-        'capture this session."'
+        'capture this session."',
     )
 
     p = doc.add_paragraph()
@@ -116,7 +114,7 @@ def create_empathy_framework_doc():
         "\"I noticed the concert hall you're performing in has different acoustics than what "
         "you're practicing in. I've created a practice schedule that gradually adjusts the "
         "rehearsal room's acoustic settings to match the performance venue, so there are no "
-        'surprises on opening night."'
+        'surprises on opening night."',
     )
 
     p = doc.add_paragraph()
@@ -234,7 +232,7 @@ def create_empathy_framework_doc():
     p.add_run("Level 3:").bold = True
     doc.add_paragraph(
         "Nurse opens patient chart → AI already loaded vitals, medications, and allergies "
-        "(learned this nurse always checks these three things)"
+        "(learned this nurse always checks these three things)",
     )
     p = doc.add_paragraph()
     p.add_run("Time per patient: ").bold = True
@@ -247,7 +245,7 @@ def create_empathy_framework_doc():
     doc.add_paragraph(
         "Before nurse starts shift → AI: \"You have 6 patients today. I've flagged two items: "
         "Room 302 blood pressure trending up (monitor), Room 405 medication expires in 3 hours "
-        '(renewal form ready)."'
+        '(renewal form ready)."',
     )
 
     p = doc.add_paragraph()
@@ -347,7 +345,7 @@ def create_empathy_framework_doc():
     quote_run = quote.add_run(
         "The highest form of empathy isn't feeling what someone else feels.\n\n"
         "It's understanding what they need before they know they need it, "
-        "and having the wisdom to know when to act."
+        "and having the wisdom to know when to act.",
     )
     quote_run.italic = True
     quote_run.font.size = Pt(12)

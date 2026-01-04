@@ -1,5 +1,4 @@
-"""
-Unit tests for AuditLogger
+"""Unit tests for AuditLogger
 
 Tests compliance requirements for SOC2, HIPAA, and GDPR.
 
@@ -83,7 +82,9 @@ class TestAuditLogger:
     def logger(self, temp_log_dir):
         """Create test audit logger"""
         return AuditLogger(
-            log_dir=temp_log_dir, enable_rotation=False, enable_console_logging=False
+            log_dir=temp_log_dir,
+            enable_rotation=False,
+            enable_console_logging=False,
         )
 
     def test_logger_initialization(self, temp_log_dir):

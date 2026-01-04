@@ -1,5 +1,4 @@
-"""
-Bottleneck Detector
+"""Bottleneck Detector
 
 Identifies performance bottlenecks in code.
 
@@ -57,9 +56,7 @@ class Bottleneck:
 
 
 class BottleneckDetector:
-    """
-    Detects performance bottlenecks from profiling data.
-    """
+    """Detects performance bottlenecks from profiling data."""
 
     def __init__(self):
         # Patterns indicating different bottleneck types
@@ -92,10 +89,11 @@ class BottleneckDetector:
         ]
 
     def detect_bottlenecks(
-        self, profiles: list[FunctionProfile], threshold_percent: float = 5.0
+        self,
+        profiles: list[FunctionProfile],
+        threshold_percent: float = 5.0,
     ) -> list[Bottleneck]:
-        """
-        Detect bottlenecks from profiling data.
+        """Detect bottlenecks from profiling data.
 
         Args:
             profiles: List of function profiles
@@ -103,6 +101,7 @@ class BottleneckDetector:
 
         Returns:
             List of detected bottlenecks
+
         """
         bottlenecks = []
 
@@ -128,7 +127,7 @@ class BottleneckDetector:
                         reasoning=f"Consumes {profile.percent_total:.1f}% of total execution time",
                         fix_suggestion=self._suggest_hot_path_fix(profile),
                         metadata={"call_count": profile.call_count},
-                    )
+                    ),
                 )
 
             # Detect I/O bound operations
@@ -145,7 +144,7 @@ class BottleneckDetector:
                         reasoning=f"I/O operation taking {profile.total_time:.2f}s",
                         fix_suggestion=self._suggest_io_fix(profile),
                         metadata={"call_count": profile.call_count},
-                    )
+                    ),
                 )
 
             # Detect potential N+1 queries
@@ -162,7 +161,7 @@ class BottleneckDetector:
                         reasoning=f"Database query called {profile.call_count} times - potential N+1",
                         fix_suggestion="Add eager loading or batch queries",
                         metadata={"call_count": profile.call_count},
-                    )
+                    ),
                 )
 
         # Sort by severity and time cost
@@ -197,29 +196,26 @@ class BottleneckDetector:
         """Determine bottleneck severity"""
         if percent_total > 30:
             return "CRITICAL"
-        elif percent_total > 20:
+        if percent_total > 20:
             return "HIGH"
-        elif percent_total > 10:
+        if percent_total > 10:
             return "MEDIUM"
-        else:
-            return "LOW"
+        return "LOW"
 
     def _suggest_hot_path_fix(self, profile: FunctionProfile) -> str:
         """Suggest fix for hot path"""
         if self._is_cpu_bound(profile):
             return "Optimize algorithm or consider caching results"
-        elif self._is_io_bound(profile):
+        if self._is_io_bound(profile):
             return "Use async I/O or connection pooling"
-        else:
-            return "Profile function internally to identify specific bottleneck"
+        return "Profile function internally to identify specific bottleneck"
 
     def _suggest_io_fix(self, profile: FunctionProfile) -> str:
         """Suggest fix for I/O bottleneck"""
         if "query" in profile.function_name.lower() or "select" in profile.function_name.lower():
             return "Add database indexes, use query optimization, or implement caching"
-        elif "request" in profile.function_name.lower():
+        if "request" in profile.function_name.lower():
             return "Implement request batching, caching, or use async HTTP client"
-        elif "file" in profile.function_name.lower() or "read" in profile.function_name.lower():
+        if "file" in profile.function_name.lower() or "read" in profile.function_name.lower():
             return "Use buffered I/O, async file operations, or caching"
-        else:
-            return "Consider async I/O operations or connection pooling"
+        return "Consider async I/O operations or connection pooling"

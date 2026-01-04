@@ -1,5 +1,4 @@
-"""
-Tests for empathy_os.cost_tracker module.
+"""Tests for empathy_os.cost_tracker module.
 
 Tests cover:
 - CostTracker initialization and storage

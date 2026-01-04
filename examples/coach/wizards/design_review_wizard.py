@@ -1,5 +1,4 @@
-"""
-Design Review Wizard
+"""Design Review Wizard
 
 Evaluates architecture for trade-offs, risks, and alignment with goals.
 Uses Empathy Framework Level 4 (Anticipatory) to identify future issues
@@ -23,8 +22,7 @@ from .base_wizard import (
 
 
 class DesignReviewWizard(BaseWizard):
-    """
-    Wizard for architecture and design review
+    """Wizard for architecture and design review
 
     Uses:
     - Level 3: Proactively identify design patterns and anti-patterns
@@ -58,7 +56,6 @@ class DesignReviewWizard(BaseWizard):
 
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute design review workflow"""
-
         # Step 1: Assess context
         self._extract_constraints(task)
         self._assess_emotional_state(task)
@@ -89,7 +86,9 @@ class DesignReviewWizard(BaseWizard):
                 content=architecture_analysis["detailed_analysis"],
             ),
             WizardArtifact(
-                type="doc", title="Trade-off Analysis", content=self._format_tradeoffs(tradeoffs)
+                type="doc",
+                title="Trade-off Analysis",
+                content=self._format_tradeoffs(tradeoffs),
             ),
             WizardArtifact(
                 type="adr",
@@ -131,8 +130,10 @@ class DesignReviewWizard(BaseWizard):
         if task.role in ["developer", "architect"]:
             handoffs.append(
                 WizardHandoff(
-                    owner="team", what="Architecture review meeting", when="Within 1 week"
-                )
+                    owner="team",
+                    what="Architecture review meeting",
+                    when="Within 1 week",
+                ),
             )
         if "refactor" in task.task.lower():
             handoffs.append(
@@ -140,7 +141,7 @@ class DesignReviewWizard(BaseWizard):
                     owner="pm",
                     what="Refactoring timeline and resource allocation",
                     when="Before starting work",
-                )
+                ),
             )
 
         # Step 12: Empathy checks
@@ -193,7 +194,6 @@ class DesignReviewWizard(BaseWizard):
 
     def _analyze_architecture(self, task: WizardTask, goals: list[str]) -> dict[str, Any]:
         """Analyze architecture (Level 3: Proactive pattern detection)"""
-
         context_lower = task.context.lower()
 
         # Detect architecture patterns
@@ -266,7 +266,7 @@ Based on the context, this appears to be a {"".join(patterns[:1]) if patterns el
                     "benefit": "Independent scalability, team autonomy, technology flexibility",
                     "cost": "Increased operational complexity, distributed system challenges, network latency",
                     "recommendation": "Consider: service mesh, centralized logging, distributed tracing",
-                }
+                },
             )
 
         if "Monolithic" in patterns:
@@ -276,7 +276,7 @@ Based on the context, this appears to be a {"".join(patterns[:1]) if patterns el
                     "benefit": "Simpler deployment, easier debugging, lower operational overhead",
                     "cost": "Limited scalability, tighter coupling, slower development velocity at scale",
                     "recommendation": "Consider: modular monolith pattern, domain boundaries, migration path",
-                }
+                },
             )
 
         if "Serverless" in patterns:
@@ -286,7 +286,7 @@ Based on the context, this appears to be a {"".join(patterns[:1]) if patterns el
                     "benefit": "Zero server management, auto-scaling, pay-per-use",
                     "cost": "Cold starts, vendor lock-in, limited execution time, debugging complexity",
                     "recommendation": "Consider: function warmers, local development tools, multi-cloud strategy",
-                }
+                },
             )
 
         if "Event-driven" in patterns:
@@ -296,7 +296,7 @@ Based on the context, this appears to be a {"".join(patterns[:1]) if patterns el
                     "benefit": "Loose coupling, scalability, resilience",
                     "cost": "Eventual consistency, debugging complexity, message ordering challenges",
                     "recommendation": "Consider: event schema registry, dead letter queues, idempotency",
-                }
+                },
             )
 
         # Generic trade-off if none detected
@@ -307,13 +307,16 @@ Based on the context, this appears to be a {"".join(patterns[:1]) if patterns el
                     "benefit": "Meets immediate functional requirements",
                     "cost": "May have hidden technical debt or scalability limitations",
                     "recommendation": "Conduct thorough architecture review to identify specific trade-offs",
-                }
+                },
             )
 
         return tradeoffs
 
     def _assess_design_risks(
-        self, task: WizardTask, analysis: dict, tradeoffs: list[dict]
+        self,
+        task: WizardTask,
+        analysis: dict,
+        tradeoffs: list[dict],
     ) -> list[WizardRisk]:
         """Assess design risks (Level 4: Anticipatory)"""
         risks = []
@@ -325,7 +328,7 @@ Based on the context, this appears to be a {"".join(patterns[:1]) if patterns el
                     risk="Architecture complexity may overwhelm team",
                     mitigation="Start with simpler approach, add complexity incrementally as team gains experience",
                     severity="high",
-                )
+                ),
             )
 
         # Risk based on patterns
@@ -335,14 +338,14 @@ Based on the context, this appears to be a {"".join(patterns[:1]) if patterns el
                     risk="Distributed system failures and cascading issues",
                     mitigation="Implement circuit breakers, timeouts, and comprehensive monitoring",
                     severity="high",
-                )
+                ),
             )
             risks.append(
                 WizardRisk(
                     risk="Data consistency across services",
                     mitigation="Use saga pattern or event sourcing for distributed transactions",
                     severity="medium",
-                )
+                ),
             )
 
         if "Monolithic" in analysis.get("patterns", []):
@@ -351,7 +354,7 @@ Based on the context, this appears to be a {"".join(patterns[:1]) if patterns el
                     risk="Future scalability bottlenecks",
                     mitigation="Design with clear module boundaries, plan migration path to distributed architecture",
                     severity="medium",
-                )
+                ),
             )
 
         # General risks
@@ -360,7 +363,7 @@ Based on the context, this appears to be a {"".join(patterns[:1]) if patterns el
                 risk="Technical debt accumulation",
                 mitigation="Regular architecture reviews, refactoring time in sprints, ADR documentation",
                 severity="medium",
-            )
+            ),
         )
 
         risks.append(
@@ -368,7 +371,7 @@ Based on the context, this appears to be a {"".join(patterns[:1]) if patterns el
                 risk="Knowledge silos in complex architecture",
                 mitigation="Architecture documentation, team knowledge sharing sessions, pair programming",
                 severity="low",
-            )
+            ),
         )
 
         return risks[:5]  # Top 5 risks

@@ -1,5 +1,4 @@
-"""
-Performance Profiling Wizard (Level 4)
+"""Performance Profiling Wizard (Level 4)
 
 Predicts performance bottlenecks BEFORE they become critical.
 
@@ -25,8 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 class PerformanceProfilingWizard(BaseWizard):
-    """
-    Performance Profiling Wizard - Level 4
+    """Performance Profiling Wizard - Level 4
 
     Beyond identifying current bottlenecks:
     - Predicts future performance degradation
@@ -51,8 +49,7 @@ class PerformanceProfilingWizard(BaseWizard):
         self.trajectory_analyzer = PerformanceTrajectoryAnalyzer()
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze performance and predict bottlenecks.
+        """Analyze performance and predict bottlenecks.
 
         Context expects:
             - profiler_data: Profiling output (string or dict)
@@ -63,6 +60,7 @@ class PerformanceProfilingWizard(BaseWizard):
 
         Returns:
             Analysis with bottlenecks, trajectory, predictions, recommendations
+
         """
         profiler_data = context.get("profiler_data")
         profiler_type = context.get("profiler_type", "simple_json")
@@ -99,7 +97,9 @@ class PerformanceProfilingWizard(BaseWizard):
 
         # Phase 6: Recommendations
         recommendations = self._generate_recommendations(
-            bottlenecks, trajectory_prediction, insights
+            bottlenecks,
+            trajectory_prediction,
+            insights,
         )
 
         # Get top function
@@ -135,10 +135,11 @@ class PerformanceProfilingWizard(BaseWizard):
         }
 
     def _generate_insights(
-        self, profiles: list[FunctionProfile], bottlenecks: list[Bottleneck]
+        self,
+        profiles: list[FunctionProfile],
+        bottlenecks: list[Bottleneck],
     ) -> dict[str, Any]:
         """Generate performance insights"""
-
         # Identify patterns
         io_heavy = sum(1 for b in bottlenecks if b.type.value == "io_bound")
         cpu_heavy = sum(1 for b in bottlenecks if b.type.value == "cpu_bound")
@@ -156,19 +157,16 @@ class PerformanceProfilingWizard(BaseWizard):
 
     def _identify_dominant_pattern(self, io_heavy: int, cpu_heavy: int, n_plus_one: int) -> str:
         """Identify dominant performance pattern"""
-
         if n_plus_one > 0:
             return "database_n_plus_one"
-        elif io_heavy > cpu_heavy:
+        if io_heavy > cpu_heavy:
             return "io_bound"
-        elif cpu_heavy > 0:
+        if cpu_heavy > 0:
             return "cpu_bound"
-        else:
-            return "balanced"
+        return "balanced"
 
     def _estimate_optimization_potential(self, bottlenecks: list[Bottleneck]) -> dict[str, Any]:
         """Estimate potential time savings from optimizations"""
-
         if not bottlenecks:
             return {"potential_savings": 0.0, "percentage": 0.0, "assessment": "LOW"}
 
@@ -192,15 +190,13 @@ class PerformanceProfilingWizard(BaseWizard):
 
     def _assess_optimization_potential(self, percentage: float) -> str:
         """Assess optimization potential"""
-
         if percentage > 30:
             return "HIGH"
-        elif percentage > 15:
+        if percentage > 15:
             return "MEDIUM"
-        elif percentage > 5:
+        if percentage > 5:
             return "LOW"
-        else:
-            return "MINIMAL"
+        return "MINIMAL"
 
     def _generate_predictions(
         self,
@@ -209,7 +205,6 @@ class PerformanceProfilingWizard(BaseWizard):
         profiles: list[FunctionProfile],
     ) -> list[dict[str, Any]]:
         """Generate Level 4 predictions"""
-
         predictions = []
 
         # Prediction 1: Critical bottlenecks
@@ -226,7 +221,7 @@ class PerformanceProfilingWizard(BaseWizard):
                     ),
                     "affected_functions": [b.function_name for b in critical_bottlenecks[:3]],
                     "prevention_steps": [b.fix_suggestion for b in critical_bottlenecks[:3]],
-                }
+                },
             )
 
         # Prediction 2: N+1 query pattern
@@ -245,7 +240,7 @@ class PerformanceProfilingWizard(BaseWizard):
                         "Add database query monitoring",
                         "Review ORM usage patterns",
                     ],
-                }
+                },
             )
 
         # Prediction 3: Trajectory-based prediction
@@ -258,7 +253,7 @@ class PerformanceProfilingWizard(BaseWizard):
                     "time_horizon": trajectory.estimated_time_to_critical,
                     "confidence": trajectory.confidence,
                     "prevention_steps": trajectory.recommendations,
-                }
+                },
             )
 
         return predictions
@@ -270,7 +265,6 @@ class PerformanceProfilingWizard(BaseWizard):
         insights: dict[str, Any],
     ) -> list[str]:
         """Generate actionable recommendations"""
-
         recommendations = []
 
         # Pattern-based recommendations
@@ -278,23 +272,23 @@ class PerformanceProfilingWizard(BaseWizard):
 
         if dominant_pattern == "database_n_plus_one":
             recommendations.append(
-                "⚠️  CRITICAL: Fix N+1 database queries with eager loading or batching"
+                "⚠️  CRITICAL: Fix N+1 database queries with eager loading or batching",
             )
 
         if dominant_pattern == "io_bound":
             recommendations.append(
-                "Optimize I/O operations: Use async I/O, connection pooling, or caching"
+                "Optimize I/O operations: Use async I/O, connection pooling, or caching",
             )
 
         if dominant_pattern == "cpu_bound":
             recommendations.append(
-                "Optimize CPU-heavy operations: Review algorithms, consider caching results"
+                "Optimize CPU-heavy operations: Review algorithms, consider caching results",
             )
 
         # Bottleneck-specific recommendations
         for bottleneck in bottlenecks[:3]:  # Top 3
             recommendations.append(
-                f"{bottleneck.severity}: {bottleneck.function_name} - {bottleneck.fix_suggestion}"
+                f"{bottleneck.severity}: {bottleneck.function_name} - {bottleneck.fix_suggestion}",
             )
 
         # Trajectory recommendations
@@ -305,7 +299,7 @@ class PerformanceProfilingWizard(BaseWizard):
         opt_potential = insights.get("optimization_potential", "LOW")
         if opt_potential in ["HIGH", "MEDIUM"]:
             recommendations.append(
-                f"{opt_potential} optimization potential - significant performance gains possible"
+                f"{opt_potential} optimization potential - significant performance gains possible",
             )
 
         return list(set(recommendations))  # Deduplicate

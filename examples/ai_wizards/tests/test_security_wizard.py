@@ -1,5 +1,4 @@
-"""
-Tests for Security Analysis Wizard
+"""Tests for Security Analysis Wizard
 
 SECURITY NOTICE: This file contains INTENTIONALLY VULNERABLE code patterns
 for testing the Security Analysis Wizard's detection capabilities.
@@ -61,7 +60,7 @@ def search_users(search_term):
     # Another SQL injection
     query = "SELECT * FROM users WHERE name LIKE '%" + search_term + "%'"
     return db.execute(query).fetchall()
-"""
+""",
                 )
 
             result = await wizard.analyze({"source_files": [vuln_file], "project_path": tmpdir})
@@ -91,7 +90,7 @@ DATABASE_PASSWORD = "MySuperSecretPassword123"
 def connect():
     password = "hardcoded_password"
     return db.connect(password)
-"""
+""",
                 )
 
             result = await wizard.analyze({"source_files": [vuln_file], "project_path": tmpdir})
@@ -121,7 +120,7 @@ def render_comment(comment):
 def show_message(msg):
     # Another XSS
     document.write(msg)
-"""
+""",
                 )
 
             result = await wizard.analyze({"source_files": [vuln_file], "project_path": tmpdir})
@@ -149,7 +148,7 @@ def execute_command(user_command):
 def run_script(script_name):
     # Another command injection
     subprocess.call(f"python {script_name}", shell=True)
-"""
+""",
                 )
 
             result = await wizard.analyze({"source_files": [vuln_file], "project_path": tmpdir})
@@ -176,7 +175,7 @@ def hash_password(password):
 def hash_token(token):
     # Weak crypto - SHA1
     return hashlib.sha1(token.encode()).hexdigest()
-"""
+""",
                 )
 
             result = await wizard.analyze({"source_files": [vuln_file], "project_path": tmpdir})
@@ -199,7 +198,7 @@ def public_search(query):
     # Publicly accessible SQL injection
     result = db.execute(f"SELECT * FROM data WHERE query='{query}'")
     return result.fetchall()
-"""
+""",
                 )
 
             # Mark endpoint as public
@@ -210,7 +209,7 @@ def public_search(query):
                     "source_files": [vuln_file],
                     "project_path": tmpdir,
                     "endpoint_config": endpoint_config,
-                }
+                },
             )
 
             assessments = result["exploitability_assessments"]
@@ -243,7 +242,7 @@ def public_search(query):
 def public_endpoint(user_input):
     query = f"SELECT * FROM data WHERE id={user_input}"
     return db.execute(query).fetchone()
-"""
+""",
                 )
 
             internal_file = os.path.join(tmpdir, "internal_api.py")
@@ -253,7 +252,7 @@ def public_endpoint(user_input):
 def internal_endpoint(user_input):
     query = f"SELECT * FROM data WHERE id={user_input}"
     return db.execute(query).fetchone()
-"""
+""",
                 )
 
             endpoint_config = {
@@ -266,7 +265,7 @@ def internal_endpoint(user_input):
                     "source_files": [public_file, internal_file],
                     "project_path": tmpdir,
                     "endpoint_config": endpoint_config,
-                }
+                },
             )
 
             assessments = result["exploitability_assessments"]
@@ -306,7 +305,7 @@ def search(query):
 def authenticate(user, password):
     hash = hashlib.md5(password.encode()).hexdigest()
     return hash == stored_hash
-"""
+""",
                 )
 
             endpoint_config = {vuln_file: {"endpoint_public": True}}
@@ -316,7 +315,7 @@ def authenticate(user, password):
                     "source_files": [vuln_file],
                     "project_path": tmpdir,
                     "endpoint_config": endpoint_config,
-                }
+                },
             )
 
             predictions = result["predictions"]
@@ -346,7 +345,7 @@ def authenticate(user, password):
 def get_user(user_id):
     query = f"SELECT * FROM users WHERE id={user_id}"
     return db.execute(query).fetchone()
-"""
+""",
                 )
 
             endpoint_config = {vuln_file: {"endpoint_public": True}}
@@ -356,7 +355,7 @@ def get_user(user_id):
                     "source_files": [vuln_file],
                     "project_path": tmpdir,
                     "endpoint_config": endpoint_config,
-                }
+                },
             )
 
             recommendations = result["recommendations"]
@@ -388,7 +387,7 @@ def search(query):
 # MEDIUM: Weak crypto
 def hash_data(data):
     return hashlib.md5(data.encode()).hexdigest()
-"""
+""",
                 )
 
             result = await wizard.analyze({"source_files": [vuln_file], "project_path": tmpdir})
@@ -417,7 +416,7 @@ def endpoint2(search):
 
 def endpoint3(term):
     db.execute(f"SELECT * FROM products WHERE t='{term}'")
-"""
+""",
                 )
 
             endpoint_config = {vuln_file: {"endpoint_public": True}}
@@ -427,7 +426,7 @@ def endpoint3(term):
                     "source_files": [vuln_file],
                     "project_path": tmpdir,
                     "endpoint_config": endpoint_config,
-                }
+                },
             )
 
             insights = result["insights"]
@@ -475,7 +474,7 @@ def safe_function():
     # Safe code with parameterized queries
     result = db.execute("SELECT * FROM users WHERE id = ?", (user_id,))
     return result.fetchone()
-"""
+""",
                 )
 
             result = await wizard.analyze({"source_files": [safe_file], "project_path": tmpdir})
@@ -499,7 +498,7 @@ def public_search(query):
     # Public SQL injection - IMMEDIATE urgency
     result = db.execute(f"SELECT * FROM users WHERE q='{query}'")
     return result.fetchall()
-"""
+""",
                 )
 
             endpoint_config = {critical_file: {"endpoint_public": True}}
@@ -509,7 +508,7 @@ def public_search(query):
                     "source_files": [critical_file],
                     "project_path": tmpdir,
                     "endpoint_config": endpoint_config,
-                }
+                },
             )
 
             assessments = result["exploitability_assessments"]
@@ -620,7 +619,8 @@ class TestExploitAnalyzer:
 
         # Internal endpoint
         internal_assessment = analyzer.assess_exploitability(
-            vulnerability, {"endpoint_public": False}
+            vulnerability,
+            {"endpoint_public": False},
         )
 
         # Public should have higher likelihood

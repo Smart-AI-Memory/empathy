@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Example 2: Tech Debt Trajectory Tracking
+"""Example 2: Tech Debt Trajectory Tracking
 ========================================
 
 Demonstrates how persistent memory enables AI to track technical debt
@@ -32,7 +31,6 @@ from empathy_software_plugin.wizards import TechDebtWizard
 
 def seed_historical_data(wizard: TechDebtWizard):
     """Simulate 3 months of historical snapshots"""
-
     history_data = {
         "snapshots": [
             # 90 days ago: 25 items
@@ -59,7 +57,7 @@ def seed_historical_data(wizard: TechDebtWizard):
                 "by_severity": {"low": 15, "medium": 20, "high": 9, "critical": 3},
                 "hotspots": ["src/legacy/importer.py", "src/api/endpoints.py"],
             },
-        ]
+        ],
     }
 
     # Store in pattern storage
@@ -113,14 +111,14 @@ def old_function():
 def risky_function():
     # TEMP: Remove after migration
     pass
-"""
+""",
     )
 
     result = await wizard.analyze(
         {
             "project_path": str(sample_dir),
             "track_history": True,
-        }
+        },
     )
 
     # Clean up sample

@@ -1,5 +1,4 @@
-"""
-Sensor Data Parsers
+"""Sensor Data Parsers
 
 Parses sensor data from various formats (HL7, FHIR, manual entry).
 
@@ -30,8 +29,7 @@ class VitalSignType(Enum):
 
 @dataclass
 class VitalSignReading:
-    """
-    Standardized vital sign reading.
+    """Standardized vital sign reading.
 
     This is the universal format - all parsers convert to this.
     """
@@ -68,8 +66,7 @@ class BaseSensorParser:
 
 
 class FHIRObservationParser(BaseSensorParser):
-    """
-    Parse FHIR Observation resources.
+    """Parse FHIR Observation resources.
 
     FHIR is standard for healthcare data exchange.
     """
@@ -87,7 +84,6 @@ class FHIRObservationParser(BaseSensorParser):
 
     def parse(self, data: str) -> list[VitalSignReading]:
         """Parse FHIR Observation JSON"""
-
         try:
             observation = json.loads(data)
         except json.JSONDecodeError:
@@ -145,8 +141,7 @@ class FHIRObservationParser(BaseSensorParser):
 
 
 class SimpleJSONParser(BaseSensorParser):
-    """
-    Parse simple JSON format for manual entry or simulation.
+    """Parse simple JSON format for manual entry or simulation.
 
     Example:
     {
@@ -161,6 +156,7 @@ class SimpleJSONParser(BaseSensorParser):
             "o2_sat": 94
         }
     }
+
     """
 
     VITAL_MAPPINGS = {
@@ -182,7 +178,6 @@ class SimpleJSONParser(BaseSensorParser):
 
     def parse(self, data: str) -> list[VitalSignReading]:
         """Parse simple JSON format"""
-
         try:
             parsed = json.loads(data)
         except json.JSONDecodeError:
@@ -231,15 +226,14 @@ class SensorParserFactory:
         if not parser_class:
             raise ValueError(
                 f"Unsupported sensor format: {format_type}. "
-                f"Supported: {', '.join(cls._parsers.keys())}"
+                f"Supported: {', '.join(cls._parsers.keys())}",
             )
 
         return parser_class()
 
 
 def parse_sensor_data(data: str, format_type: str = "simple_json") -> list[VitalSignReading]:
-    """
-    Convenience function to parse sensor data.
+    """Convenience function to parse sensor data.
 
     Args:
         data: Raw sensor data (JSON string)
@@ -252,14 +246,14 @@ def parse_sensor_data(data: str, format_type: str = "simple_json") -> list[Vital
         >>> data = '{"patient_id": "12345", "vitals": {"hr": 110}}'
         >>> readings = parse_sensor_data(data, "simple_json")
         >>> print(f"HR: {readings[0].value} {readings[0].unit}")
+
     """
     parser = SensorParserFactory.create(format_type)
     return parser.parse(data)
 
 
 def normalize_vitals(readings: list[VitalSignReading]) -> dict[str, Any]:
-    """
-    Normalize vital sign readings into protocol-checkable format.
+    """Normalize vital sign readings into protocol-checkable format.
 
     Takes list of VitalSignReading and converts to dict for protocol checker.
 
@@ -272,6 +266,7 @@ def normalize_vitals(readings: list[VitalSignReading]) -> dict[str, Any]:
     Example:
         >>> normalized = normalize_vitals(readings)
         >>> # Returns: {"hr": 110, "systolic_bp": 95, "respiratory_rate": 24}
+
     """
     normalized = {}
 

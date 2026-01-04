@@ -1,5 +1,4 @@
-"""
-Health check endpoint for Railway/Kubernetes monitoring.
+"""Health check endpoint for Railway/Kubernetes monitoring.
 """
 
 from datetime import datetime
@@ -12,8 +11,7 @@ router = APIRouter(prefix="/api/v1/health", tags=["Health"])
 @router.get("")
 @router.get("/")
 async def health_check():
-    """
-    Health check endpoint.
+    """Health check endpoint.
 
     Used by Railway for deployment health monitoring.
     """

@@ -1,5 +1,4 @@
-"""
-ScalingWizard - Scalability and architecture analysis
+"""ScalingWizard - Scalability and architecture analysis
 
 Level 4 Anticipatory Empathy for Scalability using the Empathy Framework.
 
@@ -13,8 +12,7 @@ from .base_wizard import BaseCoachWizard, WizardIssue, WizardPrediction
 
 
 class ScalingWizard(BaseCoachWizard):
-    """
-    Scalability and architecture analysis
+    """Scalability and architecture analysis
 
     Detects:
     - single points of failure
@@ -35,8 +33,7 @@ class ScalingWizard(BaseCoachWizard):
         )
 
     def analyze_code(self, code: str, file_path: str, language: str) -> list[WizardIssue]:
-        """
-        Analyze code for scalability issues
+        """Analyze code for scalability issues
 
         This is a reference implementation. In production, integrate with:
         - Static analysis tools
@@ -56,10 +53,13 @@ class ScalingWizard(BaseCoachWizard):
         return issues
 
     def predict_future_issues(
-        self, code: str, file_path: str, project_context: dict[str, Any], timeline_days: int = 90
+        self,
+        code: str,
+        file_path: str,
+        project_context: dict[str, Any],
+        timeline_days: int = 90,
     ) -> list[WizardPrediction]:
-        """
-        Level 4 Anticipatory: Predict scalability issues {timeline_days} days ahead
+        """Level 4 Anticipatory: Predict scalability issues {timeline_days} days ahead
 
         Uses:
         - Historical patterns
@@ -75,16 +75,16 @@ class ScalingWizard(BaseCoachWizard):
 
         self.logger.info(
             f"{self.name} predicted {len(predictions)} future issues "
-            f"for {file_path} ({timeline_days} days ahead)"
+            f"for {file_path} ({timeline_days} days ahead)",
         )
         return predictions
 
     def suggest_fixes(self, issue: WizardIssue) -> str:
-        """
-        Suggest how to fix a scalability issue
+        """Suggest how to fix a scalability issue
 
         Returns:
             Detailed fix suggestion with code examples
+
         """
         # Implementation depends on issue type
         return f"Fix suggestion for {issue.category} issue: {issue.message}"

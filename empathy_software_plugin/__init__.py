@@ -1,5 +1,4 @@
-"""
-Empathy Framework - Software Development Plugin
+"""Empathy Framework - Software Development Plugin
 
 Primary domain plugin demonstrating Level 4 Anticipatory Empathy
 for software development teams.

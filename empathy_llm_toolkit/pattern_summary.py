@@ -1,5 +1,4 @@
-"""
-Pattern Summary Generator
+"""Pattern Summary Generator
 
 Generates a markdown summary of stored patterns for inclusion in CLAUDE.md.
 This enables Claude Code sessions to have context about historical patterns.
@@ -29,8 +28,7 @@ logger = logging.getLogger(__name__)
 
 
 class PatternSummaryGenerator:
-    """
-    Generates markdown summaries of stored patterns.
+    """Generates markdown summaries of stored patterns.
 
     Scans the patterns directory and produces a concise summary
     suitable for inclusion in CLAUDE.md via @import.
@@ -119,11 +117,11 @@ class PatternSummaryGenerator:
         return snapshots
 
     def generate_markdown(self) -> str:
-        """
-        Generate a markdown summary of all patterns.
+        """Generate a markdown summary of all patterns.
 
         Returns:
             Markdown string suitable for CLAUDE.md inclusion
+
         """
         if not any([self._bug_patterns, self._security_decisions, self._tech_debt_history]):
             self.load_all_patterns()
@@ -157,7 +155,7 @@ class PatternSummaryGenerator:
                 "- **Security**: Check team decisions for false positives",
                 "- **Tech Debt**: Consider debt trajectory when planning refactoring work",
                 "",
-            ]
+            ],
         )
 
         return "\n".join(lines)
@@ -247,7 +245,9 @@ class PatternSummaryGenerator:
 
         # Sort by date
         sorted_snapshots = sorted(
-            self._tech_debt_history, key=lambda s: s.get("date", ""), reverse=True
+            self._tech_debt_history,
+            key=lambda s: s.get("date", ""),
+            reverse=True,
         )
 
         # Current state (most recent)
@@ -295,11 +295,11 @@ class PatternSummaryGenerator:
         return lines
 
     def write_to_file(self, output_path: str) -> None:
-        """
-        Write the markdown summary to a file.
+        """Write the markdown summary to a file.
 
         Args:
             output_path: Path to write the summary
+
         """
         output = Path(output_path)
         output.parent.mkdir(parents=True, exist_ok=True)
@@ -326,7 +326,9 @@ def main():
         help="Output file path (default: ./.claude/patterns_summary.md)",
     )
     parser.add_argument(
-        "--print", action="store_true", help="Print to stdout instead of writing to file"
+        "--print",
+        action="store_true",
+        help="Print to stdout instead of writing to file",
     )
 
     args = parser.parse_args()

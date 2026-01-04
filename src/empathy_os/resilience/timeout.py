@@ -1,5 +1,4 @@
-"""
-Timeout Pattern Implementation
+"""Timeout Pattern Implementation
 
 Prevents operations from hanging indefinitely.
 
@@ -33,8 +32,7 @@ def timeout(
     error_message: str | None = None,
     fallback: Callable[..., T] | None = None,
 ) -> Callable:
-    """
-    Decorator to add timeout to a function.
+    """Decorator to add timeout to a function.
 
     Args:
         seconds: Maximum execution time in seconds
@@ -49,6 +47,7 @@ def timeout(
         @timeout(10, fallback=lambda: "default")
         async def get_data():
             ...
+
     """
 
     def decorator(func: Callable[..., T]) -> Callable[..., T]:
@@ -79,7 +78,7 @@ def timeout(
             if platform.system() == "Windows":
                 # Windows doesn't support SIGALRM, just run without timeout
                 logger.warning(
-                    f"Timeout not supported on Windows for sync function {func.__name__}"
+                    f"Timeout not supported on Windows for sync function {func.__name__}",
                 )
                 return func(*args, **kwargs)
 
@@ -113,8 +112,7 @@ async def with_timeout(
     seconds: float,
     fallback_value: T | None = None,
 ) -> T:
-    """
-    Execute a coroutine with a timeout.
+    """Execute a coroutine with a timeout.
 
     Args:
         coro: Coroutine to execute
@@ -127,6 +125,7 @@ async def with_timeout(
     Example:
         result = await with_timeout(slow_api_call(), 30)
         result = await with_timeout(get_data(), 10, fallback_value={})
+
     """
     try:
         return await asyncio.wait_for(coro, timeout=seconds)

@@ -1,5 +1,4 @@
-"""
-Tests for Protocol Checker
+"""Tests for Protocol Checker
 
 Tests the healthcare "linter" that validates patient data against clinical protocols.
 
@@ -1092,7 +1091,10 @@ class TestRecommendationGeneration:
             screening_threshold=0,
             interventions=[
                 ProtocolIntervention(
-                    order=i, action=f"Intervention {i}", timing="immediate", required=True
+                    order=i,
+                    action=f"Intervention {i}",
+                    timing="immediate",
+                    required=True,
                 )
                 for i in range(1, 6)  # 5 interventions
             ],
@@ -1129,13 +1131,19 @@ class TestRecommendationGeneration:
         # (This tests the fallback return statement)
         deviation = ProtocolDeviation(
             intervention=ProtocolIntervention(
-                order=1, action="Test", timing="immediate", required=True
+                order=1,
+                action="Test",
+                timing="immediate",
+                required=True,
             ),
             status=ComplianceStatus.COMPLETED,  # Not OVERDUE or PENDING
         )
 
         result = checker._generate_recommendation(
-            protocol=protocol, activated=True, deviations=[deviation], criteria_results=[]
+            protocol=protocol,
+            activated=True,
+            deviations=[deviation],
+            criteria_results=[],
         )
 
         # Should fall back to generic monitoring message
@@ -1151,15 +1159,21 @@ class TestAlertLevelEdgeCases:
         deviations = [
             ProtocolDeviation(
                 intervention=ProtocolIntervention(
-                    order=1, action="Test", timing="immediate", required=True
+                    order=1,
+                    action="Test",
+                    timing="immediate",
+                    required=True,
                 ),
                 status=ComplianceStatus.OVERDUE,
-            )
+            ),
         ]
 
         # Protocol not activated - should return NONE even with deviations
         alert_level = checker._determine_alert_level(
-            protocol_activated=False, deviations=deviations, score=0, threshold=1
+            protocol_activated=False,
+            deviations=deviations,
+            score=0,
+            threshold=1,
         )
 
         assert alert_level == "NONE"
@@ -1169,7 +1183,10 @@ class TestAlertLevelEdgeCases:
         checker = ProtocolChecker()
 
         alert_level = checker._determine_alert_level(
-            protocol_activated=True, deviations=[], score=5, threshold=3
+            protocol_activated=True,
+            deviations=[],
+            score=5,
+            threshold=3,
         )
 
         assert alert_level == "NONE"
@@ -1180,7 +1197,10 @@ class TestAlertLevelEdgeCases:
         deviations = [
             ProtocolDeviation(
                 intervention=ProtocolIntervention(
-                    order=i, action=f"Action {i}", timing="immediate", required=True
+                    order=i,
+                    action=f"Action {i}",
+                    timing="immediate",
+                    required=True,
                 ),
                 status=ComplianceStatus.OVERDUE,
             )
@@ -1188,7 +1208,10 @@ class TestAlertLevelEdgeCases:
         ]
 
         alert_level = checker._determine_alert_level(
-            protocol_activated=True, deviations=deviations, score=5, threshold=2
+            protocol_activated=True,
+            deviations=deviations,
+            score=5,
+            threshold=2,
         )
 
         assert alert_level == "CRITICAL"
@@ -1199,20 +1222,29 @@ class TestAlertLevelEdgeCases:
         deviations = [
             ProtocolDeviation(
                 intervention=ProtocolIntervention(
-                    order=1, action="Overdue action", timing="immediate", required=True
+                    order=1,
+                    action="Overdue action",
+                    timing="immediate",
+                    required=True,
                 ),
                 status=ComplianceStatus.OVERDUE,
             ),
             ProtocolDeviation(
                 intervention=ProtocolIntervention(
-                    order=2, action="Pending action", timing="within 1 hour", required=True
+                    order=2,
+                    action="Pending action",
+                    timing="within 1 hour",
+                    required=True,
                 ),
                 status=ComplianceStatus.PENDING,
             ),
         ]
 
         alert_level = checker._determine_alert_level(
-            protocol_activated=True, deviations=deviations, score=3, threshold=2
+            protocol_activated=True,
+            deviations=deviations,
+            score=3,
+            threshold=2,
         )
 
         # Overdue takes priority
@@ -1224,14 +1256,20 @@ class TestAlertLevelEdgeCases:
         deviations = [
             ProtocolDeviation(
                 intervention=ProtocolIntervention(
-                    order=1, action="Pending action", timing="within 2 hours", required=True
+                    order=1,
+                    action="Pending action",
+                    timing="within 2 hours",
+                    required=True,
                 ),
                 status=ComplianceStatus.PENDING,
             ),
         ]
 
         alert_level = checker._determine_alert_level(
-            protocol_activated=True, deviations=deviations, score=2, threshold=1
+            protocol_activated=True,
+            deviations=deviations,
+            score=2,
+            threshold=1,
         )
 
         assert alert_level == "WARNING"
@@ -1432,16 +1470,28 @@ class TestComplexScenarios:
             screening_threshold=0,
             interventions=[
                 ProtocolIntervention(
-                    order=1, action="First step", timing="immediate", required=True
+                    order=1,
+                    action="First step",
+                    timing="immediate",
+                    required=True,
                 ),
                 ProtocolIntervention(
-                    order=2, action="Second step", timing="within 1 hour", required=True
+                    order=2,
+                    action="Second step",
+                    timing="within 1 hour",
+                    required=True,
                 ),
                 ProtocolIntervention(
-                    order=3, action="Third step", timing="within 2 hours", required=True
+                    order=3,
+                    action="Third step",
+                    timing="within 2 hours",
+                    required=True,
                 ),
                 ProtocolIntervention(
-                    order=4, action="Fourth step", timing="within 4 hours", required=True
+                    order=4,
+                    action="Fourth step",
+                    timing="within 4 hours",
+                    required=True,
                 ),
             ],
             monitoring_frequency="hourly",
@@ -1506,10 +1556,16 @@ class TestComplexScenarios:
             screening_threshold=3,
             interventions=[
                 ProtocolIntervention(
-                    order=1, action="Initial assessment", timing="immediate", required=True
+                    order=1,
+                    action="Initial assessment",
+                    timing="immediate",
+                    required=True,
                 ),
                 ProtocolIntervention(
-                    order=2, action="Treatment", timing="within 1 hour", required=True
+                    order=2,
+                    action="Treatment",
+                    timing="within 1 hour",
+                    required=True,
                 ),
             ],
             monitoring_frequency="continuous",

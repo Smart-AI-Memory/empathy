@@ -1,5 +1,4 @@
-"""
-Tests for Refactoring Crew
+"""Tests for Refactoring Crew
 
 Tests the 2-agent refactoring crew that performs interactive code
 refactoring with session memory, rollback, and user preference learning.
@@ -863,10 +862,10 @@ class TestRefactoringCrewWorkflow:
                             "before_code": "def old(): pass",
                             "confidence": 0.9,
                             "estimated_impact": "high",
-                        }
-                    ]
+                        },
+                    ],
                 },
-            }
+            },
         )
 
         crew._agents = {"analyzer": mock_analyzer, "writer": MagicMock()}

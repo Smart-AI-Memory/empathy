@@ -1,5 +1,4 @@
-"""
-Comprehensive Test Suite for All 16 Wizards
+"""Comprehensive Test Suite for All 16 Wizards
 
 Tests configuration, security integration, compliance verification,
 and PII pattern detection for all domain-specific wizards.
@@ -321,7 +320,10 @@ class TestWizardSecurityWarnings:
         ],
     )
     def test_security_warning_for_sensitive_wizards(
-        self, llm_without_security, wizard_class, caplog
+        self,
+        llm_without_security,
+        wizard_class,
+        caplog,
     ):
         """Test SENSITIVE wizards warn when security is disabled"""
         _ = wizard_class(llm_without_security)

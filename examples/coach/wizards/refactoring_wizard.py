@@ -1,5 +1,4 @@
-"""
-Refactoring Wizard
+"""Refactoring Wizard
 
 Analyzes code quality, identifies technical debt, and orchestrates safe refactoring.
 Uses Empathy Framework Level 3 (Proactive) for smell detection and Level 4
@@ -23,8 +22,7 @@ from .base_wizard import (
 
 
 class RefactoringWizard(BaseWizard):
-    """
-    Wizard for code quality analysis and refactoring
+    """Wizard for code quality analysis and refactoring
 
     Uses:
     - Level 2: Guide user through refactoring decisions
@@ -73,7 +71,6 @@ class RefactoringWizard(BaseWizard):
 
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute refactoring workflow"""
-
         # Step 1: Assess emotional context
         self._assess_emotional_state(task)
 
@@ -109,11 +106,15 @@ class RefactoringWizard(BaseWizard):
                 content=self._generate_quality_report(diagnosis, smells, complexity),
             ),
             WizardArtifact(
-                type="doc", title="Refactoring Plan", content="\n".join(refactoring_plan)
+                type="doc",
+                title="Refactoring Plan",
+                content="\n".join(refactoring_plan),
             ),
             WizardArtifact(type="code", title="Refactored Code Examples", content=refactored_code),
             WizardArtifact(
-                type="doc", title="Maintainability Forecast", content=maintainability_forecast
+                type="doc",
+                title="Maintainability Forecast",
+                content=maintainability_forecast,
             ),
             WizardArtifact(
                 type="checklist",
@@ -209,7 +210,7 @@ class RefactoringWizard(BaseWizard):
                         "Extract Class: Split responsibilities into separate classes",
                         "Replace Method with Method Object: For complex algorithms",
                     ],
-                }
+                },
             )
 
         # Code duplication
@@ -225,7 +226,7 @@ class RefactoringWizard(BaseWizard):
                         "Pull Up Method: Move common code to parent class",
                         "Form Template Method: Extract common algorithm structure",
                     ],
-                }
+                },
             )
 
         # High complexity
@@ -241,7 +242,7 @@ class RefactoringWizard(BaseWizard):
                         "Replace Nested Conditional with Guard Clauses",
                         "Replace Conditional with Polymorphism: For type-based branching",
                     ],
-                }
+                },
             )
 
         # God class / SRP violation
@@ -260,7 +261,7 @@ class RefactoringWizard(BaseWizard):
                         "Extract Subclass: Separate specialized behavior",
                         "Replace Data Value with Object: Extract complex data structures",
                     ],
-                }
+                },
             )
 
         # Feature envy
@@ -275,7 +276,7 @@ class RefactoringWizard(BaseWizard):
                         "Move Method: Move to the class it's most interested in",
                         "Extract Method then Move Method: For partial feature envy",
                     ],
-                }
+                },
             )
 
         # Primitive obsession
@@ -291,7 +292,7 @@ class RefactoringWizard(BaseWizard):
                         "Introduce Parameter Object: For method parameter groups",
                         "Replace Type Code with Class: For status/type fields",
                     ],
-                }
+                },
             )
 
         # If no specific smells detected, provide general analysis
@@ -307,7 +308,7 @@ class RefactoringWizard(BaseWizard):
                         "Extract Method: Break down long methods",
                         "Add Type Hints: Improve IDE support and type safety",
                     ],
-                }
+                },
             )
 
         return smells
@@ -338,7 +339,10 @@ class RefactoringWizard(BaseWizard):
         }
 
     def _create_refactoring_plan(
-        self, task: WizardTask, smells: list[dict], complexity: dict
+        self,
+        task: WizardTask,
+        smells: list[dict],
+        complexity: dict,
     ) -> list[str]:
         """Create step-by-step refactoring plan"""
         plan = ["## Refactoring Plan (Risk-Ordered: Lowest Risk First)\n"]
@@ -538,7 +542,10 @@ def apply_promo_code(promo_code, total, membership):
         return code
 
     def _predict_maintainability_issues(
-        self, task: WizardTask, smells: list[dict], complexity: dict
+        self,
+        task: WizardTask,
+        smells: list[dict],
+        complexity: dict,
     ) -> str:
         """Level 4: Predict future maintainability crisis"""
         forecast = "# Maintainability Forecast (Level 4: Anticipatory)\n\n"
@@ -663,7 +670,7 @@ def apply_promo_code(promo_code, total, membership):
                 risk="Refactoring may accidentally change behavior",
                 mitigation="Run full test suite after each atomic refactoring step. If tests fail, revert immediately.",
                 severity="high",
-            )
+            ),
         )
 
         # Scope creep risk
@@ -672,7 +679,7 @@ def apply_promo_code(promo_code, total, membership):
                 risk="Refactoring scope may grow ('while we're here, let's also...')",
                 mitigation="Stick to original plan. Create separate tickets for additional improvements.",
                 severity="medium",
-            )
+            ),
         )
 
         # Test coverage gap risk
@@ -681,7 +688,7 @@ def apply_promo_code(promo_code, total, membership):
                 risk="Low test coverage may hide behavioral changes",
                 mitigation="Add tests BEFORE refactoring complex code. Target: 80%+ coverage.",
                 severity="high",
-            )
+            ),
         )
 
         return risks
@@ -696,7 +703,7 @@ def apply_promo_code(promo_code, total, membership):
                     owner="Team Lead / Senior Dev",
                     what="Code review of refactored code (focus on behavior preservation)",
                     when="After refactoring complete, before merge",
-                )
+                ),
             )
 
         return handoffs

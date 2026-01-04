@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Level 5 Transformative Empathy Demo
+"""Level 5 Transformative Empathy Demo
 
 Healthcare Handoff Patterns → Software Deployment Safety
 
@@ -36,8 +35,7 @@ except ImportError:
 # Simulated MemDocs-style pattern storage
 # In production, this would use actual MemDocs integration
 class PatternMemory:
-    """
-    Simulated long-term memory for cross-domain patterns
+    """Simulated long-term memory for cross-domain patterns
 
     This demonstrates the concept of MemDocs integration.
     In production, use actual MemDocs for persistent storage.
@@ -94,8 +92,7 @@ def print_info(text: str):
 
 
 def analyze_healthcare_handoff(memory: PatternMemory):
-    """
-    Step 1: Analyze healthcare handoff protocol
+    """Step 1: Analyze healthcare handoff protocol
     Learn the pattern that will transfer to software
     """
     print_header("STEP 1: Healthcare Domain Analysis", "=")
@@ -163,12 +160,14 @@ def analyze_healthcare_handoff(memory: PatternMemory):
 
     # Store in memory (simulating MemDocs)
     memory.store_pattern(
-        domain="healthcare", pattern_type="handoff_failure", details=handoff_pattern
+        domain="healthcare",
+        pattern_type="handoff_failure",
+        details=handoff_pattern,
     )
 
     print_success("Pattern 'critical_handoff_failure' stored in memory")
     print_info(
-        f"Key finding: Handoffs without verification fail {handoff_pattern['failure_rate']:.0%} of the time"
+        f"Key finding: Handoffs without verification fail {handoff_pattern['failure_rate']:.0%} of the time",
     )
     print()
 
@@ -181,8 +180,7 @@ def analyze_healthcare_handoff(memory: PatternMemory):
 
 
 def analyze_deployment_pipeline(memory: PatternMemory, healthcare_pattern: dict):
-    """
-    Step 2: Analyze software deployment pipeline
+    """Step 2: Analyze software deployment pipeline
     Apply healthcare pattern cross-domain
     """
     print_header("STEP 2: Software Domain Analysis", "=")
@@ -287,14 +285,12 @@ def analyze_deployment_pipeline(memory: PatternMemory, healthcare_pattern: dict)
         print()
 
         return prediction
-    else:
-        print("No cross-domain patterns found")
-        return None
+    print("No cross-domain patterns found")
+    return None
 
 
 def main():
     """Run the complete Level 5 Transformative Empathy demo"""
-
     print_header("LEVEL 5 TRANSFORMATIVE EMPATHY DEMO", "=")
     print()
     print("Healthcare Handoff Patterns → Software Deployment Safety")

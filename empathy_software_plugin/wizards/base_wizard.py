@@ -1,5 +1,4 @@
-"""
-Base Wizard for Software Development Plugin
+"""Base Wizard for Software Development Plugin
 
 Foundation for all software development wizards.
 
@@ -24,8 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 class BaseWizard(ABC):
-    """
-    Base class for all software development wizards.
+    """Base class for all software development wizards.
 
     All wizards implement Level 4 Anticipatory Empathy:
     - Analyze current state
@@ -44,12 +42,12 @@ class BaseWizard(ABC):
         short_term_memory: RedisShortTermMemory | None = None,
         cache_ttl_seconds: int = 3600,
     ):
-        """
-        Initialize base wizard.
+        """Initialize base wizard.
 
         Args:
             short_term_memory: Optional Redis memory for caching/sharing
             cache_ttl_seconds: Cache duration for analysis results (default 1 hour)
+
         """
         self.logger = logger
         self.short_term_memory = short_term_memory
@@ -65,18 +63,15 @@ class BaseWizard(ABC):
     @abstractmethod
     def name(self) -> str:
         """Wizard name"""
-        pass
 
     @property
     @abstractmethod
     def level(self) -> int:
         """Empathy level (1-5)"""
-        pass
 
     @abstractmethod
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze the given context and return results.
+        """Analyze the given context and return results.
 
         Args:
             context: Dictionary with wizard-specific inputs
@@ -87,8 +82,8 @@ class BaseWizard(ABC):
             - recommendations: List of actionable steps
             - confidence: Float 0.0-1.0
             - Additional wizard-specific data
+
         """
-        pass
 
     # =========================================================================
     # SHORT-TERM MEMORY (Caching & Sharing)
@@ -106,14 +101,14 @@ class BaseWizard(ABC):
         return self.short_term_memory is not None
 
     def get_cached_result(self, context: dict[str, Any]) -> dict[str, Any] | None:
-        """
-        Get cached analysis result if available.
+        """Get cached analysis result if available.
 
         Args:
             context: The analysis context (used for cache key)
 
         Returns:
             Cached result dict, or None if not cached
+
         """
         if self.short_term_memory is None:
             return None
@@ -123,8 +118,7 @@ class BaseWizard(ABC):
         return dict(result) if result else None
 
     def cache_result(self, context: dict[str, Any], result: dict[str, Any]) -> bool:
-        """
-        Cache analysis result for future reuse.
+        """Cache analysis result for future reuse.
 
         Args:
             context: The analysis context (used for cache key)
@@ -132,6 +126,7 @@ class BaseWizard(ABC):
 
         Returns:
             True if cached successfully
+
         """
         if self.short_term_memory is None:
             return False
@@ -140,8 +135,7 @@ class BaseWizard(ABC):
         return bool(self.short_term_memory.stash(key, result, self._credentials))
 
     async def analyze_with_cache(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze with automatic caching.
+        """Analyze with automatic caching.
 
         First checks cache for existing result. If not found,
         runs analysis and caches the result.
@@ -151,6 +145,7 @@ class BaseWizard(ABC):
 
         Returns:
             Analysis result (from cache or fresh)
+
         """
         # Try cache first
         cached = self.get_cached_result(context)
@@ -169,8 +164,7 @@ class BaseWizard(ABC):
         return result
 
     def share_context(self, key: str, data: Any) -> bool:
-        """
-        Share context data for other wizards to use.
+        """Share context data for other wizards to use.
 
         Use this to pass intermediate results or discovered insights
         to subsequent wizards in a pipeline.
@@ -183,6 +177,7 @@ class BaseWizard(ABC):
 
         Returns:
             True if shared successfully
+
         """
         if self.short_term_memory is None:
             return False
@@ -197,12 +192,11 @@ class BaseWizard(ABC):
                 f"shared:{key}",
                 data,
                 global_creds,
-            )
+            ),
         )
 
     def get_shared_context(self, key: str, from_wizard: str | None = None) -> Any | None:
-        """
-        Get context data shared by another wizard.
+        """Get context data shared by another wizard.
 
         If from_wizard is specified, looks in that wizard's private namespace.
         Otherwise, looks in the global shared namespace.
@@ -214,6 +208,7 @@ class BaseWizard(ABC):
 
         Returns:
             The shared data, or None if not found
+
         """
         if self.short_term_memory is None:
             return None
@@ -235,8 +230,7 @@ class BaseWizard(ABC):
         confidence: float = 0.5,
         code: str | None = None,
     ) -> bool:
-        """
-        Stage a pattern discovered during analysis.
+        """Stage a pattern discovered during analysis.
 
         When a wizard discovers a reusable pattern, it can stage it
         for validation and eventual promotion to the pattern library.
@@ -251,6 +245,7 @@ class BaseWizard(ABC):
 
         Returns:
             True if staged successfully
+
         """
         if self.short_term_memory is None:
             return False
@@ -269,8 +264,7 @@ class BaseWizard(ABC):
         return bool(self.short_term_memory.stage_pattern(pattern, self._credentials))
 
     def send_signal(self, signal_type: str, data: dict) -> bool:
-        """
-        Send a coordination signal.
+        """Send a coordination signal.
 
         Use to notify completion, request help, or broadcast status.
 
@@ -280,6 +274,7 @@ class BaseWizard(ABC):
 
         Returns:
             True if sent successfully
+
         """
         if self.short_term_memory is None:
             return False
@@ -289,5 +284,5 @@ class BaseWizard(ABC):
                 signal_type=signal_type,
                 data={"wizard": self.name, **data},
                 credentials=self._credentials,
-            )
+            ),
         )

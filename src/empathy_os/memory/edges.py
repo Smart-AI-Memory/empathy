@@ -1,5 +1,4 @@
-"""
-Memory Graph Edge Types
+"""Memory Graph Edge Types
 
 Defines edge types for connecting nodes in the knowledge graph.
 Edges represent relationships between entities discovered by wizards.
@@ -60,8 +59,7 @@ class EdgeType(Enum):
 
 @dataclass
 class Edge:
-    """
-    An edge connecting two nodes in the memory graph.
+    """An edge connecting two nodes in the memory graph.
 
     Represents a relationship between entities.
     """

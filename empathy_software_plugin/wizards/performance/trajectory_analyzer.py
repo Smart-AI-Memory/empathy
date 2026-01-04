@@ -1,5 +1,4 @@
-"""
-Performance Trajectory Analyzer (Level 4)
+"""Performance Trajectory Analyzer (Level 4)
 
 Analyzes performance trends to predict future bottlenecks.
 
@@ -31,8 +30,7 @@ class PerformanceTrend:
 
 @dataclass
 class TrajectoryPrediction:
-    """
-    Performance trajectory prediction.
+    """Performance trajectory prediction.
 
     This is Level 4 - predicting BEFORE hitting limits.
     """
@@ -76,8 +74,7 @@ class TrajectoryPrediction:
 
 
 class PerformanceTrajectoryAnalyzer:
-    """
-    Analyzes performance trajectory to predict degradation.
+    """Analyzes performance trajectory to predict degradation.
 
     Level 4 Anticipatory Empathy implementation.
     """
@@ -104,8 +101,7 @@ class PerformanceTrajectoryAnalyzer:
         current_metrics,
         historical_metrics=None,  # Can be dict or list  # Can be dict or list
     ) -> TrajectoryPrediction:
-        """
-        Analyze performance trajectory.
+        """Analyze performance trajectory.
 
         Accepts parameters in either order for backward compatibility:
         - analyze_trajectory(current_metrics: dict, historical_metrics: list)
@@ -127,8 +123,8 @@ class PerformanceTrajectoryAnalyzer:
             >>> prediction = analyzer.analyze_trajectory(current_metrics, history)
             >>> if prediction.trajectory_state == "degrading":
             ...     print(f"ALERT: {prediction.overall_assessment}")
-        """
 
+        """
         # Auto-detect parameter order (backward compatibility)
         if isinstance(current_metrics, list) and isinstance(historical_metrics, dict):
             # Parameters were passed in reverse order
@@ -184,10 +180,12 @@ class PerformanceTrajectoryAnalyzer:
         )
 
     def _analyze_metric_trend(
-        self, metric_name: str, current_value: float, historical_metrics: list[dict[str, Any]]
+        self,
+        metric_name: str,
+        current_value: float,
+        historical_metrics: list[dict[str, Any]],
     ) -> PerformanceTrend | None:
         """Analyze trend for single metric"""
-
         # Validate current_value is numeric
         try:
             current_value = float(current_value)
@@ -225,11 +223,10 @@ class PerformanceTrajectoryAnalyzer:
                 direction = "degrading"
             else:
                 direction = "improving"
+        elif metric_name in ["response_time", "error_rate", "cpu_usage", "memory_usage"]:
+            direction = "improving"
         else:
-            if metric_name in ["response_time", "error_rate", "cpu_usage", "memory_usage"]:
-                direction = "improving"
-            else:
-                direction = "degrading"
+            direction = "degrading"
 
         # Calculate rate of change (per time period)
         time_periods = len(historical_values)
@@ -237,7 +234,11 @@ class PerformanceTrajectoryAnalyzer:
 
         # Determine if concerning
         concerning, reasoning = self._is_trend_concerning(
-            metric_name, current_value, total_change, rate_of_change, direction
+            metric_name,
+            current_value,
+            total_change,
+            rate_of_change,
+            direction,
         )
 
         return PerformanceTrend(
@@ -261,14 +262,13 @@ class PerformanceTrajectoryAnalyzer:
         direction: str,
     ) -> tuple[bool, str]:
         """Determine if trend is concerning"""
-
         # Check if currently out of acceptable range
         if metric_name in self.acceptable_ranges:
             min_val, max_val = self.acceptable_ranges[metric_name]
 
             if current_value < min_val:
                 return True, f"{metric_name} below acceptable range"
-            elif current_value > max_val:
+            if current_value > max_val:
                 return True, f"{metric_name} above acceptable range ({max_val})"
 
         # Check rate of change
@@ -282,7 +282,6 @@ class PerformanceTrajectoryAnalyzer:
 
     def _determine_trajectory_state(self, trends: list[PerformanceTrend]) -> str:
         """Determine overall trajectory state"""
-
         concerning_trends = [t for t in trends if t.concerning]
 
         if not concerning_trends:
@@ -301,14 +300,14 @@ class PerformanceTrajectoryAnalyzer:
         return "degrading"
 
     def _estimate_time_to_critical(
-        self, trends: list[PerformanceTrend], current_metrics: dict[str, float]
+        self,
+        trends: list[PerformanceTrend],
+        current_metrics: dict[str, float],
     ) -> str | None:
-        """
-        Estimate time until metrics hit critical thresholds.
+        """Estimate time until metrics hit critical thresholds.
 
         Core Level 4 - predicting the future.
         """
-
         for trend in trends:
             if not trend.concerning:
                 continue
@@ -338,10 +337,12 @@ class PerformanceTrajectoryAnalyzer:
         return None
 
     def _generate_assessment(
-        self, trajectory_state: str, trends: list[PerformanceTrend], time_to_critical: str | None
+        self,
+        trajectory_state: str,
+        trends: list[PerformanceTrend],
+        time_to_critical: str | None,
     ) -> str:
         """Generate overall assessment"""
-
         if trajectory_state == "optimal":
             return "Performance metrics stable. System operating within acceptable ranges."
 
@@ -372,10 +373,11 @@ class PerformanceTrajectoryAnalyzer:
         return "Performance trajectory under assessment."
 
     def _generate_recommendations(
-        self, trajectory_state: str, trends: list[PerformanceTrend]
+        self,
+        trajectory_state: str,
+        trends: list[PerformanceTrend],
     ) -> list[str]:
         """Generate actionable recommendations"""
-
         if trajectory_state == "optimal":
             return ["Continue monitoring performance metrics"]
 
@@ -404,10 +406,11 @@ class PerformanceTrajectoryAnalyzer:
         return list(set(recommendations))  # Deduplicate
 
     def _calculate_confidence(
-        self, historical_metrics: list[dict[str, Any]], trends: list[PerformanceTrend]
+        self,
+        historical_metrics: list[dict[str, Any]],
+        trends: list[PerformanceTrend],
     ) -> float:
         """Calculate confidence in prediction"""
-
         # More data = higher confidence
         data_points = len(historical_metrics)
         data_confidence = min(data_points / 10, 1.0)

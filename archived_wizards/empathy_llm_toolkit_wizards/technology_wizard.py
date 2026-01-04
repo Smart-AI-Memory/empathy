@@ -1,5 +1,4 @@
-"""
-Technology/IT Wizard - System Security Compliant AI Assistant
+"""Technology/IT Wizard - System Security Compliant AI Assistant
 
 Specialized wizard for IT and technology operations with system security,
 infrastructure data protection, and comprehensive audit logging.
@@ -40,8 +39,7 @@ TECHNOLOGY_PII_PATTERNS = [
 
 
 class TechnologyWizard(BaseWizard):
-    """
-    System security compliant technology and IT AI assistant
+    """System security compliant technology and IT AI assistant
 
     Implements data protection for IT operations:
     1. Infrastructure data detection and protection
@@ -67,6 +65,7 @@ class TechnologyWizard(BaseWizard):
         ...     user_input="Help me troubleshoot this infrastructure issue",
         ...     user_id="sysadmin@company.com"
         ... )
+
     """
 
     def __init__(
@@ -74,12 +73,12 @@ class TechnologyWizard(BaseWizard):
         llm: EmpathyLLM,
         custom_pii_patterns: list[str] | None = None,
     ):
-        """
-        Initialize technology/IT wizard
+        """Initialize technology/IT wizard
 
         Args:
             llm: EmpathyLLM instance (security should be enabled)
             custom_pii_patterns: Additional organization-specific patterns
+
         """
         pii_patterns = TECHNOLOGY_PII_PATTERNS.copy()
 
@@ -106,12 +105,12 @@ class TechnologyWizard(BaseWizard):
         if not llm.enable_security:
             logger.warning(
                 "TechnologyWizard initialized with security DISABLED. "
-                "IT security requires enable_security=True in EmpathyLLM."
+                "IT security requires enable_security=True in EmpathyLLM.",
             )
 
         logger.info(
             f"TechnologyWizard initialized: {len(pii_patterns)} PII patterns, "
-            f"empathy level={config.default_empathy_level}, security={llm.enable_security}"
+            f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
     def _build_system_prompt(self) -> str:

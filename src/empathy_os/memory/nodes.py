@@ -1,5 +1,4 @@
-"""
-Memory Graph Node Types
+"""Memory Graph Node Types
 
 Defines node types for the cross-wizard knowledge graph.
 Each node represents an entity discovered by a wizard.
@@ -51,8 +50,7 @@ class NodeType(Enum):
 
 @dataclass
 class Node:
-    """
-    A node in the memory graph.
+    """A node in the memory graph.
 
     Represents any entity that wizards discover or create.
     """

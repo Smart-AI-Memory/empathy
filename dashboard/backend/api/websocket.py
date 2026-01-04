@@ -1,5 +1,4 @@
-"""
-WebSocket API for real-time metrics streaming.
+"""WebSocket API for real-time metrics streaming.
 
 Provides WebSocket endpoint for streaming:
 - Real-time Redis metrics
@@ -24,8 +23,7 @@ router = APIRouter()
 
 
 class ConnectionManager:
-    """
-    Manages WebSocket connections and broadcasts.
+    """Manages WebSocket connections and broadcasts.
 
     Handles multiple concurrent connections and ensures
     graceful cleanup on disconnect.
@@ -78,8 +76,7 @@ async def websocket_metrics(
     service: Annotated[MemoryService, Depends(get_memory_service)],
     settings: Annotated[Settings, Depends(get_settings)],
 ):
-    """
-    WebSocket endpoint for real-time metrics streaming.
+    """WebSocket endpoint for real-time metrics streaming.
 
     Connection flow:
     1. Client connects to ws://host:port/ws/metrics
@@ -165,13 +162,13 @@ async def _metrics_update_loop(
     service: MemoryService,
     settings: Settings,
 ):
-    """
-    Periodically send metrics updates to connected client.
+    """Periodically send metrics updates to connected client.
 
     Args:
         websocket: WebSocket connection
         service: Memory service instance
         settings: Application settings
+
     """
     try:
         while True:

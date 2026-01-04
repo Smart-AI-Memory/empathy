@@ -1,5 +1,4 @@
-"""
-Comprehensive tests for Memory Control Panel Module
+"""Comprehensive tests for Memory Control Panel Module
 
 Tests cover:
 - Control panel initialization
@@ -191,7 +190,9 @@ class TestMemoryControlPanelRedis:
     def test_start_redis_failure(self, mock_ensure):
         """Test Redis start failure"""
         mock_status = RedisStatus(
-            available=False, method=RedisStartMethod.MOCK, message="Failed to start"
+            available=False,
+            method=RedisStartMethod.MOCK,
+            message="Failed to start",
         )
         mock_ensure.return_value = mock_status
 
@@ -314,7 +315,7 @@ class TestMemoryControlPanelPatterns:
         panel = MemoryControlPanel()
         mock_long_term = Mock()
         mock_long_term.list_patterns.return_value = [
-            {"pattern_id": "pat_1", "classification": "PUBLIC"}
+            {"pattern_id": "pat_1", "classification": "PUBLIC"},
         ]
         panel._long_term = mock_long_term
 
@@ -401,7 +402,7 @@ class TestMemoryControlPanelExport:
             panel = MemoryControlPanel()
             mock_long_term = Mock()
             mock_long_term.list_patterns.return_value = [
-                {"pattern_id": "pat_1", "classification": "PUBLIC"}
+                {"pattern_id": "pat_1", "classification": "PUBLIC"},
             ]
             panel._long_term = mock_long_term
 
@@ -431,8 +432,9 @@ class TestMemoryControlPanelHealthCheck:
         panel = MemoryControlPanel()
         panel._redis_status = RedisStatus(available=True, method=RedisStartMethod.HOMEBREW)
 
-        with patch.object(panel, "_count_patterns", return_value=10):
-            with patch.object(
+        with (
+            patch.object(panel, "_count_patterns", return_value=10),
+            patch.object(
                 panel,
                 "get_statistics",
                 return_value=MemoryStats(
@@ -442,8 +444,9 @@ class TestMemoryControlPanelHealthCheck:
                     patterns_sensitive=5,
                     patterns_encrypted=5,
                 ),
-            ):
-                health = panel.health_check()
+            ),
+        ):
+            health = panel.health_check()
 
         assert health["overall"] == "healthy"
         assert len(health["checks"]) > 0
@@ -460,13 +463,15 @@ class TestMemoryControlPanelHealthCheck:
 
         panel = MemoryControlPanel()
 
-        with patch.object(panel, "_count_patterns", return_value=0):
-            with patch.object(
+        with (
+            patch.object(panel, "_count_patterns", return_value=0),
+            patch.object(
                 panel,
                 "get_statistics",
                 return_value=MemoryStats(redis_available=False),
-            ):
-                health = panel.health_check()
+            ),
+        ):
+            health = panel.health_check()
 
         assert health["overall"] == "degraded"
         assert any("redis" in c["name"] for c in health["checks"])
@@ -484,8 +489,9 @@ class TestMemoryControlPanelHealthCheck:
         panel = MemoryControlPanel()
         panel._redis_status = RedisStatus(available=True, method=RedisStartMethod.HOMEBREW)
 
-        with patch.object(panel, "_count_patterns", return_value=10):
-            with patch.object(
+        with (
+            patch.object(panel, "_count_patterns", return_value=10),
+            patch.object(
                 panel,
                 "get_statistics",
                 return_value=MemoryStats(
@@ -495,8 +501,9 @@ class TestMemoryControlPanelHealthCheck:
                     patterns_sensitive=5,
                     patterns_encrypted=0,  # Not encrypted!
                 ),
-            ):
-                health = panel.health_check()
+            ),
+        ):
+            health = panel.health_check()
 
         assert health["overall"] == "unhealthy"
         assert any(c["status"] == "fail" for c in health["checks"])
@@ -667,7 +674,8 @@ class TestCLIMain:
         """Test CLI start command"""
         mock_panel = Mock()
         mock_panel.start_redis.return_value = RedisStatus(
-            available=True, method=RedisStartMethod.HOMEBREW
+            available=True,
+            method=RedisStartMethod.HOMEBREW,
         )
         mock_panel_class.return_value = mock_panel
 
@@ -680,7 +688,9 @@ class TestCLIMain:
         """Test CLI start command failure"""
         mock_panel = Mock()
         mock_panel.start_redis.return_value = RedisStatus(
-            available=False, method=RedisStartMethod.MOCK, message="Failed"
+            available=False,
+            method=RedisStartMethod.MOCK,
+            message="Failed",
         )
         mock_panel_class.return_value = mock_panel
 
@@ -728,7 +738,7 @@ class TestCLIMain:
         """Test CLI patterns command"""
         mock_panel = Mock()
         mock_panel.list_patterns.return_value = [
-            {"pattern_id": "pat_1", "classification": "PUBLIC"}
+            {"pattern_id": "pat_1", "classification": "PUBLIC"},
         ]
         mock_panel_class.return_value = mock_panel
 

@@ -1,5 +1,4 @@
-"""
-Coach - Orchestration Agent
+"""Coach - Orchestration Agent
 
 Applies the Empathy Framework to software work by coordinating task-specific
 wizards (Debugging, Documentation, etc.) and ensuring empathetic, anticipatory
@@ -48,8 +47,7 @@ class CoachOutput:
 
 
 class Coach:
-    """
-    Orchestration agent that routes tasks to specialized wizards
+    """Orchestration agent that routes tasks to specialized wizards
 
     Coach applies the Empathy Framework to:
     1. Understand user role, constraints, and context (Cognitive Empathy)
@@ -58,11 +56,11 @@ class Coach:
     """
 
     def __init__(self, config: EmpathyConfig | None = None):
-        """
-        Initialize Coach with wizards
+        """Initialize Coach with wizards
 
         Args:
             config: Optional EmpathyConfig for customization
+
         """
         self.config = config or EmpathyConfig()
         self.empathy = EmpathyOS(
@@ -122,8 +120,7 @@ class Coach:
         }
 
     async def process(self, task: WizardTask, multi_wizard: bool = True) -> CoachOutput:
-        """
-        Process a task by routing to appropriate wizard(s)
+        """Process a task by routing to appropriate wizard(s)
 
         Args:
             task: WizardTask to process
@@ -131,8 +128,8 @@ class Coach:
 
         Returns:
             CoachOutput with results
-        """
 
+        """
         # Step 1: Route to appropriate wizard(s)
         routing = self._route_task(task, multi_wizard)
 
@@ -165,8 +162,7 @@ class Coach:
         )
 
     def _route_task(self, task: WizardTask, multi_wizard: bool) -> list[tuple[BaseWizard, float]]:
-        """
-        Route task to wizard(s) based on confidence scores and collaboration patterns
+        """Route task to wizard(s) based on confidence scores and collaboration patterns
 
         Args:
             task: Task to route
@@ -174,6 +170,7 @@ class Coach:
 
         Returns:
             List of (wizard, confidence) tuples, sorted by confidence
+
         """
         # Step 1: Check for pre-defined collaboration patterns
         task_lower = (task.task + " " + task.context).lower()
@@ -213,8 +210,7 @@ class Coach:
         return scores
 
     def _synthesize_outputs(self, primary: WizardOutput, secondary: list[WizardOutput]) -> str:
-        """
-        Synthesize recommendations across multiple wizards
+        """Synthesize recommendations across multiple wizards
 
         Args:
             primary: Primary wizard output
@@ -222,6 +218,7 @@ class Coach:
 
         Returns:
             Synthesized recommendations
+
         """
         if not secondary:
             return f"Primary recommendation: {primary.diagnosis}"
@@ -263,10 +260,9 @@ class Coach:
 
     async def _create_fallback_response(self, task: WizardTask) -> CoachOutput:
         """Create fallback response when no wizard can handle task"""
-
         # Use Empathy Framework Level 2 (Guided) to provide helpful response
         empathy_response = await self.empathy.level_2_guided(
-            f"I need help with: {task.task}. Context: {task.context}"
+            f"I need help with: {task.task}. Context: {task.context}",
         )
 
         from .wizards.base_wizard import EmpathyChecks, WizardArtifact, WizardRisk
@@ -287,17 +283,18 @@ class Coach:
                     content=empathy_response.get(
                         "result",
                         empathy_response.get(
-                            "reasoning", "Unable to determine specific approach for this task"
+                            "reasoning",
+                            "Unable to determine specific approach for this task",
                         ),
                     ),
-                )
+                ),
             ],
             risks=[
                 WizardRisk(
                     risk="Task unclear or outside wizard capabilities",
                     mitigation="Refine task description with more specific keywords",
                     severity="medium",
-                )
+                ),
             ],
             handoffs=[],
             next_actions=[
@@ -322,11 +319,11 @@ class Coach:
         )
 
     def list_wizards(self) -> list[dict[str, str]]:
-        """
-        List available wizards and their capabilities
+        """List available wizards and their capabilities
 
         Returns:
             List of wizard info dicts
+
         """
         return [
             {

@@ -1,5 +1,4 @@
-"""
-Clinical Protocol Monitor (Level 4)
+"""Clinical Protocol Monitor (Level 4)
 
 Main monitoring system that combines protocol checking and trajectory analysis.
 
@@ -22,8 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class ClinicalProtocolMonitor:
-    """
-    Clinical Protocol Monitoring System.
+    """Clinical Protocol Monitoring System.
 
     Monitors patient sensor data against clinical protocols using
     the same systematic approach as linting configuration:
@@ -47,10 +45,12 @@ class ClinicalProtocolMonitor:
         self.patient_history: dict[str, list[dict[str, Any]]] = {}
 
     def load_protocol(
-        self, patient_id: str, protocol_name: str, patient_context: dict[str, Any] | None = None
+        self,
+        patient_id: str,
+        protocol_name: str,
+        patient_context: dict[str, Any] | None = None,
     ) -> ClinicalProtocol:
-        """
-        Load and activate protocol for patient.
+        """Load and activate protocol for patient.
 
         Args:
             patient_id: Patient identifier
@@ -67,6 +67,7 @@ class ClinicalProtocolMonitor:
             ...     protocol_name="sepsis",
             ...     patient_context={"age": 65, "post_op_day": 2}
             ... )
+
         """
         protocol = self.protocol_loader.load_protocol(protocol_name)
         self.active_protocols[patient_id] = protocol
@@ -76,8 +77,7 @@ class ClinicalProtocolMonitor:
         return protocol
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Main analysis method - unified interface.
+        """Main analysis method - unified interface.
 
         Context expects:
             - patient_id: Patient identifier
@@ -88,6 +88,7 @@ class ClinicalProtocolMonitor:
 
         Returns:
             Comprehensive analysis with alerts, predictions, recommendations
+
         """
         patient_id = context.get("patient_id")
         sensor_data = context.get("sensor_data")
@@ -130,7 +131,9 @@ class ClinicalProtocolMonitor:
 
         # Phase 1: Check protocol compliance
         compliance_result = self.protocol_checker.check_compliance(
-            protocol, normalized_data, intervention_status
+            protocol,
+            normalized_data,
+            intervention_status,
         )
 
         # Phase 2: Analyze trajectory (Level 4)
@@ -144,7 +147,9 @@ class ClinicalProtocolMonitor:
 
         # Phase 4: Generate recommendations
         recommendations = self._generate_recommendations(
-            compliance_result, trajectory_prediction, protocol
+            compliance_result,
+            trajectory_prediction,
+            protocol,
         )
 
         # Phase 5: Generate predictions (Level 4)
@@ -198,7 +203,9 @@ class ClinicalProtocolMonitor:
         }
 
     def _generate_alerts(
-        self, compliance: ProtocolCheckResult, trajectory: TrajectoryPrediction
+        self,
+        compliance: ProtocolCheckResult,
+        trajectory: TrajectoryPrediction,
     ) -> list[dict[str, Any]]:
         """Generate alerts based on compliance and trajectory"""
         alerts = []
@@ -210,7 +217,7 @@ class ClinicalProtocolMonitor:
                     "type": "protocol_activated",
                     "severity": "high",
                     "message": compliance.recommendation,
-                }
+                },
             )
 
         # Overdue intervention alerts
@@ -222,7 +229,7 @@ class ClinicalProtocolMonitor:
                     "severity": "critical",
                     "message": f"{len(overdue)} interventions overdue",
                     "details": [d.intervention.action for d in overdue],
-                }
+                },
             )
 
         # Trajectory alerts (Level 4 - early warning)
@@ -232,7 +239,7 @@ class ClinicalProtocolMonitor:
                     "type": "trajectory_critical",
                     "severity": "critical",
                     "message": trajectory.overall_assessment,
-                }
+                },
             )
         elif trajectory.trajectory_state == "concerning":
             alerts.append(
@@ -241,7 +248,7 @@ class ClinicalProtocolMonitor:
                     "severity": "warning",
                     "message": trajectory.overall_assessment,
                     "time_to_critical": trajectory.estimated_time_to_critical,
-                }
+                },
             )
 
         return alerts
@@ -265,13 +272,15 @@ class ClinicalProtocolMonitor:
         # From protocol-specific guidance
         if compliance.protocol_activated:
             recommendations.append(
-                f"Follow {protocol.name} monitoring frequency: {protocol.monitoring_frequency}"
+                f"Follow {protocol.name} monitoring frequency: {protocol.monitoring_frequency}",
             )
 
         return list(set(recommendations))  # Deduplicate
 
     def _generate_predictions(
-        self, trajectory: TrajectoryPrediction, compliance: ProtocolCheckResult
+        self,
+        trajectory: TrajectoryPrediction,
+        compliance: ProtocolCheckResult,
     ) -> list[dict[str, Any]]:
         """Generate Level 4 predictions"""
         predictions = []
@@ -286,7 +295,7 @@ class ClinicalProtocolMonitor:
                     "time_horizon": trajectory.estimated_time_to_critical,
                     "confidence": trajectory.confidence,
                     "prevention_steps": trajectory.recommendations,
-                }
+                },
             )
 
         # Compliance-based predictions
@@ -300,7 +309,7 @@ class ClinicalProtocolMonitor:
                         "Complete pending interventions",
                         "Document deviations and rationale",
                     ],
-                }
+                },
             )
 
         return predictions

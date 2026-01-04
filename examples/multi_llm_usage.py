@@ -1,5 +1,4 @@
-"""
-Example: Using Empathy Framework with Different LLMs
+"""Example: Using Empathy Framework with Different LLMs
 
 This shows how to use the EmpathyLLM wrapper with multiple providers
 without needing to create custom wizards.
@@ -111,7 +110,9 @@ async def example_switching_providers():
 
     # Use Claude for complex reasoning
     claude_llm = EmpathyLLM(
-        provider="anthropic", target_level=4, api_key=os.getenv("ANTHROPIC_API_KEY")
+        provider="anthropic",
+        target_level=4,
+        api_key=os.getenv("ANTHROPIC_API_KEY"),
     )
 
     # Use GPT-4 for fast responses
@@ -221,7 +222,7 @@ PRICING (Pro Tier):
 - $99/year includes $300/year Claude API credits
 - Claude recommended for Level 4 Anticipatory features
 - Free tier: Bring your own API key for any provider
-    """
+    """,
     )
 
 

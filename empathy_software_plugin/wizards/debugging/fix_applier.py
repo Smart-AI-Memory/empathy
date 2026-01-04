@@ -1,5 +1,4 @@
-"""
-Fix Applier
+"""Fix Applier
 
 Systematically applies fixes to code based on linter violations.
 
@@ -16,8 +15,7 @@ from .linter_parsers import LintIssue
 
 
 def _validate_file_path(file_path: str) -> bool:
-    """
-    Validate file path is safe for subprocess execution.
+    """Validate file path is safe for subprocess execution.
 
     SECURITY: Prevents command injection via malicious file paths.
     Checks that path exists, is a file, and doesn't contain shell metacharacters.
@@ -70,8 +68,7 @@ class BaseFixApplier:
         raise NotImplementedError
 
     def apply_fix(self, issue: LintIssue, dry_run: bool = False) -> FixResult:
-        """
-        Apply fix for issue.
+        """Apply fix for issue.
 
         Args:
             issue: LintIssue to fix
@@ -79,6 +76,7 @@ class BaseFixApplier:
 
         Returns:
             FixResult with outcome
+
         """
         raise NotImplementedError
 
@@ -96,8 +94,7 @@ class BaseFixApplier:
 
 
 class ESLintFixApplier(BaseFixApplier):
-    """
-    Apply ESLint fixes.
+    """Apply ESLint fixes.
 
     Uses --fix flag for auto-fixable issues.
     """
@@ -107,8 +104,7 @@ class ESLintFixApplier(BaseFixApplier):
         self.autofixable_rules = self._get_autofixable_rules()
 
     def _get_autofixable_rules(self) -> set:
-        """
-        Get set of auto-fixable ESLint rules.
+        """Get set of auto-fixable ESLint rules.
 
         In practice, we'd query ESLint, but for now use common ones.
         """
@@ -136,7 +132,6 @@ class ESLintFixApplier(BaseFixApplier):
 
     def apply_fix(self, issue: LintIssue, dry_run: bool = False) -> FixResult:
         """Apply ESLint fix"""
-
         if not self.can_autofix(issue):
             # Provide manual suggestion
             _suggestion = self.suggest_manual_fix(issue)
@@ -169,6 +164,7 @@ class ESLintFixApplier(BaseFixApplier):
         try:
             result = subprocess.run(
                 ["npx", "eslint", "--fix", issue.file_path],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=30,
@@ -193,7 +189,6 @@ class ESLintFixApplier(BaseFixApplier):
 
     def suggest_manual_fix(self, issue: LintIssue) -> str:
         """Suggest manual fix for ESLint issue"""
-
         # Extract variable name from message if present
         var_name = "variable"
         if "'" in issue.message:
@@ -213,8 +208,7 @@ class ESLintFixApplier(BaseFixApplier):
 
 
 class PylintFixApplier(BaseFixApplier):
-    """
-    Apply Pylint fixes.
+    """Apply Pylint fixes.
 
     Pylint doesn't have auto-fix, so we provide suggestions.
     Can integrate with autopep8/black for some fixes.
@@ -224,8 +218,7 @@ class PylintFixApplier(BaseFixApplier):
         super().__init__("pylint")
 
     def can_autofix(self, issue: LintIssue) -> bool:
-        """
-        Pylint itself doesn't auto-fix, but we can use other tools.
+        """Pylint itself doesn't auto-fix, but we can use other tools.
 
         Some formatting issues can be fixed with black/autopep8.
         """
@@ -241,16 +234,21 @@ class PylintFixApplier(BaseFixApplier):
 
     def apply_fix(self, issue: LintIssue, dry_run: bool = False) -> FixResult:
         """Apply Pylint fix (via black/autopep8 if possible)"""
-
         if not self.can_autofix(issue):
             suggestion = self.suggest_manual_fix(issue)
             return FixResult(
-                issue=issue, success=False, method="manual_suggestion", changes_made=suggestion
+                issue=issue,
+                success=False,
+                method="manual_suggestion",
+                changes_made=suggestion,
             )
 
         if dry_run:
             return FixResult(
-                issue=issue, success=True, method="autofix", changes_made="Would format with black"
+                issue=issue,
+                success=True,
+                method="autofix",
+                changes_made="Would format with black",
             )
 
         # SECURITY: Validate file path before subprocess execution
@@ -265,7 +263,11 @@ class PylintFixApplier(BaseFixApplier):
         # Try black first
         try:
             result = subprocess.run(
-                ["black", issue.file_path], capture_output=True, text=True, timeout=30
+                ["black", issue.file_path],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=30,
             )
 
             if result.returncode == 0:
@@ -283,6 +285,7 @@ class PylintFixApplier(BaseFixApplier):
         try:
             result = subprocess.run(
                 ["autopep8", "--in-place", issue.file_path],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=30,
@@ -308,7 +311,6 @@ class PylintFixApplier(BaseFixApplier):
 
     def suggest_manual_fix(self, issue: LintIssue) -> str:
         """Suggest manual fix"""
-
         suggestions = {
             "unused-variable": "Remove variable or prefix with _",
             "unused-import": "Remove unused import",
@@ -322,8 +324,7 @@ class PylintFixApplier(BaseFixApplier):
 
 
 class TypeScriptFixApplier(BaseFixApplier):
-    """
-    Apply TypeScript fixes.
+    """Apply TypeScript fixes.
 
     TypeScript compiler doesn't auto-fix, but we can suggest fixes.
     """
@@ -340,12 +341,14 @@ class TypeScriptFixApplier(BaseFixApplier):
         suggestion = self.suggest_manual_fix(issue)
 
         return FixResult(
-            issue=issue, success=False, method="manual_suggestion", changes_made=suggestion
+            issue=issue,
+            success=False,
+            method="manual_suggestion",
+            changes_made=suggestion,
         )
 
     def suggest_manual_fix(self, issue: LintIssue) -> str:
         """Suggest TypeScript fix"""
-
         # Extract TS error code
         if issue.rule.startswith("TS"):
             code = issue.rule[2:]
@@ -384,17 +387,19 @@ class FixApplierFactory:
         if not applier_class:
             raise ValueError(
                 f"Unsupported fix applier: {linter_name}. "
-                f"Supported: {', '.join(cls._appliers.keys())}"
+                f"Supported: {', '.join(cls._appliers.keys())}",
             )
 
         return applier_class()
 
 
 def apply_fixes(
-    linter_name: str, issues: list[LintIssue], dry_run: bool = False, auto_only: bool = False
+    linter_name: str,
+    issues: list[LintIssue],
+    dry_run: bool = False,
+    auto_only: bool = False,
 ) -> list[FixResult]:
-    """
-    Apply fixes for list of issues.
+    """Apply fixes for list of issues.
 
     Args:
         linter_name: Name of linter
@@ -409,6 +414,7 @@ def apply_fixes(
         >>> results = apply_fixes("eslint", issues, dry_run=True)
         >>> auto_fixed = [r for r in results if r.method == "autofix" and r.success]
         >>> print(f"Could auto-fix {len(auto_fixed)} issues")
+
     """
     applier = FixApplierFactory.create(linter_name)
 
@@ -419,10 +425,10 @@ def apply_fixes(
 
 
 def group_issues_by_fixability(
-    linter_name: str, issues: list[LintIssue]
+    linter_name: str,
+    issues: list[LintIssue],
 ) -> dict[str, list[LintIssue]]:
-    """
-    Group issues by whether they can be auto-fixed.
+    """Group issues by whether they can be auto-fixed.
 
     Args:
         linter_name: Name of linter
@@ -430,6 +436,7 @@ def group_issues_by_fixability(
 
     Returns:
         Dictionary with "auto_fixable" and "manual" keys
+
     """
     applier = FixApplierFactory.create(linter_name)
 

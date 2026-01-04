@@ -1,5 +1,4 @@
-"""
-Release Preparation Workflow
+"""Release Preparation Workflow
 
 Pre-release quality gate combining health checks, security scan,
 and changelog generation.
@@ -37,8 +36,7 @@ RELEASE_PREP_STEPS = {
 
 
 class ReleasePreparationWorkflow(BaseWorkflow):
-    """
-    Pre-release quality gate workflow.
+    """Pre-release quality gate workflow.
 
     Combines multiple checks to determine if the codebase
     is ready for release.
@@ -66,14 +64,14 @@ class ReleasePreparationWorkflow(BaseWorkflow):
         crew_config: dict | None = None,
         **kwargs: Any,
     ):
-        """
-        Initialize release preparation workflow.
+        """Initialize release preparation workflow.
 
         Args:
             skip_approve_if_clean: Skip premium approval if all checks pass
             use_security_crew: Enable SecurityAuditCrew for comprehensive security audit
             crew_config: Configuration dict for SecurityAuditCrew
             **kwargs: Additional arguments passed to BaseWorkflow
+
         """
         super().__init__(**kwargs)
         self.skip_approve_if_clean = skip_approve_if_clean
@@ -101,8 +99,7 @@ class ReleasePreparationWorkflow(BaseWorkflow):
             }
 
     def should_skip_stage(self, stage_name: str, input_data: Any) -> tuple[bool, str | None]:
-        """
-        Skip approval if all checks pass cleanly.
+        """Skip approval if all checks pass cleanly.
 
         Args:
             stage_name: Name of the stage to check
@@ -110,6 +107,7 @@ class ReleasePreparationWorkflow(BaseWorkflow):
 
         Returns:
             Tuple of (should_skip, reason)
+
         """
         if stage_name == "approve" and self.skip_approve_if_clean:
             if not self._has_blockers:
@@ -117,25 +115,26 @@ class ReleasePreparationWorkflow(BaseWorkflow):
         return False, None
 
     async def run_stage(
-        self, stage_name: str, tier: ModelTier, input_data: Any
+        self,
+        stage_name: str,
+        tier: ModelTier,
+        input_data: Any,
     ) -> tuple[Any, int, int]:
         """Route to specific stage implementation."""
         if stage_name == "health":
             return await self._health(input_data, tier)
-        elif stage_name == "security":
+        if stage_name == "security":
             return await self._security(input_data, tier)
-        elif stage_name == "crew_security":
+        if stage_name == "crew_security":
             return await self._crew_security(input_data, tier)
-        elif stage_name == "changelog":
+        if stage_name == "changelog":
             return await self._changelog(input_data, tier)
-        elif stage_name == "approve":
+        if stage_name == "approve":
             return await self._approve(input_data, tier)
-        else:
-            raise ValueError(f"Unknown stage: {stage_name}")
+        raise ValueError(f"Unknown stage: {stage_name}")
 
     async def _health(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Run health checks.
+        """Run health checks.
 
         Executes lint, type checking, and tests.
         """
@@ -146,6 +145,7 @@ class ReleasePreparationWorkflow(BaseWorkflow):
         try:
             result = subprocess.run(
                 ["python", "-m", "ruff", "check", target_path],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=60,
@@ -163,6 +163,7 @@ class ReleasePreparationWorkflow(BaseWorkflow):
         try:
             result = subprocess.run(
                 ["python", "-m", "mypy", target_path, "--ignore-missing-imports"],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=120,
@@ -180,6 +181,7 @@ class ReleasePreparationWorkflow(BaseWorkflow):
         try:
             result = subprocess.run(
                 ["python", "-m", "pytest", "--co", "-q"],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=60,
@@ -226,8 +228,7 @@ class ReleasePreparationWorkflow(BaseWorkflow):
         )
 
     async def _security(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Run security scan summary.
+        """Run security scan summary.
 
         Quick security check for obvious issues.
         """
@@ -251,7 +252,7 @@ class ReleasePreparationWorkflow(BaseWorkflow):
                             "type": "hardcoded_secret",
                             "file": str(py_file),
                             "severity": "high",
-                        }
+                        },
                     )
 
                 # Check for eval/exec
@@ -261,7 +262,7 @@ class ReleasePreparationWorkflow(BaseWorkflow):
                             "type": "dangerous_function",
                             "file": str(py_file),
                             "severity": "high",
-                        }
+                        },
                     )
             except OSError:
                 continue
@@ -294,8 +295,7 @@ class ReleasePreparationWorkflow(BaseWorkflow):
         )
 
     async def _crew_security(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Run SecurityAuditCrew for comprehensive security analysis.
+        """Run SecurityAuditCrew for comprehensive security analysis.
 
         This stage uses the 5-agent SecurityAuditCrew for deep security
         analysis including vulnerability hunting, risk assessment,
@@ -387,8 +387,7 @@ class ReleasePreparationWorkflow(BaseWorkflow):
         )
 
     async def _changelog(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Generate changelog from recent commits.
+        """Generate changelog from recent commits.
 
         Extracts commit messages and organizes by type.
         """
@@ -400,6 +399,7 @@ class ReleasePreparationWorkflow(BaseWorkflow):
         try:
             result = subprocess.run(
                 ["git", "log", f"--since={since}", "--oneline", "--no-merges"],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=30,
@@ -435,7 +435,7 @@ class ReleasePreparationWorkflow(BaseWorkflow):
                             "sha": sha,
                             "message": message,
                             "category": category,
-                        }
+                        },
                     )
         except (subprocess.TimeoutExpired, FileNotFoundError):
             pass
@@ -469,8 +469,7 @@ class ReleasePreparationWorkflow(BaseWorkflow):
         )
 
     async def _approve(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Final release readiness assessment using LLM.
+        """Final release readiness assessment using LLM.
 
         Synthesizes all checks into go/no-go recommendation.
 
@@ -573,12 +572,18 @@ Provide a comprehensive release readiness assessment."""
             except Exception:
                 # Fall back to legacy _call_llm if executor fails
                 response, input_tokens, output_tokens = await self._call_llm(
-                    tier, system or "", user_message, max_tokens=2000
+                    tier,
+                    system or "",
+                    user_message,
+                    max_tokens=2000,
                 )
         else:
             # Legacy path for backward compatibility
             response, input_tokens, output_tokens = await self._call_llm(
-                tier, system or "", user_message, max_tokens=2000
+                tier,
+                system or "",
+                user_message,
+                max_tokens=2000,
             )
 
         # Parse XML response if enforcement is enabled
@@ -610,7 +615,7 @@ Provide a comprehensive release readiness assessment."""
                     "summary": parsed_data.get("summary"),
                     "findings": parsed_data.get("findings", []),
                     "checklist": parsed_data.get("checklist", []),
-                }
+                },
             )
 
         # Add formatted report for human readability
@@ -620,8 +625,7 @@ Provide a comprehensive release readiness assessment."""
 
 
 def format_release_prep_report(result: dict, input_data: dict) -> str:
-    """
-    Format release preparation output as a human-readable report.
+    """Format release preparation output as a human-readable report.
 
     Args:
         result: The approve stage result
@@ -629,6 +633,7 @@ def format_release_prep_report(result: dict, input_data: dict) -> str:
 
     Returns:
         Formatted report string
+
     """
     lines = []
 

@@ -1,5 +1,4 @@
-"""
-Empathy Healthcare Plugin
+"""Empathy Healthcare Plugin
 
 Clinical protocol monitoring using the empathy framework.
 

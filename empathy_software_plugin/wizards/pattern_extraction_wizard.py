@@ -1,5 +1,4 @@
-"""
-Pattern Extraction Wizard
+"""Pattern Extraction Wizard
 
 Level 3 wizard that detects bug fixes in git diffs and suggests
 storing them as patterns for future reference.
@@ -20,8 +19,7 @@ from .base_wizard import BaseWizard
 
 
 class PatternExtractionWizard(BaseWizard):
-    """
-    Detects bug fixes and suggests pattern storage.
+    """Detects bug fixes and suggests pattern storage.
 
     Analyzes git diffs to identify:
     - Null checks added
@@ -108,8 +106,7 @@ class PatternExtractionWizard(BaseWizard):
         }
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze git diff for potential bug fix patterns.
+        """Analyze git diff for potential bug fix patterns.
 
         Args:
             context: {
@@ -125,6 +122,7 @@ class PatternExtractionWizard(BaseWizard):
                 "recommendations": list of recommendations,
                 "confidence": float
             }
+
         """
         diff = context.get("diff")
         commit_message = context.get("commit_message", "")
@@ -151,7 +149,7 @@ class PatternExtractionWizard(BaseWizard):
                         "type": "no_changes",
                         "severity": "info",
                         "description": "No git changes detected to analyze.",
-                    }
+                    },
                 ],
                 "recommendations": ["Make some code changes and try again."],
                 "confidence": 0.0,
@@ -185,6 +183,7 @@ class PatternExtractionWizard(BaseWizard):
             # Get diff
             diff_result = subprocess.run(
                 ["git", "diff", f"HEAD~{commits}", "HEAD"],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=10,
@@ -194,6 +193,7 @@ class PatternExtractionWizard(BaseWizard):
             # Get commit message
             msg_result = subprocess.run(
                 ["git", "log", f"-{commits}", "--format=%s%n%b"],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=5,
@@ -218,7 +218,9 @@ class PatternExtractionWizard(BaseWizard):
                 # Save previous file's patterns
                 if current_file and added_lines:
                     file_patterns = self._analyze_file_changes(
-                        current_file, added_lines, commit_lower
+                        current_file,
+                        added_lines,
+                        commit_lower,
                     )
                     suggested.extend(file_patterns)
 
@@ -292,7 +294,7 @@ class PatternExtractionWizard(BaseWizard):
                         "fix_code": matches[0] if matches else "",
                         "status": "investigating",
                     },
-                }
+                },
             )
 
         return patterns
@@ -319,7 +321,7 @@ class PatternExtractionWizard(BaseWizard):
                     "type": "high_value_patterns",
                     "severity": "info",
                     "description": f"{len(high_conf)} high-confidence fix patterns detected. These are likely valuable for future reference.",
-                }
+                },
             )
 
         # Common pattern types
@@ -334,7 +336,7 @@ class PatternExtractionWizard(BaseWizard):
                     "type": "recurring_fix_type",
                     "severity": "warning",
                     "description": f"Multiple {most_common[0]} fixes detected ({most_common[1]}). Consider adding preventive checks.",
-                }
+                },
             )
 
         return predictions
@@ -350,7 +352,7 @@ class PatternExtractionWizard(BaseWizard):
         high_conf = [p for p in patterns if p["confidence"] >= 0.7]
         if high_conf:
             recommendations.append(
-                f"Consider storing {len(high_conf)} detected fix pattern(s) for future reference."
+                f"Consider storing {len(high_conf)} detected fix pattern(s) for future reference.",
             )
 
         # Add specific storage command
@@ -358,7 +360,7 @@ class PatternExtractionWizard(BaseWizard):
             first = patterns[0]
             recommendations.append(
                 f"To store: empathy patterns resolve {first['pattern_id']} "
-                f"--root-cause '<cause>' --fix '{first['description']}'"
+                f"--root-cause '<cause>' --fix '{first['description']}'",
             )
 
         return recommendations
@@ -376,14 +378,14 @@ class PatternExtractionWizard(BaseWizard):
         return float(round(avg_conf, 2))
 
     async def save_pattern(self, pattern: dict) -> bool:
-        """
-        Save a suggested pattern to storage.
+        """Save a suggested pattern to storage.
 
         Args:
             pattern: Pattern dict from suggested_patterns
 
         Returns:
             True if saved successfully
+
         """
         pre_filled = pattern.get("pre_filled", {})
         if not pre_filled:

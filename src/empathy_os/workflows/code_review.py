@@ -1,5 +1,4 @@
-"""
-Code Review Workflow
+"""Code Review Workflow
 
 A tiered code analysis pipeline:
 1. Haiku: Classify change type (cheap, fast)
@@ -28,8 +27,7 @@ CODE_REVIEW_STEPS = {
 
 
 class CodeReviewWorkflow(BaseWorkflow):
-    """
-    Multi-tier code review workflow.
+    """Multi-tier code review workflow.
 
     Uses cheap models for classification, capable models for security
     and bug scanning, and premium models only for complex architectural
@@ -61,14 +59,14 @@ class CodeReviewWorkflow(BaseWorkflow):
         crew_config: dict | None = None,
         **kwargs: Any,
     ):
-        """
-        Initialize workflow.
+        """Initialize workflow.
 
         Args:
             file_threshold: Number of files above which premium review is used.
             core_modules: List of module paths considered "core" (trigger premium).
             use_crew: Enable CodeReviewCrew for comprehensive 5-agent analysis.
             crew_config: Configuration dict for CodeReviewCrew.
+
         """
         super().__init__(**kwargs)
         self.file_threshold = file_threshold
@@ -107,8 +105,7 @@ class CodeReviewWorkflow(BaseWorkflow):
         return False, None
 
     def _gather_project_context(self) -> str:
-        """
-        Gather project context for project-level reviews.
+        """Gather project context for project-level reviews.
 
         Reads project metadata and key files to provide context to the LLM.
         Returns formatted project context string, or empty string if no context found.
@@ -199,7 +196,7 @@ class CodeReviewWorkflow(BaseWorkflow):
                         f
                         for f in files
                         if f.endswith(
-                            (".py", ".ts", ".js", ".json", ".yaml", ".yml", ".toml", ".md")
+                            (".py", ".ts", ".js", ".json", ".yaml", ".yml", ".toml", ".md"),
                         )
                         and not f.startswith(".")
                     ][:10]
@@ -218,19 +215,21 @@ class CodeReviewWorkflow(BaseWorkflow):
         return "\n".join(context_parts)
 
     async def run_stage(
-        self, stage_name: str, tier: ModelTier, input_data: Any
+        self,
+        stage_name: str,
+        tier: ModelTier,
+        input_data: Any,
     ) -> tuple[Any, int, int]:
         """Execute a code review stage."""
         if stage_name == "classify":
             return await self._classify(input_data, tier)
-        elif stage_name == "crew_review":
+        if stage_name == "crew_review":
             return await self._crew_review(input_data, tier)
-        elif stage_name == "scan":
+        if stage_name == "scan":
             return await self._scan(input_data, tier)
-        elif stage_name == "architect_review":
+        if stage_name == "architect_review":
             return await self._architect_review(input_data, tier)
-        else:
-            raise ValueError(f"Unknown stage: {stage_name}")
+        raise ValueError(f"Unknown stage: {stage_name}")
 
     async def _classify(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
         """Classify the type of change."""
@@ -287,7 +286,10 @@ Code:
 {code_to_review[:4000]}"""
 
         response, input_tokens, output_tokens = await self._call_llm(
-            tier, system, user_message, max_tokens=500
+            tier,
+            system,
+            user_message,
+            max_tokens=500,
         )
 
         # Parse response to determine if architect review needed
@@ -322,8 +324,7 @@ Code:
         )
 
     async def _crew_review(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Run CodeReviewCrew for comprehensive 5-agent analysis.
+        """Run CodeReviewCrew for comprehensive 5-agent analysis.
 
         This stage uses the CodeReviewCrew (Review Lead, Security Analyst,
         Architecture Reviewer, Quality Analyst, Performance Reviewer) for
@@ -419,8 +420,7 @@ Code:
         )
 
     async def _scan(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Security scan and bug pattern matching.
+        """Security scan and bug pattern matching.
 
         When external_audit_results is provided in input_data (e.g., from
         SecurityAuditCrew), these findings are merged with the LLM analysis
@@ -492,7 +492,10 @@ Code to review:
 {code_to_review[:6000]}"""
 
         response, input_tokens, output_tokens = await self._call_llm(
-            tier, system, user_message, max_tokens=2048
+            tier,
+            system,
+            user_message,
+            max_tokens=2048,
         )
 
         # Extract structured findings from LLM response
@@ -511,7 +514,8 @@ Code to review:
 
         if external_audit:
             merged_response, security_findings, external_has_critical = self._merge_external_audit(
-                response, external_audit
+                response,
+                external_audit,
             )
             response = merged_response
             has_critical = has_critical or external_has_critical
@@ -561,10 +565,11 @@ Code to review:
         )
 
     def _merge_external_audit(
-        self, llm_response: str, external_audit: dict
+        self,
+        llm_response: str,
+        external_audit: dict,
     ) -> tuple[str, list, bool]:
-        """
-        Merge external SecurityAuditCrew results into scan output.
+        """Merge external SecurityAuditCrew results into scan output.
 
         Args:
             llm_response: Response from LLM security scan
@@ -572,6 +577,7 @@ Code to review:
 
         Returns:
             Tuple of (merged_response, security_findings, has_critical)
+
         """
         findings = external_audit.get("findings", [])
         summary = external_audit.get("summary", "")
@@ -620,8 +626,7 @@ Code to review:
         return "\n".join(merged_sections), findings, has_critical
 
     async def _architect_review(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Deep architectural review.
+        """Deep architectural review.
 
         Supports XML-enhanced prompts when enabled in workflow config.
         """
@@ -699,12 +704,18 @@ Provide actionable, specific feedback."""
             except Exception:
                 # Fall back to legacy _call_llm if executor fails
                 response, input_tokens, output_tokens = await self._call_llm(
-                    tier, system or "", user_message, max_tokens=3000
+                    tier,
+                    system or "",
+                    user_message,
+                    max_tokens=3000,
                 )
         else:
             # Legacy path for backward compatibility
             response, input_tokens, output_tokens = await self._call_llm(
-                tier, system or "", user_message, max_tokens=3000
+                tier,
+                system or "",
+                user_message,
+                max_tokens=3000,
             )
 
         # Parse XML response if enforcement is enabled
@@ -746,7 +757,7 @@ Provide actionable, specific feedback."""
                     "summary": parsed_data.get("summary"),
                     "findings": parsed_data.get("findings", []),
                     "checklist": parsed_data.get("checklist", []),
-                }
+                },
             )
 
         # Add formatted report for human readability
@@ -756,8 +767,7 @@ Provide actionable, specific feedback."""
 
 
 def format_code_review_report(result: dict, input_data: dict) -> str:
-    """
-    Format code review output as a human-readable report.
+    """Format code review output as a human-readable report.
 
     Args:
         result: The architect_review stage result
@@ -765,6 +775,7 @@ def format_code_review_report(result: dict, input_data: dict) -> str:
 
     Returns:
         Formatted report string
+
     """
     lines = []
 
@@ -824,7 +835,8 @@ def format_code_review_report(result: dict, input_data: dict) -> str:
             severity = finding.get("severity", "unknown").upper()
             title = finding.get("title", "N/A")
             sev_icon = {"CRITICAL": "🔴", "HIGH": "🟠", "MEDIUM": "🟡", "LOW": "🟢"}.get(
-                severity, "⚪"
+                severity,
+                "⚪",
             )
             lines.append(f"  {sev_icon} [{severity}] {title}")
         lines.append("")

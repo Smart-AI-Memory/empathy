@@ -1,5 +1,4 @@
-"""
-Code Review Adapters for CodeReviewCrew Integration
+"""Code Review Adapters for CodeReviewCrew Integration
 
 Provides format conversion functions between CodeReviewCrew output
 and workflow dict formats used by existing workflows.
@@ -19,11 +18,11 @@ logger = logging.getLogger(__name__)
 
 
 def _check_crew_available() -> bool:
-    """
-    Check if CodeReviewCrew is available.
+    """Check if CodeReviewCrew is available.
 
     Returns:
         True if the crew module can be imported, False otherwise.
+
     """
     try:
         from empathy_llm_toolkit.agent_factory.crews import CodeReviewCrew  # noqa: F401
@@ -39,8 +38,7 @@ async def _get_crew_review(
     config: dict | None = None,
     timeout: float = 300.0,
 ) -> "CodeReviewReport | None":
-    """
-    Get CodeReviewCrew review results with graceful fallback.
+    """Get CodeReviewCrew review results with graceful fallback.
 
     Args:
         diff: Git diff or code to review
@@ -50,6 +48,7 @@ async def _get_crew_review(
 
     Returns:
         CodeReviewReport if successful, None if crew unavailable or failed.
+
     """
     if not _check_crew_available():
         logger.debug("CodeReviewCrew not available, returning None")
@@ -78,8 +77,7 @@ async def _get_crew_review(
 
 
 def crew_report_to_workflow_format(report: "CodeReviewReport") -> dict:
-    """
-    Convert CodeReviewReport to workflow dict format.
+    """Convert CodeReviewReport to workflow dict format.
 
     This converts the crew's structured output to the format expected
     by existing workflows (matching CodeReviewWorkflow output).
@@ -89,6 +87,7 @@ def crew_report_to_workflow_format(report: "CodeReviewReport") -> dict:
 
     Returns:
         Dict in workflow format with findings, verdict, etc.
+
     """
     findings = []
     for finding in report.findings:
@@ -148,8 +147,7 @@ def crew_report_to_workflow_format(report: "CodeReviewReport") -> dict:
 
 
 def workflow_findings_to_crew_format(findings: list[dict]) -> list[dict]:
-    """
-    Convert workflow findings to ReviewFinding-compatible dicts.
+    """Convert workflow findings to ReviewFinding-compatible dicts.
 
     This is useful when passing workflow findings to CodeReviewCrew
     for enhanced analysis.
@@ -159,6 +157,7 @@ def workflow_findings_to_crew_format(findings: list[dict]) -> list[dict]:
 
     Returns:
         List of dicts that can be used with CodeReviewCrew context.
+
     """
     crew_findings = []
     for finding in findings:
@@ -181,8 +180,7 @@ def merge_code_review_results(
     crew_report: dict | None,
     workflow_findings: dict | None,
 ) -> dict:
-    """
-    Merge CodeReviewCrew and workflow code review results.
+    """Merge CodeReviewCrew and workflow code review results.
 
     Combines findings from both sources, deduplicating where possible,
     and provides a unified assessment.
@@ -193,6 +191,7 @@ def merge_code_review_results(
 
     Returns:
         Merged dict with combined findings and assessment.
+
     """
     # Handle None cases
     if crew_report is None and workflow_findings is None:

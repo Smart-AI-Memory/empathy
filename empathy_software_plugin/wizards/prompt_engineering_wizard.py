@@ -1,5 +1,4 @@
-"""
-Prompt Engineering Quality Wizard - Level 4 Anticipatory Empathy
+"""Prompt Engineering Quality Wizard - Level 4 Anticipatory Empathy
 
 Alerts developers to prompt quality issues before they impact AI performance.
 
@@ -23,8 +22,7 @@ from empathy_os.plugins import BaseWizard
 
 
 class PromptEngineeringWizard(BaseWizard):
-    """
-    Level 4 Anticipatory: Analyzes prompt quality and alerts to degradation.
+    """Level 4 Anticipatory: Analyzes prompt quality and alerts to degradation.
 
     What This Wizard Learned From Experience:
     - Prompts drift subtly as features evolve
@@ -51,8 +49,7 @@ class PromptEngineeringWizard(BaseWizard):
         ]
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze prompt quality and predict degradation patterns.
+        """Analyze prompt quality and predict degradation patterns.
 
         In our experience: Prompt quality issues compound quickly.
         A small inconsistency today becomes a major refactor in weeks.
@@ -89,8 +86,7 @@ class PromptEngineeringWizard(BaseWizard):
         }
 
     async def _analyze_prompt_quality(self, prompt_files: list[str]) -> list[dict[str, Any]]:
-        """
-        Analyze current prompt quality (Level 3 Proactive).
+        """Analyze current prompt quality (Level 3 Proactive).
 
         Checks for immediate issues that impact AI performance.
         """
@@ -108,7 +104,7 @@ class PromptEngineeringWizard(BaseWizard):
                         "type": "file_read_error",
                         "file": prompt_file,
                         "message": f"Could not read prompt file: {e}",
-                    }
+                    },
                 )
                 continue
 
@@ -124,7 +120,7 @@ class PromptEngineeringWizard(BaseWizard):
                             "In our experience, structured prompts perform more reliably."
                         ),
                         "suggestion": "Use sections: ## Role, ## Task, ## Context, ## Constraints",
-                    }
+                    },
                 )
 
             # Check for context bloat
@@ -139,7 +135,7 @@ class PromptEngineeringWizard(BaseWizard):
                             "Longer prompts often contain redundancy that reduces clarity."
                         ),
                         "suggestion": "Review for redundancy. Consider separating into base + context injection.",
-                    }
+                    },
                 )
 
             # Check for vague instructions
@@ -160,7 +156,7 @@ class PromptEngineeringWizard(BaseWizard):
                             "Precise instructions yield more consistent results."
                         ),
                         "suggestion": "Use imperative verbs: 'Analyze', 'Extract', 'Generate'",
-                    }
+                    },
                 )
 
             # Check for missing examples
@@ -175,16 +171,18 @@ class PromptEngineeringWizard(BaseWizard):
                             "significantly improve output quality."
                         ),
                         "suggestion": "Add 2-3 examples in <example> tags",
-                    }
+                    },
                 )
 
         return issues
 
     async def _predict_prompt_degradation(
-        self, prompt_files: list[str], version_history: list[dict], context: dict[str, Any]
+        self,
+        prompt_files: list[str],
+        version_history: list[dict],
+        context: dict[str, Any],
     ) -> list[dict[str, Any]]:
-        """
-        Level 4 Anticipatory: Predict prompt quality degradation.
+        """Level 4 Anticipatory: Predict prompt quality degradation.
 
         Experience-based insight: Prompts drift as codebases evolve.
         Early alerts prevent compound degradation.
@@ -218,7 +216,7 @@ class PromptEngineeringWizard(BaseWizard):
                             "Code evolution without corresponding prompt updates creates "
                             "misalignment. We've seen this reduce AI effectiveness by 30-50%."
                         ),
-                    }
+                    },
                 )
 
         # Pattern 2: Prompt sprawl
@@ -245,7 +243,7 @@ class PromptEngineeringWizard(BaseWizard):
                         "We've found 3-5 base prompts with composition scales better than "
                         "dozens of standalone prompts."
                     ),
-                }
+                },
             )
 
         # Pattern 3: Missing version control
@@ -272,7 +270,7 @@ class PromptEngineeringWizard(BaseWizard):
                         "When AI behavior changes unexpectedly, version tracking is essential "
                         "for debugging. We learned this the hard way."
                     ),
-                }
+                },
             )
 
         # Pattern 4: Context window inefficiency
@@ -301,7 +299,7 @@ class PromptEngineeringWizard(BaseWizard):
                         "Token costs scale linearly with prompt size. We've reduced costs "
                         "40-60% by refactoring bloated prompts."
                     ),
-                }
+                },
             )
 
         return predictions
@@ -327,16 +325,17 @@ class PromptEngineeringWizard(BaseWizard):
         warnings = [i for i in issues if i.get("severity") == "warning"]
         if len(warnings) > 3:
             recommendations.append(
-                f"\n[QUICK WIN] Address {len(warnings)} warnings to improve prompt quality"
+                f"\n[QUICK WIN] Address {len(warnings)} warnings to improve prompt quality",
             )
 
         return recommendations
 
     def _extract_patterns(
-        self, issues: list[dict], predictions: list[dict]
+        self,
+        issues: list[dict],
+        predictions: list[dict],
     ) -> list[dict[str, Any]]:
-        """
-        Extract patterns for cross-domain learning (Level 5).
+        """Extract patterns for cross-domain learning (Level 5).
 
         Pattern: Drift detection applies to many domains.
         """
@@ -360,7 +359,7 @@ class PromptEngineeringWizard(BaseWizard):
                     ],
                     "detection": "Compare change velocity: artifacts vs code",
                     "threshold": "Alert when code_changes > artifact_changes * 3",
-                }
+                },
             )
 
         return patterns
@@ -369,7 +368,7 @@ class PromptEngineeringWizard(BaseWizard):
         """Calculate analysis confidence"""
         confidence = 0.75  # Base
 
-        if "version_history" in context and context["version_history"]:
+        if context.get("version_history"):
             confidence += 0.15  # History improves drift detection
 
         if len(context.get("prompt_files", [])) > 5:

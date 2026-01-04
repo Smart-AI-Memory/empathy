@@ -1,5 +1,4 @@
-"""
-Tests for src/empathy_os/memory/graph.py
+"""Tests for src/empathy_os/memory/graph.py
 
 Tests the memory graph knowledge base including:
 - MemoryGraph class
@@ -600,7 +599,8 @@ class TestMemoryGraphFindRelated:
             id_a = graph.add_finding(wizard="test", finding={"type": "bug", "name": "Bug A"})
             id_b = graph.add_finding(wizard="test", finding={"type": "fix", "name": "Fix B"})
             id_c = graph.add_finding(
-                wizard="test", finding={"type": "pattern", "name": "Pattern C"}
+                wizard="test",
+                finding={"type": "pattern", "name": "Pattern C"},
             )
 
             graph.add_edge(id_a, id_b, EdgeType.FIXED_BY)

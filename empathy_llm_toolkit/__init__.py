@@ -1,5 +1,4 @@
-"""
-Empathy LLM Toolkit
+"""Empathy LLM Toolkit
 
 Wraps LLM providers (OpenAI, Anthropic, local models) with Empathy Framework levels.
 
@@ -18,12 +17,12 @@ from .state import CollaborationState, UserPattern
 __version__ = "1.9.5"
 
 __all__ = [
-    "EmpathyLLM",
-    "OpenAIProvider",
     "AnthropicProvider",
+    "CollaborationState",
+    "EmpathyLLM",
+    "EmpathyLevel",
     "GeminiProvider",
     "LocalProvider",
-    "CollaborationState",
+    "OpenAIProvider",
     "UserPattern",
-    "EmpathyLevel",
 ]

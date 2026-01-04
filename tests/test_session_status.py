@@ -1,5 +1,4 @@
-"""
-Tests for Session Status Assistant Module
+"""Tests for Session Status Assistant Module
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
@@ -87,7 +86,7 @@ def patterns_dir(temp_dir):
                 "decision": "false_positive",
                 "decided_by": "@dev",
             },
-        ]
+        ],
     }
     (security / "team_decisions.json").write_text(json.dumps(decisions))
 
@@ -99,7 +98,7 @@ def patterns_dir(temp_dir):
         "snapshots": [
             {"date": "2025-12-10", "total_items": 100, "hotspots": ["file1.py"]},
             {"date": "2025-12-15", "total_items": 120, "hotspots": ["file2.py"]},
-        ]
+        ],
     }
     (tech_debt / "debt_history.json").write_text(json.dumps(debt_history))
 
@@ -391,7 +390,7 @@ class TestSessionStatusCollector:
                 title="Bugs: 1 investigating",
                 description="Test",
                 details={"count": 1},
-            )
+            ),
         )
 
         collector._detect_wins(status)
@@ -416,7 +415,7 @@ class TestOutputFormatting:
                 icon="🟡",
                 title="Bugs: 2 investigating",
                 description="Fix bug_001",
-            )
+            ),
         )
 
         output = collector.format_output(status)
@@ -451,7 +450,7 @@ class TestOutputFormatting:
                 title="Security: 1 pending",
                 description="Review finding",
                 action_prompt="Review the security finding",
-            )
+            ),
         )
 
         json_output = collector.format_json(status)
@@ -475,7 +474,7 @@ class TestOutputFormatting:
                 title="Bug",
                 description="Test",
                 action_prompt="Fix the bug in src/test.py",
-            )
+            ),
         )
 
         prompt = collector.get_action_prompt(status, 1)

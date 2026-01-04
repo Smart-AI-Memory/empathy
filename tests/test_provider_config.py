@@ -1,5 +1,4 @@
-"""
-Tests for src/empathy_os/models/provider_config.py
+"""Tests for src/empathy_os/models/provider_config.py
 
 Tests the provider configuration system including:
 - ProviderMode enum
@@ -133,7 +132,9 @@ class TestProviderDetection:
 
     @patch.dict(os.environ, {}, clear=True)
     @patch.object(
-        ProviderConfig, "_load_env_files", return_value={"ANTHROPIC_API_KEY": "from-file"}
+        ProviderConfig,
+        "_load_env_files",
+        return_value={"ANTHROPIC_API_KEY": "from-file"},
     )
     @patch.object(ProviderConfig, "_check_ollama_available", return_value=False)
     def test_detect_from_env_file(self, mock_ollama, mock_env):
@@ -170,7 +171,9 @@ class TestAutoDetect:
         assert config.available_providers == ["openai"]
 
     @patch.object(
-        ProviderConfig, "detect_available_providers", return_value=["openai", "anthropic"]
+        ProviderConfig,
+        "detect_available_providers",
+        return_value=["openai", "anthropic"],
     )
     def test_auto_detect_multiple_prefers_anthropic(self, mock_detect):
         """Test auto_detect prefers anthropic when multiple available."""
@@ -350,7 +353,9 @@ class TestConfigureCli:
         assert config.primary_provider == "openai"
 
     @patch.object(
-        ProviderConfig, "detect_available_providers", return_value=["anthropic", "openai"]
+        ProviderConfig,
+        "detect_available_providers",
+        return_value=["anthropic", "openai"],
     )
     def test_configure_cli_hybrid_mode(self, mock_detect):
         """Test CLI configuration with hybrid mode."""
@@ -358,7 +363,9 @@ class TestConfigureCli:
         assert config.mode == ProviderMode.HYBRID
 
     @patch.object(
-        ProviderConfig, "detect_available_providers", return_value=["anthropic", "openai"]
+        ProviderConfig,
+        "detect_available_providers",
+        return_value=["anthropic", "openai"],
     )
     def test_configure_cli_hybrid_provider(self, mock_detect):
         """Test CLI configuration with provider=hybrid."""

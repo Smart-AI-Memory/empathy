@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Test Script for Agent & Wizard Intelligence System (v3.1.0)
+"""Test Script for Agent & Wizard Intelligence System (v3.1.0)
 
 Run this script to verify all new features are working correctly.
 Can be run by humans or AI agents.
@@ -89,7 +88,6 @@ class TestRunner:
 
 def test_memory_graph_import():
     """Test that Memory Graph can be imported."""
-
     return True, "All imports successful", ""
 
 
@@ -150,7 +148,8 @@ def test_memory_graph_find_similar():
     with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
         graph = MemoryGraph(path=f.name)
         graph.add_finding(
-            wizard="test", finding={"type": "bug", "name": "Null reference in auth.py"}
+            wizard="test",
+            finding={"type": "bug", "name": "Null reference in auth.py"},
         )
         graph.add_finding(wizard="test", finding={"type": "bug", "name": "Type error in utils.py"})
         similar = graph.find_similar({"name": "Null reference error"}, threshold=0.3)
@@ -187,7 +186,6 @@ def test_memory_graph_find_related():
 
 def test_smart_router_import():
     """Test that Smart Router can be imported."""
-
     return True, "All imports successful", ""
 
 
@@ -276,7 +274,6 @@ def test_smart_router_error_suggestions():
 
 def test_chain_executor_import():
     """Test that Chain Executor can be imported."""
-
     return True, "All imports successful", ""
 
 
@@ -343,7 +340,6 @@ def test_chain_executor_templates():
 
 def test_prompt_wizard_import():
     """Test that Prompt Engineering Wizard can be imported."""
-
     return True, "All imports successful", ""
 
 
@@ -674,7 +670,8 @@ def run_interactive():
             finding={"type": "bug", "name": "Null pointer in utils.py:15", "severity": "medium"},
         )
         fix1 = graph.add_finding(
-            wizard="code-review", finding={"type": "fix", "name": "Add null check guard clause"}
+            wizard="code-review",
+            finding={"type": "fix", "name": "Add null check guard clause"},
         )
 
         # Connect them

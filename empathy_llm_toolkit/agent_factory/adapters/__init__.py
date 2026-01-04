@@ -1,5 +1,4 @@
-"""
-Framework Adapters for Agent Factory
+"""Framework Adapters for Agent Factory
 
 Each adapter implements the BaseAdapter interface for a specific
 agent framework, allowing seamless switching between frameworks.
@@ -77,10 +76,10 @@ __all__ = [
     "NativeAdapter",
     "WizardAdapter",
     "WizardAgent",
-    "wrap_wizard",
+    "get_autogen_adapter",
+    "get_crewai_adapter",
+    "get_haystack_adapter",
     "get_langchain_adapter",
     "get_langgraph_adapter",
-    "get_autogen_adapter",
-    "get_haystack_adapter",
-    "get_crewai_adapter",
+    "wrap_wizard",
 ]

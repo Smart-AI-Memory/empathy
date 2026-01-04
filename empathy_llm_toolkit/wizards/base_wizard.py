@@ -1,5 +1,4 @@
-"""
-Base Wizard - Foundation for all EmpathyLLM wizards
+"""Base Wizard - Foundation for all EmpathyLLM wizards
 
 Provides common functionality for security-aware AI assistants with domain-specific
 configurations and integrated privacy controls.
@@ -50,8 +49,7 @@ class WizardConfig:
 
 
 class BaseWizard:
-    """
-    Base class for all Empathy LLM wizards
+    """Base class for all Empathy LLM wizards
 
     Provides:
     - Integration with EmpathyLLM
@@ -66,12 +64,12 @@ class BaseWizard:
         llm: EmpathyLLM,
         config: WizardConfig,
     ):
-        """
-        Initialize wizard with LLM and configuration
+        """Initialize wizard with LLM and configuration
 
         Args:
             llm: EmpathyLLM instance (with or without security enabled)
             config: Wizard configuration
+
         """
         self.llm = llm
         self.config = config
@@ -95,8 +93,7 @@ class BaseWizard:
         empathy_level: int | None = None,
         session_context: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        """
-        Process user input through the wizard
+        """Process user input through the wizard
 
         Args:
             user_input: User's message or request
@@ -110,6 +107,7 @@ class BaseWizard:
                 - empathy_level: Level used
                 - security_report: Security scan results (if enabled)
                 - metadata: Additional wizard metadata
+
         """
         level = empathy_level if empathy_level is not None else self.config.default_empathy_level
 
@@ -150,8 +148,7 @@ class BaseWizard:
         return result
 
     def _build_system_prompt(self) -> str:
-        """
-        Build domain-specific system prompt
+        """Build domain-specific system prompt
 
         Override in subclasses to add domain knowledge
         """

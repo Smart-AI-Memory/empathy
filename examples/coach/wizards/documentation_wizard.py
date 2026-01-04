@@ -1,5 +1,4 @@
-"""
-Documentation Wizard
+"""Documentation Wizard
 
 Identifies friction points and generates/updates docs to unblock teams.
 Uses Empathy Framework Level 2 (Guided) for clear communication and
@@ -21,8 +20,7 @@ from .base_wizard import (
 
 
 class DocumentationWizard(BaseWizard):
-    """
-    Wizard for creating and updating documentation
+    """Wizard for creating and updating documentation
 
     Uses:
     - Level 2: Guide readers with clear, structured docs
@@ -52,7 +50,6 @@ class DocumentationWizard(BaseWizard):
 
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute documentation workflow"""
-
         # Step 1: Identify target audience and pain points
         audience = self._identify_audience(task)
         pain_points = self._identify_pain_points(task)
@@ -88,7 +85,7 @@ class DocumentationWizard(BaseWizard):
                     type="doc",
                     title="Identified Documentation Gaps",
                     content=self._format_gaps(potential_gaps),
-                )
+                ),
             )
 
         # Step 9: Create plan
@@ -133,7 +130,7 @@ class DocumentationWizard(BaseWizard):
                 owner=audience["role"],
                 what="Review documentation for clarity",
                 when="Before merging",
-            )
+            ),
         ]
 
         # Step 13: Empathy checks
@@ -199,38 +196,39 @@ class DocumentationWizard(BaseWizard):
 
         if "readme" in task_lower:
             return "README"
-        elif "handoff" in task_lower or any("handoff" in p.lower() for p in pain_points):
+        if "handoff" in task_lower or any("handoff" in p.lower() for p in pain_points):
             return "Handoff Guide"
-        elif "onboarding" in task_lower:
+        if "onboarding" in task_lower:
             return "Onboarding Guide"
-        elif "setup" in task_lower or "install" in task_lower:
+        if "setup" in task_lower or "install" in task_lower:
             return "Setup Guide"
-        elif "api" in task_lower:
+        if "api" in task_lower:
             return "API Documentation"
-        elif "hotfix" in task_lower:
+        if "hotfix" in task_lower:
             return "Hotfix Process"
-        else:
-            return "Quick Start Guide"
+        return "Quick Start Guide"
 
     def _create_diagnosis(self, audience: dict, pain_points: list[str], doc_type: str) -> str:
         """Create diagnosis of documentation needs"""
         return f"{doc_type} needed for {audience['role']} ({audience['experience']} level) to address: {', '.join(pain_points[:2])}"
 
     def _generate_documentation(
-        self, task: WizardTask, audience: dict, pain_points: list[str], doc_type: str
+        self,
+        task: WizardTask,
+        audience: dict,
+        pain_points: list[str],
+        doc_type: str,
     ) -> str:
         """Generate the actual documentation"""
-
         if doc_type == "Handoff Guide":
             return self._generate_handoff_guide(task)
-        elif doc_type == "README":
+        if doc_type == "README":
             return self._generate_readme_section(task, pain_points)
-        elif doc_type == "Hotfix Process":
+        if doc_type == "Hotfix Process":
             return self._generate_hotfix_process(task)
-        elif doc_type == "Setup Guide":
+        if doc_type == "Setup Guide":
             return self._generate_setup_guide(task)
-        else:
-            return self._generate_quick_start(task, audience)
+        return self._generate_quick_start(task, audience)
 
     def _generate_handoff_guide(self, task: WizardTask) -> str:
         """Generate handoff documentation"""

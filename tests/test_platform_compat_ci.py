@@ -1,5 +1,4 @@
-"""
-CI integration test for cross-platform compatibility.
+"""CI integration test for cross-platform compatibility.
 
 Runs the platform compatibility checker as part of pytest to catch
 cross-platform issues during regular test runs.
@@ -32,6 +31,7 @@ class TestPlatformCompatibility:
 
         result = subprocess.run(
             [sys.executable, str(script), str(project_root / "src"), "--json"],
+            check=False,
             capture_output=True,
             text=True,
             cwd=str(project_root),

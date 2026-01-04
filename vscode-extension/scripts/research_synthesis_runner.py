@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-Research Synthesis Runner for VSCode Extension
+"""Research Synthesis Runner for VSCode Extension
 
 Simple CLI wrapper to run ResearchSynthesisWorkflow from the VSCode panel.
 """

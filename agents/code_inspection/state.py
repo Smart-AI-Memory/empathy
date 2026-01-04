@@ -1,5 +1,4 @@
-"""
-Code Inspection Pipeline - State Management
+"""Code Inspection Pipeline - State Management
 
 Defines the shared state structure for the multi-agent code inspection pipeline.
 Follows the pattern from compliance_anticipation_agent.py and book_production/state.py
@@ -151,8 +150,7 @@ class HistoricalMatch(TypedDict):
 
 
 class CodeInspectionState(TypedDict):
-    """
-    Complete state for Code Inspection Agent Pipeline.
+    """Complete state for Code Inspection Agent Pipeline.
 
     Design Philosophy (following ComplianceAgentState pattern):
     - Each field answers a specific inspection question
@@ -287,14 +285,14 @@ class CodeInspectionState(TypedDict):
 
 
 def get_staged_files(project_path: str) -> list[str]:
-    """
-    Get list of staged files from git.
+    """Get list of staged files from git.
 
     Args:
         project_path: Root path of the git repository
 
     Returns:
         List of staged file paths relative to project root
+
     """
     import subprocess
 
@@ -314,8 +312,7 @@ def get_staged_files(project_path: str) -> list[str]:
 
 
 def get_changed_files(project_path: str, base: str = "HEAD") -> list[str]:
-    """
-    Get list of changed files from git (compared to base).
+    """Get list of changed files from git (compared to base).
 
     Args:
         project_path: Root path of the git repository
@@ -323,6 +320,7 @@ def get_changed_files(project_path: str, base: str = "HEAD") -> list[str]:
 
     Returns:
         List of changed file paths relative to project root
+
     """
     import subprocess
 
@@ -357,8 +355,7 @@ def create_initial_state(
     enabled_tools: dict[str, bool] | None = None,
     baseline_enabled: bool = True,
 ) -> CodeInspectionState:
-    """
-    Create initial state for code inspection pipeline.
+    """Create initial state for code inspection pipeline.
 
     Args:
         project_path: Root path to inspect
@@ -373,6 +370,7 @@ def create_initial_state(
 
     Returns:
         Initialized CodeInspectionState
+
     """
     import uuid
 
@@ -483,7 +481,7 @@ def create_initial_state(
                     "learning_enabled": learning_enabled,
                     "quick_mode": quick_mode,
                 },
-            }
+            },
         ],
         # Metadata
         pipeline_version="1.0.0",
@@ -500,14 +498,14 @@ def create_initial_state(
 
 
 def calculate_health_score(results: dict[str, ToolResult]) -> int:
-    """
-    Calculate weighted health score following code_health.py pattern.
+    """Calculate weighted health score following code_health.py pattern.
 
     Args:
         results: Dictionary of tool results
 
     Returns:
         Weighted health score 0-100
+
     """
     total_weight = 0
     weighted_score = 0
@@ -533,24 +531,22 @@ def get_health_status(score: int) -> str:
     """Get health status from score."""
     if score >= 85:
         return HealthStatus.PASS.value
-    elif score >= 70:
+    if score >= 70:
         return HealthStatus.WARN.value
-    else:
-        return HealthStatus.FAIL.value
+    return HealthStatus.FAIL.value
 
 
 def get_health_grade(score: int) -> str:
     """Get letter grade from score."""
     if score >= 90:
         return "A"
-    elif score >= 80:
+    if score >= 80:
         return "B"
-    elif score >= 70:
+    if score >= 70:
         return "C"
-    elif score >= 60:
+    if score >= 60:
         return "D"
-    else:
-        return "F"
+    return "F"
 
 
 def add_audit_entry(
@@ -559,14 +555,14 @@ def add_audit_entry(
     action: str,
     details: dict[str, Any] | None = None,
 ) -> None:
-    """
-    Add entry to audit trail (mutates state in place).
+    """Add entry to audit trail (mutates state in place).
 
     Args:
         state: Current inspection state
         phase: Current phase name
         action: Description of action
         details: Additional details
+
     """
     state["audit_trail"].append(
         {
@@ -574,6 +570,6 @@ def add_audit_entry(
             "phase": phase,
             "action": action,
             "details": details or {},
-        }
+        },
     )
     state["last_updated"] = datetime.now().isoformat()

@@ -1,5 +1,4 @@
-"""
-Tests for BaseWorkflow and workflow data structures.
+"""Tests for BaseWorkflow and workflow data structures.
 
 Tests the foundation classes used by all workflow implementations.
 
@@ -547,7 +546,7 @@ class TestWorkflowHistory:
                         description="Test",
                         cost=0.01,
                         duration_ms=100,
-                    )
+                    ),
                 ],
                 final_output={"result": "done"},
                 cost_report=CostReport(
@@ -620,7 +619,11 @@ class TestWorkflowHistory:
                     total_duration_ms=100,
                 )
                 _save_workflow_run(
-                    f"workflow-{i}", "anthropic", result, history_file, max_history=3
+                    f"workflow-{i}",
+                    "anthropic",
+                    result,
+                    history_file,
+                    max_history=3,
                 )
 
             with open(history_file) as f:
@@ -710,7 +713,10 @@ class TestConcreteWorkflow(BaseWorkflow):
     }
 
     async def run_stage(
-        self, stage_name: str, tier: ModelTier, input_data: Any
+        self,
+        stage_name: str,
+        tier: ModelTier,
+        input_data: Any,
     ) -> tuple[Any, int, int]:
         """Simple stage implementation for testing."""
         return (

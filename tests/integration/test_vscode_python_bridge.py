@@ -1,5 +1,4 @@
-"""
-Integration tests for VSCode ↔ Python CLI interaction.
+"""Integration tests for VSCode ↔ Python CLI interaction.
 
 These tests validate the entire stack from VSCode extension
 through to Python CLI workflow execution.
@@ -18,6 +17,7 @@ def test_workflow_discovery_via_cli():
     # This simulates what WorkflowDiscoveryService.discoverFromPythonCLI() does
     result = subprocess.run(
         [sys.executable, "-m", "empathy_os.cli", "workflow", "list", "--json"],
+        check=False,
         capture_output=True,
         text=True,
         timeout=10,
@@ -41,6 +41,7 @@ def test_workflow_metadata_structure():
     """Test that workflow metadata has expected structure for VSCode."""
     result = subprocess.run(
         [sys.executable, "-m", "empathy_os.cli", "workflow", "list", "--json"],
+        check=False,
         capture_output=True,
         text=True,
         timeout=10,
@@ -64,6 +65,7 @@ def test_workflow_names_match_expectations():
     """Test that discovered workflows match expected names."""
     result = subprocess.run(
         [sys.executable, "-m", "empathy_os.cli", "workflow", "list", "--json"],
+        check=False,
         capture_output=True,
         text=True,
         timeout=10,
@@ -81,7 +83,7 @@ def test_workflow_names_match_expectations():
     }
 
     assert expected_workflows.issubset(
-        workflow_names
+        workflow_names,
     ), f"Missing expected workflows. Found: {workflow_names}"
 
 
@@ -90,6 +92,7 @@ def test_workflow_categorization_coverage():
     """Test that all workflows can be categorized."""
     result = subprocess.run(
         [sys.executable, "-m", "empathy_os.cli", "workflow", "list", "--json"],
+        check=False,
         capture_output=True,
         text=True,
         timeout=10,
@@ -131,6 +134,7 @@ def test_workflow_cli_json_format():
     """Test that CLI returns valid JSON format."""
     result = subprocess.run(
         [sys.executable, "-m", "empathy_os.cli", "workflow", "list", "--json"],
+        check=False,
         capture_output=True,
         text=True,
         timeout=10,
@@ -149,6 +153,7 @@ def test_vscode_workflow_picker_data_format():
     """Test that workflow data is suitable for VSCode Quick Pick."""
     result = subprocess.run(
         [sys.executable, "-m", "empathy_os.cli", "workflow", "list", "--json"],
+        check=False,
         capture_output=True,
         text=True,
         timeout=10,

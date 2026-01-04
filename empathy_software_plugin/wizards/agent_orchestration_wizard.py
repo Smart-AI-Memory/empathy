@@ -1,5 +1,4 @@
-"""
-Agent Orchestration Wizard - Level 4 Anticipatory Empathy
+"""Agent Orchestration Wizard - Level 4 Anticipatory Empathy
 
 Alerts developers when multi-agent system complexity will become unmanageable.
 
@@ -21,8 +20,7 @@ from empathy_os.plugins import BaseWizard
 
 
 class AgentOrchestrationWizard(BaseWizard):
-    """
-    Level 4 Anticipatory: Predicts multi-agent coordination issues.
+    """Level 4 Anticipatory: Predicts multi-agent coordination issues.
 
     What We Learned Building Multi-Agent Systems:
     - Simple sequential agents scale fine to 3-5 agents
@@ -99,8 +97,7 @@ class AgentOrchestrationWizard(BaseWizard):
         return agents
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze agent orchestration patterns and predict coordination issues.
+        """Analyze agent orchestration patterns and predict coordination issues.
 
         In our experience: Multi-agent complexity sneaks up fast.
         By agent #7-10, you need formal orchestration or face refactoring.
@@ -145,7 +142,9 @@ class AgentOrchestrationWizard(BaseWizard):
         }
 
     async def _analyze_orchestration_patterns(
-        self, agents: list[dict], orchestration: list[str]
+        self,
+        agents: list[dict],
+        orchestration: list[str],
     ) -> list[dict[str, Any]]:
         """Analyze current orchestration patterns"""
         issues = []
@@ -164,7 +163,7 @@ class AgentOrchestrationWizard(BaseWizard):
                         "without explicit state tracking."
                     ),
                     "suggestion": "Implement shared state pattern (e.g., LangGraph StateGraph, custom State class)",
-                }
+                },
             )
 
         # Issue: No error handling between agents
@@ -178,7 +177,7 @@ class AgentOrchestrationWizard(BaseWizard):
                         "entire pipeline crashes. In our experience, this creates brittle systems."
                     ),
                     "suggestion": "Add try-except wrappers, fallback agents, retry logic",
-                }
+                },
             )
 
         # Issue: Circular agent dependencies
@@ -192,7 +191,7 @@ class AgentOrchestrationWizard(BaseWizard):
                         "This creates deadlocks and unpredictable behavior."
                     ),
                     "suggestion": "Restructure agent graph to be acyclic (DAG)",
-                }
+                },
             )
 
         # Issue: No agent communication protocol
@@ -206,16 +205,18 @@ class AgentOrchestrationWizard(BaseWizard):
                         "In our experience, structured protocols become essential beyond 5 agents."
                     ),
                     "suggestion": "Define message schemas, use TypedDict for agent inputs/outputs",
-                }
+                },
             )
 
         return issues
 
     async def _predict_orchestration_complexity(
-        self, agents: list[dict], orchestration: list[str], full_context: dict[str, Any]
+        self,
+        agents: list[dict],
+        orchestration: list[str],
+        full_context: dict[str, Any],
     ) -> list[dict[str, Any]]:
-        """
-        Level 4: Predict when orchestration will break down.
+        """Level 4: Predict when orchestration will break down.
 
         Based on our experience: Coordination complexity = O(n²) with agents.
         """
@@ -252,7 +253,7 @@ class AgentOrchestrationWizard(BaseWizard):
                         "By agent 7, we needed LangGraph StateGraph. By agent 12, we needed "
                         "full orchestration framework. Wish we'd designed for it earlier."
                     ),
-                }
+                },
             )
 
         # Pattern 2: Sequential agents that should be parallel
@@ -277,7 +278,7 @@ class AgentOrchestrationWizard(BaseWizard):
                         "Many agents have no dependencies on each other. "
                         "Sequential execution leaves performance on table."
                     ),
-                }
+                },
             )
 
         # Pattern 3: Growing agent communication overhead
@@ -302,7 +303,7 @@ class AgentOrchestrationWizard(BaseWizard):
                         f"Full mesh communication: {agent_count}² = {agent_count**2} channels. "
                         "Selective communication dramatically reduces overhead."
                     ),
-                }
+                },
             )
 
         # Pattern 4: No agent versioning strategy
@@ -327,7 +328,7 @@ class AgentOrchestrationWizard(BaseWizard):
                         "When agent A changes output format, agent B breaks. "
                         "Versioning prevents cascade failures."
                     ),
-                }
+                },
             )
 
         # Pattern 5: Missing observability
@@ -358,7 +359,7 @@ class AgentOrchestrationWizard(BaseWizard):
                         "Agent #4 was receiving null from Agent #2. No logging made this "
                         "a nightmare. Never again."
                     ),
-                }
+                },
             )
 
         return predictions
@@ -371,7 +372,7 @@ class AgentOrchestrationWizard(BaseWizard):
         critical = [i for i in issues if i.get("severity") == "error"]
         if critical:
             recommendations.append(
-                f"[CRITICAL] Fix {len(critical)} critical orchestration issues immediately"
+                f"[CRITICAL] Fix {len(critical)} critical orchestration issues immediately",
             )
 
         # High-impact predictions
@@ -387,7 +388,9 @@ class AgentOrchestrationWizard(BaseWizard):
         return recommendations
 
     def _extract_patterns(
-        self, issues: list[dict], predictions: list[dict]
+        self,
+        issues: list[dict],
+        predictions: list[dict],
     ) -> list[dict[str, Any]]:
         """Extract cross-domain patterns"""
         return [
@@ -407,7 +410,7 @@ class AgentOrchestrationWizard(BaseWizard):
                 ],
                 "threshold": "7-10 components",
                 "solution": "Adopt formal orchestration framework before threshold",
-            }
+            },
         ]
 
     # Helper methods
@@ -464,12 +467,11 @@ class AgentOrchestrationWizard(BaseWizard):
         """Assess orchestration complexity"""
         if len(orchestration) == 0:
             return "none"
-        elif len(orchestration) <= 2:
+        if len(orchestration) <= 2:
             return "low"
-        elif len(orchestration) <= 5:
+        if len(orchestration) <= 5:
             return "medium"
-        else:
-            return "high"
+        return "high"
 
     def _all_sequential(self, orchestration: list[str]) -> bool:
         """Check if all agents run sequentially"""

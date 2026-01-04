@@ -1,5 +1,4 @@
-"""
-Unit tests for empathy_llm_toolkit.levels module
+"""Unit tests for empathy_llm_toolkit.levels module
 
 Tests EmpathyLevel enum and class methods to achieve 95%+ coverage.
 

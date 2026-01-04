@@ -1,5 +1,4 @@
-"""
-Empathy LLM - Core Wrapper
+"""Empathy LLM - Core Wrapper
 
 Main class that wraps any LLM provider with Empathy Framework levels.
 
@@ -37,8 +36,7 @@ logger = logging.getLogger(__name__)
 
 
 class EmpathyLLM:
-    """
-    Wraps any LLM provider with Empathy Framework levels.
+    """Wraps any LLM provider with Empathy Framework levels.
 
     Automatically progresses from Level 1 (reactive) to Level 4 (anticipatory)
     based on user collaboration state.
@@ -92,6 +90,7 @@ class EmpathyLLM:
         ...     user_input="Design the architecture",
         ...     task_type="architectural_decision"
         ... )
+
     """
 
     def __init__(
@@ -108,8 +107,7 @@ class EmpathyLLM:
         enable_model_routing: bool = False,
         **kwargs,
     ):
-        """
-        Initialize EmpathyLLM.
+        """Initialize EmpathyLLM.
 
         Args:
             provider: "anthropic", "openai", or "local"
@@ -133,6 +131,7 @@ class EmpathyLLM:
                 - CAPABLE (Sonnet): code generation, bug fixes, security review
                 - PREMIUM (Opus): coordination, synthesis, architectural decisions
             **kwargs: Provider-specific options
+
         """
         self.target_level = target_level
         self.pattern_library = pattern_library or {}
@@ -164,7 +163,7 @@ class EmpathyLLM:
             self._cached_memory = self.claude_memory_loader.load_all_memory(project_root)
             logger.info(
                 f"EmpathyLLM initialized with Claude memory: "
-                f"{len(self._cached_memory)} chars loaded"
+                f"{len(self._cached_memory)} chars loaded",
             )
 
         # Initialize Phase 3 security controls (v1.8.0+)
@@ -180,7 +179,7 @@ class EmpathyLLM:
         logger.info(
             f"EmpathyLLM initialized: provider={provider}, target_level={target_level}, "
             f"security={'enabled' if enable_security else 'disabled'}, "
-            f"model_routing={'enabled' if enable_model_routing else 'disabled'}"
+            f"model_routing={'enabled' if enable_model_routing else 'disabled'}",
         )
 
     def _initialize_security(self):
@@ -214,26 +213,30 @@ class EmpathyLLM:
             logger.info(f"Audit Logger initialized: {audit_log_dir}")
 
     def _create_provider(
-        self, provider: str, api_key: str | None, model: str | None, **kwargs
+        self,
+        provider: str,
+        api_key: str | None,
+        model: str | None,
+        **kwargs,
     ) -> BaseLLMProvider:
         """Create appropriate provider instance"""
-
         if provider == "anthropic":
             return AnthropicProvider(
-                api_key=api_key, model=model or "claude-sonnet-4-5-20250929", **kwargs
+                api_key=api_key,
+                model=model or "claude-sonnet-4-5-20250929",
+                **kwargs,
             )
-        elif provider == "openai":
+        if provider == "openai":
             return OpenAIProvider(api_key=api_key, model=model or "gpt-4-turbo-preview", **kwargs)
-        elif provider in ("google", "gemini"):
+        if provider in ("google", "gemini"):
             return GeminiProvider(api_key=api_key, model=model or "gemini-1.5-pro", **kwargs)
-        elif provider == "local":
+        if provider == "local":
             return LocalProvider(
                 endpoint=kwargs.get("endpoint", "http://localhost:11434"),
                 model=model or "llama2",
                 **kwargs,
             )
-        else:
-            raise ValueError(f"Unknown provider: {provider}")
+        raise ValueError(f"Unknown provider: {provider}")
 
     def _get_or_create_state(self, user_id: str) -> CollaborationState:
         """Get or create collaboration state for user"""
@@ -242,8 +245,7 @@ class EmpathyLLM:
         return self.states[user_id]
 
     def _determine_level(self, state: CollaborationState) -> int:
-        """
-        Determine which empathy level to use.
+        """Determine which empathy level to use.
 
         Progresses automatically based on state, up to target_level.
         """
@@ -260,8 +262,7 @@ class EmpathyLLM:
         return level
 
     def _build_system_prompt(self, level: int) -> str:
-        """
-        Build system prompt including Claude memory (if enabled).
+        """Build system prompt including Claude memory (if enabled).
 
         Claude memory is prepended to the level-specific prompt,
         so instructions from CLAUDE.md files affect all interactions.
@@ -271,6 +272,7 @@ class EmpathyLLM:
 
         Returns:
             Complete system prompt
+
         """
         level_prompt = EmpathyLevel.get_system_prompt(level)
 
@@ -284,12 +286,10 @@ class EmpathyLLM:
 
 Follow the CLAUDE.md instructions above, then apply the Empathy Framework below.
 """
-        else:
-            return level_prompt
+        return level_prompt
 
     def reload_memory(self):
-        """
-        Reload Claude memory files.
+        """Reload Claude memory files.
 
         Useful if CLAUDE.md files have been updated during runtime.
         Call this to pick up changes without restarting.
@@ -310,8 +310,7 @@ Follow the CLAUDE.md instructions above, then apply the Empathy Framework below.
         force_level: int | None = None,
         task_type: str | None = None,
     ) -> dict[str, Any]:
-        """
-        Main interaction method.
+        """Main interaction method.
 
         Automatically selects appropriate empathy level and responds.
 
@@ -345,6 +344,7 @@ Follow the CLAUDE.md instructions above, then apply the Empathy Framework below.
 
         Raises:
             SecurityError: If secrets detected and block_on_secrets=True
+
         """
         start_time = time.time()
         state = self._get_or_create_state(user_id)
@@ -367,7 +367,7 @@ Follow the CLAUDE.md instructions above, then apply the Empathy Framework below.
                 "routed_tier": tier.value,
             }
             logger.info(
-                f"Model routing: task={effective_task} -> model={routed_model} (tier={tier.value})"
+                f"Model routing: task={effective_task} -> model={routed_model} (tier={tier.value})",
             )
 
         # Initialize security tracking
@@ -383,7 +383,7 @@ Follow the CLAUDE.md instructions above, then apply the Empathy Framework below.
             security_metadata["pii_scrubbed"] = len(pii_detections) > 0
             if pii_detections:
                 logger.info(
-                    f"PII detected for user {user_id}: {len(pii_detections)} items scrubbed"
+                    f"PII detected for user {user_id}: {len(pii_detections)} items scrubbed",
                 )
 
         # Phase 3: Security Pipeline (Step 2 - Secrets Detection)
@@ -395,7 +395,7 @@ Follow the CLAUDE.md instructions above, then apply the Empathy Framework below.
                 block_on_secrets = self.security_config.get("block_on_secrets", True)
                 logger.warning(
                     f"Secrets detected for user {user_id}: {len(secrets_detections)} secrets, "
-                    f"blocking={block_on_secrets}"
+                    f"blocking={block_on_secrets}",
                 )
 
                 # Log security violation
@@ -415,7 +415,7 @@ Follow the CLAUDE.md instructions above, then apply the Empathy Framework below.
                 if block_on_secrets:
                     raise SecurityError(
                         f"Request blocked: {len(secrets_detections)} secret(s) detected in input. "
-                        f"Please remove sensitive credentials before submitting."
+                        f"Please remove sensitive credentials before submitting.",
                     )
 
         # Determine level to use
@@ -495,8 +495,7 @@ Follow the CLAUDE.md instructions above, then apply the Empathy Framework below.
         context: dict[str, Any],
         model_override: str | None = None,
     ) -> dict[str, Any]:
-        """
-        Level 1: Reactive - Simple Q&A
+        """Level 1: Reactive - Simple Q&A
 
         No memory, no patterns, just respond to question.
         """
@@ -524,8 +523,7 @@ Follow the CLAUDE.md instructions above, then apply the Empathy Framework below.
         context: dict[str, Any],
         model_override: str | None = None,
     ) -> dict[str, Any]:
-        """
-        Level 2: Guided - Ask clarifying questions
+        """Level 2: Guided - Ask clarifying questions
 
         Uses conversation history for context.
         """
@@ -561,8 +559,7 @@ Follow the CLAUDE.md instructions above, then apply the Empathy Framework below.
         context: dict[str, Any],
         model_override: str | None = None,
     ) -> dict[str, Any]:
-        """
-        Level 3: Proactive - Act on detected patterns
+        """Level 3: Proactive - Act on detected patterns
 
         Checks for matching patterns and acts proactively.
         """
@@ -629,8 +626,7 @@ Was this helpful? If not, I can adjust my pattern detection.
         context: dict[str, Any],
         model_override: str | None = None,
     ) -> dict[str, Any]:
-        """
-        Level 4: Anticipatory - Predict future needs
+        """Level 4: Anticipatory - Predict future needs
 
         Analyzes trajectory and alerts to future bottlenecks.
         """
@@ -690,8 +686,7 @@ Use anticipatory format:
         context: dict[str, Any],
         model_override: str | None = None,
     ) -> dict[str, Any]:
-        """
-        Level 5: Systems - Cross-domain pattern learning
+        """Level 5: Systems - Cross-domain pattern learning
 
         Leverages shared pattern library across domains.
         """
@@ -742,8 +737,7 @@ TASK:
         state: CollaborationState,
         current_input: str,
     ) -> None:
-        """
-        Detect user behavior patterns in background.
+        """Detect user behavior patterns in background.
 
         Analyzes conversation history to identify:
         - Sequential patterns: User always does X then Y
@@ -842,7 +836,7 @@ TASK:
                             state.add_pattern(pattern)
 
             logger.debug(
-                f"Pattern detection complete. Detected {len(state.detected_patterns)} patterns."
+                f"Pattern detection complete. Detected {len(state.detected_patterns)} patterns.",
             )
 
         except Exception as e:
@@ -850,13 +844,13 @@ TASK:
             logger.warning(f"Pattern detection error (non-critical): {e}")
 
     def update_trust(self, user_id: str, outcome: str, magnitude: float = 1.0):
-        """
-        Update trust level based on interaction outcome.
+        """Update trust level based on interaction outcome.
 
         Args:
             user_id: User identifier
             outcome: "success" or "failure"
             magnitude: How much to adjust (0.0 to 1.0)
+
         """
         state = self._get_or_create_state(user_id)
         state.update_trust(outcome, magnitude)
@@ -864,12 +858,12 @@ TASK:
         logger.info(f"Trust updated for {user_id}: {outcome} -> {state.trust_level:.2f}")
 
     def add_pattern(self, user_id: str, pattern: UserPattern):
-        """
-        Manually add a detected pattern.
+        """Manually add a detected pattern.
 
         Args:
             user_id: User identifier
             pattern: UserPattern instance
+
         """
         state = self._get_or_create_state(user_id)
         state.add_pattern(pattern)
@@ -877,14 +871,14 @@ TASK:
         logger.info(f"Pattern added for {user_id}: {pattern.pattern_type.value}")
 
     def get_statistics(self, user_id: str) -> dict[str, Any]:
-        """
-        Get collaboration statistics for user.
+        """Get collaboration statistics for user.
 
         Args:
             user_id: User identifier
 
         Returns:
             Dictionary with stats
+
         """
         state = self._get_or_create_state(user_id)
         return state.get_statistics()

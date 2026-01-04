@@ -1,5 +1,4 @@
-"""
-Unit tests for workflow base module
+"""Unit tests for workflow base module
 
 Tests ModelTier, ModelProvider enums and base workflow functionality.
 These tests import modules directly to contribute to coverage.
@@ -101,10 +100,10 @@ class TestProviderModels:
         """Test that each provider maps tiers to model names"""
         provider_models = _build_provider_models()
 
-        for provider, tiers in provider_models.items():
+        for _provider, tiers in provider_models.items():
             assert isinstance(tiers, dict)
             # Each tier should map to a string (model name)
-            for tier, model_name in tiers.items():
+            for _tier, model_name in tiers.items():
                 assert isinstance(model_name, str)
                 assert len(model_name) > 0
 

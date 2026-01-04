@@ -1,5 +1,4 @@
-"""
-Security Audit Crew
+"""Security Audit Crew
 
 A multi-agent crew that performs comprehensive security audits.
 Demonstrates CrewAI's hierarchical collaboration patterns with:
@@ -171,10 +170,10 @@ class SecurityAuditConfig:
     # Scan Configuration
     scan_depth: str = "standard"  # "quick", "standard", "thorough"
     include_patterns: list[str] = field(
-        default_factory=lambda: ["*.py", "*.js", "*.ts", "*.java", "*.go"]
+        default_factory=lambda: ["*.py", "*.js", "*.ts", "*.java", "*.go"],
     )
     exclude_patterns: list[str] = field(
-        default_factory=lambda: ["*test*", "*spec*", "node_modules/*", "venv/*"]
+        default_factory=lambda: ["*test*", "*spec*", "node_modules/*", "venv/*"],
     )
 
     # Memory Graph
@@ -402,8 +401,7 @@ XML_PROMPT_TEMPLATES = {
 
 
 class SecurityAuditCrew:
-    """
-    Multi-agent crew for comprehensive security audits.
+    """Multi-agent crew for comprehensive security audits.
 
     The crew consists of 5 specialized agents:
 
@@ -443,15 +441,16 @@ class SecurityAuditCrew:
 
         # Get risk score
         print(f"Risk Score: {report.risk_score}/100")
+
     """
 
     def __init__(self, config: SecurityAuditConfig | None = None, **kwargs):
-        """
-        Initialize the Security Audit Crew.
+        """Initialize the Security Audit Crew.
 
         Args:
             config: SecurityAuditConfig or pass individual params as kwargs
             **kwargs: Individual config parameters (api_key, provider, etc.)
+
         """
         if config:
             self.config = config
@@ -707,8 +706,7 @@ Be precise with ID references. Verify CWE/CVE mappings are accurate."""
         target: str,
         context: dict | None = None,
     ) -> SecurityReport:
-        """
-        Perform a comprehensive security audit.
+        """Perform a comprehensive security audit.
 
         Args:
             target: Path to codebase or repository URL
@@ -716,6 +714,7 @@ Be precise with ID references. Verify CWE/CVE mappings are accurate."""
 
         Returns:
             SecurityReport with all findings and recommendations
+
         """
         import time
 

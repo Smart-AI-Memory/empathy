@@ -1,5 +1,4 @@
-"""
-Dependency Check Workflow
+"""Dependency Check Workflow
 
 Audits dependencies for vulnerabilities, updates, and licensing issues.
 Parses lockfiles and checks against known vulnerability patterns.
@@ -45,8 +44,7 @@ KNOWN_VULNERABILITIES = {
 
 
 class DependencyCheckWorkflow(BaseWorkflow):
-    """
-    Audit dependencies for security and updates.
+    """Audit dependencies for security and updates.
 
     Scans dependency files to identify vulnerable, outdated,
     or potentially problematic packages.
@@ -62,30 +60,31 @@ class DependencyCheckWorkflow(BaseWorkflow):
     }
 
     def __init__(self, **kwargs: Any):
-        """
-        Initialize dependency check workflow.
+        """Initialize dependency check workflow.
 
         Args:
             **kwargs: Additional arguments passed to BaseWorkflow
+
         """
         super().__init__(**kwargs)
 
     async def run_stage(
-        self, stage_name: str, tier: ModelTier, input_data: Any
+        self,
+        stage_name: str,
+        tier: ModelTier,
+        input_data: Any,
     ) -> tuple[Any, int, int]:
         """Route to specific stage implementation."""
         if stage_name == "inventory":
             return await self._inventory(input_data, tier)
-        elif stage_name == "assess":
+        if stage_name == "assess":
             return await self._assess(input_data, tier)
-        elif stage_name == "report":
+        if stage_name == "report":
             return await self._report(input_data, tier)
-        else:
-            raise ValueError(f"Unknown stage: {stage_name}")
+        raise ValueError(f"Unknown stage: {stage_name}")
 
     async def _inventory(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Parse dependency files to build inventory.
+        """Parse dependency files to build inventory.
 
         Supports requirements.txt, pyproject.toml, package.json,
         and their lockfiles.
@@ -172,7 +171,7 @@ class DependencyCheckWorkflow(BaseWorkflow):
                             "version": version,
                             "source": str(path),
                             "ecosystem": "python",
-                        }
+                        },
                     )
         except OSError:
             pass
@@ -203,7 +202,7 @@ class DependencyCheckWorkflow(BaseWorkflow):
                                 "version": version,
                                 "source": str(path),
                                 "ecosystem": "python",
-                            }
+                            },
                         )
         except OSError:
             pass
@@ -225,15 +224,14 @@ class DependencyCheckWorkflow(BaseWorkflow):
                             "source": str(path),
                             "ecosystem": "node",
                             "dev": dep_type == "devDependencies",
-                        }
+                        },
                     )
         except (OSError, json.JSONDecodeError):
             pass
         return deps
 
     async def _assess(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Check dependencies for vulnerabilities.
+        """Check dependencies for vulnerabilities.
 
         Compares against known vulnerability database and
         identifies outdated packages.
@@ -258,7 +256,7 @@ class DependencyCheckWorkflow(BaseWorkflow):
                             "severity": vuln_info["severity"],
                             "cve": vuln_info["cve"],
                             "ecosystem": ecosystem,
-                        }
+                        },
                     )
 
                 # Check for outdated (simulate version check)
@@ -269,7 +267,7 @@ class DependencyCheckWorkflow(BaseWorkflow):
                             "current_version": dep["version"],
                             "status": "potentially_outdated",
                             "ecosystem": ecosystem,
-                        }
+                        },
                     )
 
         # Categorize by severity
@@ -300,8 +298,7 @@ class DependencyCheckWorkflow(BaseWorkflow):
         )
 
     async def _report(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Generate risk assessment and recommendations using LLM.
+        """Generate risk assessment and recommendations using LLM.
 
         Creates actionable report with remediation steps.
 
@@ -332,7 +329,7 @@ class DependencyCheckWorkflow(BaseWorkflow):
         for v in vulnerabilities[:15]:
             vuln_summary.append(
                 f"- {v.get('package')}@{v.get('current_version')}: "
-                f"{v.get('cve')} ({v.get('severity')})"
+                f"{v.get('cve')} ({v.get('severity')})",
             )
 
         # Build input payload for prompt
@@ -407,12 +404,18 @@ Provide actionable remediation recommendations."""
             except Exception:
                 # Fall back to legacy _call_llm if executor fails
                 response, input_tokens, output_tokens = await self._call_llm(
-                    tier, system or "", user_message, max_tokens=3000
+                    tier,
+                    system or "",
+                    user_message,
+                    max_tokens=3000,
                 )
         else:
             # Legacy path for backward compatibility
             response, input_tokens, output_tokens = await self._call_llm(
-                tier, system or "", user_message, max_tokens=3000
+                tier,
+                system or "",
+                user_message,
+                max_tokens=3000,
             )
 
         # Parse XML response if enforcement is enabled
@@ -429,7 +432,7 @@ Provide actionable remediation recommendations."""
                     "package": vuln["package"],
                     "reason": f"Fix {vuln['cve']} ({vuln['severity']} severity)",
                     "suggestion": f"Upgrade {vuln['package']} to latest version",
-                }
+                },
             )
 
         for dep in outdated[:10]:  # Top 10 outdated
@@ -440,7 +443,7 @@ Provide actionable remediation recommendations."""
                     "package": dep["package"],
                     "reason": "Potentially outdated version",
                     "suggestion": f"Review and update {dep['package']}",
-                }
+                },
             )
 
         # Sort by priority
@@ -470,7 +473,7 @@ Provide actionable remediation recommendations."""
                     "report_summary": parsed_data.get("summary"),
                     "findings": parsed_data.get("findings", []),
                     "checklist": parsed_data.get("checklist", []),
-                }
+                },
             )
 
         # Add formatted report for human readability
@@ -480,8 +483,7 @@ Provide actionable remediation recommendations."""
 
 
 def format_dependency_check_report(result: dict, input_data: dict) -> str:
-    """
-    Format dependency check output as a human-readable report.
+    """Format dependency check output as a human-readable report.
 
     Args:
         result: The report stage result
@@ -489,6 +491,7 @@ def format_dependency_check_report(result: dict, input_data: dict) -> str:
 
     Returns:
         Formatted report string
+
     """
     lines = []
 

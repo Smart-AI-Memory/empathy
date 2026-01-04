@@ -1,5 +1,4 @@
-"""
-Tests for src/empathy_os/workflows/release_prep.py
+"""Tests for src/empathy_os/workflows/release_prep.py
 
 Comprehensive tests for the release preparation workflow including:
 - RELEASE_PREP_STEPS configuration
@@ -536,7 +535,8 @@ class TestHealthStage:
             workflow = ReleasePreparationWorkflow()
 
             result, input_tokens, output_tokens = await workflow._health(
-                {"path": tmpdir}, ModelTier.CHEAP
+                {"path": tmpdir},
+                ModelTier.CHEAP,
             )
 
             assert isinstance(result, dict)
@@ -602,7 +602,8 @@ class TestSecurityStage:
             workflow = ReleasePreparationWorkflow()
 
             result, input_tokens, output_tokens = await workflow._security(
-                {"path": tmpdir}, ModelTier.CAPABLE
+                {"path": tmpdir},
+                ModelTier.CAPABLE,
             )
 
             assert isinstance(result, dict)
@@ -693,7 +694,8 @@ class TestChangelogStage:
             workflow = ReleasePreparationWorkflow()
 
             result, input_tokens, output_tokens = await workflow._changelog(
-                {"path": tmpdir}, ModelTier.CAPABLE
+                {"path": tmpdir},
+                ModelTier.CAPABLE,
             )
 
             assert isinstance(result, dict)
@@ -739,7 +741,8 @@ class TestChangelogStage:
             workflow = ReleasePreparationWorkflow()
 
             result, _, _ = await workflow._changelog(
-                {"path": tmpdir, "since": "2 weeks ago"}, ModelTier.CAPABLE
+                {"path": tmpdir, "since": "2 weeks ago"},
+                ModelTier.CAPABLE,
             )
 
             assert result["changelog"]["period"] == "2 weeks ago"
@@ -1040,7 +1043,7 @@ class TestCrewSecurityStage:
         workflow = ReleasePreparationWorkflow(use_security_crew=True)
 
         with patch(
-            "src.empathy_os.workflows.security_adapters._check_crew_available"
+            "src.empathy_os.workflows.security_adapters._check_crew_available",
         ) as mock_check:
             mock_check.return_value = False
 
@@ -1057,7 +1060,8 @@ class TestCrewSecurityStage:
         with (
             patch("src.empathy_os.workflows.security_adapters._check_crew_available") as mock_check,
             patch(
-                "src.empathy_os.workflows.security_adapters._get_crew_audit", new_callable=AsyncMock
+                "src.empathy_os.workflows.security_adapters._get_crew_audit",
+                new_callable=AsyncMock,
             ) as mock_audit,
         ):
             mock_check.return_value = True

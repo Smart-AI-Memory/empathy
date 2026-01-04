@@ -1,5 +1,4 @@
-"""
-Workflow Configuration
+"""Workflow Configuration
 
 Provides flexible configuration for workflow model selection:
 - YAML/JSON config file support
@@ -41,19 +40,18 @@ except ImportError:
 
 # Re-export for backward compatibility
 __all__ = [
-    "ModelTier",
-    "ModelProvider",
-    "ModelConfig",
-    "WorkflowConfig",
     "DEFAULT_MODELS",
+    "ModelConfig",
+    "ModelProvider",
+    "ModelTier",
+    "WorkflowConfig",
     "get_model",
 ]
 
 
 @dataclass
 class ModelConfig:
-    """
-    Configuration for a specific model.
+    """Configuration for a specific model.
 
     Note: This class is kept for backward compatibility. New code should
     use empathy_os.models.ModelInfo from the unified registry.
@@ -129,8 +127,7 @@ class WorkflowConfig:
 
     @classmethod
     def load(cls, config_path: str | Path | None = None) -> "WorkflowConfig":
-        """
-        Load workflow configuration from file and environment.
+        """Load workflow configuration from file and environment.
 
         Args:
             config_path: Optional path to config file. If None, searches:
@@ -140,6 +137,7 @@ class WorkflowConfig:
 
         Returns:
             WorkflowConfig instance
+
         """
         config_data: dict[str, Any] = {}
 
@@ -268,8 +266,7 @@ class WorkflowConfig:
         return self.pricing_overrides.get(model)
 
     def get_xml_config_for_workflow(self, workflow_name: str) -> dict[str, Any]:
-        """
-        Get XML prompt configuration for a specific workflow.
+        """Get XML prompt configuration for a specific workflow.
 
         Merges global defaults with workflow-specific overrides.
 
@@ -278,6 +275,7 @@ class WorkflowConfig:
 
         Returns:
             Dictionary with XML prompt configuration.
+
         """
         # Start with defaults
         config = dict(self.xml_prompt_defaults)
@@ -289,14 +287,14 @@ class WorkflowConfig:
         return config
 
     def is_xml_enabled_for_workflow(self, workflow_name: str) -> bool:
-        """
-        Check if XML prompts are enabled for a workflow.
+        """Check if XML prompts are enabled for a workflow.
 
         Args:
             workflow_name: The workflow name.
 
         Returns:
             True if XML prompts are enabled.
+
         """
         config = self.get_xml_config_for_workflow(workflow_name)
         return bool(config.get("enabled", False))
@@ -310,8 +308,7 @@ class WorkflowConfig:
         return self.compliance_mode.lower() == "hipaa"
 
     def is_pii_scrubbing_enabled(self) -> bool:
-        """
-        Check if PII scrubbing is enabled.
+        """Check if PII scrubbing is enabled.
 
         Returns True if:
         - Explicitly enabled via pii_scrubbing_enabled=True
@@ -319,6 +316,7 @@ class WorkflowConfig:
 
         Returns:
             True if PII scrubbing should be active
+
         """
         # Explicit setting takes precedence
         if self.pii_scrubbing_enabled is not None:
@@ -328,14 +326,14 @@ class WorkflowConfig:
         return self.is_hipaa_mode()
 
     def is_workflow_enabled(self, workflow_name: str) -> bool | None:
-        """
-        Check if a specific workflow is enabled.
+        """Check if a specific workflow is enabled.
 
         Args:
             workflow_name: Name of the workflow (e.g., "test-gen")
 
         Returns:
             True if workflow is enabled, False if disabled, None for default behavior
+
         """
         # Explicitly disabled takes precedence
         if workflow_name in self.disabled_workflows:
@@ -355,11 +353,11 @@ class WorkflowConfig:
         return None  # None means "use default registry behavior"
 
     def get_effective_audit_level(self) -> str:
-        """
-        Get the effective audit level based on compliance mode.
+        """Get the effective audit level based on compliance mode.
 
         Returns:
             Audit level string: "standard", "enhanced", or "hipaa"
+
         """
         # Explicit setting takes precedence
         if self.audit_level != "standard":
@@ -443,8 +441,7 @@ def _ensure_default_models() -> None:
 
 
 def get_model(provider: str, tier: str, config: WorkflowConfig | None = None) -> str:
-    """
-    Get the model name for a provider/tier combination.
+    """Get the model name for a provider/tier combination.
 
     Args:
         provider: Model provider (anthropic, openai, ollama, hybrid)
@@ -453,6 +450,7 @@ def get_model(provider: str, tier: str, config: WorkflowConfig | None = None) ->
 
     Returns:
         Model name string
+
     """
     # Ensure DEFAULT_MODELS is populated from registry
     _ensure_default_models()

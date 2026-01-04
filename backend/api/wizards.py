@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Wizard Dashboard Backend API
+"""Wizard Dashboard Backend API
 Provides REST endpoints for wizard data.
 """
 

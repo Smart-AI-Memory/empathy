@@ -1,5 +1,4 @@
-"""
-Research Synthesis Workflow
+"""Research Synthesis Workflow
 
 A cost-optimized pipeline for research and analysis tasks:
 1. Haiku: Summarize each source (cheap, parallel)
@@ -53,8 +52,7 @@ SYNTHESIZE_STEP_CAPABLE = WorkflowStepConfig(
 
 
 class ResearchSynthesisWorkflow(BaseWorkflow):
-    """
-    Multi-tier research synthesis workflow for comparing multiple documents.
+    """Multi-tier research synthesis workflow for comparing multiple documents.
 
     Uses cheap models for initial summarization, capable models for
     pattern analysis, and optionally premium models for final synthesis
@@ -88,6 +86,7 @@ class ResearchSynthesisWorkflow(BaseWorkflow):
 
     Raises:
         ValueError: If fewer than 2 sources are provided
+
     """
 
     name = "research"
@@ -101,12 +100,12 @@ class ResearchSynthesisWorkflow(BaseWorkflow):
     }
 
     def __init__(self, complexity_threshold: float = 0.7, **kwargs: Any):
-        """
-        Initialize workflow.
+        """Initialize workflow.
 
         Args:
             complexity_threshold: Threshold (0-1) above which premium
                 synthesis is used. Below this, capable tier is used.
+
         """
         super().__init__(**kwargs)
         self.complexity_threshold = complexity_threshold
@@ -118,8 +117,7 @@ class ResearchSynthesisWorkflow(BaseWorkflow):
         system: str,
         user_message: str,
     ) -> tuple[str, int, int]:
-        """
-        Make an LLM call using WorkflowStepConfig and executor (if available).
+        """Make an LLM call using WorkflowStepConfig and executor (if available).
 
         This is the recommended approach for new workflows. It provides:
         - Automatic task-based routing
@@ -135,6 +133,7 @@ class ResearchSynthesisWorkflow(BaseWorkflow):
 
         Returns:
             (response_text, input_tokens, output_tokens)
+
         """
         if self._executor is not None:
             # Use executor-based execution with telemetry
@@ -145,34 +144,35 @@ class ResearchSynthesisWorkflow(BaseWorkflow):
                 system=system,
             )
             return content, input_tokens, output_tokens
-        else:
-            # Fall back to direct API call
-            tier_value = step.effective_tier
-            tier = ModelTier(tier_value)
-            return await self._call_llm(
-                tier, system, user_message, max_tokens=step.max_tokens or 4096
-            )
+        # Fall back to direct API call
+        tier_value = step.effective_tier
+        tier = ModelTier(tier_value)
+        return await self._call_llm(
+            tier,
+            system,
+            user_message,
+            max_tokens=step.max_tokens or 4096,
+        )
 
     def validate_sources(self, sources: list) -> None:
-        """
-        Validate that sufficient sources are provided.
+        """Validate that sufficient sources are provided.
 
         Args:
             sources: List of source documents/content
 
         Raises:
             ValueError: If fewer than MIN_SOURCES are provided
+
         """
         if not sources or len(sources) < self.MIN_SOURCES:
             raise ValueError(
                 f"ResearchSynthesisWorkflow requires at least {self.MIN_SOURCES} source documents. "
                 f"Got {len(sources) if sources else 0}. "
-                "For single research questions without sources, use a direct LLM call instead."
+                "For single research questions without sources, use a direct LLM call instead.",
             )
 
     async def execute(self, **kwargs: Any) -> Any:
-        """
-        Execute the research synthesis workflow.
+        """Execute the research synthesis workflow.
 
         Args:
             sources: List of source documents (required, minimum 2)
@@ -183,6 +183,7 @@ class ResearchSynthesisWorkflow(BaseWorkflow):
 
         Raises:
             ValueError: If fewer than 2 sources are provided
+
         """
         sources = kwargs.get("sources", [])
         self.validate_sources(sources)
@@ -197,10 +198,12 @@ class ResearchSynthesisWorkflow(BaseWorkflow):
         return False, None
 
     async def run_stage(
-        self, stage_name: str, tier: ModelTier, input_data: Any
+        self,
+        stage_name: str,
+        tier: ModelTier,
+        input_data: Any,
     ) -> tuple[Any, int, int]:
-        """
-        Execute a research workflow stage.
+        """Execute a research workflow stage.
 
         Args:
             stage_name: Stage to run
@@ -209,19 +212,18 @@ class ResearchSynthesisWorkflow(BaseWorkflow):
 
         Returns:
             (output, input_tokens, output_tokens)
+
         """
         if stage_name == "summarize":
             return await self._summarize(input_data, tier)
-        elif stage_name == "analyze":
+        if stage_name == "analyze":
             return await self._analyze(input_data, tier)
-        elif stage_name == "synthesize":
+        if stage_name == "synthesize":
             return await self._synthesize(input_data, tier)
-        else:
-            raise ValueError(f"Unknown stage: {stage_name}")
+        raise ValueError(f"Unknown stage: {stage_name}")
 
     async def _summarize(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Summarize each source document.
+        """Summarize each source document.
 
         Note: Sources are validated in execute() before this method is called.
         """
@@ -240,7 +242,10 @@ extracting key points relevant to the research question. Be thorough but concise
             user_message = f"Research question: {question}\n\nSource content:\n{source}"
 
             response, inp_tokens, out_tokens = await self._call_llm(
-                tier, system, user_message, max_tokens=1024
+                tier,
+                system,
+                user_message,
+                max_tokens=1024,
             )
 
             summaries.append(
@@ -248,7 +253,7 @@ extracting key points relevant to the research question. Be thorough but concise
                     "source": str(source)[:100],
                     "summary": response,
                     "key_points": [],
-                }
+                },
             )
 
             total_input += inp_tokens
@@ -265,15 +270,13 @@ extracting key points relevant to the research question. Be thorough but concise
         )
 
     async def _analyze(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Analyze patterns across summaries from multiple sources.
-        """
+        """Analyze patterns across summaries from multiple sources."""
         summaries = input_data.get("summaries", [])
         question = input_data.get("question", "")
 
         # Combine summaries for analysis
         combined = "\n\n".join(
-            [f"Source: {s.get('source', 'unknown')}\n{s.get('summary', '')}" for s in summaries]
+            [f"Source: {s.get('source', 'unknown')}\n{s.get('summary', '')}" for s in summaries],
         )
 
         system = """You are a research analyst. Analyze the summaries to identify:
@@ -287,7 +290,10 @@ Provide a structured analysis."""
         user_message = f"Research question: {question}\n\nSummaries to analyze:\n{combined}"
 
         response, input_tokens, output_tokens = await self._call_llm(
-            tier, system, user_message, max_tokens=2048
+            tier,
+            system,
+            user_message,
+            max_tokens=2048,
         )
 
         # Estimate complexity from response length and content
@@ -306,12 +312,11 @@ Provide a structured analysis."""
         )
 
     async def _synthesize(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Synthesize final insights from multi-source analysis.
+        """Synthesize final insights from multi-source analysis.
 
         Supports XML-enhanced prompts when enabled in workflow config.
         """
-        _patterns = input_data.get("patterns", [])  # noqa: F841 - reserved for future use
+        _patterns = input_data.get("patterns", [])
         complexity = input_data.get("complexity", 0.5)
         question = input_data.get("question", "")
         analysis = input_data.get("analysis", "")
@@ -362,7 +367,10 @@ Be thorough, insightful, and actionable."""
 Provide a comprehensive synthesis and answer."""
 
         response, input_tokens, output_tokens = await self._call_llm(
-            tier, system or "", user_message, max_tokens=4096
+            tier,
+            system or "",
+            user_message,
+            max_tokens=4096,
         )
 
         # Parse XML response if enforcement is enabled
@@ -384,7 +392,7 @@ Provide a comprehensive synthesis and answer."""
                     "summary": parsed_data.get("summary"),
                     "findings": parsed_data.get("findings", []),
                     "checklist": parsed_data.get("checklist", []),
-                }
+                },
             )
             # Extract key insights from parsed response
             extra = parsed_data.get("_parsed_response")

@@ -1,5 +1,4 @@
-"""
-Conversation Summary Index for Empathy Framework
+"""Conversation Summary Index for Empathy Framework
 
 Redis-backed conversation summary with topic indexing for:
 - Efficient agent context handoff (80% token savings)
@@ -27,8 +26,7 @@ from .short_term import RedisShortTermMemory
 
 @dataclass
 class AgentContext:
-    """
-    Compact context package for sub-agent handoff.
+    """Compact context package for sub-agent handoff.
 
     Token-efficient representation of conversation state:
     ~2,000 tokens vs 50,000+ for full history = 96% savings
@@ -44,11 +42,11 @@ class AgentContext:
     updated_at: str = ""
 
     def to_prompt(self) -> str:
-        """
-        Convert to markdown prompt for agent injection.
+        """Convert to markdown prompt for agent injection.
 
         Returns:
             Formatted markdown (~2,000 tokens)
+
         """
         lines = ["## Session Context (from memory)", ""]
 
@@ -97,8 +95,7 @@ class AgentContext:
 
 
 class ConversationSummaryIndex:
-    """
-    Redis-backed conversation summary with topic indexing.
+    """Redis-backed conversation summary with topic indexing.
 
     Dramatically reduces token usage for agent handoffs:
     - Full history: 50,000+ tokens
@@ -122,6 +119,7 @@ class ConversationSummaryIndex:
         >>>
         >>> # Cross-session decision recall
         >>> decisions = await index.recall_decisions("authentication", days_back=7)
+
     """
 
     PREFIX_SUMMARY = "empathy:summary:"
@@ -136,12 +134,12 @@ class ConversationSummaryIndex:
         redis_memory: RedisShortTermMemory,
         ttl: int = DEFAULT_TTL,
     ):
-        """
-        Initialize summary index.
+        """Initialize summary index.
 
         Args:
             redis_memory: Redis connection from short-term memory
             ttl: Time-to-live in seconds (default 24h)
+
         """
         self._memory = redis_memory
         self._ttl = ttl
@@ -290,8 +288,7 @@ class ConversationSummaryIndex:
         session_id: str,
         event: dict[str, Any],
     ) -> bool:
-        """
-        Incrementally update session summary with new event.
+        """Incrementally update session summary with new event.
 
         Args:
             session_id: Unique session identifier
@@ -307,6 +304,7 @@ class ConversationSummaryIndex:
             ...     "type": "decision",
             ...     "content": "Use JWT for authentication"
             ... })
+
         """
         summary_key = f"{self.PREFIX_SUMMARY}{session_id}"
         timeline_key = f"{self.PREFIX_TIMELINE}{session_id}"
@@ -321,7 +319,7 @@ class ConversationSummaryIndex:
                 "type": event_type,
                 "content": content,
                 "timestamp": datetime.now().isoformat(),
-            }
+            },
         )
         self._zadd(timeline_key, timestamp, timeline_entry)
         self._expire(timeline_key, self._ttl)
@@ -386,8 +384,7 @@ class ConversationSummaryIndex:
         focus_topics: list[str] | None = None,
         max_timeline_entries: int = 10,
     ) -> AgentContext:
-        """
-        Build compact context for sub-agent handoff.
+        """Build compact context for sub-agent handoff.
 
         Args:
             session_id: Session to get context from
@@ -403,6 +400,7 @@ class ConversationSummaryIndex:
             ...     focus_topics=["auth", "security"]
             ... )
             >>> prompt = f"Previous context:\\n{context.to_prompt()}\\n\\nTask: ..."
+
         """
         summary_key = f"{self.PREFIX_SUMMARY}{session_id}"
         timeline_key = f"{self.PREFIX_TIMELINE}{session_id}"
@@ -455,8 +453,7 @@ class ConversationSummaryIndex:
         topic: str,
         days_back: int = 7,
     ) -> list[dict[str, Any]]:
-        """
-        Search for decisions across sessions by topic.
+        """Search for decisions across sessions by topic.
 
         Args:
             topic: Topic to search for
@@ -469,6 +466,7 @@ class ConversationSummaryIndex:
             >>> decisions = index.recall_decisions("authentication")
             >>> for d in decisions:
             ...     print(f"{d['session']}: {d['decision']}")
+
         """
         topic_key = f"{self.PREFIX_TOPIC}{topic.lower()}"
         session_ids = self._smembers(topic_key)
@@ -504,33 +502,33 @@ class ConversationSummaryIndex:
                             "decision": decision,
                             "date": updated_at,
                             "topics": json.loads(summary.get("topics", "[]")),
-                        }
+                        },
                     )
 
         return results
 
     def get_sessions_by_topic(self, topic: str) -> set[str]:
-        """
-        Find all sessions that discussed a topic.
+        """Find all sessions that discussed a topic.
 
         Args:
             topic: Topic to search for
 
         Returns:
             Set of session IDs
+
         """
         topic_key = f"{self.PREFIX_TOPIC}{topic.lower()}"
         return self._smembers(topic_key)
 
     def clear_session(self, session_id: str) -> bool:
-        """
-        Clear all data for a session.
+        """Clear all data for a session.
 
         Args:
             session_id: Session to clear
 
         Returns:
             True if successful
+
         """
         summary_key = f"{self.PREFIX_SUMMARY}{session_id}"
         timeline_key = f"{self.PREFIX_TIMELINE}{session_id}"
@@ -557,8 +555,7 @@ class ConversationSummaryIndex:
         return True
 
     def _extract_topics(self, content: str) -> list[str]:
-        """
-        Extract topics from content.
+        """Extract topics from content.
 
         Simple keyword extraction for now - can be enhanced with NLP.
         """

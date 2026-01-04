@@ -1,5 +1,4 @@
-"""
-Custom LSP Messages for Coach
+"""Custom LSP Messages for Coach
 Defines custom request/response types
 """
 

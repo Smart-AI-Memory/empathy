@@ -1,5 +1,4 @@
-"""
-Editor Agent - Draft Polishing
+"""Editor Agent - Draft Polishing
 
 The quality assurance agent in the book production pipeline. Responsible for:
 1. Checking voice consistency across sections
@@ -27,8 +26,7 @@ from .state import AgentPhase, Draft, DraftVersion, EditResult
 
 
 class EditorAgent(SonnetAgent):
-    """
-    Polishes drafts for publication quality.
+    """Polishes drafts for publication quality.
 
     Model: Claude Sonnet (fast iteration, rule-based)
 
@@ -150,17 +148,17 @@ When you find issues:
 Focus on making the chapter publication-ready while preserving the author's voice."""
 
     async def process(self, state: dict[str, Any]) -> dict[str, Any]:
-        """
-        Edit the current draft.
+        """Edit the current draft.
 
         Args:
             state: Current pipeline state with draft
 
         Returns:
             Updated state with edited draft
+
         """
         self.logger.info(
-            f"Starting editing for Chapter {state['chapter_number']}: {state['chapter_title']}"
+            f"Starting editing for Chapter {state['chapter_number']}: {state['chapter_title']}",
         )
 
         # Update state
@@ -191,7 +189,7 @@ Focus on making the chapter publication-ready while preserving the author's voic
                     "description": f"Missing: {element['description']}",
                     "element": element["name"],
                     "auto_fixable": False,
-                }
+                },
             )
 
         # Phase 3: Apply automated fixes
@@ -246,14 +244,13 @@ Focus on making the chapter publication-ready while preserving the author's voic
 
         self.logger.info(
             f"Editing complete: {len(issues)} issues found, "
-            f"{len(fixes_applied)} fixed, style score: {style_score:.2f}"
+            f"{len(fixes_applied)} fixed, style score: {style_score:.2f}",
         )
 
         return state
 
     async def edit(self, draft: Draft, chapter_title: str) -> EditResult:
-        """
-        Standalone edit method for direct use.
+        """Standalone edit method for direct use.
 
         Args:
             draft: Draft to edit
@@ -261,6 +258,7 @@ Focus on making the chapter publication-ready while preserving the author's voic
 
         Returns:
             EditResult with edited draft
+
         """
         from .state import create_initial_state
 
@@ -309,7 +307,7 @@ Focus on making the chapter publication-ready while preserving the author's voic
                             "line": line_num,
                             "position": match.start(),
                             "auto_fixable": rule_name == "code_blocks_labeled",
-                        }
+                        },
                     )
 
         return issues
@@ -325,7 +323,7 @@ Focus on making the chapter publication-ready while preserving the author's voic
                         "name": name,
                         "description": element["description"],
                         "location": element["location"],
-                    }
+                    },
                 )
 
         return missing
@@ -348,7 +346,7 @@ Focus on making the chapter publication-ready while preserving the author's voic
                 {
                     "type": "code_block_label",
                     "description": "Added python label to unlabeled code blocks",
-                }
+                },
             )
 
         # Fix common hedging (simple replacements)
@@ -365,7 +363,7 @@ Focus on making the chapter publication-ready while preserving the author's voic
                     {
                         "type": "hedging_removal",
                         "description": f"Replaced '{pattern}' with '{replacement}'",
-                    }
+                    },
                 )
 
         return edited, fixes_applied

@@ -1,5 +1,4 @@
-"""
-Tests for empathy_os.discovery module.
+"""Tests for empathy_os.discovery module.
 
 Tests cover:
 - DiscoveryEngine initialization

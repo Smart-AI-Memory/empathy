@@ -1,5 +1,4 @@
-"""
-Tests for Code Health Assistant Module
+"""Tests for Code Health Assistant Module
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
@@ -71,7 +70,7 @@ def sample_report():
             score=80,
             issues=lint_issues,
             tool_used="ruff",
-        )
+        ),
     )
 
     # Add passing test result
@@ -83,7 +82,7 @@ def sample_report():
             issues=[],
             tool_used="pytest",
             details={"passed": 50, "failed": 0, "total": 50},
-        )
+        ),
     )
 
     return report
@@ -212,7 +211,7 @@ class TestHealthReport:
                 category=CheckCategory.SECURITY,
                 status=HealthStatus.FAIL,
                 score=50,
-            )
+            ),
         )
 
         # Add low-weight passing check (deps)
@@ -221,7 +220,7 @@ class TestHealthReport:
                 category=CheckCategory.DEPS,
                 status=HealthStatus.PASS,
                 score=100,
-            )
+            ),
         )
 
         # Security has higher weight, should pull score down significantly
@@ -232,7 +231,7 @@ class TestHealthReport:
         """Test getting specific result by category."""
         report = HealthReport()
         report.add_result(
-            CheckResult(category=CheckCategory.LINT, status=HealthStatus.PASS, score=100)
+            CheckResult(category=CheckCategory.LINT, status=HealthStatus.PASS, score=100),
         )
 
         lint_result = report.get_result(CheckCategory.LINT)
@@ -260,7 +259,7 @@ class TestHealthCheckRunner:
             "checks": {
                 "lint": {"enabled": True, "tool": "flake8"},
                 "tests": {"enabled": False},
-            }
+            },
         }
         runner = HealthCheckRunner(project_root=temp_dir, config=custom_config)
 
@@ -301,8 +300,8 @@ class TestHealthCheckRunner:
                         "code": "W291",
                         "message": "trailing whitespace",
                         "fix": {"applicability": "safe"},
-                    }
-                ]
+                    },
+                ],
             ),
             returncode=1,
         )
@@ -437,7 +436,7 @@ class TestFormatHealthOutput:
         # Good score
         good_report = HealthReport()
         good_report.add_result(
-            CheckResult(category=CheckCategory.LINT, status=HealthStatus.PASS, score=90)
+            CheckResult(category=CheckCategory.LINT, status=HealthStatus.PASS, score=90),
         )
         output = format_health_output(good_report)
         assert "Good" in output
@@ -445,7 +444,7 @@ class TestFormatHealthOutput:
         # Warning score
         warn_report = HealthReport()
         warn_report.add_result(
-            CheckResult(category=CheckCategory.LINT, status=HealthStatus.WARN, score=75)
+            CheckResult(category=CheckCategory.LINT, status=HealthStatus.WARN, score=75),
         )
         output = format_health_output(warn_report)
         assert "Warning" in output

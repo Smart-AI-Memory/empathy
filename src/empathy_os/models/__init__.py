@@ -1,5 +1,4 @@
-"""
-Unified Model Registry for Empathy Framework
+"""Unified Model Registry for Empathy Framework
 
 Single source of truth for model configurations across:
 - empathy_llm_toolkit.routing.ModelRouter
@@ -74,64 +73,64 @@ from .validation import (
 )
 
 __all__ = [
-    # Registry exports
-    "ModelTier",
-    "ModelProvider",
-    "ModelInfo",
-    "MODEL_REGISTRY",
-    "get_model",
-    "get_all_models",
-    "get_pricing_for_model",
-    # Task exports
-    "TaskType",
-    "TaskInfo",
-    "CHEAP_TASKS",
     "CAPABLE_TASKS",
+    "CHEAP_TASKS",
+    "DEFAULT_FALLBACK_POLICY",
+    "DEFAULT_RETRY_POLICY",
+    "MODEL_REGISTRY",
     "PREMIUM_TASKS",
     "TASK_TIER_MAP",
-    "get_tier_for_task",
-    "get_tasks_for_tier",
-    "get_all_tasks",
-    "is_known_task",
-    "normalize_task_type",
+    "CircuitBreaker",
+    "CircuitBreakerState",
+    "ConfigValidator",
+    "EmpathyLLMExecutor",
+    "ExecutionContext",
+    "FallbackPolicy",
+    "FallbackStep",
+    # Fallback exports
+    "FallbackStrategy",
+    # Telemetry exports
+    "LLMCallRecord",
     # Executor exports
     "LLMExecutor",
     "LLMResponse",
-    "ExecutionContext",
     "MockLLMExecutor",
-    "EmpathyLLMExecutor",
-    # Telemetry exports
-    "LLMCallRecord",
-    "WorkflowRunRecord",
-    "WorkflowStageRecord",
+    "ModelInfo",
+    "ModelProvider",
+    # Registry exports
+    "ModelTier",
+    "ProviderConfig",
+    # Provider config exports
+    "ProviderMode",
+    "ResilientExecutor",
+    "RetryPolicy",
+    "TaskInfo",
+    # Task exports
+    "TaskType",
+    "TelemetryAnalytics",
     "TelemetryBackend",
     "TelemetryStore",
-    "TelemetryAnalytics",
-    "get_telemetry_store",
-    "log_llm_call",
-    "log_workflow_run",
-    # Fallback exports
-    "FallbackStrategy",
-    "FallbackStep",
-    "FallbackPolicy",
-    "CircuitBreaker",
-    "CircuitBreakerState",
-    "RetryPolicy",
-    "ResilientExecutor",
-    "DEFAULT_FALLBACK_POLICY",
-    "DEFAULT_RETRY_POLICY",
     # Validation exports
     "ValidationError",
     "ValidationResult",
-    "ConfigValidator",
+    "WorkflowRunRecord",
+    "WorkflowStageRecord",
+    "configure_provider_cli",
+    "configure_provider_interactive",
+    "get_all_models",
+    "get_all_tasks",
+    "get_model",
+    "get_pricing_for_model",
+    "get_provider_config",
+    "get_tasks_for_tier",
+    "get_telemetry_store",
+    "get_tier_for_task",
+    "is_known_task",
+    "log_llm_call",
+    "log_workflow_run",
+    "normalize_task_type",
+    "reset_provider_config",
+    "set_provider_config",
     "validate_config",
     "validate_yaml_file",
-    # Provider config exports
-    "ProviderMode",
-    "ProviderConfig",
-    "get_provider_config",
-    "set_provider_config",
-    "reset_provider_config",
-    "configure_provider_interactive",
-    "configure_provider_cli",
 ]

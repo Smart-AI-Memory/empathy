@@ -1,5 +1,4 @@
-"""
-Example API Client for Empathy Memory Dashboard
+"""Example API Client for Empathy Memory Dashboard
 
 Demonstrates how to interact with the API using Python.
 Can be used as a reference for building your own clients.
@@ -25,21 +24,21 @@ except ImportError:
 
 
 class EmpathyMemoryClient:
-    """
-    Async client for Empathy Memory Dashboard API.
+    """Async client for Empathy Memory Dashboard API.
 
     Example:
         >>> async with EmpathyMemoryClient("http://localhost:8000") as client:
         ...     status = await client.get_status()
         ...     print(f"Redis: {status['redis']['status']}")
+
     """
 
     def __init__(self, base_url: str = "http://localhost:8000"):
-        """
-        Initialize client.
+        """Initialize client.
 
         Args:
             base_url: Base URL of the API (default: http://localhost:8000)
+
         """
         self.base_url = base_url.rstrip("/")
         self.client: httpx.AsyncClient | None = None
@@ -59,60 +58,61 @@ class EmpathyMemoryClient:
     # ========================================================================
 
     async def get_status(self) -> dict[str, Any]:
-        """
-        Get system status.
+        """Get system status.
 
         Returns:
             Status dictionary with Redis and storage info
+
         """
         response = await self.client.get(f"{self.base_url}/api/status")
         response.raise_for_status()
         return response.json()
 
     async def start_redis(self, verbose: bool = True) -> dict[str, Any]:
-        """
-        Start Redis if not running.
+        """Start Redis if not running.
 
         Args:
             verbose: Enable verbose logging
 
         Returns:
             Start result with method and status
+
         """
         response = await self.client.post(
-            f"{self.base_url}/api/redis/start", json={"verbose": verbose}
+            f"{self.base_url}/api/redis/start",
+            json={"verbose": verbose},
         )
         response.raise_for_status()
         return response.json()
 
     async def stop_redis(self) -> dict[str, Any]:
-        """
-        Stop Redis if we started it.
+        """Stop Redis if we started it.
 
         Returns:
             Stop result
+
         """
         response = await self.client.post(f"{self.base_url}/api/redis/stop")
         response.raise_for_status()
         return response.json()
 
     async def get_statistics(self) -> dict[str, Any]:
-        """
-        Get comprehensive statistics.
+        """Get comprehensive statistics.
 
         Returns:
             Statistics dictionary with Redis and pattern metrics
+
         """
         response = await self.client.get(f"{self.base_url}/api/stats")
         response.raise_for_status()
         return response.json()
 
     async def health_check(self) -> dict[str, Any]:
-        """
-        Perform health check.
+        """Perform health check.
 
         Returns:
             Health check results with recommendations
+
         """
         response = await self.client.get(f"{self.base_url}/api/health")
         response.raise_for_status()
@@ -127,8 +127,7 @@ class EmpathyMemoryClient:
         classification: str | None = None,
         limit: int = 100,
     ) -> dict[str, Any]:
-        """
-        List patterns.
+        """List patterns.
 
         Args:
             classification: Filter by PUBLIC/INTERNAL/SENSITIVE
@@ -136,6 +135,7 @@ class EmpathyMemoryClient:
 
         Returns:
             Pattern list with metadata
+
         """
         params = {"limit": limit}
         if classification:
@@ -150,8 +150,7 @@ class EmpathyMemoryClient:
         classification: str | None = None,
         output_filename: str | None = None,
     ) -> dict[str, Any]:
-        """
-        Export patterns to JSON file.
+        """Export patterns to JSON file.
 
         Args:
             classification: Filter by classification
@@ -159,6 +158,7 @@ class EmpathyMemoryClient:
 
         Returns:
             Export result with path and count
+
         """
         payload = {}
         if classification:
@@ -175,8 +175,7 @@ class EmpathyMemoryClient:
         pattern_id: str,
         user_id: str = "admin@system",
     ) -> dict[str, Any]:
-        """
-        Delete a pattern.
+        """Delete a pattern.
 
         Args:
             pattern_id: Pattern ID to delete
@@ -184,9 +183,11 @@ class EmpathyMemoryClient:
 
         Returns:
             Success status
+
         """
         response = await self.client.delete(
-            f"{self.base_url}/api/patterns/{pattern_id}", params={"user_id": user_id}
+            f"{self.base_url}/api/patterns/{pattern_id}",
+            params={"user_id": user_id},
         )
         response.raise_for_status()
         return response.json()
@@ -200,8 +201,7 @@ class EmpathyMemoryClient:
         callback,
         duration_seconds: int | None = None,
     ):
-        """
-        Stream real-time metrics via WebSocket.
+        """Stream real-time metrics via WebSocket.
 
         Args:
             callback: Async function to call with each metric update
@@ -211,6 +211,7 @@ class EmpathyMemoryClient:
             >>> async def print_metrics(data):
             ...     print(f"Keys: {data['redis_keys_total']}")
             >>> await client.stream_metrics(print_metrics, duration_seconds=10)
+
         """
         ws_url = self.base_url.replace("http://", "ws://").replace("https://", "wss://")
         ws_url = f"{ws_url}/ws/metrics"
@@ -283,7 +284,7 @@ async def example_basic_operations():
         health = await client.health_check()
         print(f"   Overall: {health['overall']}")
         print(
-            f"   Checks passed: {len([c for c in health['checks'] if c['status'] == 'pass'])}/{len(health['checks'])}"
+            f"   Checks passed: {len([c for c in health['checks'] if c['status'] == 'pass'])}/{len(health['checks'])}",
         )
         if health["recommendations"]:
             print(f"   Recommendations: {len(health['recommendations'])}")
@@ -305,7 +306,7 @@ async def example_pattern_operations():
         print(f"   Total: {result['total']}")
         for pattern in result["patterns"][:5]:
             print(
-                f"   - [{pattern['classification']}] {pattern['pattern_id']} ({pattern['pattern_type']})"
+                f"   - [{pattern['classification']}] {pattern['pattern_id']} ({pattern['pattern_type']})",
             )
         print()
 
@@ -318,7 +319,8 @@ async def example_pattern_operations():
         # Export patterns
         print("3. Exporting patterns...")
         export_result = await client.export_patterns(
-            classification=None, output_filename="backup.json"
+            classification=None,
+            output_filename="backup.json",
         )
         print(f"   Exported: {export_result['pattern_count']} patterns")
         print(f"   Location: {export_result['output_path']}")

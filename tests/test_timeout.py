@@ -1,5 +1,4 @@
-"""
-Tests for src/empathy_os/resilience/timeout.py
+"""Tests for src/empathy_os/resilience/timeout.py
 
 Comprehensive tests for the timeout decorator and with_timeout utility.
 """

@@ -1,5 +1,4 @@
-"""
-Manufacturing Wizard - Production Data Privacy Compliant AI Assistant
+"""Manufacturing Wizard - Production Data Privacy Compliant AI Assistant
 
 Specialized wizard for manufacturing with proprietary data protection,
 quality control, and comprehensive audit logging.
@@ -41,8 +40,7 @@ MANUFACTURING_PII_PATTERNS = [
 
 
 class ManufacturingWizard(BaseWizard):
-    """
-    Production data privacy compliant manufacturing AI assistant
+    """Production data privacy compliant manufacturing AI assistant
 
     Implements proprietary data protection for manufacturing operations:
     1. Proprietary data detection and protection
@@ -68,6 +66,7 @@ class ManufacturingWizard(BaseWizard):
         ...     user_input="Help me optimize this production process",
         ...     user_id="engineer@manufacturer.com"
         ... )
+
     """
 
     def __init__(
@@ -75,12 +74,12 @@ class ManufacturingWizard(BaseWizard):
         llm: EmpathyLLM,
         custom_pii_patterns: list[str] | None = None,
     ):
-        """
-        Initialize manufacturing wizard
+        """Initialize manufacturing wizard
 
         Args:
             llm: EmpathyLLM instance (security recommended)
             custom_pii_patterns: Additional company-specific proprietary patterns
+
         """
         pii_patterns = MANUFACTURING_PII_PATTERNS.copy()
 
@@ -106,7 +105,7 @@ class ManufacturingWizard(BaseWizard):
 
         logger.info(
             f"ManufacturingWizard initialized: {len(pii_patterns)} PII patterns, "
-            f"empathy level={config.default_empathy_level}, security={llm.enable_security}"
+            f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
     def _build_system_prompt(self) -> str:

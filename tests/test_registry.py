@@ -1,5 +1,4 @@
-"""
-Tests for src/empathy_os/models/registry.py
+"""Tests for src/empathy_os/models/registry.py
 
 Tests the unified model registry including:
 - ModelTier enum

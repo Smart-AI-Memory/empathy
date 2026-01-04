@@ -1,5 +1,4 @@
-"""
-Shared Task-Type Schema for Empathy Framework
+"""Shared Task-Type Schema for Empathy Framework
 
 Provides a unified vocabulary for task types across:
 - empathy_llm_toolkit.routing.ModelRouter
@@ -22,8 +21,7 @@ from .registry import ModelTier
 
 
 class TaskType(Enum):
-    """
-    Canonical task types for model routing.
+    """Canonical task types for model routing.
 
     Tasks are organized by their typical tier:
     - CHEAP tier: Simple, fast tasks
@@ -99,7 +97,7 @@ CHEAP_TASKS: frozenset[str] = frozenset(
         TaskType.FORMAT_CODE.value,
         TaskType.SIMPLE_QA.value,
         TaskType.CATEGORIZE.value,
-    ]
+    ],
 )
 
 # Capable tier tasks
@@ -115,7 +113,7 @@ CAPABLE_TASKS: frozenset[str] = frozenset(
         TaskType.DOCUMENT_CODE.value,
         TaskType.ANALYZE_ERROR.value,
         TaskType.SUGGEST_FIX.value,
-    ]
+    ],
 )
 
 # Premium tier tasks
@@ -129,7 +127,7 @@ PREMIUM_TASKS: frozenset[str] = frozenset(
         TaskType.COMPLEX_REASONING.value,
         TaskType.MULTI_STEP_PLANNING.value,
         TaskType.CRITICAL_DECISION.value,
-    ]
+    ],
 )
 
 # Complete mapping for lookup
@@ -146,8 +144,7 @@ TASK_TIER_MAP: dict[str, ModelTier] = {
 
 
 def normalize_task_type(task_type: str) -> str:
-    """
-    Normalize a task type string for lookup.
+    """Normalize a task type string for lookup.
 
     Converts to lowercase and normalizes separators to underscores.
 
@@ -156,13 +153,13 @@ def normalize_task_type(task_type: str) -> str:
 
     Returns:
         Normalized task type (e.g., "fix_bug")
+
     """
     return task_type.lower().replace("-", "_").replace(" ", "_")
 
 
 def get_tier_for_task(task_type: str | TaskType) -> ModelTier:
-    """
-    Get the appropriate tier for a task type.
+    """Get the appropriate tier for a task type.
 
     Args:
         task_type: Task type string or TaskType enum
@@ -179,6 +176,7 @@ def get_tier_for_task(task_type: str | TaskType) -> ModelTier:
         ModelTier.PREMIUM
         >>> get_tier_for_task("unknown_task")
         ModelTier.CAPABLE
+
     """
     # Handle TaskType enum
     if isinstance(task_type, TaskType):
@@ -191,30 +189,30 @@ def get_tier_for_task(task_type: str | TaskType) -> ModelTier:
 
 
 def get_tasks_for_tier(tier: ModelTier) -> list[str]:
-    """
-    Get all task types for a given tier.
+    """Get all task types for a given tier.
 
     Args:
         tier: ModelTier to get tasks for
 
     Returns:
         List of task type strings
+
     """
     if tier == ModelTier.CHEAP:
         return list(CHEAP_TASKS)
-    elif tier == ModelTier.CAPABLE:
+    if tier == ModelTier.CAPABLE:
         return list(CAPABLE_TASKS)
-    elif tier == ModelTier.PREMIUM:
+    if tier == ModelTier.PREMIUM:
         return list(PREMIUM_TASKS)
     return []
 
 
 def get_all_tasks() -> dict[str, list[str]]:
-    """
-    Get all known task types organized by tier.
+    """Get all known task types organized by tier.
 
     Returns:
         Dict mapping tier name to list of task types
+
     """
     return {
         "cheap": list(CHEAP_TASKS),
@@ -224,14 +222,14 @@ def get_all_tasks() -> dict[str, list[str]]:
 
 
 def is_known_task(task_type: str) -> bool:
-    """
-    Check if a task type is known/defined.
+    """Check if a task type is known/defined.
 
     Args:
         task_type: Task type string
 
     Returns:
         True if task is defined, False otherwise
+
     """
     normalized = normalize_task_type(task_type)
     return normalized in TASK_TIER_MAP

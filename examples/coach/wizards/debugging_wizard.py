@@ -1,5 +1,4 @@
-"""
-Debugging Wizard
+"""Debugging Wizard
 
 Analyzes bugs, forms hypotheses, proposes fixes, and creates regression tests.
 Uses Empathy Framework Level 3 (Proactive) for pattern detection and Level 4
@@ -24,8 +23,7 @@ from .base_wizard import (
 
 
 class DebuggingWizard(BaseWizard):
-    """
-    Wizard for debugging issues and proposing fixes
+    """Wizard for debugging issues and proposing fixes
 
     Uses:
     - Level 2: Guide user through reproduction steps
@@ -56,7 +54,6 @@ class DebuggingWizard(BaseWizard):
 
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute debugging workflow"""
-
         # Step 1: Assess emotional context (someone is likely stressed!)
         emotional_state = self._assess_emotional_state(task)
 
@@ -112,12 +109,14 @@ class DebuggingWizard(BaseWizard):
         if task.role == "developer":
             handoffs.append(
                 WizardHandoff(
-                    owner="senior_dev", what="Code review of patch", when="Before deployment"
-                )
+                    owner="senior_dev",
+                    what="Code review of patch",
+                    when="Before deployment",
+                ),
             )
         if emotional_state["urgency"] == "high":
             handoffs.append(
-                WizardHandoff(owner="pm", what="Timeline impact assessment", when="Within 1 hour")
+                WizardHandoff(owner="pm", what="Timeline impact assessment", when="Within 1 hour"),
             )
 
         # Step 12: Empathy checks
@@ -169,14 +168,14 @@ class DebuggingWizard(BaseWizard):
                     "cause": "Missing configuration value on cold start",
                     "likelihood": "high",
                     "test": "Check config loading in startup sequence",
-                }
+                },
             )
             hypotheses.append(
                 {
                     "cause": "Race condition in initialization",
                     "likelihood": "medium",
                     "test": "Add logging to init order",
-                }
+                },
             )
 
         elif "500" in diagnosis:
@@ -185,14 +184,14 @@ class DebuggingWizard(BaseWizard):
                     "cause": "Unhandled exception in request handler",
                     "likelihood": "high",
                     "test": "Review recent code changes in handlers",
-                }
+                },
             )
             hypotheses.append(
                 {
                     "cause": "Database connection failure",
                     "likelihood": "medium",
                     "test": "Check DB connection pool settings",
-                }
+                },
             )
 
         elif "timeout" in diagnosis.lower():
@@ -201,14 +200,14 @@ class DebuggingWizard(BaseWizard):
                     "cause": "Slow database query (N+1 problem)",
                     "likelihood": "high",
                     "test": "Enable query logging and check for loops",
-                }
+                },
             )
             hypotheses.append(
                 {
                     "cause": "Downstream service latency",
                     "likelihood": "medium",
                     "test": "Add timeout monitoring to external calls",
-                }
+                },
             )
 
         else:
@@ -217,7 +216,7 @@ class DebuggingWizard(BaseWizard):
                     "cause": "Unknown - requires log analysis",
                     "likelihood": "unknown",
                     "test": "Reproduce with verbose logging",
-                }
+                },
             )
 
         return hypotheses[:3]  # Max 3 hypotheses
@@ -349,7 +348,7 @@ def test_error_response_format():
                     risk="Production deployment causes outage",
                     mitigation="Deploy during low-traffic window with immediate rollback capability",
                     severity="high",
-                )
+                ),
             )
 
         return risks

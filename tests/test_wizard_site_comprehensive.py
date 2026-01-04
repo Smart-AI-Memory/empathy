@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Comprehensive Wizard Site Testing Plan
+"""Comprehensive Wizard Site Testing Plan
 ======================================
 
 Tests all 44 wizards accessible via wizards.smartaimemory.com
@@ -467,7 +466,7 @@ def skip_if_server_unavailable(api_base_url):
     if not _check_server_available(api_base_url):
         pytest.skip(
             f"Wizard server not running at {api_base_url}. "
-            "Start with: cd wizard_api && uvicorn main:app --port 8001"
+            "Start with: cd wizard_api && uvicorn main:app --port 8001",
         )
 
 
@@ -613,10 +612,10 @@ class TestAIWizards:
                         analysis.get("issues"),
                         analysis.get("predictions"),
                         analysis.get("recommendations"),
-                    ]
+                    ],
                 )
                 assert has_content or data.get(
-                    "output"
+                    "output",
                 ), f"AI wizard {wizard['id']} returned empty analysis"
 
 

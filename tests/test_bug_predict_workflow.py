@@ -1,5 +1,4 @@
-"""
-Tests for BugPredictionWorkflow.
+"""Tests for BugPredictionWorkflow.
 
 Tests bug prediction workflow stages and pattern correlation.
 
@@ -96,7 +95,7 @@ class TestPatternLoading:
                 "patterns": [
                     {"bug_type": "null_reference", "root_cause": "Missing null check"},
                     {"bug_type": "type_mismatch", "root_cause": "Wrong type"},
-                ]
+                ],
             }
             patterns_file = Path(tmpdir) / "debugging.json"
             patterns_file.write_text(json.dumps(patterns_data))
@@ -163,7 +162,9 @@ class TestRunStageRouting:
             mock.return_value = ({"scanned": True}, 100, 50)
 
             result, in_tok, out_tok = await workflow.run_stage(
-                "scan", ModelTier.CHEAP, {"path": "."}
+                "scan",
+                ModelTier.CHEAP,
+                {"path": "."},
             )
 
             mock.assert_called_once()
@@ -178,7 +179,9 @@ class TestRunStageRouting:
             mock.return_value = ({"correlated": True}, 100, 50)
 
             result, _, _ = await workflow.run_stage(
-                "correlate", ModelTier.CAPABLE, {"patterns_found": []}
+                "correlate",
+                ModelTier.CAPABLE,
+                {"patterns_found": []},
             )
 
             mock.assert_called_once()
@@ -193,7 +196,9 @@ class TestRunStageRouting:
             mock.return_value = ({"predicted": True}, 100, 50)
 
             result, _, _ = await workflow.run_stage(
-                "predict", ModelTier.CAPABLE, {"correlations": []}
+                "predict",
+                ModelTier.CAPABLE,
+                {"correlations": []},
             )
 
             mock.assert_called_once()
@@ -208,7 +213,9 @@ class TestRunStageRouting:
             mock.return_value = ({"recommendations": "Fix bugs"}, 100, 50)
 
             result, _, _ = await workflow.run_stage(
-                "recommend", ModelTier.PREMIUM, {"predictions": []}
+                "recommend",
+                ModelTier.PREMIUM,
+                {"predictions": []},
             )
 
             mock.assert_called_once()
@@ -251,7 +258,7 @@ try:
     risky_operation()
 except:
     pass
-"""
+""",
             )
 
             workflow = BugPredictionWorkflow()
@@ -276,7 +283,7 @@ def incomplete():
     # TODO: finish this
     # FIXME: broken
     pass
-"""
+""",
             )
 
             workflow = BugPredictionWorkflow()
@@ -299,7 +306,7 @@ def incomplete():
 def dangerous(code):
     eval(code)
     exec(code)
-"""
+""",
             )
 
             workflow = BugPredictionWorkflow()
@@ -380,7 +387,7 @@ class TestCorrelateStage:
                 "patterns": [
                     {"bug_type": "null_reference", "root_cause": "Missing null check"},
                     {"bug_type": "type_mismatch", "root_cause": "Wrong type"},
-                ]
+                ],
             }
             patterns_file = Path(tmpdir) / "debugging.json"
             patterns_file.write_text(json.dumps(patterns_data))
@@ -390,8 +397,8 @@ class TestCorrelateStage:
             result, _, _ = await workflow._correlate(
                 {
                     "patterns_found": [
-                        {"file": "app.py", "pattern": "broad_exception", "severity": "medium"}
-                    ]
+                        {"file": "app.py", "pattern": "broad_exception", "severity": "medium"},
+                    ],
                 },
                 ModelTier.CAPABLE,
             )
@@ -409,8 +416,8 @@ class TestCorrelateStage:
         result, _, _ = await workflow._correlate(
             {
                 "patterns_found": [
-                    {"file": "app.py", "pattern": "unknown_pattern", "severity": "low"}
-                ]
+                    {"file": "app.py", "pattern": "unknown_pattern", "severity": "low"},
+                ],
             },
             ModelTier.CAPABLE,
         )
@@ -524,7 +531,7 @@ class TestPredictStage:
                             "severity": "high",
                         },
                         "confidence": 1.0,
-                    }
+                    },
                 ],
                 "patterns_found": [],
             },
@@ -573,7 +580,7 @@ class TestRecommendStage:
                         "file": "app.py",
                         "risk_score": 0.8,
                         "patterns": [{"pattern": "dangerous_eval", "severity": "high"}],
-                    }
+                    },
                 ],
                 "overall_risk_score": 0.8,
             },
@@ -617,7 +624,7 @@ class TestRecommendStage:
                             "file": "app.py",
                             "risk_score": 0.9,
                             "patterns": [{"pattern": "dangerous_eval", "severity": "high"}],
-                        }
+                        },
                     ],
                     "overall_risk_score": 0.9,
                 },
@@ -734,7 +741,7 @@ class TestFormatBugPredictReport:
                         "root_cause": "Missing null check",
                     },
                     "confidence": 0.8,
-                }
+                },
             ],
         }
 
@@ -759,7 +766,7 @@ def risky():
         eval("danger")
     except:
         pass
-"""
+""",
             )
 
             workflow = BugPredictionWorkflow(patterns_dir=tmpdir)

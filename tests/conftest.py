@@ -8,7 +8,8 @@ def pytest_configure(config):
     # Add ini settings dynamically based on markers
     config.addinivalue_line("markers", "unit: Unit tests that import and test modules directly")
     config.addinivalue_line(
-        "markers", "integration: Integration tests that run via subprocess (no coverage)"
+        "markers",
+        "integration: Integration tests that run via subprocess (no coverage)",
     )
 
 

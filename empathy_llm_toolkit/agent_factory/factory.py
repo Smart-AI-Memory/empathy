@@ -1,5 +1,4 @@
-"""
-Universal Agent Factory
+"""Universal Agent Factory
 
 The main entry point for creating agents and workflows across any
 supported framework while retaining Empathy's core features.
@@ -59,8 +58,7 @@ from empathy_llm_toolkit.agent_factory.framework import (
 
 
 class AgentFactory:
-    """
-    Universal factory for creating agents and workflows.
+    """Universal factory for creating agents and workflows.
 
     Supports multiple frameworks (LangChain, LangGraph, AutoGen, Haystack, Native)
     while providing a unified interface and integrating with Empathy's
@@ -74,18 +72,18 @@ class AgentFactory:
         api_key: str | None = None,
         use_case: str = "general",
     ):
-        """
-        Initialize the Agent Factory.
+        """Initialize the Agent Factory.
 
         Args:
             framework: Framework to use (auto-detected if not specified)
             provider: LLM provider (anthropic, openai, local)
             api_key: API key (uses env var if not provided)
             use_case: Use case for framework recommendation (general, rag, multi_agent, etc.)
+
         """
         self.provider = provider
         self.api_key = api_key or os.getenv(
-            "ANTHROPIC_API_KEY" if provider == "anthropic" else "OPENAI_API_KEY"
+            "ANTHROPIC_API_KEY" if provider == "anthropic" else "OPENAI_API_KEY",
         )
 
         # Resolve framework
@@ -116,29 +114,28 @@ class AgentFactory:
         if self.framework == Framework.NATIVE:
             return NativeAdapter(self.provider, self.api_key)
 
-        elif self.framework == Framework.LANGCHAIN:
+        if self.framework == Framework.LANGCHAIN:
             adapter_class = get_langchain_adapter()
             return adapter_class(self.provider, self.api_key)  # type: ignore[no-any-return]
 
-        elif self.framework == Framework.LANGGRAPH:
+        if self.framework == Framework.LANGGRAPH:
             adapter_class = get_langgraph_adapter()
             return adapter_class(self.provider, self.api_key)  # type: ignore[no-any-return]
 
-        elif self.framework == Framework.AUTOGEN:
+        if self.framework == Framework.AUTOGEN:
             adapter_class = get_autogen_adapter()
             return adapter_class(self.provider, self.api_key)  # type: ignore[no-any-return]
 
-        elif self.framework == Framework.HAYSTACK:
+        if self.framework == Framework.HAYSTACK:
             adapter_class = get_haystack_adapter()
             return adapter_class(self.provider, self.api_key)  # type: ignore[no-any-return]
 
-        elif self.framework == Framework.CREWAI:
+        if self.framework == Framework.CREWAI:
             adapter_class = get_crewai_adapter()
             return adapter_class(self.provider, self.api_key)  # type: ignore[no-any-return]
 
-        else:
-            # Fallback to native
-            return NativeAdapter(self.provider, self.api_key)
+        # Fallback to native
+        return NativeAdapter(self.provider, self.api_key)
 
     @property
     def adapter(self) -> BaseAdapter:
@@ -174,8 +171,7 @@ class AgentFactory:
         store_findings: bool = True,
         query_similar: bool = True,
     ) -> BaseAgent:
-        """
-        Create an agent using the configured framework.
+        """Create an agent using the configured framework.
 
         Args:
             name: Unique agent name
@@ -205,6 +201,7 @@ class AgentFactory:
 
         Returns:
             Agent implementing BaseAgent interface
+
         """
         # Parse role
         if isinstance(role, str):
@@ -261,7 +258,7 @@ class AgentFactory:
                 import logging
 
                 logging.getLogger(__name__).warning(
-                    "Memory integration not available, memory_graph_enabled ignored"
+                    "Memory integration not available, memory_graph_enabled ignored",
                 )
 
         # Apply Resilience wrapper (if enabled) - outermost wrapper
@@ -285,7 +282,7 @@ class AgentFactory:
                 import logging
 
                 logging.getLogger(__name__).warning(
-                    "Resilience module not available, resilience_enabled ignored"
+                    "Resilience module not available, resilience_enabled ignored",
                 )
 
         # Track for reuse
@@ -307,8 +304,7 @@ class AgentFactory:
         max_retries: int = 3,
         framework_options: dict | None = None,
     ) -> BaseWorkflow:
-        """
-        Create a workflow/pipeline from agents.
+        """Create a workflow/pipeline from agents.
 
         Args:
             name: Workflow name
@@ -325,6 +321,7 @@ class AgentFactory:
 
         Returns:
             Workflow implementing BaseWorkflow interface
+
         """
         config = WorkflowConfig(
             name=name,
@@ -342,10 +339,13 @@ class AgentFactory:
         return self._adapter.create_workflow(config, agents)
 
     def create_tool(
-        self, name: str, description: str, func: Callable, args_schema: dict | None = None
+        self,
+        name: str,
+        description: str,
+        func: Callable,
+        args_schema: dict | None = None,
     ) -> Any:
-        """
-        Create a tool in the framework's format.
+        """Create a tool in the framework's format.
 
         Args:
             name: Tool name
@@ -355,6 +355,7 @@ class AgentFactory:
 
         Returns:
             Tool in the framework's native format
+
         """
         return self._adapter.create_tool(name, description, func, args_schema)
 
@@ -368,14 +369,14 @@ class AgentFactory:
 
     @classmethod
     def list_frameworks(cls, installed_only: bool = True) -> list[dict]:
-        """
-        List available frameworks.
+        """List available frameworks.
 
         Args:
             installed_only: Only show installed frameworks
 
         Returns:
             List of framework info dicts
+
         """
         all_frameworks = [
             Framework.NATIVE,
@@ -403,25 +404,25 @@ class AgentFactory:
 
     @classmethod
     def recommend_framework(cls, use_case: str = "general") -> Framework:
-        """
-        Get recommended framework for a use case.
+        """Get recommended framework for a use case.
 
         Args:
             use_case: general, rag, multi_agent, code_analysis, workflow, conversational
 
         Returns:
             Recommended framework
+
         """
         return get_recommended_framework(use_case)
 
     def switch_framework(self, framework: Framework | str) -> None:
-        """
-        Switch to a different framework.
+        """Switch to a different framework.
 
         Note: Existing agents won't be migrated.
 
         Args:
             framework: New framework to use
+
         """
         if isinstance(framework, str):
             framework = Framework.from_string(framework)
@@ -435,7 +436,10 @@ class AgentFactory:
     # =========================================================================
 
     def create_researcher(
-        self, name: str = "researcher", model_tier: str = "capable", **kwargs
+        self,
+        name: str = "researcher",
+        model_tier: str = "capable",
+        **kwargs,
     ) -> BaseAgent:
         """Create a researcher agent."""
         return self.create_agent(
@@ -447,7 +451,10 @@ class AgentFactory:
         )
 
     def create_writer(
-        self, name: str = "writer", model_tier: str = "premium", **kwargs
+        self,
+        name: str = "writer",
+        model_tier: str = "premium",
+        **kwargs,
     ) -> BaseAgent:
         """Create a writer agent."""
         return self.create_agent(
@@ -459,7 +466,10 @@ class AgentFactory:
         )
 
     def create_reviewer(
-        self, name: str = "reviewer", model_tier: str = "capable", **kwargs
+        self,
+        name: str = "reviewer",
+        model_tier: str = "capable",
+        **kwargs,
     ) -> BaseAgent:
         """Create a reviewer agent."""
         return self.create_agent(
@@ -471,7 +481,10 @@ class AgentFactory:
         )
 
     def create_debugger(
-        self, name: str = "debugger", model_tier: str = "capable", **kwargs
+        self,
+        name: str = "debugger",
+        model_tier: str = "capable",
+        **kwargs,
     ) -> BaseAgent:
         """Create a debugger agent."""
         return self.create_agent(
@@ -484,7 +497,10 @@ class AgentFactory:
         )
 
     def create_coordinator(
-        self, name: str = "coordinator", model_tier: str = "premium", **kwargs
+        self,
+        name: str = "coordinator",
+        model_tier: str = "premium",
+        **kwargs,
     ) -> BaseAgent:
         """Create a coordinator agent."""
         return self.create_agent(
@@ -500,10 +516,11 @@ class AgentFactory:
     # =========================================================================
 
     def create_research_pipeline(
-        self, topic: str = "", include_reviewer: bool = True
+        self,
+        topic: str = "",
+        include_reviewer: bool = True,
     ) -> BaseWorkflow:
-        """
-        Create a research → write → review pipeline.
+        """Create a research → write → review pipeline.
 
         Args:
             topic: Research topic (used in prompts)
@@ -511,10 +528,11 @@ class AgentFactory:
 
         Returns:
             Workflow ready to run
+
         """
         agents = [
             self.create_researcher(
-                system_prompt=f"Research thoroughly about: {topic}" if topic else None
+                system_prompt=f"Research thoroughly about: {topic}" if topic else None,
             ),
             self.create_writer(),
         ]

@@ -1,5 +1,4 @@
-"""
-Security Adapter
+"""Security Adapter
 
 Wraps empathy_software_plugin.wizards.security.vulnerability_scanner
 and converts its output to the unified ToolResult format.
@@ -16,8 +15,7 @@ from ..state import ToolResult
 
 
 class SecurityAdapter:
-    """
-    Adapter for the Security Vulnerability Scanner.
+    """Adapter for the Security Vulnerability Scanner.
 
     Provides OWASP pattern detection, secret scanning, and CVE matching.
     """
@@ -28,24 +26,24 @@ class SecurityAdapter:
         config: dict[str, Any] | None = None,
         scan_dependencies: bool = True,
     ):
-        """
-        Initialize the adapter.
+        """Initialize the adapter.
 
         Args:
             project_root: Root directory of the project
             config: Configuration overrides
             scan_dependencies: Whether to scan dependencies for CVEs
+
         """
         self.project_root = Path(project_root)
         self.config = config or {}
         self.scan_dependencies = scan_dependencies
 
     async def analyze(self) -> ToolResult:
-        """
-        Run security scans and return unified result.
+        """Run security scans and return unified result.
 
         Returns:
             ToolResult with security findings
+
         """
         start_time = time.time()
 
@@ -152,7 +150,8 @@ class SecurityAdapter:
 
         except ImportError:
             return self._create_skip_result(
-                "vulnerability_scanner module not available", start_time
+                "vulnerability_scanner module not available",
+                start_time,
             )
         except Exception as e:
             return self._create_error_result(str(e), start_time)

@@ -1,5 +1,4 @@
-"""
-Project Index - Main index class with persistence.
+"""Project Index - Main index class with persistence.
 
 Manages the project index, persists to JSON, syncs with Redis.
 
@@ -20,8 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 class ProjectIndex:
-    """
-    Central project index with file metadata.
+    """Central project index with file metadata.
 
     Features:
     - JSON persistence in .empathy/project_index.json
@@ -54,11 +52,11 @@ class ProjectIndex:
     # ===== Persistence =====
 
     def load(self) -> bool:
-        """
-        Load index from JSON file.
+        """Load index from JSON file.
 
         Returns:
             True if loaded successfully, False otherwise
+
         """
         if not self._index_path.exists():
             logger.info(f"No index found at {self._index_path}")
@@ -98,11 +96,11 @@ class ProjectIndex:
             return False
 
     def save(self) -> bool:
-        """
-        Save index to JSON file.
+        """Save index to JSON file.
 
         Returns:
             True if saved successfully, False otherwise
+
         """
         try:
             # Ensure directory exists
@@ -161,7 +159,7 @@ class ProjectIndex:
                     {
                         "generated_at": datetime.now().isoformat(),
                         "file_count": len(self._records),
-                    }
+                    },
                 ),
             )
 
@@ -173,8 +171,7 @@ class ProjectIndex:
     # ===== Index Operations =====
 
     def refresh(self) -> None:
-        """
-        Refresh the entire index by scanning the project.
+        """Refresh the entire index by scanning the project.
 
         This rebuilds the index from scratch.
         """
@@ -192,12 +189,11 @@ class ProjectIndex:
         self.save()
 
         logger.info(
-            f"Index refreshed: {len(self._records)} files, {summary.files_needing_attention} need attention"
+            f"Index refreshed: {len(self._records)} files, {summary.files_needing_attention} need attention",
         )
 
     def update_file(self, path: str, **updates: Any) -> bool:
-        """
-        Update metadata for a specific file.
+        """Update metadata for a specific file.
 
         This is the write API for workflows and agents.
 
@@ -207,6 +203,7 @@ class ProjectIndex:
 
         Returns:
             True if updated successfully
+
         """
         if path not in self._records:
             logger.warning(f"File not in index: {path}")
@@ -230,21 +227,20 @@ class ProjectIndex:
         return True
 
     def update_coverage(self, coverage_data: dict[str, float]) -> int:
-        """
-        Update coverage data for files.
+        """Update coverage data for files.
 
         Args:
             coverage_data: Dict mapping file paths to coverage percentages
 
         Returns:
             Number of files updated
+
         """
         updated = 0
 
         for path, coverage in coverage_data.items():
             # Normalize path
-            if path.startswith("./"):
-                path = path[2:]
+            path = path.removeprefix("./")
 
             if path in self._records:
                 self._records[path].coverage_percent = coverage
@@ -266,7 +262,7 @@ class ProjectIndex:
         covered = [r for r in records if r.coverage_percent > 0]
         if covered:
             self._summary.test_coverage_avg = sum(r.coverage_percent for r in covered) / len(
-                covered
+                covered,
             )
 
     # ===== Query API =====
@@ -361,7 +357,7 @@ class ProjectIndex:
                     f
                     for f in files_needing_tests
                     if f.impact_score >= self.config.high_impact_threshold
-                ]
+                ],
             ),
             "total_loc_untested": sum(f.lines_of_code for f in files_needing_tests),
             "by_directory": self._group_by_directory(files_needing_tests),
@@ -393,8 +389,7 @@ class ProjectIndex:
     # ===== Context for Workflows =====
 
     def get_context_for_workflow(self, workflow_type: str) -> dict[str, Any]:
-        """
-        Get relevant context for a specific workflow type.
+        """Get relevant context for a specific workflow type.
 
         This provides a filtered view of the index tailored to workflow needs.
         """
@@ -408,24 +403,23 @@ class ProjectIndex:
                 ][:10],
             }
 
-        elif workflow_type == "code_review":
+        if workflow_type == "code_review":
             return {
                 "high_impact_files": [f.to_dict() for f in self.get_high_impact_files()[:10]],
                 "stale_files": [f.to_dict() for f in self.get_stale_files()[:10]],
                 "summary": self._summary.to_dict(),
             }
 
-        elif workflow_type == "security_audit":
+        if workflow_type == "security_audit":
             return {
                 "all_source_files": [f.to_dict() for f in self.get_files_by_category("source")],
                 "untested_files": [f.to_dict() for f in self.get_files_needing_tests()],
                 "summary": self._summary.to_dict(),
             }
 
-        else:
-            return {
-                "summary": self._summary.to_dict(),
-                "files_needing_attention": [
-                    f.to_dict() for f in self.get_files_needing_attention()[:20]
-                ],
-            }
+        return {
+            "summary": self._summary.to_dict(),
+            "files_needing_attention": [
+                f.to_dict() for f in self.get_files_needing_attention()[:20]
+            ],
+        }

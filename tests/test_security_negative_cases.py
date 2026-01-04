@@ -1,5 +1,4 @@
-"""
-Security negative test cases for Empathy Framework.
+"""Security negative test cases for Empathy Framework.
 
 Tests cover:
 - SQL injection attack prevention

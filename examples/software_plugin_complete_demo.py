@@ -1,5 +1,4 @@
-"""
-Software Development Plugin - Complete Integration Demo
+"""Software Development Plugin - Complete Integration Demo
 
 Shows all wizards working together on a realistic project analysis.
 
@@ -50,7 +49,6 @@ def test_something():
 
 async def run_complete_analysis():
     """Run complete project analysis with all wizards"""
-
     print("\n")
     print("╔" + "=" * 68 + "╗")
     print("║" + " " * 8 + "SOFTWARE DEVELOPMENT PLUGIN - COMPLETE ANALYSIS" + " " * 13 + "║")
@@ -71,7 +69,7 @@ async def run_complete_analysis():
 
         print("\n📁 Project Structure:")
         print(f"  {tmpdir}/")
-        for filename in PROJECT_CODE_SAMPLES.keys():
+        for filename in PROJECT_CODE_SAMPLES:
             print(f"    - {filename}")
 
         # Phase 1: Testing Analysis
@@ -89,7 +87,7 @@ async def run_complete_analysis():
                 "coverage_report": {},  # No coverage
                 "test_files": [os.path.join(tmpdir, "test_api.py")],
                 "source_files": [os.path.join(tmpdir, "api.py"), os.path.join(tmpdir, "auth.py")],
-            }
+            },
         )
 
         print("\n📊 Test Analysis:")
@@ -115,14 +113,14 @@ async def run_complete_analysis():
             {
                 "source_files": [os.path.join(tmpdir, "api.py"), os.path.join(tmpdir, "auth.py")],
                 "endpoint_config": {os.path.join(tmpdir, "api.py"): {"endpoint_public": True}},
-            }
+            },
         )
 
         print("\n🔒 Security Analysis:")
         print(f"  Vulnerabilities Found: {security_result['vulnerabilities_found']}")
         by_sev = security_result["by_severity"]
         print(
-            f"  Critical: {by_sev['CRITICAL']}, High: {by_sev['HIGH']}, Medium: {by_sev['MEDIUM']}"
+            f"  Critical: {by_sev['CRITICAL']}, High: {by_sev['HIGH']}, Medium: {by_sev['MEDIUM']}",
         )
 
         if security_result["exploitability_assessments"]:
@@ -166,14 +164,14 @@ async def run_complete_analysis():
                         "cumulative_time": 4.8,
                         "percent": 48.0,
                     },
-                ]
-            }
+                ],
+            },
         )
 
         performance_wizard = PerformanceProfilingWizard()
 
         performance_result = await performance_wizard.analyze(
-            {"profiler_data": mock_profile, "profiler_type": "simple_json"}
+            {"profiler_data": mock_profile, "profiler_type": "simple_json"},
         )
 
         print("\n⚡ Performance Analysis:")
@@ -210,7 +208,7 @@ async def run_complete_analysis():
         print("\n  Top Priority Issues:")
         for i, pred in enumerate(all_predictions[:5], 1):
             print(
-                f"\n  {i}. [{pred.get('severity', 'unknown').upper()}] {pred.get('type', 'unknown')}"
+                f"\n  {i}. [{pred.get('severity', 'unknown').upper()}] {pred.get('type', 'unknown')}",
             )
             print(f"     {pred.get('description', 'No description')[:100]}...")
 

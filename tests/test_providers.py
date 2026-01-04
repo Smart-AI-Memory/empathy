@@ -1,5 +1,4 @@
-"""
-Comprehensive tests for LLM Provider Adapters
+"""Comprehensive tests for LLM Provider Adapters
 
 Tests cover:
 - LLMResponse dataclass
@@ -46,7 +45,11 @@ class TestLLMResponse:
     def test_llm_response_with_empty_metadata(self):
         """Test LLMResponse with empty metadata"""
         response = LLMResponse(
-            content="Hello", model="gpt-4", tokens_used=10, finish_reason="stop", metadata={}
+            content="Hello",
+            model="gpt-4",
+            tokens_used=10,
+            finish_reason="stop",
+            metadata={},
         )
 
         assert response.content == "Hello"
@@ -61,7 +64,12 @@ class TestBaseLLMProvider:
 
         class ConcreteProvider(BaseLLMProvider):
             async def generate(
-                self, messages, system_prompt=None, temperature=0.7, max_tokens=1024, **kwargs
+                self,
+                messages,
+                system_prompt=None,
+                temperature=0.7,
+                max_tokens=1024,
+                **kwargs,
             ):
                 return LLMResponse("test", "model", 10, "stop", {})
 
@@ -78,7 +86,12 @@ class TestBaseLLMProvider:
 
         class ConcreteProvider(BaseLLMProvider):
             async def generate(
-                self, messages, system_prompt=None, temperature=0.7, max_tokens=1024, **kwargs
+                self,
+                messages,
+                system_prompt=None,
+                temperature=0.7,
+                max_tokens=1024,
+                **kwargs,
             ):
                 return LLMResponse("test", "model", 10, "stop", {})
 
@@ -93,7 +106,12 @@ class TestBaseLLMProvider:
 
         class ConcreteProvider(BaseLLMProvider):
             async def generate(
-                self, messages, system_prompt=None, temperature=0.7, max_tokens=1024, **kwargs
+                self,
+                messages,
+                system_prompt=None,
+                temperature=0.7,
+                max_tokens=1024,
+                **kwargs,
             ):
                 return LLMResponse("test", "model", 10, "stop", {})
 
@@ -111,7 +129,12 @@ class TestBaseLLMProvider:
 
         class ConcreteProvider(BaseLLMProvider):
             async def generate(
-                self, messages, system_prompt=None, temperature=0.7, max_tokens=1024, **kwargs
+                self,
+                messages,
+                system_prompt=None,
+                temperature=0.7,
+                max_tokens=1024,
+                **kwargs,
             ):
                 return LLMResponse("test", "model", 10, "stop", {})
 
@@ -129,7 +152,12 @@ class TestBaseLLMProvider:
 
         class ConcreteProvider(BaseLLMProvider):
             async def generate(
-                self, messages, system_prompt=None, temperature=0.7, max_tokens=1024, **kwargs
+                self,
+                messages,
+                system_prompt=None,
+                temperature=0.7,
+                max_tokens=1024,
+                **kwargs,
             ):
                 return LLMResponse("test", "model", 10, "stop", {})
 

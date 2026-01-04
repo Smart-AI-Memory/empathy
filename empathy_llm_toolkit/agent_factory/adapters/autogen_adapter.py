@@ -1,5 +1,4 @@
-"""
-AutoGen Adapter
+"""AutoGen Adapter
 
 Creates conversational multi-agent systems using Microsoft's AutoGen.
 Best for agent teams that converse to solve problems.
@@ -97,7 +96,11 @@ class AutoGenWorkflow(BaseWorkflow):
     """Workflow using AutoGen's GroupChat."""
 
     def __init__(
-        self, config: WorkflowConfig, agents: list[BaseAgent], group_chat=None, manager=None
+        self,
+        config: WorkflowConfig,
+        agents: list[BaseAgent],
+        group_chat=None,
+        manager=None,
     ):
         super().__init__(config, agents)
         self._group_chat = group_chat
@@ -181,7 +184,7 @@ class AutoGenAdapter(BaseAdapter):
     def __init__(self, provider: str = "anthropic", api_key: str | None = None):
         self.provider = provider
         self.api_key = api_key or os.getenv(
-            "ANTHROPIC_API_KEY" if provider == "anthropic" else "OPENAI_API_KEY"
+            "ANTHROPIC_API_KEY" if provider == "anthropic" else "OPENAI_API_KEY",
         )
 
     @property
@@ -194,24 +197,24 @@ class AutoGenAdapter(BaseAdapter):
     def _get_llm_config(self, config: AgentConfig) -> dict:
         """Build AutoGen LLM config."""
         model_id = config.model_override or self.get_model_for_tier(
-            config.model_tier, self.provider
+            config.model_tier,
+            self.provider,
         )
 
         if self.provider == "anthropic":
             return {
                 "config_list": [
-                    {"model": model_id, "api_key": self.api_key, "api_type": "anthropic"}
+                    {"model": model_id, "api_key": self.api_key, "api_type": "anthropic"},
                 ],
                 "temperature": config.temperature,
                 "max_tokens": config.max_tokens,
             }
-        else:
-            # OpenAI (default for AutoGen)
-            return {
-                "config_list": [{"model": model_id, "api_key": self.api_key}],
-                "temperature": config.temperature,
-                "max_tokens": config.max_tokens,
-            }
+        # OpenAI (default for AutoGen)
+        return {
+            "config_list": [{"model": model_id, "api_key": self.api_key}],
+            "temperature": config.temperature,
+            "max_tokens": config.max_tokens,
+        }
 
     def create_agent(self, config: AgentConfig) -> AutoGenAgent:
         """Create an AutoGen agent."""
@@ -235,7 +238,9 @@ class AutoGenAdapter(BaseAdapter):
         else:
             # AssistantAgent for general tasks
             ag_agent = autogen.AssistantAgent(
-                name=config.name, system_message=system_message, llm_config=llm_config
+                name=config.name,
+                system_message=system_message,
+                llm_config=llm_config,
             )
 
         return AutoGenAgent(config, autogen_agent=ag_agent)
@@ -263,7 +268,9 @@ class AutoGenAdapter(BaseAdapter):
         if config.mode == "conversation":
             # Free-form conversation
             group_chat = autogen.GroupChat(
-                agents=autogen_agents, messages=[], max_round=config.max_iterations
+                agents=autogen_agents,
+                messages=[],
+                max_round=config.max_iterations,
             )
         else:
             # Sequential (round-robin)
@@ -281,7 +288,11 @@ class AutoGenAdapter(BaseAdapter):
         return AutoGenWorkflow(config, agents, group_chat=group_chat, manager=manager)
 
     def create_tool(
-        self, name: str, description: str, func: Callable, args_schema: dict | None = None
+        self,
+        name: str,
+        description: str,
+        func: Callable,
+        args_schema: dict | None = None,
     ) -> dict:
         """Create a function for AutoGen agents."""
         # AutoGen uses function registration

@@ -1,5 +1,4 @@
-"""
-Pipeline Nodes for Code Inspection Agent
+"""Pipeline Nodes for Code Inspection Agent
 
 Each node represents a phase of the inspection pipeline.
 

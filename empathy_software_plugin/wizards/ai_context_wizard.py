@@ -1,5 +1,4 @@
-"""
-AI Context Window Management Wizard - Level 4 Anticipatory Empathy
+"""AI Context Window Management Wizard - Level 4 Anticipatory Empathy
 
 Alerts developers when context window usage patterns will become problematic.
 
@@ -21,8 +20,7 @@ from empathy_os.plugins import BaseWizard
 
 
 class AIContextWindowWizard(BaseWizard):
-    """
-    Level 4 Anticipatory: Predicts context window issues before they occur.
+    """Level 4 Anticipatory: Predicts context window issues before they occur.
 
     What We Learned:
     - Context needs grow non-linearly with feature complexity
@@ -49,8 +47,7 @@ class AIContextWindowWizard(BaseWizard):
         ]
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze context window usage and predict future issues.
+        """Analyze context window usage and predict future issues.
 
         In our experience: Context limits sneak up on you. By the time
         you hit the limit, you're forced into emergency refactoring.
@@ -70,7 +67,10 @@ class AIContextWindowWizard(BaseWizard):
 
         # Level 4: Predict future problems
         predictions = await self._predict_context_issues(
-            ai_calls, context_sources, model_limits, context
+            ai_calls,
+            context_sources,
+            model_limits,
+            context,
         )
 
         recommendations = self._generate_recommendations(issues, predictions)
@@ -91,7 +91,10 @@ class AIContextWindowWizard(BaseWizard):
         }
 
     async def _analyze_current_usage(
-        self, ai_calls: list[dict], context_sources: list[dict], model_limits: dict
+        self,
+        ai_calls: list[dict],
+        context_sources: list[dict],
+        model_limits: dict,
     ) -> list[dict[str, Any]]:
         """Analyze current context window usage"""
         issues = []
@@ -114,7 +117,7 @@ class AIContextWindowWizard(BaseWizard):
                         ),
                         "estimated_tokens": estimated_tokens,
                         "suggestion": "Implement context pruning or chunking strategy",
-                    }
+                    },
                 )
 
             # Check for naive concatenation
@@ -129,7 +132,7 @@ class AIContextWindowWizard(BaseWizard):
                             "This pattern fails unpredictably as data grows."
                         ),
                         "suggestion": "Use structured context builders with size limits",
-                    }
+                    },
                 )
 
             # Check for missing token counting
@@ -144,7 +147,7 @@ class AIContextWindowWizard(BaseWizard):
                             "injection leads to unpredictable failures."
                         ),
                         "suggestion": "Add token estimation before AI calls",
-                    }
+                    },
                 )
 
         return issues
@@ -156,8 +159,7 @@ class AIContextWindowWizard(BaseWizard):
         model_limits: dict,
         full_context: dict[str, Any],
     ) -> list[dict[str, Any]]:
-        """
-        Level 4: Predict future context window problems.
+        """Level 4: Predict future context window problems.
 
         Based on our experience with multi-agent systems that started simple
         and grew complex.
@@ -197,7 +199,7 @@ class AIContextWindowWizard(BaseWizard):
                             "We've seen this pattern require emergency refactoring. "
                             "Proactive design prevents crisis."
                         ),
-                    }
+                    },
                 )
 
         # Pattern 2: Multi-turn conversation growth
@@ -224,7 +226,7 @@ class AIContextWindowWizard(BaseWizard):
                         "Without pruning, they hit limits within 10-20 turns. "
                         "We learned to design for this early."
                     ),
-                }
+                },
             )
 
         # Pattern 3: Dynamic context sources
@@ -253,7 +255,7 @@ class AIContextWindowWizard(BaseWizard):
                         "User has 10 records today, 10,000 tomorrow. "
                         "We've seen this break production systems."
                     ),
-                }
+                },
             )
 
         # Pattern 4: Lack of context strategy
@@ -280,7 +282,7 @@ class AIContextWindowWizard(BaseWizard):
                         "We refactored context management 3 times before finding the right "
                         "pattern. Starting with good architecture saves months of rework."
                     ),
-                }
+                },
             )
 
         # Pattern 5: Cost implications
@@ -309,7 +311,7 @@ class AIContextWindowWizard(BaseWizard):
                         "Context costs are proportional to token count. "
                         "We've reduced costs 40-60% through context optimization."
                     ),
-                }
+                },
             )
 
         return predictions
@@ -335,7 +337,9 @@ class AIContextWindowWizard(BaseWizard):
         return recommendations
 
     def _extract_patterns(
-        self, issues: list[dict], predictions: list[dict]
+        self,
+        issues: list[dict],
+        predictions: list[dict],
     ) -> list[dict[str, Any]]:
         """Extract cross-domain patterns"""
         patterns = []
@@ -358,7 +362,7 @@ class AIContextWindowWizard(BaseWizard):
                     ],
                     "detection": "Identify dynamic data sources without size limits",
                     "prevention": "Add LIMIT, pagination, size validation",
-                }
+                },
             )
 
         return patterns
@@ -414,7 +418,9 @@ class AIContextWindowWizard(BaseWizard):
         return 1.1  # Default 10% growth
 
     def _calculate_avg_context_size(
-        self, ai_calls: list[dict], context_sources: list[dict]
+        self,
+        ai_calls: list[dict],
+        context_sources: list[dict],
     ) -> float:
         """Calculate average context size"""
         if not ai_calls:

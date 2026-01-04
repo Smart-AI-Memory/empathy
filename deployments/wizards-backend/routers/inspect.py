@@ -1,5 +1,4 @@
-"""
-Code Inspection Pipeline API
+"""Code Inspection Pipeline API
 
 Wraps the CodeInspectionAgent for web access.
 Unified code analysis with parallel execution and cross-tool intelligence.
@@ -16,14 +15,17 @@ class InspectRequest(BaseModel):
 
     project_path: str = Field(default=".", description="Project root to inspect")
     target_mode: str = Field(
-        default="all", description="Target mode: all, staged, changed, or paths"
+        default="all",
+        description="Target mode: all, staged, changed, or paths",
     )
     target_paths: list[str] = Field(default_factory=list, description="Specific paths to inspect")
     exclude_patterns: list[str] = Field(
-        default_factory=list, description="Glob patterns to exclude"
+        default_factory=list,
+        description="Glob patterns to exclude",
     )
     output_format: str = Field(
-        default="json", description="Output format: json, terminal, markdown, sarif, html"
+        default="json",
+        description="Output format: json, terminal, markdown, sarif, html",
     )
     parallel_mode: bool = Field(default=True, description="Run analysis in parallel")
     learning_enabled: bool = Field(default=True, description="Enable pattern learning")
@@ -39,8 +41,7 @@ class QuickScanRequest(BaseModel):
 
 @router.post("/run")
 async def run_inspection(request: InspectRequest):
-    """
-    Run the full code inspection pipeline.
+    """Run the full code inspection pipeline.
 
     This is the main empathy-inspect command as an API.
 
@@ -97,7 +98,7 @@ async def run_inspection(request: InspectRequest):
     except ImportError as e:
         raise HTTPException(
             status_code=503,
-            detail=f"Inspection agent not available: {str(e)}. Install empathy-framework[full]",
+            detail=f"Inspection agent not available: {e!s}. Install empathy-framework[full]",
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -105,8 +106,7 @@ async def run_inspection(request: InspectRequest):
 
 @router.post("/quick")
 async def quick_scan(request: QuickScanRequest):
-    """
-    Quick project health scan.
+    """Quick project health scan.
 
     Runs a fast inspection with default settings.
     Good for quick health checks.
@@ -122,9 +122,7 @@ async def quick_scan(request: QuickScanRequest):
 
 @router.get("/formats")
 async def list_formats():
-    """
-    List available output formats.
-    """
+    """List available output formats."""
     return {
         "formats": [
             {
@@ -152,14 +150,13 @@ async def list_formats():
                 "description": "Professional HTML dashboard",
                 "use_case": "Stakeholder reports, sprint reviews",
             },
-        ]
+        ],
     }
 
 
 @router.get("/demo")
 async def demo_inspection():
-    """
-    Demo endpoint showing inspection capabilities.
+    """Demo endpoint showing inspection capabilities.
 
     Returns sample output showing what a full inspection looks like.
     """
@@ -181,7 +178,7 @@ async def demo_inspection():
                 {
                     "type": "security_priority",
                     "description": "1 high-severity security finding needs immediate attention",
-                }
+                },
             ],
             "recommendations": [
                 "Fix SQL injection in api/users.py:42",

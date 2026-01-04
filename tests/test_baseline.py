@@ -1,5 +1,4 @@
-"""
-Tests for agents/code_inspection/baseline.py
+"""Tests for agents/code_inspection/baseline.py
 
 Tests the Baseline and Suppression System for managing finding suppressions.
 """
@@ -332,7 +331,7 @@ class TestBaselineManagerIsSuppressed:
     def test_is_suppressed_baseline_project(self, manager):
         """Test project-wide baseline suppression."""
         manager.baseline["suppressions"]["project"].append(
-            {"rule_code": "W001", "reason": "Project-wide ignore"}
+            {"rule_code": "W001", "reason": "Project-wide ignore"},
         )
 
         result = manager.is_suppressed("W001", "any_file.py", 42)
@@ -343,7 +342,7 @@ class TestBaselineManagerIsSuppressed:
     def test_is_suppressed_baseline_file(self, manager):
         """Test file-specific baseline suppression."""
         manager.baseline["suppressions"]["files"]["src/special.py"] = [
-            {"rule_code": "B002", "reason": "Known issue in this file"}
+            {"rule_code": "B002", "reason": "Known issue in this file"},
         ]
 
         result = manager.is_suppressed("B002", "src/special.py", 100)
@@ -354,7 +353,7 @@ class TestBaselineManagerIsSuppressed:
     def test_is_suppressed_baseline_file_with_line(self, manager):
         """Test file-specific baseline suppression with line number."""
         manager.baseline["suppressions"]["files"]["src/special.py"] = [
-            {"rule_code": "B002", "reason": "Known issue at this line", "line_number": 50}
+            {"rule_code": "B002", "reason": "Known issue at this line", "line_number": 50},
         ]
 
         # Matching line number
@@ -369,7 +368,7 @@ class TestBaselineManagerIsSuppressed:
     def test_is_suppressed_baseline_rule(self, manager):
         """Test rule-wide baseline suppression."""
         manager.baseline["suppressions"]["rules"]["W999"] = {
-            "reason": "We never care about this rule"
+            "reason": "We never care about this rule",
         }
 
         result = manager.is_suppressed("W999", "anywhere.py", 1)
@@ -380,7 +379,7 @@ class TestBaselineManagerIsSuppressed:
     def test_is_suppressed_case_insensitive(self, manager):
         """Test that rule code matching is case insensitive."""
         manager.baseline["suppressions"]["project"].append(
-            {"rule_code": "b001", "reason": "Test"}  # lowercase
+            {"rule_code": "b001", "reason": "Test"},  # lowercase
         )
 
         result = manager.is_suppressed("B001", "test.py", 1)  # uppercase
@@ -391,7 +390,7 @@ class TestBaselineManagerIsSuppressed:
         """Test that expired suppressions are not matched."""
         past_date = (datetime.now() - timedelta(days=30)).isoformat()
         manager.baseline["suppressions"]["project"].append(
-            {"rule_code": "B001", "reason": "Expired", "expires_at": past_date}
+            {"rule_code": "B001", "reason": "Expired", "expires_at": past_date},
         )
 
         result = manager.is_suppressed("B001", "test.py", 1)
@@ -433,7 +432,9 @@ class TestBaselineManagerAddSuppression:
     def test_add_suppression_project_scope(self, manager):
         """Test adding a project-wide suppression."""
         result = manager.add_suppression(
-            rule_code="B001", reason="Known false positive", scope="project"
+            rule_code="B001",
+            reason="Known false positive",
+            scope="project",
         )
 
         assert result is True
@@ -445,7 +446,10 @@ class TestBaselineManagerAddSuppression:
     def test_add_suppression_file_scope(self, manager):
         """Test adding a file-specific suppression."""
         result = manager.add_suppression(
-            rule_code="S001", reason="Legacy code", scope="file", file_path="src/legacy.py"
+            rule_code="S001",
+            reason="Legacy code",
+            scope="file",
+            file_path="src/legacy.py",
         )
 
         assert result is True
@@ -471,7 +475,9 @@ class TestBaselineManagerAddSuppression:
     def test_add_suppression_rule_scope(self, manager):
         """Test adding a rule-wide suppression."""
         result = manager.add_suppression(
-            rule_code="W999", reason="We ignore this rule globally", scope="rule"
+            rule_code="W999",
+            reason="We ignore this rule globally",
+            scope="rule",
         )
 
         assert result is True
@@ -497,7 +503,10 @@ class TestBaselineManagerAddSuppression:
     def test_add_suppression_with_ttl(self, manager):
         """Test adding suppression with TTL."""
         result = manager.add_suppression(
-            rule_code="B001", reason="Temporary fix", scope="project", ttl_days=30
+            rule_code="B001",
+            reason="Temporary fix",
+            scope="project",
+            ttl_days=30,
         )
 
         assert result is True
@@ -511,7 +520,10 @@ class TestBaselineManagerAddSuppression:
     def test_add_suppression_with_tool(self, manager):
         """Test adding suppression with tool restriction."""
         result = manager.add_suppression(
-            rule_code="L001", reason="Lint-specific", scope="project", tool="lint"
+            rule_code="L001",
+            reason="Lint-specific",
+            scope="project",
+            tool="lint",
         )
 
         assert result is True
@@ -521,7 +533,10 @@ class TestBaselineManagerAddSuppression:
     def test_add_suppression_with_created_by(self, manager):
         """Test adding suppression with created_by field."""
         result = manager.add_suppression(
-            rule_code="B001", reason="Test", scope="project", created_by="developer@test.com"
+            rule_code="B001",
+            reason="Test",
+            scope="project",
+            created_by="developer@test.com",
         )
 
         assert result is True
@@ -559,7 +574,7 @@ class TestBaselineManagerFilterFindings:
     def test_filter_findings_removes_suppressed(self, manager):
         """Test that suppressed findings are removed."""
         manager.baseline["suppressions"]["project"].append(
-            {"rule_code": "B001", "reason": "Ignore"}
+            {"rule_code": "B001", "reason": "Ignore"},
         )
 
         findings = [
@@ -575,7 +590,7 @@ class TestBaselineManagerFilterFindings:
     def test_filter_findings_marks_suppressed_in_original(self, manager):
         """Test that original findings are marked as suppressed."""
         manager.baseline["suppressions"]["project"].append(
-            {"rule_code": "B001", "reason": "Known issue"}
+            {"rule_code": "B001", "reason": "Known issue"},
         )
 
         findings = [
@@ -592,7 +607,7 @@ class TestBaselineManagerFilterFindings:
     def test_filter_findings_uses_rule_code_key(self, manager):
         """Test that filter_findings works with rule_code key."""
         manager.baseline["suppressions"]["project"].append(
-            {"rule_code": "B001", "reason": "Ignore"}
+            {"rule_code": "B001", "reason": "Ignore"},
         )
 
         findings = [
@@ -606,7 +621,7 @@ class TestBaselineManagerFilterFindings:
     def test_filter_findings_with_tool(self, manager):
         """Test filtering with tool parameter."""
         manager.baseline["suppressions"]["project"].append(
-            {"rule_code": "B001", "reason": "Ignore for security tool", "tool": "security"}
+            {"rule_code": "B001", "reason": "Ignore for security tool", "tool": "security"},
         )
 
         findings = [
@@ -619,7 +634,8 @@ class TestBaselineManagerFilterFindings:
 
         # Should NOT be filtered for lint tool
         result2 = manager.filter_findings(
-            [{"code": "B001", "file_path": "test.py", "line_number": 1}], tool="lint"
+            [{"code": "B001", "file_path": "test.py", "line_number": 1}],
+            tool="lint",
         )
         assert len(result2) == 1
 
@@ -677,7 +693,7 @@ class TestBaselineManagerStats:
         """Test that stats count expired suppressions."""
         past_date = (datetime.now() - timedelta(days=30)).isoformat()
         manager.baseline["suppressions"]["project"].append(
-            {"rule_code": "B001", "reason": "Test", "expires_at": past_date}
+            {"rule_code": "B001", "reason": "Test", "expires_at": past_date},
         )
 
         stats = manager.get_suppression_stats()
@@ -688,7 +704,7 @@ class TestBaselineManagerStats:
         """Test that stats count expiring soon suppressions."""
         soon_date = (datetime.now() + timedelta(days=3)).isoformat()
         manager.baseline["suppressions"]["project"].append(
-            {"rule_code": "B001", "reason": "Test", "expires_at": soon_date}
+            {"rule_code": "B001", "reason": "Test", "expires_at": soon_date},
         )
 
         stats = manager.get_suppression_stats()
@@ -716,10 +732,10 @@ class TestBaselineManagerCleanupExpired:
         """Test cleanup removes expired project suppressions."""
         past_date = (datetime.now() - timedelta(days=30)).isoformat()
         manager.baseline["suppressions"]["project"].append(
-            {"rule_code": "B001", "reason": "Expired", "expires_at": past_date}
+            {"rule_code": "B001", "reason": "Expired", "expires_at": past_date},
         )
         manager.baseline["suppressions"]["project"].append(
-            {"rule_code": "B002", "reason": "Not expired"}
+            {"rule_code": "B002", "reason": "Not expired"},
         )
 
         removed = manager.cleanup_expired()
@@ -759,7 +775,7 @@ class TestBaselineManagerCleanupExpired:
     def test_cleanup_expired_returns_zero_if_none_expired(self, manager):
         """Test cleanup returns 0 when nothing is expired."""
         manager.baseline["suppressions"]["project"].append(
-            {"rule_code": "B001", "reason": "No expiry"}
+            {"rule_code": "B001", "reason": "No expiry"},
         )
 
         removed = manager.cleanup_expired()
@@ -792,7 +808,9 @@ class TestCreateBaselineFile:
         """Test creating baseline file with description and maintainer."""
         with tempfile.TemporaryDirectory() as tmpdir:
             path = create_baseline_file(
-                tmpdir, description="My project baseline", maintainer="admin@test.com"
+                tmpdir,
+                description="My project baseline",
+                maintainer="admin@test.com",
             )
 
             with open(path) as f:
@@ -934,7 +952,7 @@ class TestBaselineManagerEdgeCases:
     def test_none_line_number(self, manager):
         """Test is_suppressed with None line number."""
         manager.baseline["suppressions"]["files"]["test.py"] = [
-            {"rule_code": "B001", "reason": "File-wide"}
+            {"rule_code": "B001", "reason": "File-wide"},
         ]
 
         result = manager.is_suppressed("B001", file_path="test.py", line_number=None)
@@ -950,7 +968,7 @@ x = 1  # empathy:disable B001
 # empathy:disable-next-line W001
 y = 2
 z = 3  # empathy:disable B002
-"""
+""",
         )
 
         suppressions = manager.scan_file_for_inline("test.py")
@@ -966,7 +984,7 @@ z = 3  # empathy:disable B002
         """Test that inline suppressions take priority over baseline."""
         # Add baseline suppression
         manager.baseline["suppressions"]["project"].append(
-            {"rule_code": "B001", "reason": "Baseline reason"}
+            {"rule_code": "B001", "reason": "Baseline reason"},
         )
 
         # Add file with inline suppression

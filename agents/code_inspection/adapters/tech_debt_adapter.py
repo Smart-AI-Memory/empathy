@@ -1,5 +1,4 @@
-"""
-Tech Debt Adapter
+"""Tech Debt Adapter
 
 Wraps empathy_software_plugin.wizards.tech_debt_wizard
 and converts its output to the unified ToolResult format.
@@ -16,8 +15,7 @@ from ..state import ToolResult
 
 
 class TechDebtAdapter:
-    """
-    Adapter for the Tech Debt Wizard.
+    """Adapter for the Tech Debt Wizard.
 
     Scans for TODOs, FIXMEs, tech debt markers, and tracks trajectory.
     """
@@ -27,22 +25,22 @@ class TechDebtAdapter:
         project_root: str,
         config: dict[str, Any] | None = None,
     ):
-        """
-        Initialize the adapter.
+        """Initialize the adapter.
 
         Args:
             project_root: Root directory of the project
             config: Configuration overrides
+
         """
         self.project_root = Path(project_root)
         self.config = config or {}
 
     async def analyze(self) -> ToolResult:
-        """
-        Run tech debt analysis and return unified result.
+        """Run tech debt analysis and return unified result.
 
         Returns:
             ToolResult with tech debt findings
+
         """
         start_time = time.time()
 
@@ -57,7 +55,7 @@ class TechDebtAdapter:
                 {
                     "project_path": str(self.project_root),
                     "track_history": True,
-                }
+                },
             )
 
             # Convert findings to unified format

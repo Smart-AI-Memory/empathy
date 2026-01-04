@@ -1,5 +1,4 @@
-"""
-Secrets Detector Examples
+"""Secrets Detector Examples
 
 Demonstrates practical usage of the SecretsDetector module for
 enterprise privacy integration.
@@ -45,11 +44,11 @@ def example_2_file_scanning():
     print("=" * 60)
 
     def scan_file_for_secrets(file_path: str) -> bool:
-        """
-        Scan a file for secrets and report findings.
+        """Scan a file for secrets and report findings.
 
         Returns:
             True if no secrets found, False otherwise
+
         """
         detector = SecretsDetector()
 
@@ -111,16 +110,15 @@ def example_3_custom_patterns():
     detector.add_custom_pattern(name="acme_api_key", pattern=r"ACME_[A-Z0-9]{32}", severity="high")
 
     detector.add_custom_pattern(
-        name="internal_token", pattern=r"INT_TKN_[a-z0-9]{24}", severity="medium"
+        name="internal_token",
+        pattern=r"INT_TKN_[a-z0-9]{24}",
+        severity="medium",
     )
 
     # Test with custom secrets
     code = (
         "# Company-specific credentials\n"
-        + "ACME_"
-        + "A" * 32
-        + "\n"
-        + "INT_TKN_abc123def456ghi789jkl012\n"
+        "ACME_" + "A" * 32 + "\n" + "INT_TKN_abc123def456ghi789jkl012\n"
     )
 
     detections = detector.detect(code)
@@ -171,14 +169,14 @@ def example_5_ci_cd_integration():
     print("=" * 60)
 
     def pre_commit_secrets_check(staged_files: list[str]) -> bool:
-        """
-        Pre-commit hook to check for secrets.
+        """Pre-commit hook to check for secrets.
 
         Args:
             staged_files: List of files to check
 
         Returns:
             True if no secrets found, False if secrets detected
+
         """
         detector = SecretsDetector()
         all_clean = True
@@ -231,8 +229,7 @@ def example_6_audit_integration():
     print("=" * 60)
 
     def detect_and_audit(content: str, user_id: str, file_path: str) -> dict:
-        """
-        Detect secrets and create audit log entry.
+        """Detect secrets and create audit log entry.
 
         Args:
             content: Content to scan
@@ -241,6 +238,7 @@ def example_6_audit_integration():
 
         Returns:
             Audit log entry dictionary
+
         """
         detector = SecretsDetector()
         detections = detector.detect(content)

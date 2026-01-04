@@ -1,5 +1,4 @@
-"""
-EmpathyLLM Executor Implementation
+"""EmpathyLLM Executor Implementation
 
 Default LLMExecutor implementation that wraps EmpathyLLM for use
 in workflows with automatic model routing and cost tracking.
@@ -23,8 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class EmpathyLLMExecutor:
-    """
-    Default executor wrapping EmpathyLLM with routing.
+    """Default executor wrapping EmpathyLLM with routing.
 
     This executor provides a unified interface for workflows to call LLMs
     with automatic tier-based model routing and cost tracking.
@@ -39,6 +37,7 @@ class EmpathyLLMExecutor:
         ... )
         >>> print(f"Model used: {response.model_used}")
         >>> print(f"Cost: ${response.cost:.4f}")
+
     """
 
     def __init__(
@@ -49,8 +48,7 @@ class EmpathyLLMExecutor:
         telemetry_store: TelemetryBackend | TelemetryStore | None = None,
         **llm_kwargs: Any,
     ):
-        """
-        Initialize the EmpathyLLM executor.
+        """Initialize the EmpathyLLM executor.
 
         Args:
             empathy_llm: Optional pre-configured EmpathyLLM instance.
@@ -58,6 +56,7 @@ class EmpathyLLMExecutor:
             api_key: Optional API key for the provider.
             telemetry_store: Optional telemetry store for recording calls.
             **llm_kwargs: Additional arguments for EmpathyLLM.
+
         """
         self._provider = provider
         self._api_key = api_key
@@ -93,21 +92,21 @@ class EmpathyLLMExecutor:
             or "opus" in model_lower
         ):
             return "anthropic"
-        elif "gpt" in model_lower or "o1" in model_lower:
+        if "gpt" in model_lower or "o1" in model_lower:
             return "openai"
-        elif "gemini" in model_lower:
+        if "gemini" in model_lower:
             return "google"
-        elif "llama" in model_lower or "mixtral" in model_lower or ":" in model_id:
+        if "llama" in model_lower or "mixtral" in model_lower or ":" in model_id:
             return "ollama"
         # Default to anthropic
         return "anthropic"
 
     def _get_llm_for_tier(self, tier: str) -> tuple[Any, str, str]:
-        """
-        Get the appropriate LLM for a tier (supports hybrid mode).
+        """Get the appropriate LLM for a tier (supports hybrid mode).
 
         Returns:
             Tuple of (llm_instance, actual_provider, model_id)
+
         """
         if self._provider != "hybrid" or not self._hybrid_config:
             # Non-hybrid mode: use single provider
@@ -171,7 +170,7 @@ class EmpathyLLMExecutor:
             except ImportError as e:
                 raise ImportError(
                     "empathy_llm_toolkit is required for EmpathyLLMExecutor. "
-                    "Install it or use MockLLMExecutor for testing."
+                    "Install it or use MockLLMExecutor for testing.",
                 ) from e
         return self._llm
 
@@ -183,8 +182,7 @@ class EmpathyLLMExecutor:
         context: ExecutionContext | None = None,
         **kwargs: Any,
     ) -> LLMResponse:
-        """
-        Execute an LLM call with routing and cost tracking.
+        """Execute an LLM call with routing and cost tracking.
 
         Args:
             task_type: Type of task for routing (e.g., "summarize", "fix_bug").
@@ -195,6 +193,7 @@ class EmpathyLLMExecutor:
 
         Returns:
             LLMResponse with content, tokens, cost, and metadata.
+
         """
         start_time = time.time()
         call_id = str(uuid.uuid4())
@@ -314,14 +313,14 @@ class EmpathyLLMExecutor:
         return response
 
     def get_model_for_task(self, task_type: str) -> str:
-        """
-        Get the model that would be used for a task type.
+        """Get the model that would be used for a task type.
 
         Args:
             task_type: Type of task to route
 
         Returns:
             Model identifier string
+
         """
         tier = get_tier_for_task(task_type)
         model_info = get_model(self._provider, tier.value)
@@ -333,8 +332,7 @@ class EmpathyLLMExecutor:
         input_tokens: int,
         output_tokens: int,
     ) -> float:
-        """
-        Estimate cost for a task before execution.
+        """Estimate cost for a task before execution.
 
         Args:
             task_type: Type of task
@@ -343,6 +341,7 @@ class EmpathyLLMExecutor:
 
         Returns:
             Estimated cost in dollars
+
         """
         tier = get_tier_for_task(task_type)
         model_info = get_model(self._provider, tier.value)

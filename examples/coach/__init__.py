@@ -1,5 +1,4 @@
-"""
-Coach - Empathy Framework Orchestration Agent
+"""Coach - Empathy Framework Orchestration Agent
 
 Coordinates task-specific wizards to provide empathetic, anticipatory
 assistance for software development tasks.
@@ -14,8 +13,8 @@ from .wizards import DebuggingWizard, DocumentationWizard, WizardOutput, WizardT
 __all__ = [
     "Coach",
     "CoachOutput",
-    "WizardTask",
-    "WizardOutput",
     "DebuggingWizard",
     "DocumentationWizard",
+    "WizardOutput",
+    "WizardTask",
 ]

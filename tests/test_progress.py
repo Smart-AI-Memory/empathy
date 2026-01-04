@@ -1,5 +1,4 @@
-"""
-Tests for Progress Tracking System.
+"""Tests for Progress Tracking System.
 
 Tests real-time progress tracking for workflow execution.
 

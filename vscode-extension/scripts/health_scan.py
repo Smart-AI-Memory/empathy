@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Health Scan Script for Empathy Framework VSCode Extension
+"""Health Scan Script for Empathy Framework VSCode Extension
 
 Runs lint, type check, and test collection to generate health.json.
 This script accepts paths as arguments rather than being embedded inline,
@@ -22,6 +21,7 @@ def run_lint_check(workspace: Path) -> int:
     try:
         result = subprocess.run(
             [sys.executable, "-m", "ruff", "check", "src/", "--statistics"],
+            check=False,
             capture_output=True,
             text=True,
             cwd=workspace,
@@ -38,6 +38,7 @@ def run_type_check(workspace: Path) -> int:
     try:
         result = subprocess.run(
             [sys.executable, "-m", "mypy", "src/empathy_os", "--ignore-missing-imports"],
+            check=False,
             capture_output=True,
             text=True,
             cwd=workspace,
@@ -52,6 +53,7 @@ def run_test_collection(workspace: Path) -> int:
     try:
         result = subprocess.run(
             [sys.executable, "-m", "pytest", "tests/", "--co", "-q"],
+            check=False,
             capture_output=True,
             text=True,
             cwd=workspace,

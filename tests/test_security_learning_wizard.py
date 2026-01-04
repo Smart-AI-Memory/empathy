@@ -1,5 +1,4 @@
-"""
-Tests for empathy_software_plugin/wizards/security_learning_wizard.py
+"""Tests for empathy_software_plugin/wizards/security_learning_wizard.py
 
 Tests the SecurityLearningWizard including:
 - SecurityFinding, TeamDecision, LearningResult dataclasses
@@ -343,7 +342,7 @@ class TestSecurityLearningWizardAnalyze:
                 {
                     "project_path": tmpdir,
                     "apply_learned_patterns": True,
-                }
+                },
             )
             assert result is not None
 
@@ -437,7 +436,7 @@ class TestSecurityLearningWizardIntegration:
         """Test analysis on secure project."""
         with tempfile.TemporaryDirectory() as tmpdir:
             (Path(tmpdir) / "secure.py").write_text(
-                "import os\nsecret = os.environ.get('SECRET')\n"
+                "import os\nsecret = os.environ.get('SECRET')\n",
             )
 
             wizard = SecurityLearningWizard(pattern_storage_path=tmpdir)

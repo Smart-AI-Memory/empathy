@@ -1,5 +1,4 @@
-"""
-Tests for PRReviewWorkflow.
+"""Tests for PRReviewWorkflow.
 
 Tests the combined code review + security audit workflow for
 comprehensive PR analysis.

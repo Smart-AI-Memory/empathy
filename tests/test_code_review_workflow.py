@@ -1,5 +1,4 @@
-"""
-Tests for CodeReviewWorkflow.
+"""Tests for CodeReviewWorkflow.
 
 Tests the tiered code review pipeline with classification,
 security scanning, and conditional architectural review.
@@ -236,7 +235,9 @@ class TestCodeReviewWorkflowIntegration:
 
             # Mock base workflow execute
             with patch.object(
-                workflow.__class__.__bases__[0], "execute", new_callable=AsyncMock
+                workflow.__class__.__bases__[0],
+                "execute",
+                new_callable=AsyncMock,
             ) as mock_execute:
                 mock_result = MagicMock()
                 mock_result.success = True

@@ -1,5 +1,4 @@
-"""
-End-to-End Tests for Coach LSP
+"""End-to-End Tests for Coach LSP
 Tests full workflow: IDE → LSP → Coach → Results
 
 Copyright 2025 Deep Study AI, LLC
@@ -58,7 +57,6 @@ def slow_function():
     @pytest.mark.asyncio
     async def test_security_wizard_flow(self, server, test_file_python):
         """Test: File → SecurityWizard → Diagnostics"""
-
         # Simulate: User opens file in IDE
         from pygls.lsp.types import DidOpenTextDocumentParams, TextDocumentItem
 
@@ -68,7 +66,7 @@ def slow_function():
                 language_id="python",
                 version=1,
                 text=Path(test_file_python).read_text(),
-            )
+            ),
         )
 
         # Trigger did_open handler
@@ -97,7 +95,6 @@ def slow_function():
     @pytest.mark.asyncio
     async def test_performance_wizard_flow(self, server, test_file_python):
         """Test: File → PerformanceWizard → Predictions"""
-
         # Run PerformanceWizard
         result = await server.command_handlers["coach/runWizard"](
             server,
@@ -118,9 +115,9 @@ def slow_function():
     @pytest.mark.asyncio
     async def test_multi_wizard_collaboration(self, server, test_file_python):
         """Test: Multi-wizard review of API endpoint"""
-
         result = await server.command_handlers["coach/multiWizardReview"](
-            server, ["new_api_endpoint", [f"file://{test_file_python}"]]
+            server,
+            ["new_api_endpoint", [f"file://{test_file_python}"]],
         )
 
         # Should activate multiple wizards
@@ -131,7 +128,6 @@ def slow_function():
     @pytest.mark.asyncio
     async def test_hover_prediction(self, server, test_file_python):
         """Test: Hover over code → Level 4 prediction"""
-
         # Simulate hover over connection pool code
         prediction = await server._get_prediction("pool_size=10 connection pooling database")
 
@@ -174,11 +170,11 @@ def slow_function():
     @pytest.mark.asyncio
     async def test_error_recovery(self, server):
         """Test: Server handles errors gracefully"""
-
         # Try to run non-existent wizard
         try:
             result = await server.command_handlers["coach/runWizard"](
-                server, ["NonExistentWizard", {"role": "developer", "task": "Test"}]
+                server,
+                ["NonExistentWizard", {"role": "developer", "task": "Test"}],
             )
             # Should return error, not crash
             assert "error" in str(result).lower() or result is None
@@ -189,7 +185,6 @@ def slow_function():
     @pytest.mark.asyncio
     async def test_context_collection(self, server, test_file_python):
         """Test: Context collector gathers file info"""
-
         context = await server.context_collector.collect(f"file://{test_file_python}")
 
         # Should include file content
@@ -203,7 +198,6 @@ def slow_function():
     @pytest.mark.asyncio
     async def test_diagnostic_publishing(self, server, test_file_python):
         """Test: Diagnostics published to IDE"""
-
         # Analyze document
         await server._analyze_document(f"file://{test_file_python}")
 
@@ -223,7 +217,6 @@ class TestRealWorldScenarios:
     @pytest.mark.asyncio
     async def test_scenario_new_developer(self, server):
         """Scenario: New developer joins team, needs onboarding"""
-
         result = await server.command_handlers["coach/runWizard"](
             server,
             [
@@ -242,7 +235,6 @@ class TestRealWorldScenarios:
     @pytest.mark.asyncio
     async def test_scenario_production_bug(self, server):
         """Scenario: Production bug needs urgent debugging"""
-
         result = await server.command_handlers["coach/runWizard"](
             server,
             [
@@ -262,7 +254,6 @@ class TestRealWorldScenarios:
     @pytest.mark.asyncio
     async def test_scenario_scaling_preparation(self, server):
         """Scenario: Company expecting 10x traffic, needs scaling plan"""
-
         result = await server.command_handlers["coach/runWizard"](
             server,
             [
@@ -328,13 +319,15 @@ class TestPerformance:
 
         # Prime cache
         await server.command_handlers["coach/runWizard"](
-            server, ["PerformanceWizard", {"role": "developer", "task": "Cache test"}]
+            server,
+            ["PerformanceWizard", {"role": "developer", "task": "Cache test"}],
         )
 
         # Measure cache hit
         start = time.time()
         await server.command_handlers["coach/runWizard"](
-            server, ["PerformanceWizard", {"role": "developer", "task": "Cache test"}]
+            server,
+            ["PerformanceWizard", {"role": "developer", "task": "Cache test"}],
         )
         duration = time.time() - start
 

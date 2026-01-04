@@ -1,5 +1,4 @@
-"""
-Git Pattern Extractor
+"""Git Pattern Extractor
 
 Automatically detects bug fixes from git commits and creates
 draft pattern entries for review.
@@ -32,8 +31,7 @@ logger = logging.getLogger(__name__)
 
 
 class GitPatternExtractor:
-    """
-    Extracts bug fix patterns from git commits.
+    """Extracts bug fix patterns from git commits.
 
     Analyzes commit messages and diffs to detect common
     fix patterns, then creates draft pattern files.
@@ -104,14 +102,14 @@ class GitPatternExtractor:
         }
 
     def extract_from_recent_commits(self, num_commits: int = 1) -> list[dict[str, Any]]:
-        """
-        Extract patterns from recent git commits.
+        """Extract patterns from recent git commits.
 
         Args:
             num_commits: Number of recent commits to analyze
 
         Returns:
             List of detected pattern dicts
+
         """
         patterns = []
 
@@ -138,11 +136,11 @@ class GitPatternExtractor:
         return patterns
 
     def extract_from_staged(self) -> list[dict[str, Any]]:
-        """
-        Extract patterns from currently staged changes.
+        """Extract patterns from currently staged changes.
 
         Returns:
             List of detected pattern dicts
+
         """
         diff = self._get_staged_diff()
         if not diff:
@@ -158,14 +156,14 @@ class GitPatternExtractor:
         return self._analyze_diff(diff, commit_info)
 
     def save_pattern(self, pattern: dict[str, Any]) -> Path | None:
-        """
-        Save a detected pattern as a draft for review.
+        """Save a detected pattern as a draft for review.
 
         Args:
             pattern: Pattern dict from extraction
 
         Returns:
             Path to saved file, or None if failed
+
         """
         self.debugging_dir.mkdir(parents=True, exist_ok=True)
 
@@ -201,6 +199,7 @@ class GitPatternExtractor:
         try:
             result = subprocess.run(
                 ["git", "log", "-1", "--format=%H%n%s%n%an%n%aI", ref],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=5,
@@ -226,6 +225,7 @@ class GitPatternExtractor:
         try:
             result = subprocess.run(
                 ["git", "diff", ref1, ref2],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=10,
@@ -239,6 +239,7 @@ class GitPatternExtractor:
         try:
             result = subprocess.run(
                 ["git", "diff", "--cached"],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=10,
@@ -252,6 +253,7 @@ class GitPatternExtractor:
         try:
             result = subprocess.run(
                 ["git", "config", key],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=5,
@@ -286,7 +288,9 @@ class GitPatternExtractor:
                 # Process previous file
                 if current_file and added_lines:
                     file_patterns = self._detect_fix_patterns(
-                        current_file, added_lines, commit_info
+                        current_file,
+                        added_lines,
+                        commit_info,
                     )
                     patterns.extend(file_patterns)
 
@@ -334,7 +338,7 @@ class GitPatternExtractor:
                         "matches_count": len(matches),
                         "author": commit_info.get("author", "unknown"),
                         "date": commit_info.get("date", datetime.now().isoformat()),
-                    }
+                    },
                 )
 
         return detected

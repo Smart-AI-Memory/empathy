@@ -1,5 +1,4 @@
-"""
-Writer Agent - Chapter Draft Creation
+"""Writer Agent - Chapter Draft Creation
 
 The creative powerhouse of the book production pipeline. Responsible for:
 1. Transforming research into narrative prose
@@ -25,8 +24,7 @@ from .state import AgentPhase, ChapterSpec, Draft, DraftVersion, ResearchResult
 
 
 class WriterAgent(OpusAgent):
-    """
-    Transforms research into polished chapter drafts.
+    """Transforms research into polished chapter drafts.
 
     Model: Claude Opus 4.5 (highest quality for creative writing)
 
@@ -131,17 +129,17 @@ Write with clarity, enthusiasm, and deep technical knowledge.
 Your goal: Readers finish the chapter excited to implement what they learned."""
 
     async def process(self, state: dict[str, Any]) -> dict[str, Any]:
-        """
-        Create chapter draft from research.
+        """Create chapter draft from research.
 
         Args:
             state: Current pipeline state with research results
 
         Returns:
             Updated state with draft content
+
         """
         self.logger.info(
-            f"Starting writing for Chapter {state['chapter_number']}: {state['chapter_title']}"
+            f"Starting writing for Chapter {state['chapter_number']}: {state['chapter_title']}",
         )
 
         # Update state
@@ -219,7 +217,7 @@ Your goal: Readers finish the chapter excited to implement what they learned."""
         self.logger.info(
             f"Writing complete: {self.count_words(draft_content)} words, "
             f"{draft_content.count('## ')} sections, "
-            f"{draft_content.count('```')} code blocks"
+            f"{draft_content.count('```')} code blocks",
         )
 
         return state
@@ -229,8 +227,7 @@ Your goal: Readers finish the chapter excited to implement what they learned."""
         research: ResearchResult,
         spec: ChapterSpec,
     ) -> Draft:
-        """
-        Standalone write method for direct use.
+        """Standalone write method for direct use.
 
         Args:
             research: Research results from ResearchAgent
@@ -238,6 +235,7 @@ Your goal: Readers finish the chapter excited to implement what they learned."""
 
         Returns:
             Draft with chapter content
+
         """
         from .state import create_initial_state
 
@@ -386,7 +384,7 @@ each section of the outline. Make it engaging, technically accurate, and actiona
                     },
                     "chapter_title": state["chapter_title"],
                     "chapter_number": state["chapter_number"],
-                }
+                },
             )
 
         # Store patterns

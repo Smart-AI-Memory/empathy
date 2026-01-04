@@ -1,5 +1,4 @@
-"""
-Localization Wizard
+"""Localization Wizard
 
 Internationalization (i18n) and localization (L10n), translations, multi-language support.
 Uses Empathy Framework Level 3 (Proactive) for string extraction and Level 4
@@ -23,8 +22,7 @@ from .base_wizard import (
 
 
 class LocalizationWizard(BaseWizard):
-    """
-    Wizard for internationalization and localization
+    """Wizard for internationalization and localization
 
     Uses:
     - Level 2: Guide user through i18n setup
@@ -72,7 +70,6 @@ class LocalizationWizard(BaseWizard):
 
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute localization workflow"""
-
         self._assess_emotional_state(task)
         self._extract_constraints(task)
 
@@ -91,7 +88,9 @@ class LocalizationWizard(BaseWizard):
             ),
             WizardArtifact(type="code", title="i18n Framework Setup", content=framework_setup),
             WizardArtifact(
-                type="code", title="Translation Files (JSON)", content=translation_files
+                type="code",
+                title="Translation Files (JSON)",
+                content=translation_files,
             ),
             WizardArtifact(type="code", title="RTL (Right-to-Left) Support", content=rtl_support),
             WizardArtifact(
@@ -100,7 +99,9 @@ class LocalizationWizard(BaseWizard):
                 content=self._create_translation_workflow(task),
             ),
             WizardArtifact(
-                type="doc", title="Localization Forecast", content=localization_forecast
+                type="doc",
+                title="Localization Forecast",
+                content=localization_forecast,
             ),
         ]
 
@@ -633,7 +634,7 @@ class LocalizationWizard(BaseWizard):
                 risk="Translation quality issues lead to poor UX or brand damage",
                 mitigation="Use professional translators for critical content. Native speaker review before launch.",
                 severity="high",
-            )
+            ),
         )
 
         risks.append(
@@ -641,7 +642,7 @@ class LocalizationWizard(BaseWizard):
                 risk="Hardcoded strings missed during extraction, breaking localized UI",
                 mitigation="Automated string extraction in CI/CD. Fail builds if hardcoded strings detected.",
                 severity="medium",
-            )
+            ),
         )
 
         risks.append(
@@ -649,7 +650,7 @@ class LocalizationWizard(BaseWizard):
                 risk="RTL layout breaks UI for Arabic/Hebrew users",
                 mitigation="Use CSS logical properties. Test with RTL languages from day 1.",
                 severity="high",
-            )
+            ),
         )
 
         risks.append(
@@ -657,7 +658,7 @@ class LocalizationWizard(BaseWizard):
                 risk="Translation debt accumulates faster than team can handle",
                 mitigation="Integrate with translation service (Lokalise, Phrase). Automate translation workflow.",
                 severity="medium",
-            )
+            ),
         )
 
         return risks
@@ -672,14 +673,14 @@ class LocalizationWizard(BaseWizard):
                     owner="Translation Team / Service",
                     what="Translate extracted strings, maintain translation memory, cultural adaptation",
                     when="Continuously as strings are added",
-                )
+                ),
             )
             handoffs.append(
                 WizardHandoff(
                     owner="Native Speaker Reviewers",
                     what="QA translations, test in-app, verify cultural appropriateness",
                     when="Before each release",
-                )
+                ),
             )
 
         return handoffs

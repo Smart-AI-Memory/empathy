@@ -1,5 +1,4 @@
-"""
-Wizard-to-Agent Bridge Adapter
+"""Wizard-to-Agent Bridge Adapter
 
 Bridges existing wizards to the Agent Factory interface, allowing
 wizards to be used in Agent Factory workflows and pipelines.
@@ -30,20 +29,19 @@ logger = logging.getLogger(__name__)
 
 
 class WizardAgent(BaseAgent):
-    """
-    Agent wrapper for existing wizards.
+    """Agent wrapper for existing wizards.
 
     Adapts the wizard's analyze() method to the Agent Factory
     invoke() interface.
     """
 
     def __init__(self, wizard, config: AgentConfig):
-        """
-        Initialize wizard agent.
+        """Initialize wizard agent.
 
         Args:
             wizard: Wizard instance (must have analyze() method)
             config: Agent configuration
+
         """
         super().__init__(config)
         self._wizard = wizard
@@ -65,8 +63,7 @@ class WizardAgent(BaseAgent):
     @safe_agent_operation("wizard_invoke")
     @log_performance(threshold_seconds=5.0)
     async def invoke(self, input_data: str | dict, context: dict | None = None) -> dict:
-        """
-        Invoke the wizard.
+        """Invoke the wizard.
 
         Transforms input to wizard format, calls analyze(),
         and transforms output to Agent Factory format.
@@ -77,6 +74,7 @@ class WizardAgent(BaseAgent):
 
         Returns:
             Dict with output, metadata, predictions, recommendations
+
         """
         # Build wizard context
         wizard_context = context.copy() if context else {}
@@ -122,21 +120,19 @@ class WizardAgent(BaseAgent):
         }
 
     def _extract_output(self, result: dict) -> str:
-        """
-        Extract the main output from wizard result.
+        """Extract the main output from wizard result.
 
         Wizards return various formats, so we need to normalize.
         """
         # Try common output keys
         for key in ["output", "response", "result", "analysis", "summary"]:
-            if key in result and result[key]:
+            if result.get(key):
                 value = result[key]
                 if isinstance(value, str):
                     return value
-                elif isinstance(value, list):
+                if isinstance(value, list):
                     return "\n".join(str(item) for item in value)
-                else:
-                    return str(value)
+                return str(value)
 
         # Fall back to recommendations
         if "recommendations" in result:
@@ -148,8 +144,7 @@ class WizardAgent(BaseAgent):
         return str(result)
 
     async def stream(self, input_data: str | dict, context: dict | None = None):
-        """
-        Stream wizard response.
+        """Stream wizard response.
 
         Most wizards don't support streaming, so we yield the full response.
         """
@@ -158,16 +153,14 @@ class WizardAgent(BaseAgent):
 
 
 class WizardWorkflow(BaseWorkflow):
-    """
-    Workflow for chaining multiple wizards.
+    """Workflow for chaining multiple wizards.
 
     Allows wizards to be composed into pipelines where
     the output of one feeds into the next.
     """
 
     async def run(self, input_data: str | dict, initial_state: dict | None = None) -> dict:
-        """
-        Run the wizard workflow.
+        """Run the wizard workflow.
 
         Args:
             input_data: Initial input
@@ -175,6 +168,7 @@ class WizardWorkflow(BaseWorkflow):
 
         Returns:
             Combined results from all wizards
+
         """
         self._state = initial_state or {}
         self._state["input"] = input_data
@@ -200,7 +194,7 @@ class WizardWorkflow(BaseWorkflow):
             # Collect predictions and recommendations
             self._state.setdefault("all_predictions", []).extend(result.get("predictions", []))
             self._state.setdefault("all_recommendations", []).extend(
-                result.get("recommendations", [])
+                result.get("recommendations", []),
             )
 
         # Build final output
@@ -234,8 +228,7 @@ class WizardWorkflow(BaseWorkflow):
 
 
 class WizardAdapter(BaseAdapter):
-    """
-    Adapter for integrating wizards with Agent Factory.
+    """Adapter for integrating wizards with Agent Factory.
 
     Allows existing wizards to be used as agents in the
     Agent Factory ecosystem.
@@ -255,15 +248,16 @@ class WizardAdapter(BaseAdapter):
 
         # Use in workflow
         result = await agent.invoke({"linters": {"eslint": output}})
+
     """
 
     def __init__(self, provider: str = "anthropic", api_key: str | None = None):
-        """
-        Initialize wizard adapter.
+        """Initialize wizard adapter.
 
         Args:
             provider: LLM provider (for model tier resolution)
             api_key: API key (uses env var if not provided)
+
         """
         self.provider = provider
         self.api_key = api_key
@@ -277,8 +271,7 @@ class WizardAdapter(BaseAdapter):
         return True
 
     def create_agent(self, config: AgentConfig) -> WizardAgent:
-        """
-        Create a wizard agent from config.
+        """Create a wizard agent from config.
 
         Note: This requires a wizard instance in config.framework_options.
 
@@ -287,12 +280,13 @@ class WizardAdapter(BaseAdapter):
 
         Returns:
             WizardAgent instance
+
         """
         wizard = config.framework_options.get("wizard")
         if wizard is None:
             raise ValueError(
                 "Wizard instance required in config.framework_options['wizard']. "
-                "Use create_agent_from_wizard() for easier wizard wrapping."
+                "Use create_agent_from_wizard() for easier wizard wrapping.",
             )
 
         return WizardAgent(wizard, config)
@@ -305,8 +299,7 @@ class WizardAdapter(BaseAdapter):
         model_tier: str = "capable",
         **kwargs,
     ) -> WizardAgent:
-        """
-        Create an agent from a wizard instance.
+        """Create an agent from a wizard instance.
 
         This is the preferred method for wrapping wizards.
 
@@ -319,6 +312,7 @@ class WizardAdapter(BaseAdapter):
 
         Returns:
             WizardAgent wrapping the wizard
+
         """
         # Get wizard name
         wizard_name = getattr(wizard, "name", wizard.__class__.__name__)
@@ -354,8 +348,7 @@ class WizardAdapter(BaseAdapter):
         wizard_kwargs: dict | None = None,
         **agent_kwargs,
     ) -> WizardAgent:
-        """
-        Create an agent from a wizard class.
+        """Create an agent from a wizard class.
 
         Instantiates the wizard and wraps it.
 
@@ -367,6 +360,7 @@ class WizardAdapter(BaseAdapter):
 
         Returns:
             WizardAgent instance
+
         """
         wizard_kwargs = wizard_kwargs or {}
         wizard = wizard_class(**wizard_kwargs)
@@ -374,8 +368,7 @@ class WizardAdapter(BaseAdapter):
         return self.create_agent_from_wizard(wizard, name=name, **agent_kwargs)
 
     def create_workflow(self, config: WorkflowConfig, agents: list[BaseAgent]) -> WizardWorkflow:
-        """
-        Create a workflow from wizard agents.
+        """Create a workflow from wizard agents.
 
         Args:
             config: Workflow configuration
@@ -383,14 +376,18 @@ class WizardAdapter(BaseAdapter):
 
         Returns:
             WizardWorkflow instance
+
         """
         return WizardWorkflow(config, agents)
 
     def create_tool(
-        self, name: str, description: str, func, args_schema: dict | None = None
+        self,
+        name: str,
+        description: str,
+        func,
+        args_schema: dict | None = None,
     ) -> dict:
-        """
-        Create a tool dict (wizards don't use tools directly).
+        """Create a tool dict (wizards don't use tools directly).
 
         Returns a tool dict for documentation purposes.
         """
@@ -405,8 +402,7 @@ class WizardAdapter(BaseAdapter):
 
 # Convenience function for quick wizard wrapping
 def wrap_wizard(wizard, name: str | None = None, model_tier: str = "capable") -> WizardAgent:
-    """
-    Quick helper to wrap a wizard as an agent.
+    """Quick helper to wrap a wizard as an agent.
 
     Args:
         wizard: Wizard instance
@@ -424,6 +420,7 @@ def wrap_wizard(wizard, name: str | None = None, model_tier: str = "capable") ->
         security_agent = wrap_wizard(security_wizard, model_tier="capable")
 
         result = await security_agent.invoke({"code": source_code})
+
     """
     adapter = WizardAdapter()
     return adapter.create_agent_from_wizard(wizard, name=name, model_tier=model_tier)

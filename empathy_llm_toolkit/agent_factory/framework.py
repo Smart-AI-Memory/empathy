@@ -1,5 +1,4 @@
-"""
-Framework Enumeration and Detection
+"""Framework Enumeration and Detection
 
 Defines supported agent frameworks and provides utilities for
 detecting installed frameworks and selecting defaults.
@@ -53,11 +52,11 @@ class Framework(Enum):
 
 
 def detect_installed_frameworks() -> list[Framework]:
-    """
-    Detect which agent frameworks are installed.
+    """Detect which agent frameworks are installed.
 
     Returns:
         List of installed frameworks (native is always included)
+
     """
     installed = [Framework.NATIVE]
 
@@ -105,14 +104,14 @@ def detect_installed_frameworks() -> list[Framework]:
 
 
 def get_recommended_framework(use_case: str = "general") -> Framework:
-    """
-    Get recommended framework for a use case.
+    """Get recommended framework for a use case.
 
     Args:
         use_case: One of "general", "rag", "multi_agent", "code_analysis", "workflow"
 
     Returns:
         Recommended framework based on installed packages and use case
+
     """
     installed = detect_installed_frameworks()
 
@@ -135,11 +134,11 @@ def get_recommended_framework(use_case: str = "general") -> Framework:
 
 
 def get_framework_info(framework: Framework) -> dict[str, object]:
-    """
-    Get information about a framework.
+    """Get information about a framework.
 
     Returns:
         Dict with name, description, best_for, install_command
+
     """
     info: dict[Framework, dict[str, object]] = {
         Framework.NATIVE: {

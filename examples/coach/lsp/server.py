@@ -1,5 +1,4 @@
-"""
-Coach Language Server
+"""Coach Language Server
 Implements LSP protocol to bridge IDE extensions to Coach engine
 
 Copyright 2025 Deep Study AI, LLC
@@ -67,7 +66,8 @@ class CoachLanguageServer(LanguageServer):
 
         @self.feature(CODE_ACTION)
         async def code_action(
-            ls: LanguageServer, params: lsp_types.CodeActionParams
+            ls: LanguageServer,
+            params: lsp_types.CodeActionParams,
         ) -> list[lsp_types.CodeAction]:
             """Provide quick fixes from wizards"""
             diagnostics = params.context.diagnostics
@@ -95,7 +95,8 @@ class CoachLanguageServer(LanguageServer):
 
         @self.feature(HOVER)
         async def hover(
-            ls: LanguageServer, params: lsp_types.HoverParams
+            ls: LanguageServer,
+            params: lsp_types.HoverParams,
         ) -> lsp_types.Hover | None:
             """Provide Level 4 predictions on hover"""
             document_uri = params.text_document.uri
@@ -113,8 +114,9 @@ class CoachLanguageServer(LanguageServer):
                 logger.info(f"Providing Level 4 prediction: {prediction[:50]}...")
                 return lsp_types.Hover(
                     contents=lsp_types.MarkupContent(
-                        kind=lsp_types.MarkupKind.Markdown, value=prediction
-                    )
+                        kind=lsp_types.MarkupKind.Markdown,
+                        value=prediction,
+                    ),
                 )
             return None
 
@@ -161,7 +163,9 @@ class CoachLanguageServer(LanguageServer):
                 context = f"Scenario: {scenario}"
 
             task = WizardTask(
-                role="developer", task=f"Multi-wizard review: {scenario}", context=context
+                role="developer",
+                task=f"Multi-wizard review: {scenario}",
+                context=context,
             )
 
             # Run multi-wizard
@@ -262,7 +266,9 @@ class CoachLanguageServer(LanguageServer):
         return diagnostics
 
     def _create_security_fix(
-        self, diagnostic: lsp_types.Diagnostic, params: lsp_types.CodeActionParams
+        self,
+        diagnostic: lsp_types.Diagnostic,
+        params: lsp_types.CodeActionParams,
     ) -> lsp_types.CodeAction | None:
         """Create quick fix for security issue"""
         action = lsp_types.CodeAction(
@@ -274,7 +280,9 @@ class CoachLanguageServer(LanguageServer):
         return action
 
     def _create_performance_fix(
-        self, diagnostic: lsp_types.Diagnostic, params: lsp_types.CodeActionParams
+        self,
+        diagnostic: lsp_types.Diagnostic,
+        params: lsp_types.CodeActionParams,
     ) -> lsp_types.CodeAction | None:
         """Create quick fix for performance issue"""
         action = lsp_types.CodeAction(
@@ -285,7 +293,9 @@ class CoachLanguageServer(LanguageServer):
         return action
 
     def _create_accessibility_fix(
-        self, diagnostic: lsp_types.Diagnostic, params: lsp_types.CodeActionParams
+        self,
+        diagnostic: lsp_types.Diagnostic,
+        params: lsp_types.CodeActionParams,
     ) -> lsp_types.CodeAction | None:
         """Create quick fix for accessibility issue"""
         action = lsp_types.CodeAction(

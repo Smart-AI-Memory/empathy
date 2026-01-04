@@ -1,5 +1,4 @@
-"""
-Integration Tests for Software Development Plugin
+"""Integration Tests for Software Development Plugin
 
 Tests all three wizards working together on realistic projects.
 
@@ -24,7 +23,6 @@ class TestSoftwarePluginIntegration:
     @pytest.mark.asyncio
     async def test_complete_project_analysis(self):
         """Test all three wizards analyzing the same project"""
-
         with tempfile.TemporaryDirectory() as tmpdir:
             # Create a realistic project with multiple issues
             api_file = os.path.join(tmpdir, "api.py")
@@ -65,7 +63,7 @@ def process_user_request(user_id):
 def execute_command(user_command):
     # Command injection - security issue
     os.system(user_command)
-"""
+""",
                 )
 
             # Create test file (incomplete coverage)
@@ -81,7 +79,7 @@ def test_authenticate_user():
 # - get_user_posts
 # - process_user_request (HIGH RISK - payment/auth related)
 # - execute_command (HIGH RISK - system command)
-"""
+""",
                 )
 
             # Create profiling data
@@ -108,8 +106,8 @@ def test_authenticate_user():
                             "cumulative_time": 4.0,
                             "percent": 40.0,
                         },
-                    ]
-                }
+                    ],
+                },
             )
 
             # Endpoint configuration
@@ -121,11 +119,11 @@ def test_authenticate_user():
             security_wizard = SecurityAnalysisWizard()
 
             testing_result = await testing_wizard.analyze(
-                {"source_files": [api_file], "test_files": [test_file], "project_path": tmpdir}
+                {"source_files": [api_file], "test_files": [test_file], "project_path": tmpdir},
             )
 
             performance_result = await performance_wizard.analyze(
-                {"profiler_data": profile_data, "profiler_type": "simple_json"}
+                {"profiler_data": profile_data, "profiler_type": "simple_json"},
             )
 
             security_result = await security_wizard.analyze(
@@ -133,7 +131,7 @@ def test_authenticate_user():
                     "source_files": [api_file],
                     "project_path": tmpdir,
                     "endpoint_config": endpoint_config,
-                }
+                },
             )
 
             # Verify each wizard found issues
@@ -159,7 +157,6 @@ def test_authenticate_user():
     @pytest.mark.asyncio
     async def test_integrated_risk_assessment(self):
         """Test combining predictions from all wizards for risk assessment"""
-
         with tempfile.TemporaryDirectory() as tmpdir:
             # Create vulnerable payment processing code
             payment_file = os.path.join(tmpdir, "payment.py")
@@ -178,7 +175,7 @@ def process_payment(amount, card_number):
     encrypted_card = hashlib.md5(card_number.encode()).hexdigest()
 
     return True
-"""
+""",
                 )
 
             test_file = os.path.join(tmpdir, "test_payment.py")
@@ -197,9 +194,9 @@ def process_payment(amount, card_number):
                             "calls": 1000,
                             "cumulative_time": 0.5,
                             "percent": 50.0,
-                        }
-                    ]
-                }
+                        },
+                    ],
+                },
             )
 
             endpoint_config = {payment_file: {"endpoint_public": True}}
@@ -210,11 +207,11 @@ def process_payment(amount, card_number):
             security_wizard = SecurityAnalysisWizard()
 
             testing_result = await testing_wizard.analyze(
-                {"source_files": [payment_file], "test_files": [test_file], "project_path": tmpdir}
+                {"source_files": [payment_file], "test_files": [test_file], "project_path": tmpdir},
             )
 
             performance_result = await performance_wizard.analyze(
-                {"profiler_data": profile_data, "profiler_type": "simple_json"}
+                {"profiler_data": profile_data, "profiler_type": "simple_json"},
             )
 
             security_result = await security_wizard.analyze(
@@ -222,7 +219,7 @@ def process_payment(amount, card_number):
                     "source_files": [payment_file],
                     "project_path": tmpdir,
                     "endpoint_config": endpoint_config,
-                }
+                },
             )
 
             # Combine risk assessments
@@ -237,7 +234,7 @@ def process_payment(amount, card_number):
                             "type": "untested_payment_code",
                             "severity": "CRITICAL",
                             "source": "testing_wizard",
-                        }
+                        },
                     )
 
             # Check for exploitable vulnerabilities (CRITICAL)
@@ -250,7 +247,7 @@ def process_payment(amount, card_number):
                             "severity": assessment["exploitability"],
                             "vulnerability": assessment["vulnerability"]["name"],
                             "source": "security_wizard",
-                        }
+                        },
                     )
 
             # Check for performance bottlenecks in critical code (HIGH)
@@ -262,7 +259,7 @@ def process_payment(amount, card_number):
                             "type": "payment_performance_bottleneck",
                             "severity": "HIGH",
                             "source": "performance_wizard",
-                        }
+                        },
                     )
 
             # Should have identified multiple critical issues
@@ -275,7 +272,6 @@ def process_payment(amount, card_number):
     @pytest.mark.asyncio
     async def test_wizard_recommendations_complement(self):
         """Test that wizard recommendations work together"""
-
         with tempfile.TemporaryDirectory() as tmpdir:
             code_file = os.path.join(tmpdir, "app.py")
             with open(code_file, "w") as f:
@@ -289,7 +285,7 @@ def search_users(query):
         if result:
             results.append(result)
     return results
-"""
+""",
                 )
 
             test_file = os.path.join(tmpdir, "test_app.py")
@@ -308,9 +304,9 @@ def search_users(query):
                             "calls": 100,
                             "cumulative_time": 8.0,
                             "percent": 80.0,
-                        }
-                    ]
-                }
+                        },
+                    ],
+                },
             )
 
             endpoint_config = {code_file: {"endpoint_public": True}}
@@ -321,11 +317,11 @@ def search_users(query):
             security_wizard = SecurityAnalysisWizard()
 
             testing_result = await testing_wizard.analyze(
-                {"source_files": [code_file], "test_files": [test_file], "project_path": tmpdir}
+                {"source_files": [code_file], "test_files": [test_file], "project_path": tmpdir},
             )
 
             performance_result = await performance_wizard.analyze(
-                {"profiler_data": profile_data, "profiler_type": "simple_json"}
+                {"profiler_data": profile_data, "profiler_type": "simple_json"},
             )
 
             security_result = await security_wizard.analyze(
@@ -333,7 +329,7 @@ def search_users(query):
                     "source_files": [code_file],
                     "project_path": tmpdir,
                     "endpoint_config": endpoint_config,
-                }
+                },
             )
 
             # Collect all recommendations
@@ -379,7 +375,6 @@ def search_users(query):
     @pytest.mark.asyncio
     async def test_all_wizards_standard_interface(self):
         """Test all wizards follow standard interface"""
-
         testing_wizard = EnhancedTestingWizard()
         performance_wizard = PerformanceProfilingWizard()
         security_wizard = SecurityAnalysisWizard()
@@ -403,15 +398,15 @@ def search_users(query):
             profile_data = json.dumps({"functions": []})
 
             testing_result = await testing_wizard.analyze(
-                {"source_files": [test_file], "test_files": [test_file], "project_path": tmpdir}
+                {"source_files": [test_file], "test_files": [test_file], "project_path": tmpdir},
             )
 
             performance_result = await performance_wizard.analyze(
-                {"profiler_data": profile_data, "profiler_type": "simple_json"}
+                {"profiler_data": profile_data, "profiler_type": "simple_json"},
             )
 
             security_result = await security_wizard.analyze(
-                {"source_files": [test_file], "project_path": tmpdir}
+                {"source_files": [test_file], "project_path": tmpdir},
             )
 
             # All should have standard keys
@@ -430,7 +425,6 @@ class TestSoftwarePluginWorkflow:
     @pytest.mark.asyncio
     async def test_pre_deployment_workflow(self):
         """Test using all wizards before deployment"""
-
         with tempfile.TemporaryDirectory() as tmpdir:
             # Simulate code ready for deployment
             app_file = os.path.join(tmpdir, "application.py")
@@ -441,7 +435,7 @@ def critical_function(user_input):
     # This is going to production
     result = db.execute(f"SELECT * FROM data WHERE id={user_input}")
     return result.fetchone()
-"""
+""",
                 )
 
             test_file = os.path.join(tmpdir, "test_application.py")
@@ -460,9 +454,9 @@ def critical_function(user_input):
                             "calls": 100,
                             "cumulative_time": 1.0,
                             "percent": 100.0,
-                        }
-                    ]
-                }
+                        },
+                    ],
+                },
             )
 
             endpoint_config = {app_file: {"endpoint_public": True}}
@@ -478,17 +472,17 @@ def critical_function(user_input):
                     "source_files": [app_file],
                     "project_path": tmpdir,
                     "endpoint_config": endpoint_config,
-                }
+                },
             )
 
             # Step 2: Test coverage analysis
             testing_result = await testing_wizard.analyze(
-                {"source_files": [app_file], "test_files": [test_file], "project_path": tmpdir}
+                {"source_files": [app_file], "test_files": [test_file], "project_path": tmpdir},
             )
 
             # Step 3: Performance check
             performance_result = await performance_wizard.analyze(
-                {"profiler_data": profile_data, "profiler_type": "simple_json"}
+                {"profiler_data": profile_data, "profiler_type": "simple_json"},
             )
 
             # Determine deployment readiness

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-Complete AI/Software Wizards Demo - Level 4 Anticipatory Intelligence
+"""Complete AI/Software Wizards Demo - Level 4 Anticipatory Intelligence
 
 Demonstrates all 12+ AI-focused software development wizards:
 - Multi-Model Coordination

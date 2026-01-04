@@ -1,5 +1,4 @@
-"""
-Code Health Assistant Module
+"""Code Health Assistant Module
 
 A comprehensive system for running health checks, tracking trends,
 and auto-fixing common issues in codebases.
@@ -224,12 +223,12 @@ class HealthCheckRunner:
         project_root: str = ".",
         config: dict | None = None,
     ):
-        """
-        Initialize the health check runner.
+        """Initialize the health check runner.
 
         Args:
             project_root: Root directory of the project
             config: Configuration dictionary (uses defaults if not provided)
+
         """
         self.project_root = Path(project_root).resolve()
         self.config = {**DEFAULT_CONFIG, **(config or {})}
@@ -345,6 +344,7 @@ class HealthCheckRunner:
             if tool == "ruff":
                 result = subprocess.run(
                     ["ruff", "check", "--output-format=json", str(self.project_root)],
+                    check=False,
                     capture_output=True,
                     text=True,
                     cwd=str(self.project_root),
@@ -364,12 +364,13 @@ class HealthCheckRunner:
                                 ),
                                 fixable=item.get("fix") is not None,
                                 fix_command="ruff check --fix" if item.get("fix") else None,
-                            )
+                            ),
                         )
             else:
                 # Fallback to flake8
                 result = subprocess.run(
                     ["flake8", "--format=json", str(self.project_root)],
+                    check=False,
                     capture_output=True,
                     text=True,
                     cwd=str(self.project_root),
@@ -416,6 +417,7 @@ class HealthCheckRunner:
             if tool == "black":
                 result = subprocess.run(
                     ["black", "--check", "--diff", str(self.project_root)],
+                    check=False,
                     capture_output=True,
                     text=True,
                     cwd=str(self.project_root),
@@ -439,7 +441,7 @@ class HealthCheckRunner:
                                     severity="warning",
                                     fixable=True,
                                     fix_command=f"black {current_file}",
-                                )
+                                ),
                             )
 
                     # Also check stderr for files that would be reformatted
@@ -458,7 +460,7 @@ class HealthCheckRunner:
                                             severity="warning",
                                             fixable=True,
                                             fix_command=f"black {file_path}",
-                                        )
+                                        ),
                                     )
 
             score = max(0, 100 - len(issues) * 10)  # -10 per file
@@ -500,6 +502,7 @@ class HealthCheckRunner:
             if tool == "pyright":
                 result = subprocess.run(
                     ["pyright", "--outputjson"],
+                    check=False,
                     capture_output=True,
                     text=True,
                     cwd=str(self.project_root),
@@ -519,7 +522,7 @@ class HealthCheckRunner:
                                     message=diag.get("message", ""),
                                     severity="error" if diag.get("severity") == 1 else "warning",
                                     fixable=False,
-                                )
+                                ),
                             )
                     except json.JSONDecodeError:
                         pass
@@ -527,6 +530,7 @@ class HealthCheckRunner:
             elif tool == "mypy":
                 result = subprocess.run(
                     ["mypy", "--show-error-codes", "--no-error-summary", str(self.project_root)],
+                    check=False,
                     capture_output=True,
                     text=True,
                     cwd=str(self.project_root),
@@ -546,7 +550,7 @@ class HealthCheckRunner:
                                         message=parts[3].strip() if len(parts) > 3 else "",
                                         severity="error",
                                         fixable=False,
-                                    )
+                                    ),
                                 )
 
             score = max(0, 100 - len(issues) * 10)  # -10 per type error
@@ -590,6 +594,7 @@ class HealthCheckRunner:
         try:
             result = subprocess.run(
                 ["pytest", "--tb=no", "-q", "--co", "-q"],  # Collect only, quiet
+                check=False,
                 capture_output=True,
                 text=True,
                 cwd=str(self.project_root),
@@ -604,6 +609,7 @@ class HealthCheckRunner:
             # Run actual tests
             result = subprocess.run(
                 ["pytest", "--tb=short", "-q"],
+                check=False,
                 capture_output=True,
                 text=True,
                 cwd=str(self.project_root),
@@ -654,7 +660,7 @@ class HealthCheckRunner:
                                     message=f"Test failed: {test_path}",
                                     severity="error",
                                     fixable=False,
-                                )
+                                ),
                             )
 
             total = passed + failed
@@ -708,6 +714,7 @@ class HealthCheckRunner:
         try:
             result = subprocess.run(
                 ["bandit", "-r", "-f", "json", str(self.project_root)],
+                check=False,
                 capture_output=True,
                 text=True,
                 cwd=str(self.project_root),
@@ -727,7 +734,7 @@ class HealthCheckRunner:
                                 message=item.get("issue_text", ""),
                                 severity="error" if severity in ["HIGH", "MEDIUM"] else "warning",
                                 fixable=False,
-                            )
+                            ),
                         )
                 except json.JSONDecodeError:
                     pass
@@ -780,6 +787,7 @@ class HealthCheckRunner:
         try:
             result = subprocess.run(
                 ["pip-audit", "--format=json"],
+                check=False,
                 capture_output=True,
                 text=True,
                 cwd=str(self.project_root),
@@ -799,7 +807,7 @@ class HealthCheckRunner:
                                 severity="error" if item.get("fix_versions") else "warning",
                                 fixable=bool(item.get("fix_versions")),
                                 fix_command=self._get_fix_cmd(item),
-                            )
+                            ),
                         )
                 except json.JSONDecodeError:
                     pass
@@ -855,7 +863,7 @@ class AutoFixer:
                             "issue": issue.message,
                             "fix_command": issue.fix_command,
                             "safe": self._is_safe_fix(issue),
-                        }
+                        },
                     )
         return fixes
 
@@ -958,7 +966,7 @@ class HealthTrendTracker:
                 "status": report.status.value,
                 "total_issues": report.total_issues,
                 "results": {r.category.value: r.score for r in report.results},
-            }
+            },
         )
 
         filepath.write_text(json.dumps(history, indent=2))
@@ -989,7 +997,7 @@ class HealthTrendTracker:
                             {
                                 "date": date,
                                 "score": entry.get("overall_score", 0),
-                            }
+                            },
                         )
                 except json.JSONDecodeError:
                     pass
@@ -1043,13 +1051,13 @@ def format_health_output(
     level: int = 1,
     thresholds: dict | None = None,
 ) -> str:
-    """
-    Format health report for display.
+    """Format health report for display.
 
     Args:
         report: The health report to format
         level: Detail level (1=summary, 2=details, 3=full)
         thresholds: Score thresholds for status icons
+
     """
     thresholds = thresholds or DEFAULT_THRESHOLDS
     lines = []
@@ -1086,7 +1094,7 @@ def format_health_output(
         if result.category == CheckCategory.TESTS:
             details = result.details
             lines.append(
-                f"{icon} {category_name}: {details.get('passed', 0)}P/{details.get('failed', 0)}F"
+                f"{icon} {category_name}: {details.get('passed', 0)}P/{details.get('failed', 0)}F",
             )
         elif result.category == CheckCategory.LINT:
             lines.append(f"{icon} {category_name}: {result.issue_count} warnings")
@@ -1152,7 +1160,7 @@ def format_health_output(
         lines.append("")
         lines.append("━" * 40)
         lines.append(
-            f"[1] Fix {report.total_fixable} auto-fixable issues  [2] See details  [3] Full report"
+            f"[1] Fix {report.total_fixable} auto-fixable issues  [2] See details  [3] Full report",
         )
 
     return "\n".join(lines)

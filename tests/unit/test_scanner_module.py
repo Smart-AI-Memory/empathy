@@ -1,5 +1,4 @@
-"""
-Unit tests for project scanner module
+"""Unit tests for project scanner module
 
 Tests ProjectScanner for file discovery, categorization, and pattern matching.
 """
@@ -224,7 +223,7 @@ def foo():
 
 def bar():
     return "hello"
-"""
+""",
             )
 
             scanner = ProjectScanner(tmpdir)

@@ -1,5 +1,4 @@
-"""
-Tests for SecureReleasePipeline.
+"""Tests for SecureReleasePipeline.
 
 Tests the comprehensive security pipeline that composes multiple workflows.
 
@@ -242,7 +241,7 @@ class TestAggregateFindings:
         pipeline = SecureReleasePipeline()
         security_result = MagicMock()
         security_result.final_output = {
-            "assessment": {"severity_breakdown": {"critical": 2, "high": 3, "medium": 5}}
+            "assessment": {"severity_breakdown": {"critical": 2, "high": 3, "medium": 5}},
         }
 
         findings = pipeline._aggregate_findings(None, security_result, None)
@@ -273,7 +272,7 @@ class TestAggregateFindings:
         }
         security_result = MagicMock()
         security_result.final_output = {
-            "assessment": {"severity_breakdown": {"critical": 3, "high": 5}}
+            "assessment": {"severity_breakdown": {"critical": 3, "high": 5}},
         }
 
         findings = pipeline._aggregate_findings(crew_report, security_result, None)
@@ -363,7 +362,7 @@ class TestGenerateRecommendations:
             "assessment": {
                 "critical_findings": [{"title": "SQL Injection"}],
                 "high_findings": [],
-            }
+            },
         }
 
         blockers, warnings, recs = pipeline._generate_recommendations(crew_report, None, None, None)
@@ -378,7 +377,7 @@ class TestGenerateRecommendations:
             "assessment": {
                 "critical_findings": [],
                 "high_findings": [{"title": "XSS Vulnerability"}],
-            }
+            },
         }
 
         blockers, warnings, recs = pipeline._generate_recommendations(crew_report, None, None, None)
@@ -393,7 +392,10 @@ class TestGenerateRecommendations:
         security_result.final_output = {"assessment": {"risk_level": "critical"}}
 
         blockers, warnings, recs = pipeline._generate_recommendations(
-            None, security_result, None, None
+            None,
+            security_result,
+            None,
+            None,
         )
 
         assert any("critical risk" in b.lower() for b in blockers)
@@ -405,7 +407,10 @@ class TestGenerateRecommendations:
         code_review_result.final_output = {"verdict": "reject"}
 
         blockers, warnings, recs = pipeline._generate_recommendations(
-            None, None, code_review_result, None
+            None,
+            None,
+            code_review_result,
+            None,
         )
 
         assert any("rejected" in b.lower() for b in blockers)
@@ -417,7 +422,10 @@ class TestGenerateRecommendations:
         code_review_result.final_output = {"verdict": "request_changes"}
 
         blockers, warnings, recs = pipeline._generate_recommendations(
-            None, None, code_review_result, None
+            None,
+            None,
+            code_review_result,
+            None,
         )
 
         assert any("changes requested" in w.lower() for w in warnings)
@@ -432,7 +440,10 @@ class TestGenerateRecommendations:
         }
 
         blockers, warnings, recs = pipeline._generate_recommendations(
-            None, None, None, release_result
+            None,
+            None,
+            None,
+            release_result,
         )
 
         assert any("Missing changelog" in b for b in blockers)
@@ -606,7 +617,7 @@ class TestPipelineExecution:
         mock_security_result = MagicMock()
         mock_security_result.cost_report.total_cost = 0.05
         mock_security_result.final_output = {
-            "assessment": {"risk_score": 30, "severity_breakdown": {}}
+            "assessment": {"risk_score": 30, "severity_breakdown": {}},
         }
 
         mock_release_result = MagicMock()
@@ -617,7 +628,7 @@ class TestPipelineExecution:
         with (
             patch("src.empathy_os.workflows.security_audit.SecurityAuditWorkflow") as mock_sec_cls,
             patch(
-                "src.empathy_os.workflows.release_prep.ReleasePreparationWorkflow"
+                "src.empathy_os.workflows.release_prep.ReleasePreparationWorkflow",
             ) as mock_rel_cls,
             patch(
                 "src.empathy_os.workflows.security_adapters._check_crew_available",

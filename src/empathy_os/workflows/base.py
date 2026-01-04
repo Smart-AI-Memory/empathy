@@ -1,5 +1,4 @@
-"""
-Base Workflow Class for Multi-Model Pipelines
+"""Base Workflow Class for Multi-Model Pipelines
 
 Provides a framework for creating cost-optimized workflows that
 route tasks to the appropriate model tier.
@@ -94,8 +93,7 @@ from empathy_os.models import MODEL_REGISTRY  # noqa: E402
 
 
 def _build_provider_models() -> dict[ModelProvider, dict[ModelTier, str]]:
-    """
-    Build PROVIDER_MODELS from MODEL_REGISTRY.
+    """Build PROVIDER_MODELS from MODEL_REGISTRY.
 
     This ensures PROVIDER_MODELS stays in sync with the single source of truth.
     """
@@ -247,8 +245,7 @@ def _save_workflow_run(
 
 
 def get_workflow_stats(history_file: str = WORKFLOW_HISTORY_FILE) -> dict:
-    """
-    Get workflow statistics for dashboard.
+    """Get workflow statistics for dashboard.
 
     Returns:
         Dictionary with workflow stats including:
@@ -257,6 +254,7 @@ def get_workflow_stats(history_file: str = WORKFLOW_HISTORY_FILE) -> dict:
         - by_provider: Per-provider stats
         - recent_runs: Last 10 runs
         - total_savings: Total cost savings
+
     """
     history = _load_workflow_history(history_file)
 
@@ -333,8 +331,7 @@ def get_workflow_stats(history_file: str = WORKFLOW_HISTORY_FILE) -> dict:
 
 
 class BaseWorkflow(ABC):
-    """
-    Base class for multi-model workflows.
+    """Base class for multi-model workflows.
 
     Subclasses define stages and tier mappings:
 
@@ -367,8 +364,7 @@ class BaseWorkflow(ABC):
         telemetry_backend: TelemetryBackend | None = None,
         progress_callback: ProgressCallback | None = None,
     ):
-        """
-        Initialize workflow with optional cost tracker, provider, and config.
+        """Initialize workflow with optional cost tracker, provider, and config.
 
         Args:
             cost_tracker: CostTracker instance for logging costs
@@ -382,6 +378,7 @@ class BaseWorkflow(ABC):
                      Defaults to TelemetryStore (JSONL file backend).
             progress_callback: Callback for real-time progress updates.
                      If provided, enables live progress tracking during execution.
+
         """
         from .config import WorkflowConfig
 
@@ -435,10 +432,13 @@ class BaseWorkflow(ABC):
         return model
 
     async def _call_llm(
-        self, tier: ModelTier, system: str, user_message: str, max_tokens: int = 4096
+        self,
+        tier: ModelTier,
+        system: str,
+        user_message: str,
+        max_tokens: int = 4096,
     ) -> tuple[str, int, int]:
-        """
-        Provider-agnostic LLM call using the configured provider.
+        """Provider-agnostic LLM call using the configured provider.
 
         This method uses run_step_with_executor internally to make LLM calls
         that respect the configured provider (anthropic, openai, google, etc.).
@@ -451,6 +451,7 @@ class BaseWorkflow(ABC):
 
         Returns:
             Tuple of (response_content, input_tokens, output_tokens)
+
         """
         from .step_config import WorkflowStepConfig
 
@@ -522,10 +523,12 @@ class BaseWorkflow(ABC):
 
     @abstractmethod
     async def run_stage(
-        self, stage_name: str, tier: ModelTier, input_data: Any
+        self,
+        stage_name: str,
+        tier: ModelTier,
+        input_data: Any,
     ) -> tuple[Any, int, int]:
-        """
-        Execute a single workflow stage.
+        """Execute a single workflow stage.
 
         Args:
             stage_name: Name of the stage to run
@@ -534,12 +537,11 @@ class BaseWorkflow(ABC):
 
         Returns:
             Tuple of (output_data, input_tokens, output_tokens)
+
         """
-        pass
 
     def should_skip_stage(self, stage_name: str, input_data: Any) -> tuple[bool, str | None]:
-        """
-        Determine if a stage should be skipped.
+        """Determine if a stage should be skipped.
 
         Override in subclasses for conditional stage execution.
 
@@ -549,18 +551,19 @@ class BaseWorkflow(ABC):
 
         Returns:
             Tuple of (should_skip, reason)
+
         """
         return False, None
 
     async def execute(self, **kwargs: Any) -> WorkflowResult:
-        """
-        Execute the full workflow.
+        """Execute the full workflow.
 
         Args:
             **kwargs: Initial input data for the workflow
 
         Returns:
             WorkflowResult with stages, output, and cost report
+
         """
         # Set run ID for telemetry correlation
         self._run_id = str(uuid.uuid4())
@@ -611,7 +614,9 @@ class BaseWorkflow(ABC):
 
                 # Run the stage
                 output, input_tokens, output_tokens = await self.run_stage(
-                    stage_name, tier, current_data
+                    stage_name,
+                    tier,
+                    current_data,
                 )
 
                 stage_end = datetime.now()
@@ -744,8 +749,7 @@ class BaseWorkflow(ABC):
         user_id: str | None = None,
         session_id: str | None = None,
     ) -> ExecutionContext:
-        """
-        Create an ExecutionContext for a step execution.
+        """Create an ExecutionContext for a step execution.
 
         Args:
             step_name: Name of the workflow step
@@ -755,6 +759,7 @@ class BaseWorkflow(ABC):
 
         Returns:
             ExecutionContext populated with workflow info
+
         """
         return ExecutionContext(
             workflow_name=self.name,
@@ -769,8 +774,7 @@ class BaseWorkflow(ABC):
         )
 
     def _create_default_executor(self) -> LLMExecutor:
-        """
-        Create a default EmpathyLLMExecutor wrapped in ResilientExecutor.
+        """Create a default EmpathyLLMExecutor wrapped in ResilientExecutor.
 
         This method is called lazily when run_step_with_executor is used
         without a pre-configured executor. The executor is wrapped with
@@ -778,6 +782,7 @@ class BaseWorkflow(ABC):
 
         Returns:
             LLMExecutor instance (ResilientExecutor wrapping EmpathyLLMExecutor)
+
         """
         from empathy_os.models.empathy_executor import EmpathyLLMExecutor
         from empathy_os.models.fallback import ResilientExecutor
@@ -792,13 +797,13 @@ class BaseWorkflow(ABC):
         return ResilientExecutor(executor=base_executor)
 
     def _get_executor(self) -> LLMExecutor:
-        """
-        Get or create the LLM executor.
+        """Get or create the LLM executor.
 
         Returns the configured executor or creates a default one.
 
         Returns:
             LLMExecutor instance
+
         """
         if self._executor is None:
             self._executor = self._create_default_executor()
@@ -818,8 +823,7 @@ class BaseWorkflow(ABC):
         error_message: str | None = None,
         fallback_used: bool = False,
     ) -> None:
-        """
-        Emit an LLMCallRecord to the telemetry backend.
+        """Emit an LLMCallRecord to the telemetry backend.
 
         Args:
             step_name: Name of the workflow step
@@ -833,6 +837,7 @@ class BaseWorkflow(ABC):
             success: Whether the call succeeded
             error_message: Error message if failed
             fallback_used: Whether fallback was used
+
         """
         record = LLMCallRecord(
             call_id=str(uuid.uuid4()),
@@ -858,11 +863,11 @@ class BaseWorkflow(ABC):
             pass  # Don't fail workflow if telemetry fails
 
     def _emit_workflow_telemetry(self, result: WorkflowResult) -> None:
-        """
-        Emit a WorkflowRunRecord to the telemetry backend.
+        """Emit a WorkflowRunRecord to the telemetry backend.
 
         Args:
             result: The workflow result to record
+
         """
         # Build stage records
         stages = [
@@ -911,8 +916,7 @@ class BaseWorkflow(ABC):
         system: str | None = None,
         **kwargs: Any,
     ) -> tuple[str, int, int, float]:
-        """
-        Run a workflow step using the LLMExecutor.
+        """Run a workflow step using the LLMExecutor.
 
         This method provides a unified interface for executing steps with
         automatic routing, telemetry, and cost tracking. If no executor
@@ -926,6 +930,7 @@ class BaseWorkflow(ABC):
 
         Returns:
             Tuple of (content, input_tokens, output_tokens, cost)
+
         """
         executor = self._get_executor()
 
@@ -970,11 +975,11 @@ class BaseWorkflow(ABC):
     # =========================================================================
 
     def _get_xml_config(self) -> dict[str, Any]:
-        """
-        Get XML prompt configuration for this workflow.
+        """Get XML prompt configuration for this workflow.
 
         Returns:
             Dictionary with XML configuration settings.
+
         """
         if self._config is None:
             return {}
@@ -995,8 +1000,7 @@ class BaseWorkflow(ABC):
         input_payload: str,
         extra: dict[str, Any] | None = None,
     ) -> str:
-        """
-        Render a prompt using XML template if enabled.
+        """Render a prompt using XML template if enabled.
 
         Args:
             role: The role for the AI (e.g., "security analyst").
@@ -1009,6 +1013,7 @@ class BaseWorkflow(ABC):
 
         Returns:
             Rendered prompt string (XML if enabled, plain text otherwise).
+
         """
         from empathy_os.prompts import PromptContext, XmlPromptTemplate, get_template
 
@@ -1017,7 +1022,12 @@ class BaseWorkflow(ABC):
         if not config.get("enabled", False):
             # Fall back to plain text
             return self._render_plain_prompt(
-                role, goal, instructions, constraints, input_type, input_payload
+                role,
+                goal,
+                instructions,
+                constraints,
+                input_type,
+                input_payload,
             )
 
         # Create context
@@ -1075,14 +1085,14 @@ class BaseWorkflow(ABC):
         return "\n".join(parts)
 
     def _parse_xml_response(self, response: str) -> dict[str, Any]:
-        """
-        Parse an XML response if XML enforcement is enabled.
+        """Parse an XML response if XML enforcement is enabled.
 
         Args:
             response: The LLM response text.
 
         Returns:
             Dictionary with parsed fields or raw response data.
+
         """
         from empathy_os.prompts import XmlResponseParser
 
@@ -1110,10 +1120,12 @@ class BaseWorkflow(ABC):
         }
 
     def _extract_findings_from_response(
-        self, response: str, files_changed: list[str], code_context: str = ""
+        self,
+        response: str,
+        files_changed: list[str],
+        code_context: str = "",
     ) -> list[dict[str, Any]]:
-        """
-        Extract structured findings from LLM response.
+        """Extract structured findings from LLM response.
 
         Tries multiple strategies in order:
         1. XML parsing (if XML tags present)
@@ -1140,6 +1152,7 @@ class BaseWorkflow(ABC):
                     "recommendation": "Fix suggestion"
                 }
             ]
+
         """
         import re
         import uuid
@@ -1162,7 +1175,8 @@ class BaseWorkflow(ABC):
             if parsed.success and parsed.findings:
                 for raw_finding in parsed.findings:
                     enriched = self._enrich_finding_with_location(
-                        raw_finding.to_dict(), files_changed
+                        raw_finding.to_dict(),
+                        files_changed,
                     )
                     findings.append(enriched)
                 return findings
@@ -1223,7 +1237,7 @@ class BaseWorkflow(ABC):
                             "message": message.strip() if message else "",
                             "details": "",
                             "recommendation": "",
-                        }
+                        },
                     )
 
         # Deduplicate by file:line
@@ -1238,10 +1252,11 @@ class BaseWorkflow(ABC):
         return unique_findings
 
     def _enrich_finding_with_location(
-        self, raw_finding: dict[str, Any], files_changed: list[str]
+        self,
+        raw_finding: dict[str, Any],
+        files_changed: list[str],
     ) -> dict[str, Any]:
-        """
-        Enrich a finding from XML parser with file/line/column fields.
+        """Enrich a finding from XML parser with file/line/column fields.
 
         Args:
             raw_finding: Finding dict from XML parser (has 'location' string field)
@@ -1249,6 +1264,7 @@ class BaseWorkflow(ABC):
 
         Returns:
             Enriched finding dict with file, line, column fields
+
         """
         import uuid
 
@@ -1257,7 +1273,7 @@ class BaseWorkflow(ABC):
 
         # Map category from severity or title keywords
         category = self._infer_category(
-            raw_finding.get("title", "") + " " + raw_finding.get("details", "")
+            raw_finding.get("title", "") + " " + raw_finding.get("details", ""),
         )
 
         return {
@@ -1273,10 +1289,11 @@ class BaseWorkflow(ABC):
         }
 
     def _parse_location_string(
-        self, location: str, files_changed: list[str]
+        self,
+        location: str,
+        files_changed: list[str],
     ) -> tuple[str, int, int]:
-        """
-        Parse a location string to extract file, line, column.
+        """Parse a location string to extract file, line, column.
 
         Handles formats like:
         - "src/auth.py:42:10"
@@ -1291,6 +1308,7 @@ class BaseWorkflow(ABC):
         Returns:
             Tuple of (file_path, line_number, column_number)
             Defaults: ("", 1, 1) if parsing fails
+
         """
         import re
 
@@ -1300,7 +1318,8 @@ class BaseWorkflow(ABC):
 
         # Try colon-separated format: file.py:line:col
         match = re.search(
-            r"([^\s:]+\.(?:py|ts|tsx|js|jsx|java|go|rb|php)):(\d+)(?::(\d+))?", location
+            r"([^\s:]+\.(?:py|ts|tsx|js|jsx|java|go|rb|php)):(\d+)(?::(\d+))?",
+            location,
         )
         if match:
             file_path = match.group(1)
@@ -1342,14 +1361,14 @@ class BaseWorkflow(ABC):
         return (files_changed[0] if files_changed else "", 1, 1)
 
     def _infer_severity(self, text: str) -> str:
-        """
-        Infer severity from keywords in text.
+        """Infer severity from keywords in text.
 
         Args:
             text: Message or title text
 
         Returns:
             Severity level: critical, high, medium, low, or info
+
         """
         text_lower = text.lower()
 
@@ -1403,14 +1422,14 @@ class BaseWorkflow(ABC):
         return "info"
 
     def _infer_category(self, text: str) -> str:
-        """
-        Infer finding category from keywords.
+        """Infer finding category from keywords.
 
         Args:
             text: Message or title text
 
         Returns:
             Category: security, performance, maintainability, style, or correctness
+
         """
         text_lower = text.lower()
 

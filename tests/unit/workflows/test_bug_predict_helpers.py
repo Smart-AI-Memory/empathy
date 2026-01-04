@@ -1,5 +1,4 @@
-"""
-Educational Tests for Bug Prediction Helper Functions
+"""Educational Tests for Bug Prediction Helper Functions
 
 This test module demonstrates fundamental testing patterns:
 1. File I/O mocking with tmp_path fixture
@@ -42,8 +41,7 @@ from empathy_os.workflows.bug_predict import (
 
 @pytest.mark.unit
 class TestLoadBugPredictConfig:
-    """
-    Educational tests for configuration loading.
+    """Educational tests for configuration loading.
 
     Key Learning Points:
     - Using tmp_path fixture for file system testing
@@ -54,8 +52,7 @@ class TestLoadBugPredictConfig:
     """
 
     def test_returns_defaults_when_no_config_file_exists(self):
-        """
-        Test that defaults are returned when no config file is found.
+        """Test that defaults are returned when no config file is found.
 
         Teaching Pattern: Testing the "happy path" fallback behavior.
         When external dependencies aren't available, the system should
@@ -82,8 +79,7 @@ class TestLoadBugPredictConfig:
                 os.chdir(original_cwd)
 
     def test_loads_from_empathy_config_yml(self, tmp_path, monkeypatch):
-        """
-        Test loading from primary config file: empathy.config.yml
+        """Test loading from primary config file: empathy.config.yml
 
         Teaching Pattern: Using tmp_path fixture to create temporary files.
         This is the preferred way to test file I/O in pytest.
@@ -100,7 +96,7 @@ bug_predict:
   acceptable_exception_contexts:
     - version
     - config
-"""
+""",
         )
         # Change to the temp directory
         monkeypatch.chdir(tmp_path)
@@ -115,8 +111,7 @@ bug_predict:
         assert "version" in config["acceptable_exception_contexts"]
 
     def test_tries_multiple_config_file_paths(self, tmp_path, monkeypatch):
-        """
-        Test that config loader tries multiple file paths in order.
+        """Test that config loader tries multiple file paths in order.
 
         Teaching Pattern: Testing fallback logic with multiple paths.
         Real systems often try multiple locations for config files.
@@ -127,7 +122,7 @@ bug_predict:
             """
 bug_predict:
   risk_threshold: 0.9
-"""
+""",
         )
         monkeypatch.chdir(tmp_path)
 
@@ -138,8 +133,7 @@ bug_predict:
         assert config["risk_threshold"] == 0.9
 
     def test_handles_malformed_yaml_gracefully(self, tmp_path, monkeypatch):
-        """
-        Test that malformed YAML doesn't crash, falls back to defaults.
+        """Test that malformed YAML doesn't crash, falls back to defaults.
 
         Teaching Pattern: Testing error handling and graceful degradation.
         Production code should never crash on bad input - always have a fallback.
@@ -152,7 +146,7 @@ bug_predict:
   risk_threshold: 0.85
     invalid_indentation: this is broken
   - list item with wrong level
-"""
+""",
         )
         monkeypatch.chdir(tmp_path)
 
@@ -164,8 +158,7 @@ bug_predict:
         assert config["exclude_files"] == []  # Default value
 
     def test_merges_partial_config_with_defaults(self, tmp_path, monkeypatch):
-        """
-        Test that partial configs are merged with defaults.
+        """Test that partial configs are merged with defaults.
 
         Teaching Pattern: Testing merge logic - some fields custom, others default.
         This is common in configuration systems.
@@ -176,7 +169,7 @@ bug_predict:
             """
 bug_predict:
   risk_threshold: 0.95
-"""
+""",
         )
         monkeypatch.chdir(tmp_path)
 
@@ -196,8 +189,7 @@ bug_predict:
 
 @pytest.mark.unit
 class TestShouldExcludeFile:
-    """
-    Educational tests for glob pattern matching.
+    """Educational tests for glob pattern matching.
 
     Key Learning Points:
     - Parametrized testing for multiple test cases
@@ -225,8 +217,7 @@ class TestShouldExcludeFile:
         ],
     )
     def test_pattern_matching(self, file_path, pattern, expected):
-        """
-        Test various glob pattern matching scenarios.
+        """Test various glob pattern matching scenarios.
 
         Teaching Pattern: Parametrized testing - one test function, many cases.
         This is more maintainable than writing individual test functions.
@@ -237,8 +228,7 @@ class TestShouldExcludeFile:
         ), f"Pattern '{pattern}' should {'match' if expected else 'not match'} '{file_path}'"
 
     def test_no_exclusion_when_pattern_list_empty(self):
-        """
-        Test that empty pattern list excludes nothing.
+        """Test that empty pattern list excludes nothing.
 
         Teaching Pattern: Testing edge case - empty input.
         Always test with empty/null/zero inputs!
@@ -247,8 +237,7 @@ class TestShouldExcludeFile:
         assert result is False
 
     def test_first_matching_pattern_wins(self):
-        """
-        Test that matching stops at first match.
+        """Test that matching stops at first match.
 
         Teaching Pattern: Testing early-exit logic.
         """
@@ -260,8 +249,7 @@ class TestShouldExcludeFile:
         assert result is True
 
     def test_multiple_patterns_any_match_excludes(self):
-        """
-        Test that ANY pattern matching causes exclusion.
+        """Test that ANY pattern matching causes exclusion.
 
         Teaching Pattern: Testing OR logic (any match is sufficient).
         """
@@ -276,8 +264,7 @@ class TestShouldExcludeFile:
         assert _should_exclude_file("build/module.pyc", patterns) is True
 
     def test_case_sensitive_matching(self):
-        """
-        Test that pattern matching is case-sensitive.
+        """Test that pattern matching is case-sensitive.
 
         Teaching Pattern: Testing case sensitivity assumptions.
         """
@@ -293,8 +280,7 @@ class TestShouldExcludeFile:
 
 @pytest.mark.unit
 class TestIsAcceptableBroadException:
-    """
-    Educational tests for context-based code analysis.
+    """Educational tests for context-based code analysis.
 
     Key Learning Points:
     - Testing functions that analyze surrounding code
@@ -304,8 +290,7 @@ class TestIsAcceptableBroadException:
     """
 
     def test_accepts_version_detection_with_fallback(self):
-        """
-        Test that version detection with fallback is acceptable.
+        """Test that version detection with fallback is acceptable.
 
         Teaching Pattern: Testing context-aware heuristics.
         The SAME exception pattern is good in some contexts, bad in others.
@@ -328,9 +313,7 @@ class TestIsAcceptableBroadException:
         assert result is True
 
     def test_accepts_config_loading_with_defaults(self):
-        """
-        Test that config loading with fallback to defaults is acceptable.
-        """
+        """Test that config loading with fallback to defaults is acceptable."""
         line = "except Exception:"
         context_before = [
             "try:",
@@ -344,9 +327,7 @@ class TestIsAcceptableBroadException:
         assert result is True
 
     def test_accepts_optional_import_detection(self):
-        """
-        Test that optional import detection is acceptable.
-        """
+        """Test that optional import detection is acceptable."""
         line = "except Exception:"
         context_before = [
             "try:",
@@ -360,9 +341,7 @@ class TestIsAcceptableBroadException:
         assert result is True
 
     def test_accepts_cleanup_code_in_del(self):
-        """
-        Test that cleanup code in __del__ is acceptable.
-        """
+        """Test that cleanup code in __del__ is acceptable."""
         line = "except Exception:"
         context_before = [
             "def __del__(self):",
@@ -377,8 +356,7 @@ class TestIsAcceptableBroadException:
         assert result is True
 
     def test_rejects_bare_exception_without_context(self):
-        """
-        Test that broad exception without justifying context is rejected.
+        """Test that broad exception without justifying context is rejected.
 
         Teaching Pattern: Testing the negative case - what should be flagged.
         """
@@ -395,8 +373,7 @@ class TestIsAcceptableBroadException:
         assert result is False
 
     def test_accepts_intentional_comment_justification(self):
-        """
-        Test that explicit comment justifying broad catch is acceptable.
+        """Test that explicit comment justifying broad catch is acceptable.
 
         Teaching Pattern: Documentation as intent - comments can indicate
         that the developer knew what they were doing.
@@ -415,8 +392,7 @@ class TestIsAcceptableBroadException:
         assert result is True
 
     def test_respects_configurable_contexts(self):
-        """
-        Test that acceptable_contexts parameter is respected.
+        """Test that acceptable_contexts parameter is respected.
 
         Teaching Pattern: Testing configuration-driven behavior.
         """
@@ -427,7 +403,10 @@ class TestIsAcceptableBroadException:
         # With 'version' in acceptable contexts
         assert (
             _is_acceptable_broad_exception(
-                line, context_before, context_after, acceptable_contexts=["version"]
+                line,
+                context_before,
+                context_after,
+                acceptable_contexts=["version"],
             )
             is True
         )
@@ -451,8 +430,7 @@ class TestIsAcceptableBroadException:
 
 @pytest.mark.unit
 class TestIsDangerousEvalUsage:
-    """
-    Educational tests for security vulnerability detection.
+    """Educational tests for security vulnerability detection.
 
     Key Learning Points:
     - Testing security scanners
@@ -463,8 +441,7 @@ class TestIsDangerousEvalUsage:
     """
 
     def test_detects_real_eval_usage(self):
-        """
-        Test that real dangerous eval() usage is detected.
+        """Test that real dangerous eval() usage is detected.
 
         Teaching Pattern: Testing the positive case - what SHOULD be flagged.
         """
@@ -478,8 +455,7 @@ def dangerous_function(user_input):
         assert result is True
 
     def test_ignores_eval_in_string_literal(self):
-        """
-        Test that eval() in string literals (detection code) is NOT flagged.
+        """Test that eval() in string literals (detection code) is NOT flagged.
 
         Teaching Pattern: False positive filtering.
         Code that DETECTS vulnerabilities is not itself vulnerable.
@@ -495,9 +471,7 @@ def check_for_vulnerabilities(code):
         assert result is False
 
     def test_ignores_eval_in_comments(self):
-        """
-        Test that eval mentioned in comments is NOT flagged.
-        """
+        """Test that eval mentioned in comments is NOT flagged."""
         content = """
 def safe_function():
     # SECURITY FIX: We removed eval() and use json.loads() instead
@@ -508,8 +482,7 @@ def safe_function():
         assert result is False
 
     def test_ignores_javascript_regex_exec(self):
-        """
-        Test that JavaScript regex.exec() is NOT flagged.
+        """Test that JavaScript regex.exec() is NOT flagged.
 
         Teaching Pattern: Language-aware detection.
         Same function name, different meaning in different languages.
@@ -522,8 +495,7 @@ const result = pattern.exec(text);  // This is safe - regex matching
         assert result is False
 
     def test_ignores_test_fixtures_with_eval(self):
-        """
-        Test that test fixtures containing eval (test data) are NOT flagged.
+        """Test that test fixtures containing eval (test data) are NOT flagged.
 
         Teaching Pattern: Distinguishing between test data and production code.
         """
@@ -543,8 +515,7 @@ def bad_function(x):
         assert result is False
 
     def test_ignores_scanner_test_files(self):
-        """
-        Test that scanner test files themselves are excluded.
+        """Test that scanner test files themselves are excluded.
 
         Teaching Pattern: Meta-exclusion - test files for security scanners
         deliberately contain examples of bad patterns.
@@ -559,9 +530,7 @@ def test_detect_eval():
         assert result is False
 
     def test_detects_exec_in_addition_to_eval(self):
-        """
-        Test that exec() is also detected (not just eval).
-        """
+        """Test that exec() is also detected (not just eval)."""
         content = """
 def dangerous():
     exec(user_code)  # Also dangerous!
@@ -570,8 +539,7 @@ def dangerous():
         assert result is True
 
     def test_no_false_positive_on_file_without_eval(self):
-        """
-        Test that files without eval/exec are not flagged.
+        """Test that files without eval/exec are not flagged.
 
         Teaching Pattern: Testing the true negative - what should NOT be flagged.
         """
@@ -591,8 +559,7 @@ def safe_function():
 
 @pytest.mark.unit
 class TestHasProblematicExceptionHandlers:
-    """
-    Educational tests for the integration function.
+    """Educational tests for the integration function.
 
     This function combines multiple helpers to perform analysis.
 
@@ -603,9 +570,7 @@ class TestHasProblematicExceptionHandlers:
     """
 
     def test_flags_problematic_exception_handler(self):
-        """
-        Test that truly problematic exception handlers are flagged.
-        """
+        """Test that truly problematic exception handlers are flagged."""
         content = """
 def process_data(data):
     try:
@@ -618,9 +583,7 @@ def process_data(data):
         assert result is True
 
     def test_allows_version_detection_pattern(self):
-        """
-        Test that version detection pattern is allowed.
-        """
+        """Test that version detection pattern is allowed."""
         content = """
 def get_version():
     try:
@@ -632,9 +595,7 @@ def get_version():
         assert result is False
 
     def test_no_flag_when_no_broad_exceptions_exist(self):
-        """
-        Test that files without broad exceptions are not flagged.
-        """
+        """Test that files without broad exceptions are not flagged."""
         content = """
 def safe_function():
     try:
@@ -648,9 +609,7 @@ def safe_function():
         assert result is False
 
     def test_respects_configurable_contexts_parameter(self):
-        """
-        Test that custom acceptable_contexts are respected.
-        """
+        """Test that custom acceptable_contexts are respected."""
         content = """
 def custom_handler():
     try:
@@ -661,7 +620,9 @@ def custom_handler():
         # With 'config' in acceptable contexts
         assert (
             _has_problematic_exception_handlers(
-                content, "src/config.py", acceptable_contexts=["config"]
+                content,
+                "src/config.py",
+                acceptable_contexts=["config"],
             )
             is False
         )

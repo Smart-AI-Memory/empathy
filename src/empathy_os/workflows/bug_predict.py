@@ -1,5 +1,4 @@
-"""
-Bug Prediction Workflow
+"""Bug Prediction Workflow
 
 Analyzes code against learned bug patterns to predict likely issues
 before they manifest in production.
@@ -27,11 +26,11 @@ from .step_config import WorkflowStepConfig
 
 
 def _load_bug_predict_config() -> dict:
-    """
-    Load bug_predict configuration from empathy.config.yml.
+    """Load bug_predict configuration from empathy.config.yml.
 
     Returns:
         Dict with bug_predict settings, or defaults if not found.
+
     """
     defaults = {
         "risk_threshold": 0.7,
@@ -55,10 +54,12 @@ def _load_bug_predict_config() -> dict:
                         bug_config = config["bug_predict"]
                         return {
                             "risk_threshold": bug_config.get(
-                                "risk_threshold", defaults["risk_threshold"]
+                                "risk_threshold",
+                                defaults["risk_threshold"],
                             ),
                             "exclude_files": bug_config.get(
-                                "exclude_files", defaults["exclude_files"]
+                                "exclude_files",
+                                defaults["exclude_files"],
                             ),
                             "acceptable_exception_contexts": bug_config.get(
                                 "acceptable_exception_contexts",
@@ -72,8 +73,7 @@ def _load_bug_predict_config() -> dict:
 
 
 def _should_exclude_file(file_path: str, exclude_patterns: list[str]) -> bool:
-    """
-    Check if a file should be excluded based on glob patterns.
+    """Check if a file should be excluded based on glob patterns.
 
     Args:
         file_path: Path to the file
@@ -81,6 +81,7 @@ def _should_exclude_file(file_path: str, exclude_patterns: list[str]) -> bool:
 
     Returns:
         True if the file matches any exclusion pattern.
+
     """
     for pattern in exclude_patterns:
         # Handle ** patterns for recursive matching
@@ -96,11 +97,11 @@ def _should_exclude_file(file_path: str, exclude_patterns: list[str]) -> bool:
                     return True
                 if not suffix and fnmatch.fnmatch(file_path, f"*{prefix}*"):
                     return True
-        else:
-            if fnmatch.fnmatch(file_path, pattern) or fnmatch.fnmatch(
-                Path(file_path).name, pattern
-            ):
-                return True
+        elif fnmatch.fnmatch(file_path, pattern) or fnmatch.fnmatch(
+            Path(file_path).name,
+            pattern,
+        ):
+            return True
 
     return False
 
@@ -111,8 +112,7 @@ def _is_acceptable_broad_exception(
     context_after: list[str],
     acceptable_contexts: list[str] | None = None,
 ) -> bool:
-    """
-    Check if a broad exception handler is acceptable based on context.
+    """Check if a broad exception handler is acceptable based on context.
 
     Acceptable patterns (configurable via acceptable_contexts):
     - version: Version/metadata detection with fallback
@@ -129,6 +129,7 @@ def _is_acceptable_broad_exception(
 
     Returns:
         True if the exception handler is acceptable, False if problematic.
+
     """
     # Default acceptable contexts if not provided
     if acceptable_contexts is None:
@@ -181,8 +182,7 @@ def _has_problematic_exception_handlers(
     file_path: str,
     acceptable_contexts: list[str] | None = None,
 ) -> bool:
-    """
-    Check if file has problematic broad exception handlers.
+    """Check if file has problematic broad exception handlers.
 
     Filters out acceptable uses like version detection, config fallbacks,
     and optional feature detection.
@@ -194,6 +194,7 @@ def _has_problematic_exception_handlers(
 
     Returns:
         True if problematic exception handlers found, False otherwise.
+
     """
     if "except:" not in content and "except Exception:" not in content:
         return False
@@ -210,7 +211,10 @@ def _has_problematic_exception_handlers(
             context_after = lines[i + 1 : min(len(lines), i + 6)]
 
             if not _is_acceptable_broad_exception(
-                stripped, context_before, context_after, acceptable_contexts
+                stripped,
+                context_before,
+                context_after,
+                acceptable_contexts,
             ):
                 problematic_count += 1
 
@@ -219,8 +223,7 @@ def _has_problematic_exception_handlers(
 
 
 def _is_dangerous_eval_usage(content: str, file_path: str) -> bool:
-    """
-    Check if file contains dangerous eval/exec usage, filtering false positives.
+    """Check if file contains dangerous eval/exec usage, filtering false positives.
 
     Excludes:
     - String literals used for detection (e.g., 'if "eval(" in content')
@@ -232,6 +235,7 @@ def _is_dangerous_eval_usage(content: str, file_path: str) -> bool:
 
     Returns:
         True if dangerous eval/exec usage is found, False otherwise.
+
     """
     # Check if file even contains eval or exec
     if "eval(" not in content and "exec(" not in content:
@@ -259,13 +263,20 @@ def _is_dangerous_eval_usage(content: str, file_path: str) -> bool:
             # All eval/exec occurrences might be in fixtures - do deeper check
             # Remove fixture content and see if any eval/exec remains
             content_without_fixtures = re.sub(
-                r"write_text\s*\([^)]*\)", "", content, flags=re.DOTALL
+                r"write_text\s*\([^)]*\)",
+                "",
+                content,
+                flags=re.DOTALL,
             )
             content_without_fixtures = re.sub(
-                r'write_text\s*\("""[\s\S]*?"""\)', "", content_without_fixtures
+                r'write_text\s*\("""[\s\S]*?"""\)',
+                "",
+                content_without_fixtures,
             )
             content_without_fixtures = re.sub(
-                r"write_text\s*\('''[\s\S]*?'''\)", "", content_without_fixtures
+                r"write_text\s*\('''[\s\S]*?'''\)",
+                "",
+                content_without_fixtures,
             )
             if "eval(" not in content_without_fixtures and "exec(" not in content_without_fixtures:
                 return False
@@ -347,8 +358,7 @@ BUG_PREDICT_STEPS = {
 
 
 class BugPredictionWorkflow(BaseWorkflow):
-    """
-    Predict bugs by correlating current code with learned patterns.
+    """Predict bugs by correlating current code with learned patterns.
 
     Uses pattern library integration to identify code that matches
     historical bug patterns and generates preventive recommendations.
@@ -370,14 +380,14 @@ class BugPredictionWorkflow(BaseWorkflow):
         patterns_dir: str = "./patterns",
         **kwargs: Any,
     ):
-        """
-        Initialize bug prediction workflow.
+        """Initialize bug prediction workflow.
 
         Args:
             risk_threshold: Minimum risk score to trigger premium recommendations
                            (defaults to config value or 0.7)
             patterns_dir: Directory containing learned patterns
             **kwargs: Additional arguments passed to BaseWorkflow
+
         """
         super().__init__(**kwargs)
 
@@ -407,8 +417,7 @@ class BugPredictionWorkflow(BaseWorkflow):
                 self._bug_patterns = []
 
     def should_skip_stage(self, stage_name: str, input_data: Any) -> tuple[bool, str | None]:
-        """
-        Conditionally downgrade recommend stage based on risk score.
+        """Conditionally downgrade recommend stage based on risk score.
 
         Args:
             stage_name: Name of the stage to check
@@ -416,6 +425,7 @@ class BugPredictionWorkflow(BaseWorkflow):
 
         Returns:
             Tuple of (should_skip, reason)
+
         """
         if stage_name == "recommend":
             if self._risk_score < self.risk_threshold:
@@ -425,10 +435,12 @@ class BugPredictionWorkflow(BaseWorkflow):
         return False, None
 
     async def run_stage(
-        self, stage_name: str, tier: ModelTier, input_data: Any
+        self,
+        stage_name: str,
+        tier: ModelTier,
+        input_data: Any,
     ) -> tuple[Any, int, int]:
-        """
-        Route to specific stage implementation.
+        """Route to specific stage implementation.
 
         Args:
             stage_name: Name of the stage to run
@@ -437,21 +449,20 @@ class BugPredictionWorkflow(BaseWorkflow):
 
         Returns:
             Tuple of (output_data, input_tokens, output_tokens)
+
         """
         if stage_name == "scan":
             return await self._scan(input_data, tier)
-        elif stage_name == "correlate":
+        if stage_name == "correlate":
             return await self._correlate(input_data, tier)
-        elif stage_name == "predict":
+        if stage_name == "predict":
             return await self._predict(input_data, tier)
-        elif stage_name == "recommend":
+        if stage_name == "recommend":
             return await self._recommend(input_data, tier)
-        else:
-            raise ValueError(f"Unknown stage: {stage_name}")
+        raise ValueError(f"Unknown stage: {stage_name}")
 
     async def _scan(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Scan codebase for code patterns and structures.
+        """Scan codebase for code patterns and structures.
 
         In production, this would analyze source files for patterns
         that historically correlate with bugs.
@@ -505,20 +516,22 @@ class BugPredictionWorkflow(BaseWorkflow):
                                 "path": str(file_path),
                                 "lines": len(content.splitlines()),
                                 "size": len(content),
-                            }
+                            },
                         )
 
                         # Look for common bug-prone patterns
                         # Use smart detection with configurable acceptable contexts
                         if _has_problematic_exception_handlers(
-                            content, str(file_path), acceptable_contexts
+                            content,
+                            str(file_path),
+                            acceptable_contexts,
                         ):
                             patterns_found.append(
                                 {
                                     "file": str(file_path),
                                     "pattern": "broad_exception",
                                     "severity": "medium",
-                                }
+                                },
                             )
                         if "# TODO" in content or "# FIXME" in content:
                             patterns_found.append(
@@ -526,7 +539,7 @@ class BugPredictionWorkflow(BaseWorkflow):
                                     "file": str(file_path),
                                     "pattern": "incomplete_code",
                                     "severity": "low",
-                                }
+                                },
                             )
                         # Use smart detection to filter false positives
                         if _is_dangerous_eval_usage(content, str(file_path)):
@@ -535,7 +548,7 @@ class BugPredictionWorkflow(BaseWorkflow):
                                     "file": str(file_path),
                                     "pattern": "dangerous_eval",
                                     "severity": "high",
-                                }
+                                },
                             )
                     except OSError:
                         continue
@@ -556,8 +569,7 @@ class BugPredictionWorkflow(BaseWorkflow):
         )
 
     async def _correlate(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Match current code patterns against historical bug patterns.
+        """Match current code patterns against historical bug patterns.
 
         Correlates findings from scan stage with patterns stored in
         the debugging.json pattern library.
@@ -582,7 +594,7 @@ class BugPredictionWorkflow(BaseWorkflow):
                                 "fix": bug_pattern.get("fix", ""),
                             },
                             "confidence": 0.75,
-                        }
+                        },
                     )
 
         # Add correlations for patterns without direct matches
@@ -593,7 +605,7 @@ class BugPredictionWorkflow(BaseWorkflow):
                         "current_pattern": pattern,
                         "historical_bug": None,
                         "confidence": 0.3,
-                    }
+                    },
                 )
 
         input_tokens = len(str(input_data)) // 4
@@ -620,8 +632,7 @@ class BugPredictionWorkflow(BaseWorkflow):
         return historical in correlation_map.get(current, [])
 
     async def _predict(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Identify high-risk areas based on correlation scores.
+        """Identify high-risk areas based on correlation scores.
 
         Calculates risk scores for each file and identifies
         the most likely locations for bugs to occur.
@@ -676,8 +687,7 @@ class BugPredictionWorkflow(BaseWorkflow):
         )
 
     async def _recommend(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Generate actionable fix recommendations using LLM.
+        """Generate actionable fix recommendations using LLM.
 
         Uses premium tier (or capable if downgraded) to generate
         specific recommendations for addressing predicted bugs.
@@ -695,7 +705,7 @@ class BugPredictionWorkflow(BaseWorkflow):
             patterns = pred.get("patterns", [])
             for p in patterns:
                 issues_summary.append(
-                    f"- {file_path}: {p.get('pattern')} (severity: {p.get('severity')})"
+                    f"- {file_path}: {p.get('pattern')} (severity: {p.get('severity')})",
                 )
 
         # Build input payload
@@ -765,12 +775,18 @@ Provide detailed recommendations for preventing bugs."""
             except Exception:
                 # Fall back to legacy _call_llm if executor fails
                 response, input_tokens, output_tokens = await self._call_llm(
-                    tier, system or "", user_message, max_tokens=2000
+                    tier,
+                    system or "",
+                    user_message,
+                    max_tokens=2000,
                 )
         else:
             # Legacy path for backward compatibility
             response, input_tokens, output_tokens = await self._call_llm(
-                tier, system or "", user_message, max_tokens=2000
+                tier,
+                system or "",
+                user_message,
+                max_tokens=2000,
             )
 
         # Parse XML response if enforcement is enabled
@@ -791,7 +807,7 @@ Provide detailed recommendations for preventing bugs."""
                     "summary": parsed_data.get("summary"),
                     "findings": parsed_data.get("findings", []),
                     "checklist": parsed_data.get("checklist", []),
-                }
+                },
             )
 
         # Add formatted report for human readability
@@ -801,8 +817,7 @@ Provide detailed recommendations for preventing bugs."""
 
 
 def format_bug_predict_report(result: dict, input_data: dict) -> str:
-    """
-    Format bug prediction output as a human-readable report.
+    """Format bug prediction output as a human-readable report.
 
     Args:
         result: The recommend stage result
@@ -810,6 +825,7 @@ def format_bug_predict_report(result: dict, input_data: dict) -> str:
 
     Returns:
         Formatted report string
+
     """
     lines = []
 
@@ -872,7 +888,7 @@ def format_bug_predict_report(result: dict, input_data: dict) -> str:
             lines.append(f"  🔴 {file_path} (risk: {score:.0%})")
             for p in file_patterns[:3]:
                 lines.append(
-                    f"      - {p.get('pattern', 'unknown')}: {p.get('severity', 'unknown')}"
+                    f"      - {p.get('pattern', 'unknown')}: {p.get('severity', 'unknown')}",
                 )
         lines.append("")
 
@@ -890,7 +906,7 @@ def format_bug_predict_report(result: dict, input_data: dict) -> str:
             historical = corr.get("historical_bug", {})
             confidence = corr.get("confidence", 0)
             lines.append(
-                f"  ⚠️ {current.get('pattern', 'unknown')} correlates with {historical.get('type', 'unknown')}"
+                f"  ⚠️ {current.get('pattern', 'unknown')} correlates with {historical.get('type', 'unknown')}",
             )
             lines.append(f"      Confidence: {confidence:.0%}")
             if historical.get("root_cause"):

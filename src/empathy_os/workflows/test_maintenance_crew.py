@@ -1,5 +1,4 @@
-"""
-Test Maintenance Crew - CrewAI-Based Automated Test Management
+"""Test Maintenance Crew - CrewAI-Based Automated Test Management
 
 A crew of specialized agents that collaboratively manage the test lifecycle:
 - Test Analyst: Analyzes coverage gaps and prioritizes work
@@ -67,8 +66,7 @@ class CrewConfig:
 
 
 class TestAnalystAgent:
-    """
-    Analyzes test coverage and prioritizes work.
+    """Analyzes test coverage and prioritizes work.
 
     Responsibilities:
     - Identify files needing tests
@@ -155,7 +153,7 @@ class TestAnalystAgent:
             {
                 "mode": "analyze",
                 "max_items": self.config.max_files_per_run,
-            }
+            },
         )
 
         duration = int((datetime.now() - start).total_seconds() * 1000)
@@ -172,19 +170,17 @@ class TestAnalystAgent:
         """Generate actionable recommendation."""
         if len(high_impact) > 5:
             return f"URGENT: {len(high_impact)} high-impact files need tests. Start with the top 5."
-        elif len(high_impact) > 0:
+        if len(high_impact) > 0:
             return f"Prioritize {len(high_impact)} high-impact files before addressing remaining {len(all_gaps) - len(high_impact)} gaps."
-        elif len(all_gaps) > 20:
+        if len(all_gaps) > 20:
             return f"Consider batch test generation for {len(all_gaps)} files."
-        elif len(all_gaps) > 0:
+        if len(all_gaps) > 0:
             return f"Address {len(all_gaps)} remaining test gaps to improve coverage."
-        else:
-            return "Excellent! All files requiring tests have coverage."
+        return "Excellent! All files requiring tests have coverage."
 
 
 class TestGeneratorAgent:
-    """
-    Generates tests for source files.
+    """Generates tests for source files.
 
     Responsibilities:
     - Read source file and understand its structure
@@ -226,7 +222,7 @@ class TestGeneratorAgent:
                         "file": item.file_path,
                         "success": False,
                         "error": str(e),
-                    }
+                    },
                 )
 
         duration = int((datetime.now() - start).total_seconds() * 1000)
@@ -366,8 +362,7 @@ class Test{class_name}:
 
 
 class TestValidatorAgent:
-    """
-    Validates generated tests.
+    """Validates generated tests.
 
     Responsibilities:
     - Run generated tests to verify they pass
@@ -407,7 +402,7 @@ class TestValidatorAgent:
                         "file": test_file,
                         "passed": False,
                         "error": str(e),
-                    }
+                    },
                 )
                 failed += 1
 
@@ -464,6 +459,7 @@ class TestValidatorAgent:
             # Run pytest without coverage to avoid coverage threshold failures
             result = subprocess.run(
                 ["python", "-m", "pytest", str(full_path), "-v", "--tb=short", "-x", "--no-cov"],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=timeout,
@@ -508,8 +504,7 @@ class TestValidatorAgent:
 
 
 class TestReporterAgent:
-    """
-    Generates reports and recommendations.
+    """Generates reports and recommendations.
 
     Responsibilities:
     - Generate test health reports
@@ -592,19 +587,19 @@ class TestReporterAgent:
         if summary.test_coverage_avg < 50:
             recommendations.append(
                 f"CRITICAL: Test coverage is {summary.test_coverage_avg:.1f}%. "
-                f"Target is {self.config.min_coverage_target}%. Prioritize test creation."
+                f"Target is {self.config.min_coverage_target}%. Prioritize test creation.",
             )
         elif summary.test_coverage_avg < self.config.min_coverage_target:
             recommendations.append(
                 f"Coverage is {summary.test_coverage_avg:.1f}%, "
-                f"below target of {self.config.min_coverage_target}%."
+                f"below target of {self.config.min_coverage_target}%.",
             )
 
         # Test gap recommendations
         if summary.files_without_tests > 20:
             recommendations.append(
                 f"Large test gap: {summary.files_without_tests} files need tests. "
-                "Consider batch generation."
+                "Consider batch generation.",
             )
         elif summary.files_without_tests > 0:
             recommendations.append(f"{summary.files_without_tests} files still need tests.")
@@ -612,7 +607,7 @@ class TestReporterAgent:
         # Staleness recommendations
         if summary.stale_file_count > 10:
             recommendations.append(
-                f"{summary.stale_file_count} files have stale tests. Run test update workflow."
+                f"{summary.stale_file_count} files have stale tests. Run test update workflow.",
             )
         elif summary.stale_file_count > 0:
             recommendations.append(f"{summary.stale_file_count} files have stale tests.")
@@ -621,7 +616,7 @@ class TestReporterAgent:
         if summary.critical_untested_files:
             recommendations.append(
                 f"PRIORITY: {len(summary.critical_untested_files)} high-impact files "
-                "lack tests. Address immediately."
+                "lack tests. Address immediately.",
             )
 
         if not recommendations:
@@ -631,8 +626,7 @@ class TestReporterAgent:
 
 
 class TestMaintenanceCrew:
-    """
-    Coordinates the test maintenance agents.
+    """Coordinates the test maintenance agents.
 
     The crew can run different types of maintenance operations:
     - full: Run all agents in sequence
@@ -662,8 +656,7 @@ class TestMaintenanceCrew:
         self._run_history: list[dict[str, Any]] = []
 
     async def run(self, mode: str = "full", test_files: list[str] | None = None) -> dict[str, Any]:
-        """
-        Run the crew with specified mode.
+        """Run the crew with specified mode.
 
         Modes:
         - full: Complete maintenance cycle
@@ -767,7 +760,7 @@ class TestMaintenanceCrew:
                                 "validation_optional": True,
                             },
                             duration_ms=0,
-                        )
+                        ),
                     )
 
         # Phase 4: Reporting (always run)

@@ -1,5 +1,4 @@
-"""
-Performance Audit Workflow
+"""Performance Audit Workflow
 
 Identifies performance bottlenecks and optimization opportunities
 through static analysis.
@@ -120,8 +119,7 @@ PERF_PATTERNS = {
 
 
 class PerformanceAuditWorkflow(BaseWorkflow):
-    """
-    Identify performance bottlenecks and optimization opportunities.
+    """Identify performance bottlenecks and optimization opportunities.
 
     Uses static analysis to find common performance anti-patterns
     and algorithmic complexity issues.
@@ -142,20 +140,19 @@ class PerformanceAuditWorkflow(BaseWorkflow):
         min_hotspots_for_premium: int = 3,
         **kwargs: Any,
     ):
-        """
-        Initialize performance audit workflow.
+        """Initialize performance audit workflow.
 
         Args:
             min_hotspots_for_premium: Minimum hotspots to trigger premium optimization
             **kwargs: Additional arguments passed to BaseWorkflow
+
         """
         super().__init__(**kwargs)
         self.min_hotspots_for_premium = min_hotspots_for_premium
         self._hotspot_count: int = 0
 
     def should_skip_stage(self, stage_name: str, input_data: Any) -> tuple[bool, str | None]:
-        """
-        Downgrade optimize stage if few hotspots.
+        """Downgrade optimize stage if few hotspots.
 
         Args:
             stage_name: Name of the stage to check
@@ -163,6 +160,7 @@ class PerformanceAuditWorkflow(BaseWorkflow):
 
         Returns:
             Tuple of (should_skip, reason)
+
         """
         if stage_name == "optimize":
             if self._hotspot_count < self.min_hotspots_for_premium:
@@ -171,23 +169,24 @@ class PerformanceAuditWorkflow(BaseWorkflow):
         return False, None
 
     async def run_stage(
-        self, stage_name: str, tier: ModelTier, input_data: Any
+        self,
+        stage_name: str,
+        tier: ModelTier,
+        input_data: Any,
     ) -> tuple[Any, int, int]:
         """Route to specific stage implementation."""
         if stage_name == "profile":
             return await self._profile(input_data, tier)
-        elif stage_name == "analyze":
+        if stage_name == "analyze":
             return await self._analyze(input_data, tier)
-        elif stage_name == "hotspots":
+        if stage_name == "hotspots":
             return await self._hotspots(input_data, tier)
-        elif stage_name == "optimize":
+        if stage_name == "optimize":
             return await self._optimize(input_data, tier)
-        else:
-            raise ValueError(f"Unknown stage: {stage_name}")
+        raise ValueError(f"Unknown stage: {stage_name}")
 
     async def _profile(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Static analysis for common performance anti-patterns.
+        """Static analysis for common performance anti-patterns.
 
         Scans code for known performance issues.
         """
@@ -224,7 +223,7 @@ class PerformanceAuditWorkflow(BaseWorkflow):
                                             "description": pattern_info["description"],
                                             "impact": pattern_info["impact"],
                                             "match": match.group()[:80],
-                                        }
+                                        },
                                     )
                     except OSError:
                         continue
@@ -251,8 +250,7 @@ class PerformanceAuditWorkflow(BaseWorkflow):
         )
 
     async def _analyze(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Deep analysis of algorithmic complexity.
+        """Deep analysis of algorithmic complexity.
 
         Examines code structure for complexity issues.
         """
@@ -286,7 +284,7 @@ class PerformanceAuditWorkflow(BaseWorkflow):
                     "finding_count": len(file_findings),
                     "high_impact": high_count,
                     "concerns": concerns[:5],
-                }
+                },
             )
 
         # Sort by complexity score
@@ -306,8 +304,7 @@ class PerformanceAuditWorkflow(BaseWorkflow):
         )
 
     async def _hotspots(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Identify performance hotspots.
+        """Identify performance hotspots.
 
         Pinpoints files and areas requiring immediate attention.
         """
@@ -351,8 +348,7 @@ class PerformanceAuditWorkflow(BaseWorkflow):
         )
 
     async def _optimize(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Generate optimization recommendations using LLM.
+        """Generate optimization recommendations using LLM.
 
         Creates actionable recommendations for performance improvements.
 
@@ -368,7 +364,7 @@ class PerformanceAuditWorkflow(BaseWorkflow):
         for h in hotspots[:10]:
             hotspots_summary.append(
                 f"- {h.get('file')}: score={h.get('complexity_score', 0)}, "
-                f"concerns={', '.join(h.get('concerns', []))}"
+                f"concerns={', '.join(h.get('concerns', []))}",
             )
 
         # Summary of most common issues
@@ -446,12 +442,18 @@ Provide detailed optimization strategies."""
             except Exception:
                 # Fall back to legacy _call_llm if executor fails
                 response, input_tokens, output_tokens = await self._call_llm(
-                    tier, system or "", user_message, max_tokens=3000
+                    tier,
+                    system or "",
+                    user_message,
+                    max_tokens=3000,
                 )
         else:
             # Legacy path for backward compatibility
             response, input_tokens, output_tokens = await self._call_llm(
-                tier, system or "", user_message, max_tokens=3000
+                tier,
+                system or "",
+                user_message,
+                max_tokens=3000,
             )
 
         # Parse XML response if enforcement is enabled
@@ -474,7 +476,7 @@ Provide detailed optimization strategies."""
                     "summary": parsed_data.get("summary"),
                     "findings": parsed_data.get("findings", []),
                     "checklist": parsed_data.get("checklist", []),
-                }
+                },
             )
 
         # Add formatted report for human readability
@@ -530,8 +532,7 @@ Provide detailed optimization strategies."""
 
 
 def format_perf_audit_report(result: dict, input_data: dict) -> str:
-    """
-    Format performance audit output as a human-readable report.
+    """Format performance audit output as a human-readable report.
 
     Args:
         result: The optimize stage result
@@ -539,6 +540,7 @@ def format_perf_audit_report(result: dict, input_data: dict) -> str:
 
     Returns:
         Formatted report string
+
     """
     lines = []
 

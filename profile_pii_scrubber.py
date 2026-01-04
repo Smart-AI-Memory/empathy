@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-Performance profiling for PII Scrubber module
+"""Performance profiling for PII Scrubber module
 
 Profiles PII scrubbing performance to identify optimization targets.
 Target: <3ms/KB (current: 3-5ms/KB)

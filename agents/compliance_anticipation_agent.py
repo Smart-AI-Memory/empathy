@@ -1,5 +1,4 @@
-"""
-Compliance Anticipation Agent - Level 4 Anticipatory Empathy
+"""Compliance Anticipation Agent - Level 4 Anticipatory Empathy
 
 Multi-step LangGraph agent that predicts regulatory audits, identifies compliance
 gaps, and prepares documentation proactively to achieve positive outcomes.
@@ -33,8 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 class ComplianceAgentState(TypedDict):
-    """
-    Level 4 Anticipatory Agent State
+    """Level 4 Anticipatory Agent State
 
     Follows Principle #13: "Agent State as Clinical Flowsheet"
     Every field answers a compliance question with clear audit trail.
@@ -195,10 +193,10 @@ class ComplianceAgentState(TypedDict):
 
 
 def create_initial_state(
-    hospital_id: str, audit_type: str = "joint_commission"
+    hospital_id: str,
+    audit_type: str = "joint_commission",
 ) -> ComplianceAgentState:
-    """
-    Create initial agent state
+    """Create initial agent state
 
     Args:
         hospital_id: Unique identifier for hospital/facility
@@ -206,6 +204,7 @@ def create_initial_state(
 
     Returns:
         Initialized ComplianceAgentState
+
     """
     now = datetime.now()
     execution_id = f"compliance_{now.strftime('%Y%m%d_%H%M%S')}_{hospital_id}"
@@ -281,8 +280,7 @@ def create_initial_state(
 
 
 def create_compliance_agent() -> StateGraph:
-    """
-    Create Level 4 Anticipatory Compliance Agent
+    """Create Level 4 Anticipatory Compliance Agent
 
     Workflow:
     1. Predict Audit Timeline → When will next audit occur?
@@ -299,7 +297,6 @@ def create_compliance_agent() -> StateGraph:
     - Actionable (assigns specific tasks with deadlines)
     - Transparent (explains reasoning, provides confidence scores)
     """
-
     workflow = StateGraph(ComplianceAgentState)
 
     # Step 1: Audit Prediction
@@ -350,8 +347,7 @@ def create_compliance_agent() -> StateGraph:
 
 
 def predict_next_audit(state: ComplianceAgentState) -> ComplianceAgentState:
-    """
-    Step 1: Predict when next audit will occur
+    """Step 1: Predict when next audit will occur
 
     Methods (in order of preference):
     1. Regulatory schedule (published audit windows) - confidence: 0.95
@@ -364,7 +360,6 @@ def predict_next_audit(state: ComplianceAgentState) -> ComplianceAgentState:
     - Reduces stress and scrambling
     - Allows time to fix gaps without pressure
     """
-
     logger.info(f"[Step 1] Predicting {state['audit_type']} audit for {state['hospital_id']}")
 
     # Add to audit trail
@@ -375,7 +370,7 @@ def predict_next_audit(state: ComplianceAgentState) -> ComplianceAgentState:
             "action": "Starting audit prediction",
             "details": {"audit_type": state["audit_type"]},
             "user": "system",
-        }
+        },
     )
 
     # Get audit cycle for this type
@@ -426,15 +421,15 @@ def predict_next_audit(state: ComplianceAgentState) -> ComplianceAgentState:
     # Log prediction
     logger.info(
         f"Predicted audit: {predicted_date.strftime('%Y-%m-%d')} "
-        f"({days_until} days away, {confidence:.0%} confidence)"
+        f"({days_until} days away, {confidence:.0%} confidence)",
     )
 
     # Add message
     state["messages"].append(
         AIMessage(
             content=f"Predicted {state['audit_type']} audit on {predicted_date.strftime('%Y-%m-%d')} "
-            f"(in {days_until} days) with {confidence:.0%} confidence"
-        )
+            f"(in {days_until} days) with {confidence:.0%} confidence",
+        ),
     )
 
     # Audit trail
@@ -450,15 +445,14 @@ def predict_next_audit(state: ComplianceAgentState) -> ComplianceAgentState:
                 "method": "historical_cycle",
             },
             "user": "system",
-        }
+        },
     )
 
     return state
 
 
 def check_anticipation_window(state: ComplianceAgentState) -> ComplianceAgentState:
-    """
-    Step 2: Check if we're within optimal anticipation window
+    """Step 2: Check if we're within optimal anticipation window
 
     Level 4 Guardrail:
     - Too early (>120 days): Preparation may become outdated, waste effort
@@ -470,7 +464,6 @@ def check_anticipation_window(state: ComplianceAgentState) -> ComplianceAgentSta
     - Acting at right time maximizes effectiveness
     - Avoids wasted effort (too early) or crisis mode (too late)
     """
-
     logger.info(f"[Step 2] Checking anticipation window ({state['days_until_audit']} days)")
 
     days_until = state["days_until_audit"]
@@ -491,7 +484,7 @@ def check_anticipation_window(state: ComplianceAgentState) -> ComplianceAgentSta
         state["warnings"].append(
             f"Audit predicted in {days_until} days. "
             f"Optimal anticipation window is 60-120 days. "
-            f"Will schedule re-check for {(datetime.now() + timedelta(days=days_until - 120)).strftime('%Y-%m-%d')}"
+            f"Will schedule re-check for {(datetime.now() + timedelta(days=days_until - 120)).strftime('%Y-%m-%d')}",
         )
 
     elif 30 <= days_until < 60:
@@ -502,7 +495,7 @@ def check_anticipation_window(state: ComplianceAgentState) -> ComplianceAgentSta
         state["warnings"].append(
             "Less than 60 days until audit. "
             "Limited time for comprehensive remediation. "
-            "Recommend expedited action."
+            "Recommend expedited action.",
         )
 
     else:  # < 30 days
@@ -512,7 +505,7 @@ def check_anticipation_window(state: ComplianceAgentState) -> ComplianceAgentSta
         message = f"🚨 URGENT: Only {days_until} days until audit. Focus on critical gaps only."
         state["warnings"].append(
             "Less than 30 days until audit. "
-            "Very limited time. Focus on critical compliance gaps only."
+            "Very limited time. Focus on critical compliance gaps only.",
         )
 
     state["messages"].append(AIMessage(content=message))
@@ -532,7 +525,7 @@ def check_anticipation_window(state: ComplianceAgentState) -> ComplianceAgentSta
                 "within_window": state["is_within_anticipation_window"],
             },
             "user": "system",
-        }
+        },
     )
 
     logger.info(f"Anticipation window: {state['time_to_act']}")
@@ -541,28 +534,25 @@ def check_anticipation_window(state: ComplianceAgentState) -> ComplianceAgentSta
 
 
 def should_anticipate(state: ComplianceAgentState) -> str:
-    """
-    Routing function: Decide whether to proceed with anticipation
+    """Routing function: Decide whether to proceed with anticipation
 
     Returns:
         "anticipate" - Within optimal window, proceed
         "too_early" - Too far out, schedule for later
         "proceed_anyway" - Urgent, proceed despite non-optimal timing
-    """
 
+    """
     time_to_act = state["time_to_act"]
 
     if time_to_act == "too_early":
         return "too_early"
-    elif time_to_act in ["urgent", "too_late"]:
+    if time_to_act in ["urgent", "too_late"]:
         return "proceed_anyway"
-    else:
-        return "anticipate"
+    return "anticipate"
 
 
 def assess_current_compliance(state: ComplianceAgentState) -> ComplianceAgentState:
-    """
-    Step 3A: Assess current compliance status
+    """Step 3A: Assess current compliance status
 
     Scans all compliance requirements for the audit type and determines
     current compliance percentage.
@@ -572,7 +562,6 @@ def assess_current_compliance(state: ComplianceAgentState) -> ComplianceAgentSta
     - Categorization helps prioritize remediation
     - Baseline measurement enables tracking improvement
     """
-
     logger.info(f"[Step 3A] Assessing compliance for {state['audit_type']}")
 
     # TODO: Connect to real compliance data
@@ -645,8 +634,8 @@ def assess_current_compliance(state: ComplianceAgentState) -> ComplianceAgentSta
     state["messages"].append(
         AIMessage(
             content=f"{status_emoji} Compliance Assessment: {compliance_pct:.1f}% "
-            f"({compliant}/{total_items} items compliant)"
-        )
+            f"({compliant}/{total_items} items compliant)",
+        ),
     )
 
     # Audit trail
@@ -662,7 +651,7 @@ def assess_current_compliance(state: ComplianceAgentState) -> ComplianceAgentSta
                 "categories": category_pct,
             },
             "user": "system",
-        }
+        },
     )
 
     logger.info(f"Compliance: {compliance_pct:.1f}% ({compliant}/{total_items})")
@@ -671,8 +660,7 @@ def assess_current_compliance(state: ComplianceAgentState) -> ComplianceAgentSta
 
 
 def identify_compliance_gaps(state: ComplianceAgentState) -> ComplianceAgentState:
-    """
-    Step 3B: Identify specific compliance gaps with actionable details
+    """Step 3B: Identify specific compliance gaps with actionable details
 
     For positive outcomes:
     - Specific patient IDs enable targeted remediation
@@ -680,7 +668,6 @@ def identify_compliance_gaps(state: ComplianceAgentState) -> ComplianceAgentStat
     - Time estimates enable resource planning
     - Retroactive fix capability determines urgency
     """
-
     logger.info("[Step 3B] Identifying compliance gaps")
 
     # TODO: Connect to real gap detection system
@@ -710,7 +697,7 @@ def identify_compliance_gaps(state: ComplianceAgentState) -> ComplianceAgentStat
                 "estimated_time_to_fix": "25 minutes",
                 "can_fix_retroactively": True,
                 "legal_risk": "medium",
-            }
+            },
         )
         gap_id_counter += 1
 
@@ -729,7 +716,7 @@ def identify_compliance_gaps(state: ComplianceAgentState) -> ComplianceAgentStat
                 "estimated_time_to_fix": "45 minutes",
                 "can_fix_retroactively": False,  # Can document review but can't undo administration
                 "legal_risk": "high",
-            }
+            },
         )
         gap_id_counter += 1
 
@@ -748,7 +735,7 @@ def identify_compliance_gaps(state: ComplianceAgentState) -> ComplianceAgentStat
                 "estimated_time_to_fix": "15 minutes",
                 "can_fix_retroactively": False,
                 "legal_risk": "high",
-            }
+            },
         )
         gap_id_counter += 1
 
@@ -768,7 +755,7 @@ def identify_compliance_gaps(state: ComplianceAgentState) -> ComplianceAgentStat
     # Message
     if len(gaps) == 0:
         state["messages"].append(
-            AIMessage(content="🎉 No compliance gaps identified. Excellent work!")
+            AIMessage(content="🎉 No compliance gaps identified. Excellent work!"),
         )
     else:
         state["messages"].append(
@@ -777,8 +764,8 @@ def identify_compliance_gaps(state: ComplianceAgentState) -> ComplianceAgentStat
                 f"{severity_dist['critical']} critical, "
                 f"{severity_dist['high']} high, "
                 f"{severity_dist['medium']} medium, "
-                f"{severity_dist['low']} low"
-            )
+                f"{severity_dist['low']} low",
+            ),
         )
 
     # Audit trail
@@ -793,7 +780,7 @@ def identify_compliance_gaps(state: ComplianceAgentState) -> ComplianceAgentStat
                 "gaps": [{"id": g["gap_id"], "description": g["description"]} for g in gaps],
             },
             "user": "system",
-        }
+        },
     )
 
     logger.info(f"Identified {len(gaps)} gaps: {severity_dist}")
@@ -802,8 +789,7 @@ def identify_compliance_gaps(state: ComplianceAgentState) -> ComplianceAgentStat
 
 
 def prepare_audit_documentation(state: ComplianceAgentState) -> ComplianceAgentState:
-    """
-    Step 4: Prepare comprehensive audit documentation package
+    """Step 4: Prepare comprehensive audit documentation package
 
     For positive outcomes:
     - Pre-prepared documentation reduces audit day stress
@@ -811,7 +797,6 @@ def prepare_audit_documentation(state: ComplianceAgentState) -> ComplianceAgentS
     - Gap remediation plan demonstrates proactive approach
     - Audit readiness score provides confidence metric
     """
-
     logger.info("[Step 4] Preparing audit documentation")
 
     # Generate documentation package
@@ -879,8 +864,8 @@ def prepare_audit_documentation(state: ComplianceAgentState) -> ComplianceAgentS
     # Message
     state["messages"].append(
         AIMessage(
-            content=f"📄 Documentation package prepared: {len(doc_files)} files ready at {doc_url}"
-        )
+            content=f"📄 Documentation package prepared: {len(doc_files)} files ready at {doc_url}",
+        ),
     )
 
     # Audit trail
@@ -895,7 +880,7 @@ def prepare_audit_documentation(state: ComplianceAgentState) -> ComplianceAgentS
                 "readiness_score": doc_package["audit_readiness_score"],
             },
             "user": "system",
-        }
+        },
     )
 
     logger.info(f"Documentation prepared: {doc_url}")
@@ -906,8 +891,7 @@ def prepare_audit_documentation(state: ComplianceAgentState) -> ComplianceAgentS
 def send_anticipatory_notifications(
     state: ComplianceAgentState,
 ) -> ComplianceAgentState:
-    """
-    Step 5: Send notifications to stakeholders with actionable information
+    """Step 5: Send notifications to stakeholders with actionable information
 
     For positive outcomes:
     - Early notification enables calm, planned response
@@ -915,7 +899,6 @@ def send_anticipatory_notifications(
     - Deadlines provide urgency without panic
     - Transparent reasoning builds trust in AI system
     """
-
     logger.info("[Step 5] Sending notifications to stakeholders")
 
     # Create action items from gaps
@@ -939,7 +922,7 @@ def send_anticipatory_notifications(
                 "estimated_time": gap["estimated_time_to_fix"],
                 "status": "pending",
                 "created_at": datetime.now().isoformat(),
-            }
+            },
         )
         action_id += 1
 
@@ -967,8 +950,8 @@ def send_anticipatory_notifications(
     # Message
     state["messages"].append(
         AIMessage(
-            content=f"📧 Notifications sent to {len(recipients)} recipients: {', '.join(recipients)}"
-        )
+            content=f"📧 Notifications sent to {len(recipients)} recipients: {', '.join(recipients)}",
+        ),
     )
 
     # Audit trail
@@ -982,7 +965,7 @@ def send_anticipatory_notifications(
                 "action_item_count": len(action_items),
             },
             "user": "system",
-        }
+        },
     )
 
     logger.info(f"Notifications sent to: {recipients}")
@@ -991,8 +974,7 @@ def send_anticipatory_notifications(
 
 
 def schedule_continuous_monitoring(state: ComplianceAgentState) -> ComplianceAgentState:
-    """
-    Step 6: Schedule periodic re-checks until audit
+    """Step 6: Schedule periodic re-checks until audit
 
     For positive outcomes:
     - Regular monitoring tracks progress toward compliance
@@ -1000,7 +982,6 @@ def schedule_continuous_monitoring(state: ComplianceAgentState) -> ComplianceAge
     - Trend analysis predicts audit readiness
     - Automated reminders keep team accountable
     """
-
     logger.info("[Step 6] Scheduling continuous monitoring")
 
     days_until = state["days_until_audit"]
@@ -1031,8 +1012,8 @@ def schedule_continuous_monitoring(state: ComplianceAgentState) -> ComplianceAge
     state["messages"].append(
         AIMessage(
             content=f"⏰ Scheduled {frequency} monitoring until {state['next_audit_date']} "
-            f"(next check: {next_check_date[:10]})"
-        )
+            f"(next check: {next_check_date[:10]})",
+        ),
     )
 
     # Audit trail
@@ -1047,7 +1028,7 @@ def schedule_continuous_monitoring(state: ComplianceAgentState) -> ComplianceAge
                 "until_date": state["next_audit_date"],
             },
             "user": "system",
-        }
+        },
     )
 
     logger.info(f"Monitoring scheduled: {frequency} until {state['next_audit_date']}")
@@ -1061,12 +1042,10 @@ def schedule_continuous_monitoring(state: ComplianceAgentState) -> ComplianceAge
 
 
 def get_audit_requirements(audit_type: str) -> list[dict]:
-    """
-    Get compliance requirements for audit type
+    """Get compliance requirements for audit type
 
     TODO: Load from database or configuration file
     """
-
     # Example requirements for Joint Commission
     if audit_type == "joint_commission":
         return [
@@ -1118,15 +1097,13 @@ def get_audit_requirements(audit_type: str) -> list[dict]:
 
 
 def calculate_audit_readiness_score(state: ComplianceAgentState) -> float:
-    """
-    Calculate overall audit readiness score (0-100)
+    """Calculate overall audit readiness score (0-100)
 
     Factors:
     - Compliance percentage (60% weight)
     - Gap severity (20% weight)
     - Time remaining (20% weight)
     """
-
     # Factor 1: Compliance percentage
     compliance_score = state["compliance_percentage"]
 
@@ -1163,47 +1140,40 @@ def calculate_audit_readiness_score(state: ComplianceAgentState) -> float:
 
 
 def determine_assignee(gap: dict) -> str:
-    """
-    Determine who should be assigned to fix this gap
+    """Determine who should be assigned to fix this gap
 
     Based on category and severity
     """
-
     category = gap["category"]
     severity = gap["severity"]
 
     if category == "medication_safety":
         if severity == "critical":
             return "nurse_manager"  # Manager handles critical safety issues
-        else:
-            return "charge_nurse"
+        return "charge_nurse"
 
-    elif category == "documentation":
+    if category == "documentation":
         return "charge_nurse"  # Charge nurse coordinates documentation fixes
 
-    elif category == "patient_safety":
+    if category == "patient_safety":
         if "restraint" in gap["item"].lower():
             return "provider"  # Restraint orders require provider
-        else:
-            return "charge_nurse"
+        return "charge_nurse"
 
-    elif category == "infection_control":
+    if category == "infection_control":
         return "infection_control_nurse"
 
-    else:
-        return "charge_nurse"  # Default
+    return "charge_nurse"  # Default
 
 
 def calculate_deadline(gap: dict, days_until_audit: int, audit_date: str) -> str:
-    """
-    Calculate appropriate deadline for fixing gap
+    """Calculate appropriate deadline for fixing gap
 
     - Critical: 1 week or 25% of time remaining (whichever is sooner)
     - High: 2 weeks or 50% of time remaining
     - Medium: 1 month or 75% of time remaining
     - Low: 2 weeks before audit
     """
-
     severity = gap["severity"]
 
     if severity == "critical":
@@ -1228,12 +1198,10 @@ def calculate_deadline(gap: dict, days_until_audit: int, audit_date: str) -> str
 
 
 def get_assignee_email(assignee: str, hospital_id: str) -> str:
-    """
-    Get email address for assignee
+    """Get email address for assignee
 
     TODO: Look up from hospital staff database
     """
-
     # Example mapping
     email_map = {
         "charge_nurse": f"charge.nurse@{hospital_id}.hospital.com",
@@ -1247,10 +1215,7 @@ def get_assignee_email(assignee: str, hospital_id: str) -> str:
 
 
 def compose_notification(state: ComplianceAgentState, action_items: list[dict]) -> dict:
-    """
-    Compose notification with all relevant information
-    """
-
+    """Compose notification with all relevant information"""
     days_until = state["days_until_audit"]
     compliance_pct = state["compliance_percentage"]
     gaps = state["compliance_gaps"]
@@ -1340,8 +1305,7 @@ without stress or rushed work during audit week.
 
 
 def send_notification_to_recipients(notification: dict, recipients: list[str], hospital_id: str):
-    """
-    Send notification via configured channels
+    """Send notification via configured channels
 
     TODO: Integrate with actual notification system
     - Email (SMTP)
@@ -1349,7 +1313,6 @@ def send_notification_to_recipients(notification: dict, recipients: list[str], h
     - Slack/Teams (webhooks)
     - In-app notifications
     """
-
     logger.info(f"Sending notification to: {recipients}")
 
     # Simulate sending
@@ -1369,10 +1332,10 @@ def send_notification_to_recipients(notification: dict, recipients: list[str], h
 
 
 async def run_compliance_agent(
-    hospital_id: str, audit_type: str = "joint_commission"
+    hospital_id: str,
+    audit_type: str = "joint_commission",
 ) -> ComplianceAgentState:
-    """
-    Run the compliance anticipation agent
+    """Run the compliance anticipation agent
 
     Args:
         hospital_id: Hospital/facility identifier
@@ -1380,8 +1343,8 @@ async def run_compliance_agent(
 
     Returns:
         Final agent state with all results
-    """
 
+    """
     logger.info(f"Starting Compliance Anticipation Agent for {hospital_id} ({audit_type})")
 
     # Create agent
@@ -1395,7 +1358,7 @@ async def run_compliance_agent(
 
     logger.info(
         f"Agent completed. Audit readiness score: "
-        f"{final_state.get('documentation_package', {}).get('audit_readiness_score', 0):.1f}"
+        f"{final_state.get('documentation_package', {}).get('audit_readiness_score', 0):.1f}",
     )
 
     return final_state
@@ -1407,7 +1370,8 @@ if __name__ == "__main__":
     # Example usage
     async def main():
         result = await run_compliance_agent(
-            hospital_id="example_hospital_123", audit_type="joint_commission"
+            hospital_id="example_hospital_123",
+            audit_type="joint_commission",
         )
 
         print("\n" + "=" * 80)
@@ -1420,7 +1384,7 @@ if __name__ == "__main__":
         print(f"Action Items: {len(result['action_items'])}")
         print(f"Documentation: {result['documentation_url']}")
         print(
-            f"Audit Readiness: {result['documentation_package']['audit_readiness_score']:.1f}/100"
+            f"Audit Readiness: {result['documentation_package']['audit_readiness_score']:.1f}/100",
         )
         print("=" * 80)
 

@@ -1,5 +1,4 @@
-"""
-SBAR Handoffs for Code Inspection Pipeline
+"""SBAR Handoffs for Code Inspection Pipeline
 
 Structured handoffs between pipeline phases using healthcare-inspired
 SBAR (Situation, Background, Assessment, Recommendation) format.
@@ -28,8 +27,7 @@ class HandoffType(Enum):
 
 @dataclass
 class SBARHandoff:
-    """
-    Structured handoff between pipeline phases.
+    """Structured handoff between pipeline phases.
 
     Based on healthcare SBAR format:
     - Situation: Current state of inspection
@@ -60,8 +58,7 @@ class SBARHandoff:
 def create_static_to_dynamic_handoff(
     state: dict[str, Any],
 ) -> SBARHandoff:
-    """
-    Create handoff from Phase 1 (Static Analysis) to Phase 2 (Dynamic Analysis).
+    """Create handoff from Phase 1 (Static Analysis) to Phase 2 (Dynamic Analysis).
 
     Communicates static analysis findings to inform dynamic analysis focus.
     """
@@ -132,8 +129,7 @@ def create_static_to_dynamic_handoff(
 def create_dynamic_to_cross_handoff(
     state: dict[str, Any],
 ) -> SBARHandoff:
-    """
-    Create handoff from Phase 2 (Dynamic Analysis) to Phase 3 (Cross-Analysis).
+    """Create handoff from Phase 2 (Dynamic Analysis) to Phase 3 (Cross-Analysis).
 
     Communicates dynamic findings for cross-tool correlation.
     """
@@ -195,8 +191,7 @@ def create_dynamic_to_cross_handoff(
 def create_cross_to_learning_handoff(
     state: dict[str, Any],
 ) -> SBARHandoff:
-    """
-    Create handoff from Phase 3 (Cross-Analysis) to Phase 4 (Learning).
+    """Create handoff from Phase 3 (Cross-Analysis) to Phase 4 (Learning).
 
     Communicates insights for pattern extraction.
     """

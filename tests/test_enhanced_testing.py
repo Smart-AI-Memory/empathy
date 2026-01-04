@@ -1,5 +1,4 @@
-"""
-Tests for Enhanced Testing Wizard
+"""Tests for Enhanced Testing Wizard
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
@@ -51,7 +50,7 @@ class TestEnhancedTestingWizard:
                 "coverage_report": coverage_data,
                 "test_files": [],
                 "source_files": [],
-            }
+            },
         )
 
         coverage = result["coverage"]
@@ -86,7 +85,7 @@ def authenticate_user(username, password):
     except Exception as e:
         # Error handling - high risk!
         return None
-"""
+""",
                 )
 
             result = await wizard.analyze(
@@ -94,7 +93,7 @@ def authenticate_user(username, password):
                     "project_path": tmpdir,
                     "coverage_report": {},  # No coverage = untested
                     "source_files": [auth_file],
-                }
+                },
             )
 
             risk_gaps = result["risk_gaps"]
@@ -120,7 +119,7 @@ def authenticate_user(username, password):
 def test_something():
     assert foo == bar
     assert baz == qux
-"""
+""",
                 )
 
             test_file2 = os.path.join(tmpdir, "test_another.py")
@@ -130,7 +129,7 @@ def test_something():
 def test_no_assertions():
     # This test has no assertions - low quality!
     foo = bar()
-"""
+""",
                 )
 
             result = await wizard.analyze(
@@ -139,7 +138,7 @@ def test_no_assertions():
                     "coverage_report": {},
                     "test_files": [test_file1, test_file2],
                     "source_files": [],
-                }
+                },
             )
 
             quality = result["test_quality"]
@@ -164,7 +163,7 @@ def test_with_sleep():
     import time
     time.sleep(5)  # Timing-based - brittle!
     assert result == expected
-"""
+""",
                 )
 
             result = await wizard.analyze(
@@ -173,7 +172,7 @@ def test_with_sleep():
                     "coverage_report": {},
                     "test_files": [brittle_test],
                     "source_files": [],
-                }
+                },
             )
 
             brittle_tests = result["brittle_tests"]
@@ -196,11 +195,11 @@ def process_payment(card_number, amount):
     # User input + financial - CRITICAL!
     result = gateway.charge(card_number, amount)
     return result
-"""
+""",
                 )
 
             result = await wizard.analyze(
-                {"project_path": tmpdir, "coverage_report": {}, "source_files": [critical_file]}
+                {"project_path": tmpdir, "coverage_report": {}, "source_files": [critical_file]},
             )
 
             predictions = result["predictions"]
@@ -232,11 +231,11 @@ def process_payment(card_number, amount):
                         "lines_covered": 40,  # Low coverage
                         "branches_total": 20,
                         "branches_covered": 5,
-                    }
+                    },
                 },
                 "test_files": [],
                 "source_files": ["/test/file.py"],
-            }
+            },
         )
 
         recommendations = result["recommendations"]
@@ -260,7 +259,7 @@ def risky_function():
         return result
     except ValueError as e:
         return None
-"""
+""",
                 )
 
             result = await wizard.analyze(
@@ -268,7 +267,7 @@ def risky_function():
                     "project_path": tmpdir,
                     "coverage_report": {},
                     "source_files": [file_with_error_handling],
-                }
+                },
             )
 
             suggestions = result["test_suggestions"]
@@ -290,7 +289,7 @@ def risky_function():
         wizard = EnhancedTestingWizard()
 
         result = await wizard.analyze(
-            {"project_path": "/test", "coverage_report": {}, "test_files": [], "source_files": []}
+            {"project_path": "/test", "coverage_report": {}, "test_files": [], "source_files": []},
         )
 
         # Check standard wizard outputs
@@ -307,7 +306,7 @@ def risky_function():
         wizard = EnhancedTestingWizard()
 
         result = await wizard.analyze(
-            {"project_path": "/test", "coverage_report": {}, "test_files": [], "source_files": []}
+            {"project_path": "/test", "coverage_report": {}, "test_files": [], "source_files": []},
         )
 
         # Should handle gracefully
@@ -332,11 +331,11 @@ class TestRiskPatterns:
 def login_user(username, password):
     # Authentication logic
     return authenticate(username, password)
-"""
+""",
                 )
 
             result = await wizard.analyze(
-                {"project_path": tmpdir, "coverage_report": {}, "source_files": [auth_file]}
+                {"project_path": tmpdir, "coverage_report": {}, "source_files": [auth_file]},
             )
 
             risk_gaps = result["risk_gaps"]
@@ -361,11 +360,11 @@ def calculate_total(items):
         price = item.price
         total = total + price
     return round(total, 2)
-"""
+""",
                 )
 
             result = await wizard.analyze(
-                {"project_path": tmpdir, "coverage_report": {}, "source_files": [payment_file]}
+                {"project_path": tmpdir, "coverage_report": {}, "source_files": [payment_file]},
             )
 
             risk_gaps = result["risk_gaps"]

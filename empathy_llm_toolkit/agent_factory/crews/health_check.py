@@ -1,5 +1,4 @@
-"""
-Health Check Crew
+"""Health Check Crew
 
 A multi-agent crew that diagnoses and fixes project health issues.
 Uses XML-enhanced prompts for structured, consistent output.
@@ -424,8 +423,7 @@ XML_PROMPT_TEMPLATES = {
 
 
 class HealthCheckCrew:
-    """
-    Multi-agent crew for project health diagnosis and fixing.
+    """Multi-agent crew for project health diagnosis and fixing.
 
     The crew consists of 5 specialized agents using XML-enhanced prompts:
 
@@ -470,15 +468,16 @@ class HealthCheckCrew:
             print(f"Health Score: {report.health_score}/100")
             for issue in report.critical_issues:
                 print(f"  - {issue.title}")
+
     """
 
     def __init__(self, config: HealthCheckConfig | None = None, **kwargs: Any):
-        """
-        Initialize the Health Check Crew.
+        """Initialize the Health Check Crew.
 
         Args:
             config: HealthCheckConfig or pass individual params as kwargs
             **kwargs: Individual config parameters (api_key, provider, etc.)
+
         """
         if config:
             self.config = config
@@ -701,8 +700,7 @@ Rules:
         auto_fix: bool | None = None,
         context: dict | None = None,
     ) -> HealthCheckReport:
-        """
-        Perform a comprehensive health check.
+        """Perform a comprehensive health check.
 
         Args:
             path: Path to check (default: current directory)
@@ -711,6 +709,7 @@ Rules:
 
         Returns:
             HealthCheckReport with issues, fixes, and health score
+
         """
         import time
 
@@ -835,6 +834,7 @@ Rules:
         try:
             result = subprocess.run(
                 ["python", "-m", "ruff", "check", path, "--output-format=json"],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=60,
@@ -859,7 +859,7 @@ Rules:
                             line_number=v.get("location", {}).get("row"),
                             rule_id=v.get("code"),
                             tool="ruff",
-                        )
+                        ),
                     )
             except json.JSONDecodeError:
                 pass
@@ -877,6 +877,7 @@ Rules:
         try:
             result = subprocess.run(
                 ["python", "-m", "mypy", path, "--ignore-missing-imports", "--no-error-summary"],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=120,
@@ -911,7 +912,7 @@ Rules:
                             file_path=file_path,
                             line_number=line_num,
                             tool="mypy",
-                        )
+                        ),
                     )
 
         except (subprocess.TimeoutExpired, FileNotFoundError) as e:
@@ -927,6 +928,7 @@ Rules:
         try:
             result = subprocess.run(
                 ["python", "-m", "pytest", path, "--tb=line", "-q", "--no-header"],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=180,
@@ -949,7 +951,7 @@ Rules:
                             severity=IssueSeverity.HIGH,
                             file_path=test_name.split("::")[0] if "::" in test_name else None,
                             tool="pytest",
-                        )
+                        ),
                     )
                 elif "ERROR" in line and "test" in line.lower():
                     issues.append(
@@ -959,7 +961,7 @@ Rules:
                             category=HealthCategory.TESTS,
                             severity=IssueSeverity.CRITICAL,
                             tool="pytest",
-                        )
+                        ),
                     )
 
         except (subprocess.TimeoutExpired, FileNotFoundError) as e:
@@ -976,6 +978,7 @@ Rules:
         try:
             result = subprocess.run(
                 ["pip-audit", "--format=json"],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=60,
@@ -1013,7 +1016,7 @@ Rules:
                             rule_id=v.get("id"),
                             tool="pip-audit",
                             metadata={"fix_versions": v.get("fix_versions", [])},
-                        )
+                        ),
                     )
             except json.JSONDecodeError:
                 pass
@@ -1023,6 +1026,7 @@ Rules:
             try:
                 result = subprocess.run(
                     ["pip", "check"],
+                    check=False,
                     capture_output=True,
                     text=True,
                     timeout=30,
@@ -1037,7 +1041,7 @@ Rules:
                                 category=HealthCategory.DEPENDENCIES,
                                 severity=IssueSeverity.MEDIUM,
                                 tool="pip",
-                            )
+                            ),
                         )
             except (subprocess.TimeoutExpired, FileNotFoundError):
                 pass
@@ -1113,7 +1117,7 @@ Consider patterns from past fixes.
                         before_code=f.get("before_code"),
                         after_code=f.get("after_code"),
                         patch=f.get("patch"),
-                    )
+                    ),
                 )
             return fixes
 
@@ -1128,7 +1132,7 @@ Consider patterns from past fixes.
                         status=FixStatus.SUGGESTED,
                         file_path=issue.file_path,
                         related_issues=[issue.title],
-                    )
+                    ),
                 )
 
         return fixes
@@ -1143,6 +1147,7 @@ Consider patterns from past fixes.
                 try:
                     result = subprocess.run(
                         ["python", "-m", "ruff", "check", path, "--fix"],
+                        check=False,
                         capture_output=True,
                         text=True,
                         timeout=60,
@@ -1158,8 +1163,7 @@ Consider patterns from past fixes.
         return updated_fixes
 
     def _calculate_health_score(self, issues: list[HealthIssue]) -> float:
-        """
-        Calculate health score from issues.
+        """Calculate health score from issues.
 
         Uses category-capped deductions to prevent one category (e.g., lint)
         from dominating the score. This makes the score more meaningful -

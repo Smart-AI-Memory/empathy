@@ -1,5 +1,4 @@
-"""
-Audit Logging Framework for Empathy Framework
+"""Audit Logging Framework for Empathy Framework
 
 Comprehensive audit logging for SOC2, HIPAA, and GDPR compliance.
 Implements tamper-evident, append-only logging with structured JSON format.
@@ -36,8 +35,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class AuditEvent:
-    """
-    Represents a single audit event.
+    """Represents a single audit event.
 
     All audit events share these core fields for compliance tracking.
     """
@@ -70,8 +68,7 @@ class AuditEvent:
 
 @dataclass
 class SecurityViolation:
-    """
-    Represents a security policy violation.
+    """Represents a security policy violation.
 
     Used for tracking and alerting on security issues.
     """
@@ -85,8 +82,7 @@ class SecurityViolation:
 
 
 class AuditLogger:
-    """
-    Comprehensive audit logging for Empathy Framework.
+    """Comprehensive audit logging for Empathy Framework.
 
     Implements SOC2, HIPAA, and GDPR compliant audit trails with:
     - Tamper-evident append-only logging
@@ -115,6 +111,7 @@ class AuditLogger:
         - SOC2 CC7.2: System Monitoring and Logging
         - HIPAA 164.312(b): Audit Controls
         - GDPR Article 30: Records of Processing Activities
+
     """
 
     def __init__(
@@ -126,8 +123,7 @@ class AuditLogger:
         enable_rotation: bool = True,
         enable_console_logging: bool = False,
     ):
-        """
-        Initialize the audit logger.
+        """Initialize the audit logger.
 
         Args:
             log_dir: Directory for audit logs
@@ -136,6 +132,7 @@ class AuditLogger:
             retention_days: Number of days to retain audit logs
             enable_rotation: Whether to enable automatic log rotation
             enable_console_logging: Whether to also log to console (for development)
+
         """
         self.log_dir = Path(log_dir)
         self.log_filename = log_filename
@@ -167,8 +164,7 @@ class AuditLogger:
             logger.warning(f"Using fallback log directory: {self.log_dir}")
 
     def _write_event(self, event: AuditEvent):
-        """
-        Write an audit event to the log file.
+        """Write an audit event to the log file.
 
         Uses append-only mode for tamper-evidence.
         """
@@ -194,8 +190,7 @@ class AuditLogger:
                 print(f"AUDIT LOG FAILURE: {e}", flush=True)
 
     def _rotate_log(self):
-        """
-        Rotate the audit log file.
+        """Rotate the audit log file.
 
         Renames current log with timestamp and creates new file.
         """
@@ -256,8 +251,7 @@ class AuditLogger:
         error: str = "",
         **kwargs,
     ):
-        """
-        Log an LLM API request.
+        """Log an LLM API request.
 
         Tracks all LLM interactions for compliance and monitoring.
 
@@ -292,6 +286,7 @@ class AuditLogger:
             ...     pii_count=0,
             ...     secrets_count=0
             ... )
+
         """
         event = AuditEvent(
             event_type="llm_request",
@@ -364,8 +359,7 @@ class AuditLogger:
         error: str = "",
         **kwargs,
     ):
-        """
-        Log MemDocs pattern storage.
+        """Log MemDocs pattern storage.
 
         Tracks pattern creation for compliance and data governance.
 
@@ -392,6 +386,7 @@ class AuditLogger:
             ...     pii_scrubbed=2,
             ...     retention_days=180
             ... )
+
         """
         event = AuditEvent(
             event_type="store_pattern",
@@ -414,8 +409,7 @@ class AuditLogger:
                 },
                 "compliance": {
                     "gdpr_compliant": secrets_detected == 0,
-                    "hipaa_compliant": classification == "SENSITIVE"
-                    and encrypted
+                    "hipaa_compliant": (classification == "SENSITIVE" and encrypted)
                     or classification != "SENSITIVE",
                     "soc2_compliant": secrets_detected == 0
                     and classification in ["PUBLIC", "INTERNAL", "SENSITIVE"],
@@ -465,8 +459,7 @@ class AuditLogger:
         error: str = "",
         **kwargs,
     ):
-        """
-        Log MemDocs pattern retrieval.
+        """Log MemDocs pattern retrieval.
 
         Tracks pattern access for compliance and security monitoring.
 
@@ -489,6 +482,7 @@ class AuditLogger:
             ...     access_granted=True,
             ...     permission_level="explicit"
             ... )
+
         """
         event = AuditEvent(
             event_type="retrieve_pattern",
@@ -539,8 +533,7 @@ class AuditLogger:
         blocked: bool = True,
         **kwargs,
     ):
-        """
-        Log a security policy violation.
+        """Log a security policy violation.
 
         Tracks security incidents for monitoring and response.
 
@@ -561,9 +554,12 @@ class AuditLogger:
             ...     details={"secret_type": "api_key", "action": "llm_request"},
             ...     blocked=True
             ... )
+
         """
         violation = SecurityViolation(
-            violation_type=violation_type, severity=severity, details=details
+            violation_type=violation_type,
+            severity=severity,
+            details=details,
         )
 
         event = AuditEvent(
@@ -595,10 +591,13 @@ class AuditLogger:
         self._write_event(event)
 
     def _handle_security_violation(
-        self, user_id: str, violation_type: str, severity: str, details: dict[str, Any]
+        self,
+        user_id: str,
+        violation_type: str,
+        severity: str,
+        details: dict[str, Any],
     ):
-        """
-        Internal handler for security violations.
+        """Internal handler for security violations.
 
         Tracks violation counts and triggers alerts.
         """
@@ -608,7 +607,10 @@ class AuditLogger:
 
         # Log the violation
         self.log_security_violation(
-            user_id=user_id, violation_type=violation_type, severity=severity, details=details
+            user_id=user_id,
+            violation_type=violation_type,
+            severity=severity,
+            details=details,
         )
 
         # Alert logic
@@ -616,7 +618,7 @@ class AuditLogger:
         if severity == "CRITICAL" or count >= 3:
             logger.warning(
                 f"Security violation threshold reached: {user_id} - "
-                f"{violation_type} (count: {count}, severity: {severity})"
+                f"{violation_type} (count: {count}, severity: {severity})",
             )
 
     def query(
@@ -629,8 +631,7 @@ class AuditLogger:
         limit: int = 1000,
         **filters,
     ) -> list[dict]:
-        """
-        Query audit logs with filters.
+        """Query audit logs with filters.
 
         Provides search and analysis capabilities for audit data.
 
@@ -659,6 +660,7 @@ class AuditLogger:
             >>>
             >>> # Find patterns with high PII counts (nested filter)
             >>> events = logger.query(security__pii_detected__gt=5)
+
         """
         results: list[dict[str, Any]] = []
 
@@ -685,7 +687,7 @@ class AuditLogger:
                         # Date range filtering
                         if start_date or end_date:
                             event_time = datetime.fromisoformat(
-                                event.get("timestamp", "").rstrip("Z")
+                                event.get("timestamp", "").rstrip("Z"),
                             )
                             if start_date and event_time < start_date:
                                 continue
@@ -708,8 +710,7 @@ class AuditLogger:
         return results
 
     def _apply_custom_filters(self, event: dict, filters: dict) -> bool:
-        """
-        Apply custom filters to an event.
+        """Apply custom filters to an event.
 
         Supports nested key access with __ separator and comparison operators.
         """
@@ -731,24 +732,27 @@ class AuditLogger:
                     return False
 
             # Apply comparison
-            if operator == "gt" and not (isinstance(current, int | float) and current > value):
+            if (
+                operator == "gt" and not (isinstance(current, int | float) and current > value)
+            ) or (
+                operator == "gte" and not (isinstance(current, int | float) and current >= value)
+            ):
                 return False
-            elif operator == "gte" and not (isinstance(current, int | float) and current >= value):
-                return False
-            elif operator == "lt" and not (isinstance(current, int | float) and current < value):
-                return False
-            elif operator == "lte" and not (isinstance(current, int | float) and current <= value):
-                return False
-            elif operator == "ne" and current == value:
-                return False
-            elif operator is None and current != value:
+            if (
+                (operator == "lt" and not (isinstance(current, int | float) and current < value))
+                or (
+                    operator == "lte"
+                    and not (isinstance(current, int | float) and current <= value)
+                )
+                or (operator == "ne" and current == value)
+                or (operator is None and current != value)
+            ):
                 return False
 
         return True
 
     def get_violation_summary(self, user_id: str | None = None) -> dict[str, Any]:
-        """
-        Get summary of security violations.
+        """Get summary of security violations.
 
         Args:
             user_id: Optional user ID to filter by
@@ -759,6 +763,7 @@ class AuditLogger:
         Example:
             >>> summary = logger.get_violation_summary(user_id="user@company.com")
             >>> print(f"Total violations: {summary['total_violations']}")
+
         """
         violations = self.query(event_type="security_violation", user_id=user_id)
 
@@ -790,10 +795,11 @@ class AuditLogger:
         }
 
     def get_compliance_report(
-        self, start_date: datetime | None = None, end_date: datetime | None = None
+        self,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
     ) -> dict[str, Any]:
-        """
-        Generate compliance report for audit period.
+        """Generate compliance report for audit period.
 
         Provides statistics for compliance audits (SOC2, HIPAA, GDPR).
 
@@ -810,6 +816,7 @@ class AuditLogger:
             ...     start_date=datetime.utcnow() - timedelta(days=30)
             ... )
             >>> print(f"Total LLM requests: {report['llm_requests']['total']}")
+
         """
         # Query all events in period
         all_events = self.query(start_date=start_date, end_date=end_date, limit=100000)

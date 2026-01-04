@@ -1,5 +1,4 @@
-"""
-Tests for the Book Production Learning System
+"""Tests for the Book Production Learning System
 
 Tests cover:
 - SBAR Agent Handoffs

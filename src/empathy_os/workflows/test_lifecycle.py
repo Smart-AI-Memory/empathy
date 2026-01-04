@@ -1,5 +1,4 @@
-"""
-Test Lifecycle Manager - Event-Driven Test Management
+"""Test Lifecycle Manager - Event-Driven Test Management
 
 Monitors file changes and automatically manages test lifecycle:
 - Tracks when source files are created/modified/deleted
@@ -59,8 +58,7 @@ class TestTask:
 
 
 class TestLifecycleManager:
-    """
-    Manages the lifecycle of tests based on source file events.
+    """Manages the lifecycle of tests based on source file events.
 
     Key responsibilities:
     - Queue tasks when files change
@@ -243,12 +241,11 @@ class TestLifecycleManager:
         """Determine task priority based on file impact."""
         if record.impact_score >= 10.0:
             return TestPriority.CRITICAL
-        elif record.impact_score >= 5.0:
+        if record.impact_score >= 5.0:
             return TestPriority.HIGH
-        elif record.impact_score >= 2.0:
+        if record.impact_score >= 2.0:
             return TestPriority.MEDIUM
-        else:
-            return TestPriority.LOW
+        return TestPriority.LOW
 
     async def _execute_task(self, task: TestTask) -> bool:
         """Execute a single task."""
@@ -264,7 +261,7 @@ class TestLifecycleManager:
                     "mode": "execute",
                     "changed_files": [task.file_path],
                     "max_items": 1,
-                }
+                },
             )
 
             task.status = "completed"
@@ -336,7 +333,7 @@ class TestLifecycleManager:
             key=lambda t: (
                 {"critical": 0, "high": 1, "medium": 2, "low": 3, "deferred": 4}[t.priority.value],
                 t.created_at,
-            )
+            ),
         )
 
         # Limit
@@ -450,8 +447,7 @@ class TestLifecycleManager:
     # ===== Git Hook Integration =====
 
     async def process_git_pre_commit(self, staged_files: list[str]) -> dict[str, Any]:
-        """
-        Process git pre-commit hook.
+        """Process git pre-commit hook.
 
         Returns warnings about files being committed without tests.
         """
@@ -469,14 +465,14 @@ class TestLifecycleManager:
                         {
                             "file": file_path,
                             "reason": f"High-impact file ({record.impact_score:.1f}) without tests",
-                        }
+                        },
                     )
                 else:
                     warnings.append(
                         {
                             "file": file_path,
                             "reason": "File requires tests but none exist",
-                        }
+                        },
                     )
 
         return {

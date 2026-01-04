@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Empathy Wizard API - Real Wizard Integration
+"""Empathy Wizard API - Real Wizard Integration
 Connects React dashboard to actual wizard implementations.
 """
 
@@ -12,7 +11,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-import logging  # noqa: E402, I001
+import logging  # noqa: E402
 from typing import Any  # noqa: E402
 
 from fastapi import FastAPI, HTTPException  # noqa: E402
@@ -98,16 +97,20 @@ def get_llm_instance():
 
     Raises:
         ValueError: If ANTHROPIC_API_KEY environment variable is not set.
+
     """
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
         raise ValueError(
             "ANTHROPIC_API_KEY environment variable is required. "
-            "Set it in your .env file or environment before starting the API."
+            "Set it in your .env file or environment before starting the API.",
         )
 
     return EmpathyLLM(
-        provider="anthropic", api_key=api_key, enable_security=True, enable_audit_logging=True
+        provider="anthropic",
+        api_key=api_key,
+        enable_security=True,
+        enable_audit_logging=True,
     )
 
 
@@ -437,7 +440,6 @@ async def root():
 @app.post("/api/wizard/{wizard_id}/process")
 async def process_wizard(wizard_id: str, request: WizardRequest) -> WizardResponse:
     """Process input with specified wizard"""
-
     if wizard_id not in WIZARDS:
         raise HTTPException(
             status_code=404,
@@ -451,7 +453,9 @@ async def process_wizard(wizard_id: str, request: WizardRequest) -> WizardRespon
         if hasattr(wizard, "process"):
             # Domain wizards (healthcare, finance, legal, education, etc.)
             result = await wizard.process(
-                user_input=request.input, user_id=request.user_id, context=request.context or {}
+                user_input=request.input,
+                user_id=request.user_id,
+                context=request.context or {},
             )
 
             return WizardResponse(
@@ -465,7 +469,7 @@ async def process_wizard(wizard_id: str, request: WizardRequest) -> WizardRespon
                 },
             )
 
-        elif hasattr(wizard, "analyze_code"):
+        if hasattr(wizard, "analyze_code"):
             # Coach wizards (debugging, security, api, testing, etc.)
             issues = wizard.analyze_code(
                 code=request.input,
@@ -479,7 +483,7 @@ async def process_wizard(wizard_id: str, request: WizardRequest) -> WizardRespon
             output_lines = []
             for issue in issues:
                 output_lines.append(
-                    f"[{issue.severity.upper()}] Line {issue.line}: {issue.message}"
+                    f"[{issue.severity.upper()}] Line {issue.line}: {issue.message}",
                 )
                 if issue.suggestion:
                     output_lines.append(f"  💡 {issue.suggestion}")
@@ -501,7 +505,7 @@ async def process_wizard(wizard_id: str, request: WizardRequest) -> WizardRespon
                 },
             )
 
-        elif hasattr(wizard, "analyze"):
+        if hasattr(wizard, "analyze"):
             # AI wizards (prompt_engineering, multi_model, rag_pattern, etc.)
             context = request.context or {}
             context["user_input"] = request.input
@@ -515,7 +519,7 @@ async def process_wizard(wizard_id: str, request: WizardRequest) -> WizardRespon
                 output_parts.append("Issues:")
                 for issue in result["issues"][:5]:  # Top 5
                     output_parts.append(
-                        f"  - [{issue.get('severity', 'info').upper()}] {issue.get('message', 'N/A')}"
+                        f"  - [{issue.get('severity', 'info').upper()}] {issue.get('message', 'N/A')}",
                     )
 
             if result.get("recommendations"):
@@ -540,10 +544,10 @@ async def process_wizard(wizard_id: str, request: WizardRequest) -> WizardRespon
                 },
             )
 
-        else:
-            raise HTTPException(
-                status_code=500, detail=f"Wizard '{wizard_id}' has unknown interface"
-            )
+        raise HTTPException(
+            status_code=500,
+            detail=f"Wizard '{wizard_id}' has unknown interface",
+        )
 
     except Exception as e:
         logger.error(f"Error processing with {wizard_id}: {e}", exc_info=True)

@@ -1,5 +1,4 @@
-"""
-Empathy Service - Main service layer for the Empathy Framework backend.
+"""Empathy Service - Main service layer for the Empathy Framework backend.
 Coordinates analysis requests and manages wizard interactions.
 """
 
@@ -9,8 +8,7 @@ from .analyzers.multi_layer_analyzer import MultiLayerAnalyzer
 
 
 class EmpathyService:
-    """
-    Main service for coordinating Empathy Framework operations.
+    """Main service for coordinating Empathy Framework operations.
     Handles analysis requests, wizard management, and result aggregation.
     """
 
@@ -19,10 +17,13 @@ class EmpathyService:
         self.active_sessions = {}
 
     async def analyze_code(
-        self, code: str, language: str = "python", include_metrics: bool = True, **kwargs
+        self,
+        code: str,
+        language: str = "python",
+        include_metrics: bool = True,
+        **kwargs,
     ) -> dict[str, Any]:
-        """
-        Analyze code for issues and improvements.
+        """Analyze code for issues and improvements.
 
         Args:
             code: Source code to analyze
@@ -32,6 +33,7 @@ class EmpathyService:
 
         Returns:
             Analysis results including issues, recommendations, and metrics
+
         """
         context = {"code": code, "language": language, **kwargs}
 
@@ -50,10 +52,12 @@ class EmpathyService:
         }
 
     async def analyze_project(
-        self, project_path: str, file_patterns: list[str] | None = None, **kwargs
+        self,
+        project_path: str,
+        file_patterns: list[str] | None = None,
+        **kwargs,
     ) -> dict[str, Any]:
-        """
-        Analyze entire project for issues and patterns.
+        """Analyze entire project for issues and patterns.
 
         Args:
             project_path: Path to project directory
@@ -62,6 +66,7 @@ class EmpathyService:
 
         Returns:
             Project-level analysis results
+
         """
         # This would integrate with file system scanning
         # For now, return a placeholder
@@ -72,14 +77,14 @@ class EmpathyService:
         }
 
     async def get_wizard_info(self, wizard_name: str | None = None) -> dict[str, Any]:
-        """
-        Get information about available wizards.
+        """Get information about available wizards.
 
         Args:
             wizard_name: Optional specific wizard name
 
         Returns:
             Wizard information
+
         """
         wizards = [
             {
@@ -112,20 +117,19 @@ class EmpathyService:
             wizard = next((w for w in wizards if w["name"] == wizard_name), None)
             if wizard:
                 return {"success": True, "wizard": wizard}
-            else:
-                return {"success": False, "error": "Wizard not found"}
+            return {"success": False, "error": "Wizard not found"}
 
         return {"success": True, "wizards": wizards, "total": len(wizards)}
 
     async def create_analysis_session(self, config: dict[str, Any]) -> str:
-        """
-        Create a new analysis session.
+        """Create a new analysis session.
 
         Args:
             config: Session configuration
 
         Returns:
             Session ID
+
         """
         import uuid
 
@@ -138,14 +142,14 @@ class EmpathyService:
         return session_id
 
     async def get_session_results(self, session_id: str) -> dict[str, Any]:
-        """
-        Get results for an analysis session.
+        """Get results for an analysis session.
 
         Args:
             session_id: Session identifier
 
         Returns:
             Session results
+
         """
         if session_id not in self.active_sessions:
             return {"success": False, "error": "Session not found"}

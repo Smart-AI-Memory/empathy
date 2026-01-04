@@ -1,5 +1,4 @@
-"""
-Tests for Performance Profiling Wizard
+"""Tests for Performance Profiling Wizard
 
 Copyright 2025 Deep Study AI, LLC
 Licensed under Fair Source 0.9
@@ -54,12 +53,12 @@ class TestPerformanceProfilingWizard:
                         "cumulative_time": 0.5,
                         "percent": 5.0,
                     },
-                ]
-            }
+                ],
+            },
         )
 
         result = await wizard.analyze(
-            {"profiler_data": profile_data, "profiler_type": "simple_json"}
+            {"profiler_data": profile_data, "profiler_type": "simple_json"},
         )
 
         # Check profiling summary
@@ -97,12 +96,12 @@ class TestPerformanceProfilingWizard:
                         "cumulative_time": 0.5,
                         "percent": 5.0,
                     },
-                ]
-            }
+                ],
+            },
         )
 
         result = await wizard.analyze(
-            {"profiler_data": profile_data, "profiler_type": "simple_json"}
+            {"profiler_data": profile_data, "profiler_type": "simple_json"},
         )
 
         bottlenecks = result["bottlenecks"]
@@ -131,13 +130,13 @@ class TestPerformanceProfilingWizard:
                         "calls": 1000,  # Many calls!
                         "cumulative_time": 3.0,
                         "percent": 30.0,
-                    }
-                ]
-            }
+                    },
+                ],
+            },
         )
 
         result = await wizard.analyze(
-            {"profiler_data": profile_data, "profiler_type": "simple_json"}
+            {"profiler_data": profile_data, "profiler_type": "simple_json"},
         )
 
         bottlenecks = result["bottlenecks"]
@@ -168,13 +167,13 @@ class TestPerformanceProfilingWizard:
                         "calls": 100,
                         "cumulative_time": 2.5,
                         "percent": 25.0,
-                    }
-                ]
-            }
+                    },
+                ],
+            },
         )
 
         result = await wizard.analyze(
-            {"profiler_data": profile_data, "profiler_type": "simple_json"}
+            {"profiler_data": profile_data, "profiler_type": "simple_json"},
         )
 
         bottlenecks = result["bottlenecks"]
@@ -200,9 +199,9 @@ class TestPerformanceProfilingWizard:
                         "calls": 100,
                         "cumulative_time": 0.8,
                         "percent": 80.0,
-                    }
-                ]
-            }
+                    },
+                ],
+            },
         )
 
         # Include historical metrics showing degradation
@@ -217,7 +216,7 @@ class TestPerformanceProfilingWizard:
                 "profiler_data": profile_data,
                 "profiler_type": "simple_json",
                 "historical_metrics": historical_metrics,
-            }
+            },
         )
 
         trajectory = result["trajectory_analysis"]
@@ -250,13 +249,13 @@ class TestPerformanceProfilingWizard:
                         "calls": 1000,
                         "cumulative_time": 5.0,
                         "percent": 50.0,
-                    }
-                ]
-            }
+                    },
+                ],
+            },
         )
 
         result = await wizard.analyze(
-            {"profiler_data": profile_data, "profiler_type": "simple_json"}
+            {"profiler_data": profile_data, "profiler_type": "simple_json"},
         )
 
         predictions = result["predictions"]
@@ -294,13 +293,13 @@ class TestPerformanceProfilingWizard:
                         "calls": 500,
                         "cumulative_time": 3.0,
                         "percent": 60.0,
-                    }
-                ]
-            }
+                    },
+                ],
+            },
         )
 
         result = await wizard.analyze(
-            {"profiler_data": profile_data, "profiler_type": "simple_json"}
+            {"profiler_data": profile_data, "profiler_type": "simple_json"},
         )
 
         recommendations = result["recommendations"]
@@ -329,13 +328,13 @@ class TestPerformanceProfilingWizard:
                         "calls": 200,
                         "cumulative_time": 4.0,
                         "percent": 80.0,
-                    }
-                ]
-            }
+                    },
+                ],
+            },
         )
 
         result = await wizard.analyze(
-            {"profiler_data": profile_data, "profiler_type": "simple_json"}
+            {"profiler_data": profile_data, "profiler_type": "simple_json"},
         )
 
         insights = result["insights"]
@@ -363,13 +362,13 @@ class TestPerformanceProfilingWizard:
                         "calls": 10,
                         "cumulative_time": 1.0,
                         "percent": 100.0,
-                    }
-                ]
-            }
+                    },
+                ],
+            },
         )
 
         result = await wizard.analyze(
-            {"profiler_data": profile_data, "profiler_type": "simple_json"}
+            {"profiler_data": profile_data, "profiler_type": "simple_json"},
         )
 
         # Check standard wizard outputs
@@ -388,7 +387,7 @@ class TestPerformanceProfilingWizard:
         profile_data = json.dumps({"functions": []})
 
         result = await wizard.analyze(
-            {"profiler_data": profile_data, "profiler_type": "simple_json"}
+            {"profiler_data": profile_data, "profiler_type": "simple_json"},
         )
 
         # Should handle gracefully
@@ -435,12 +434,12 @@ class TestPerformanceProfilingWizard:
                         "cumulative_time": 1.5,
                         "percent": 15.0,
                     },
-                ]
-            }
+                ],
+            },
         )
 
         result = await wizard.analyze(
-            {"profiler_data": profile_data, "profiler_type": "simple_json"}
+            {"profiler_data": profile_data, "profiler_type": "simple_json"},
         )
 
         bottlenecks = result["bottlenecks"]
@@ -474,9 +473,9 @@ class TestProfilerParsers:
                         "calls": 100,
                         "cumulative_time": 1.5,
                         "percent": 15.0,
-                    }
-                ]
-            }
+                    },
+                ],
+            },
         )
 
         profiles = parser.parse(profile_data)
@@ -515,7 +514,7 @@ class TestBottleneckDetector:
                 cumulative_time=2.0,
                 percent_total=20.0,
                 profiler="test",
-            )
+            ),
         ]
 
         bottlenecks = detector.detect_bottlenecks(profiles)

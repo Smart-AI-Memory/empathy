@@ -1,5 +1,4 @@
-"""
-Configuration Validation for Multi-Model Workflows
+"""Configuration Validation for Multi-Model Workflows
 
 Provides schema validation for workflow configurations:
 - Required field validation
@@ -62,8 +61,7 @@ class ValidationResult:
 
 
 class ConfigValidator:
-    """
-    Validator for multi-model workflow configurations.
+    """Validator for multi-model workflow configurations.
 
     Validates:
     - Provider names exist in registry
@@ -96,14 +94,14 @@ class ConfigValidator:
     }
 
     def validate_workflow_config(self, config: dict[str, Any]) -> ValidationResult:
-        """
-        Validate a workflow configuration dictionary.
+        """Validate a workflow configuration dictionary.
 
         Args:
             config: Workflow configuration dict
 
         Returns:
             ValidationResult with any errors or warnings
+
         """
         result = ValidationResult(valid=True)
 
@@ -183,7 +181,8 @@ class ConfigValidator:
 
                 if not isinstance(value, int):
                     result.add_error(
-                        f"{path}.{field_name}", f"Expected integer, got {type(value).__name__}"
+                        f"{path}.{field_name}",
+                        f"Expected integer, got {type(value).__name__}",
                     )
                 else:
                     min_val = spec.get("min")
@@ -200,8 +199,7 @@ class ConfigValidator:
                         )
 
     def validate_provider_tier(self, provider: str, tier: str) -> ValidationResult:
-        """
-        Validate that a provider/tier combination exists.
+        """Validate that a provider/tier combination exists.
 
         Args:
             provider: Provider name
@@ -209,6 +207,7 @@ class ConfigValidator:
 
         Returns:
             ValidationResult
+
         """
         result = ValidationResult(valid=True)
 
@@ -231,28 +230,28 @@ class ConfigValidator:
 
 
 def validate_config(config: dict[str, Any]) -> ValidationResult:
-    """
-    Convenience function to validate a workflow config.
+    """Convenience function to validate a workflow config.
 
     Args:
         config: Configuration dictionary
 
     Returns:
         ValidationResult
+
     """
     validator = ConfigValidator()
     return validator.validate_workflow_config(config)
 
 
 def validate_yaml_file(file_path: str) -> ValidationResult:
-    """
-    Validate a YAML configuration file.
+    """Validate a YAML configuration file.
 
     Args:
         file_path: Path to YAML file
 
     Returns:
         ValidationResult
+
     """
     import yaml
 

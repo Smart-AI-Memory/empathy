@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Example 3: Security False Positive Learning
+"""Example 3: Security False Positive Learning
 ===========================================
 
 Demonstrates how persistent memory enables AI to learn from team
@@ -32,7 +31,6 @@ from empathy_software_plugin.wizards import SecurityLearningWizard
 
 def seed_team_decisions(wizard: SecurityLearningWizard):
     """Simulate team security decisions from past reviews"""
-
     decisions_data = {
         "decisions": [
             # Team decided: SQL injection warnings in ORM code are false positives
@@ -62,7 +60,7 @@ def seed_team_decisions(wizard: SecurityLearningWizard):
                 "decided_at": (datetime.now() - timedelta(days=60)).isoformat(),
                 "applies_to": "all",
             },
-        ]
+        ],
     }
 
     # Store in pattern storage
@@ -121,7 +119,7 @@ def store_secret():
     # This is a REAL vulnerability - not suppressed
     api_key = "sk-secret-key-12345"
     return api_key
-"""
+""",
     )
 
     # -------------------------------------------------------------------------
@@ -135,7 +133,7 @@ def store_secret():
             "project_path": str(sample_dir),
             "apply_learned_patterns": True,
             "scan_depth": "quick",
-        }
+        },
     )
 
     # Clean up
@@ -197,7 +195,7 @@ def store_secret():
         decided_by="@your_name",
         applies_to="pattern"  # or "all" for all of this type
     )
-"""
+""",
         )
 
     print("=" * 60)

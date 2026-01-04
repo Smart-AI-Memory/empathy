@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Coach Health Check
+"""Coach Health Check
 
 Validates that all 16 wizards are loaded and functioning correctly.
 Run this to verify your Coach installation.
@@ -125,7 +124,7 @@ task = WizardTask(
 )
 result = await coach.process(task)
 print(result.primary_output.diagnosis)
-    """
+    """,
     )
 
     return True

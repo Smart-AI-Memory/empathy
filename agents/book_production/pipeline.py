@@ -1,5 +1,4 @@
-"""
-Book Production Pipeline - Orchestrator
+"""Book Production Pipeline - Orchestrator
 
 Orchestrates the full chapter production workflow:
 Research → Write → Edit → Review
@@ -70,8 +69,7 @@ class PipelineConfig:
 
 
 class BookProductionPipeline:
-    """
-    Orchestrates multi-agent book production.
+    """Orchestrates multi-agent book production.
 
     Workflow:
     1. Research - Gather and analyze source material
@@ -83,11 +81,11 @@ class BookProductionPipeline:
     """
 
     def __init__(self, config: PipelineConfig | None = None):
-        """
-        Initialize the pipeline.
+        """Initialize the pipeline.
 
         Args:
             config: Pipeline configuration (uses defaults if not provided)
+
         """
         self.config = config or PipelineConfig()
         self.logger = logging.getLogger("pipeline.book_production")
@@ -158,7 +156,7 @@ class BookProductionPipeline:
             f"handoffs={self.config.enable_sbar_handoffs}, "
             f"gaps={self.config.enable_quality_gap_detection}, "
             f"patterns={self.config.enable_pattern_extraction}, "
-            f"feedback={self.config.enable_feedback_loop}"
+            f"feedback={self.config.enable_feedback_loop}",
         )
 
     async def produce_chapter(
@@ -166,8 +164,7 @@ class BookProductionPipeline:
         spec: ChapterSpec,
         source_paths: list[str] | None = None,
     ) -> Chapter:
-        """
-        Produce a complete chapter through the full pipeline.
+        """Produce a complete chapter through the full pipeline.
 
         Args:
             spec: Chapter specification
@@ -175,6 +172,7 @@ class BookProductionPipeline:
 
         Returns:
             Completed Chapter with content and metadata
+
         """
         self.logger.info(f"Starting production for Chapter {spec.number}: {spec.title}")
         start_time = datetime.now()
@@ -253,13 +251,13 @@ class BookProductionPipeline:
                 gap_summary = self.gap_detector.summarize_gaps(gaps)
                 self.logger.info(
                     f"Quality gaps: {gap_summary['total_gaps']} total, "
-                    f"{gap_summary['blocking_count']} blocking"
+                    f"{gap_summary['blocking_count']} blocking",
                 )
 
             if not approved and iteration < self.config.max_iterations:
                 self.logger.info(
                     f"Review rejected (score: {quality_scores.get('overall', 0):.2f}). "
-                    f"Iterating with feedback..."
+                    f"Iterating with feedback...",
                 )
 
                 # Create SBAR handoff: Reviewer → Writer (revision)
@@ -315,7 +313,7 @@ class BookProductionPipeline:
                     quality_scores=scores_dict,
                 )
                 self.logger.info(
-                    f"Extracted {len(extracted_patterns)} patterns from successful chapter"
+                    f"Extracted {len(extracted_patterns)} patterns from successful chapter",
                 )
 
         # Record feedback for approved chapter
@@ -355,7 +353,7 @@ class BookProductionPipeline:
         self.logger.info(
             f"Chapter {spec.number} complete: approved={approved}, "
             f"score={chapter.quality_score:.2f}, time={duration:.1f}s, "
-            f"iterations={iteration}, patterns_extracted={len(extracted_patterns)}"
+            f"iterations={iteration}, patterns_extracted={len(extracted_patterns)}",
         )
 
         return chapter
@@ -365,8 +363,7 @@ class BookProductionPipeline:
         chapters: list[ChapterSpec],
         parallel: bool = True,
     ) -> list[Chapter]:
-        """
-        Produce multiple chapters, optionally in parallel.
+        """Produce multiple chapters, optionally in parallel.
 
         Args:
             chapters: List of chapter specifications
@@ -374,6 +371,7 @@ class BookProductionPipeline:
 
         Returns:
             List of completed chapters
+
         """
         self.logger.info(f"Starting book production: {len(chapters)} chapters")
         start_time = datetime.now()
@@ -387,7 +385,7 @@ class BookProductionPipeline:
                 batch = chapters[i : i + batch_size]
                 self.logger.info(
                     f"Processing batch {i // batch_size + 1}: "
-                    f"chapters {i + 1}-{min(i + batch_size, len(chapters))}"
+                    f"chapters {i + 1}-{min(i + batch_size, len(chapters))}",
                 )
 
                 batch_results = await asyncio.gather(
@@ -404,7 +402,7 @@ class BookProductionPipeline:
                                 content="",
                                 quality_score=0.0,
                                 metadata={"error": str(result)},
-                            )
+                            ),
                         )
                     else:
                         results.append(result)
@@ -422,7 +420,7 @@ class BookProductionPipeline:
                             content="",
                             quality_score=0.0,
                             metadata={"error": str(e)},
-                        )
+                        ),
                     )
 
         duration = (datetime.now() - start_time).total_seconds()
@@ -513,8 +511,7 @@ async def produce_chapter(
     source_paths: list[str] | None = None,
     book_context: str = "",
 ) -> Chapter:
-    """
-    Convenience function to produce a single chapter.
+    """Convenience function to produce a single chapter.
 
     Args:
         chapter_number: Chapter number
@@ -524,6 +521,7 @@ async def produce_chapter(
 
     Returns:
         Completed Chapter
+
     """
     pipeline = BookProductionPipeline()
 

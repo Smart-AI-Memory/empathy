@@ -1,5 +1,4 @@
-"""
-Cross-Analysis Node - Phase 3
+"""Cross-Analysis Node - Phase 3
 
 Correlates findings between different tools to generate insights.
 
@@ -23,8 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 async def run_cross_analysis(state: CodeInspectionState) -> CodeInspectionState:
-    """
-    Phase 3: Correlate findings between tools.
+    """Phase 3: Correlate findings between tools.
 
     Generates cross-tool insights that provide intelligence beyond
     what individual tools can provide.
@@ -34,6 +32,7 @@ async def run_cross_analysis(state: CodeInspectionState) -> CodeInspectionState:
 
     Returns:
         Updated state with cross-tool insights
+
     """
     logger.info("[Phase 3] Starting cross-analysis")
 
@@ -80,8 +79,7 @@ async def run_cross_analysis(state: CodeInspectionState) -> CodeInspectionState:
 async def _security_informs_review(
     state: CodeInspectionState,
 ) -> list[CrossToolInsight]:
-    """
-    Generate insights where security findings inform code review.
+    """Generate insights where security findings inform code review.
 
     Links security vulnerabilities to related code review findings
     to prioritize review of vulnerable areas.
@@ -143,8 +141,7 @@ async def _security_informs_review(
 
 
 async def _bugs_inform_tests(state: CodeInspectionState) -> list[CrossToolInsight]:
-    """
-    Generate insights where historical bugs inform test recommendations.
+    """Generate insights where historical bugs inform test recommendations.
 
     Uses patterns from memory-enhanced debugging to suggest tests
     that could catch similar bugs.
@@ -198,8 +195,7 @@ async def _bugs_inform_tests(state: CodeInspectionState) -> list[CrossToolInsigh
 async def _apply_debt_trajectory_priority(
     state: CodeInspectionState,
 ) -> dict[str, Any]:
-    """
-    Adjust finding priorities based on tech debt trajectory.
+    """Adjust finding priorities based on tech debt trajectory.
 
     If debt is increasing, boost priority of debt-related findings.
     If in hotspot files, boost priority further.
@@ -248,7 +244,7 @@ async def _apply_debt_trajectory_priority(
             boosted_count += 1
 
     logger.info(
-        f"Applied debt trajectory priority: trend={trend}, boosted={boosted_count} findings"
+        f"Applied debt trajectory priority: trend={trend}, boosted={boosted_count} findings",
     )
 
     return {

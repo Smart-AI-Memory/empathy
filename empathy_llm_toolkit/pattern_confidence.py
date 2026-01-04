@@ -1,5 +1,4 @@
-"""
-Pattern Confidence Scoring
+"""Pattern Confidence Scoring
 
 Tracks how often stored fixes resolve similar issues,
 building confidence scores over time.
@@ -85,8 +84,7 @@ class PatternUsageStats:
 
 
 class PatternConfidenceTracker:
-    """
-    Tracks pattern usage and calculates confidence scores.
+    """Tracks pattern usage and calculates confidence scores.
 
     Stores usage data in patterns/confidence/usage_stats.json
     """
@@ -151,8 +149,7 @@ class PatternConfidenceTracker:
         return self._stats[pattern_id]
 
     def record_suggestion(self, pattern_id: str) -> None:
-        """
-        Record that a pattern was suggested to the user.
+        """Record that a pattern was suggested to the user.
 
         Call this when a pattern is shown as a potential fix.
         """
@@ -168,13 +165,13 @@ class PatternConfidenceTracker:
         successful: bool = True,
         notes: str | None = None,
     ) -> None:
-        """
-        Record that a pattern fix was applied.
+        """Record that a pattern fix was applied.
 
         Args:
             pattern_id: The pattern that was applied
             successful: Whether the fix resolved the issue
             notes: Optional feedback notes
+
         """
         stats = self._get_or_create_stats(pattern_id)
         stats.times_applied += 1
@@ -191,7 +188,7 @@ class PatternConfidenceTracker:
                     "date": datetime.now().isoformat(),
                     "successful": successful,
                     "notes": notes,
-                }
+                },
             )
 
         self._save()
@@ -203,11 +200,11 @@ class PatternConfidenceTracker:
         )
 
     def get_pattern_stats(self, pattern_id: str) -> dict[str, Any]:
-        """
-        Get usage statistics for a pattern.
+        """Get usage statistics for a pattern.
 
         Returns:
             Dict with usage stats and calculated scores
+
         """
         stats = self._get_or_create_stats(pattern_id)
         return {
@@ -230,14 +227,14 @@ class PatternConfidenceTracker:
         return [self.get_pattern_stats(pid) for pid in self._stats]
 
     def get_top_patterns(self, limit: int = 10) -> list[dict[str, Any]]:
-        """
-        Get top patterns by confidence score.
+        """Get top patterns by confidence score.
 
         Args:
             limit: Maximum patterns to return
 
         Returns:
             List of pattern stats, sorted by confidence
+
         """
         self._ensure_loaded()
         all_stats = self.get_all_stats()
@@ -249,14 +246,14 @@ class PatternConfidenceTracker:
         return sorted_stats[:limit]
 
     def get_stale_patterns(self, days: int = 90) -> list[dict[str, Any]]:
-        """
-        Get patterns that haven't been used recently.
+        """Get patterns that haven't been used recently.
 
         Args:
             days: Number of days to consider stale
 
         Returns:
             List of stale pattern stats
+
         """
         self._ensure_loaded()
         stale = []
@@ -275,8 +272,7 @@ class PatternConfidenceTracker:
         return stale
 
     def update_pattern_summary(self) -> bool:
-        """
-        Update the patterns_summary.md with confidence scores.
+        """Update the patterns_summary.md with confidence scores.
 
         This adds a confidence section to the generated summary.
         """
@@ -297,7 +293,7 @@ class PatternConfidenceTracker:
                 icon = "🟢" if score >= 0.8 else "🟡" if score >= 0.5 else "🔴"
                 confidence_section.append(
                     f"- {icon} **{p['pattern_id']}**: {score:.0%} confidence "
-                    f"({p['times_applied']} applied, {p['times_successful']} successful)"
+                    f"({p['times_applied']} applied, {p['times_successful']} successful)",
                 )
 
             confidence_section.append("")

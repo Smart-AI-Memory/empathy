@@ -1,5 +1,4 @@
-"""
-Bug Risk Analyzer (Level 4)
+"""Bug Risk Analyzer (Level 4)
 
 Predicts which linting violations are likely to cause production bugs.
 
@@ -51,8 +50,7 @@ class RiskAssessment:
 
 
 class BugRiskAnalyzer:
-    """
-    Analyzes linting violations to predict bug risk.
+    """Analyzes linting violations to predict bug risk.
 
     This implements Level 4 Anticipatory Empathy by:
     1. Mapping violations to known bug patterns
@@ -68,14 +66,14 @@ class BugRiskAnalyzer:
         self.typescript_risk_patterns = self._get_typescript_patterns()
 
     def analyze(self, issues: list[LintIssue]) -> list[RiskAssessment]:
-        """
-        Analyze issues and return risk assessments.
+        """Analyze issues and return risk assessments.
 
         Args:
             issues: List of linting issues
 
         Returns:
             List of RiskAssessment objects, sorted by risk level
+
         """
         assessments = []
 
@@ -98,7 +96,6 @@ class BugRiskAnalyzer:
 
     def _assess_issue(self, issue: LintIssue) -> RiskAssessment:
         """Assess single issue"""
-
         # Route to appropriate pattern library
         if issue.linter == "eslint":
             patterns = self.eslint_risk_patterns
@@ -333,8 +330,7 @@ class BugRiskAnalyzer:
         }
 
     def generate_summary(self, assessments: list[RiskAssessment]) -> dict[str, Any]:
-        """
-        Generate summary of risk assessments.
+        """Generate summary of risk assessments.
 
         This is the Level 4 alert format.
         """
@@ -386,13 +382,14 @@ class BugRiskAnalyzer:
             "alert_level": alert_level,
             "top_risks": [a.to_dict() for a in assessments[:5]],  # Top 5
             "recommendation": self._generate_recommendation(
-                critical_count, high_count, len(by_risk[BugRisk.MEDIUM])
+                critical_count,
+                high_count,
+                len(by_risk[BugRisk.MEDIUM]),
             ),
         }
 
     def _generate_recommendation(self, critical: int, high: int, medium: int) -> str:
         """Generate Level 4 recommendation"""
-
         if critical > 0:
             return (
                 f"ALERT: {critical} CRITICAL issues detected. "

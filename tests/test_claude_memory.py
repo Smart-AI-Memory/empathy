@@ -1,5 +1,4 @@
-"""
-Tests for Claude Memory Integration (v1.8.0)
+"""Tests for Claude Memory Integration (v1.8.0)
 
 Tests the ClaudeMemoryLoader and integration with EmpathyLLM.
 
@@ -57,7 +56,7 @@ def sample_claude_memory(temp_project_dir):
 
 ## Security
 - Never commit secrets
-"""
+""",
     )
 
     return temp_project_dir
@@ -155,7 +154,7 @@ def test_import_processing(temp_project_dir):
 
 ## Additional content
 After import
-"""
+""",
     )
 
     # Create imported file
@@ -164,7 +163,7 @@ After import
         """# Imported Content
 
 This was imported!
-"""
+""",
     )
 
     config = ClaudeMemoryConfig(enabled=True, load_user=False, load_enterprise=False)
@@ -196,7 +195,10 @@ def test_import_depth_limit(temp_project_dir):
     main_file.write_text("@./file0.md")
 
     config = ClaudeMemoryConfig(
-        enabled=True, load_user=False, load_enterprise=False, max_import_depth=5
+        enabled=True,
+        load_user=False,
+        load_enterprise=False,
+        max_import_depth=5,
     )
     loader = ClaudeMemoryLoader(config)
 
@@ -303,7 +305,7 @@ async def test_reload_memory(sample_claude_memory, mock_anthropic):
     # Modify memory file
     memory_file = Path(sample_claude_memory) / ".claude" / "CLAUDE.md"
     memory_file.write_text(
-        memory_file.read_text() + "\n\n## New Section\nAdded after initialization"
+        memory_file.read_text() + "\n\n## New Section\nAdded after initialization",
     )
 
     # Reload

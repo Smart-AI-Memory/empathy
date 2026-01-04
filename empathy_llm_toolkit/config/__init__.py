@@ -1,5 +1,4 @@
-"""
-Empathy Framework Configuration Module
+"""Empathy Framework Configuration Module
 
 Provides unified configuration models for agents, wizards, and workflows.
 
@@ -19,12 +18,12 @@ from empathy_llm_toolkit.config.unified import (
 )
 
 __all__ = [
-    "UnifiedAgentConfig",
+    "AgentOperationError",
     "BookProductionConfig",
     "MemDocsConfig",
-    "RedisConfig",
     "ModelTier",
     "Provider",
+    "RedisConfig",
+    "UnifiedAgentConfig",
     "WorkflowMode",
-    "AgentOperationError",
 ]

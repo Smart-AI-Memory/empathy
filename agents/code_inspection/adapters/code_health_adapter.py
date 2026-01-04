@@ -1,5 +1,4 @@
-"""
-Code Health Adapter
+"""Code Health Adapter
 
 Wraps empathy_llm_toolkit.code_health.HealthCheckRunner and converts
 its output to the unified ToolResult format.
@@ -15,8 +14,7 @@ from ..state import ToolResult
 
 
 class CodeHealthAdapter:
-    """
-    Adapter for the Code Health System.
+    """Adapter for the Code Health System.
 
     Wraps the HealthCheckRunner to provide lint, format, types, and security
     checks in a unified format.
@@ -28,24 +26,24 @@ class CodeHealthAdapter:
         config: dict[str, Any] | None = None,
         target_paths: list[str] | None = None,
     ):
-        """
-        Initialize the adapter.
+        """Initialize the adapter.
 
         Args:
             project_root: Root directory of the project
             config: Configuration overrides for health checks
             target_paths: Specific file paths to check (for staged/changed mode)
+
         """
         self.project_root = project_root
         self.config = config or {}
         self.target_paths = set(target_paths) if target_paths else None
 
     async def analyze(self) -> ToolResult:
-        """
-        Run code health checks and return unified result.
+        """Run code health checks and return unified result.
 
         Returns:
             ToolResult with aggregated findings
+
         """
         start_time = time.time()
 

@@ -1,5 +1,4 @@
-"""
-Empathy Framework Memory Module
+"""Empathy Framework Memory Module
 
 Unified two-tier memory system for AI agent collaboration:
 
@@ -125,72 +124,72 @@ from .summary_index import AgentContext, ConversationSummaryIndex
 from .unified import Environment, MemoryConfig, UnifiedMemory
 
 __all__ = [
-    # Unified Memory Interface (recommended)
-    "UnifiedMemory",
-    "MemoryConfig",
-    "Environment",
-    # Redis Bootstrap
-    "ensure_redis",
-    "get_redis_or_mock",
-    "stop_redis",
-    "RedisStartMethod",
-    "RedisStatus",
-    # Control Panel
-    "MemoryControlPanel",
-    "ControlPanelConfig",
-    "MemoryStats",
-    # Short-term Memory
-    "RedisShortTermMemory",
+    "REVERSE_EDGE_TYPES",
+    "WIZARD_EDGE_PATTERNS",
     "AccessTier",
+    "AgentContext",
     "AgentCredentials",
-    "StagedPattern",
-    "ConflictContext",
-    "TTLStrategy",
-    # Configuration
-    "get_redis_memory",
-    "get_redis_config",
-    "get_railway_redis",
-    "check_redis_connection",
-    # Long-term Memory
-    "SecureMemDocsIntegration",
+    "AuditEvent",
+    # Security - Audit
+    "AuditLogger",
+    "BugNode",
     "Classification",
     "ClassificationRules",
-    "PatternMetadata",
-    "SecurePattern",
-    "MemDocsStorage",
-    "EncryptionManager",
-    "SecurityError",
-    "MemoryPermissionError",
     # Claude Memory
     "ClaudeMemoryConfig",
     "ClaudeMemoryLoader",
-    # Security - PII
-    "PIIScrubber",
-    "PIIDetection",
-    "PIIPattern",
-    # Security - Secrets
-    "SecretsDetector",
-    "SecretDetection",
-    "SecretType",
-    "Severity",
-    "detect_secrets",
-    # Security - Audit
-    "AuditLogger",
-    "AuditEvent",
-    "SecurityViolation",
+    "ConflictContext",
+    "ControlPanelConfig",
     # Conversation Summary Index
     "ConversationSummaryIndex",
-    "AgentContext",
-    # Memory Graph (Cross-Wizard Intelligence)
-    "MemoryGraph",
-    "Node",
-    "NodeType",
-    "BugNode",
-    "VulnerabilityNode",
-    "PerformanceNode",
-    "PatternNode",
     "Edge",
     "EdgeType",
-    "REVERSE_EDGE_TYPES",
-    "WIZARD_EDGE_PATTERNS",
+    "EncryptionManager",
+    "Environment",
+    "MemDocsStorage",
+    "MemoryConfig",
+    # Control Panel
+    "MemoryControlPanel",
+    # Memory Graph (Cross-Wizard Intelligence)
+    "MemoryGraph",
+    "MemoryPermissionError",
+    "MemoryStats",
+    "Node",
+    "NodeType",
+    "PIIDetection",
+    "PIIPattern",
+    # Security - PII
+    "PIIScrubber",
+    "PatternMetadata",
+    "PatternNode",
+    "PerformanceNode",
+    # Short-term Memory
+    "RedisShortTermMemory",
+    "RedisStartMethod",
+    "RedisStatus",
+    "SecretDetection",
+    "SecretType",
+    # Security - Secrets
+    "SecretsDetector",
+    # Long-term Memory
+    "SecureMemDocsIntegration",
+    "SecurePattern",
+    "SecurityError",
+    "SecurityViolation",
+    "Severity",
+    "StagedPattern",
+    "TTLStrategy",
+    # Unified Memory Interface (recommended)
+    "UnifiedMemory",
+    "VulnerabilityNode",
+    "check_redis_connection",
+    "detect_secrets",
+    # Redis Bootstrap
+    "ensure_redis",
+    "get_railway_redis",
+    "get_redis_config",
+    # Configuration
+    "get_redis_memory",
+    "get_redis_or_mock",
+    "stop_redis",
 ]

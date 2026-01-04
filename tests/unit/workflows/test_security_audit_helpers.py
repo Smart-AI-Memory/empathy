@@ -1,5 +1,4 @@
-"""
-Educational Tests for Security Audit Helper Functions
+"""Educational Tests for Security Audit Helper Functions
 
 Learning Objectives:
 - Meta-detection: Testing code that detects vulnerabilities
@@ -35,8 +34,7 @@ class TestIsDetectionCode:
     """Educational tests for detection code identification (meta-detection)."""
 
     def test_identifies_string_literal_detection_patterns(self):
-        """
-        Teaching Pattern: Meta-detection fundamentals.
+        """Teaching Pattern: Meta-detection fundamentals.
 
         When code contains '"eval("' as a string literal (in quotes),
         it's likely detection code searching for that pattern, not
@@ -54,8 +52,7 @@ class TestIsDetectionCode:
         assert result is True  # This is detection code, not vulnerable code
 
     def test_identifies_regex_compilation_for_detection(self):
-        r"""
-        Teaching Pattern: Regex-based detection identification.
+        r"""Teaching Pattern: Regex-based detection identification.
 
         When code compiles a regex pattern for scanning, it's building
         a security tool, not introducing a vulnerability.
@@ -72,8 +69,7 @@ class TestIsDetectionCode:
         assert result is True  # Regex compilation = detection tool
 
     def test_identifies_pattern_searching(self):
-        """
-        Teaching Pattern: Pattern matching method detection.
+        """Teaching Pattern: Pattern matching method detection.
 
         Methods like .search(), .finditer(), .match() indicate
         pattern detection, not vulnerability introduction.
@@ -90,8 +86,7 @@ class TestIsDetectionCode:
         assert result is True  # Search method = detection
 
     def test_identifies_in_content_checks(self):
-        """
-        Teaching Pattern: Content checking identification.
+        """Teaching Pattern: Content checking identification.
 
         The pattern "X in content" is a common detection idiom.
 
@@ -107,8 +102,7 @@ class TestIsDetectionCode:
         assert result is True  # "in content" = detection pattern
 
     def test_rejects_actual_vulnerable_code(self):
-        """
-        Teaching Pattern: Distinguishing real vulnerabilities from detection.
+        """Teaching Pattern: Distinguishing real vulnerabilities from detection.
 
         Actual calls to dangerous functions should NOT be flagged as
         detection code - they're real vulnerabilities.
@@ -136,8 +130,7 @@ class TestIsFakeCredential:
     """Educational tests for fake credential identification."""
 
     def test_identifies_aws_example_keys(self):
-        """
-        Teaching Pattern: AWS official example pattern.
+        """Teaching Pattern: AWS official example pattern.
 
         AWS documentation uses 'EXAMPLE' in their example credentials.
         These should never be flagged as real secrets.
@@ -153,8 +146,7 @@ class TestIsFakeCredential:
         assert result is True  # Contains 'EXAMPLE' marker
 
     def test_identifies_test_and_mock_credentials(self):
-        """
-        Teaching Pattern: Common test credential markers.
+        """Teaching Pattern: Common test credential markers.
 
         Credentials containing 'TEST', 'FAKE', 'MOCK' are clearly
         not real secrets and should be ignored.
@@ -172,8 +164,7 @@ class TestIsFakeCredential:
             assert result is True, f"Should identify {cred} as fake"
 
     def test_identifies_placeholder_patterns(self):
-        """
-        Teaching Pattern: Placeholder credential detection.
+        """Teaching Pattern: Placeholder credential detection.
 
         Credentials with "your-X-here", "...", or generic values like
         "secret" or "password" are placeholders.
@@ -194,8 +185,7 @@ class TestIsFakeCredential:
             assert result is True, f"Should identify {cred} as placeholder"
 
     def test_identifies_literal_example_values(self):
-        """
-        Teaching Pattern: Literal test values.
+        """Teaching Pattern: Literal test values.
 
         Values like "secret123", "password", "hardcoded_secret" are
         clearly examples from documentation or tests.
@@ -213,8 +203,7 @@ class TestIsFakeCredential:
             assert result is True, f"Should identify {value} as example"
 
     def test_identifies_pattern_constants(self):
-        r"""
-        Teaching Pattern: Pattern definition constants.
+        r"""Teaching Pattern: Pattern definition constants.
 
         Constants ending in _PATTERN or _EXAMPLE are pattern definitions,
         not actual secrets.
@@ -233,8 +222,7 @@ class TestIsFakeCredential:
             assert result is True, f"Should identify {const} as pattern constant"
 
     def test_rejects_real_looking_credentials(self):
-        """
-        Teaching Pattern: Distinguishing real secrets from fake ones.
+        """Teaching Pattern: Distinguishing real secrets from fake ones.
 
         Credentials that don't match any fake patterns should be flagged
         as potential real secrets.
@@ -266,8 +254,7 @@ class TestIsDocumentationOrString:
     """Educational tests for documentation and string literal detection."""
 
     def test_identifies_comment_lines(self):
-        """
-        Teaching Pattern: Comment detection.
+        """Teaching Pattern: Comment detection.
 
         Lines starting with comment markers (#, //, *) are documentation,
         not executable code.
@@ -287,8 +274,7 @@ class TestIsDocumentationOrString:
             assert result is True, f"Should identify {line} as comment"
 
     def test_identifies_docstrings(self):
-        """
-        Teaching Pattern: Docstring detection.
+        """Teaching Pattern: Docstring detection.
 
         Lines containing triple quotes (triple-double or triple-single)
         are likely in docstrings.
@@ -308,8 +294,7 @@ class TestIsDocumentationOrString:
             assert result is True, f"Should identify {line} as docstring"
 
     def test_identifies_string_literal_assignments(self):
-        r"""
-        Teaching Pattern: String assignment detection.
+        r"""Teaching Pattern: String assignment detection.
 
         Code that assigns a string containing vulnerable patterns
         is defining test data or patterns, not executing them.
@@ -329,8 +314,7 @@ class TestIsDocumentationOrString:
             assert result is True, f"Should identify {line} as string assignment"
 
     def test_identifies_documentation_keywords(self):
-        """
-        Teaching Pattern: Contextual keyword detection.
+        """Teaching Pattern: Contextual keyword detection.
 
         Lines containing keywords like "example", "vulnerable", "dangerous",
         "pattern", "detect" are explaining vulnerabilities, not introducing them.
@@ -352,8 +336,7 @@ class TestIsDocumentationOrString:
             assert result is True, f"Should identify {line} as documentation"
 
     def test_rejects_actual_executable_code(self):
-        """
-        Teaching Pattern: Distinguishing documentation from execution.
+        """Teaching Pattern: Distinguishing documentation from execution.
 
         Actual function calls without documentation context should NOT
         be flagged as documentation.
@@ -394,8 +377,7 @@ class TestSecurityFilterIntegration:
     """Integration tests combining multiple security filters."""
 
     def test_scanner_test_file_with_detection_patterns(self):
-        """
-        Teaching Pattern: Multi-layer filtering.
+        """Teaching Pattern: Multi-layer filtering.
 
         A security scanner test file might contain:
         1. Detection code (if "eval(" in content)
@@ -423,8 +405,7 @@ class TestSecurityFilterIntegration:
         assert workflow._is_documentation_or_string(test_code_lines[2], "eval(") is True
 
     def test_distinguishes_real_vulnerabilities_from_false_positives(self):
-        """
-        Teaching Pattern: Precision in security scanning.
+        """Teaching Pattern: Precision in security scanning.
 
         A good security scanner must:
         - Flag REAL vulnerabilities (actual dangerous code)
@@ -460,8 +441,7 @@ class TestSecurityFilterEdgeCases:
     """Edge case tests for security filter robustness."""
 
     def test_handles_empty_strings(self):
-        """
-        Teaching Pattern: Null/empty input handling.
+        """Teaching Pattern: Null/empty input handling.
 
         Security filters should gracefully handle empty inputs without
         crashing or giving false results.
@@ -476,8 +456,7 @@ class TestSecurityFilterEdgeCases:
         assert result is False  # No documentation markers in empty string
 
     def test_handles_very_long_lines(self):
-        """
-        Teaching Pattern: Performance and robustness.
+        """Teaching Pattern: Performance and robustness.
 
         Real-world code can have very long lines (minified JS, generated code).
         Filters should handle these without performance issues.
@@ -490,8 +469,7 @@ class TestSecurityFilterEdgeCases:
         assert result is True  # Should still detect pattern
 
     def test_handles_unicode_and_special_characters(self):
-        """
-        Teaching Pattern: Character encoding robustness.
+        """Teaching Pattern: Character encoding robustness.
 
         Code in the wild may contain unicode, emojis, or special characters.
         Filters should handle these gracefully.
@@ -504,8 +482,7 @@ class TestSecurityFilterEdgeCases:
         assert result is True  # Still identifies as documentation
 
     def test_handles_nested_quotes(self):
-        """
-        Teaching Pattern: Complex string parsing.
+        """Teaching Pattern: Complex string parsing.
 
         Code may have nested quotes or escaped characters.
 
@@ -519,8 +496,7 @@ class TestSecurityFilterEdgeCases:
         assert result is True  # Should identify as pattern definition
 
     def test_case_insensitive_pattern_matching(self):
-        """
-        Teaching Pattern: Case-insensitive detection.
+        """Teaching Pattern: Case-insensitive detection.
 
         Some patterns (like FAKE, TEST, EXAMPLE) should be detected
         regardless of case.
@@ -552,8 +528,7 @@ class TestSecurityAuditWorkflowInitialization:
     """Tests for SecurityAuditWorkflow initialization."""
 
     def test_default_initialization(self, tmp_path, monkeypatch):
-        """
-        Teaching Pattern: Testing constructor defaults.
+        """Teaching Pattern: Testing constructor defaults.
 
         When no arguments are provided, the workflow should use
         sensible defaults. We use tmp_path to avoid loading any
@@ -570,22 +545,21 @@ class TestSecurityAuditWorkflowInitialization:
         assert workflow._team_decisions == {}
 
     def test_custom_configuration(self):
-        """
-        Teaching Pattern: Testing dependency injection.
+        """Teaching Pattern: Testing dependency injection.
 
         The workflow should accept custom configuration through
         constructor parameters.
         """
         workflow = SecurityAuditWorkflow(
-            patterns_dir="/custom/patterns", skip_remediate_if_clean=False
+            patterns_dir="/custom/patterns",
+            skip_remediate_if_clean=False,
         )
 
         assert workflow.patterns_dir == "/custom/patterns"
         assert workflow.skip_remediate_if_clean is False
 
     def test_stage_skip_logic_when_clean(self):
-        """
-        Teaching Pattern: Testing conditional premium tier usage.
+        """Teaching Pattern: Testing conditional premium tier usage.
 
         When no critical/high findings exist, remediation stage
         (premium model) should be skipped to save costs.
@@ -598,8 +572,7 @@ class TestSecurityAuditWorkflowInitialization:
         assert "No high/critical findings" in reason
 
     def test_stage_skip_logic_when_critical_found(self):
-        """
-        Teaching Pattern: Testing positive condition (when NOT to skip).
+        """Teaching Pattern: Testing positive condition (when NOT to skip).
 
         When critical/high findings exist, remediation should run
         even if skip_remediate_if_clean is True.

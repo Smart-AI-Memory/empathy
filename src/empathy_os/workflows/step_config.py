@@ -1,5 +1,4 @@
-"""
-Workflow Step Configuration for Multi-Model Pipelines
+"""Workflow Step Configuration for Multi-Model Pipelines
 
 Provides declarative step configuration that integrates with:
 - empathy_os.models.registry for model lookup
@@ -24,8 +23,7 @@ from empathy_os.models import (
 
 @dataclass
 class WorkflowStepConfig:
-    """
-    Configuration for a single workflow step.
+    """Configuration for a single workflow step.
 
     Combines declarative routing configuration with optional overrides
     for provider, tier, and resilience policies.
@@ -47,6 +45,7 @@ class WorkflowStepConfig:
         ... )
         >>> step2.effective_tier
         'capable'
+
     """
 
     # Required fields
@@ -75,8 +74,7 @@ class WorkflowStepConfig:
 
     @property
     def effective_tier(self) -> str:
-        """
-        Get the effective tier for this step.
+        """Get the effective tier for this step.
 
         Priority:
         1. tier_hint if specified
@@ -84,6 +82,7 @@ class WorkflowStepConfig:
 
         Returns:
             Tier name ("cheap", "capable", or "premium")
+
         """
         if self.tier_hint:
             return self.tier_hint
@@ -104,13 +103,13 @@ class WorkflowStepConfig:
         retry_policy: RetryPolicy | None = None,
         timeout_seconds: int | None = None,
     ) -> "WorkflowStepConfig":
-        """
-        Create a new step config with overrides applied.
+        """Create a new step config with overrides applied.
 
         Useful for runtime customization without mutating the original.
 
         Returns:
             New WorkflowStepConfig with overrides applied
+
         """
         return WorkflowStepConfig(
             name=self.name,
@@ -147,8 +146,7 @@ class WorkflowStepConfig:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "WorkflowStepConfig":
-        """
-        Create from dictionary.
+        """Create from dictionary.
 
         Note: fallback_policy and retry_policy are not restored from dict
         (they should be configured programmatically).
@@ -166,11 +164,11 @@ class WorkflowStepConfig:
 
 
 def validate_step_config(step: WorkflowStepConfig) -> list[str]:
-    """
-    Validate a step configuration.
+    """Validate a step configuration.
 
     Returns:
         List of validation error messages (empty if valid)
+
     """
     errors = []
 
@@ -206,8 +204,7 @@ def steps_from_tier_map(
     tier_map: dict[str, str],
     task_type_default: str = "generate_code",
 ) -> list[WorkflowStepConfig]:
-    """
-    Convert legacy stages/tier_map to WorkflowStepConfig list.
+    """Convert legacy stages/tier_map to WorkflowStepConfig list.
 
     Useful for migrating existing workflows.
 
@@ -218,6 +215,7 @@ def steps_from_tier_map(
 
     Returns:
         List of WorkflowStepConfig
+
     """
     steps = []
     for stage_name in stages:
@@ -231,6 +229,6 @@ def steps_from_tier_map(
                 name=stage_name,
                 task_type=task_type_default,
                 tier_hint=tier,
-            )
+            ),
         )
     return steps

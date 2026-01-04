@@ -1,5 +1,4 @@
-"""
-Tests for CodeReviewPipeline.
+"""Tests for CodeReviewPipeline.
 
 Tests the composite workflow combining CodeReviewCrew with CodeReviewWorkflow.
 

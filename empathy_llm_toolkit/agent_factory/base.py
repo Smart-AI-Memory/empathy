@@ -1,5 +1,4 @@
-"""
-Base Classes for Agent Factory
+"""Base Classes for Agent Factory
 
 Defines the common interfaces that all framework adapters must implement.
 These abstractions allow seamless switching between LangChain, LangGraph,
@@ -128,8 +127,7 @@ class WorkflowConfig:
 
 
 class BaseAgent(ABC):
-    """
-    Abstract base class for framework-agnostic agents.
+    """Abstract base class for framework-agnostic agents.
 
     All framework adapters create agents that implement this interface,
     allowing seamless switching between frameworks.
@@ -143,8 +141,7 @@ class BaseAgent(ABC):
 
     @abstractmethod
     async def invoke(self, input_data: str | dict, context: dict | None = None) -> dict:
-        """
-        Invoke the agent with input.
+        """Invoke the agent with input.
 
         Args:
             input_data: User input or structured data
@@ -152,17 +149,15 @@ class BaseAgent(ABC):
 
         Returns:
             Dict with at least {"output": str, "metadata": dict}
+
         """
-        pass
 
     @abstractmethod
     async def stream(self, input_data: str | dict, context: dict | None = None):
-        """
-        Stream agent response.
+        """Stream agent response.
 
         Yields chunks of the response as they're generated.
         """
-        pass
 
     def add_tool(self, tool: Any) -> None:
         """Add a tool to the agent."""
@@ -183,8 +178,7 @@ class BaseAgent(ABC):
 
 
 class BaseWorkflow(ABC):
-    """
-    Abstract base class for framework-agnostic workflows.
+    """Abstract base class for framework-agnostic workflows.
 
     Workflows orchestrate multiple agents to complete complex tasks.
     """
@@ -196,8 +190,7 @@ class BaseWorkflow(ABC):
 
     @abstractmethod
     async def run(self, input_data: str | dict, initial_state: dict | None = None) -> dict:
-        """
-        Run the workflow.
+        """Run the workflow.
 
         Args:
             input_data: Initial input
@@ -205,17 +198,15 @@ class BaseWorkflow(ABC):
 
         Returns:
             Dict with final output and execution metadata
+
         """
-        pass
 
     @abstractmethod
     async def stream(self, input_data: str | dict, initial_state: dict | None = None):
-        """
-        Stream workflow execution.
+        """Stream workflow execution.
 
         Yields updates as agents complete their work.
         """
-        pass
 
     def get_state(self) -> dict:
         """Get current workflow state."""
@@ -227,8 +218,7 @@ class BaseWorkflow(ABC):
 
 
 class BaseAdapter(ABC):
-    """
-    Abstract base class for framework adapters.
+    """Abstract base class for framework adapters.
 
     Each framework (LangChain, LangGraph, AutoGen, Haystack) implements
     an adapter that creates agents and workflows using that framework's
@@ -239,30 +229,26 @@ class BaseAdapter(ABC):
     @abstractmethod
     def framework_name(self) -> str:
         """Name of the framework this adapter supports."""
-        pass
 
     @abstractmethod
     def is_available(self) -> bool:
         """Check if the framework is installed and available."""
-        pass
 
     @abstractmethod
     def create_agent(self, config: AgentConfig) -> BaseAgent:
-        """
-        Create an agent using this framework.
+        """Create an agent using this framework.
 
         Args:
             config: Agent configuration
 
         Returns:
             Agent implementing BaseAgent interface
+
         """
-        pass
 
     @abstractmethod
     def create_workflow(self, config: WorkflowConfig, agents: list[BaseAgent]) -> BaseWorkflow:
-        """
-        Create a workflow using this framework.
+        """Create a workflow using this framework.
 
         Args:
             config: Workflow configuration
@@ -270,22 +256,24 @@ class BaseAdapter(ABC):
 
         Returns:
             Workflow implementing BaseWorkflow interface
+
         """
-        pass
 
     def create_tool(
-        self, name: str, description: str, func: Callable, args_schema: dict | None = None
+        self,
+        name: str,
+        description: str,
+        func: Callable,
+        args_schema: dict | None = None,
     ) -> Any:
-        """
-        Create a tool for agents in this framework's format.
+        """Create a tool for agents in this framework's format.
 
         Default implementation returns a dict; override for framework-specific.
         """
         return {"name": name, "description": description, "func": func, "args_schema": args_schema}
 
     def get_model_for_tier(self, tier: str, provider: str = "anthropic") -> str:
-        """
-        Get the model ID for a given tier.
+        """Get the model ID for a given tier.
 
         Uses Empathy's ModelRouter if available, otherwise defaults.
         """
@@ -312,5 +300,6 @@ class BaseAdapter(ABC):
                 "openai": {"cheap": "gpt-4o-mini", "capable": "gpt-4o", "premium": "o1"},
             }
             return defaults.get(provider, defaults["anthropic"]).get(
-                tier, "claude-sonnet-4-20250514"
+                tier,
+                "claude-sonnet-4-20250514",
             )

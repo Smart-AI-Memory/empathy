@@ -1,5 +1,4 @@
-"""
-Comprehensive tests for all 16 Coach Wizards
+"""Comprehensive tests for all 16 Coach Wizards
 
 Level 4 Anticipatory Empathy implementation using the Empathy Framework.
 
@@ -1038,5 +1037,5 @@ class TestWizardIntegration:
                 issue.fix_suggestion == "Use bcrypt for hashing",
                 issue.category == "Security",
                 issue.confidence == 0.99,
-            ]
+            ],
         )

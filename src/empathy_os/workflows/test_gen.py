@@ -1,5 +1,4 @@
-"""
-Test Generation Workflow
+"""Test Generation Workflow
 
 Generates tests targeting areas with historical bugs and low coverage.
 Prioritizes test creation for bug-prone code paths.
@@ -106,8 +105,7 @@ class ClassSignature:
 
 
 class ASTFunctionAnalyzer(ast.NodeVisitor):
-    """
-    AST-based function analyzer for accurate test generation.
+    """AST-based function analyzer for accurate test generation.
 
     Extracts:
     - Function signatures with types
@@ -125,10 +123,11 @@ class ASTFunctionAnalyzer(ast.NodeVisitor):
         self.last_error: str | None = None  # Track parse errors for debugging
 
     def analyze(
-        self, code: str, file_path: str = ""
+        self,
+        code: str,
+        file_path: str = "",
     ) -> tuple[list[FunctionSignature], list[ClassSignature]]:
-        """
-        Analyze code and extract function/class signatures.
+        """Analyze code and extract function/class signatures.
 
         Args:
             code: Python source code to analyze
@@ -137,6 +136,7 @@ class ASTFunctionAnalyzer(ast.NodeVisitor):
         Returns:
             Tuple of (functions, classes) lists. If parsing fails,
             returns empty lists and sets self.last_error with details.
+
         """
         self.last_error = None
         try:
@@ -197,7 +197,8 @@ class ASTFunctionAnalyzer(ast.NodeVisitor):
         for item in node.body:
             if isinstance(item, ast.FunctionDef | ast.AsyncFunctionDef):
                 method_sig = self._extract_function_signature(
-                    item, is_async=isinstance(item, ast.AsyncFunctionDef)
+                    item,
+                    is_async=isinstance(item, ast.AsyncFunctionDef),
                 )
                 methods.append(method_sig)
 
@@ -218,14 +219,16 @@ class ASTFunctionAnalyzer(ast.NodeVisitor):
                 is_enum=is_enum,
                 is_dataclass=is_dataclass,
                 required_init_params=required_init_params,
-            )
+            ),
         )
 
         self._current_class = None
         # Don't call generic_visit to avoid processing methods again
 
     def _extract_function_signature(
-        self, node: ast.FunctionDef | ast.AsyncFunctionDef, is_async: bool = False
+        self,
+        node: ast.FunctionDef | ast.AsyncFunctionDef,
+        is_async: bool = False,
     ) -> FunctionSignature:
         """Extract detailed signature from function node."""
         # Extract parameters with types and defaults
@@ -366,8 +369,7 @@ TEST_GEN_STEPS = {
 
 
 class TestGenerationWorkflow(BaseWorkflow):
-    """
-    Generate tests targeting areas with historical bugs.
+    """Generate tests targeting areas with historical bugs.
 
     Prioritizes test generation for files that have historically
     been bug-prone and have low test coverage.
@@ -391,8 +393,7 @@ class TestGenerationWorkflow(BaseWorkflow):
         output_dir: str = "tests/generated",
         **kwargs: Any,
     ):
-        """
-        Initialize test generation workflow.
+        """Initialize test generation workflow.
 
         Args:
             patterns_dir: Directory containing learned patterns
@@ -400,6 +401,7 @@ class TestGenerationWorkflow(BaseWorkflow):
             write_tests: If True, write generated tests to output_dir
             output_dir: Directory to write generated test files
             **kwargs: Additional arguments passed to BaseWorkflow
+
         """
         super().__init__(**kwargs)
         self.patterns_dir = patterns_dir
@@ -430,8 +432,7 @@ class TestGenerationWorkflow(BaseWorkflow):
                 pass
 
     def should_skip_stage(self, stage_name: str, input_data: Any) -> tuple[bool, str | None]:
-        """
-        Downgrade review stage if few tests generated.
+        """Downgrade review stage if few tests generated.
 
         Args:
             stage_name: Name of the stage to check
@@ -439,6 +440,7 @@ class TestGenerationWorkflow(BaseWorkflow):
 
         Returns:
             Tuple of (should_skip, reason)
+
         """
         if stage_name == "review":
             if self._test_count < self.min_tests_for_review:
@@ -448,23 +450,24 @@ class TestGenerationWorkflow(BaseWorkflow):
         return False, None
 
     async def run_stage(
-        self, stage_name: str, tier: ModelTier, input_data: Any
+        self,
+        stage_name: str,
+        tier: ModelTier,
+        input_data: Any,
     ) -> tuple[Any, int, int]:
         """Route to specific stage implementation."""
         if stage_name == "identify":
             return await self._identify(input_data, tier)
-        elif stage_name == "analyze":
+        if stage_name == "analyze":
             return await self._analyze(input_data, tier)
-        elif stage_name == "generate":
+        if stage_name == "generate":
             return await self._generate(input_data, tier)
-        elif stage_name == "review":
+        if stage_name == "review":
             return await self._review(input_data, tier)
-        else:
-            raise ValueError(f"Unknown stage: {stage_name}")
+        raise ValueError(f"Unknown stage: {stage_name}")
 
     async def _identify(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Identify files needing tests.
+        """Identify files needing tests.
 
         Finds files with low coverage, historical bugs, or
         no existing tests.
@@ -574,7 +577,7 @@ class TestGenerationWorkflow(BaseWorkflow):
                                     "is_hotspot": is_hotspot,
                                     "has_tests": has_tests,
                                     "priority": priority,
-                                }
+                                },
                             )
                     except OSError:
                         scan_counts["files_read_error"] += 1
@@ -637,8 +640,7 @@ class TestGenerationWorkflow(BaseWorkflow):
         return possible[0]  # Return expected location even if doesn't exist
 
     async def _analyze(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Analyze code structure for test generation.
+        """Analyze code structure for test generation.
 
         Examines functions, classes, and patterns to determine
         what tests should be generated.
@@ -668,10 +670,14 @@ class TestGenerationWorkflow(BaseWorkflow):
 
                 # Extract testable items with configurable limits and error tracking
                 functions, func_error = self._extract_functions(
-                    content, candidate["file"], max_functions_per_file
+                    content,
+                    candidate["file"],
+                    max_functions_per_file,
                 )
                 classes, class_error = self._extract_classes(
-                    content, candidate["file"], max_classes_per_file
+                    content,
+                    candidate["file"],
+                    max_classes_per_file,
                 )
 
                 # Track parse errors for visibility
@@ -689,7 +695,7 @@ class TestGenerationWorkflow(BaseWorkflow):
                         "function_count": len(functions),
                         "class_count": len(classes),
                         "test_suggestions": self._generate_suggestions(functions, classes),
-                    }
+                    },
                 )
             except OSError:
                 continue
@@ -710,10 +716,12 @@ class TestGenerationWorkflow(BaseWorkflow):
         )
 
     def _extract_functions(
-        self, content: str, file_path: str = "", max_functions: int = 30
+        self,
+        content: str,
+        file_path: str = "",
+        max_functions: int = 30,
     ) -> tuple[list[dict], str | None]:
-        """
-        Extract function definitions from Python code using AST analysis.
+        """Extract function definitions from Python code using AST analysis.
 
         Args:
             content: Python source code
@@ -722,6 +730,7 @@ class TestGenerationWorkflow(BaseWorkflow):
 
         Returns:
             Tuple of (functions list, error message or None)
+
         """
         analyzer = ASTFunctionAnalyzer()
         functions, _ = analyzer.analyze(content, file_path)
@@ -740,15 +749,17 @@ class TestGenerationWorkflow(BaseWorkflow):
                         "has_side_effects": sig.has_side_effects,
                         "complexity": sig.complexity,
                         "docstring": sig.docstring,
-                    }
+                    },
                 )
         return result, analyzer.last_error
 
     def _extract_classes(
-        self, content: str, file_path: str = "", max_classes: int = 15
+        self,
+        content: str,
+        file_path: str = "",
+        max_classes: int = 15,
     ) -> tuple[list[dict], str | None]:
-        """
-        Extract class definitions from Python code using AST analysis.
+        """Extract class definitions from Python code using AST analysis.
 
         Args:
             content: Python source code
@@ -757,6 +768,7 @@ class TestGenerationWorkflow(BaseWorkflow):
 
         Returns:
             Tuple of (classes list, error message or None)
+
         """
         analyzer = ASTFunctionAnalyzer()
         _, classes = analyzer.analyze(content, file_path)
@@ -786,7 +798,7 @@ class TestGenerationWorkflow(BaseWorkflow):
                     "docstring": sig.docstring,
                     "is_dataclass": sig.is_dataclass,
                     "required_init_params": sig.required_init_params,
-                }
+                },
             )
         return result, analyzer.last_error
 
@@ -808,8 +820,7 @@ class TestGenerationWorkflow(BaseWorkflow):
         return suggestions
 
     async def _generate(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Generate test cases.
+        """Generate test cases.
 
         Creates test code targeting identified functions
         and classes, focusing on edge cases.
@@ -840,7 +851,7 @@ class TestGenerationWorkflow(BaseWorkflow):
                         "target": func["name"],
                         "type": "function",
                         "code": test_code,
-                    }
+                    },
                 )
 
             for cls in item.get("classes", [])[:max_classes_to_generate]:
@@ -850,7 +861,7 @@ class TestGenerationWorkflow(BaseWorkflow):
                         "target": cls["name"],
                         "type": "class",
                         "code": test_code,
-                    }
+                    },
                 )
 
             if tests:
@@ -860,7 +871,7 @@ class TestGenerationWorkflow(BaseWorkflow):
                         "test_file": f"test_{module_name}.py",
                         "tests": tests,
                         "test_count": len(tests),
-                    }
+                    },
                 )
 
         self._test_count = sum(t["test_count"] for t in generated_tests)
@@ -949,7 +960,7 @@ async def test_{name}_with_various_inputs({param_names_str}):
     """Test {name} with various input combinations."""
     result = await {name}({", ".join(param_names)})
     assert result is not None
-'''
+''',
                 )
             else:
                 tests.append(
@@ -961,29 +972,28 @@ def test_{name}_with_various_inputs({param_names_str}):
     """Test {name} with various input combinations."""
     result = {name}({", ".join(param_names)})
     assert result is not None
-'''
+''',
                 )
-        else:
-            # Simple valid input test
-            if is_async:
-                tests.append(
-                    f'''
+        # Simple valid input test
+        elif is_async:
+            tests.append(
+                f'''
 @pytest.mark.asyncio
 async def test_{name}_returns_value():
     """Test that {name} returns a value with valid inputs."""
     result = await {name}({param_str})
     assert result is not None
-'''
-                )
-            else:
-                tests.append(
-                    f'''
+''',
+            )
+        else:
+            tests.append(
+                f'''
 def test_{name}_returns_value():
     """Test that {name} returns a value with valid inputs."""
     result = {name}({param_str})
     assert result is not None
-'''
-                )
+''',
+            )
 
         # Generate edge case tests based on parameter types
         edge_cases = test_cases.get("edge_cases", [])
@@ -1005,7 +1015,7 @@ async def test_{name}_edge_cases(edge_input):
     except (ValueError, TypeError, KeyError) as e:
         # Expected error for edge cases
         assert str(e)  # Error message should not be empty
-'''
+''',
                 )
             else:
                 tests.append(
@@ -1022,7 +1032,7 @@ def test_{name}_edge_cases(edge_input):
     except (ValueError, TypeError, KeyError) as e:
         # Expected error for edge cases
         assert str(e)  # Error message should not be empty
-'''
+''',
                 )
 
         # Generate exception tests for each raised exception
@@ -1035,7 +1045,7 @@ async def test_{name}_raises_{exc_type.lower()}():
     """Test that {name} raises {exc_type} for invalid inputs."""
     with pytest.raises({exc_type}):
         await {name}(None)  # Adjust input to trigger {exc_type}
-'''
+''',
                 )
             else:
                 tests.append(
@@ -1044,7 +1054,7 @@ def test_{name}_raises_{exc_type.lower()}():
     """Test that {name} raises {exc_type} for invalid inputs."""
     with pytest.raises({exc_type}):
         {name}(None)  # Adjust input to trigger {exc_type}
-'''
+''',
                 )
 
         # Add return type assertion if we know the type
@@ -1059,7 +1069,7 @@ async def test_{name}_returns_correct_type():
     """Test that {name} returns the expected type."""
     result = await {name}({param_str})
     {type_check}
-'''
+''',
                     )
                 else:
                     tests.append(
@@ -1068,7 +1078,7 @@ def test_{name}_returns_correct_type():
     """Test that {name} returns the expected type."""
     result = {name}({param_str})
     {type_check}
-'''
+''',
                     )
 
         return "\n".join(tests)
@@ -1083,7 +1093,7 @@ def test_{name}_returns_correct_type():
             if isinstance(param, tuple) and len(param) >= 2:
                 _name, type_hint, default = param[0], param[1], param[2] if len(param) > 2 else None
             else:
-                _name = param if isinstance(param, str) else str(param)  # noqa: F841
+                _name = param if isinstance(param, str) else str(param)
                 type_hint = "Any"
                 default = None
 
@@ -1144,18 +1154,17 @@ def test_{name}_returns_correct_type():
         type_hint_lower = type_hint.lower()
         if "str" in type_hint_lower:
             return ['"hello"', '"world"', '"test_string"']
-        elif "int" in type_hint_lower:
+        if "int" in type_hint_lower:
             return ["0", "1", "42", "-1"]
-        elif "float" in type_hint_lower:
+        if "float" in type_hint_lower:
             return ["0.0", "1.0", "3.14"]
-        elif "bool" in type_hint_lower:
+        if "bool" in type_hint_lower:
             return ["True", "False"]
-        elif "list" in type_hint_lower:
+        if "list" in type_hint_lower:
             return ["[]", "[1, 2, 3]"]
-        elif "dict" in type_hint_lower:
+        if "dict" in type_hint_lower:
             return ["{}", '{"key": "value"}']
-        else:
-            return ['"test_value"']
+        return ['"test_value"']
 
     def _generate_test_for_class(self, module: str, cls: dict) -> str:
         """Generate executable test class based on AST analysis."""
@@ -1163,7 +1172,7 @@ def test_{name}_returns_correct_type():
         init_params = cls.get("init_params", [])
         methods = cls.get("methods", [])
         required_params = cls.get("required_init_params", 0)
-        _docstring = cls.get("docstring", "")  # Reserved for future use  # noqa: F841
+        _docstring = cls.get("docstring", "")  # Reserved for future use
 
         # Generate constructor arguments - ensure we have values for ALL required params
         init_args = self._generate_test_cases_for_params(init_params)
@@ -1185,7 +1194,7 @@ def test_{name}_returns_correct_type():
 def {name.lower()}_instance():
     """Create a {name} instance for testing."""
     return {name}({init_arg_str})
-'''
+''',
         )
 
         # Test initialization
@@ -1198,7 +1207,7 @@ class Test{name}:
         """Test that {name} can be instantiated."""
         instance = {name}({init_arg_str})
         assert instance is not None
-'''
+''',
         )
 
         # Only generate parametrized tests for single-param classes to avoid tuple mismatches
@@ -1218,7 +1227,7 @@ class Test{name}:
         """Test {name} initialization with various arguments."""
         instance = {name}({param_name})
         assert instance is not None
-'''
+''',
                 )
 
         # Generate tests for each public method
@@ -1245,7 +1254,7 @@ class Test{name}:
         """Test that {method_name} returns a value."""
         result = await {name.lower()}_instance.{method_name}({method_arg_str})
         assert result is not None or result == 0 or result == "" or result == []
-'''
+''',
                 )
             else:
                 tests.append(
@@ -1254,7 +1263,7 @@ class Test{name}:
         """Test that {method_name} returns a value."""
         result = {name.lower()}_instance.{method_name}({method_arg_str})
         assert result is not None or result == 0 or result == "" or result == []
-'''
+''',
                 )
 
             # Add exception tests for methods that raise
@@ -1267,7 +1276,7 @@ class Test{name}:
         """Test that {method_name} raises {exc_type} for invalid inputs."""
         with pytest.raises({exc_type}):
             await {name.lower()}_instance.{method_name}(None)
-'''
+''',
                     )
                 else:
                     tests.append(
@@ -1276,14 +1285,13 @@ class Test{name}:
         """Test that {method_name} raises {exc_type} for invalid inputs."""
         with pytest.raises({exc_type}):
             {name.lower()}_instance.{method_name}(None)
-'''
+''',
                     )
 
         return "\n".join(tests)
 
     async def _review(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Review and improve generated tests using LLM.
+        """Review and improve generated tests using LLM.
 
         This stage now receives the generated test code and uses the LLM
         to create the final analysis report.
@@ -1508,8 +1516,7 @@ END OF REQUIRED FORMAT - output nothing after recommendations."""
 
 
 def format_test_gen_report(result: dict, input_data: dict) -> str:
-    """
-    Format test generation output as a human-readable report.
+    """Format test generation output as a human-readable report.
 
     Args:
         result: The review stage result
@@ -1517,6 +1524,7 @@ def format_test_gen_report(result: dict, input_data: dict) -> str:
 
     Returns:
         Formatted report string
+
     """
     import re
 
@@ -1598,14 +1606,18 @@ def format_test_gen_report(result: dict, input_data: dict) -> str:
 
         # Extract coverage improvement
         coverage_match = re.search(
-            r"<coverage-improvement>(.*?)</coverage-improvement>", review, re.DOTALL
+            r"<coverage-improvement>(.*?)</coverage-improvement>",
+            review,
+            re.DOTALL,
         )
         if coverage_match:
             coverage_improvement = coverage_match.group(1).strip()
 
         # Extract findings
         for finding_match in re.finditer(
-            r'<finding severity="(\w+)">(.*?)</finding>', review, re.DOTALL
+            r'<finding severity="(\w+)">(.*?)</finding>',
+            review,
+            re.DOTALL,
         ):
             severity = finding_match.group(1)
             finding_content = finding_match.group(2)
@@ -1620,7 +1632,7 @@ def format_test_gen_report(result: dict, input_data: dict) -> str:
                     "title": title_match.group(1).strip() if title_match else "Unknown",
                     "location": location_match.group(1).strip() if location_match else "",
                     "fix": fix_match.group(1).strip() if fix_match else "",
-                }
+                },
             )
 
         # Extract suggested tests
@@ -1636,7 +1648,7 @@ def format_test_gen_report(result: dict, input_data: dict) -> str:
                     "target": target,
                     "type": type_match.group(1).strip() if type_match else "unit",
                     "description": desc_match.group(1).strip() if desc_match else "",
-                }
+                },
             )
 
     # Show parsed summary
@@ -1718,7 +1730,7 @@ def format_test_gen_report(result: dict, input_data: dict) -> str:
                 source = "..." + source[-47:]
             lines.append(f"  📁 {source}")
             lines.append(
-                f"     └─ {test_count} test(s) → {test_file.get('test_file', 'test_*.py')}"
+                f"     └─ {test_count} test(s) → {test_file.get('test_file', 'test_*.py')}",
             )
         if len(generated_tests) > 10:
             lines.append(f"  ... and {len(generated_tests) - 10} more files")

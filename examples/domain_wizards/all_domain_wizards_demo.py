@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-Complete Domain Wizards Demo - All 16 Industry-Specific AI Assistants
+"""Complete Domain Wizards Demo - All 16 Industry-Specific AI Assistants
 
 Demonstrates all 16 production-ready, security-integrated domain wizards:
 - Healthcare, Finance, Legal, Education (HIPAA, SOX, FERPA compliant)
@@ -64,7 +63,7 @@ def print_wizard_info(wizard, result):
     if compliance:
         print(f"🔒 Classification: {compliance.get('classification', 'N/A')}")
         print(
-            f"🛡️  PII Detected: {compliance.get('phi_detected', False) or compliance.get('pii_detected', False)}"
+            f"🛡️  PII Detected: {compliance.get('phi_detected', False) or compliance.get('pii_detected', False)}",
         )
         print(f"📋 Retention: {compliance.get('retention_days', 'N/A')} days")
     print()

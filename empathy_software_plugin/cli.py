@@ -1,5 +1,4 @@
-"""
-Empathy Framework - Software Development CLI
+"""Empathy Framework - Software Development CLI
 
 Command-line interface for running AI development wizards on your codebase.
 
@@ -98,14 +97,14 @@ async def analyze_project(
     output_format: str = "text",
     verbose: bool = False,
 ):
-    """
-    Analyze a project with AI development wizards.
+    """Analyze a project with AI development wizards.
 
     Args:
         project_path: Path to project root
         wizard_names: List of wizard names to run (or None for all)
         output_format: 'text' or 'json'
         verbose: Show detailed output
+
     """
     logger.info(f"Starting project analysis for: {project_path} (format: {output_format})")
     print_header("Empathy Framework - AI Development Analysis")
@@ -192,8 +191,7 @@ async def analyze_project(
 
 
 async def gather_project_context(project_path: str) -> dict[str, Any]:
-    """
-    Gather context about the project.
+    """Gather context about the project.
 
     Returns dictionary with all context needed by wizards.
     """
@@ -264,6 +262,7 @@ async def gather_project_context(project_path: str) -> dict[str, Any]:
 
         result = subprocess.run(
             ["git", "log", "--oneline", "--name-only", "-50"],
+            check=False,
             cwd=project_path,
             capture_output=True,
             text=True,
@@ -291,7 +290,7 @@ def parse_ai_calls(file_path: str, content: str) -> list[dict[str, Any]]:
                 "code_snippet": content[:500],  # First 500 chars as sample
                 "prompt_size": len(content),
                 "conversation_id": None,  # Could detect from context
-            }
+            },
         )
 
     return calls
@@ -320,7 +319,6 @@ def parse_git_history(git_output: str) -> list[dict[str, Any]]:
 
 def prepare_wizard_context(wizard_name: str, full_context: dict[str, Any]) -> dict[str, Any]:
     """Prepare context specific to a wizard's requirements"""
-
     base_context = {
         "project_path": full_context["project_path"],
         "version_history": full_context.get("version_history", []),
@@ -332,7 +330,7 @@ def prepare_wizard_context(wizard_name: str, full_context: dict[str, Any]) -> di
             "prompt_files": full_context.get("prompt_files", []),
         }
 
-    elif wizard_name == "context_window":
+    if wizard_name == "context_window":
         return {
             **base_context,
             "ai_calls": full_context.get("ai_calls", []),
@@ -341,14 +339,14 @@ def prepare_wizard_context(wizard_name: str, full_context: dict[str, Any]) -> di
             "model_name": "claude-3-sonnet",
         }
 
-    elif wizard_name == "collaboration_pattern":
+    if wizard_name == "collaboration_pattern":
         return {
             **base_context,
             "ai_integration_files": full_context.get("ai_integration_files", []),
             "ai_usage_patterns": full_context.get("ai_usage_patterns", []),
         }
 
-    elif wizard_name == "ai_documentation":
+    if wizard_name == "ai_documentation":
         return {
             **base_context,
             "documentation_files": full_context.get("documentation_files", []),
@@ -360,7 +358,6 @@ def prepare_wizard_context(wizard_name: str, full_context: dict[str, Any]) -> di
 
 def display_wizard_results(wizard, result: dict[str, Any], verbose: bool):
     """Display wizard results in human-readable format"""
-
     # Issues
     issues = result.get("issues", [])
     if issues:
@@ -461,7 +458,7 @@ def list_wizards():
             print(f"\n{Colors.BOLD}{wizard_id}{Colors.END}")
             print(f"  Name: {info['name']}")
             print(
-                f"  Level: {info['empathy_level']} ({'Anticipatory' if info['empathy_level'] == 4 else 'Other'})"
+                f"  Level: {info['empathy_level']} ({'Anticipatory' if info['empathy_level'] == 4 else 'Other'})",
             )
             print(f"  Category: {info.get('category', 'N/A')}")
 
@@ -520,10 +517,15 @@ Examples:
     analyze_parser = subparsers.add_parser("analyze", help="Analyze a project")
     analyze_parser.add_argument("path", help="Path to project")
     analyze_parser.add_argument(
-        "--wizards", help="Comma-separated list of wizards to run", default=None
+        "--wizards",
+        help="Comma-separated list of wizards to run",
+        default=None,
     )
     analyze_parser.add_argument(
-        "--output", choices=["text", "json"], default="text", help="Output format"
+        "--output",
+        choices=["text", "json"],
+        default="text",
+        help="Output format",
     )
     analyze_parser.add_argument("--verbose", action="store_true", help="Show detailed output")
 
@@ -552,21 +554,20 @@ Examples:
                 wizard_names=wizard_names,
                 output_format=args.output,
                 verbose=args.verbose,
-            )
+            ),
         )
 
-    elif args.command == "list-wizards":
+    if args.command == "list-wizards":
         return list_wizards()
 
-    elif args.command == "wizard-info":
+    if args.command == "wizard-info":
         return wizard_info(args.wizard_id)
 
     return 0
 
 
 def scan_command():
-    """
-    Entry point for empathy-scan command (converted from bin/empathy-scan).
+    """Entry point for empathy-scan command (converted from bin/empathy-scan).
     One-click security & performance scanner.
     """
     logger.info("Empathy Framework security and performance scanner started")
@@ -646,7 +647,9 @@ def scan_command():
 
         for wizard_name, wizard in wizards:
             result = wizard.run_full_analysis(
-                code=code, file_path=str(file_path), language="python"
+                code=code,
+                file_path=str(file_path),
+                language="python",
             )
 
             if result.issues:

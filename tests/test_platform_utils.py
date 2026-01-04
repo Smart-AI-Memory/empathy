@@ -1,5 +1,4 @@
-"""
-Tests for platform_utils cross-platform utilities.
+"""Tests for platform_utils cross-platform utilities.
 
 Tests platform detection, directory functions, asyncio handling,
 and file utilities across Windows, macOS, and Linux.
@@ -239,7 +238,10 @@ class TestFileUtilities:
     def test_open_text_file_default_encoding(self):
         """Test open_text_file uses UTF-8 by default."""
         with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".txt", delete=False, encoding="utf-8"
+            mode="w",
+            suffix=".txt",
+            delete=False,
+            encoding="utf-8",
         ) as f:
             f.write("Hello, World!")
             temp_path = f.name
@@ -254,7 +256,10 @@ class TestFileUtilities:
     def test_open_text_file_custom_encoding(self):
         """Test open_text_file accepts custom encoding."""
         with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".txt", delete=False, encoding="utf-8"
+            mode="w",
+            suffix=".txt",
+            delete=False,
+            encoding="utf-8",
         ) as f:
             f.write("Test")
             temp_path = f.name
@@ -269,7 +274,10 @@ class TestFileUtilities:
     def test_read_text_file(self):
         """Test read_text_file reads content correctly."""
         with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".txt", delete=False, encoding="utf-8"
+            mode="w",
+            suffix=".txt",
+            delete=False,
+            encoding="utf-8",
         ) as f:
             f.write("Line 1\nLine 2\n")
             temp_path = f.name
@@ -314,7 +322,7 @@ class TestPathUtilities:
 
     def test_normalize_path_pathlib(self):
         """Test normalize_path with Path input."""
-        result = normalize_path(Path("."))
+        result = normalize_path(Path())
         assert isinstance(result, Path)
         assert result.is_absolute()
 

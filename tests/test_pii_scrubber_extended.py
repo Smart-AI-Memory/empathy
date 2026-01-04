@@ -1,5 +1,4 @@
-"""
-Extended Tests for PII Scrubber Module
+"""Extended Tests for PII Scrubber Module
 
 Comprehensive tests to improve coverage from 60% to 90%.
 Focuses on uncovered areas:
@@ -949,7 +948,7 @@ class TestComplexScenarios:
 
         # At least one of these should be detected
         detected_count = len(
-            [t for t in ["insurance_id", "patient_id", "ticket", "ssn"] if t in pii_types]
+            [t for t in ["insurance_id", "patient_id", "ticket", "ssn"] if t in pii_types],
         )
         assert detected_count >= 1
 

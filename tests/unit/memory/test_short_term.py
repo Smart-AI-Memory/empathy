@@ -1,5 +1,4 @@
-"""
-Educational Tests for Short-Term Memory (Redis Mocking & Core Operations)
+"""Educational Tests for Short-Term Memory (Redis Mocking & Core Operations)
 
 Learning Objectives:
 - Testing external dependencies without external services (built-in mock mode)
@@ -48,8 +47,7 @@ class TestMockModeBasics:
     """Educational tests for built-in mock mode."""
 
     def test_initialization_with_mock_mode(self):
-        """
-        Teaching Pattern: Testing with built-in mock mode.
+        """Teaching Pattern: Testing with built-in mock mode.
 
         The ShortTermMemory class has a built-in mock mode that doesn't
         require a real Redis server. This is perfect for unit tests!
@@ -65,8 +63,7 @@ class TestMockModeBasics:
         assert memory._mock_storage == {}  # Empty mock storage
 
     def test_mock_mode_automatically_enabled_when_redis_unavailable(self):
-        """
-        Teaching Pattern: Graceful degradation when dependencies unavailable.
+        """Teaching Pattern: Graceful degradation when dependencies unavailable.
 
         If Redis is not installed, mock mode is automatically enabled.
         This allows the code to work even without optional dependencies.
@@ -78,8 +75,7 @@ class TestMockModeBasics:
             assert memory.use_mock is True  # Automatically switched to mock mode
 
     def test_mock_storage_is_isolated_per_instance(self):
-        """
-        Teaching Pattern: Test isolation.
+        """Teaching Pattern: Test isolation.
 
         Each mock instance should have its own storage to prevent
         test contamination.
@@ -104,8 +100,7 @@ class TestBasicStashRetrieve:
 
     @pytest.fixture
     def memory(self):
-        """
-        Teaching Pattern: Fixture for test dependencies.
+        """Teaching Pattern: Fixture for test dependencies.
 
         Create a fresh memory instance for each test to ensure isolation.
         """
@@ -113,16 +108,14 @@ class TestBasicStashRetrieve:
 
     @pytest.fixture
     def agent_creds(self):
-        """
-        Teaching Pattern: Fixture for common test data.
+        """Teaching Pattern: Fixture for common test data.
 
         Most operations require credentials, so we create a fixture.
         """
         return AgentCredentials("test_agent", AccessTier.CONTRIBUTOR)
 
     def test_stash_and_retrieve_simple_data(self, memory, agent_creds):
-        """
-        Teaching Pattern: Testing the happy path.
+        """Teaching Pattern: Testing the happy path.
 
         Start with the simplest possible scenario - store and retrieve data.
         """
@@ -138,8 +131,7 @@ class TestBasicStashRetrieve:
         assert retrieved == data
 
     def test_stash_overwrites_existing_data(self, memory, agent_creds):
-        """
-        Teaching Pattern: Testing state mutations.
+        """Teaching Pattern: Testing state mutations.
 
         When you store data with the same key, it should overwrite.
         """
@@ -156,8 +148,7 @@ class TestBasicStashRetrieve:
         assert retrieved["version"] == 2
 
     def test_retrieve_nonexistent_key_returns_none(self, memory, agent_creds):
-        """
-        Teaching Pattern: Testing negative cases.
+        """Teaching Pattern: Testing negative cases.
 
         What happens when you try to retrieve a key that doesn't exist?
         """
@@ -165,8 +156,7 @@ class TestBasicStashRetrieve:
         assert retrieved is None
 
     def test_stash_with_complex_nested_data(self, memory, agent_creds):
-        """
-        Teaching Pattern: Testing with realistic data.
+        """Teaching Pattern: Testing with realistic data.
 
         Real-world data is often nested and complex. Test with structures
         that mirror production usage.
@@ -217,8 +207,7 @@ class TestTTLStrategies:
         return AgentCredentials("test_agent", AccessTier.CONTRIBUTOR)
 
     def test_ttl_strategy_enum_values(self):
-        """
-        Teaching Pattern: Testing enum configurations.
+        """Teaching Pattern: Testing enum configurations.
 
         TTL strategies define how long different types of data should live.
         """
@@ -228,8 +217,7 @@ class TestTTLStrategies:
         assert TTLStrategy.SESSION.value == 1800  # 30 minutes
 
     def test_stash_with_custom_ttl(self, memory, agent_creds):
-        """
-        Teaching Pattern: Testing TTL parameter handling.
+        """Teaching Pattern: Testing TTL parameter handling.
 
         When stashing data, you can specify a TTL strategy enum.
         In mock mode, we track the expiration time.
@@ -249,8 +237,7 @@ class TestTTLStrategies:
             assert expiry > time.time()  # Should expire in the future
 
     def test_stash_with_ttl_strategy_enum(self, memory, agent_creds):
-        """
-        Teaching Pattern: Testing enum-based configuration.
+        """Teaching Pattern: Testing enum-based configuration.
 
         Instead of hardcoding TTL values, use TTLStrategy enums
         for consistency across the codebase.
@@ -266,8 +253,7 @@ class TestTTLStrategies:
         assert full_key in memory._mock_storage
 
     def test_different_ttl_strategies_for_different_data_types(self, memory, agent_creds):
-        """
-        Teaching Pattern: Testing business logic for TTL selection.
+        """Teaching Pattern: Testing business logic for TTL selection.
 
         Different types of data should have different TTL strategies:
         - Working results: Short-lived (1 hour)
@@ -276,7 +262,10 @@ class TestTTLStrategies:
         """
         # Working results - 1 hour (pass enum, not .value)
         memory.stash(
-            "working:result1", {"data": "temp"}, agent_creds, ttl=TTLStrategy.WORKING_RESULTS
+            "working:result1",
+            {"data": "temp"},
+            agent_creds,
+            ttl=TTLStrategy.WORKING_RESULTS,
         )
 
         # Staged patterns - 24 hours
@@ -289,7 +278,10 @@ class TestTTLStrategies:
 
         # Coordination - 5 minutes
         memory.stash(
-            "coord:signal1", {"status": "ready"}, agent_creds, ttl=TTLStrategy.COORDINATION
+            "coord:signal1",
+            {"status": "ready"},
+            agent_creds,
+            ttl=TTLStrategy.COORDINATION,
         )
 
         # All should be retrievable immediately
@@ -313,8 +305,7 @@ class TestAccessControl:
         return RedisShortTermMemory(use_mock=True)
 
     def test_access_tier_hierarchy(self):
-        """
-        Teaching Pattern: Testing enum hierarchies.
+        """Teaching Pattern: Testing enum hierarchies.
 
         Access tiers form a hierarchy:
         Observer (1) < Contributor (2) < Validator (3) < Steward (4)
@@ -325,8 +316,7 @@ class TestAccessControl:
         assert AccessTier.STEWARD.value == 4
 
     def test_observer_can_read(self):
-        """
-        Teaching Pattern: Testing minimal permissions.
+        """Teaching Pattern: Testing minimal permissions.
 
         Observers (Tier 1) can only read data.
         """
@@ -338,8 +328,7 @@ class TestAccessControl:
         assert observer.can_administer() is False
 
     def test_contributor_can_stage(self):
-        """
-        Teaching Pattern: Testing intermediate permissions.
+        """Teaching Pattern: Testing intermediate permissions.
 
         Contributors (Tier 2) can read and stage patterns.
         """
@@ -351,8 +340,7 @@ class TestAccessControl:
         assert contributor.can_administer() is False
 
     def test_validator_can_promote(self):
-        """
-        Teaching Pattern: Testing elevated permissions.
+        """Teaching Pattern: Testing elevated permissions.
 
         Validators (Tier 3) can read, stage, and validate patterns.
         """
@@ -364,8 +352,7 @@ class TestAccessControl:
         assert validator.can_administer() is False
 
     def test_steward_has_full_access(self):
-        """
-        Teaching Pattern: Testing admin permissions.
+        """Teaching Pattern: Testing admin permissions.
 
         Stewards (Tier 4) have full access including administration.
         """
@@ -377,8 +364,7 @@ class TestAccessControl:
         assert steward.can_administer() is True
 
     def test_contributor_and_above_can_stash(self, memory):
-        """
-        Teaching Pattern: Testing write permissions.
+        """Teaching Pattern: Testing write permissions.
 
         Only Contributor tier and above can stash (write) data.
         Observer can only read.
@@ -416,8 +402,7 @@ class TestConnectionRetry:
     """Educational tests for connection retry with exponential backoff."""
 
     def test_redis_config_default_retry_settings(self):
-        """
-        Teaching Pattern: Testing default configuration values.
+        """Teaching Pattern: Testing default configuration values.
 
         RedisConfig should have sensible retry defaults.
         """
@@ -429,8 +414,7 @@ class TestConnectionRetry:
         assert config.retry_max_delay == 2.0  # 2 seconds
 
     def test_redis_config_custom_retry_settings(self):
-        """
-        Teaching Pattern: Testing configuration customization.
+        """Teaching Pattern: Testing configuration customization.
 
         Users should be able to override retry settings.
         """
@@ -447,8 +431,7 @@ class TestConnectionRetry:
     @patch("empathy_os.memory.short_term.redis.Redis")
     @patch("empathy_os.memory.short_term.logger")
     def test_connection_retry_on_failure(self, mock_logger, mock_redis_class):
-        """
-        Teaching Pattern: Testing retry logic with mock failures.
+        """Teaching Pattern: Testing retry logic with mock failures.
 
         Simulate connection failures and verify retry behavior.
         This test demonstrates exponential backoff - it fails twice,
@@ -482,8 +465,7 @@ class TestConnectionRetry:
             assert memory._client == mock_instance
 
     def test_redis_config_to_redis_kwargs(self):
-        """
-        Teaching Pattern: Testing configuration serialization.
+        """Teaching Pattern: Testing configuration serialization.
 
         RedisConfig should convert to kwargs for redis.Redis constructor.
         """
@@ -516,8 +498,7 @@ class TestMetricsTracking:
     """Educational tests for metrics tracking."""
 
     def test_metrics_initialization(self):
-        """
-        Teaching Pattern: Testing initial state.
+        """Teaching Pattern: Testing initial state.
 
         Metrics should start at zero.
         """
@@ -531,8 +512,7 @@ class TestMetricsTracking:
         assert metrics.latency_max_ms == 0.0
 
     def test_record_successful_operation(self):
-        """
-        Teaching Pattern: Testing metrics recording.
+        """Teaching Pattern: Testing metrics recording.
 
         When an operation succeeds, metrics should be updated.
         """
@@ -549,8 +529,7 @@ class TestMetricsTracking:
         assert metrics.latency_max_ms == 5.0
 
     def test_record_failed_operation(self):
-        """
-        Teaching Pattern: Testing failure tracking.
+        """Teaching Pattern: Testing failure tracking.
 
         Failed operations should increment the failure counter.
         """
@@ -563,8 +542,7 @@ class TestMetricsTracking:
         assert metrics.operations_failed == 1
 
     def test_latency_average_calculation(self):
-        """
-        Teaching Pattern: Testing computed properties.
+        """Teaching Pattern: Testing computed properties.
 
         Average latency should be calculated from sum / total.
         """
@@ -579,8 +557,7 @@ class TestMetricsTracking:
         assert metrics.latency_avg_ms == pytest.approx(10.0)
 
     def test_latency_max_tracking(self):
-        """
-        Teaching Pattern: Testing max value tracking.
+        """Teaching Pattern: Testing max value tracking.
 
         Should track the maximum latency observed.
         """
@@ -593,8 +570,7 @@ class TestMetricsTracking:
         assert metrics.latency_max_ms == 15.0  # Max of all operations
 
     def test_success_rate_calculation(self):
-        """
-        Teaching Pattern: Testing percentage calculations.
+        """Teaching Pattern: Testing percentage calculations.
 
         Success rate should be (successes / total) * 100.
         """
@@ -609,8 +585,7 @@ class TestMetricsTracking:
         assert metrics.success_rate == pytest.approx(70.0)
 
     def test_success_rate_with_no_operations(self):
-        """
-        Teaching Pattern: Testing edge case (division by zero).
+        """Teaching Pattern: Testing edge case (division by zero).
 
         When no operations have been recorded, success rate should be 100%
         (optimistic default) rather than causing a division by zero error.
@@ -620,8 +595,7 @@ class TestMetricsTracking:
         assert metrics.success_rate == 100.0
 
     def test_metrics_to_dict_serialization(self):
-        """
-        Teaching Pattern: Testing serialization for reporting.
+        """Teaching Pattern: Testing serialization for reporting.
 
         Metrics should be serializable to dict for JSON reporting.
         """
@@ -653,8 +627,7 @@ class TestStagedPatterns:
     """Educational tests for staged pattern workflow."""
 
     def test_staged_pattern_creation(self):
-        """
-        Teaching Pattern: Testing dataclass initialization.
+        """Teaching Pattern: Testing dataclass initialization.
 
         StagedPattern represents a pattern awaiting validation.
         """
@@ -673,8 +646,7 @@ class TestStagedPatterns:
         assert pattern.confidence == 0.85
 
     def test_staged_pattern_serialization(self):
-        """
-        Teaching Pattern: Testing to_dict/from_dict roundtrip.
+        """Teaching Pattern: Testing to_dict/from_dict roundtrip.
 
         Domain objects should be serializable for storage.
         """
@@ -701,8 +673,7 @@ class TestStagedPatterns:
         assert restored.interests == ["security", "database"]
 
     def test_staged_pattern_default_values(self):
-        """
-        Teaching Pattern: Testing default values in dataclasses.
+        """Teaching Pattern: Testing default values in dataclasses.
 
         Optional fields should have sensible defaults.
         """
@@ -733,8 +704,7 @@ class TestConflictContext:
     """Educational tests for conflict resolution context."""
 
     def test_conflict_context_creation(self):
-        """
-        Teaching Pattern: Testing complex state objects.
+        """Teaching Pattern: Testing complex state objects.
 
         ConflictContext tracks negotiation state per "Getting to Yes" framework.
         """
@@ -757,8 +727,7 @@ class TestConflictContext:
         assert conflict.resolved is False
 
     def test_conflict_resolution_workflow(self):
-        """
-        Teaching Pattern: Testing state transitions.
+        """Teaching Pattern: Testing state transitions.
 
         Conflicts start unresolved, then get resolved with a solution.
         """
@@ -780,8 +749,7 @@ class TestConflictContext:
         assert conflict.resolution is not None
 
     def test_conflict_context_serialization(self):
-        """
-        Teaching Pattern: Testing datetime serialization.
+        """Teaching Pattern: Testing datetime serialization.
 
         Datetime fields should serialize to ISO format strings.
         """

@@ -1,5 +1,4 @@
-"""
-Redis Short-Term Memory for Empathy Framework
+"""Redis Short-Term Memory for Empathy Framework
 
 Per EMPATHY_PHILOSOPHY.md v1.1.0:
 - Implements fast, TTL-based working memory for agent coordination
@@ -30,8 +29,7 @@ from .memory.short_term import AccessTier
 
 
 class TTLStrategy(Enum):
-    """
-    TTL strategies for different memory types
+    """TTL strategies for different memory types
 
     Per EMPATHY_PHILOSOPHY.md Section 9.3:
     - Working results: 1 hour
@@ -120,8 +118,7 @@ class StagedPattern:
 
 @dataclass
 class ConflictContext:
-    """
-    Context for principled negotiation
+    """Context for principled negotiation
 
     Per Getting to Yes framework:
     - Positions: What each party says they want
@@ -162,8 +159,7 @@ class ConflictContext:
 
 
 class RedisShortTermMemory:
-    """
-    Redis-backed short-term memory for agent coordination
+    """Redis-backed short-term memory for agent coordination
 
     Features:
     - Fast read/write with automatic TTL expiration
@@ -177,6 +173,7 @@ class RedisShortTermMemory:
         >>> creds = AgentCredentials("agent_1", AccessTier.CONTRIBUTOR)
         >>> memory.stash("analysis_results", {"issues": 3}, creds)
         >>> data = memory.retrieve("analysis_results", creds)
+
     """
 
     # Key prefixes for namespacing
@@ -194,8 +191,7 @@ class RedisShortTermMemory:
         password: str | None = None,
         use_mock: bool = False,
     ):
-        """
-        Initialize Redis connection
+        """Initialize Redis connection
 
         Args:
             host: Redis host
@@ -203,6 +199,7 @@ class RedisShortTermMemory:
             db: Redis database number
             password: Redis password (optional)
             use_mock: Use in-memory mock for testing
+
         """
         self.use_mock = use_mock or not REDIS_AVAILABLE
 
@@ -277,8 +274,7 @@ class RedisShortTermMemory:
         credentials: AgentCredentials,
         ttl: TTLStrategy = TTLStrategy.WORKING_RESULTS,
     ) -> bool:
-        """
-        Stash data in short-term memory
+        """Stash data in short-term memory
 
         Args:
             key: Unique key for the data
@@ -291,11 +287,12 @@ class RedisShortTermMemory:
 
         Example:
             >>> memory.stash("analysis_v1", {"findings": [...]}, creds)
+
         """
         if not credentials.can_stage():
             raise PermissionError(
                 f"Agent {credentials.agent_id} (Tier {credentials.tier.name}) "
-                "cannot write to memory. Requires CONTRIBUTOR or higher."
+                "cannot write to memory. Requires CONTRIBUTOR or higher.",
             )
 
         full_key = f"{self.PREFIX_WORKING}{credentials.agent_id}:{key}"
@@ -312,8 +309,7 @@ class RedisShortTermMemory:
         credentials: AgentCredentials,
         agent_id: str | None = None,
     ) -> Any | None:
-        """
-        Retrieve data from short-term memory
+        """Retrieve data from short-term memory
 
         Args:
             key: Key to retrieve
@@ -325,6 +321,7 @@ class RedisShortTermMemory:
 
         Example:
             >>> data = memory.retrieve("analysis_v1", creds)
+
         """
         owner = agent_id or credentials.agent_id
         full_key = f"{self.PREFIX_WORKING}{owner}:{key}"
@@ -337,14 +334,14 @@ class RedisShortTermMemory:
         return payload.get("data")
 
     def clear_working_memory(self, credentials: AgentCredentials) -> int:
-        """
-        Clear all working memory for an agent
+        """Clear all working memory for an agent
 
         Args:
             credentials: Agent credentials (must own the memory or be Steward)
 
         Returns:
             Number of keys deleted
+
         """
         pattern = f"{self.PREFIX_WORKING}{credentials.agent_id}:*"
         keys = self._keys(pattern)
@@ -361,8 +358,7 @@ class RedisShortTermMemory:
         pattern: StagedPattern,
         credentials: AgentCredentials,
     ) -> bool:
-        """
-        Stage a pattern for validation
+        """Stage a pattern for validation
 
         Per EMPATHY_PHILOSOPHY.md: Patterns must be staged before
         being promoted to the active library.
@@ -373,11 +369,12 @@ class RedisShortTermMemory:
 
         Returns:
             True if staged successfully
+
         """
         if not credentials.can_stage():
             raise PermissionError(
                 f"Agent {credentials.agent_id} cannot stage patterns. "
-                "Requires CONTRIBUTOR tier or higher."
+                "Requires CONTRIBUTOR tier or higher.",
             )
 
         key = f"{self.PREFIX_STAGED}{pattern.pattern_id}"
@@ -392,8 +389,7 @@ class RedisShortTermMemory:
         pattern_id: str,
         credentials: AgentCredentials,
     ) -> StagedPattern | None:
-        """
-        Retrieve a staged pattern
+        """Retrieve a staged pattern
 
         Args:
             pattern_id: Pattern ID
@@ -401,6 +397,7 @@ class RedisShortTermMemory:
 
         Returns:
             StagedPattern or None
+
         """
         key = f"{self.PREFIX_STAGED}{pattern_id}"
         raw = self._get(key)
@@ -414,14 +411,14 @@ class RedisShortTermMemory:
         self,
         credentials: AgentCredentials,
     ) -> list[StagedPattern]:
-        """
-        List all staged patterns awaiting validation
+        """List all staged patterns awaiting validation
 
         Args:
             credentials: Any tier can read
 
         Returns:
             List of staged patterns
+
         """
         pattern = f"{self.PREFIX_STAGED}*"
         keys = self._keys(pattern)
@@ -439,8 +436,7 @@ class RedisShortTermMemory:
         pattern_id: str,
         credentials: AgentCredentials,
     ) -> StagedPattern | None:
-        """
-        Promote staged pattern (remove from staging for library add)
+        """Promote staged pattern (remove from staging for library add)
 
         Args:
             pattern_id: Pattern to promote
@@ -448,11 +444,12 @@ class RedisShortTermMemory:
 
         Returns:
             The promoted pattern (for adding to PatternLibrary)
+
         """
         if not credentials.can_validate():
             raise PermissionError(
                 f"Agent {credentials.agent_id} cannot promote patterns. "
-                "Requires VALIDATOR tier or higher."
+                "Requires VALIDATOR tier or higher.",
             )
 
         pattern = self.get_staged_pattern(pattern_id, credentials)
@@ -467,8 +464,7 @@ class RedisShortTermMemory:
         credentials: AgentCredentials,
         reason: str = "",
     ) -> bool:
-        """
-        Reject a staged pattern
+        """Reject a staged pattern
 
         Args:
             pattern_id: Pattern to reject
@@ -477,11 +473,12 @@ class RedisShortTermMemory:
 
         Returns:
             True if rejected
+
         """
         if not credentials.can_validate():
             raise PermissionError(
                 f"Agent {credentials.agent_id} cannot reject patterns. "
-                "Requires VALIDATOR tier or higher."
+                "Requires VALIDATOR tier or higher.",
             )
 
         key = f"{self.PREFIX_STAGED}{pattern_id}"
@@ -497,8 +494,7 @@ class RedisShortTermMemory:
         credentials: AgentCredentials,
         batna: str | None = None,
     ) -> ConflictContext:
-        """
-        Create context for principled negotiation
+        """Create context for principled negotiation
 
         Per Getting to Yes framework:
         - Separate positions from interests
@@ -513,11 +509,12 @@ class RedisShortTermMemory:
 
         Returns:
             ConflictContext for resolution
+
         """
         if not credentials.can_stage():
             raise PermissionError(
                 f"Agent {credentials.agent_id} cannot create conflict context. "
-                "Requires CONTRIBUTOR tier or higher."
+                "Requires CONTRIBUTOR tier or higher.",
             )
 
         context = ConflictContext(
@@ -541,8 +538,7 @@ class RedisShortTermMemory:
         conflict_id: str,
         credentials: AgentCredentials,
     ) -> ConflictContext | None:
-        """
-        Retrieve conflict context
+        """Retrieve conflict context
 
         Args:
             conflict_id: Conflict identifier
@@ -550,6 +546,7 @@ class RedisShortTermMemory:
 
         Returns:
             ConflictContext or None
+
         """
         key = f"{self.PREFIX_CONFLICT}{conflict_id}"
         raw = self._get(key)
@@ -565,8 +562,7 @@ class RedisShortTermMemory:
         resolution: str,
         credentials: AgentCredentials,
     ) -> bool:
-        """
-        Mark conflict as resolved
+        """Mark conflict as resolved
 
         Args:
             conflict_id: Conflict to resolve
@@ -575,11 +571,12 @@ class RedisShortTermMemory:
 
         Returns:
             True if resolved
+
         """
         if not credentials.can_validate():
             raise PermissionError(
                 f"Agent {credentials.agent_id} cannot resolve conflicts. "
-                "Requires VALIDATOR tier or higher."
+                "Requires VALIDATOR tier or higher.",
             )
 
         context = self.get_conflict_context(conflict_id, credentials)
@@ -603,8 +600,7 @@ class RedisShortTermMemory:
         credentials: AgentCredentials,
         target_agent: str | None = None,
     ) -> bool:
-        """
-        Send coordination signal to other agents
+        """Send coordination signal to other agents
 
         Args:
             signal_type: Type of signal (e.g., "ready", "blocking", "complete")
@@ -614,11 +610,12 @@ class RedisShortTermMemory:
 
         Returns:
             True if sent
+
         """
         if not credentials.can_stage():
             raise PermissionError(
                 f"Agent {credentials.agent_id} cannot send signals. "
-                "Requires CONTRIBUTOR tier or higher."
+                "Requires CONTRIBUTOR tier or higher.",
             )
 
         target = target_agent or "broadcast"
@@ -637,8 +634,7 @@ class RedisShortTermMemory:
         credentials: AgentCredentials,
         signal_type: str | None = None,
     ) -> list[dict]:
-        """
-        Receive coordination signals
+        """Receive coordination signals
 
         Args:
             credentials: Agent receiving signals
@@ -646,6 +642,7 @@ class RedisShortTermMemory:
 
         Returns:
             List of signals
+
         """
         if signal_type:
             pattern = f"{self.PREFIX_COORDINATION}{signal_type}:*:{credentials.agent_id}"
@@ -673,8 +670,7 @@ class RedisShortTermMemory:
         credentials: AgentCredentials,
         metadata: dict | None = None,
     ) -> bool:
-        """
-        Create a collaboration session
+        """Create a collaboration session
 
         Args:
             session_id: Unique session identifier
@@ -683,6 +679,7 @@ class RedisShortTermMemory:
 
         Returns:
             True if created
+
         """
         key = f"{self.PREFIX_SESSION}{session_id}"
         payload = {
@@ -699,8 +696,7 @@ class RedisShortTermMemory:
         session_id: str,
         credentials: AgentCredentials,
     ) -> bool:
-        """
-        Join an existing session
+        """Join an existing session
 
         Args:
             session_id: Session to join
@@ -708,6 +704,7 @@ class RedisShortTermMemory:
 
         Returns:
             True if joined
+
         """
         key = f"{self.PREFIX_SESSION}{session_id}"
         raw = self._get(key)
@@ -726,8 +723,7 @@ class RedisShortTermMemory:
         session_id: str,
         credentials: AgentCredentials,
     ) -> dict | None:
-        """
-        Get session information
+        """Get session information
 
         Args:
             session_id: Session identifier
@@ -735,6 +731,7 @@ class RedisShortTermMemory:
 
         Returns:
             Session data or None
+
         """
         key = f"{self.PREFIX_SESSION}{session_id}"
         raw = self._get(key)
@@ -748,11 +745,11 @@ class RedisShortTermMemory:
     # === Health Check ===
 
     def ping(self) -> bool:
-        """
-        Check Redis connection health
+        """Check Redis connection health
 
         Returns:
             True if connected and responsive
+
         """
         if self.use_mock:
             return True
@@ -764,24 +761,24 @@ class RedisShortTermMemory:
             return False
 
     def get_stats(self) -> dict:
-        """
-        Get memory statistics
+        """Get memory statistics
 
         Returns:
             Dict with memory stats
+
         """
         if self.use_mock:
             return {
                 "mode": "mock",
                 "total_keys": len(self._mock_storage),
                 "working_keys": len(
-                    [k for k in self._mock_storage if k.startswith(self.PREFIX_WORKING)]
+                    [k for k in self._mock_storage if k.startswith(self.PREFIX_WORKING)],
                 ),
                 "staged_keys": len(
-                    [k for k in self._mock_storage if k.startswith(self.PREFIX_STAGED)]
+                    [k for k in self._mock_storage if k.startswith(self.PREFIX_STAGED)],
                 ),
                 "conflict_keys": len(
-                    [k for k in self._mock_storage if k.startswith(self.PREFIX_CONFLICT)]
+                    [k for k in self._mock_storage if k.startswith(self.PREFIX_CONFLICT)],
                 ),
             }
 

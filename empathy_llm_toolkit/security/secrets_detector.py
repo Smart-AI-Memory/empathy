@@ -1,5 +1,4 @@
-"""
-Secrets Detection Module
+"""Secrets Detection Module
 
 Comprehensive secrets detection for enterprise privacy integration.
 Detects API keys, passwords, private keys, OAuth tokens, JWT tokens, database
@@ -73,8 +72,7 @@ class Severity(Enum):
 
 @dataclass
 class SecretDetection:
-    """
-    Metadata about a detected secret.
+    """Metadata about a detected secret.
 
     CRITICAL: The actual secret value is NEVER stored in this object.
     """
@@ -103,8 +101,7 @@ class SecretDetection:
 
 
 class SecretsDetector:
-    """
-    Detects secrets in text content using pattern matching and entropy analysis.
+    """Detects secrets in text content using pattern matching and entropy analysis.
 
     This detector is designed for high performance with compiled regex patterns
     and early exit on detection. It supports custom patterns and provides
@@ -117,6 +114,7 @@ class SecretsDetector:
         ...     print(f"Found {len(detections)} secrets")
         ...     for detection in detections:
         ...         print(f"  - {detection.secret_type.value} at line {detection.line_number}")
+
     """
 
     def __init__(
@@ -126,14 +124,14 @@ class SecretsDetector:
         min_entropy_length: int = 20,
         max_context_chars: int = 50,
     ):
-        """
-        Initialize secrets detector.
+        """Initialize secrets detector.
 
         Args:
             enable_entropy_analysis: Whether to detect high-entropy strings
             entropy_threshold: Minimum entropy for detection (4.5 is recommended)
             min_entropy_length: Minimum string length for entropy analysis
             max_context_chars: Maximum characters to include in context snippet
+
         """
         self.enable_entropy_analysis = enable_entropy_analysis
         self.entropy_threshold = entropy_threshold
@@ -153,7 +151,6 @@ class SecretsDetector:
 
     def _initialize_patterns(self):
         """Initialize compiled regex patterns for all secret types"""
-
         # Anthropic API Keys (sk-ant-...)
         self._patterns[SecretType.ANTHROPIC_API_KEY] = (
             re.compile(
@@ -305,8 +302,7 @@ class SecretsDetector:
         )
 
     def detect(self, content: str) -> list[SecretDetection]:
-        """
-        Detect secrets in content.
+        """Detect secrets in content.
 
         Args:
             content: Text content to scan for secrets
@@ -319,6 +315,7 @@ class SecretsDetector:
             >>> detections = detector.detect(code_content)
             >>> for detection in detections:
             ...     print(f"Found {detection.secret_type.value} at line {detection.line_number}")
+
         """
         if not content:
             return []
@@ -412,10 +409,13 @@ class SecretsDetector:
         return line_number, column
 
     def _create_context_snippet(
-        self, lines: list[str], line_number: int, column_start: int, column_end: int
+        self,
+        lines: list[str],
+        line_number: int,
+        column_start: int,
+        column_end: int,
     ) -> str:
-        """
-        Create a context snippet showing where the secret was found.
+        """Create a context snippet showing where the secret was found.
 
         The actual secret value is replaced with [REDACTED].
         """
@@ -443,8 +443,7 @@ class SecretsDetector:
         return redacted_line
 
     def _detect_high_entropy(self, content: str, lines: list[str]) -> list[SecretDetection]:
-        """
-        Detect high-entropy strings that might be secrets.
+        """Detect high-entropy strings that might be secrets.
 
         Uses Shannon entropy to identify random-looking strings.
         """
@@ -467,7 +466,10 @@ class SecretsDetector:
                 _, column_end = self._get_line_column(content, match.end())
 
                 context_snippet = self._create_context_snippet(
-                    lines, line_number, column_start, column_end
+                    lines,
+                    line_number,
+                    column_start,
+                    column_end,
                 )
 
                 # Confidence based on entropy (higher entropy = higher confidence)
@@ -483,14 +485,13 @@ class SecretsDetector:
                         context_snippet=context_snippet,
                         confidence=confidence,
                         metadata={"entropy": round(entropy, 2), "length": len(string_value)},
-                    )
+                    ),
                 )
 
         return detections
 
     def _calculate_entropy(self, string: str) -> float:
-        """
-        Calculate Shannon entropy of a string.
+        """Calculate Shannon entropy of a string.
 
         Higher entropy indicates more randomness (potential secret).
 
@@ -499,6 +500,7 @@ class SecretsDetector:
 
         Returns:
             Entropy value (typically 0-8 for base64/hex strings)
+
         """
         if not string:
             return 0.0
@@ -520,8 +522,7 @@ class SecretsDetector:
         entropy_detections: list[SecretDetection],
         pattern_detections: list[SecretDetection],
     ) -> list[SecretDetection]:
-        """
-        Filter out entropy detections that overlap with pattern detections.
+        """Filter out entropy detections that overlap with pattern detections.
 
         Pattern detections have higher confidence, so we prefer them.
         """
@@ -547,8 +548,7 @@ class SecretsDetector:
         return filtered
 
     def add_custom_pattern(self, name: str, pattern: str, severity: str):
-        """
-        Add a custom secret pattern.
+        """Add a custom secret pattern.
 
         Args:
             name: Name for this pattern (e.g., "company_api_key")
@@ -562,6 +562,7 @@ class SecretsDetector:
             ...     pattern=r"acme_[a-zA-Z0-9]{32}",
             ...     severity="high"
             ... )
+
         """
         try:
             compiled_pattern = re.compile(pattern, re.MULTILINE)
@@ -581,18 +582,18 @@ class SecretsDetector:
         except KeyError as e:
             logger.error("invalid_severity", severity=severity)
             raise ValueError(
-                f"Invalid severity '{severity}'. Must be: critical, high, medium, low"
+                f"Invalid severity '{severity}'. Must be: critical, high, medium, low",
             ) from e
 
     def remove_custom_pattern(self, name: str) -> bool:
-        """
-        Remove a custom pattern.
+        """Remove a custom pattern.
 
         Args:
             name: Name of pattern to remove
 
         Returns:
             True if removed, False if not found
+
         """
         if name in self._custom_patterns:
             del self._custom_patterns[name]
@@ -603,11 +604,11 @@ class SecretsDetector:
         return False
 
     def get_statistics(self) -> dict:
-        """
-        Get detector statistics.
+        """Get detector statistics.
 
         Returns:
             Dictionary with pattern counts and configuration
+
         """
         return {
             "builtin_patterns": len(self._patterns),
@@ -621,8 +622,7 @@ class SecretsDetector:
 
 # Convenience function for quick detection
 def detect_secrets(content: str, **kwargs) -> list[SecretDetection]:
-    """
-    Convenience function to detect secrets without creating a detector instance.
+    """Convenience function to detect secrets without creating a detector instance.
 
     Args:
         content: Text content to scan
@@ -635,6 +635,7 @@ def detect_secrets(content: str, **kwargs) -> list[SecretDetection]:
         >>> detections = detect_secrets(code_content)
         >>> if detections:
         ...     print(f"Found {len(detections)} secrets!")
+
     """
     detector = SecretsDetector(**kwargs)
     return detector.detect(content)
@@ -668,7 +669,9 @@ if __name__ == "__main__":
 
     # Example 2: Custom pattern
     detector.add_custom_pattern(
-        name="acme_api_key", pattern=r"acme_[a-zA-Z0-9]{32}", severity="high"
+        name="acme_api_key",
+        pattern=r"acme_[a-zA-Z0-9]{32}",
+        severity="high",
     )
 
     # Example 3: Statistics

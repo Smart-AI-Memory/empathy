@@ -1,5 +1,4 @@
-"""
-Memory service layer wrapping MemoryControlPanel.
+"""Memory service layer wrapping MemoryControlPanel.
 
 Provides async interface for memory operations with proper error handling,
 logging, and business logic separation from API routes.
@@ -24,19 +23,18 @@ logger = structlog.get_logger(__name__)
 
 
 class MemoryService:
-    """
-    Service layer for memory operations.
+    """Service layer for memory operations.
 
     Wraps MemoryControlPanel with async interface and additional
     business logic for API consumption.
     """
 
     def __init__(self, settings: Settings):
-        """
-        Initialize memory service.
+        """Initialize memory service.
 
         Args:
             settings: Application settings
+
         """
         self.settings = settings
 
@@ -58,24 +56,24 @@ class MemoryService:
         )
 
     async def get_status(self) -> dict[str, Any]:
-        """
-        Get system status asynchronously.
+        """Get system status asynchronously.
 
         Returns:
             System status dictionary
+
         """
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(None, self._panel.status)
 
     async def start_redis(self, verbose: bool = True) -> dict[str, Any]:
-        """
-        Start Redis if not running.
+        """Start Redis if not running.
 
         Args:
             verbose: Enable verbose logging
 
         Returns:
             Start result with status information
+
         """
         loop = asyncio.get_event_loop()
         status = await loop.run_in_executor(None, self._panel.start_redis, verbose)
@@ -90,11 +88,11 @@ class MemoryService:
         }
 
     async def stop_redis(self) -> dict[str, Any]:
-        """
-        Stop Redis if we started it.
+        """Stop Redis if we started it.
 
         Returns:
             Stop result
+
         """
         loop = asyncio.get_event_loop()
         success = await loop.run_in_executor(None, self._panel.stop_redis)
@@ -111,21 +109,21 @@ class MemoryService:
         }
 
     async def get_statistics(self) -> MemoryStats:
-        """
-        Get comprehensive statistics.
+        """Get comprehensive statistics.
 
         Returns:
             MemoryStats object
+
         """
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(None, self._panel.get_statistics)
 
     async def health_check(self) -> dict[str, Any]:
-        """
-        Perform health check.
+        """Perform health check.
 
         Returns:
             Health check results
+
         """
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(None, self._panel.health_check)
@@ -135,8 +133,7 @@ class MemoryService:
         classification: str | None = None,
         limit: int = 100,
     ) -> list[dict[str, Any]]:
-        """
-        List patterns in long-term storage.
+        """List patterns in long-term storage.
 
         Args:
             classification: Filter by classification (PUBLIC/INTERNAL/SENSITIVE)
@@ -144,6 +141,7 @@ class MemoryService:
 
         Returns:
             List of pattern summaries
+
         """
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(
@@ -158,8 +156,7 @@ class MemoryService:
         pattern_id: str,
         user_id: str = "admin@system",
     ) -> bool:
-        """
-        Delete a pattern.
+        """Delete a pattern.
 
         Args:
             pattern_id: Pattern ID to delete
@@ -167,6 +164,7 @@ class MemoryService:
 
         Returns:
             True if deleted successfully
+
         """
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(
@@ -181,8 +179,7 @@ class MemoryService:
         output_path: str,
         classification: str | None = None,
     ) -> dict[str, Any]:
-        """
-        Export patterns to JSON file.
+        """Export patterns to JSON file.
 
         Args:
             output_path: Output file path
@@ -190,6 +187,7 @@ class MemoryService:
 
         Returns:
             Export result with count and path
+
         """
         loop = asyncio.get_event_loop()
         count = await loop.run_in_executor(
@@ -209,11 +207,11 @@ class MemoryService:
         }
 
     async def get_real_time_metrics(self) -> dict[str, Any]:
-        """
-        Get real-time metrics for WebSocket streaming.
+        """Get real-time metrics for WebSocket streaming.
 
         Returns:
             Lightweight metrics dictionary
+
         """
         stats = await self.get_statistics()
 
@@ -231,11 +229,11 @@ class MemoryService:
 
 @lru_cache
 def get_memory_service() -> MemoryService:
-    """
-    Get cached MemoryService instance.
+    """Get cached MemoryService instance.
 
     Returns:
         Singleton MemoryService instance
+
     """
     settings = get_settings()
     return MemoryService(settings)

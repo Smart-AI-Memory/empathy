@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Fix MkDocs relative asset paths to absolute paths.
+"""Fix MkDocs relative asset paths to absolute paths.
 
 MkDocs generates relative paths like "../../assets/" which only work correctly
 when URLs have trailing slashes. This script converts them to absolute paths
@@ -12,8 +11,7 @@ from pathlib import Path
 
 
 def fix_html_file(file_path: Path, base_path: str = "/framework-docs") -> int:
-    """
-    Fix relative asset paths in an HTML file to absolute paths.
+    """Fix relative asset paths in an HTML file to absolute paths.
 
     Args:
         file_path: Path to the HTML file
@@ -21,6 +19,7 @@ def fix_html_file(file_path: Path, base_path: str = "/framework-docs") -> int:
 
     Returns:
         Number of replacements made
+
     """
     content = file_path.read_text(encoding="utf-8")
     original = content

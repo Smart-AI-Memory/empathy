@@ -1,5 +1,4 @@
-"""
-Test Quality Adapter
+"""Test Quality Adapter
 
 Wraps empathy_software_plugin.wizards.testing.quality_analyzer
 and converts its output to the unified ToolResult format.
@@ -16,8 +15,7 @@ from ..state import ToolResult
 
 
 class TestQualityAdapter:
-    """
-    Adapter for the Test Quality Analyzer.
+    """Adapter for the Test Quality Analyzer.
 
     Detects flaky tests, weak assertions, slow tests, and test anti-patterns.
     """
@@ -28,24 +26,24 @@ class TestQualityAdapter:
         config: dict[str, Any] | None = None,
         test_dirs: list[str] | None = None,
     ):
-        """
-        Initialize the adapter.
+        """Initialize the adapter.
 
         Args:
             project_root: Root directory of the project
             config: Configuration overrides
             test_dirs: Directories to scan for tests (defaults to ["tests"])
+
         """
         self.project_root = Path(project_root)
         self.config = config or {}
         self.test_dirs = test_dirs or ["tests", "test"]
 
     async def analyze(self) -> ToolResult:
-        """
-        Run test quality analysis and return unified result.
+        """Run test quality analysis and return unified result.
 
         Returns:
             ToolResult with test quality findings
+
         """
         start_time = time.time()
 

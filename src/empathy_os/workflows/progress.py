@@ -1,5 +1,4 @@
-"""
-Progress Tracking System
+"""Progress Tracking System
 
 Real-time progress tracking for workflow execution with WebSocket support.
 Enables live UI updates during workflow runs.
@@ -119,8 +118,7 @@ AsyncProgressCallback = Callable[[ProgressUpdate], Coroutine[Any, Any, None]]
 
 
 class ProgressTracker:
-    """
-    Tracks and broadcasts workflow progress.
+    """Tracks and broadcasts workflow progress.
 
     Maintains state for all stages and emits updates to registered callbacks.
     Supports both sync and async callbacks for flexibility.
@@ -219,7 +217,7 @@ class ProgressTracker:
 
             if stage.started_at:
                 stage.duration_ms = int(
-                    (stage.completed_at - stage.started_at).total_seconds() * 1000
+                    (stage.completed_at - stage.started_at).total_seconds() * 1000,
                 )
 
         self._emit(ProgressStatus.FAILED, f"Failed: {stage_name}", error=error)
@@ -422,8 +420,7 @@ def create_progress_tracker(
     stage_names: list[str],
     reporter: ProgressReporter | None = None,
 ) -> ProgressTracker:
-    """
-    Factory function to create a progress tracker with optional reporter.
+    """Factory function to create a progress tracker with optional reporter.
 
     Args:
         workflow_name: Name of the workflow
@@ -432,6 +429,7 @@ def create_progress_tracker(
 
     Returns:
         Configured ProgressTracker instance
+
     """
     import uuid
 

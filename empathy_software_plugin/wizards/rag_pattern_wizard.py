@@ -1,5 +1,4 @@
-"""
-RAG Pattern Wizard - Level 4 Anticipatory Empathy
+"""RAG Pattern Wizard - Level 4 Anticipatory Empathy
 
 Alerts developers when RAG (Retrieval-Augmented Generation) implementation
 will encounter scalability or quality issues.
@@ -22,8 +21,7 @@ from empathy_os.plugins import BaseWizard
 
 
 class RAGPatternWizard(BaseWizard):
-    """
-    Level 4 Anticipatory: Predicts RAG implementation issues.
+    """Level 4 Anticipatory: Predicts RAG implementation issues.
 
     What We Learned About RAG:
     - Naive chunking (split by char count) fails when data grows
@@ -34,7 +32,10 @@ class RAGPatternWizard(BaseWizard):
 
     def __init__(self):
         super().__init__(
-            name="RAG Pattern Wizard", domain="software", empathy_level=4, category="ai_development"
+            name="RAG Pattern Wizard",
+            domain="software",
+            empathy_level=4,
+            category="ai_development",
         )
 
     def get_required_context(self) -> list[str]:
@@ -48,8 +49,7 @@ class RAGPatternWizard(BaseWizard):
         ]
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze RAG implementation and predict quality/scale issues.
+        """Analyze RAG implementation and predict quality/scale issues.
 
         In our experience: RAG breaks down in predictable ways as it scales.
         Early detection prevents painful rewrites.
@@ -63,12 +63,19 @@ class RAGPatternWizard(BaseWizard):
 
         # Current issues
         issues = await self._analyze_rag_implementation(
-            rag_impl, embedding_strat, chunk_strat, corpus_size
+            rag_impl,
+            embedding_strat,
+            chunk_strat,
+            corpus_size,
         )
 
         # Level 4: Predict future RAG issues
         predictions = await self._predict_rag_degradation(
-            rag_impl, embedding_strat, chunk_strat, corpus_size, context
+            rag_impl,
+            embedding_strat,
+            chunk_strat,
+            corpus_size,
+            context,
         )
 
         recommendations = self._generate_recommendations(issues, predictions)
@@ -89,7 +96,11 @@ class RAGPatternWizard(BaseWizard):
         }
 
     async def _analyze_rag_implementation(
-        self, rag_impl: list[str], embedding_strat: dict, chunk_strat: dict, corpus_size: int
+        self,
+        rag_impl: list[str],
+        embedding_strat: dict,
+        chunk_strat: dict,
+        corpus_size: int,
     ) -> list[dict[str, Any]]:
         """Analyze current RAG implementation"""
         issues = []
@@ -108,7 +119,7 @@ class RAGPatternWizard(BaseWizard):
                         "Use semantic chunking: split by paragraphs, sentences, or "
                         "semantic boundaries (e.g., LangChain SemanticChunker)"
                     ),
-                }
+                },
             )
 
         # Issue: No chunk overlap
@@ -122,7 +133,7 @@ class RAGPatternWizard(BaseWizard):
                         "split across chunk boundaries is lost."
                     ),
                     "suggestion": "Add 10-20% overlap between chunks",
-                }
+                },
             )
 
         # Issue: No metadata enrichment
@@ -136,7 +147,7 @@ class RAGPatternWizard(BaseWizard):
                         "In our experience, metadata filtering dramatically improves retrieval."
                     ),
                     "suggestion": "Add metadata to chunks for filtering and relevance",
-                }
+                },
             )
 
         # Issue: Single embedding model
@@ -151,7 +162,7 @@ class RAGPatternWizard(BaseWizard):
                         "specialized embeddings."
                     ),
                     "suggestion": "Consider domain-specific embeddings for different content types",
-                }
+                },
             )
 
         # Issue: No reranking
@@ -165,7 +176,7 @@ class RAGPatternWizard(BaseWizard):
                         "similarity often returns suboptimal results. Reranking improves quality 30-50%."
                     ),
                     "suggestion": "Add reranker (e.g., Cohere rerank, cross-encoder model)",
-                }
+                },
             )
 
         return issues
@@ -178,8 +189,7 @@ class RAGPatternWizard(BaseWizard):
         corpus_size: int,
         full_context: dict[str, Any],
     ) -> list[dict[str, Any]]:
-        """
-        Level 4: Predict when RAG quality will degrade.
+        """Level 4: Predict when RAG quality will degrade.
 
         Based on our experience: RAG breaks at predictable thresholds.
         """
@@ -213,7 +223,7 @@ class RAGPatternWizard(BaseWizard):
                         "too many 'similar but not relevant' results. Added BM25 hybrid search, "
                         "quality jumped immediately."
                     ),
-                }
+                },
             )
 
         # Pattern 2: Embedding staleness
@@ -238,7 +248,7 @@ class RAGPatternWizard(BaseWizard):
                         "Documents change, but embeddings don't auto-update. "
                         "Stale embeddings = stale retrieval. Incremental updates solve this."
                     ),
-                }
+                },
             )
 
         # Pattern 3: No query understanding layer
@@ -268,7 +278,7 @@ class RAGPatternWizard(BaseWizard):
                         "We added simple query rewriting (expand acronyms, add synonyms). "
                         "Retrieval quality improved 25% with minimal effort."
                     ),
-                }
+                },
             )
 
         # Pattern 4: Missing evaluation framework
@@ -298,7 +308,7 @@ class RAGPatternWizard(BaseWizard):
                         "We thought our RAG was great. Built evaluation, discovered 40% "
                         "of queries retrieved irrelevant docs. Fixed in 2 days with data."
                     ),
-                }
+                },
             )
 
         # Pattern 5: Context window waste
@@ -324,7 +334,7 @@ class RAGPatternWizard(BaseWizard):
                         "Retrieving 10 chunks doesn't mean use all 10. "
                         "Top 3 might be enough. Extra context confuses AI and costs money."
                     ),
-                }
+                },
             )
 
         return predictions
@@ -337,7 +347,7 @@ class RAGPatternWizard(BaseWizard):
         if any(i["type"] == "no_reranking" for i in issues):
             recommendations.append(
                 "[QUICK WIN] Add reranking layer. In our experience, "
-                "this is highest ROI improvement (30-50% quality boost, minimal effort)."
+                "this is highest ROI improvement (30-50% quality boost, minimal effort).",
             )
 
         # High-impact predictions
@@ -353,7 +363,9 @@ class RAGPatternWizard(BaseWizard):
         return recommendations
 
     def _extract_patterns(
-        self, issues: list[dict], predictions: list[dict]
+        self,
+        issues: list[dict],
+        predictions: list[dict],
     ) -> list[dict[str, Any]]:
         """Extract cross-domain patterns"""
         return [
@@ -372,7 +384,7 @@ class RAGPatternWizard(BaseWizard):
                 ],
                 "threshold": "5,000-10,000 items",
                 "solution": "Hybrid retrieval (multiple signals combined)",
-            }
+            },
         ]
 
     # Helper methods

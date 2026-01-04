@@ -1,5 +1,4 @@
-"""
-Tests for core EmpathyOS functionality
+"""Tests for core EmpathyOS functionality
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9

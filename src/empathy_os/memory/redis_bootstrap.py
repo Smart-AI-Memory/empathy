@@ -1,5 +1,4 @@
-"""
-Redis Bootstrap for Empathy Framework
+"""Redis Bootstrap for Empathy Framework
 
 Automatically starts Redis if not running, with graceful fallback.
 Supports:
@@ -85,6 +84,7 @@ def _run_silent(cmd: list[str], timeout: int = 5) -> tuple[bool, str]:
     try:
         result = subprocess.run(
             cmd,
+            check=False,
             capture_output=True,
             text=True,
             timeout=timeout,
@@ -156,7 +156,7 @@ def _start_via_docker(port: int = 6379) -> bool:
 
     # Check if container exists
     success, output = _run_silent(
-        ["docker", "ps", "-a", "--filter", f"name={container_name}", "--format", "{{.Names}}"]
+        ["docker", "ps", "-a", "--filter", f"name={container_name}", "--format", "{{.Names}}"],
     )
 
     if container_name in output:
@@ -342,8 +342,7 @@ def ensure_redis(
     auto_start: bool = True,
     verbose: bool = True,
 ) -> RedisStatus:
-    """
-    Ensure Redis is available, starting it if necessary.
+    """Ensure Redis is available, starting it if necessary.
 
     Args:
         host: Redis host
@@ -360,8 +359,8 @@ def ensure_redis(
         ...     print(f"Redis ready via {status.method.value}")
         ... else:
         ...     print(f"Redis unavailable: {status.message}")
-    """
 
+    """
     # Check if already running
     if _check_redis_running(host, port):
         status = RedisStatus(
@@ -402,7 +401,7 @@ def ensure_redis(
                 (RedisStartMethod.CHOCOLATEY, _start_via_chocolatey),
                 (RedisStartMethod.SCOOP, _start_via_scoop),
                 (RedisStartMethod.WSL, _start_via_wsl),
-            ]
+            ],
         )
 
     # Docker and direct work on all platforms
@@ -410,7 +409,7 @@ def ensure_redis(
         [
             (RedisStartMethod.DOCKER, lambda: _start_via_docker(port)),
             (RedisStartMethod.DIRECT, lambda: _start_via_direct(port)),
-        ]
+        ],
     )
 
     for method, start_func in start_methods:
@@ -471,14 +470,14 @@ def ensure_redis(
 
 
 def stop_redis(method: RedisStartMethod) -> bool:
-    """
-    Stop Redis if we started it.
+    """Stop Redis if we started it.
 
     Args:
         method: The method used to start Redis
 
     Returns:
         True if stopped successfully
+
     """
     if method == RedisStartMethod.HOMEBREW:
         success, _ = _run_silent(["brew", "services", "stop", "redis"])
@@ -523,11 +522,11 @@ def stop_redis(method: RedisStartMethod) -> bool:
 
 # Convenience function for simple usage
 def get_redis_or_mock(host: str = "localhost", port: int = 6379):
-    """
-    Get a Redis connection, starting Redis if needed, or return mock.
+    """Get a Redis connection, starting Redis if needed, or return mock.
 
     Returns:
         tuple: (RedisShortTermMemory instance, RedisStatus)
+
     """
     from .short_term import RedisShortTermMemory
 

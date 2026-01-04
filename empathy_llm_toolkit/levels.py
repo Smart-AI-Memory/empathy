@@ -1,5 +1,4 @@
-"""
-Empathy Level Definitions
+"""Empathy Level Definitions
 
 Defines behavior for each of the 5 empathy levels.
 
@@ -11,8 +10,7 @@ from enum import IntEnum
 
 
 class EmpathyLevel(IntEnum):
-    """
-    The 5 levels of AI-human collaboration empathy.
+    """The 5 levels of AI-human collaboration empathy.
 
     Each level builds on previous levels.
     """
@@ -38,7 +36,6 @@ class EmpathyLevel(IntEnum):
     @classmethod
     def get_system_prompt(cls, level: int) -> str:
         """Get system prompt for operating at specific level"""
-
         base = """You are an AI assistant using the Empathy Framework for collaboration.
 
 Your responses should be:
@@ -117,8 +114,7 @@ Pattern contribution:
 
     @classmethod
     def get_temperature_recommendation(cls, level: int) -> float:
-        """
-        Get recommended temperature for each level.
+        """Get recommended temperature for each level.
 
         Higher levels benefit from lower temperature (more focused).
         """
@@ -133,8 +129,7 @@ Pattern contribution:
 
     @classmethod
     def get_required_context(cls, level: int) -> dict[str, bool]:
-        """
-        Get context requirements for each level.
+        """Get context requirements for each level.
 
         Returns dict of {context_type: required}
         """
@@ -175,8 +170,7 @@ Pattern contribution:
 
     @classmethod
     def get_max_tokens_recommendation(cls, level: int) -> int:
-        """
-        Get recommended max_tokens for each level.
+        """Get recommended max_tokens for each level.
 
         Higher levels often need longer responses.
         """
@@ -190,8 +184,7 @@ Pattern contribution:
 
     @classmethod
     def should_use_json_mode(cls, level: int) -> bool:
-        """
-        Determine if JSON mode is beneficial for level.
+        """Determine if JSON mode is beneficial for level.
 
         Levels 4-5 benefit from structured output.
         """

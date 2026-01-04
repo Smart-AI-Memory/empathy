@@ -1,5 +1,4 @@
-"""
-Tests for Memory Graph - Cross-Wizard Intelligence
+"""Tests for Memory Graph - Cross-Wizard Intelligence
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
@@ -237,7 +236,8 @@ class TestMemoryGraph:
     def test_get_statistics(self, graph):
         """Test getting graph statistics."""
         graph.add_finding(
-            wizard="security", finding={"type": "vulnerability", "name": "V1", "severity": "high"}
+            wizard="security",
+            finding={"type": "vulnerability", "name": "V1", "severity": "high"},
         )
         graph.add_finding(
             wizard="security",

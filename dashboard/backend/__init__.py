@@ -1,5 +1,4 @@
-"""
-Empathy Memory Dashboard API
+"""Empathy Memory Dashboard API
 
 FastAPI backend for managing and monitoring the Empathy Framework memory system.
 

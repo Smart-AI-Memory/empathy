@@ -1,5 +1,4 @@
-"""
-AccessibilityWizard - Web accessibility (WCAG) compliance
+"""AccessibilityWizard - Web accessibility (WCAG) compliance
 
 Level 4 Anticipatory Empathy for Accessibility using the Empathy Framework.
 
@@ -13,8 +12,7 @@ from .base_wizard import BaseCoachWizard, WizardIssue, WizardPrediction
 
 
 class AccessibilityWizard(BaseCoachWizard):
-    """
-    Web accessibility (WCAG) compliance
+    """Web accessibility (WCAG) compliance
 
     Detects:
     - missing alt text
@@ -36,8 +34,7 @@ class AccessibilityWizard(BaseCoachWizard):
         )
 
     def analyze_code(self, code: str, file_path: str, language: str) -> list[WizardIssue]:
-        """
-        Analyze code for accessibility issues
+        """Analyze code for accessibility issues
 
         This is a reference implementation. In production, integrate with:
         - Static analysis tools
@@ -57,10 +54,13 @@ class AccessibilityWizard(BaseCoachWizard):
         return issues
 
     def predict_future_issues(
-        self, code: str, file_path: str, project_context: dict[str, Any], timeline_days: int = 90
+        self,
+        code: str,
+        file_path: str,
+        project_context: dict[str, Any],
+        timeline_days: int = 90,
     ) -> list[WizardPrediction]:
-        """
-        Level 4 Anticipatory: Predict accessibility issues {timeline_days} days ahead
+        """Level 4 Anticipatory: Predict accessibility issues {timeline_days} days ahead
 
         Uses:
         - Historical patterns
@@ -76,16 +76,16 @@ class AccessibilityWizard(BaseCoachWizard):
 
         self.logger.info(
             f"{self.name} predicted {len(predictions)} future issues "
-            f"for {file_path} ({timeline_days} days ahead)"
+            f"for {file_path} ({timeline_days} days ahead)",
         )
         return predictions
 
     def suggest_fixes(self, issue: WizardIssue) -> str:
-        """
-        Suggest how to fix a accessibility issue
+        """Suggest how to fix a accessibility issue
 
         Returns:
             Detailed fix suggestion with code examples
+
         """
         # Implementation depends on issue type
         return f"Fix suggestion for {issue.category} issue: {issue.message}"

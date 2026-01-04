@@ -1,5 +1,4 @@
-"""
-Compliance Wizard
+"""Compliance Wizard
 
 SOC 2, HIPAA, GDPR, ISO 27001 compliance audit and preparation.
 Uses Empathy Framework Level 3 (Proactive) for compliance gap analysis and Level 4
@@ -23,8 +22,7 @@ from .base_wizard import (
 
 
 class ComplianceWizard(BaseWizard):
-    """
-    Wizard for compliance audits and regulatory preparation
+    """Wizard for compliance audits and regulatory preparation
 
     Uses:
     - Level 2: Guide user through compliance requirements
@@ -65,7 +63,6 @@ class ComplianceWizard(BaseWizard):
 
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute compliance audit workflow"""
-
         emotional_state = self._assess_emotional_state(task)
         self._extract_constraints(task)
 
@@ -83,7 +80,9 @@ class ComplianceWizard(BaseWizard):
                 content=self._generate_gap_analysis_report(diagnosis, gap_analysis),
             ),
             WizardArtifact(
-                type="doc", title="Remediation Plan", content="\n".join(remediation_plan)
+                type="doc",
+                title="Remediation Plan",
+                content="\n".join(remediation_plan),
             ),
             WizardArtifact(type="doc", title="Policy Documents", content=policy_documents),
             WizardArtifact(type="doc", title="Audit Evidence Collection", content=audit_evidence),
@@ -93,7 +92,9 @@ class ComplianceWizard(BaseWizard):
                 content=self._create_pre_audit_checklist(task),
             ),
             WizardArtifact(
-                type="doc", title="Compliance Risk Forecast", content=compliance_forecast
+                type="doc",
+                title="Compliance Risk Forecast",
+                content=compliance_forecast,
             ),
         ]
 
@@ -172,7 +173,7 @@ class ComplianceWizard(BaseWizard):
                     "Enforce MFA for privileged accounts (admins, developers)",
                     "Document MFA policy and user onboarding process",
                 ],
-            }
+            },
         )
 
         gaps.append(
@@ -188,7 +189,7 @@ class ComplianceWizard(BaseWizard):
                     "Set up alerts for security events (failed logins, privilege escalation)",
                     "Create incident response runbooks",
                 ],
-            }
+            },
         )
 
         gaps.append(
@@ -204,7 +205,7 @@ class ComplianceWizard(BaseWizard):
                     "Encrypt backups",
                     "Implement key management (AWS KMS, HashiCorp Vault)",
                 ],
-            }
+            },
         )
 
         gaps.append(
@@ -220,7 +221,7 @@ class ComplianceWizard(BaseWizard):
                     "Create user-facing data export/deletion UI",
                     "Document data retention policy (30-day deletion SLA)",
                 ],
-            }
+            },
         )
 
         gaps.append(
@@ -236,7 +237,7 @@ class ComplianceWizard(BaseWizard):
                     "Review SOC 2 reports for critical vendors",
                     "Maintain vendor risk register",
                 ],
-            }
+            },
         )
 
         gaps.append(
@@ -252,7 +253,7 @@ class ComplianceWizard(BaseWizard):
                     "Document threats, vulnerabilities, mitigations",
                     "Executive sign-off on risk acceptance",
                 ],
-            }
+            },
         )
 
         return gaps
@@ -588,7 +589,7 @@ class ComplianceWizard(BaseWizard):
                 risk="Audit failure blocks enterprise customer deals",
                 mitigation="Fix all critical gaps before audit. Conduct mock audit to validate readiness.",
                 severity="high",
-            )
+            ),
         )
 
         risks.append(
@@ -596,7 +597,7 @@ class ComplianceWizard(BaseWizard):
                 risk="Data breach leads to GDPR/HIPAA fines and lawsuits",
                 mitigation="Implement MFA, encryption, monitoring NOW. Conduct penetration test.",
                 severity="critical",
-            )
+            ),
         )
 
         risks.append(
@@ -604,7 +605,7 @@ class ComplianceWizard(BaseWizard):
                 risk="Compliance gaps grow faster than team can remediate",
                 mitigation="Prioritize critical gaps. Consider hiring compliance consultant. Automate where possible.",
                 severity="medium",
-            )
+            ),
         )
 
         return risks
@@ -619,21 +620,21 @@ class ComplianceWizard(BaseWizard):
                     owner="Security Team / CISO",
                     what="Implement technical controls (MFA, encryption, monitoring), conduct penetration test",
                     when="Before audit",
-                )
+                ),
             )
             handoffs.append(
                 WizardHandoff(
                     owner="Legal / Compliance Officer",
                     what="Review policies, ensure regulatory compliance, manage auditor relationship",
                     when="Throughout audit process",
-                )
+                ),
             )
             handoffs.append(
                 WizardHandoff(
                     owner="External Auditor",
                     what="Conduct SOC 2 / ISO 27001 audit, issue certification report",
                     when="After remediation complete",
-                )
+                ),
             )
 
         return handoffs

@@ -1,5 +1,4 @@
-"""
-API Wizard
+"""API Wizard
 
 Designs consistent REST/GraphQL APIs with OpenAPI specs, versioning, and documentation.
 Uses Empathy Framework Level 3 (Proactive) for endpoint design and Level 4
@@ -23,8 +22,7 @@ from .base_wizard import (
 
 
 class APIWizard(BaseWizard):
-    """
-    Wizard for API design and documentation
+    """Wizard for API design and documentation
 
     Uses:
     - Level 2: Guide user through API design decisions
@@ -62,7 +60,6 @@ class APIWizard(BaseWizard):
 
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute API design workflow"""
-
         self._assess_emotional_state(task)
         self._extract_constraints(task)
 
@@ -82,7 +79,9 @@ class APIWizard(BaseWizard):
             ),
             WizardArtifact(type="doc", title="Versioning Strategy", content=versioning_strategy),
             WizardArtifact(
-                type="doc", title="API Documentation", content=self._generate_api_docs(task, design)
+                type="doc",
+                title="API Documentation",
+                content=self._generate_api_docs(task, design),
             ),
         ]
 

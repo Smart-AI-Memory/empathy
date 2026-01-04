@@ -1,5 +1,4 @@
-"""
-Golden File Tests for Refactoring Crew
+"""Golden File Tests for Refactoring Crew
 
 Tests the RefactoringCrew against known code patterns to ensure
 consistent detection of refactoring opportunities.
@@ -175,7 +174,7 @@ class TestRefactoringCrewGoldenAnalysis:
                     "before_code": "# mock code",
                     "confidence": 0.9,
                     "estimated_impact": "medium",
-                }
+                },
             )
 
         # Mock analyzer
@@ -184,7 +183,7 @@ class TestRefactoringCrewGoldenAnalysis:
             return_value={
                 "output": "",
                 "metadata": {"findings": mock_findings},
-            }
+            },
         )
 
         crew._agents = {"analyzer": mock_analyzer, "writer": MagicMock()}
@@ -231,7 +230,7 @@ class TestGoldenFileRecording:
                     file_path="test.py",
                     start_line=1,
                     end_line=1,
-                ).to_dict()
+                ).to_dict(),
             ],
             "decisions": [("f1", True)],
         }
@@ -262,7 +261,7 @@ class TestGoldenFileRecording:
                     "before_code": "x = 1",
                     "confidence": 0.9,
                     "estimated_impact": "low",
-                }
+                },
             ],
             "decisions": [("f1", True)],
         }

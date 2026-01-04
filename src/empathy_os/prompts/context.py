@@ -1,5 +1,4 @@
-"""
-Prompt Context
+"""Prompt Context
 
 Provides dataclass for structured prompt context used by XML templates.
 
@@ -15,8 +14,7 @@ from typing import Any
 
 @dataclass
 class PromptContext:
-    """
-    Context for rendering XML prompts.
+    """Context for rendering XML prompts.
 
     Provides a structured way to pass information to prompt templates,
     ensuring consistency across different workflows.
@@ -29,6 +27,7 @@ class PromptContext:
         input_type: Type of input content ("code", "diff", "document", "question").
         input_payload: The actual content to analyze or process.
         extra: Additional context-specific data.
+
     """
 
     role: str
@@ -54,14 +53,14 @@ class PromptContext:
         risk_level: str = "",
         **extra: Any,
     ) -> PromptContext:
-        """
-        Create a context for security audit workflows.
+        """Create a context for security audit workflows.
 
         Args:
             code: The code to audit.
             findings_summary: Summary of detected findings.
             risk_level: Current risk assessment level.
             **extra: Additional context data.
+
         """
         return cls(
             role="application security engineer",
@@ -95,14 +94,14 @@ class PromptContext:
         context: str = "",
         **extra: Any,
     ) -> PromptContext:
-        """
-        Create a context for code review workflows.
+        """Create a context for code review workflows.
 
         Args:
             code_or_diff: The code or diff to review.
             input_type: Either "code" or "diff".
             context: Additional context about the change.
             **extra: Additional context data.
+
         """
         return cls(
             role="senior staff engineer performing code review",
@@ -135,13 +134,13 @@ class PromptContext:
         context: str = "",
         **extra: Any,
     ) -> PromptContext:
-        """
-        Create a context for research/synthesis workflows.
+        """Create a context for research/synthesis workflows.
 
         Args:
             question: The research question to answer.
             context: Related context or codebase information.
             **extra: Additional context data.
+
         """
         return cls(
             role="staff engineer conducting technical research",

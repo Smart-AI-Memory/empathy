@@ -1,5 +1,4 @@
-"""
-Tests for PerformanceProfilingWizard - Level 4 Anticipatory Performance Analysis.
+"""Tests for PerformanceProfilingWizard - Level 4 Anticipatory Performance Analysis.
 
 Tests cover:
 - Initialization and properties
@@ -87,8 +86,8 @@ class TestPerformanceProfilingWizardAnalyze:
                         "cumulative_time": 0.5,
                         "percent": 10.0,
                     },
-                ]
-            }
+                ],
+            },
         )
 
     @pytest.mark.asyncio
@@ -198,7 +197,7 @@ class TestInsightGeneration:
                 cumulative_time=1.0,
                 percent_total=50.0,
                 profiler="test",
-            )
+            ),
         ]
         bottlenecks = [
             Bottleneck(
@@ -212,7 +211,7 @@ class TestInsightGeneration:
                 reasoning="I/O operation",
                 fix_suggestion="Use async I/O",
                 metadata={},
-            )
+            ),
         ]
 
         insights = wizard._generate_insights(profiles, bottlenecks)
@@ -235,7 +234,7 @@ class TestInsightGeneration:
                 reasoning="CPU heavy",
                 fix_suggestion="Optimize",
                 metadata={},
-            )
+            ),
         ]
 
         insights = wizard._generate_insights(profiles, bottlenecks)
@@ -258,7 +257,7 @@ class TestInsightGeneration:
                 reasoning="N+1 query",
                 fix_suggestion="Use eager loading",
                 metadata={},
-            )
+            ),
         ]
 
         insights = wizard._generate_insights(profiles, bottlenecks)
@@ -333,7 +332,7 @@ class TestOptimizationPotential:
                 reasoning="Hot path",
                 fix_suggestion="Optimize",
                 metadata={},
-            )
+            ),
         ]
 
         result = wizard._estimate_optimization_potential(bottlenecks)
@@ -383,7 +382,7 @@ class TestPredictionGeneration:
                 reasoning="Critical hot path",
                 fix_suggestion="Optimize algorithm",
                 metadata={},
-            )
+            ),
         ]
 
         predictions = wizard._generate_predictions(bottlenecks, None, [])
@@ -407,7 +406,7 @@ class TestPredictionGeneration:
                 reasoning="N+1 query pattern",
                 fix_suggestion="Use eager loading",
                 metadata={},
-            )
+            ),
         ]
 
         predictions = wizard._generate_predictions(bottlenecks, None, [])
@@ -503,7 +502,7 @@ class TestRecommendationGeneration:
                 reasoning="Hot path",
                 fix_suggestion="Cache results",
                 metadata={},
-            )
+            ),
         ]
         insights = {"dominant_pattern": "balanced", "optimization_potential": {}}
 
@@ -578,9 +577,9 @@ class TestEdgeCases:
                             "calls": 0,
                             "cumulative_time": 0.0,
                             "percent": 0.0,
-                        }
-                    ]
-                }
+                        },
+                    ],
+                },
             ),
         }
         result = await wizard.analyze(context)
@@ -628,9 +627,9 @@ class TestEdgeCases:
                             "calls": 1000,
                             "cumulative_time": 0.0,
                             "percent": 0.0,
-                        }
-                    ]
-                }
+                        },
+                    ],
+                },
             ),
         }
         result = await wizard.analyze(context)
@@ -681,8 +680,8 @@ class TestIntegration:
                         "cumulative_time": 0.5,
                         "percent": 5.0,
                     },
-                ]
-            }
+                ],
+            },
         )
 
         context = {
@@ -717,9 +716,9 @@ class TestIntegration:
                         "calls": 50,
                         "cumulative_time": 2.0,
                         "percent": 40.0,
-                    }
-                ]
-            }
+                    },
+                ],
+            },
         )
 
         historical = [
@@ -765,8 +764,8 @@ class TestIntegration:
                         "cumulative_time": 2.0,
                         "percent": 25.0,
                     },
-                ]
-            }
+                ],
+            },
         )
 
         context = {

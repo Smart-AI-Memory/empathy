@@ -1,5 +1,4 @@
-"""
-Collaboration State Management
+"""Collaboration State Management
 
 Tracks AI-human collaboration over time to enable Level 3+ empathy.
 
@@ -24,8 +23,7 @@ class PatternType(Enum):
 
 @dataclass
 class UserPattern:
-    """
-    A detected pattern in user behavior.
+    """A detected pattern in user behavior.
 
     Enables Level 3 (Proactive) empathy.
     """
@@ -39,8 +37,7 @@ class UserPattern:
     context: dict[str, Any] = field(default_factory=dict)
 
     def should_act(self, trust_level: float) -> bool:
-        """
-        Determine if we should act proactively on this pattern.
+        """Determine if we should act proactively on this pattern.
 
         Requires both high confidence and sufficient trust.
         """
@@ -60,8 +57,7 @@ class Interaction:
 
 @dataclass
 class CollaborationState:
-    """
-    Tracks AI-human collaboration state over time.
+    """Tracks AI-human collaboration state over time.
 
     This is the foundation for Level 2+ empathy:
     - Level 2: Uses conversation history for context
@@ -104,7 +100,11 @@ class CollaborationState:
         return self.successful_actions / total
 
     def add_interaction(
-        self, role: str, content: str, empathy_level: int, metadata: dict | None = None
+        self,
+        role: str,
+        content: str,
+        empathy_level: int,
+        metadata: dict | None = None,
     ):
         """Add interaction to history"""
         self.interactions.append(
@@ -114,7 +114,7 @@ class CollaborationState:
                 content=content,
                 empathy_level=empathy_level,
                 metadata=metadata or {},
-            )
+            ),
         )
 
         # Track level history
@@ -122,12 +122,12 @@ class CollaborationState:
             self.level_history.append(empathy_level)
 
     def update_trust(self, outcome: str, magnitude: float = 1.0):
-        """
-        Update trust level based on action outcome.
+        """Update trust level based on action outcome.
 
         Args:
             outcome: "success" or "failure"
             magnitude: How much to adjust (0.0 to 1.0)
+
         """
         if outcome == "success":
             adjustment = 0.05 * magnitude
@@ -159,8 +159,7 @@ class CollaborationState:
         self.detected_patterns.append(pattern)
 
     def find_matching_pattern(self, trigger_text: str) -> UserPattern | None:
-        """
-        Find pattern that matches current input.
+        """Find pattern that matches current input.
 
         Returns pattern with highest confidence if found.
         """
@@ -177,10 +176,11 @@ class CollaborationState:
         return None
 
     def get_conversation_history(
-        self, max_turns: int = 10, include_metadata: bool = False
+        self,
+        max_turns: int = 10,
+        include_metadata: bool = False,
     ) -> list[dict[str, Any]]:
-        """
-        Get recent conversation history in LLM format.
+        """Get recent conversation history in LLM format.
 
         Args:
             max_turns: Maximum number of turns to include
@@ -188,17 +188,16 @@ class CollaborationState:
 
         Returns:
             List of {"role": "user/assistant", "content": "..."}
+
         """
         recent = self.interactions[-max_turns:] if max_turns else self.interactions
 
         if include_metadata:
             return [{"role": i.role, "content": i.content, "metadata": i.metadata} for i in recent]
-        else:
-            return [{"role": i.role, "content": i.content} for i in recent]
+        return [{"role": i.role, "content": i.content} for i in recent]
 
     def should_progress_to_level(self, level: int) -> bool:
-        """
-        Determine if system should progress to higher empathy level.
+        """Determine if system should progress to higher empathy level.
 
         Progression criteria:
         - Level 2: Immediate (guided questions always helpful)

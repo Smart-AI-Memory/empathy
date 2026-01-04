@@ -1,5 +1,4 @@
-"""
-Tests for agents/code_inspection/nodes/reporting.py
+"""Tests for agents/code_inspection/nodes/reporting.py
 
 Tests the reporting module including:
 - Report generation
@@ -299,7 +298,7 @@ class TestReportFormatting:
                 "total_findings": 10,
                 "health_score": 75,
                 "health_grade": "C",
-            }
+            },
         }
         assert "summary" in report
         assert report["summary"]["total_findings"] == 10
@@ -311,7 +310,7 @@ class TestReportFormatting:
                 "critical": 1,
                 "high": 3,
                 "medium": 6,
-            }
+            },
         }
         assert "findings_by_severity" in report
         assert sum(report["findings_by_severity"].values()) == 10
@@ -322,7 +321,7 @@ class TestReportFormatting:
             "recommendations": [
                 "Fix critical issues",
                 "Review high priority items",
-            ]
+            ],
         }
         assert "recommendations" in report
         assert len(report["recommendations"]) == 2

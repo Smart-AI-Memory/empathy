@@ -1,5 +1,4 @@
-"""
-Accessibility Wizard
+"""Accessibility Wizard
 
 WCAG compliance, inclusive design, screen reader compatibility, keyboard navigation.
 Uses Empathy Framework Level 3 (Proactive) for a11y audit and Level 4
@@ -23,8 +22,7 @@ from .base_wizard import (
 
 
 class AccessibilityWizard(BaseWizard):
-    """
-    Wizard for accessibility (a11y) compliance and inclusive design
+    """Wizard for accessibility (a11y) compliance and inclusive design
 
     Uses:
     - Level 2: Guide user through WCAG guidelines
@@ -68,7 +66,6 @@ class AccessibilityWizard(BaseWizard):
 
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute accessibility audit workflow"""
-
         # Step 1: Assess emotional context
         self._assess_emotional_state(task)
 
@@ -107,11 +104,15 @@ class AccessibilityWizard(BaseWizard):
                 content=self._generate_audit_report(diagnosis, audit_results),
             ),
             WizardArtifact(
-                type="code", title="Remediation Code Examples", content=remediation_code
+                type="code",
+                title="Remediation Code Examples",
+                content=remediation_code,
             ),
             WizardArtifact(type="code", title="Keyboard Navigation Tests", content=keyboard_tests),
             WizardArtifact(
-                type="code", title="ARIA Labels Implementation", content=aria_implementation
+                type="code",
+                title="ARIA Labels Implementation",
+                content=aria_implementation,
             ),
             WizardArtifact(
                 type="checklist",
@@ -119,7 +120,9 @@ class AccessibilityWizard(BaseWizard):
                 content=self._create_testing_checklist(task),
             ),
             WizardArtifact(
-                type="doc", title="Accessibility Forecast", content=accessibility_forecast
+                type="doc",
+                title="Accessibility Forecast",
+                content=accessibility_forecast,
             ),
         ]
 
@@ -201,7 +204,7 @@ class AccessibilityWizard(BaseWizard):
                     'Use alt="" for decorative images',
                     "Provide text alternatives for complex graphics",
                 ],
-            }
+            },
         )
 
         issues.append(
@@ -216,7 +219,7 @@ class AccessibilityWizard(BaseWizard):
                     "Don't skip heading levels (h1 → h3)",
                     "One <h1> per page for main heading",
                 ],
-            }
+            },
         )
 
         # WCAG 2.1 Level AA issues
@@ -232,7 +235,7 @@ class AccessibilityWizard(BaseWizard):
                     "Ensure 3:1 contrast for large text (18pt+)",
                     "Use color contrast checker tool",
                 ],
-            }
+            },
         )
 
         issues.append(
@@ -247,7 +250,7 @@ class AccessibilityWizard(BaseWizard):
                     "Use semantic HTML (button, a, input)",
                     'Add tabindex="0" if custom interactive elements needed',
                 ],
-            }
+            },
         )
 
         issues.append(
@@ -262,7 +265,7 @@ class AccessibilityWizard(BaseWizard):
                     "Avoid positive tabindex values",
                     "Test tab navigation flow",
                 ],
-            }
+            },
         )
 
         issues.append(
@@ -277,7 +280,7 @@ class AccessibilityWizard(BaseWizard):
                     "Provide visible focus indicator (border, shadow)",
                     "Ensure 3:1 contrast for focus indicator",
                 ],
-            }
+            },
         )
 
         issues.append(
@@ -292,7 +295,7 @@ class AccessibilityWizard(BaseWizard):
                     'Add ARIA labels: aria-label="Close"',
                     "Add ARIA states: aria-expanded, aria-selected",
                 ],
-            }
+            },
         )
 
         return issues
@@ -307,7 +310,7 @@ class AccessibilityWizard(BaseWizard):
 
         for i, issue in enumerate(sorted_issues, 1):
             plan.append(
-                f"\n### Step {i}: Fix {issue['criterion']} (WCAG {issue['level']}, {issue['severity']})"
+                f"\n### Step {i}: Fix {issue['criterion']} (WCAG {issue['level']}, {issue['severity']})",
             )
             plan.append(f"**Issue**: {issue['issue']}")
             plan.append(f"**Impact**: {issue['impact']}")
@@ -817,7 +820,7 @@ class AccessibilityWizard(BaseWizard):
                 risk="Non-compliance may trigger ADA/Section 508 lawsuits",
                 mitigation="Achieve WCAG 2.1 AA compliance before public launch. Document testing. Create accessibility statement.",
                 severity="high",
-            )
+            ),
         )
 
         # User exclusion risk
@@ -826,7 +829,7 @@ class AccessibilityWizard(BaseWizard):
                 risk="Accessibility barriers exclude 15-20% of potential users",
                 mitigation="Fix critical issues immediately. Test with assistive technologies. Include disabled users in testing.",
                 severity="high",
-            )
+            ),
         )
 
         # Technical debt risk
@@ -835,7 +838,7 @@ class AccessibilityWizard(BaseWizard):
                 risk="Retrofitting accessibility is 10x more expensive than building it in",
                 mitigation="Include accessibility in code reviews. Add automated tests. Train developers on WCAG.",
                 severity="medium",
-            )
+            ),
         )
 
         return risks
@@ -850,14 +853,14 @@ class AccessibilityWizard(BaseWizard):
                     owner="QA / Accessibility Specialist",
                     what="Manual screen reader testing, keyboard testing, WCAG compliance verification",
                     when="Before every release",
-                )
+                ),
             )
             handoffs.append(
                 WizardHandoff(
                     owner="Legal / Compliance",
                     what="Review accessibility statement, ensure ADA/Section 508 compliance",
                     when="Before public launch",
-                )
+                ),
             )
 
         return handoffs

@@ -1,5 +1,4 @@
-"""
-Tests for DocumentGenerationWorkflow.
+"""Tests for DocumentGenerationWorkflow.
 
 Tests the multi-tier documentation generation pipeline with:
 - Outline generation

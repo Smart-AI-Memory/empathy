@@ -1,5 +1,4 @@
-"""
-Linter Output Parsers
+"""Linter Output Parsers
 
 Parses output from various linters into standardized format.
 
@@ -25,8 +24,7 @@ class Severity(Enum):
 
 @dataclass
 class LintIssue:
-    """
-    Standardized lint issue across all linters.
+    """Standardized lint issue across all linters.
 
     This is the universal format - all parser output converts to this.
     """
@@ -65,8 +63,7 @@ class BaseLinterParser:
         self.linter_name = linter_name
 
     def parse(self, output: str, format: str = "auto") -> list[LintIssue]:
-        """
-        Parse linter output into standardized issues.
+        """Parse linter output into standardized issues.
 
         Args:
             output: Raw linter output (text or JSON)
@@ -74,6 +71,7 @@ class BaseLinterParser:
 
         Returns:
             List of LintIssue objects
+
         """
         raise NotImplementedError
 
@@ -84,8 +82,7 @@ class BaseLinterParser:
 
 
 class ESLintParser(BaseLinterParser):
-    """
-    Parse ESLint output.
+    """Parse ESLint output.
 
     Supports both JSON and text formats.
     """
@@ -95,15 +92,13 @@ class ESLintParser(BaseLinterParser):
 
     def parse(self, output: str, format: str = "auto") -> list[LintIssue]:
         """Parse ESLint output"""
-
         # Auto-detect format
         if format == "auto":
             format = "json" if output.strip().startswith("[") else "text"
 
         if format == "json":
             return self._parse_json(output)
-        else:
-            return self._parse_text(output)
+        return self._parse_text(output)
 
     def _parse_json(self, output: str) -> list[LintIssue]:
         """Parse ESLint JSON format"""
@@ -132,7 +127,7 @@ class ESLintParser(BaseLinterParser):
                                 "end_line": message.get("endLine"),
                                 "end_column": message.get("endColumn"),
                             },
-                        )
+                        ),
                     )
 
         except json.JSONDecodeError:
@@ -172,7 +167,7 @@ class ESLintParser(BaseLinterParser):
                         severity=Severity.ERROR if severity == "error" else Severity.WARNING,
                         linter=self.linter_name,
                         has_autofix=False,  # Can't tell from text format
-                    )
+                    ),
                 )
 
         return issues
@@ -183,8 +178,7 @@ class ESLintParser(BaseLinterParser):
 
 
 class PylintParser(BaseLinterParser):
-    """
-    Parse Pylint output.
+    """Parse Pylint output.
 
     Supports JSON and text formats.
     """
@@ -194,15 +188,13 @@ class PylintParser(BaseLinterParser):
 
     def parse(self, output: str, format: str = "auto") -> list[LintIssue]:
         """Parse Pylint output"""
-
         # Auto-detect format
         if format == "auto":
             format = "json" if output.strip().startswith("[") else "text"
 
         if format == "json":
             return self._parse_json(output)
-        else:
-            return self._parse_text(output)
+        return self._parse_text(output)
 
     def _parse_json(self, output: str) -> list[LintIssue]:
         """Parse Pylint JSON format"""
@@ -227,7 +219,7 @@ class PylintParser(BaseLinterParser):
                             "module": item.get("module"),
                             "obj": item.get("obj"),
                         },
-                    )
+                    ),
                 )
 
         except json.JSONDecodeError:
@@ -258,7 +250,7 @@ class PylintParser(BaseLinterParser):
                         linter=self.linter_name,
                         has_autofix=False,
                         context={"code": code, "symbol": symbol},
-                    )
+                    ),
                 )
 
         return issues
@@ -283,9 +275,7 @@ class PylintParser(BaseLinterParser):
 
 
 class MyPyParser(BaseLinterParser):
-    """
-    Parse mypy (Python type checker) output.
-    """
+    """Parse mypy (Python type checker) output."""
 
     def __init__(self):
         super().__init__("mypy")
@@ -313,16 +303,14 @@ class MyPyParser(BaseLinterParser):
                         linter=self.linter_name,
                         has_autofix=False,
                         context={"severity_text": severity},
-                    )
+                    ),
                 )
 
         return issues
 
 
 class TypeScriptParser(BaseLinterParser):
-    """
-    Parse TypeScript compiler (tsc) output.
-    """
+    """Parse TypeScript compiler (tsc) output."""
 
     def __init__(self):
         super().__init__("typescript")
@@ -350,16 +338,14 @@ class TypeScriptParser(BaseLinterParser):
                         linter=self.linter_name,
                         has_autofix=False,
                         context={"ts_code": code},
-                    )
+                    ),
                 )
 
         return issues
 
 
 class ClippyParser(BaseLinterParser):
-    """
-    Parse Rust Clippy output.
-    """
+    """Parse Rust Clippy output."""
 
     def __init__(self):
         super().__init__("clippy")
@@ -418,9 +404,7 @@ class ClippyParser(BaseLinterParser):
 
 
 class LinterParserFactory:
-    """
-    Factory for creating appropriate parser based on linter type.
-    """
+    """Factory for creating appropriate parser based on linter type."""
 
     _parsers = {
         "eslint": ESLintParser,
@@ -434,8 +418,7 @@ class LinterParserFactory:
 
     @classmethod
     def create(cls, linter_name: str) -> BaseLinterParser:
-        """
-        Create parser for specified linter.
+        """Create parser for specified linter.
 
         Args:
             linter_name: Name of linter (eslint, pylint, mypy, etc.)
@@ -445,12 +428,13 @@ class LinterParserFactory:
 
         Raises:
             ValueError if linter not supported
+
         """
         parser_class = cls._parsers.get(linter_name.lower())
 
         if not parser_class:
             raise ValueError(
-                f"Unsupported linter: {linter_name}. Supported: {', '.join(cls._parsers.keys())}"
+                f"Unsupported linter: {linter_name}. Supported: {', '.join(cls._parsers.keys())}",
             )
 
         return parser_class()
@@ -462,8 +446,7 @@ class LinterParserFactory:
 
 
 def parse_linter_output(linter_name: str, output: str, format: str = "auto") -> list[LintIssue]:
-    """
-    Convenience function to parse linter output.
+    """Convenience function to parse linter output.
 
     Args:
         linter_name: Name of linter
@@ -477,6 +460,7 @@ def parse_linter_output(linter_name: str, output: str, format: str = "auto") -> 
         >>> issues = parse_linter_output("eslint", eslint_json_output)
         >>> for issue in issues:
         ...     print(f"{issue.file_path}:{issue.line} - {issue.message}")
+
     """
     parser = LinterParserFactory.create(linter_name)
     return parser.parse(output, format)

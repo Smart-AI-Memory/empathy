@@ -1,5 +1,4 @@
-"""
-Provider Configuration System
+"""Provider Configuration System
 
 Handles user provider selection during install/update and runtime configuration.
 Supports single-provider mode (default) and hybrid mode (multi-provider).
@@ -116,8 +115,7 @@ class ProviderConfig:
 
     @classmethod
     def auto_detect(cls) -> ProviderConfig:
-        """
-        Auto-detect the best configuration based on available API keys.
+        """Auto-detect the best configuration based on available API keys.
 
         Logic:
         - If only one provider available → SINGLE mode with that provider
@@ -133,23 +131,22 @@ class ProviderConfig:
                 primary_provider="anthropic",
                 available_providers=[],
             )
-        elif len(available) == 1:
+        if len(available) == 1:
             # Single provider available, use it
             return cls(
                 mode=ProviderMode.SINGLE,
                 primary_provider=available[0],
                 available_providers=available,
             )
-        else:
-            # Multiple providers available
-            # Default to first cloud provider (prefer anthropic > openai > google > ollama)
-            priority = ["anthropic", "openai", "google", "ollama"]
-            primary = next((p for p in priority if p in available), available[0])
-            return cls(
-                mode=ProviderMode.SINGLE,
-                primary_provider=primary,
-                available_providers=available,
-            )
+        # Multiple providers available
+        # Default to first cloud provider (prefer anthropic > openai > google > ollama)
+        priority = ["anthropic", "openai", "google", "ollama"]
+        primary = next((p for p in priority if p in available), available[0])
+        return cls(
+            mode=ProviderMode.SINGLE,
+            primary_provider=primary,
+            available_providers=available,
+        )
 
     def get_model_for_tier(self, tier: str | ModelTier) -> ModelInfo | None:
         """Get the model to use for a given tier based on current config."""
@@ -158,13 +155,12 @@ class ProviderConfig:
         if self.mode == ProviderMode.HYBRID:
             # Use hybrid provider from registry
             return MODEL_REGISTRY.get("hybrid", {}).get(tier_str)
-        elif self.mode == ProviderMode.CUSTOM:
+        if self.mode == ProviderMode.CUSTOM:
             # Use per-tier provider mapping
             provider = self.tier_providers.get(tier_str, self.primary_provider)
             return MODEL_REGISTRY.get(provider, {}).get(tier_str)
-        else:
-            # SINGLE mode: use primary provider for all tiers
-            return MODEL_REGISTRY.get(self.primary_provider, {}).get(tier_str)
+        # SINGLE mode: use primary provider for all tiers
+        return MODEL_REGISTRY.get(self.primary_provider, {}).get(tier_str)
 
     def get_effective_registry(self) -> dict[str, ModelInfo]:
         """Get the effective model registry based on current config."""
@@ -225,8 +221,7 @@ class ProviderConfig:
 
 # Interactive configuration for install/update
 def configure_provider_interactive() -> ProviderConfig:
-    """
-    Interactive provider configuration for install/update.
+    """Interactive provider configuration for install/update.
 
     Returns configured ProviderConfig after user selection.
     """
@@ -336,8 +331,7 @@ def configure_provider_cli(
     provider: str | None = None,
     mode: str | None = None,
 ) -> ProviderConfig:
-    """
-    CLI-based provider configuration (non-interactive).
+    """CLI-based provider configuration (non-interactive).
 
     Args:
         provider: Provider name (anthropic, openai, google, ollama, hybrid)
@@ -345,6 +339,7 @@ def configure_provider_cli(
 
     Returns:
         Configured ProviderConfig
+
     """
     available = ProviderConfig.detect_available_providers()
 
@@ -391,14 +386,14 @@ def reset_provider_config() -> None:
 
 
 def configure_hybrid_interactive() -> ProviderConfig:
-    """
-    Interactive hybrid configuration - let users pick models for each tier.
+    """Interactive hybrid configuration - let users pick models for each tier.
 
     Shows available models from all providers with detected API keys,
     allowing users to mix and match the best models for their workflow.
 
     Returns:
         ProviderConfig with custom tier mappings
+
     """
     print("\n" + "=" * 60)
     print("🔀 Hybrid Model Configuration")

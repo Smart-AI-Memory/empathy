@@ -1,5 +1,4 @@
-"""
-Tests for Memory Control Panel security features.
+"""Tests for Memory Control Panel security features.
 
 Tests cover:
 - Input validation (pattern IDs, agent IDs, classifications)

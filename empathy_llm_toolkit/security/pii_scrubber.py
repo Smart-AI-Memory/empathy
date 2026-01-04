@@ -1,5 +1,4 @@
-"""
-PII Scrubbing Module for Enterprise Privacy Integration
+"""PII Scrubbing Module for Enterprise Privacy Integration
 
 Comprehensive PII detection and scrubbing based on GDPR, HIPAA, and SOC2 requirements.
 Supports custom patterns and provides detailed audit information.
@@ -15,8 +14,7 @@ from typing import Any
 
 @dataclass
 class PIIDetection:
-    """
-    Details about a detected PII instance.
+    """Details about a detected PII instance.
 
     Attributes:
         pii_type: Type of PII detected (email, phone, ssn, etc.)
@@ -26,6 +24,7 @@ class PIIDetection:
         replacement: What it was replaced with
         confidence: Detection confidence (0.0-1.0)
         metadata: Additional context about the detection
+
     """
 
     pii_type: str
@@ -62,8 +61,7 @@ class PIIDetection:
 
 @dataclass
 class PIIPattern:
-    """
-    Definition of a PII detection pattern.
+    """Definition of a PII detection pattern.
 
     Attributes:
         name: Pattern identifier (e.g., "email", "ssn")
@@ -72,6 +70,7 @@ class PIIPattern:
         confidence: Base confidence level for this pattern
         description: Human-readable description
         enabled: Whether this pattern is active
+
     """
 
     name: str
@@ -83,8 +82,7 @@ class PIIPattern:
 
 
 class PIIScrubber:
-    """
-    Comprehensive PII detection and scrubbing system.
+    """Comprehensive PII detection and scrubbing system.
 
     Detects and removes Personally Identifiable Information from text content
     according to GDPR, HIPAA, and SOC2 requirements.
@@ -113,15 +111,16 @@ class PIIScrubber:
     Performance:
         All patterns are pre-compiled for efficient repeated use.
         Typical scrubbing time: ~1-5ms for 1KB of text.
+
     """
 
     def __init__(self, enable_name_detection: bool = True):
-        """
-        Initialize PII scrubber with default patterns.
+        """Initialize PII scrubber with default patterns.
 
         Args:
             enable_name_detection: Enable context-aware name detection
                                  (may have false positives, disabled by default in production)
+
         """
         self.patterns: dict[str, PIIPattern] = {}
         self.custom_patterns: dict[str, PIIPattern] = {}
@@ -135,7 +134,6 @@ class PIIScrubber:
 
     def _init_default_patterns(self):
         """Initialize default PII detection patterns based on enterprise security policy"""
-
         # Email addresses (RFC 5322 simplified)
         self.patterns["email"] = PIIPattern(
             name="email",
@@ -215,7 +213,7 @@ class PIIScrubber:
             name="ipv4",
             pattern=re.compile(
                 r"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}"
-                r"(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b"
+                r"(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b",
             ),
             replacement="[IP]",
             confidence=1.0,
@@ -228,7 +226,7 @@ class PIIScrubber:
             pattern=re.compile(
                 r"\b(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\b|"
                 r"\b(?:[0-9a-fA-F]{1,4}:){1,7}:\b|"
-                r"\b:(?::[0-9a-fA-F]{1,4}){1,7}\b"
+                r"\b:(?::[0-9a-fA-F]{1,4}){1,7}\b",
             ),
             replacement="[IP]",
             confidence=0.95,
@@ -294,8 +292,7 @@ class PIIScrubber:
         )
 
     def scrub(self, content: str) -> tuple[str, list[PIIDetection]]:
-        """
-        Scrub PII from content.
+        """Scrub PII from content.
 
         Detects and replaces all PII according to configured patterns.
         Returns both sanitized content and detailed detection information.
@@ -316,6 +313,7 @@ class PIIScrubber:
             "Email me at [EMAIL] or call [PHONE]"
             >>> print(detections[0].pii_type)
             "email"
+
         """
         if not content:
             return content, []
@@ -348,7 +346,7 @@ class PIIScrubber:
                             pii_pattern.replacement,
                             match,
                             pii_pattern.confidence,
-                        )
+                        ),
                     )
 
         # Sort by start position
@@ -410,8 +408,7 @@ class PIIScrubber:
         confidence: float = 1.0,
         description: str = "",
     ):
-        """
-        Add a custom PII detection pattern.
+        """Add a custom PII detection pattern.
 
         Allows extending the scrubber with organization-specific or
         domain-specific PII patterns.
@@ -434,6 +431,7 @@ class PIIScrubber:
             ...     replacement="[EMPLOYEE_ID]",
             ...     description="Company employee identifier"
             ... )
+
         """
         if name in self.patterns or name in self.custom_patterns:
             raise ValueError(f"Pattern '{name}' already exists")
@@ -453,33 +451,33 @@ class PIIScrubber:
         )
 
     def remove_custom_pattern(self, name: str):
-        """
-        Remove a custom PII pattern.
+        """Remove a custom PII pattern.
 
         Args:
             name: Pattern identifier
 
         Raises:
             ValueError: If pattern doesn't exist or is a default pattern
+
         """
         if name not in self.custom_patterns:
             if name in self.patterns:
                 raise ValueError(
-                    f"Cannot remove default pattern '{name}'. Use disable_pattern() instead."
+                    f"Cannot remove default pattern '{name}'. Use disable_pattern() instead.",
                 )
             raise ValueError(f"Pattern '{name}' not found")
 
         del self.custom_patterns[name]
 
     def disable_pattern(self, name: str):
-        """
-        Disable a PII pattern without removing it.
+        """Disable a PII pattern without removing it.
 
         Args:
             name: Pattern identifier
 
         Raises:
             ValueError: If pattern doesn't exist
+
         """
         if name in self.patterns:
             self.patterns[name].enabled = False
@@ -489,14 +487,14 @@ class PIIScrubber:
             raise ValueError(f"Pattern '{name}' not found")
 
     def enable_pattern(self, name: str):
-        """
-        Enable a previously disabled PII pattern.
+        """Enable a previously disabled PII pattern.
 
         Args:
             name: Pattern identifier
 
         Raises:
             ValueError: If pattern doesn't exist
+
         """
         if name in self.patterns:
             self.patterns[name].enabled = True
@@ -506,11 +504,11 @@ class PIIScrubber:
             raise ValueError(f"Pattern '{name}' not found")
 
     def get_statistics(self) -> dict[str, Any]:
-        """
-        Get statistics about configured patterns.
+        """Get statistics about configured patterns.
 
         Returns:
             Dictionary with pattern statistics
+
         """
         enabled_default = sum(1 for p in self.patterns.values() if p.enabled)
         enabled_custom = sum(1 for p in self.custom_patterns.values() if p.enabled)
@@ -529,8 +527,7 @@ class PIIScrubber:
         }
 
     def get_pattern_info(self, name: str) -> dict[str, Any]:
-        """
-        Get detailed information about a specific pattern.
+        """Get detailed information about a specific pattern.
 
         Args:
             name: Pattern identifier
@@ -540,6 +537,7 @@ class PIIScrubber:
 
         Raises:
             ValueError: If pattern doesn't exist
+
         """
         pattern = None
         is_custom = False
@@ -563,14 +561,14 @@ class PIIScrubber:
         }
 
     def validate_patterns(self) -> list[dict[str, Any]]:
-        """
-        Validate all patterns with test cases.
+        """Validate all patterns with test cases.
 
         Returns a list of validation results for each pattern.
         Useful for testing pattern effectiveness.
 
         Returns:
             List of dictionaries with validation results
+
         """
         test_cases = {
             "email": [
@@ -636,7 +634,7 @@ class PIIScrubber:
                     "passed": passed,
                     "failed": failed,
                     "success_rate": passed / len(cases) if cases else 0,
-                }
+                },
             )
 
         return results

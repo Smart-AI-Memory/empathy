@@ -1,5 +1,4 @@
-"""
-Progressive Feature Discovery for Empathy Framework
+"""Progressive Feature Discovery for Empathy Framework
 
 Surface tips and suggestions at the right time based on usage patterns.
 Helps users discover power-user features without overwhelming them upfront.
@@ -87,8 +86,7 @@ def _days_since_sync(stats: dict) -> int:
 
 
 class DiscoveryEngine:
-    """
-    Tracks usage and surfaces contextual tips.
+    """Tracks usage and surfaces contextual tips.
 
     Usage:
         engine = DiscoveryEngine()
@@ -136,14 +134,14 @@ class DiscoveryEngine:
             json.dump(self.state, f, indent=2)
 
     def record_command(self, command: str) -> list:
-        """
-        Record a command execution and return any triggered tips.
+        """Record a command execution and return any triggered tips.
 
         Args:
             command: The command that was executed
 
         Returns:
             List of tip messages to show
+
         """
         # Update counts
         counts = self.state.get("command_counts", {})
@@ -177,8 +175,7 @@ class DiscoveryEngine:
         self._save()
 
     def get_pending_tips(self, trigger: str | None = None, max_tips: int = 2) -> list:
-        """
-        Get pending tips based on current state.
+        """Get pending tips based on current state.
 
         Args:
             trigger: Command that triggered this check (optional)
@@ -186,6 +183,7 @@ class DiscoveryEngine:
 
         Returns:
             List of tip messages
+
         """
         tips_to_show = []
         shown_tips = set(self.state.get("tips_shown", []))
@@ -219,7 +217,7 @@ class DiscoveryEngine:
                         "id": tip_id,
                         "tip": tip_config["tip"],
                         "priority": tip_config.get("priority", 3),
-                    }
+                    },
                 )
 
         # Sort by priority and limit - ensure we get an int for sorting
@@ -274,12 +272,12 @@ def get_engine(storage_dir: str = ".empathy") -> DiscoveryEngine:
 
 
 def show_tip_if_available(command: str, quiet: bool = False) -> None:
-    """
-    Check for tips after a command and display them.
+    """Check for tips after a command and display them.
 
     Args:
         command: The command that was just executed
         quiet: If True, don't print anything
+
     """
     engine = get_engine()
     tips = engine.record_command(command)

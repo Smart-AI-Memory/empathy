@@ -1,5 +1,4 @@
-"""
-Five Levels of AI Empathy - Individual Level Classes
+"""Five Levels of AI Empathy - Individual Level Classes
 
 Provides concrete implementations for each empathy level:
 - Level 1: Reactive Empathy (respond to explicit requests)
@@ -23,8 +22,7 @@ from typing import Any
 
 @dataclass
 class EmpathyAction:
-    """
-    An action taken at a specific empathy level
+    """An action taken at a specific empathy level
 
     Records what action was taken, at what level, and the outcome.
     """
@@ -38,8 +36,7 @@ class EmpathyAction:
 
 
 class EmpathyLevel(ABC):
-    """
-    Abstract base class for empathy levels
+    """Abstract base class for empathy levels
 
     Each level implements specific behaviors appropriate to that
     level of empathy sophistication.
@@ -53,8 +50,7 @@ class EmpathyLevel(ABC):
 
     @abstractmethod
     def respond(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Respond to a situation at this empathy level.
+        """Respond to a situation at this empathy level.
 
         This abstract method defines the core behavior for each empathy level.
         Subclasses must implement level-specific response logic that corresponds
@@ -90,8 +86,8 @@ class EmpathyLevel(ABC):
 
             Implementations should record actions via self.record_action() and
             maintain consistency in the response format across levels.
+
         """
-        pass
 
     def record_action(
         self,
@@ -116,8 +112,7 @@ class EmpathyLevel(ABC):
 
 
 class Level1Reactive(EmpathyLevel):
-    """
-    Level 1: Reactive Empathy
+    """Level 1: Reactive Empathy
 
     **Principle**: Help after being asked
 
@@ -143,14 +138,14 @@ class Level1Reactive(EmpathyLevel):
         >>> response = level1.respond({"request": "status", "subject": "project"})
         >>> print(response["action"])
         'provide_requested_information'
+
     """
 
     level_number = 1
     level_name = "Reactive Empathy"
 
     def respond(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Respond reactively to explicit request
+        """Respond reactively to explicit request
 
         Only provides what was directly asked for.
         """
@@ -177,8 +172,7 @@ class Level1Reactive(EmpathyLevel):
 
 
 class Level2Guided(EmpathyLevel):
-    """
-    Level 2: Guided Empathy
+    """Level 2: Guided Empathy
 
     **Principle**: Collaborative exploration with user input
 
@@ -208,14 +202,14 @@ class Level2Guided(EmpathyLevel):
         ... })
         >>> print(len(response["clarifying_questions"]))
         3
+
     """
 
     level_number = 2
     level_name = "Guided Empathy"
 
     def respond(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Respond with guided exploration
+        """Respond with guided exploration
 
         Asks questions to understand needs and collaboratively explore solutions.
         """
@@ -266,8 +260,7 @@ class Level2Guided(EmpathyLevel):
 
 
 class Level3Proactive(EmpathyLevel):
-    """
-    Level 3: Proactive Empathy
+    """Level 3: Proactive Empathy
 
     **Principle**: Act before being asked (when confidence is high)
 
@@ -296,14 +289,14 @@ class Level3Proactive(EmpathyLevel):
         ...     "confidence": 0.9
         ... })
         >>> print(response["proactive_offer"])
+
     """
 
     level_number = 3
     level_name = "Proactive Empathy"
 
     def respond(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Respond proactively to observed needs
+        """Respond proactively to observed needs
 
         Takes initiative on obvious needs without being asked.
         """
@@ -351,8 +344,7 @@ class Level3Proactive(EmpathyLevel):
 
 
 class Level4Anticipatory(EmpathyLevel):
-    """
-    Level 4: Anticipatory Empathy
+    """Level 4: Anticipatory Empathy
 
     **Principle**: Predict and prepare for future needs
 
@@ -387,14 +379,14 @@ class Level4Anticipatory(EmpathyLevel):
         ...     "prediction_horizon": "30_days"
         ... })
         >>> print(response["predicted_needs"])
+
     """
 
     level_number = 4
     level_name = "Anticipatory Empathy"
 
     def respond(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Respond anticipatorily to predicted future needs
+        """Respond anticipatorily to predicted future needs
 
         Analyzes trajectory and prepares for future needs before they arise.
         """
@@ -427,7 +419,10 @@ class Level4Anticipatory(EmpathyLevel):
         return response
 
     def _predict_future_needs(
-        self, current_state: dict[str, Any], trajectory: str, horizon: str
+        self,
+        current_state: dict[str, Any],
+        trajectory: str,
+        horizon: str,
     ) -> dict[str, Any]:
         """Predict future needs based on current trajectory"""
         # Simulate prediction logic
@@ -452,8 +447,7 @@ class Level4Anticipatory(EmpathyLevel):
 
 
 class Level5Systems(EmpathyLevel):
-    """
-    Level 5: Systems Empathy
+    """Level 5: Systems Empathy
 
     **Principle**: Build structures that help at scale
 
@@ -489,20 +483,20 @@ class Level5Systems(EmpathyLevel):
         ...     "pattern": "repetitive_structure"
         ... })
         >>> print(response["system_created"])
+
     """
 
     level_number = 5
     level_name = "Systems Empathy"
 
     def respond(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Respond with systems-level solution
+        """Respond with systems-level solution
 
         Creates reusable structures that help at scale.
         """
         problem_class = context.get("problem_class", "unknown")
         instances = context.get("instances", 0)
-        pattern = context.get("pattern", None)
+        pattern = context.get("pattern")
 
         system_design = self._design_system_solution(problem_class, instances, pattern)
 
@@ -530,7 +524,10 @@ class Level5Systems(EmpathyLevel):
         return response
 
     def _design_system_solution(
-        self, problem_class: str, instances: int, pattern: str | None
+        self,
+        problem_class: str,
+        instances: int,
+        pattern: str | None,
     ) -> dict[str, Any]:
         """Design a system-level solution"""
         return {
@@ -555,8 +552,7 @@ class Level5Systems(EmpathyLevel):
 
 # Convenience function to get level class by number
 def get_level_class(level: int) -> type:
-    """
-    Get the class for a specific empathy level
+    """Get the class for a specific empathy level
 
     Args:
         level: Level number (1-5)
@@ -569,6 +565,7 @@ def get_level_class(level: int) -> type:
         >>> level4 = LevelClass()
         >>> print(level4.level_name)
         'Anticipatory Empathy'
+
     """
     levels = {
         1: Level1Reactive,

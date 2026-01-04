@@ -1,5 +1,4 @@
-"""
-Software Deployment Pipeline (Simulated)
+"""Software Deployment Pipeline (Simulated)
 
 This code represents a typical deployment pipeline
 with SIMILAR GAPS to healthcare handoffs.
@@ -12,8 +11,7 @@ Licensed under Fair Source 0.9 (converts to Apache 2.0 on January 1, 2029)
 
 
 class DeploymentPipeline:
-    """
-    Deploy code from Dev → Staging → Production
+    """Deploy code from Dev → Staging → Production
 
     WARNING: This pipeline has handoff vulnerabilities
     similar to healthcare shift changes!
@@ -25,8 +23,7 @@ class DeploymentPipeline:
         self.deployment_log = []
 
     def deploy_to_staging(self, build_artifacts: dict):
-        """
-        Deploy to staging environment
+        """Deploy to staging environment
 
         CRITICAL GAP #1: No verification checklist
         CRITICAL GAP #2: Assumes staging team knows all context
@@ -37,7 +34,7 @@ class DeploymentPipeline:
 
         # Deploy to staging
         self.deployment_log.append(
-            {"environment": "staging", "version": self.version, "status": "deployed"}
+            {"environment": "staging", "version": self.version, "status": "deployed"},
         )
 
         # PROBLEM: No verification that:
@@ -50,8 +47,7 @@ class DeploymentPipeline:
         return True
 
     def promote_to_production(self, staging_checks: dict = None):
-        """
-        Promote from staging to production
+        """Promote from staging to production
 
         THIS IS THE CRITICAL HANDOFF - just like nurse shift change!
 
@@ -77,7 +73,7 @@ class DeploymentPipeline:
         # Missing: Explicit acknowledgment from on-call team
 
         self.deployment_log.append(
-            {"environment": "production", "version": self.version, "status": "deployed"}
+            {"environment": "production", "version": self.version, "status": "deployed"},
         )
 
         print("✓ Deployed to production")
@@ -85,8 +81,7 @@ class DeploymentPipeline:
 
 
 def deploy_feature_release(app_config: dict):
-    """
-    Deploy new feature release
+    """Deploy new feature release
 
     PATTERN: Same information loss during handoffs as healthcare!
     """
@@ -136,8 +131,7 @@ def deploy_feature_release(app_config: dict):
 
 
 def emergency_hotfix_deployment(issue_description: str):
-    """
-    Emergency hotfix under time pressure
+    """Emergency hotfix under time pressure
 
     EXACTLY like emergency patient handoffs!
     Time pressure = shortcuts = information loss

@@ -1,5 +1,4 @@
-"""
-Tests for CLI Module
+"""Tests for CLI Module
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
@@ -241,7 +240,10 @@ class TestCLIMetricsCommands:
         # Record some metrics
         for i in range(5):
             collector.record_metric(
-                user_id="test_user", empathy_level=3, success=True, response_time_ms=100.0 + i * 10
+                user_id="test_user",
+                empathy_level=3,
+                success=True,
+                response_time_ms=100.0 + i * 10,
             )
 
         args = MockArgs(db=str(db_path), user="test_user")
@@ -598,7 +600,9 @@ class TestCLIMain:
         monkeypatch.chdir(temp_dir)
         output_file = Path(temp_dir) / "custom.json"
         with patch.object(
-            sys, "argv", ["empathy", "init", "--format", "json", "-o", str(output_file)]
+            sys,
+            "argv",
+            ["empathy", "init", "--format", "json", "-o", str(output_file)],
         ):
             main()
 
@@ -681,7 +685,9 @@ class TestCLIMain:
         PatternPersistence.save_to_sqlite(library, str(library_path))
 
         with patch.object(
-            sys, "argv", ["empathy", "patterns", "list", str(library_path), "--format", "sqlite"]
+            sys,
+            "argv",
+            ["empathy", "patterns", "list", str(library_path), "--format", "sqlite"],
         ):
             main()
 
@@ -775,11 +781,16 @@ class TestCLIMain:
 
         for _ in range(3):
             collector.record_metric(
-                user_id="test_user", empathy_level=2, success=True, response_time_ms=50.0
+                user_id="test_user",
+                empathy_level=2,
+                success=True,
+                response_time_ms=50.0,
             )
 
         with patch.object(
-            sys, "argv", ["empathy", "metrics", "show", "test_user", "--db", str(db_path)]
+            sys,
+            "argv",
+            ["empathy", "metrics", "show", "test_user", "--db", str(db_path)],
         ):
             main()
 
@@ -794,11 +805,16 @@ class TestCLIMain:
         collector = MetricsCollector(str(db_path))
 
         collector.record_metric(
-            user_id="user123", empathy_level=1, success=True, response_time_ms=25.0
+            user_id="user123",
+            empathy_level=1,
+            success=True,
+            response_time_ms=25.0,
         )
 
         with patch.object(
-            sys, "argv", ["empathy", "metrics", "show", "user123", "--db", str(db_path)]
+            sys,
+            "argv",
+            ["empathy", "metrics", "show", "user123", "--db", str(db_path)],
         ):
             main()
 

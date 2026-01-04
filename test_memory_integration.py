@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-Test script for Claude Memory Integration
+"""Test script for Claude Memory Integration
 
 This script demonstrates and tests all memory features:
 - Hierarchical loading (Enterprise/User/Project)
@@ -62,7 +61,7 @@ def test_import_directive() -> None:
 - Follow PEP 8
 - Write docstrings
 - Target 90%+ test coverage
-"""
+""",
         )
 
     # Update main CLAUDE.md to import it
@@ -77,7 +76,7 @@ This is the Empathy Framework v1.8.0-alpha
 
 ## Additional Notes
 Memory integration test
-"""
+""",
         )
 
     config = ClaudeMemoryConfig(enabled=True)
@@ -127,7 +126,7 @@ def test_empathy_llm_integration() -> None:
     print("\n✓ System prompt built for Level 2")
     print(f"✓ Prompt includes memory: {'PROJECT Level' in system_prompt}")
     print(
-        f"✓ Prompt includes level instructions: {'Level 2' in system_prompt or 'Guided' in system_prompt}"
+        f"✓ Prompt includes level instructions: {'Level 2' in system_prompt or 'Guided' in system_prompt}",
     )
 
     print(f"\nSystem prompt length: {len(system_prompt)} chars")
@@ -144,7 +143,10 @@ def test_memory_reloading() -> None:
     config = ClaudeMemoryConfig(enabled=True, load_user=False, load_enterprise=False)
 
     llm = EmpathyLLM(
-        provider="anthropic", api_key="test-key", claude_memory_config=config, project_root="."
+        provider="anthropic",
+        api_key="test-key",
+        claude_memory_config=config,
+        project_root=".",
     )
 
     original_memory = llm._cached_memory
@@ -199,7 +201,7 @@ def test_hierarchical_loading() -> None:
 ## My Settings
 - Prefer concise responses
 - Use Python 3.10+
-"""
+""",
             )
 
         config = ClaudeMemoryConfig(enabled=True, load_enterprise=False)
@@ -240,7 +242,10 @@ def test_disabled_memory() -> None:
     config = ClaudeMemoryConfig()
 
     llm = EmpathyLLM(
-        provider="anthropic", api_key="test-key", claude_memory_config=config, project_root="."
+        provider="anthropic",
+        api_key="test-key",
+        claude_memory_config=config,
+        project_root=".",
     )
 
     print(f"✓ Memory disabled by default: {not config.enabled}")

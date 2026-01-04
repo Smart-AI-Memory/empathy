@@ -1,5 +1,4 @@
-"""
-Tests for Security Audit Crew
+"""Tests for Security Audit Crew
 
 Tests the multi-agent security audit crew that demonstrates
 CrewAI's hierarchical collaboration patterns.
@@ -480,10 +479,10 @@ class TestSecurityAuditCrewWorkflow:
                             "description": "...",
                             "severity": "critical",
                             "category": "injection",
-                        }
-                    ]
+                        },
+                    ],
                 },
-            }
+            },
         )
         crew._workflow = mock_workflow
 

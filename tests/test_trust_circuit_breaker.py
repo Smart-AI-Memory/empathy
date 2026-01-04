@@ -1,5 +1,4 @@
-"""
-Tests for Trust Circuit Breaker
+"""Tests for Trust Circuit Breaker
 
 Validates the cross-domain transfer from reliability circuit breaker
 to trust management.

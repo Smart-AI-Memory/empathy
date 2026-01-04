@@ -1,5 +1,4 @@
-"""
-Dynamic Analysis Node - Phase 2
+"""Dynamic Analysis Node - Phase 2
 
 Runs conditional dynamic analysis based on Phase 1 results.
 Can skip if critical issues found, or deep-dive if patterns match.
@@ -24,14 +23,14 @@ logger = logging.getLogger(__name__)
 
 
 async def run_dynamic_analysis(state: CodeInspectionState) -> CodeInspectionState:
-    """
-    Phase 2: Run conditional dynamic analysis.
+    """Phase 2: Run conditional dynamic analysis.
 
     Args:
         state: Current inspection state
 
     Returns:
         Updated state with dynamic analysis results
+
     """
     logger.info(f"[Phase 2] Starting dynamic analysis for {state['project_path']}")
 
@@ -95,7 +94,7 @@ async def run_dynamic_analysis(state: CodeInspectionState) -> CodeInspectionStat
 
         if isinstance(result, Exception):
             logger.error(f"Tool {tool_name} failed: {result}")
-            state["errors"].append(f"{tool_name}: {str(result)}")
+            state["errors"].append(f"{tool_name}: {result!s}")
             continue
 
         # Store result
@@ -116,7 +115,7 @@ async def run_dynamic_analysis(state: CodeInspectionState) -> CodeInspectionStat
         logger.info(
             f"{tool_name}: status={result.get('status')}, "
             f"score={result.get('score')}, "
-            f"findings={result.get('findings_count')}"
+            f"findings={result.get('findings_count')}",
         )
 
     # Update state
@@ -141,8 +140,7 @@ async def run_dynamic_analysis(state: CodeInspectionState) -> CodeInspectionStat
 
 
 async def run_deep_dive_analysis(state: CodeInspectionState) -> CodeInspectionState:
-    """
-    Deep-dive analysis triggered by historical pattern matches.
+    """Deep-dive analysis triggered by historical pattern matches.
 
     Runs additional advanced debugging for files with pattern matches.
 
@@ -151,6 +149,7 @@ async def run_deep_dive_analysis(state: CodeInspectionState) -> CodeInspectionSt
 
     Returns:
         Updated state with deep-dive results
+
     """
     logger.info("[Phase 2+] Starting deep-dive analysis")
 
@@ -172,11 +171,11 @@ async def run_deep_dive_analysis(state: CodeInspectionState) -> CodeInspectionSt
         state["advanced_debugging_result"] = result
 
         logger.info(
-            f"Deep-dive: status={result.get('status')}, findings={result.get('findings_count')}"
+            f"Deep-dive: status={result.get('status')}, findings={result.get('findings_count')}",
         )
     except Exception as e:
         logger.error(f"Deep-dive analysis failed: {e}")
-        state["errors"].append(f"deep_dive: {str(e)}")
+        state["errors"].append(f"deep_dive: {e!s}")
 
     # Also run standard dynamic analysis
     state = await run_dynamic_analysis(state)
@@ -192,14 +191,14 @@ async def run_deep_dive_analysis(state: CodeInspectionState) -> CodeInspectionSt
 
 
 async def handle_skip_dynamic(state: CodeInspectionState) -> CodeInspectionState:
-    """
-    Handle skipping dynamic analysis due to critical issues.
+    """Handle skipping dynamic analysis due to critical issues.
 
     Args:
         state: Current inspection state
 
     Returns:
         Updated state with skip information
+
     """
     logger.info(f"[Phase 2] Skipping dynamic analysis: {state.get('skip_reason', 'unknown')}")
 

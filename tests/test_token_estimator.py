@@ -1,5 +1,4 @@
-"""
-Tests for Token Estimation Service.
+"""Tests for Token Estimation Service.
 
 Tests pre-flight token estimation for cost prediction.
 

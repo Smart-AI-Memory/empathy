@@ -1,5 +1,4 @@
-"""
-Empathy LLM Wizards - Canonical Examples
+"""Empathy LLM Wizards - Canonical Examples
 
 Core wizard base class and canonical domain examples demonstrating
 the Empathy Framework's capabilities across different use cases.
@@ -31,9 +30,9 @@ from .technology_wizard import TechnologyWizard
 __all__ = [
     # Base classes
     "BaseWizard",
-    "WizardConfig",
     # Canonical domain examples
     "CustomerSupportWizard",
     "HealthcareWizard",
     "TechnologyWizard",
+    "WizardConfig",
 ]

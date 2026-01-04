@@ -1,5 +1,4 @@
-"""
-Document Generation Workflow
+"""Document Generation Workflow
 
 A cost-optimized, enterprise-safe documentation pipeline:
 1. Haiku: Generate outline from code/specs (cheap, fast)
@@ -48,8 +47,7 @@ DOC_GEN_STEPS = {
 
 
 class DocumentGenerationWorkflow(BaseWorkflow):
-    """
-    Multi-tier document generation workflow.
+    """Multi-tier document generation workflow.
 
     Uses cheap models for outlining, capable models for content
     generation, and premium models for final polish and consistency
@@ -88,8 +86,7 @@ class DocumentGenerationWorkflow(BaseWorkflow):
         max_display_chars: int = 45000,  # Max chars before chunking output
         **kwargs: Any,
     ):
-        """
-        Initialize workflow with enterprise-safe defaults.
+        """Initialize workflow with enterprise-safe defaults.
 
         Args:
             skip_polish_threshold: Skip premium polish for docs under this
@@ -111,6 +108,7 @@ class DocumentGenerationWorkflow(BaseWorkflow):
                 If provided, documentation will be saved to a file automatically.
             max_display_chars: Maximum characters before splitting output into chunks
                 for display (default 45000). Helps avoid terminal/UI truncation.
+
         """
         super().__init__(**kwargs)
         self.skip_polish_threshold = skip_polish_threshold
@@ -138,13 +136,16 @@ class DocumentGenerationWorkflow(BaseWorkflow):
         return input_cost + output_cost
 
     def _track_cost(
-        self, tier: ModelTier, input_tokens: int, output_tokens: int
+        self,
+        tier: ModelTier,
+        input_tokens: int,
+        output_tokens: int,
     ) -> tuple[float, bool]:
-        """
-        Track accumulated cost and check against limits.
+        """Track accumulated cost and check against limits.
 
         Returns:
             Tuple of (cost_for_this_call, should_stop)
+
         """
         cost = self._estimate_cost(tier, input_tokens, output_tokens)
         self._accumulated_cost += cost
@@ -158,21 +159,20 @@ class DocumentGenerationWorkflow(BaseWorkflow):
             self._cost_warning_issued = True
             logger.warning(
                 f"Doc-gen cost approaching limit: ${self._accumulated_cost:.2f} "
-                f"of ${self.max_cost:.2f} ({self.cost_warning_threshold * 100:.0f}% threshold)"
+                f"of ${self.max_cost:.2f} ({self.cost_warning_threshold * 100:.0f}% threshold)",
             )
 
         # Check if we should stop
         should_stop = self.max_cost > 0 and self._accumulated_cost >= self.max_cost
         if should_stop:
             logger.warning(
-                f"Doc-gen cost limit reached: ${self._accumulated_cost:.2f} >= ${self.max_cost:.2f}"
+                f"Doc-gen cost limit reached: ${self._accumulated_cost:.2f} >= ${self.max_cost:.2f}",
             )
 
         return cost, should_stop
 
     def _auto_scale_tokens(self, section_count: int) -> int:
-        """
-        Auto-scale max_write_tokens based on section count.
+        """Auto-scale max_write_tokens based on section count.
 
         Enterprise projects may have 20+ sections requiring more tokens.
         """
@@ -185,10 +185,12 @@ class DocumentGenerationWorkflow(BaseWorkflow):
         return scaled
 
     def _export_document(
-        self, document: str, doc_type: str, report: str | None = None
+        self,
+        document: str,
+        doc_type: str,
+        report: str | None = None,
     ) -> tuple[Path | None, Path | None]:
-        """
-        Export generated documentation to file.
+        """Export generated documentation to file.
 
         Args:
             document: The generated documentation content
@@ -197,6 +199,7 @@ class DocumentGenerationWorkflow(BaseWorkflow):
 
         Returns:
             Tuple of (doc_path, report_path) or (None, None) if export disabled
+
         """
         if not self.export_path:
             return None, None
@@ -229,8 +232,7 @@ class DocumentGenerationWorkflow(BaseWorkflow):
             return None, None
 
     def _chunk_output_for_display(self, content: str, chunk_prefix: str = "PART") -> list[str]:
-        """
-        Split large output into displayable chunks.
+        """Split large output into displayable chunks.
 
         Args:
             content: The content to chunk
@@ -238,6 +240,7 @@ class DocumentGenerationWorkflow(BaseWorkflow):
 
         Returns:
             List of content chunks, each under max_display_chars
+
         """
         if len(content) <= self.max_display_chars:
             return [content]
@@ -256,7 +259,7 @@ class DocumentGenerationWorkflow(BaseWorkflow):
             if current_chunk and len(current_chunk) + len(section) > self.max_display_chars:
                 chunks.append(
                     f"{'=' * 60}\n{chunk_prefix} {chunk_num} of {{total}}\n{'=' * 60}\n\n"
-                    + current_chunk
+                    + current_chunk,
                 )
                 chunk_num += 1
                 current_chunk = section
@@ -267,7 +270,7 @@ class DocumentGenerationWorkflow(BaseWorkflow):
         if current_chunk:
             chunks.append(
                 f"{'=' * 60}\n{chunk_prefix} {chunk_num} of {{total}}\n{'=' * 60}\n\n"
-                + current_chunk
+                + current_chunk,
             )
 
         # Update total count in all chunks
@@ -285,17 +288,19 @@ class DocumentGenerationWorkflow(BaseWorkflow):
         return False, None
 
     async def run_stage(
-        self, stage_name: str, tier: ModelTier, input_data: Any
+        self,
+        stage_name: str,
+        tier: ModelTier,
+        input_data: Any,
     ) -> tuple[Any, int, int]:
         """Execute a document generation stage."""
         if stage_name == "outline":
             return await self._outline(input_data, tier)
-        elif stage_name == "write":
+        if stage_name == "write":
             return await self._write(input_data, tier)
-        elif stage_name == "polish":
+        if stage_name == "polish":
             return await self._polish(input_data, tier)
-        else:
-            raise ValueError(f"Unknown stage: {stage_name}")
+        raise ValueError(f"Unknown stage: {stage_name}")
 
     async def _outline(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
         """Generate document outline from source."""
@@ -337,7 +342,7 @@ class DocumentGenerationWorkflow(BaseWorkflow):
                 import logging
 
                 logging.getLogger(__name__).warning(
-                    f"Target appears to be a file path but doesn't exist: {target}"
+                    f"Target appears to be a file path but doesn't exist: {target}",
                 )
 
         system = """You are a technical writer. Create a detailed outline for documentation.
@@ -358,7 +363,10 @@ Content to document:
 {content_to_document[:4000]}"""
 
         response, input_tokens, output_tokens = await self._call_llm(
-            tier, system, user_message, max_tokens=1000
+            tier,
+            system,
+            user_message,
+            max_tokens=1000,
         )
 
         return (
@@ -420,7 +428,12 @@ Content to document:
 
         if use_chunking:
             return await self._write_chunked(
-                sections, outline, doc_type, audience, content_to_document, tier
+                sections,
+                outline,
+                doc_type,
+                audience,
+                content_to_document,
+                tier,
             )
 
         # Handle section_focus for targeted generation
@@ -458,7 +471,10 @@ Source content for reference:
 {content_to_document[:5000]}"""
 
         response, input_tokens, output_tokens = await self._call_llm(
-            tier, system, user_message, max_tokens=self.max_write_tokens
+            tier,
+            system,
+            user_message,
+            max_tokens=self.max_write_tokens,
         )
 
         self._total_content_tokens = output_tokens
@@ -559,7 +575,7 @@ Source content for reference:
                 logger.info(
                     f"Chunk {chunk_idx + 1}/{len(chunks)} complete: "
                     f"{len(response)} chars, {output_tokens} tokens, "
-                    f"cost so far: ${self._accumulated_cost:.2f}"
+                    f"cost so far: ${self._accumulated_cost:.2f}",
                 )
 
                 # Check cost limit
@@ -611,8 +627,7 @@ Source content for reference:
         return (result, total_input_tokens, total_output_tokens)
 
     async def _polish(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Final review and consistency polish using LLM.
+        """Final review and consistency polish using LLM.
 
         Enterprise-safe: chunks large documents to avoid truncation.
         Supports XML-enhanced prompts when enabled in workflow config.
@@ -629,7 +644,7 @@ Source content for reference:
         if needs_chunked_polish:
             logger.info(
                 f"Large document detected (~{estimated_tokens} tokens). "
-                "Using chunked polish for enterprise safety."
+                "Using chunked polish for enterprise safety.",
             )
             return await self._polish_chunked(input_data, tier)
 
@@ -709,12 +724,18 @@ Return the polished document with improvements noted at the end."""
             except Exception:
                 # Fall back to legacy _call_llm if executor fails
                 response, input_tokens, output_tokens = await self._call_llm(
-                    tier, system or "", user_message, max_tokens=polish_max_tokens
+                    tier,
+                    system or "",
+                    user_message,
+                    max_tokens=polish_max_tokens,
                 )
         else:
             # Legacy path for backward compatibility
             response, input_tokens, output_tokens = await self._call_llm(
-                tier, system or "", user_message, max_tokens=polish_max_tokens
+                tier,
+                system or "",
+                user_message,
+                max_tokens=polish_max_tokens,
             )
 
         # Parse XML response if enforcement is enabled
@@ -735,7 +756,7 @@ Return the polished document with improvements noted at the end."""
                     "summary": parsed_data.get("summary"),
                     "findings": parsed_data.get("findings", []),
                     "checklist": parsed_data.get("checklist", []),
-                }
+                },
             )
 
         # Add formatted report for human readability
@@ -754,21 +775,21 @@ Return the polished document with improvements noted at the end."""
 
         # Chunk output for display if needed
         output_chunks = self._chunk_output_for_display(
-            result["formatted_report"], chunk_prefix="DOC OUTPUT"
+            result["formatted_report"],
+            chunk_prefix="DOC OUTPUT",
         )
         if len(output_chunks) > 1:
             result["output_chunks"] = output_chunks
             result["output_chunk_count"] = len(output_chunks)
             logger.info(
                 f"Report split into {len(output_chunks)} chunks for display "
-                f"(total {len(result['formatted_report'])} chars)"
+                f"(total {len(result['formatted_report'])} chars)",
             )
 
         return (result, input_tokens, output_tokens)
 
     async def _polish_chunked(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """
-        Polish large documents in chunks to avoid truncation.
+        """Polish large documents in chunks to avoid truncation.
 
         Splits the document by section headers and polishes each chunk separately,
         then combines the results.
@@ -817,7 +838,10 @@ Section to polish:
 
             try:
                 response, input_tokens, output_tokens = await self._call_llm(
-                    tier, system, user_message, max_tokens=8000
+                    tier,
+                    system,
+                    user_message,
+                    max_tokens=8000,
                 )
 
                 # Track cost
@@ -829,13 +853,13 @@ Section to polish:
 
                 logger.info(
                     f"Polish chunk {chunk_idx + 1}/{len(sections)} complete, "
-                    f"cost so far: ${self._accumulated_cost:.2f}"
+                    f"cost so far: ${self._accumulated_cost:.2f}",
                 )
 
                 if should_stop:
                     logger.warning(
                         f"Cost limit reached during polish. "
-                        f"Returning {len(polished_chunks)}/{len(sections)} polished chunks."
+                        f"Returning {len(polished_chunks)}/{len(sections)} polished chunks.",
                     )
                     # Add remaining sections unpolished
                     polished_chunks.extend(sections[chunk_idx + 1 :])
@@ -878,22 +902,22 @@ Section to polish:
 
         # Chunk output for display if needed
         output_chunks = self._chunk_output_for_display(
-            result["formatted_report"], chunk_prefix="DOC OUTPUT"
+            result["formatted_report"],
+            chunk_prefix="DOC OUTPUT",
         )
         if len(output_chunks) > 1:
             result["output_chunks"] = output_chunks
             result["output_chunk_count"] = len(output_chunks)
             logger.info(
                 f"Report split into {len(output_chunks)} chunks for display "
-                f"(total {len(result['formatted_report'])} chars)"
+                f"(total {len(result['formatted_report'])} chars)",
             )
 
         return (result, total_input_tokens, total_output_tokens)
 
 
 def format_doc_gen_report(result: dict, input_data: dict) -> str:
-    """
-    Format document generation output as a human-readable report.
+    """Format document generation output as a human-readable report.
 
     Args:
         result: The polish stage result
@@ -901,6 +925,7 @@ def format_doc_gen_report(result: dict, input_data: dict) -> str:
 
     Returns:
         Formatted report string
+
     """
     lines = []
 
@@ -957,7 +982,7 @@ def format_doc_gen_report(result: dict, input_data: dict) -> str:
     if was_chunked:
         if stopped_early:
             lines.append(
-                f"Generation Mode: Chunked ({chunks_completed}/{chunk_count} chunks completed)"
+                f"Generation Mode: Chunked ({chunks_completed}/{chunk_count} chunks completed)",
             )
         else:
             lines.append(f"Generation Mode: Chunked ({chunk_count} chunks)")

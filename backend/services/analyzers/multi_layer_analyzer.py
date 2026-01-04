@@ -1,5 +1,4 @@
-"""
-Multi-Layer Analyzer - Orchestrates analysis across different empathy levels.
+"""Multi-Layer Analyzer - Orchestrates analysis across different empathy levels.
 """
 
 import asyncio
@@ -10,8 +9,7 @@ from .layer3_ai import AIAnalyzer
 
 
 class MultiLayerAnalyzer:
-    """
-    Orchestrates analysis across multiple empathy levels.
+    """Orchestrates analysis across multiple empathy levels.
     Combines results from different analyzers to provide comprehensive insights.
     """
 
@@ -28,8 +26,7 @@ class MultiLayerAnalyzer:
         # Level 4 and 5 analyzers would go here
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Perform multi-layer analysis.
+        """Perform multi-layer analysis.
 
         Args:
             context: Analysis context with code, metrics, and other data
@@ -39,6 +36,7 @@ class MultiLayerAnalyzer:
                 - issues: List of all detected issues
                 - summary: Analysis summary
                 - level_results: Results grouped by empathy level
+
         """
         all_issues = []
         level_results = {}
@@ -54,7 +52,7 @@ class MultiLayerAnalyzer:
         for analyzer, result in zip(self.analyzers, results, strict=False):
             if isinstance(result, Exception):
                 # Log error but continue
-                print(f"Error in {analyzer.name}: {str(result)}")
+                print(f"Error in {analyzer.name}: {result!s}")
                 continue
 
             level_results[f"level_{analyzer.level}"] = {
@@ -79,7 +77,7 @@ class MultiLayerAnalyzer:
         try:
             return await analyzer.analyze(context)
         except Exception as e:
-            print(f"Analyzer {analyzer.name} failed: {str(e)}")
+            print(f"Analyzer {analyzer.name} failed: {e!s}")
             return []
 
     def _generate_summary(self, issues: list[Issue]) -> dict[str, Any]:

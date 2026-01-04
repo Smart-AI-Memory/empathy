@@ -1,5 +1,4 @@
-"""
-Template Starters for Empathy Framework
+"""Template Starters for Empathy Framework
 
 Scaffold new projects with Empathy pre-configured for different use cases.
 
@@ -619,10 +618,12 @@ def list_templates() -> list:
 
 
 def scaffold_project(
-    template_name: str, project_name: str, target_dir: str | None = None, force: bool = False
+    template_name: str,
+    project_name: str,
+    target_dir: str | None = None,
+    force: bool = False,
 ) -> dict:
-    """
-    Create a new project from a template.
+    """Create a new project from a template.
 
     Args:
         template_name: Template ID (minimal, python-cli, python-fastapi, python-agent)
@@ -632,6 +633,7 @@ def scaffold_project(
 
     Returns:
         Dict with created files and status
+
     """
     if template_name not in TEMPLATES:
         return {
@@ -742,9 +744,8 @@ def cmd_new(args):
             print(f"    $ {step}")
         print()
         return 0
-    else:
-        print(f"\n  Error: {result['error']}")
-        if "available" in result:
-            print(f"  Available templates: {', '.join(result['available'])}")
-        print()
-        return 1
+    print(f"\n  Error: {result['error']}")
+    if "available" in result:
+        print(f"  Available templates: {', '.join(result['available'])}")
+    print()
+    return 1

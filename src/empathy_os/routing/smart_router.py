@@ -1,5 +1,4 @@
-"""
-Smart Router
+"""Smart Router
 
 Intelligent dispatcher that analyzes developer input and routes
 to the appropriate wizard(s) using LLM classification.
@@ -32,8 +31,7 @@ class RoutingDecision:
 
 
 class SmartRouter:
-    """
-    Routes developer requests to appropriate wizard(s).
+    """Routes developer requests to appropriate wizard(s).
 
     Uses LLM classification (Haiku) to understand natural language
     requests and route them to the best wizard(s).
@@ -51,11 +49,11 @@ class SmartRouter:
     """
 
     def __init__(self, api_key: str | None = None):
-        """
-        Initialize the smart router.
+        """Initialize the smart router.
 
         Args:
             api_key: Optional Anthropic API key for LLM classification
+
         """
         self._registry = WizardRegistry()
         self._classifier = HaikuClassifier(api_key=api_key)
@@ -65,8 +63,7 @@ class SmartRouter:
         request: str,
         context: dict[str, Any] | None = None,
     ) -> RoutingDecision:
-        """
-        Route a request to the appropriate wizard(s).
+        """Route a request to the appropriate wizard(s).
 
         Uses LLM classification for accurate natural language understanding.
 
@@ -76,6 +73,7 @@ class SmartRouter:
 
         Returns:
             RoutingDecision with wizard recommendations
+
         """
         # Classify the request
         classification = await self._classifier.classify(
@@ -105,8 +103,7 @@ class SmartRouter:
         request: str,
         context: dict[str, Any] | None = None,
     ) -> RoutingDecision:
-        """
-        Synchronous routing using keyword matching.
+        """Synchronous routing using keyword matching.
 
         Faster but less accurate than LLM classification.
 
@@ -116,6 +113,7 @@ class SmartRouter:
 
         Returns:
             RoutingDecision with wizard recommendations
+
         """
         classification = self._classifier.classify_sync(
             request=request,
@@ -162,14 +160,14 @@ class SmartRouter:
         return self._registry.list_all()
 
     def suggest_for_file(self, file_path: str) -> list[str]:
-        """
-        Suggest wizards based on file type.
+        """Suggest wizards based on file type.
 
         Args:
             file_path: Path to the file
 
         Returns:
             List of suggested wizard names
+
         """
         suggestions = []
 
@@ -178,9 +176,7 @@ class SmartRouter:
         filename = file_path.rsplit("/", 1)[-1]
 
         for wizard in self._registry.list_all():
-            if ext in wizard.handles_file_types:
-                suggestions.append(wizard.name)
-            elif filename in wizard.handles_file_types:
+            if ext in wizard.handles_file_types or filename in wizard.handles_file_types:
                 suggestions.append(wizard.name)
 
         # Default suggestions if no matches
@@ -190,14 +186,14 @@ class SmartRouter:
         return suggestions
 
     def suggest_for_error(self, error_type: str) -> list[str]:
-        """
-        Suggest wizards based on error type.
+        """Suggest wizards based on error type.
 
         Args:
             error_type: Type of error (e.g., "TypeError", "SecurityError")
 
         Returns:
             List of suggested wizard names
+
         """
         error_lower = error_type.lower()
 
@@ -224,8 +220,7 @@ class SmartRouter:
 
 # Convenience function for quick routing
 async def quick_route(request: str, context: dict | None = None) -> RoutingDecision:
-    """
-    Quick routing helper.
+    """Quick routing helper.
 
     Args:
         request: Developer request
@@ -233,6 +228,7 @@ async def quick_route(request: str, context: dict | None = None) -> RoutingDecis
 
     Returns:
         RoutingDecision
+
     """
     router = SmartRouter()
     return await router.route(request, context)

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-End-to-End Performance Profiling for Complete Security Pipeline
+"""End-to-End Performance Profiling for Complete Security Pipeline
 
 Profiles the complete security pipeline to identify overall bottlenecks.
 Target: <10ms end-to-end (current: <20ms)
@@ -22,7 +21,6 @@ from empathy_llm_toolkit.security import SecureMemDocsIntegration
 
 def profile_complete_pipeline():
     """Profile complete security pipeline end-to-end"""
-
     print("=" * 60)
     print("Complete Security Pipeline Performance Profiling")
     print("=" * 60)

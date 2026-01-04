@@ -1,5 +1,4 @@
-"""
-Advanced Debugging Wizard (Level 4)
+"""Advanced Debugging Wizard (Level 4)
 
 Protocol-based debugging using linting configuration pattern.
 
@@ -34,8 +33,7 @@ logger = logging.getLogger(__name__)
 
 
 class AdvancedDebuggingWizard(BaseWizard):
-    """
-    Advanced Debugging Wizard - Level 4 Anticipatory
+    """Advanced Debugging Wizard - Level 4 Anticipatory
 
     Systematically debugs code using linting configuration pattern:
     - Parses linter output
@@ -63,8 +61,7 @@ class AdvancedDebuggingWizard(BaseWizard):
         return self._level
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze code using linting protocols.
+        """Analyze code using linting protocols.
 
         Context expects:
             - project_path: Path to project
@@ -75,6 +72,7 @@ class AdvancedDebuggingWizard(BaseWizard):
 
         Returns:
             Analysis with issues, risk assessment, fixes, and verification
+
         """
         project_path = context.get("project_path", ".")
         linters = context.get("linters", {})
@@ -187,15 +185,16 @@ class AdvancedDebuggingWizard(BaseWizard):
             # Standard wizard outputs
             "predictions": self._generate_predictions(trajectory, risk_summary),
             "recommendations": self._generate_recommendations(
-                risk_summary, fixability_by_linter, trajectory
+                risk_summary,
+                fixability_by_linter,
+                trajectory,
             ),
             "patterns": cross_language_insights,
             "confidence": 0.9,
         }
 
     def _generate_cross_language_insights(self, issues: list[LintIssue]) -> list[dict[str, Any]]:
-        """
-        Generate Level 5 cross-language insights.
+        """Generate Level 5 cross-language insights.
 
         Find patterns that exist across multiple languages in this project.
         """
@@ -217,7 +216,7 @@ class AdvancedDebuggingWizard(BaseWizard):
 
                 if pattern:
                     # Check if this pattern appears in other languages
-                    other_langs = [lang for lang in by_language.keys() if lang != issue.linter]
+                    other_langs = [lang for lang in by_language if lang != issue.linter]
 
                     if other_langs:
                         insight = {
@@ -232,10 +231,11 @@ class AdvancedDebuggingWizard(BaseWizard):
         return insights[:3]  # Top 3 insights
 
     def _analyze_trajectory(
-        self, issues: list[LintIssue], risk_summary: dict[str, Any]
+        self,
+        issues: list[LintIssue],
+        risk_summary: dict[str, Any],
     ) -> dict[str, Any]:
-        """
-        Analyze issue trajectory (Level 4).
+        """Analyze issue trajectory (Level 4).
 
         Predict where code quality is headed.
         """
@@ -288,7 +288,9 @@ class AdvancedDebuggingWizard(BaseWizard):
         return recommendations.get(state, "")
 
     def _generate_predictions(
-        self, trajectory: dict[str, Any], risk_summary: dict[str, Any]
+        self,
+        trajectory: dict[str, Any],
+        risk_summary: dict[str, Any],
     ) -> list[dict[str, Any]]:
         """Generate Level 4 predictions"""
         predictions = []
@@ -308,7 +310,7 @@ class AdvancedDebuggingWizard(BaseWizard):
                         "Add pre-commit hooks to catch these",
                         "Review why these weren't caught earlier",
                     ],
-                }
+                },
             )
 
         # Predict based on high-risk accumulation
@@ -327,7 +329,7 @@ class AdvancedDebuggingWizard(BaseWizard):
                         "Add linting to CI/CD",
                         "Consider pair programming for complex areas",
                     ],
-                }
+                },
             )
 
         # Predict based on trajectory
@@ -342,13 +344,16 @@ class AdvancedDebuggingWizard(BaseWizard):
                         "Allocate time for systematic cleanup",
                         "Update coding standards documentation",
                     ],
-                }
+                },
             )
 
         return predictions
 
     def _generate_recommendations(
-        self, risk_summary: dict[str, Any], fixability: dict[str, dict], trajectory: dict[str, Any]
+        self,
+        risk_summary: dict[str, Any],
+        fixability: dict[str, dict],
+        trajectory: dict[str, Any],
     ) -> list[str]:
         """Generate actionable recommendations"""
         recommendations = []
@@ -359,12 +364,12 @@ class AdvancedDebuggingWizard(BaseWizard):
         if alert_level == "CRITICAL":
             recommendations.append(
                 f"🚨 CRITICAL: Fix {risk_summary['by_risk_level']['critical']} "
-                "critical issues immediately"
+                "critical issues immediately",
             )
 
         if alert_level in ["CRITICAL", "HIGH"]:
             recommendations.append(
-                f"⚠️  Address {risk_summary['by_risk_level']['high']} high-risk issues before merge"
+                f"⚠️  Address {risk_summary['by_risk_level']['high']} high-risk issues before merge",
             )
 
         # Based on fixability
@@ -372,7 +377,7 @@ class AdvancedDebuggingWizard(BaseWizard):
 
         if total_auto_fixable > 0:
             recommendations.append(
-                f"✅ {total_auto_fixable} issues can be auto-fixed. Run with auto_fix=True"
+                f"✅ {total_auto_fixable} issues can be auto-fixed. Run with auto_fix=True",
             )
 
         # Based on trajectory

@@ -1,5 +1,4 @@
-"""
-Integration tests for workflow-wizard interactions.
+"""Integration tests for workflow-wizard interactions.
 
 Tests cover:
 - Workflow initialization with wizard dependencies
@@ -25,7 +24,7 @@ class TestWorkflowWizardIntegration:
             return_value={
                 "response": "Mock LLM response",
                 "confidence": 0.9,
-            }
+            },
         )
         llm.provider = "anthropic"
         return llm
@@ -40,13 +39,13 @@ class TestWorkflowWizardIntegration:
                 "issues": [],
                 "recommendations": ["Test recommendation"],
                 "confidence": 0.85,
-            }
+            },
         )
         wizard.process = AsyncMock(
             return_value={
                 "response": "Wizard response",
                 "classification": "general",
-            }
+            },
         )
         return wizard
 

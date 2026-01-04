@@ -1,5 +1,4 @@
-"""
-Storage Backends for Empathy Framework Memory
+"""Storage Backends for Empathy Framework Memory
 
 Provides pluggable storage backends for pattern persistence:
 - File-based (default): Simple JSON file storage

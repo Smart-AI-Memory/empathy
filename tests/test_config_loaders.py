@@ -1,5 +1,4 @@
-"""
-Tests for empathy_software_plugin/wizards/debugging/config_loaders.py
+"""Tests for empathy_software_plugin/wizards/debugging/config_loaders.py
 
 Comprehensive tests for linting configuration loaders including:
 - LintConfig dataclass methods

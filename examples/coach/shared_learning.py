@@ -1,5 +1,4 @@
-"""
-Shared Learning System for Coach Wizards
+"""Shared Learning System for Coach Wizards
 
 Enables wizards to learn from each other's patterns and improve over time.
 Implements multi-agent learning using the Empathy Framework's PatternLibrary.
@@ -30,8 +29,7 @@ class WizardInsight:
 
 
 class SharedLearningSystem:
-    """
-    Multi-agent learning system for Coach wizards
+    """Multi-agent learning system for Coach wizards
 
     Wizards contribute patterns and insights that other wizards can learn from.
     Uses Empathy Framework's PatternLibrary for storage and retrieval.
@@ -52,8 +50,7 @@ class SharedLearningSystem:
         tags: list[str],
         context: dict[str, Any] | None = None,
     ) -> Pattern:
-        """
-        Wizard contributes a learned pattern
+        """Wizard contributes a learned pattern
 
         Args:
             wizard_name: Name of contributing wizard
@@ -65,6 +62,7 @@ class SharedLearningSystem:
 
         Returns:
             Created Pattern object
+
         """
         pattern = Pattern(
             id=f"{wizard_name}_{pattern_type}_{datetime.now().timestamp()}",
@@ -87,8 +85,7 @@ class SharedLearningSystem:
         tags: list[str] | None = None,
         min_confidence: float = 0.5,
     ) -> list[Pattern]:
-        """
-        Query patterns from the shared library
+        """Query patterns from the shared library
 
         Args:
             pattern_type: Filter by pattern type
@@ -97,6 +94,7 @@ class SharedLearningSystem:
 
         Returns:
             List of matching patterns
+
         """
         # Manual filtering since PatternLibrary.query_patterns has different signature
         results = []
@@ -120,12 +118,12 @@ class SharedLearningSystem:
         return results
 
     def record_insight(self, wizard_name: str, insight: WizardInsight):
-        """
-        Record an insight from a wizard
+        """Record an insight from a wizard
 
         Args:
             wizard_name: Name of wizard
             insight: WizardInsight object
+
         """
         if wizard_name not in self.insights:
             self.insights[wizard_name] = []
@@ -133,10 +131,11 @@ class SharedLearningSystem:
         self.insights[wizard_name].append(insight)
 
     def get_insights_for_wizard(
-        self, wizard_name: str, insight_type: str | None = None
+        self,
+        wizard_name: str,
+        insight_type: str | None = None,
     ) -> list[WizardInsight]:
-        """
-        Get insights relevant to a wizard
+        """Get insights relevant to a wizard
 
         Args:
             wizard_name: Name of wizard
@@ -144,6 +143,7 @@ class SharedLearningSystem:
 
         Returns:
             List of relevant insights
+
         """
         all_insights = []
 
@@ -160,12 +160,12 @@ class SharedLearningSystem:
         return all_insights
 
     def record_collaboration(self, wizard1: str, wizard2: str):
-        """
-        Record that two wizards collaborated on a task
+        """Record that two wizards collaborated on a task
 
         Args:
             wizard1: First wizard name
             wizard2: Second wizard name
+
         """
         key = f"{wizard1}->{wizard2}"
         self.wizard_collaborations[key] = self.wizard_collaborations.get(key, 0) + 1
@@ -175,14 +175,14 @@ class SharedLearningSystem:
         return self.wizard_collaborations.copy()
 
     def get_top_patterns(self, limit: int = 10) -> list[Pattern]:
-        """
-        Get top patterns by usage and success rate
+        """Get top patterns by usage and success rate
 
         Args:
             limit: Maximum number of patterns to return
 
         Returns:
             List of top patterns
+
         """
         all_patterns = []
 
@@ -195,11 +195,11 @@ class SharedLearningSystem:
         return all_patterns[:limit]
 
     def analyze_wizard_strengths(self) -> dict[str, dict[str, Any]]:
-        """
-        Analyze each wizard's strengths based on contributed patterns
+        """Analyze each wizard's strengths based on contributed patterns
 
         Returns:
             Dict mapping wizard names to strength analysis
+
         """
         analysis = {}
 
@@ -234,14 +234,14 @@ class SharedLearningSystem:
         return analysis
 
     def recommend_wizard_for_task(self, task_type: str) -> str | None:
-        """
-        Recommend which wizard is best for a task type based on learned patterns
+        """Recommend which wizard is best for a task type based on learned patterns
 
         Args:
             task_type: Type of task
 
         Returns:
             Recommended wizard name or None
+
         """
         # Query patterns of this type
         patterns = self.query_patterns(pattern_type=task_type, min_confidence=0.6)

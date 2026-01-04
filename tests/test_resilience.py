@@ -1,5 +1,4 @@
-"""
-Tests for Resilience Module
+"""Tests for Resilience Module
 
 Tests retry, circuit breaker, timeout, fallback, and health check patterns.
 

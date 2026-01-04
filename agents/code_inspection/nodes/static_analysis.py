@@ -1,5 +1,4 @@
-"""
-Static Analysis Node - Phase 1
+"""Static Analysis Node - Phase 1
 
 Runs all static analysis tools in parallel using asyncio.gather.
 Following the pattern from book_production/pipeline.py.
@@ -25,8 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 async def run_static_analysis(state: CodeInspectionState) -> CodeInspectionState:
-    """
-    Phase 1: Run all static analysis tools in parallel.
+    """Phase 1: Run all static analysis tools in parallel.
 
     Following the asyncio.gather pattern from book_production/pipeline.py.
 
@@ -35,6 +33,7 @@ async def run_static_analysis(state: CodeInspectionState) -> CodeInspectionState
 
     Returns:
         Updated state with static analysis results
+
     """
     logger.info(f"[Phase 1] Starting static analysis for {state['project_path']}")
 
@@ -109,7 +108,7 @@ async def run_static_analysis(state: CodeInspectionState) -> CodeInspectionState
 
         if isinstance(result, Exception):
             logger.error(f"Tool {tool_name} failed: {result}")
-            state["errors"].append(f"{tool_name}: {str(result)}")
+            state["errors"].append(f"{tool_name}: {result!s}")
             continue
 
         # Store result
@@ -132,7 +131,7 @@ async def run_static_analysis(state: CodeInspectionState) -> CodeInspectionState
         logger.info(
             f"{tool_name}: status={result.get('status')}, "
             f"score={result.get('score')}, "
-            f"findings={result.get('findings_count')}"
+            f"findings={result.get('findings_count')}",
         )
 
     # Update state with aggregates
@@ -148,8 +147,8 @@ async def run_static_analysis(state: CodeInspectionState) -> CodeInspectionState
         state["messages"].append(
             AIMessage(
                 content=f"Static analysis complete: {len(tasks)} tools run, "
-                f"{total_findings} findings ({critical_count} critical)"
-            )
+                f"{total_findings} findings ({critical_count} critical)",
+            ),
         )
     except ImportError:
         pass

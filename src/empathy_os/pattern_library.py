@@ -1,5 +1,4 @@
-"""
-Pattern Library for Multi-Agent Collaboration
+"""Pattern Library for Multi-Agent Collaboration
 
 Enables AI agents to share discovered patterns with each other, accelerating
 learning across the agent collective (Level 5: Systems Empathy).
@@ -17,8 +16,7 @@ from typing import Any
 
 @dataclass
 class Pattern:
-    """
-    A discovered pattern that can be shared across AI agents
+    """A discovered pattern that can be shared across AI agents
 
     Patterns represent reusable solutions, common behaviors, or
     learned heuristics that one agent discovered and others can benefit from.
@@ -27,6 +25,7 @@ class Pattern:
     - Sequential patterns: "After action X, users typically need Y"
     - Temporal patterns: "On Mondays, prioritize Z"
     - Conditional patterns: "If context A, then approach B works best"
+
     """
 
     id: str
@@ -76,8 +75,7 @@ class PatternMatch:
 
 
 class PatternLibrary:
-    """
-    Shared library for multi-agent pattern discovery and sharing
+    """Shared library for multi-agent pattern discovery and sharing
 
     Enables Level 5 Systems Empathy: AI-AI cooperation where one agent's
     discovery benefits all agents in the collective.
@@ -112,6 +110,7 @@ class PatternLibrary:
         >>> context = {"recent_event": "system_update", "user_confusion": True}
         >>> matches = library.query_patterns("documentation_agent", context)
         >>> print(f"Found {len(matches)} relevant patterns")
+
     """
 
     def __init__(self):
@@ -121,8 +120,7 @@ class PatternLibrary:
         self.pattern_graph: dict[str, list[str]] = {}  # pattern_id -> related_pattern_ids
 
     def contribute_pattern(self, agent_id: str, pattern: Pattern) -> None:
-        """
-        Agent contributes a discovered pattern to the library
+        """Agent contributes a discovered pattern to the library
 
         Args:
             agent_id: ID of contributing agent
@@ -138,6 +136,7 @@ class PatternLibrary:
             ...     confidence=0.9
             ... )
             >>> library.contribute_pattern("agent_1", pattern)
+
         """
         # Store pattern
         self.patterns[pattern.id] = pattern
@@ -159,8 +158,7 @@ class PatternLibrary:
         min_confidence: float = 0.5,
         limit: int = 10,
     ) -> list[PatternMatch]:
-        """
-        Query relevant patterns for current context
+        """Query relevant patterns for current context
 
         Args:
             agent_id: ID of querying agent
@@ -179,6 +177,7 @@ class PatternLibrary:
             ...     "time_of_day": "morning"
             ... }
             >>> matches = library.query_patterns("debug_agent", context, min_confidence=0.7)
+
         """
         matches: list[PatternMatch] = []
 
@@ -199,7 +198,7 @@ class PatternLibrary:
                         pattern=pattern,
                         relevance_score=relevance_score,
                         matching_factors=matching_factors,
-                    )
+                    ),
                 )
 
         # Sort by relevance and limit
@@ -207,40 +206,40 @@ class PatternLibrary:
         return matches[:limit]
 
     def get_pattern(self, pattern_id: str) -> Pattern | None:
-        """
-        Get a specific pattern by ID
+        """Get a specific pattern by ID
 
         Args:
             pattern_id: Pattern identifier
 
         Returns:
             Pattern if found, None otherwise
+
         """
         return self.patterns.get(pattern_id)
 
     def record_pattern_outcome(self, pattern_id: str, success: bool):
-        """
-        Record outcome of using a pattern
+        """Record outcome of using a pattern
 
         Updates pattern statistics to improve future recommendations.
 
         Args:
             pattern_id: ID of pattern that was used
             success: Whether using the pattern was successful
+
         """
         pattern = self.patterns.get(pattern_id)
         if pattern:
             pattern.record_usage(success)
 
     def link_patterns(self, pattern_id_1: str, pattern_id_2: str):
-        """
-        Create a link between related patterns
+        """Create a link between related patterns
 
         Helps agents discover complementary patterns.
 
         Args:
             pattern_id_1: First pattern ID
             pattern_id_2: Second pattern ID
+
         """
         if pattern_id_1 in self.pattern_graph:
             if pattern_id_2 not in self.pattern_graph[pattern_id_1]:
@@ -251,8 +250,7 @@ class PatternLibrary:
                 self.pattern_graph[pattern_id_2].append(pattern_id_1)
 
     def get_related_patterns(self, pattern_id: str, depth: int = 1) -> list[Pattern]:
-        """
-        Get patterns related to a given pattern
+        """Get patterns related to a given pattern
 
         Args:
             pattern_id: Source pattern ID
@@ -260,6 +258,7 @@ class PatternLibrary:
 
         Returns:
             List of related patterns
+
         """
         if depth <= 0 or pattern_id not in self.pattern_graph:
             return []
@@ -278,21 +277,20 @@ class PatternLibrary:
         return [self.patterns[pid] for pid in related_ids if pid in self.patterns]
 
     def get_agent_patterns(self, agent_id: str) -> list[Pattern]:
-        """
-        Get all patterns contributed by a specific agent
+        """Get all patterns contributed by a specific agent
 
         Args:
             agent_id: Agent identifier
 
         Returns:
             List of patterns from this agent
+
         """
         pattern_ids = self.agent_contributions.get(agent_id, [])
         return [self.patterns[pid] for pid in pattern_ids if pid in self.patterns]
 
     def get_top_patterns(self, n: int = 10, sort_by: str = "success_rate") -> list[Pattern]:
-        """
-        Get top N patterns by specified metric
+        """Get top N patterns by specified metric
 
         Args:
             n: Number of patterns to return
@@ -300,6 +298,7 @@ class PatternLibrary:
 
         Returns:
             Top N patterns
+
         """
         patterns = list(self.patterns.values())
 
@@ -313,11 +312,11 @@ class PatternLibrary:
         return patterns[:n]
 
     def get_library_stats(self) -> dict[str, Any]:
-        """
-        Get statistics about the pattern library
+        """Get statistics about the pattern library
 
         Returns:
             Dict with library statistics
+
         """
         if not self.patterns:
             return {
@@ -350,13 +349,15 @@ class PatternLibrary:
         }
 
     def _calculate_relevance(
-        self, pattern: Pattern, context: dict[str, Any]
+        self,
+        pattern: Pattern,
+        context: dict[str, Any],
     ) -> tuple[float, list[str]]:
-        """
-        Calculate how relevant a pattern is to current context
+        """Calculate how relevant a pattern is to current context
 
         Returns:
             (relevance_score, matching_factors)
+
         """
         relevance = 0.0
         matching_factors = []

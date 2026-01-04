@@ -1,5 +1,4 @@
-"""
-Unit Tests for EmpathyLLMExecutor
+"""Unit Tests for EmpathyLLMExecutor
 
 Comprehensive tests for the executor that handles LLM calls
 across different providers and tiers.
@@ -99,7 +98,6 @@ class TestEmpathyLLMExecutorRun:
     @pytest.fixture
     def mock_executor(self):
         """Create executor with mocked LLM."""
-
         with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key"}):
             executor = EmpathyLLMExecutor(provider="anthropic")
 
@@ -110,7 +108,7 @@ class TestEmpathyLLMExecutorRun:
                     "content": "Mock response",
                     "metadata": {"tokens_used": 100, "output_tokens": 50, "model": "test-model"},
                     "level_used": 3,
-                }
+                },
             )
             executor._llm = mock_llm
 
@@ -230,7 +228,7 @@ class TestEmpathyLLMExecutorCostTracking:
                 "content": "Response",
                 "metadata": {"tokens_used": 100, "output_tokens": 50, "model": "test"},
                 "level_used": 3,
-            }
+            },
         )
         executor_with_telemetry._llm = mock_llm
 

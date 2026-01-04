@@ -1,5 +1,4 @@
-"""
-Security Analysis Wizard - Live Demonstration
+"""Security Analysis Wizard - Live Demonstration
 
 Shows security vulnerability detection and exploitability assessment.
 
@@ -99,7 +98,7 @@ async def demo_basic_scanning():
             f.write(VULNERABLE_PAYMENT_CODE)
 
         result = await wizard.analyze(
-            {"source_files": [auth_file, api_file, payment_file], "project_path": tmpdir}
+            {"source_files": [auth_file, api_file, payment_file], "project_path": tmpdir},
         )
 
         print("\n📊 Security Scan Results:")
@@ -149,7 +148,7 @@ async def demo_exploitability():
         }
 
         result = await wizard.analyze(
-            {"source_files": [auth_file, api_file], "endpoint_config": endpoint_config}
+            {"source_files": [auth_file, api_file], "endpoint_config": endpoint_config},
         )
 
         print("\n🔍 EXPLOITABILITY ASSESSMENT:\n")
@@ -157,7 +156,7 @@ async def demo_exploitability():
         for assessment in result["exploitability_assessments"][:5]:
             print(f"  [{assessment['exploitability']}] {assessment['vulnerability']['name']}")
             print(
-                f"      File: {os.path.basename(assessment['vulnerability']['file_path'])}:{assessment['vulnerability']['line_number']}"
+                f"      File: {os.path.basename(assessment['vulnerability']['file_path'])}:{assessment['vulnerability']['line_number']}",
             )
             print(f"      Accessibility: {assessment['accessibility']}")
             print(f"      Attack Complexity: {assessment['attack_complexity']}")
@@ -202,7 +201,7 @@ async def demo_predictions():
             {
                 "source_files": [auth_file, api_file, payment_file],
                 "endpoint_config": endpoint_config,
-            }
+            },
         )
 
         print("\n🔮 PREDICTIONS:\n")
@@ -249,7 +248,7 @@ async def demo_recommendations():
             {
                 "source_files": [auth_file, api_file],
                 "endpoint_config": {api_file: {"endpoint_public": True}},
-            }
+            },
         )
 
         print("\n📝 RECOMMENDATIONS:\n")
@@ -271,9 +270,9 @@ async def demo_the_value():
     print("✓ SQL Injection found (CRITICAL)")
     print("✓ Hardcoded API key found (HIGH)")
     print("✓ Missing semicolon (STYLE)")
-    print("")
+    print()
     print("Total: 3 issues")
-    print("")
+    print()
     print("...but which one should you fix first?")
 
     print("\n" + "SECURITY ANALYSIS WIZARD".center(70))
@@ -284,7 +283,7 @@ async def demo_the_value():
     print("   Likelihood: 90%")
     print("   In our experience: Actively scanned by automated tools")
     print("   Mitigation: IMMEDIATE - Fix before deployment")
-    print("")
+    print()
     print("✓ Hardcoded API key (HIGH)")
     print("   Exploitability: HIGH")
     print("   Accessibility: INTERNAL")
@@ -296,7 +295,7 @@ async def demo_the_value():
     print("-" * 70)
     print("Traditional scanning finds vulnerabilities.")
     print("Security Wizard predicts which will ACTUALLY be exploited.")
-    print("")
+    print()
     print("It prioritizes by real-world attack likelihood,")
     print("not just theoretical severity.")
 

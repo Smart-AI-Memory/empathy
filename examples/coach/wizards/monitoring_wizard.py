@@ -1,5 +1,4 @@
-"""
-Monitoring Wizard
+"""Monitoring Wizard
 
 Observability, SLO definition, alerting, incident response, and dashboard creation.
 Uses Empathy Framework Level 3 (Proactive) for metrics analysis and Level 4
@@ -21,8 +20,7 @@ from .base_wizard import (
 
 
 class MonitoringWizard(BaseWizard):
-    """
-    Wizard for observability, monitoring, and incident response
+    """Wizard for observability, monitoring, and incident response
 
     Uses:
     - Level 2: Guide user through monitoring setup
@@ -65,7 +63,6 @@ class MonitoringWizard(BaseWizard):
 
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute monitoring setup workflow"""
-
         self._assess_emotional_state(task)
         self._extract_constraints(task)
 
@@ -743,7 +740,7 @@ class MonitoringWizard(BaseWizard):
                 risk="Alert fatigue leads to ignored pages and missed incidents",
                 mitigation="Tune alert thresholds. Track false positive rate. Review alerts weekly.",
                 severity="high",
-            )
+            ),
         )
 
         risks.append(
@@ -751,7 +748,7 @@ class MonitoringWizard(BaseWizard):
                 risk="Monitoring blind spots allow incidents to go undetected",
                 mitigation="Quarterly architecture review for monitoring gaps. Monitor dependencies.",
                 severity="high",
-            )
+            ),
         )
 
         risks.append(
@@ -759,7 +756,7 @@ class MonitoringWizard(BaseWizard):
                 risk="Outdated runbooks slow down incident response",
                 mitigation="Update runbooks after every incident. Test in game days.",
                 severity="medium",
-            )
+            ),
         )
 
         risks.append(
@@ -767,7 +764,7 @@ class MonitoringWizard(BaseWizard):
                 risk="On-call burnout due to excessive paging",
                 mitigation="Limit to <3 pages/week. Provide comp time. Improve automation.",
                 severity="medium",
-            )
+            ),
         )
 
         return risks
@@ -782,14 +779,14 @@ class MonitoringWizard(BaseWizard):
                     owner="SRE / Platform Team",
                     what="Set up monitoring infrastructure (Prometheus, Grafana), configure alerting, on-call rotation",
                     when="Before production launch",
-                )
+                ),
             )
             handoffs.append(
                 WizardHandoff(
                     owner="Engineering Team",
                     what="Write and maintain runbooks, participate in on-call rotation, respond to incidents",
                     when="Ongoing",
-                )
+                ),
             )
 
         return handoffs

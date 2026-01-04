@@ -1,5 +1,4 @@
-"""
-Keyboard Shortcuts Workflow
+"""Keyboard Shortcuts Workflow
 
 Generates optimized keyboard shortcuts for any project following
 the "Keyboard Conductor" musical scale pattern.
@@ -35,8 +34,7 @@ from .schema import (
 
 
 class KeyboardShortcutWorkflow(BaseWorkflow):
-    """
-    Generate optimized keyboard shortcuts for any project.
+    """Generate optimized keyboard shortcuts for any project.
 
     Uses the "Keyboard Conductor" pattern:
     - Scale 1 (Daily): 4 most-used features on home row
@@ -69,16 +67,15 @@ class KeyboardShortcutWorkflow(BaseWorkflow):
         """Execute a single workflow stage."""
         if stage_name == "discover":
             return await self._discover_features(input_data)
-        elif stage_name == "analyze":
+        if stage_name == "analyze":
             return await self._analyze_features(input_data, tier)
-        elif stage_name == "generate":
+        if stage_name == "generate":
             return await self._generate_shortcuts(input_data, tier)
-        elif stage_name == "validate":
+        if stage_name == "validate":
             return await self._validate_shortcuts(input_data, tier)
-        elif stage_name == "export":
+        if stage_name == "export":
             return await self._export_outputs(input_data)
-        else:
-            raise ValueError(f"Unknown stage: {stage_name}")
+        raise ValueError(f"Unknown stage: {stage_name}")
 
     def should_skip_stage(
         self,
@@ -107,8 +104,7 @@ class KeyboardShortcutWorkflow(BaseWorkflow):
         self,
         input_data: dict[str, Any],
     ) -> tuple[dict[str, Any], int, int]:
-        """
-        Parse features from project sources.
+        """Parse features from project sources.
 
         Supports:
         - VSCode package.json commands
@@ -151,8 +147,7 @@ class KeyboardShortcutWorkflow(BaseWorkflow):
         input_data: dict[str, Any],
         tier: ModelTier,
     ) -> tuple[dict[str, Any], int, int]:
-        """
-        Use LLM to categorize features and suggest mnemonics.
+        """Use LLM to categorize features and suggest mnemonics.
 
         Input: FeatureManifest with discovered features
         Output: Enhanced manifest with frequency tiers and mnemonic suggestions
@@ -203,8 +198,7 @@ class KeyboardShortcutWorkflow(BaseWorkflow):
         input_data: dict[str, Any],
         tier: ModelTier,
     ) -> tuple[dict[str, Any], int, int]:
-        """
-        Use LLM to generate optimal shortcuts for each layout.
+        """Use LLM to generate optimal shortcuts for each layout.
 
         Input: Analyzed manifest
         Output: GeneratedShortcuts with shortcuts for all layouts
@@ -250,8 +244,7 @@ class KeyboardShortcutWorkflow(BaseWorkflow):
         input_data: dict[str, Any],
         tier: ModelTier,
     ) -> tuple[dict[str, Any], int, int]:
-        """
-        Validate generated shortcuts for conflicts and issues.
+        """Validate generated shortcuts for conflicts and issues.
 
         Input: GeneratedShortcuts
         Output: Validated shortcuts with any warnings/conflicts
@@ -265,7 +258,7 @@ class KeyboardShortcutWorkflow(BaseWorkflow):
                     "shortcuts": [
                         {"key": s.key, "feature_id": s.feature_id, "mnemonic": s.mnemonic}
                         for s in layout_shortcuts.shortcuts
-                    ]
+                    ],
                 }
                 for layout, layout_shortcuts in generated.layouts.items()
             },
@@ -308,8 +301,7 @@ class KeyboardShortcutWorkflow(BaseWorkflow):
         self,
         input_data: dict[str, Any],
     ) -> tuple[dict[str, Any], int, int]:
-        """
-        Generate output files in all formats.
+        """Generate output files in all formats.
 
         Output:
         - VSCode keybindings (per layout)
@@ -347,7 +339,7 @@ class KeyboardShortcutWorkflow(BaseWorkflow):
                     "description": feature.description,
                     "frequency": feature.frequency.value,
                     "context": feature.context,
-                }
+                },
             )
         return yaml.dump({"features": features_list}, default_flow_style=False)
 
@@ -431,7 +423,7 @@ class KeyboardShortcutWorkflow(BaseWorkflow):
                         key=s["key"],
                         mnemonic=s.get("mnemonic", f"{s['key'].upper()} = {s['feature_id']}"),
                         layout=layout,
-                    )
+                    ),
                 )
 
             scales = layout_data.get("scale_assignments", {})
@@ -481,7 +473,7 @@ class KeyboardShortcutWorkflow(BaseWorkflow):
                     feature_id=feature.id,
                     key=key,
                     mnemonic=f"{key.upper()} = {feature.name}",
-                )
+                ),
             )
 
         # Assign to QWERTY layout
@@ -499,8 +491,7 @@ class KeyboardShortcutWorkflow(BaseWorkflow):
         tier: ModelTier,
         system: str = "",
     ) -> tuple[str, int, int]:
-        """
-        Call LLM with the given prompt.
+        """Call LLM with the given prompt.
 
         Uses the inherited _call_llm method from BaseWorkflow
         which handles provider selection and telemetry.

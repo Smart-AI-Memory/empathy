@@ -1,5 +1,4 @@
-"""
-Tests for WorkflowStepConfig.
+"""Tests for WorkflowStepConfig.
 
 Tests declarative step configuration for multi-model pipelines.
 

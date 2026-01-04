@@ -1,5 +1,4 @@
-"""
-Security Analysis Components
+"""Security Analysis Components
 
 Supporting modules for Security Analysis Wizard.
 
@@ -19,15 +18,15 @@ from .vulnerability_scanner import (
 )
 
 __all__ = [
-    # Vulnerability Scanning
-    "VulnerabilityScanner",
-    "Vulnerability",
     "DependencyVulnerability",
-    "VulnerabilityScanReport",
-    "VulnerabilityType",
-    "Severity",
     # Exploit Analysis
     "ExploitAnalyzer",
     # OWASP Patterns
     "OWASPPatternDetector",
+    "Severity",
+    "Vulnerability",
+    "VulnerabilityScanReport",
+    # Vulnerability Scanning
+    "VulnerabilityScanner",
+    "VulnerabilityType",
 ]

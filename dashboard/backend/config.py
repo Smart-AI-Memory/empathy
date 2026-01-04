@@ -1,5 +1,4 @@
-"""
-Configuration management for Empathy Memory Dashboard API.
+"""Configuration management for Empathy Memory Dashboard API.
 
 Loads settings from environment variables with sensible defaults.
 Supports development, staging, and production environments.
@@ -13,8 +12,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    """
-    Application settings loaded from environment variables.
+    """Application settings loaded from environment variables.
 
     Environment Variables:
         API_TITLE: API title (default: Empathy Memory Dashboard API)
@@ -124,12 +122,12 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    """
-    Get cached settings instance.
+    """Get cached settings instance.
 
     Uses LRU cache to ensure settings are loaded only once.
 
     Returns:
         Settings instance with current configuration
+
     """
     return Settings()

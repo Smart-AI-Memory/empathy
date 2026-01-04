@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Generate all 16 Coach wizards from template.
+"""Generate all 16 Coach wizards from template.
 
 This script generates the 16 specialized Coach wizards.
 This is a development/build utility, excluded from coverage via .coveragerc.

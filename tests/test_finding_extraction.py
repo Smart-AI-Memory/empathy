@@ -1,5 +1,4 @@
-"""
-Test finding extraction from LLM responses.
+"""Test finding extraction from LLM responses.
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
@@ -55,7 +54,8 @@ class TestFindingExtraction:
         """
 
         findings = self.workflow._extract_findings_from_response(
-            response=xml_response, files_changed=["src/auth/login.py", "src/api/users.py"]
+            response=xml_response,
+            files_changed=["src/auth/login.py", "src/api/users.py"],
         )
 
         assert len(findings) >= 2
@@ -102,7 +102,8 @@ class TestFindingExtraction:
     def test_parse_location_string_line_in_file(self):
         """Test parsing 'line X in file.py' format."""
         file, line, col = self.workflow._parse_location_string(
-            "line 42 in src/auth.py", ["src/auth.py"]
+            "line 42 in src/auth.py",
+            ["src/auth.py"],
         )
 
         assert file == "src/auth.py"
@@ -160,7 +161,8 @@ class TestFindingExtraction:
         """
 
         findings = self.workflow._extract_findings_from_response(
-            response=response, files_changed=["src/auth.py", "src/api.py"]
+            response=response,
+            files_changed=["src/auth.py", "src/api.py"],
         )
 
         # Should deduplicate the two findings at auth.py:42

@@ -1,5 +1,4 @@
-"""
-Education Wizard - FERPA-Compliant AI Assistant
+"""Education Wizard - FERPA-Compliant AI Assistant
 
 Specialized wizard for educational institutions with enhanced student PII protection,
 FERPA safeguards, mandatory encryption, and comprehensive audit logging.
@@ -48,8 +47,7 @@ EDUCATION_PII_PATTERNS = [
 
 
 class EducationWizard(BaseWizard):
-    """
-    FERPA-compliant educational services AI assistant
+    """FERPA-compliant educational services AI assistant
 
     Implements defense-in-depth security for student educational records:
     1. Enhanced student PII detection and scrubbing
@@ -75,6 +73,7 @@ class EducationWizard(BaseWizard):
         ...     user_input="Help me understand this student's progress",
         ...     user_id="advisor@university.edu"
         ... )
+
     """
 
     def __init__(
@@ -82,12 +81,12 @@ class EducationWizard(BaseWizard):
         llm: EmpathyLLM,
         custom_pii_patterns: list[str] | None = None,
     ):
-        """
-        Initialize FERPA-compliant education wizard
+        """Initialize FERPA-compliant education wizard
 
         Args:
             llm: EmpathyLLM instance (security should be enabled)
             custom_pii_patterns: Additional institution-specific PII patterns
+
         """
         pii_patterns = EDUCATION_PII_PATTERNS.copy()
 
@@ -114,12 +113,12 @@ class EducationWizard(BaseWizard):
         if not llm.enable_security:
             logger.warning(
                 "EducationWizard initialized with security DISABLED. "
-                "FERPA compliance requires enable_security=True in EmpathyLLM."
+                "FERPA compliance requires enable_security=True in EmpathyLLM.",
             )
 
         logger.info(
             f"EducationWizard initialized: {len(pii_patterns)} PII patterns, "
-            f"empathy level={config.default_empathy_level}, security={llm.enable_security}"
+            f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
     def _build_system_prompt(self) -> str:

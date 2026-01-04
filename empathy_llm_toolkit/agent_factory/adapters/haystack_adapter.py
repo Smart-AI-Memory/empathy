@@ -1,5 +1,4 @@
-"""
-Haystack Adapter
+"""Haystack Adapter
 
 Creates RAG pipelines and document processing agents using deepset Haystack.
 Best for document QA, search, and NLP workflows.
@@ -138,9 +137,8 @@ class HaystackWorkflow(BaseWorkflow):
                     "metadata": {"framework": "haystack"},
                 }
 
-            else:
-                # Fallback to sequential agent execution
-                return await self._run_sequential(input_data)
+            # Fallback to sequential agent execution
+            return await self._run_sequential(input_data)
 
         except Exception as e:
             return {"output": f"Error: {e}", "error": str(e)}
@@ -167,7 +165,7 @@ class HaystackAdapter(BaseAdapter):
     def __init__(self, provider: str = "anthropic", api_key: str | None = None):
         self.provider = provider
         self.api_key = api_key or os.getenv(
-            "ANTHROPIC_API_KEY" if provider == "anthropic" else "OPENAI_API_KEY"
+            "ANTHROPIC_API_KEY" if provider == "anthropic" else "OPENAI_API_KEY",
         )
 
     @property
@@ -183,7 +181,8 @@ class HaystackAdapter(BaseAdapter):
             raise ImportError("Haystack not installed. Run: pip install haystack-ai")
 
         model_id = config.model_override or self.get_model_for_tier(
-            config.model_tier, self.provider
+            config.model_tier,
+            self.provider,
         )
 
         if self.provider == "anthropic":
@@ -197,7 +196,7 @@ class HaystackAdapter(BaseAdapter):
                     "max_tokens": config.max_tokens,
                 },
             )
-        elif self.provider == "openai":
+        if self.provider == "openai":
             from haystack.components.generators import OpenAIGenerator
 
             return OpenAIGenerator(
@@ -208,8 +207,7 @@ class HaystackAdapter(BaseAdapter):
                     "max_tokens": config.max_tokens,
                 },
             )
-        else:
-            raise ValueError(f"Unsupported provider for Haystack: {self.provider}")
+        raise ValueError(f"Unsupported provider for Haystack: {self.provider}")
 
     def create_agent(self, config: AgentConfig) -> HaystackAgent:
         """Create a Haystack agent."""
@@ -279,7 +277,11 @@ class HaystackAdapter(BaseAdapter):
         return HaystackWorkflow(config, agents, pipeline=pipeline)
 
     def create_tool(
-        self, name: str, description: str, func: Callable, args_schema: dict | None = None
+        self,
+        name: str,
+        description: str,
+        func: Callable,
+        args_schema: dict | None = None,
     ) -> dict:
         """Create a tool for Haystack (custom component would be needed)."""
         return {"name": name, "description": description, "func": func, "args_schema": args_schema}
@@ -293,5 +295,4 @@ class HaystackAdapter(BaseAdapter):
             from haystack.document_stores.in_memory import InMemoryDocumentStore
 
             return InMemoryDocumentStore()
-        else:
-            raise ValueError(f"Unsupported store type: {store_type}")
+        raise ValueError(f"Unsupported store type: {store_type}")

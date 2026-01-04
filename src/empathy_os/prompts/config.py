@@ -1,5 +1,4 @@
-"""
-XML Prompt Configuration
+"""XML Prompt Configuration
 
 Provides configuration dataclass for XML-enhanced prompts.
 
@@ -15,8 +14,7 @@ from typing import Any
 
 @dataclass
 class XmlPromptConfig:
-    """
-    Configuration for XML prompt behavior.
+    """Configuration for XML prompt behavior.
 
     Attributes:
         enabled: Whether XML prompts are enabled for this workflow/stage.
@@ -26,6 +24,7 @@ class XmlPromptConfig:
         template_name: Reference to a built-in template from BUILTIN_TEMPLATES.
         custom_template: Inline XML template string (overrides template_name).
         extra: Additional configuration options.
+
     """
 
     enabled: bool = False
@@ -37,8 +36,7 @@ class XmlPromptConfig:
     extra: dict[str, Any] = field(default_factory=dict)
 
     def merge_with(self, other: XmlPromptConfig) -> XmlPromptConfig:
-        """
-        Merge this config with another, with 'other' taking precedence.
+        """Merge this config with another, with 'other' taking precedence.
 
         Useful for combining global defaults with workflow-specific overrides.
         """

@@ -1,5 +1,4 @@
-"""
-Memory system API endpoints.
+"""Memory system API endpoints.
 
 Provides REST API for:
 - System status
@@ -37,8 +36,7 @@ router = APIRouter()
 async def get_status(
     service: Annotated[MemoryService, Depends(get_memory_service)],
 ) -> SystemStatusResponse:
-    """
-    Get system status.
+    """Get system status.
 
     Returns current state of:
     - Redis (running/stopped, host, port, start method)
@@ -53,7 +51,7 @@ async def get_status(
         logger.error("status_retrieval_failed", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to retrieve status: {str(e)}",
+            detail=f"Failed to retrieve status: {e!s}",
         )
 
 
@@ -67,8 +65,7 @@ async def start_redis(
     request: RedisStartRequest,
     service: Annotated[MemoryService, Depends(get_memory_service)],
 ) -> RedisStartResponse:
-    """
-    Start Redis server.
+    """Start Redis server.
 
     Attempts to start Redis using:
     - macOS: Homebrew, Docker, direct
@@ -90,7 +87,7 @@ async def start_redis(
         logger.error("redis_start_error", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to start Redis: {str(e)}",
+            detail=f"Failed to start Redis: {e!s}",
         )
 
 
@@ -103,8 +100,7 @@ async def start_redis(
 async def stop_redis(
     service: Annotated[MemoryService, Depends(get_memory_service)],
 ) -> RedisStopResponse:
-    """
-    Stop Redis server.
+    """Stop Redis server.
 
     Only stops Redis if it was started by this system (not externally running).
     Returns success=False if Redis wasn't started by us.
@@ -122,7 +118,7 @@ async def stop_redis(
         logger.error("redis_stop_error", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to stop Redis: {str(e)}",
+            detail=f"Failed to stop Redis: {e!s}",
         )
 
 
@@ -135,8 +131,7 @@ async def stop_redis(
 async def get_statistics(
     service: Annotated[MemoryService, Depends(get_memory_service)],
 ) -> MemoryStatsResponse:
-    """
-    Get comprehensive statistics.
+    """Get comprehensive statistics.
 
     Returns detailed metrics for:
     - Redis: key counts (total/working/staged), memory usage
@@ -170,7 +165,7 @@ async def get_statistics(
         logger.error("stats_retrieval_failed", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to retrieve statistics: {str(e)}",
+            detail=f"Failed to retrieve statistics: {e!s}",
         )
 
 
@@ -183,8 +178,7 @@ async def get_statistics(
 async def health_check(
     service: Annotated[MemoryService, Depends(get_memory_service)],
 ) -> HealthCheckResponse:
-    """
-    Health check.
+    """Health check.
 
     Checks:
     - Redis availability
@@ -203,5 +197,5 @@ async def health_check(
         logger.error("health_check_failed", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Health check failed: {str(e)}",
+            detail=f"Health check failed: {e!s}",
         )

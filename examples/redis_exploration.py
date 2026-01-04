@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Redis Short-Term Memory Exploration Script
+"""Redis Short-Term Memory Exploration Script
 
 Interactive demo of all Redis memory features for the Empathy Framework.
 Run this to explore and gain confidence in the Redis implementation.

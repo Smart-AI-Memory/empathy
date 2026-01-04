@@ -1,5 +1,4 @@
-"""
-Executor Integration Tests
+"""Executor Integration Tests
 
 Tests for the LLMExecutor infrastructure including:
 - ExecutionContext and LLMResponse dataclasses

@@ -1,5 +1,4 @@
-"""
-Pattern Resolution Module
+"""Pattern Resolution Module
 
 Provides CLI workflow for resolving investigating bug patterns
 by adding root cause, fix, and resolution time.
@@ -40,8 +39,7 @@ logger = logging.getLogger(__name__)
 
 
 class PatternResolver:
-    """
-    Resolves investigating bug patterns with root cause and fix information.
+    """Resolves investigating bug patterns with root cause and fix information.
 
     Searches through pattern directories to find matching bug IDs
     and updates them with resolution details.
@@ -52,14 +50,14 @@ class PatternResolver:
         self._debugging_dirs = ["debugging", "debugging_demo", "repo_test/debugging"]
 
     def find_bug(self, bug_id: str) -> tuple[Path | None, dict[str, Any] | None]:
-        """
-        Find a bug pattern by ID.
+        """Find a bug pattern by ID.
 
         Args:
             bug_id: The bug ID to find (e.g., "bug_20251212_3c5b9951")
 
         Returns:
             Tuple of (file_path, pattern_data) or (None, None) if not found
+
         """
         for debug_dir in self._debugging_dirs:
             dir_path = self.patterns_dir / debug_dir
@@ -88,11 +86,11 @@ class PatternResolver:
         return None, None
 
     def list_investigating(self) -> list[dict[str, Any]]:
-        """
-        List all bugs with status 'investigating'.
+        """List all bugs with status 'investigating'.
 
         Returns:
             List of bug patterns that need resolution
+
         """
         investigating = []
 
@@ -122,8 +120,7 @@ class PatternResolver:
         resolution_time_minutes: int = 0,
         resolved_by: str = "@developer",
     ) -> bool:
-        """
-        Resolve a bug pattern by updating its fields.
+        """Resolve a bug pattern by updating its fields.
 
         Args:
             bug_id: The bug ID to resolve
@@ -135,6 +132,7 @@ class PatternResolver:
 
         Returns:
             True if successfully resolved, False otherwise
+
         """
         file_path, pattern = self.find_bug(bug_id)
 
@@ -165,11 +163,11 @@ class PatternResolver:
             return False
 
     def regenerate_summary(self) -> bool:
-        """
-        Regenerate the patterns_summary.md file.
+        """Regenerate the patterns_summary.md file.
 
         Returns:
             True if successful, False otherwise
+
         """
         try:
             from empathy_llm_toolkit.pattern_summary import PatternSummaryGenerator

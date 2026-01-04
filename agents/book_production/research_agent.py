@@ -1,5 +1,4 @@
-"""
-Research Agent - Source Material Gathering
+"""Research Agent - Source Material Gathering
 
 The first agent in the book production pipeline. Responsible for:
 1. Finding relevant source documents
@@ -26,8 +25,7 @@ from .state import AgentPhase, ChapterSpec, ResearchResult, SourceDocument
 
 
 class ResearchAgent(SonnetAgent):
-    """
-    Gathers and analyzes source material for chapter production.
+    """Gathers and analyzes source material for chapter production.
 
     Model: Claude Sonnet (fast, good at structured extraction)
 
@@ -64,17 +62,17 @@ Be thorough but focused - extract what's relevant to the chapter topic.
 Note any gaps where additional research or examples may be needed."""
 
     async def process(self, state: dict[str, Any]) -> dict[str, Any]:
-        """
-        Process source documents and extract research.
+        """Process source documents and extract research.
 
         Args:
             state: Current pipeline state
 
         Returns:
             Updated state with research results
+
         """
         self.logger.info(
-            f"Starting research for Chapter {state['chapter_number']}: {state['chapter_title']}"
+            f"Starting research for Chapter {state['chapter_number']}: {state['chapter_title']}",
         )
 
         # Update state to show we're active
@@ -163,20 +161,20 @@ Note any gaps where additional research or examples may be needed."""
         self.logger.info(
             f"Research complete: {len(source_documents)} sources, "
             f"{total_words} words, {code_count} code examples, "
-            f"confidence: {confidence:.2f}"
+            f"confidence: {confidence:.2f}",
         )
 
         return state
 
     async def research(self, spec: ChapterSpec) -> ResearchResult:
-        """
-        Standalone research method for direct use.
+        """Standalone research method for direct use.
 
         Args:
             spec: Chapter specification
 
         Returns:
             ResearchResult with extracted information
+
         """
         from .state import create_initial_state
 
@@ -201,8 +199,7 @@ Note any gaps where additional research or examples may be needed."""
         )
 
     async def _find_relevant_sources(self, state: dict[str, Any]) -> list[str]:
-        """
-        Find relevant source documents for the chapter topic.
+        """Find relevant source documents for the chapter topic.
 
         Uses multiple strategies:
         1. Look for files with matching names
@@ -241,8 +238,7 @@ Note any gaps where additional research or examples may be needed."""
         path: str,
         chapter_title: str,
     ) -> SourceDocument:
-        """
-        Analyze a single source document.
+        """Analyze a single source document.
 
         Extracts:
         - Headings with hierarchy
@@ -293,7 +289,7 @@ Note any gaps where additional research or examples may be needed."""
                 {
                     "level": len(match.group(1)),
                     "text": match.group(2).strip(),
-                }
+                },
             )
         return headings
 
@@ -307,7 +303,7 @@ Note any gaps where additional research or examples may be needed."""
                     "language": match.group(1) or "text",
                     "code": match.group(2).strip(),
                     "lines": len(match.group(2).strip().split("\n")),
-                }
+                },
             )
         return blocks
 
@@ -378,7 +374,7 @@ Note any gaps where additional research or examples may be needed."""
         summary_parts.append("### Top Sources by Relevance:\n")
         for i, source in enumerate(sorted_sources[:5], 1):
             summary_parts.append(
-                f"{i}. {source['path']} (relevance: {source['relevance_score']:.0%})"
+                f"{i}. {source['path']} (relevance: {source['relevance_score']:.0%})",
             )
 
         # Key concepts
@@ -401,8 +397,7 @@ Note any gaps where additional research or examples may be needed."""
         sources: list[SourceDocument],
         target_word_count: int,
     ) -> float:
-        """
-        Assess if research is adequate for the target chapter.
+        """Assess if research is adequate for the target chapter.
 
         Returns confidence score 0-1 based on:
         - Word count coverage

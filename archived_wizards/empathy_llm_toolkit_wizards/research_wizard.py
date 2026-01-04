@@ -1,5 +1,4 @@
-"""
-Research/Academic Wizard - Research Data Privacy Compliant AI Assistant
+"""Research/Academic Wizard - Research Data Privacy Compliant AI Assistant
 
 Specialized wizard for research and academic work with research participant PII protection,
 IRB compliance, and comprehensive audit logging.
@@ -47,8 +46,7 @@ RESEARCH_PII_PATTERNS = [
 
 
 class ResearchWizard(BaseWizard):
-    """
-    Research data privacy compliant academic AI assistant
+    """Research data privacy compliant academic AI assistant
 
     Implements PII protection for research operations:
     1. Research participant PII detection and scrubbing
@@ -74,6 +72,7 @@ class ResearchWizard(BaseWizard):
         ...     user_input="Help me analyze this research dataset",
         ...     user_id="researcher@university.edu"
         ... )
+
     """
 
     def __init__(
@@ -81,12 +80,12 @@ class ResearchWizard(BaseWizard):
         llm: EmpathyLLM,
         custom_pii_patterns: list[str] | None = None,
     ):
-        """
-        Initialize research wizard
+        """Initialize research wizard
 
         Args:
             llm: EmpathyLLM instance (security should be enabled)
             custom_pii_patterns: Additional institution-specific PII patterns
+
         """
         pii_patterns = RESEARCH_PII_PATTERNS.copy()
 
@@ -113,12 +112,12 @@ class ResearchWizard(BaseWizard):
         if not llm.enable_security:
             logger.warning(
                 "ResearchWizard initialized with security DISABLED. "
-                "IRB compliance requires enable_security=True in EmpathyLLM."
+                "IRB compliance requires enable_security=True in EmpathyLLM.",
             )
 
         logger.info(
             f"ResearchWizard initialized: {len(pii_patterns)} PII patterns, "
-            f"empathy level={config.default_empathy_level}, security={llm.enable_security}"
+            f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
     def _build_system_prompt(self) -> str:

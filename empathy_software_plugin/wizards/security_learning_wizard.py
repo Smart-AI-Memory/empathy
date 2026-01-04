@@ -1,5 +1,4 @@
-"""
-Security Learning Wizard (Level 4)
+"""Security Learning Wizard (Level 4)
 
 Security analysis wizard that learns from team decisions.
 Demonstrates what's possible with persistent memory: AI that remembers
@@ -70,8 +69,7 @@ class LearningResult:
 
 
 class SecurityLearningWizard(BaseWizard):
-    """
-    Security Learning Wizard - Level 4 with Team Knowledge
+    """Security Learning Wizard - Level 4 with Team Knowledge
 
     What's now possible that wasn't before:
 
@@ -95,6 +93,7 @@ class SecurityLearningWizard(BaseWizard):
         ... })
         >>> print(result["learning_applied"]["suppressed_count"])
         # Shows how many warnings were suppressed based on team decisions
+
     """
 
     @property
@@ -106,11 +105,11 @@ class SecurityLearningWizard(BaseWizard):
         return 4
 
     def __init__(self, pattern_storage_path: str = "./patterns/security"):
-        """
-        Initialize the security learning wizard.
+        """Initialize the security learning wizard.
 
         Args:
             pattern_storage_path: Path to git-based pattern storage
+
         """
         super().__init__()
         self.pattern_storage_path = Path(pattern_storage_path)
@@ -179,8 +178,7 @@ class SecurityLearningWizard(BaseWizard):
         }
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze project security with learned patterns.
+        """Analyze project security with learned patterns.
 
         Context expects:
             - project_path: Path to the project
@@ -195,6 +193,7 @@ class SecurityLearningWizard(BaseWizard):
             - raw_findings: All findings before learning
             - predictions: Level 4 predictions
             - recommendations: Actionable steps
+
         """
         project_path = Path(context.get("project_path", "."))
         apply_learning = context.get("apply_learned_patterns", True)
@@ -206,7 +205,9 @@ class SecurityLearningWizard(BaseWizard):
 
         # Step 1: Scan for vulnerabilities
         raw_findings = await self._scan_for_vulnerabilities(
-            project_path, exclude_patterns, scan_depth
+            project_path,
+            exclude_patterns,
+            scan_depth,
         )
 
         # Step 2: Load team decisions
@@ -233,7 +234,9 @@ class SecurityLearningWizard(BaseWizard):
 
         # Step 6: Generate recommendations
         recommendations = self._generate_recommendations(
-            filtered_findings, learning_result, team_decisions
+            filtered_findings,
+            learning_result,
+            team_decisions,
         )
 
         return {
@@ -283,7 +286,10 @@ class SecurityLearningWizard(BaseWizard):
         }
 
     async def _scan_for_vulnerabilities(
-        self, project_path: Path, exclude_patterns: list[str], scan_depth: str
+        self,
+        project_path: Path,
+        exclude_patterns: list[str],
+        scan_depth: str,
     ) -> list[SecurityFinding]:
         """Scan project for security vulnerabilities"""
         findings = []
@@ -371,7 +377,7 @@ class SecurityLearningWizard(BaseWizard):
                     # Skip expired decisions
                     if decision_data.get("expiration"):
                         exp_date = datetime.fromisoformat(
-                            decision_data["expiration"].replace("Z", "")
+                            decision_data["expiration"].replace("Z", ""),
                         )
                         if exp_date < datetime.now():
                             continue
@@ -385,7 +391,7 @@ class SecurityLearningWizard(BaseWizard):
                             decided_at=decision_data["decided_at"],
                             applies_to=decision_data.get("applies_to", "pattern"),
                             expiration=decision_data.get("expiration"),
-                        )
+                        ),
                     )
             except (json.JSONDecodeError, KeyError) as e:
                 logger.warning(f"Could not load team decisions: {e}")
@@ -393,7 +399,9 @@ class SecurityLearningWizard(BaseWizard):
         return decisions
 
     def _apply_learned_patterns(
-        self, findings: list[SecurityFinding], decisions: list[TeamDecision]
+        self,
+        findings: list[SecurityFinding],
+        decisions: list[TeamDecision],
     ) -> LearningResult:
         """Apply team decisions to filter findings"""
         suppression_details = []
@@ -415,7 +423,7 @@ class SecurityLearningWizard(BaseWizard):
                                 "reason": decision.reason,
                                 "decided_by": decision.decided_by,
                                 "decided_at": decision.decided_at,
-                            }
+                            },
                         )
                         suppressed_ids.add(finding.finding_id)
                     break
@@ -435,7 +443,10 @@ class SecurityLearningWizard(BaseWizard):
         return hashlib.md5(pattern_content.encode(), usedforsecurity=False).hexdigest()[:16]
 
     def _decision_matches(
-        self, finding: SecurityFinding, finding_hash: str, decision: TeamDecision
+        self,
+        finding: SecurityFinding,
+        finding_hash: str,
+        decision: TeamDecision,
     ) -> bool:
         """Check if a decision applies to a finding"""
         if decision.applies_to == "all":
@@ -490,7 +501,7 @@ class SecurityLearningWizard(BaseWizard):
                         "Add to security review checklist",
                         "Consider automated blocking in CI/CD",
                     ],
-                }
+                },
             )
 
         # Prediction 2: Pattern concentration
@@ -512,7 +523,7 @@ class SecurityLearningWizard(BaseWizard):
                             "Review coding patterns team-wide",
                             "Consider security training",
                         ],
-                    }
+                    },
                 )
 
         # Prediction 3: Learning effectiveness
@@ -528,7 +539,7 @@ class SecurityLearningWizard(BaseWizard):
                             "Persistent memory is working."
                         ),
                         "prevention_steps": ["Continue documenting decisions"],
-                    }
+                    },
                 )
 
         # Prediction 4: Aging decisions warning
@@ -551,7 +562,7 @@ class SecurityLearningWizard(BaseWizard):
                         "Set expiration dates on decisions",
                         "Re-evaluate in context of new threats",
                     ],
-                }
+                },
             )
 
         return predictions
@@ -571,36 +582,36 @@ class SecurityLearningWizard(BaseWizard):
 
         if critical_count > 0:
             recommendations.append(
-                f"🚨 {critical_count} CRITICAL vulnerabilities - block deployment until fixed"
+                f"🚨 {critical_count} CRITICAL vulnerabilities - block deployment until fixed",
             )
 
         if high_count > 0:
             recommendations.append(
-                f"⚠️  {high_count} HIGH severity findings - prioritize for next sprint"
+                f"⚠️  {high_count} HIGH severity findings - prioritize for next sprint",
             )
 
         # Learning-based recommendations
         if learning_result and learning_result.suppressed_count > 0:
             recommendations.append(
                 f"✅ {learning_result.suppressed_count} findings suppressed by team decisions "
-                f"(reducing noise by {int(learning_result.suppressed_count / learning_result.total_findings * 100)}%)"
+                f"(reducing noise by {int(learning_result.suppressed_count / learning_result.total_findings * 100)}%)",
             )
 
         # Help build knowledge base
         new_types = {f.vulnerability_type for f in filtered_findings}
         if new_types and len(team_decisions) < 10:
             recommendations.append(
-                "💡 Tip: After reviewing, use record_decision() to teach the wizard"
+                "💡 Tip: After reviewing, use record_decision() to teach the wizard",
             )
 
         # Memory benefit
         if team_decisions:
             recommendations.append(
-                f"📚 Using {len(team_decisions)} team security decisions from memory"
+                f"📚 Using {len(team_decisions)} team security decisions from memory",
             )
         else:
             recommendations.append(
-                "💾 No team decisions recorded yet - start building security knowledge base"
+                "💾 No team decisions recorded yet - start building security knowledge base",
             )
 
         return recommendations
@@ -646,8 +657,7 @@ class SecurityLearningWizard(BaseWizard):
         applies_to: str = "pattern",
         expiration_days: int | None = None,
     ) -> bool:
-        """
-        Record a team decision about a security finding.
+        """Record a team decision about a security finding.
 
         Call this after reviewing a finding to teach the wizard.
 
@@ -670,6 +680,7 @@ class SecurityLearningWizard(BaseWizard):
             ...     decided_by="@sarah",
             ...     applies_to="pattern"
             ... )
+
         """
         decisions_file = self.pattern_storage_path / "team_decisions.json"
 

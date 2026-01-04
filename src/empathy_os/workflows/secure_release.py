@@ -1,5 +1,4 @@
-"""
-Secure Release Pipeline
+"""Secure Release Pipeline
 
 A comprehensive security pipeline that composes multiple security workflows
 for maximum coverage before release approval.
@@ -82,8 +81,7 @@ class SecureReleaseResult:
 
 
 class SecureReleasePipeline:
-    """
-    Comprehensive security pipeline for release preparation.
+    """Comprehensive security pipeline for release preparation.
 
     This pipeline composes multiple security workflows to provide
     maximum coverage before release approval.
@@ -121,8 +119,7 @@ class SecureReleasePipeline:
         crew_config: dict | None = None,
         **kwargs: Any,
     ):
-        """
-        Initialize secure release pipeline.
+        """Initialize secure release pipeline.
 
         Args:
             mode: Execution mode - "full" (with crew, DEFAULT) or "standard" (skip crew)
@@ -130,6 +127,7 @@ class SecureReleasePipeline:
             parallel_crew: Run SecurityAuditCrew in parallel with first workflow
             crew_config: Configuration for SecurityAuditCrew
             **kwargs: Additional arguments passed to child workflows
+
         """
         # Validate mode
         if mode not in ("full", "standard"):
@@ -149,8 +147,7 @@ class SecureReleasePipeline:
         since: str = "1 week ago",
         **kwargs: Any,
     ) -> SecureReleaseResult:
-        """
-        Execute the secure release pipeline.
+        """Execute the secure release pipeline.
 
         Args:
             path: Path to codebase to analyze
@@ -161,6 +158,7 @@ class SecureReleasePipeline:
 
         Returns:
             SecureReleaseResult with combined analysis
+
         """
         from .security_adapters import (
             _check_crew_available,
@@ -238,7 +236,10 @@ class SecureReleasePipeline:
 
             # Aggregate results
             combined_risk_score = self._calculate_combined_risk(
-                crew_report, security_result, code_review_result, release_result
+                crew_report,
+                security_result,
+                code_review_result,
+                release_result,
             )
 
             findings = self._aggregate_findings(crew_report, security_result, code_review_result)
@@ -247,12 +248,15 @@ class SecureReleasePipeline:
             go_no_go = self._determine_go_no_go(combined_risk_score, findings, release_result)
 
             blockers, warnings, recommendations = self._generate_recommendations(
-                crew_report, security_result, code_review_result, release_result
+                crew_report,
+                security_result,
+                code_review_result,
+                release_result,
             )
 
         except Exception as e:
             logger.error(f"Secure release pipeline failed: {e}")
-            blockers.append(f"Pipeline failed: {str(e)}")
+            blockers.append(f"Pipeline failed: {e!s}")
             go_no_go = "NO_GO"
             combined_risk_score = 100.0
             findings = {"critical": 0, "high": 0, "total": 0}
@@ -446,14 +450,14 @@ class SecureReleasePipeline:
 
 
 def format_secure_release_report(result: SecureReleaseResult) -> str:
-    """
-    Format secure release result as a human-readable report.
+    """Format secure release result as a human-readable report.
 
     Args:
         result: The SecureReleaseResult object
 
     Returns:
         Formatted report string
+
     """
     lines = []
 
@@ -527,7 +531,7 @@ def format_secure_release_report(result: SecureReleaseResult) -> str:
         crew_findings = result.crew_report.get("finding_count", 0)
         crew_icon = "✅" if crew_risk < 50 else "⚠️" if crew_risk < 75 else "❌"
         lines.append(
-            f"  {crew_icon} SecurityAuditCrew: {crew_findings} findings, risk {crew_risk}/100"
+            f"  {crew_icon} SecurityAuditCrew: {crew_findings} findings, risk {crew_risk}/100",
         )
     elif result.crew_enabled:
         lines.append("  ⏭️ SecurityAuditCrew: Skipped or failed")
@@ -555,7 +559,7 @@ def format_secure_release_report(result: SecureReleaseResult) -> str:
         confidence = rp_output.get("confidence", "unknown")
         rp_icon = "✅" if approved else "❌"
         lines.append(
-            f"  {rp_icon} ReleasePrep: {'Approved' if approved else 'Not Approved'} ({confidence} confidence)"
+            f"  {rp_icon} ReleasePrep: {'Approved' if approved else 'Not Approved'} ({confidence} confidence)",
         )
 
     lines.append("")

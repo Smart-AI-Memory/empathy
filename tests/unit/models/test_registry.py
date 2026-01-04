@@ -1,5 +1,4 @@
-"""
-Educational Tests for Model Registry (Phase 4 - Models & Providers)
+"""Educational Tests for Model Registry (Phase 4 - Models & Providers)
 
 Learning Objectives:
 - Model registration and lookup
@@ -23,8 +22,7 @@ class TestModelTier:
     """Educational tests for model tier enum."""
 
     def test_model_tier_hierarchy(self):
-        """
-        Teaching Pattern: Testing tier hierarchy.
+        """Teaching Pattern: Testing tier hierarchy.
 
         CHEAP < CAPABLE < PREMIUM for cost optimization.
         """
@@ -33,8 +31,7 @@ class TestModelTier:
         assert ModelTier.PREMIUM.value == "premium"
 
     def test_tier_comparison(self):
-        """
-        Teaching Pattern: Testing enum ordering.
+        """Teaching Pattern: Testing enum ordering.
 
         Lower tiers should be less expensive.
         """
@@ -48,8 +45,7 @@ class TestModelProvider:
     """Educational tests for model provider enum."""
 
     def test_provider_values(self):
-        """
-        Teaching Pattern: Testing provider enumeration.
+        """Teaching Pattern: Testing provider enumeration.
 
         Support for multiple LLM providers.
         """
@@ -60,8 +56,7 @@ class TestModelProvider:
         assert ModelProvider.HYBRID.value == "hybrid"
 
     def test_provider_to_string(self):
-        """
-        Teaching Pattern: Testing enum serialization.
+        """Teaching Pattern: Testing enum serialization.
 
         Providers need to serialize for API calls.
         """
@@ -79,8 +74,7 @@ class TestModelProvider:
         ],
     )
     def test_all_providers(self, provider, expected):
-        """
-        Teaching Pattern: Parametrized provider testing.
+        """Teaching Pattern: Parametrized provider testing.
 
         Each provider should have correct value.
         """
@@ -92,8 +86,7 @@ class TestModelInfo:
     """Educational tests for ModelInfo dataclass."""
 
     def test_model_info_creation(self):
-        """
-        Teaching Pattern: Testing dataclass initialization.
+        """Teaching Pattern: Testing dataclass initialization.
 
         ModelInfo stores model configuration.
         """
@@ -113,8 +106,7 @@ class TestModelInfo:
         assert model.output_cost_per_million == 5.0
 
     def test_model_info_compatibility_properties(self):
-        """
-        Teaching Pattern: Testing computed properties.
+        """Teaching Pattern: Testing computed properties.
 
         ModelInfo provides compatibility properties for different systems.
         """
@@ -135,8 +127,7 @@ class TestModelInfo:
         assert model.cost_per_1k_output == 5.0
 
     def test_model_info_to_router_config(self):
-        """
-        Teaching Pattern: Testing conversion methods.
+        """Teaching Pattern: Testing conversion methods.
 
         ModelInfo can convert to different config formats.
         """
@@ -158,8 +149,7 @@ class TestModelInfo:
         assert router_config["supports_tools"] is True
 
     def test_model_info_to_workflow_config(self):
-        """
-        Teaching Pattern: Testing workflow config conversion.
+        """Teaching Pattern: Testing workflow config conversion.
 
         Different systems need different config formats.
         """
@@ -180,8 +170,7 @@ class TestModelInfo:
         assert workflow_config["supports_vision"] is True
 
     def test_model_info_to_cost_tracker_pricing(self):
-        """
-        Teaching Pattern: Testing cost tracker conversion.
+        """Teaching Pattern: Testing cost tracker conversion.
 
         Cost tracking needs pricing information.
         """
@@ -199,8 +188,7 @@ class TestModelInfo:
         assert pricing["output"] == 5.0
 
     def test_model_info_frozen_dataclass(self):
-        """
-        Teaching Pattern: Testing immutability.
+        """Teaching Pattern: Testing immutability.
 
         ModelInfo is frozen - cannot be modified after creation.
         """
@@ -213,7 +201,7 @@ class TestModelInfo:
         )
 
         # Attempting to modify should raise error
-        with pytest.raises(Exception):  # FrozenInstanceError
+        with pytest.raises(AttributeError):  # FrozenInstanceError from dataclass
             model.id = "new-id"
 
 
@@ -222,8 +210,7 @@ class TestModelRegistry:
     """Educational tests for MODEL_REGISTRY."""
 
     def test_registry_has_all_providers(self):
-        """
-        Teaching Pattern: Testing registry structure.
+        """Teaching Pattern: Testing registry structure.
 
         Registry should have all major providers.
         """
@@ -236,8 +223,7 @@ class TestModelRegistry:
         assert "hybrid" in MODEL_REGISTRY
 
     def test_each_provider_has_all_tiers(self):
-        """
-        Teaching Pattern: Testing registry completeness.
+        """Teaching Pattern: Testing registry completeness.
 
         Each provider should have all tier levels.
         """
@@ -249,8 +235,7 @@ class TestModelRegistry:
             assert "premium" in models, f"{provider_name} missing 'premium' tier"
 
     def test_anthropic_models(self):
-        """
-        Teaching Pattern: Testing specific provider models.
+        """Teaching Pattern: Testing specific provider models.
 
         Anthropic should have Haiku, Sonnet, and Opus.
         """
@@ -263,8 +248,7 @@ class TestModelRegistry:
         assert "opus" in anthropic["premium"].id.lower()
 
     def test_ollama_models_are_free(self):
-        """
-        Teaching Pattern: Testing provider-specific features.
+        """Teaching Pattern: Testing provider-specific features.
 
         Ollama models run locally and are free.
         """
@@ -272,7 +256,7 @@ class TestModelRegistry:
 
         ollama = MODEL_REGISTRY["ollama"]
 
-        for tier, model in ollama.items():
+        for _tier, model in ollama.items():
             assert model.input_cost_per_million == 0.0
             assert model.output_cost_per_million == 0.0
 
@@ -282,8 +266,7 @@ class TestRegistryHelpers:
     """Educational tests for registry helper functions."""
 
     def test_get_model_success(self):
-        """
-        Teaching Pattern: Testing model lookup.
+        """Teaching Pattern: Testing model lookup.
 
         get_model retrieves models by provider and tier.
         """
@@ -296,8 +279,7 @@ class TestRegistryHelpers:
         assert model.tier == "cheap"
 
     def test_get_model_case_insensitive(self):
-        """
-        Teaching Pattern: Testing case insensitivity.
+        """Teaching Pattern: Testing case insensitivity.
 
         Lookups should work regardless of case.
         """
@@ -310,8 +292,7 @@ class TestRegistryHelpers:
         assert model1.id == model2.id
 
     def test_get_model_invalid_provider(self):
-        """
-        Teaching Pattern: Testing error handling.
+        """Teaching Pattern: Testing error handling.
 
         Invalid provider should return None.
         """
@@ -322,8 +303,7 @@ class TestRegistryHelpers:
         assert model is None
 
     def test_get_model_invalid_tier(self):
-        """
-        Teaching Pattern: Testing invalid tier.
+        """Teaching Pattern: Testing invalid tier.
 
         Invalid tier should return None.
         """
@@ -334,8 +314,7 @@ class TestRegistryHelpers:
         assert model is None
 
     def test_get_all_models(self):
-        """
-        Teaching Pattern: Testing registry access.
+        """Teaching Pattern: Testing registry access.
 
         get_all_models returns the complete registry.
         """
@@ -348,8 +327,7 @@ class TestRegistryHelpers:
         assert len(all_models) >= 5  # At least 5 providers
 
     def test_get_pricing_for_model(self):
-        """
-        Teaching Pattern: Testing pricing lookup by model ID.
+        """Teaching Pattern: Testing pricing lookup by model ID.
 
         Can retrieve pricing for specific model ID.
         """
@@ -363,8 +341,7 @@ class TestRegistryHelpers:
         assert pricing["input"] > 0
 
     def test_get_pricing_for_nonexistent_model(self):
-        """
-        Teaching Pattern: Testing pricing lookup failure.
+        """Teaching Pattern: Testing pricing lookup failure.
 
         Non-existent model should return None.
         """
@@ -375,8 +352,7 @@ class TestRegistryHelpers:
         assert pricing is None
 
     def test_get_supported_providers(self):
-        """
-        Teaching Pattern: Testing provider list.
+        """Teaching Pattern: Testing provider list.
 
         Can get list of all supported providers.
         """
@@ -390,8 +366,7 @@ class TestRegistryHelpers:
         assert len(providers) >= 5
 
     def test_get_tiers(self):
-        """
-        Teaching Pattern: Testing tier list.
+        """Teaching Pattern: Testing tier list.
 
         Can get list of all available tiers.
         """
@@ -411,8 +386,7 @@ class TestTierPricing:
     """Educational tests for TIER_PRICING."""
 
     def test_tier_pricing_exists(self):
-        """
-        Teaching Pattern: Testing tier-level pricing.
+        """Teaching Pattern: Testing tier-level pricing.
 
         TIER_PRICING provides fallback pricing.
         """
@@ -423,22 +397,20 @@ class TestTierPricing:
         assert "premium" in TIER_PRICING
 
     def test_tier_pricing_structure(self):
-        """
-        Teaching Pattern: Testing pricing structure.
+        """Teaching Pattern: Testing pricing structure.
 
         Each tier has input and output pricing.
         """
         from empathy_os.models.registry import TIER_PRICING
 
-        for tier, pricing in TIER_PRICING.items():
+        for _tier, pricing in TIER_PRICING.items():
             assert "input" in pricing
             assert "output" in pricing
             assert pricing["input"] > 0
             assert pricing["output"] > 0
 
     def test_tier_pricing_hierarchy(self):
-        """
-        Teaching Pattern: Testing cost hierarchy.
+        """Teaching Pattern: Testing cost hierarchy.
 
         Premium should cost more than capable, which costs more than cheap.
         """

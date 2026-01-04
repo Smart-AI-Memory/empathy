@@ -1,5 +1,4 @@
-"""
-Unit Tests for Coach Language Server
+"""Unit Tests for Coach Language Server
 
 Copyright 2025 Deep Study AI, LLC
 Licensed under Fair Source 0.9
@@ -85,7 +84,8 @@ class TestCoachLanguageServer:
         server.coach = mock_coach
 
         result = await server.command_handlers["coach/predict"](
-            server, ["database_connection_pool", 10]
+            server,
+            ["database_connection_pool", 10],
         )
 
         assert isinstance(result, str)
@@ -98,12 +98,14 @@ class TestCoachLanguageServer:
 
         # First call
         result1 = await server.command_handlers["coach/runWizard"](
-            server, ["PerformanceWizard", {"role": "developer", "task": "Test"}]
+            server,
+            ["PerformanceWizard", {"role": "developer", "task": "Test"}],
         )
 
         # Second call (should use cache)
         result2 = await server.command_handlers["coach/runWizard"](
-            server, ["PerformanceWizard", {"role": "developer", "task": "Test"}]
+            server,
+            ["PerformanceWizard", {"role": "developer", "task": "Test"}],
         )
 
         # Coach should only be called once (second call uses cache)
@@ -122,7 +124,7 @@ class TestCoachLanguageServer:
                         name="security_issue",
                         content="SQL injection vulnerability in user input",
                         format="markdown",
-                    )
+                    ),
                 ],
                 confidence=0.95,
             ),
@@ -197,7 +199,8 @@ class TestErrorHandling:
         """Test handling of wizard not found error"""
         with pytest.raises((KeyError, ValueError)):  # Will be caught and converted to LSP error
             await server.command_handlers["coach/runWizard"](
-                server, ["NonExistentWizard", {"role": "developer", "task": "Test"}]
+                server,
+                ["NonExistentWizard", {"role": "developer", "task": "Test"}],
             )
 
     @pytest.mark.asyncio

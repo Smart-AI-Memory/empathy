@@ -1,5 +1,4 @@
-"""
-Testing Analysis Components
+"""Testing Analysis Components
 
 Supporting modules for Enhanced Testing Wizard.
 
@@ -12,17 +11,17 @@ from .quality_analyzer import TestFunction, TestQualityAnalyzer, TestQualityRepo
 from .test_suggester import CodeElement, TestPriority, TestSuggester, TestSuggestion
 
 __all__ = [
+    "CodeElement",
     # Coverage Analysis
     "CoverageAnalyzer",
     "CoverageReport",
     "FileCoverage",
+    "TestFunction",
+    "TestPriority",
     # Quality Analysis
     "TestQualityAnalyzer",
     "TestQualityReport",
-    "TestFunction",
     # Test Suggestions
     "TestSuggester",
     "TestSuggestion",
-    "TestPriority",
-    "CodeElement",
 ]

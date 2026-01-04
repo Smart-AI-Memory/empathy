@@ -1,5 +1,4 @@
-"""
-Comprehensive tests for SoftwarePlugin
+"""Comprehensive tests for SoftwarePlugin
 
 Tests the software development plugin including metadata, wizard registration,
 pattern registration, and graceful import handling.

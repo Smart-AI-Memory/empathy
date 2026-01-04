@@ -1,5 +1,4 @@
-"""
-Memory-Enhanced Debugging Wizard API
+"""Memory-Enhanced Debugging Wizard API
 
 Wraps the MemoryEnhancedDebuggingWizard for web access.
 """
@@ -19,7 +18,8 @@ class DebugRequest(BaseModel):
     line_number: int | None = Field(default=None, description="Line number of error")
     code_snippet: str | None = Field(default="", description="Surrounding code context")
     correlate_with_history: bool = Field(
-        default=True, description="Enable historical pattern matching"
+        default=True,
+        description="Enable historical pattern matching",
     )
 
 
@@ -36,8 +36,7 @@ class RecordResolutionRequest(BaseModel):
 
 @router.post("/analyze")
 async def analyze_error(request: DebugRequest):
-    """
-    Analyze an error with historical pattern matching.
+    """Analyze an error with historical pattern matching.
 
     This wizard correlates your error with past bugs from the team's
     memory, recommending proven fixes and predicting resolution time.
@@ -67,7 +66,7 @@ async def analyze_error(request: DebugRequest):
                 "line_number": request.line_number,
                 "code_snippet": request.code_snippet,
                 "correlate_with_history": request.correlate_with_history,
-            }
+            },
         )
 
         return {
@@ -80,7 +79,7 @@ async def analyze_error(request: DebugRequest):
     except ImportError as e:
         raise HTTPException(
             status_code=503,
-            detail=f"Wizard not available: {str(e)}. Install empathy-framework[full]",
+            detail=f"Wizard not available: {e!s}. Install empathy-framework[full]",
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -88,8 +87,7 @@ async def analyze_error(request: DebugRequest):
 
 @router.post("/record-resolution")
 async def record_resolution(request: RecordResolutionRequest):
-    """
-    Record a bug resolution for future pattern matching.
+    """Record a bug resolution for future pattern matching.
 
     After successfully fixing a bug, call this endpoint to store
     the knowledge for future debugging sessions.
@@ -119,16 +117,14 @@ async def record_resolution(request: RecordResolutionRequest):
         }
 
     except ImportError as e:
-        raise HTTPException(status_code=503, detail=f"Wizard not available: {str(e)}")
+        raise HTTPException(status_code=503, detail=f"Wizard not available: {e!s}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/demo")
 async def demo_analysis():
-    """
-    Demo endpoint showing wizard capabilities with sample error.
-    """
+    """Demo endpoint showing wizard capabilities with sample error."""
     sample_request = DebugRequest(
         error_message="TypeError: Cannot read property 'map' of undefined",
         file_path="src/components/UserList.tsx",

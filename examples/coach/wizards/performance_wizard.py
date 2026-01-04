@@ -1,5 +1,4 @@
-"""
-Performance Wizard
+"""Performance Wizard
 
 Identifies performance bottlenecks, optimizes code, and predicts scaling issues.
 Uses Empathy Framework Level 3 (Proactive) for bottleneck detection and Level 4
@@ -23,8 +22,7 @@ from .base_wizard import (
 
 
 class PerformanceWizard(BaseWizard):
-    """
-    Wizard for performance optimization and profiling
+    """Wizard for performance optimization and profiling
 
     Uses:
     - Level 2: Guide user through profiling setup
@@ -75,7 +73,6 @@ class PerformanceWizard(BaseWizard):
 
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute performance optimization workflow"""
-
         # Step 1: Assess emotional context (performance issues are stressful!)
         emotional_state = self._assess_emotional_state(task)
 
@@ -195,7 +192,7 @@ class PerformanceWizard(BaseWizard):
                         "Implement connection pooling to reduce overhead",
                         "Consider read replicas for scaling reads",
                     ],
-                }
+                },
             )
 
         # N+1 query problem
@@ -211,7 +208,7 @@ class PerformanceWizard(BaseWizard):
                         "Batch queries using DataLoader pattern",
                         "Implement GraphQL query depth limiting",
                     ],
-                }
+                },
             )
 
         # Memory issues
@@ -228,7 +225,7 @@ class PerformanceWizard(BaseWizard):
                         "Profile with memory_profiler to find leaks",
                         "Consider streaming responses for large payloads",
                     ],
-                }
+                },
             )
 
         # Algorithm complexity
@@ -245,7 +242,7 @@ class PerformanceWizard(BaseWizard):
                         "Implement memoization for recursive functions",
                         "Consider parallel processing for independent computations",
                     ],
-                }
+                },
             )
 
         # Default bottleneck if none detected
@@ -262,7 +259,7 @@ class PerformanceWizard(BaseWizard):
                         "Optimize database queries with EXPLAIN ANALYZE",
                         "Consider horizontal scaling if current optimization insufficient",
                     ],
-                }
+                },
             )
 
         return bottlenecks
@@ -273,7 +270,7 @@ class PerformanceWizard(BaseWizard):
 
         for i, bottleneck in enumerate(bottlenecks, 1):
             plan.append(
-                f"{i}. **Fix {bottleneck['type']} issue** (Severity: {bottleneck['severity']})"
+                f"{i}. **Fix {bottleneck['type']} issue** (Severity: {bottleneck['severity']})",
             )
             for j, solution in enumerate(bottleneck["solutions"][:2], 1):  # Top 2 solutions
                 plan.append(f"   {chr(96 + j)}. {solution}")
@@ -484,7 +481,10 @@ class PerformanceUser(HttpUser):
         return prediction
 
     def _generate_performance_report(
-        self, diagnosis: str, bottlenecks: list[dict], scaling: str
+        self,
+        diagnosis: str,
+        bottlenecks: list[dict],
+        scaling: str,
     ) -> str:
         """Generate comprehensive performance report"""
         report = f"{diagnosis}\n\n"
@@ -552,7 +552,7 @@ class PerformanceUser(HttpUser):
                     risk="Database index creation may lock table during creation",
                     mitigation="Use CREATE INDEX CONCURRENTLY (Postgres) for zero-downtime indexing",
                     severity="low",
-                )
+                ),
             )
 
         # Caching risk
@@ -561,7 +561,7 @@ class PerformanceUser(HttpUser):
                 risk="Caching may serve stale data after updates",
                 mitigation="Implement cache invalidation on write operations or use short TTL (60-300s)",
                 severity="medium",
-            )
+            ),
         )
 
         # Over-optimization risk
@@ -570,7 +570,7 @@ class PerformanceUser(HttpUser):
                 risk="Premature optimization may add complexity without significant benefit",
                 mitigation="Always benchmark before/after to validate improvements (target: 30%+ gain)",
                 severity="low",
-            )
+            ),
         )
 
         return risks
@@ -585,14 +585,14 @@ class PerformanceUser(HttpUser):
                     owner="DevOps/SRE",
                     what="Configure Redis cache cluster and monitoring dashboards",
                     when="Before production deployment",
-                )
+                ),
             )
             handoffs.append(
                 WizardHandoff(
                     owner="DBA",
                     what="Review and approve database index creation plan",
                     when="Before executing DDL statements",
-                )
+                ),
             )
 
         return handoffs

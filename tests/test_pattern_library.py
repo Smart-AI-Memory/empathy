@@ -1,5 +1,4 @@
-"""
-Tests for Pattern Library
+"""Tests for Pattern Library
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
@@ -159,7 +158,9 @@ class TestPatternLibrary:
 
         # Query for sequential only
         matches = library.query_patterns(
-            "agent2", context={"test": True}, pattern_type="sequential"
+            "agent2",
+            context={"test": True},
+            pattern_type="sequential",
         )
 
         assert all(m.pattern.pattern_type == "sequential" for m in matches)
@@ -460,7 +461,8 @@ class TestPatternLibrary:
 
         # Query with completely different context
         matches = library.query_patterns(
-            "agent2", context={"domain": "education", "different": "context"}
+            "agent2",
+            context={"domain": "education", "different": "context"},
         )
 
         # Should have low or no matches due to relevance threshold
@@ -495,7 +497,8 @@ class TestPatternLibrary:
 
         # Query all patterns (relevance scoring is internal)
         matches = library.query_patterns(
-            "agent2", context={"language": "python", "task": "testing"}
+            "agent2",
+            context={"language": "python", "task": "testing"},
         )
 
         # Patterns should be returned (relevance calculation is internal to implementation)
@@ -651,7 +654,8 @@ class TestPatternLibrary:
 
         # Query with completely different context
         matches = library.query_patterns(
-            "agent2", context={"domain": "finance", "unrelated": "data"}
+            "agent2",
+            context={"domain": "finance", "unrelated": "data"},
         )
 
         # Should filter out due to low relevance
@@ -745,7 +749,8 @@ class TestPatternLibrary:
 
         # Query with context that matches multiple factors
         matches = library.query_patterns(
-            "agent2", context={"domain": "testing", "language": "python", "tags": ["automation"]}
+            "agent2",
+            context={"domain": "testing", "language": "python", "tags": ["automation"]},
         )
 
         # Should have high relevance from multiple factors
@@ -794,7 +799,8 @@ class TestPatternLibrary:
 
         # Query matching only some context keys
         matches = library.query_patterns(
-            "agent2", context={"domain": "healthcare", "feature": "doctor", "priority": "high"}
+            "agent2",
+            context={"domain": "healthcare", "feature": "doctor", "priority": "high"},
         )
 
         # Should calculate relevance based on partial matches

@@ -1,5 +1,4 @@
-"""
-Unit tests for EmpathyLLM Phase 3 Security Integration
+"""Unit tests for EmpathyLLM Phase 3 Security Integration
 
 Tests the integration of Phase 2 security controls (PII scrubbing, secrets detection,
 audit logging) into the core EmpathyLLM.interact() method.
@@ -92,7 +91,9 @@ def test_empathy_llm_security_custom_config():
             }
 
             llm = EmpathyLLM(
-                provider="anthropic", enable_security=True, security_config=security_config
+                provider="anthropic",
+                enable_security=True,
+                security_config=security_config,
             )
 
             assert llm.enable_security is True
@@ -111,7 +112,9 @@ def test_empathy_llm_security_pii_scrubbing_disabled():
             }
 
             llm = EmpathyLLM(
-                provider="anthropic", enable_security=True, security_config=security_config
+                provider="anthropic",
+                enable_security=True,
+                security_config=security_config,
             )
 
             assert llm.enable_security is True
@@ -199,7 +202,9 @@ async def test_interact_pii_all_empathy_levels(mock_provider, temp_audit_dir):
         # Test all 5 levels
         for level in range(1, 6):
             result = await llm.interact(
-                user_id=f"test_user_{level}", user_input=user_input, force_level=level
+                user_id=f"test_user_{level}",
+                user_input=user_input,
+                force_level=level,
             )
 
             # All levels should scrub PII
@@ -330,7 +335,9 @@ async def test_interact_logs_successful_request(mock_provider, temp_audit_dir):
         user_input = "Help me with my project"
 
         result = await llm.interact(
-            user_id="test_user@company.com", user_input=user_input, force_level=2
+            user_id="test_user@company.com",
+            user_input=user_input,
+            force_level=2,
         )
 
         assert result["content"] == "Mock LLM response"
@@ -573,7 +580,7 @@ async def test_interact_large_input_with_pii(mock_provider, temp_audit_dir):
 
         # Large input with multiple PII items
         user_input = "\n".join(
-            [f"Employee {i}: email{i}@example.com, phone: 555-123-{i:04d}" for i in range(10)]
+            [f"Employee {i}: email{i}@example.com, phone: 555-123-{i:04d}" for i in range(10)],
         )
 
         result = await llm.interact(user_id="test_user", user_input=user_input, force_level=1)

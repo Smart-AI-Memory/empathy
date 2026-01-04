@@ -1,5 +1,4 @@
-"""
-Tests for SecurityAuditWorkflow.
+"""Tests for SecurityAuditWorkflow.
 
 Tests the OWASP-focused security audit with vulnerability detection,
 team decision integration, and remediation planning.
@@ -113,7 +112,7 @@ class TestTeamDecisionsLoading:
                 "decisions": [
                     {"finding_hash": "abc123", "decision": "false_positive"},
                     {"finding_hash": "def456", "decision": "accepted_risk"},
-                ]
+                ],
             }
 
             with open(security_dir / "team_decisions.json", "w") as f:
@@ -363,7 +362,7 @@ class TestSecurityAuditTriage:
 def safe_query(user_id: int) -> dict:
     # Use parameterized queries
     return db.execute("SELECT * FROM users WHERE id = ?", [user_id])
-"""
+""",
             )
 
             workflow = SecurityAuditWorkflow()
@@ -397,7 +396,7 @@ from typing import Optional
 def get_user(user_id: int) -> Optional[dict]:
     '''Safe user lookup with parameterized query.'''
     return db.query("SELECT * FROM users WHERE id = ?", [user_id])
-"""
+""",
             )
 
             workflow = SecurityAuditWorkflow(patterns_dir=tmpdir)
@@ -422,7 +421,7 @@ def get_user(user_id: int) -> Optional[dict]:
 # Line 3
 os.system(cmd)  # Line 4 - vulnerability here
 # Line 5
-"""
+""",
             )
 
             workflow = SecurityAuditWorkflow()

@@ -1,5 +1,4 @@
-"""
-Reviewer Agent - Quality Assessment
+"""Reviewer Agent - Quality Assessment
 
 The final quality gate in the book production pipeline. Responsible for:
 1. Assessing overall chapter quality against exemplars
@@ -26,8 +25,7 @@ from .state import AgentPhase, Draft, QualityScore, ReviewResult
 
 
 class ReviewerAgent(OpusAgent):
-    """
-    Final quality gate for chapters.
+    """Final quality gate for chapters.
 
     Model: Claude Opus 4.5 (nuanced quality assessment)
 
@@ -171,17 +169,17 @@ Provide:
 Be thorough but constructive. The goal is publication success."""
 
     async def process(self, state: dict[str, Any]) -> dict[str, Any]:
-        """
-        Review the edited draft for publication approval.
+        """Review the edited draft for publication approval.
 
         Args:
             state: Current pipeline state with edited draft
 
         Returns:
             Updated state with review results
+
         """
         self.logger.info(
-            f"Starting review for Chapter {state['chapter_number']}: {state['chapter_title']}"
+            f"Starting review for Chapter {state['chapter_number']}: {state['chapter_title']}",
         )
 
         # Update state
@@ -269,14 +267,13 @@ Be thorough but constructive. The goal is publication success."""
 
         self.logger.info(
             f"Review complete: score={final_scores['overall']:.2f}, "
-            f"approved={approved}, confidence={confidence:.2f}"
+            f"approved={approved}, confidence={confidence:.2f}",
         )
 
         return state
 
     async def review(self, draft: Draft, chapter_title: str) -> ReviewResult:
-        """
-        Standalone review method for direct use.
+        """Standalone review method for direct use.
 
         Args:
             draft: Draft to review
@@ -284,6 +281,7 @@ Be thorough but constructive. The goal is publication success."""
 
         Returns:
             ReviewResult with scores and feedback
+
         """
         from .state import create_initial_state
 

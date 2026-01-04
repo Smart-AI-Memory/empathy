@@ -1,5 +1,4 @@
-"""
-Tests for Unified Model Registry
+"""Tests for Unified Model Registry
 
 Verifies:
 - All providers and tiers are present

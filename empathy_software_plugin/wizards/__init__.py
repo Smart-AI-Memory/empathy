@@ -37,6 +37,6 @@ __all__ = [
     "MemoryEnhancedDebuggingWizard",
     "PatternExtractionWizard",
     "PatternRetrieverWizard",
-    "TechDebtWizard",
     "SecurityLearningWizard",
+    "TechDebtWizard",
 ]

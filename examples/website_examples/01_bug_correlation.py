@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Example 1: Bug Pattern Correlation
+"""Example 1: Bug Pattern Correlation
 ==================================
 
 Demonstrates how persistent memory enables AI to correlate current bugs
@@ -95,7 +94,7 @@ async def main():
             "file_path": "src/components/OrderList.tsx",
             "line_number": 47,
             "correlate_with_history": True,  # Enable historical matching
-        }
+        },
     )
 
     # -------------------------------------------------------------------------

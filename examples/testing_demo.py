@@ -1,5 +1,4 @@
-"""
-Enhanced Testing Wizard - Live Demonstration
+"""Enhanced Testing Wizard - Live Demonstration
 
 Shows test quality analysis and bug-risk prediction.
 
@@ -90,7 +89,7 @@ async def demo_basic_analysis():
                 "/project/src/utils.py",
                 "/project/src/payment.py",  # NO TESTS!
             ],
-        }
+        },
     )
 
     print("\n📊 Coverage Analysis:")
@@ -137,7 +136,7 @@ async def demo_risk_analysis():
                 "project_path": tmpdir,
                 "coverage_report": {},  # No coverage = untested
                 "source_files": [auth_file, payment_file],
-            }
+            },
         )
 
         print("\n⚠️  HIGH-RISK GAPS DETECTED:")
@@ -169,7 +168,7 @@ async def demo_smart_suggestions():
             f.write(MOCK_AUTH_FILE)
 
         result = await wizard.analyze(
-            {"project_path": tmpdir, "coverage_report": {}, "source_files": [auth_file]}
+            {"project_path": tmpdir, "coverage_report": {}, "source_files": [auth_file]},
         )
 
         print("\n🎯 SMART TEST SUGGESTIONS:\n")
@@ -211,7 +210,7 @@ async def demo_predictions():
                 "project_path": tmpdir,
                 "coverage_report": {},
                 "source_files": [auth_file, payment_file],
-            }
+            },
         )
 
         print("\n🔮 PREDICTIONS:\n")
@@ -255,7 +254,7 @@ async def demo_recommendations():
                 "/project/src/auth.py",
                 "/project/src/utils.py",
             ],
-        }
+        },
     )
 
     print("\n📝 RECOMMENDATIONS:\n")
@@ -276,9 +275,9 @@ async def demo_the_value():
     print("-" * 70)
     print("✓ Line coverage: 60%")
     print("✓ Branch coverage: 50%")
-    print("")
+    print()
     print("Status: PASSING ✓")
-    print("")
+    print()
     print("...but does this actually mean the code is safe?")
 
     print("\n" + "ENHANCED TESTING WIZARD".center(70))
@@ -286,21 +285,21 @@ async def demo_the_value():
     print("✓ Line coverage: 60%")
     print("✓ Branch coverage: 50%")
     print("✓ Test quality score: 45/100")
-    print("")
+    print()
     print("⚠️  CRITICAL: Authentication code has 0% coverage")
     print("⚠️  CRITICAL: Payment processing has 0% coverage")
     print("⚠️  HIGH: Error handling paths untested")
-    print("")
+    print()
     print("In our experience, untested authentication and payment")
     print("code causes the majority of production security incidents.")
-    print("")
+    print()
     print("Status: HIGH RISK - Not ready for production")
 
     print("\n" + "THE DIFFERENCE".center(70))
     print("-" * 70)
     print("Coverage tells you WHAT is tested.")
     print("Enhanced Testing tells you WHAT MATTERS is tested.")
-    print("")
+    print()
     print("It predicts which untested code will actually cause bugs.")
 
     print("\n" + "=" * 70)
@@ -308,7 +307,6 @@ async def demo_the_value():
 
 async def main():
     """Run all demos"""
-
     print("\n")
     print("╔" + "=" * 68 + "╗")
     print("║" + " " * 12 + "ENHANCED TESTING WIZARD - DEMONSTRATIONS" + " " * 15 + "║")

@@ -2,4 +2,4 @@
 
 from . import analysis, auth, subscriptions, users, wizards
 
-__all__ = ["auth", "users", "wizards", "subscriptions", "analysis"]
+__all__ = ["analysis", "auth", "subscriptions", "users", "wizards"]

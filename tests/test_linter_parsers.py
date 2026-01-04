@@ -1,5 +1,4 @@
-"""
-Tests for empathy_software_plugin/wizards/debugging/linter_parsers.py
+"""Tests for empathy_software_plugin/wizards/debugging/linter_parsers.py
 
 Comprehensive tests for all linter parser implementations.
 """
@@ -158,10 +157,10 @@ class TestESLintParser:
                             "nodeType": "Identifier",
                             "endLine": 10,
                             "endColumn": 8,
-                        }
+                        },
                     ],
-                }
-            ]
+                },
+            ],
         )
 
         parser = ESLintParser()
@@ -190,7 +189,7 @@ class TestESLintParser:
                             "message": "Missing semicolon",
                             "line": 5,
                             "column": 20,
-                        }
+                        },
                     ],
                 },
                 {
@@ -212,7 +211,7 @@ class TestESLintParser:
                         },
                     ],
                 },
-            ]
+            ],
         )
 
         parser = ESLintParser()
@@ -239,10 +238,10 @@ class TestESLintParser:
                             "line": 5,
                             "column": 20,
                             "fix": {"range": [100, 100], "text": ";"},
-                        }
+                        },
                     ],
-                }
-            ]
+                },
+            ],
         )
 
         parser = ESLintParser()
@@ -367,8 +366,8 @@ class TestPylintParser:
                     "symbol": "undefined-variable",
                     "message": "Undefined variable 'foo'",
                     "message-id": "E0602",
-                }
-            ]
+                },
+            ],
         )
 
         parser = PylintParser()
@@ -413,7 +412,7 @@ class TestPylintParser:
                     "symbol": "invalid-name",
                     "message": "Invalid variable name",
                 },
-            ]
+            ],
         )
 
         parser = PylintParser()
@@ -495,8 +494,8 @@ app.py:6:0: I0001: Info (info-msg)
                     "symbol": "test",
                     "message": "test",
                     "type": "error",
-                }
-            ]
+                },
+            ],
         )
 
         parser = PylintParser()
@@ -528,8 +527,8 @@ app.py:6:0: I0001: Info (info-msg)
                     "message-id": "E0001",
                     "message": "test",
                     "type": "error",
-                }
-            ]
+                },
+            ],
         )
 
         parser = PylintParser()
@@ -548,8 +547,8 @@ app.py:6:0: I0001: Info (info-msg)
                     "message-id": "E0001",
                     "message": "test",
                     "type": "error",
-                }
-            ]
+                },
+            ],
         )
 
         parser = PylintParser()
@@ -914,10 +913,10 @@ class TestParseLintersOutput:
                             "message": "Unused var",
                             "line": 10,
                             "column": 5,
-                        }
+                        },
                     ],
-                }
-            ]
+                },
+            ],
         )
 
         issues = parse_linter_output("eslint", eslint_json)
@@ -965,10 +964,10 @@ class TestBaseLinterParser:
                                 "message": "Test message",
                                 "line": 1,
                                 "column": 1,
-                            }
+                            },
                         ],
-                    }
-                ]
+                    },
+                ],
             )
             f.write(eslint_json)
             temp_path = f.name
@@ -993,8 +992,8 @@ class TestEdgeCases:
                 {
                     "filePath": "/src/app.js",
                     "messages": [{}],  # Empty message
-                }
-            ]
+                },
+            ],
         )
 
         parser = ESLintParser()
@@ -1045,10 +1044,10 @@ class TestEdgeCases:
                             "message": long_message,
                             "line": 1,
                             "column": 1,
-                        }
+                        },
                     ],
-                }
-            ]
+                },
+            ],
         )
 
         parser = ESLintParser()
@@ -1070,10 +1069,10 @@ class TestEdgeCases:
                             "message": "Test",
                             "line": 1,
                             "column": 1,
-                        }
+                        },
                     ],
-                }
-            ]
+                },
+            ],
         )
 
         parser = ESLintParser()
@@ -1095,10 +1094,10 @@ class TestEdgeCases:
                             "message": "Error with unicode: \u2714 \u2718 \u00e9\u00e8\u00ea",
                             "line": 1,
                             "column": 1,
-                        }
+                        },
                     ],
-                }
-            ]
+                },
+            ],
         )
 
         parser = ESLintParser()
@@ -1120,10 +1119,10 @@ class TestEdgeCases:
                             "message": "Test",
                             "line": -1,
                             "column": -1,
-                        }
+                        },
                     ],
-                }
-            ]
+                },
+            ],
         )
 
         parser = ESLintParser()

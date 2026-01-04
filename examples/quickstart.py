@@ -1,5 +1,4 @@
-"""
-Empathy Framework - Quickstart Example
+"""Empathy Framework - Quickstart Example
 
 A simple demonstration of the Empathy Framework showing:
 - Initializing EmpathyOS
@@ -28,7 +27,6 @@ from empathy_os import (
 
 def main():
     """Run quickstart demonstration"""
-
     try:
         print("=" * 60)
         print("Empathy Framework - Quickstart Example")
@@ -85,7 +83,7 @@ def main():
                 "current_state": {"compliance": 0.7},
                 "trajectory": "declining",
                 "prediction_horizon": "30_days",
-            }
+            },
         )
         print(f"  Action: {response4['action']}")
         print(f"  Initiative: {response4['initiative']}")
@@ -101,7 +99,7 @@ def main():
                 "problem_class": "documentation_burden",
                 "instances": 18,
                 "pattern": "repetitive_structure",
-            }
+            },
         )
         print(f"  Action: {response5['action']}")
         print(f"  Initiative: {response5['initiative']}")

@@ -1,5 +1,4 @@
-"""
-Tests for Smart Router and Wizard Classification
+"""Tests for Smart Router and Wizard Classification
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
@@ -97,7 +96,7 @@ class TestWizardRegistry:
                 name="temp-wizard",
                 description="Temporary",
                 keywords=["temp"],
-            )
+            ),
         )
 
         assert registry.get("temp-wizard") is not None
@@ -338,7 +337,7 @@ class TestChainExecutor:
                 wizard_name="next-wizard",
                 triggered_by="test",
                 approval_required=True,
-            )
+            ),
         )
 
         assert execution.steps[1].approved is None

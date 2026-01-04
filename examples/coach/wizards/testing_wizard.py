@@ -1,5 +1,4 @@
-"""
-Testing Wizard
+"""Testing Wizard
 
 Suggests test plans, adds missing test cases, measures coverage and quality.
 Uses Empathy Framework Level 3 (Proactive) to identify untested paths
@@ -23,8 +22,7 @@ from .base_wizard import (
 
 
 class TestingWizard(BaseWizard):  # Not a test class despite the name
-    """
-    Wizard for test planning and quality assurance
+    """Wizard for test planning and quality assurance
 
     Uses:
     - Level 2: Guide test writing with clear examples
@@ -56,7 +54,6 @@ class TestingWizard(BaseWizard):  # Not a test class despite the name
 
     def execute(self, task: WizardTask) -> WizardOutput:
         """Execute testing workflow"""
-
         # Step 1: Assess context
         self._extract_constraints(task)
         self._assess_emotional_state(task)
@@ -126,7 +123,7 @@ class TestingWizard(BaseWizard):  # Not a test class despite the name
                     owner="team",
                     what="Code review for testability improvements",
                     when="Before adding tests",
-                )
+                ),
             )
 
         # Step 12: Empathy checks
@@ -210,17 +207,17 @@ class TestingWizard(BaseWizard):  # Not a test class despite the name
         # Generate test scenarios based on focus areas
         if "authentication" in focus_areas:
             missing.append(
-                {"scenario": "Valid credentials login", "type": "unit", "priority": "high"}
+                {"scenario": "Valid credentials login", "type": "unit", "priority": "high"},
             )
             missing.append(
-                {"scenario": "Invalid credentials login", "type": "unit", "priority": "high"}
+                {"scenario": "Invalid credentials login", "type": "unit", "priority": "high"},
             )
             missing.append(
                 {
                     "scenario": "Account lockout after failed attempts",
                     "type": "integration",
                     "priority": "medium",
-                }
+                },
             )
 
         if "authorization" in focus_areas:
@@ -229,14 +226,14 @@ class TestingWizard(BaseWizard):  # Not a test class despite the name
                     "scenario": "User with correct permissions can access resource",
                     "type": "integration",
                     "priority": "high",
-                }
+                },
             )
             missing.append(
                 {
                     "scenario": "User without permissions gets 403",
                     "type": "integration",
                     "priority": "high",
-                }
+                },
             )
 
         if "data_validation" in focus_areas:
@@ -246,14 +243,14 @@ class TestingWizard(BaseWizard):  # Not a test class despite the name
                     "scenario": "Invalid input rejected with clear error",
                     "type": "unit",
                     "priority": "high",
-                }
+                },
             )
             missing.append(
                 {
                     "scenario": "SQL injection attempts blocked",
                     "type": "security",
                     "priority": "high",
-                }
+                },
             )
 
         if "error_handling" in focus_areas:
@@ -262,22 +259,22 @@ class TestingWizard(BaseWizard):  # Not a test class despite the name
                     "scenario": "Graceful handling of network failures",
                     "type": "integration",
                     "priority": "medium",
-                }
+                },
             )
             missing.append(
                 {
                     "scenario": "Proper error messages for user",
                     "type": "integration",
                     "priority": "medium",
-                }
+                },
             )
 
         if "edge_cases" in focus_areas:
             missing.append(
-                {"scenario": "Empty input handling", "type": "unit", "priority": "medium"}
+                {"scenario": "Empty input handling", "type": "unit", "priority": "medium"},
             )
             missing.append(
-                {"scenario": "Maximum input size handling", "type": "unit", "priority": "medium"}
+                {"scenario": "Maximum input size handling", "type": "unit", "priority": "medium"},
             )
 
         # Generic missing tests
@@ -452,7 +449,7 @@ def db_session():
                     risk="Low test coverage leaves bugs undetected",
                     mitigation="Prioritize tests for critical paths, gradually increase coverage",
                     severity="high",
-                )
+                ),
             )
 
         risks.append(
@@ -460,7 +457,7 @@ def db_session():
                 risk="Flaky tests reduce CI/CD reliability",
                 mitigation="Use stable test data, avoid time-dependent tests, retry failed tests",
                 severity="medium",
-            )
+            ),
         )
 
         risks.append(
@@ -468,7 +465,7 @@ def db_session():
                 risk="Slow test suite impacts developer productivity",
                 mitigation="Parallelize tests, use test doubles for external services, optimize database tests",
                 severity="medium",
-            )
+            ),
         )
 
         risks.append(
@@ -476,7 +473,7 @@ def db_session():
                 risk="Tests become maintenance burden",
                 mitigation="Follow DRY principles, use fixtures, refactor tests regularly",
                 severity="low",
-            )
+            ),
         )
 
         return risks

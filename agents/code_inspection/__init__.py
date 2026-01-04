@@ -1,5 +1,4 @@
-"""
-Code Inspection Agent Pipeline
+"""Code Inspection Agent Pipeline
 
 Multi-agent orchestrated code inspection with parallel execution,
 cross-tool intelligence, and pattern learning.
@@ -46,21 +45,21 @@ from .state import (
 __all__ = [
     # Agent
     "CodeInspectionAgent",
-    "run_inspection",
     # State
     "CodeInspectionState",
-    "create_initial_state",
-    # Types
-    "InspectionPhase",
+    "CrossToolInsight",
     "FindingSeverity",
     "HealthStatus",
-    "InspectionFinding",
-    "ToolResult",
-    "CrossToolInsight",
     "HistoricalMatch",
+    "InspectionFinding",
+    # Types
+    "InspectionPhase",
+    "ToolResult",
+    "add_audit_entry",
     # Utilities
     "calculate_health_score",
-    "get_health_status",
+    "create_initial_state",
     "get_health_grade",
-    "add_audit_entry",
+    "get_health_status",
+    "run_inspection",
 ]

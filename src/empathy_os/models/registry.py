@@ -1,5 +1,4 @@
-"""
-Unified Model Registry - Single Source of Truth
+"""Unified Model Registry - Single Source of Truth
 
 This module provides a centralized model configuration that is consumed by:
 - empathy_llm_toolkit.routing.ModelRouter (via compatibility properties)
@@ -19,8 +18,7 @@ from typing import Any
 
 
 class ModelTier(Enum):
-    """
-    Model tier classification for routing.
+    """Model tier classification for routing.
 
     CHEAP: Fast, low-cost models for simple tasks (~$0.15-1.00/M input)
     CAPABLE: Balanced models for most development work (~$2.50-3.00/M input)
@@ -45,8 +43,7 @@ class ModelProvider(Enum):
 
 @dataclass(frozen=True)
 class ModelInfo:
-    """
-    Unified model information - single source of truth.
+    """Unified model information - single source of truth.
 
     Pricing is stored in per-million tokens format. Use the cost_per_1k_*
     properties for compatibility with code expecting per-1k pricing.
@@ -60,6 +57,7 @@ class ModelInfo:
         max_tokens: Maximum output tokens
         supports_vision: Whether model supports vision/images
         supports_tools: Whether model supports tool/function calling
+
     """
 
     id: str
@@ -324,8 +322,7 @@ MODEL_REGISTRY: dict[str, dict[str, ModelInfo]] = {
 
 
 def get_model(provider: str, tier: str) -> ModelInfo | None:
-    """
-    Get model info for a provider/tier combination.
+    """Get model info for a provider/tier combination.
 
     Args:
         provider: Provider name (anthropic, openai, ollama, hybrid)
@@ -333,6 +330,7 @@ def get_model(provider: str, tier: str) -> ModelInfo | None:
 
     Returns:
         ModelInfo if found, None otherwise
+
     """
     provider_models = MODEL_REGISTRY.get(provider.lower())
     if provider_models is None:
@@ -346,14 +344,14 @@ def get_all_models() -> dict[str, dict[str, ModelInfo]]:
 
 
 def get_pricing_for_model(model_id: str) -> dict[str, float] | None:
-    """
-    Get pricing for a model by its ID.
+    """Get pricing for a model by its ID.
 
     Args:
         model_id: Model identifier (e.g., "claude-3-5-haiku-20241022")
 
     Returns:
         Dict with 'input' and 'output' keys (per-million pricing), or None
+
     """
     for provider_models in MODEL_REGISTRY.values():
         for model_info in provider_models.values():

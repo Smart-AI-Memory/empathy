@@ -1,5 +1,4 @@
-"""
-Extended tests for Secure MemDocs Integration Module
+"""Extended tests for Secure MemDocs Integration Module
 
 Coverage boost tests targeting untested code paths:
 - EncryptionManager class
@@ -855,12 +854,14 @@ class TestEncryptionEdgeCases:
             manager = EncryptionManager(master_key=test_key)
 
             # Mock AESGCM to raise an unexpected error
-            with patch(
-                "empathy_llm_toolkit.security.secure_memdocs.AESGCM",
-                side_effect=RuntimeError("Unexpected crypto error"),
+            with (
+                patch(
+                    "empathy_llm_toolkit.security.secure_memdocs.AESGCM",
+                    side_effect=RuntimeError("Unexpected crypto error"),
+                ),
+                pytest.raises(SecurityError, match="Encryption failed"),
             ):
-                with pytest.raises(SecurityError, match="Encryption failed"):
-                    manager.encrypt("test content")
+                manager.encrypt("test content")
 
         except ImportError:
             pytest.skip("cryptography library not available")
@@ -896,7 +897,7 @@ class TestRetrievePatternErrorPaths:
 
         # Mock storage.retrieve to raise an unexpected error
         integration.storage.retrieve = MagicMock(
-            side_effect=RuntimeError("Unexpected database error")
+            side_effect=RuntimeError("Unexpected database error"),
         )
 
         # Retrieve should raise the unexpected error

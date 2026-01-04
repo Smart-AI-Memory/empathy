@@ -1,5 +1,4 @@
-"""
-Book Production Pipeline - Multi-Agent System
+"""Book Production Pipeline - Multi-Agent System
 
 A multi-agent system for transforming technical documentation into
 polished book chapters. Implements Phase 2 of the Book Production
@@ -57,54 +56,54 @@ from .state import (
 from .writer_agent import WriterAgent
 
 __all__ = [
-    # Pipeline
-    "BookProductionPipeline",
-    "PipelineConfig",
-    "produce_chapter",
-    # Agents
-    "ResearchAgent",
-    "WriterAgent",
-    "EditorAgent",
-    "ReviewerAgent",
-    # Base classes
-    "BaseAgent",
-    "OpusAgent",
-    "SonnetAgent",
     # Configuration
     "AgentConfig",
-    "MemDocsConfig",
-    "RedisConfig",
+    "AgentPhase",
+    # Base classes
+    "BaseAgent",
+    # Pipeline
+    "BookProductionPipeline",
+    "Chapter",
     # State management
     "ChapterProductionState",
-    "AgentPhase",
-    "create_initial_state",
     # Data structures
     "ChapterSpec",
-    "SourceDocument",
-    "DraftVersion",
-    "QualityScore",
-    "ResearchResult",
     "Draft",
+    "DraftVersion",
     "EditResult",
-    "ReviewResult",
-    "Chapter",
-    # Learning System - SBAR Handoffs
-    "HandoffType",
-    "SBARHandoff",
-    "create_research_to_writer_handoff",
-    "create_writer_to_editor_handoff",
-    "create_editor_to_reviewer_handoff",
-    "create_reviewer_to_writer_handoff",
-    # Learning System - Quality Gap Detection
-    "GapSeverity",
-    "QualityGap",
-    "QualityGapDetector",
+    "EditorAgent",
     # Learning System - Pattern Extraction
     "ExtractedPattern",
-    "PatternExtractor",
     # Learning System - Feedback Loop
     "FeedbackEntry",
     "FeedbackLoop",
+    # Learning System - Quality Gap Detection
+    "GapSeverity",
+    # Learning System - SBAR Handoffs
+    "HandoffType",
+    "MemDocsConfig",
+    "OpusAgent",
+    "PatternExtractor",
+    "PipelineConfig",
+    "QualityGap",
+    "QualityGapDetector",
+    "QualityScore",
+    "RedisConfig",
+    # Agents
+    "ResearchAgent",
+    "ResearchResult",
+    "ReviewResult",
+    "ReviewerAgent",
+    "SBARHandoff",
+    "SonnetAgent",
+    "SourceDocument",
+    "WriterAgent",
+    "create_editor_to_reviewer_handoff",
+    "create_initial_state",
+    "create_research_to_writer_handoff",
+    "create_reviewer_to_writer_handoff",
+    "create_writer_to_editor_handoff",
+    "produce_chapter",
 ]
 
 __version__ = "1.0.0"

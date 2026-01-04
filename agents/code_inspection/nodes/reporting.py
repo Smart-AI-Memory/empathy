@@ -1,5 +1,4 @@
-"""
-Reporting Node - Final Phase
+"""Reporting Node - Final Phase
 
 Generates unified health report from all inspection results.
 Provides multiple output formats: terminal, JSON, markdown.
@@ -29,8 +28,7 @@ logger = logging.getLogger(__name__)
 
 
 async def generate_unified_report(state: CodeInspectionState) -> CodeInspectionState:
-    """
-    Generate unified inspection report.
+    """Generate unified inspection report.
 
     Aggregates results from all phases into a single health report
     with categorized findings and prioritized recommendations.
@@ -40,6 +38,7 @@ async def generate_unified_report(state: CodeInspectionState) -> CodeInspectionS
 
     Returns:
         Updated state with final report
+
     """
     logger.info("[Reporting] Generating unified report")
 
@@ -126,7 +125,7 @@ async def generate_unified_report(state: CodeInspectionState) -> CodeInspectionS
     logger.info(
         f"[Reporting] Complete: Score={overall_score}, "
         f"Status={state['health_status']}, "
-        f"Findings={state['total_findings']}"
+        f"Findings={state['total_findings']}",
     )
 
     return state
@@ -164,8 +163,7 @@ def _collect_all_findings(
     state: CodeInspectionState,
     apply_baseline: bool = True,
 ) -> list[dict]:
-    """
-    Collect all findings from all tools.
+    """Collect all findings from all tools.
 
     Args:
         state: Current inspection state
@@ -173,6 +171,7 @@ def _collect_all_findings(
 
     Returns:
         List of findings (filtered if apply_baseline is True)
+
     """
     all_findings: list[dict] = []
 
@@ -228,7 +227,7 @@ def _generate_recommendations(
                 "action": f"Fix {critical_count} critical issues immediately",
                 "rationale": "Critical issues may cause security vulnerabilities or system failures",
                 "estimated_effort": "high",
-            }
+            },
         )
 
     # 2. High severity issues
@@ -240,7 +239,7 @@ def _generate_recommendations(
                 "action": f"Address {high_count} high-severity findings",
                 "rationale": "High-severity issues should be fixed before release",
                 "estimated_effort": "medium",
-            }
+            },
         )
 
     # 3. Add recommendations from cross-tool insights
@@ -253,7 +252,7 @@ def _generate_recommendations(
                         "action": rec,
                         "rationale": insight.get("description", ""),
                         "estimated_effort": "low",
-                    }
+                    },
                 )
 
     # 4. Auto-fix recommendation
@@ -264,7 +263,7 @@ def _generate_recommendations(
                 "action": f"Auto-fix {state['fixable_count']} issues with `empathy inspect --fix`",
                 "rationale": "Quick wins that improve code quality with minimal effort",
                 "estimated_effort": "low",
-            }
+            },
         )
 
     return recommendations[:10]  # Top 10 recommendations
@@ -286,7 +285,7 @@ def _generate_predictions(state: CodeInspectionState) -> list[dict]:
                 "confidence": 0.7,
                 "timeframe": "30 days",
                 "recommendation": "Allocate 20% of sprint capacity to debt reduction",
-            }
+            },
         )
     elif trend == "exploding":
         predictions.append(
@@ -296,7 +295,7 @@ def _generate_predictions(state: CodeInspectionState) -> list[dict]:
                 "confidence": 0.85,
                 "timeframe": "14 days",
                 "recommendation": "Schedule dedicated debt reduction sprint",
-            }
+            },
         )
 
     # 2. Predict based on historical patterns
@@ -309,7 +308,7 @@ def _generate_predictions(state: CodeInspectionState) -> list[dict]:
                 "confidence": 0.75,
                 "timeframe": "next release",
                 "recommendation": "Add regression tests for matched patterns",
-            }
+            },
         )
 
     # 3. Predict based on security findings
@@ -324,7 +323,7 @@ def _generate_predictions(state: CodeInspectionState) -> list[dict]:
                     "confidence": 0.8,
                     "timeframe": "if deployed",
                     "recommendation": "Do not deploy until critical issues are resolved",
-                }
+                },
             )
 
     return predictions
@@ -466,8 +465,7 @@ def format_report_markdown(state: CodeInspectionState) -> str:
 
 
 def format_report_sarif(state: CodeInspectionState) -> str:
-    """
-    Format report as SARIF 2.1.0 for GitHub Actions integration.
+    """Format report as SARIF 2.1.0 for GitHub Actions integration.
 
     SARIF (Static Analysis Results Interchange Format) enables:
     - GitHub PR annotations showing issues inline
@@ -492,13 +490,13 @@ def format_report_sarif(state: CodeInspectionState) -> str:
                     "shortDescription": {"text": finding.get("message", "")[:100]},
                     "fullDescription": {"text": finding.get("message", "")},
                     "defaultConfiguration": {
-                        "level": _severity_to_sarif_level(finding.get("severity", "medium"))
+                        "level": _severity_to_sarif_level(finding.get("severity", "medium")),
                     },
                     "properties": {
                         "category": finding.get("category", "unknown"),
                         "tool": finding.get("tool", "unknown"),
                     },
-                }
+                },
             )
 
     # Build results from findings
@@ -517,8 +515,8 @@ def format_report_sarif(state: CodeInspectionState) -> str:
                     "artifactLocation": {
                         "uri": finding["file_path"],
                         "uriBaseId": "%SRCROOT%",
-                    }
-                }
+                    },
+                },
             }
 
             # Add line number if available
@@ -534,7 +532,7 @@ def format_report_sarif(state: CodeInspectionState) -> str:
             result["fixes"] = [
                 {
                     "description": {"text": finding["remediation"]},
-                }
+                },
             ]
 
         results.append(result)
@@ -551,16 +549,16 @@ def format_report_sarif(state: CodeInspectionState) -> str:
                         "version": "2.2.9",
                         "informationUri": "https://github.com/smart-ai-memory/empathy-framework",
                         "rules": rules,
-                    }
+                    },
                 },
                 "results": results,
                 "invocations": [
                     {
                         "executionSuccessful": state["health_status"] != "fail",
                         "endTimeUtc": state.get("last_updated", datetime.now().isoformat()),
-                    }
+                    },
                 ],
-            }
+            },
         ],
     }
 
@@ -580,8 +578,7 @@ def _severity_to_sarif_level(severity: str) -> str:
 
 
 def format_report_html(state: CodeInspectionState, include_trends: bool = False) -> str:
-    """
-    Format report as HTML dashboard.
+    """Format report as HTML dashboard.
 
     Creates a visual dashboard with:
     - Health score gauge

@@ -1,5 +1,4 @@
-"""
-Subscriptions API endpoints.
+"""Subscriptions API endpoints.
 Handles license purchases, subscriptions, and team management.
 """
 
@@ -28,14 +27,14 @@ class TeamMemberRequest(BaseModel):
 
 @router.get("/")
 async def get_subscriptions(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """
-    Get user's active subscriptions.
+    """Get user's active subscriptions.
 
     Args:
         credentials: Bearer token
 
     Returns:
         List of active subscriptions
+
     """
     return {
         "subscriptions": [
@@ -47,7 +46,7 @@ async def get_subscriptions(credentials: HTTPAuthorizationCredentials = Depends(
                 "plugins": ["software", "healthcare"],
                 "purchased_at": "2025-01-15T10:00:00Z",
                 "type": "perpetual",
-            }
+            },
         ],
         "total": 1,
     }
@@ -55,10 +54,10 @@ async def get_subscriptions(credentials: HTTPAuthorizationCredentials = Depends(
 
 @router.post("/purchase")
 async def purchase_subscription(
-    request: PurchaseRequest, credentials: HTTPAuthorizationCredentials = Depends(security)
+    request: PurchaseRequest,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
-    """
-    Purchase a new subscription or additional licenses.
+    """Purchase a new subscription or additional licenses.
 
     Args:
         request: Purchase details
@@ -66,6 +65,7 @@ async def purchase_subscription(
 
     Returns:
         Purchase confirmation and license keys
+
     """
     # Placeholder implementation
     # In production, integrate with payment processor
@@ -82,14 +82,14 @@ async def purchase_subscription(
 
 @router.get("/team")
 async def get_team_members(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """
-    Get team members for organization subscription.
+    """Get team members for organization subscription.
 
     Args:
         credentials: Bearer token
 
     Returns:
         List of team members
+
     """
     return {
         "team_members": [
@@ -100,7 +100,7 @@ async def get_team_members(credentials: HTTPAuthorizationCredentials = Depends(s
                 "role": "admin",
                 "status": "active",
                 "license_assigned": True,
-            }
+            },
         ],
         "available_licenses": 4,
         "total_licenses": 5,
@@ -109,10 +109,10 @@ async def get_team_members(credentials: HTTPAuthorizationCredentials = Depends(s
 
 @router.post("/team/members")
 async def add_team_member(
-    request: TeamMemberRequest, credentials: HTTPAuthorizationCredentials = Depends(security)
+    request: TeamMemberRequest,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
-    """
-    Add a new team member.
+    """Add a new team member.
 
     Args:
         request: Team member details
@@ -120,6 +120,7 @@ async def add_team_member(
 
     Returns:
         Added team member info
+
     """
     return {
         "success": True,
@@ -130,10 +131,10 @@ async def add_team_member(
 
 @router.delete("/team/members/{user_id}")
 async def remove_team_member(
-    user_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)
+    user_id: str,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
-    """
-    Remove a team member.
+    """Remove a team member.
 
     Args:
         user_id: User ID to remove
@@ -141,20 +142,21 @@ async def remove_team_member(
 
     Returns:
         Removal confirmation
+
     """
     return {"success": True, "message": f"User {user_id} removed from team", "license_freed": True}
 
 
 @router.get("/licenses")
 async def get_licenses(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """
-    Get license information for the user's account.
+    """Get license information for the user's account.
 
     Args:
         credentials: Bearer token
 
     Returns:
         License details
+
     """
     return {
         "licenses": [
@@ -166,7 +168,7 @@ async def get_licenses(credentials: HTTPAuthorizationCredentials = Depends(secur
                 "machine_id": "machine_abc123",
                 "activated_at": "2025-01-15T10:30:00Z",
                 "version": "1.0.0",
-            }
+            },
         ],
         "total_available": 1,
         "total_used": 1,
@@ -175,10 +177,10 @@ async def get_licenses(credentials: HTTPAuthorizationCredentials = Depends(secur
 
 @router.post("/licenses/{license_id}/deactivate")
 async def deactivate_license(
-    license_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)
+    license_id: str,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
-    """
-    Deactivate a license from a machine.
+    """Deactivate a license from a machine.
 
     Args:
         license_id: License ID to deactivate
@@ -186,6 +188,7 @@ async def deactivate_license(
 
     Returns:
         Deactivation confirmation
+
     """
     return {
         "success": True,

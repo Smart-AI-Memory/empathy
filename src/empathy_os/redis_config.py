@@ -1,5 +1,4 @@
-"""
-Redis Configuration for Empathy Framework
+"""Redis Configuration for Empathy Framework
 
 Handles connection to Redis from environment variables.
 Supports Railway, redis.com, local Docker, managed Redis, or mock mode.
@@ -61,8 +60,7 @@ from .memory.short_term import RedisConfig, RedisShortTermMemory
 
 
 def parse_redis_url(url: str) -> dict:
-    """
-    Parse Redis URL into connection parameters.
+    """Parse Redis URL into connection parameters.
 
     Supports:
     - redis://user:pass@host:port/db (standard)
@@ -73,6 +71,7 @@ def parse_redis_url(url: str) -> dict:
 
     Returns:
         Dict with host, port, password, db, ssl
+
     """
     parsed = urlparse(url)
 
@@ -89,8 +88,7 @@ def parse_redis_url(url: str) -> dict:
 
 
 def get_redis_config() -> RedisConfig:
-    """
-    Get Redis configuration from environment variables.
+    """Get Redis configuration from environment variables.
 
     Priority:
     1. REDIS_URL (full URL, used by Railway/Heroku/managed services)
@@ -99,6 +97,7 @@ def get_redis_config() -> RedisConfig:
 
     Returns:
         RedisConfig with all connection parameters
+
     """
     # Check for mock mode
     if os.getenv("EMPATHY_REDIS_MOCK", "").lower() == "true":
@@ -149,11 +148,11 @@ def get_redis_config() -> RedisConfig:
 
 
 def get_redis_config_dict() -> dict:
-    """
-    Get Redis configuration as a dictionary (legacy compatibility).
+    """Get Redis configuration as a dictionary (legacy compatibility).
 
     Returns:
         Dict with connection parameters
+
     """
     config = get_redis_config()
     return {
@@ -171,8 +170,7 @@ def get_redis_memory(
     use_mock: bool | None = None,
     config: RedisConfig | None = None,
 ) -> RedisShortTermMemory:
-    """
-    Create a RedisShortTermMemory instance with environment-based config.
+    """Create a RedisShortTermMemory instance with environment-based config.
 
     Args:
         url: Optional explicit Redis URL (overrides env vars)
@@ -201,6 +199,7 @@ def get_redis_memory(
             retry_max_attempts=5,
         )
         memory = get_redis_memory(config=config)
+
     """
     # Explicit config takes highest priority
     if config is not None:
@@ -229,8 +228,7 @@ def get_redis_memory(
 
 
 def check_redis_connection() -> dict:
-    """
-    Check Redis connection and return status.
+    """Check Redis connection and return status.
 
     Returns:
         Dict with connection status and info
@@ -239,6 +237,7 @@ def check_redis_connection() -> dict:
         >>> status = check_redis_connection()
         >>> if status["connected"]:
         ...     print(f"Connected to {status['host']}:{status['port']}")
+
     """
     config = get_redis_config()
 
@@ -281,8 +280,7 @@ def check_redis_connection() -> dict:
 
 # Convenience function for Railway deployments
 def get_railway_redis() -> RedisShortTermMemory:
-    """
-    Get Redis configured for Railway deployment.
+    """Get Redis configured for Railway deployment.
 
     Railway automatically sets REDIS_URL when you add a Redis service.
 
@@ -291,13 +289,14 @@ def get_railway_redis() -> RedisShortTermMemory:
 
     Raises:
         EnvironmentError: If REDIS_URL is not set
+
     """
     redis_url = os.getenv("REDIS_URL") or os.getenv("REDIS_PRIVATE_URL")
 
     if not redis_url:
         raise OSError(
             "REDIS_URL not found. Make sure Redis is added to your Railway project.\n"
-            "Run: railway add --database redis"
+            "Run: railway add --database redis",
         )
 
     return get_redis_memory(url=redis_url)

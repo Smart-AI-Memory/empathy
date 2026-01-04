@@ -1,5 +1,4 @@
-"""
-Layer 3 AI Analyzer - Proactive Intelligence
+"""Layer 3 AI Analyzer - Proactive Intelligence
 Notices patterns and offers improvements using AI assistance.
 """
 
@@ -20,14 +19,14 @@ class AIAnalyzer(BaseAnalyzer):
         return 3  # Level 3: Proactive
 
     async def analyze(self, context: dict[str, Any]) -> list[Issue]:
-        """
-        Perform AI-powered proactive analysis.
+        """Perform AI-powered proactive analysis.
 
         Args:
             context: Analysis context including code, patterns, and metrics
 
         Returns:
             List of detected issues with recommendations
+
         """
         issues = []
 
@@ -64,7 +63,7 @@ class AIAnalyzer(BaseAnalyzer):
                             "Consider letting critical exceptions propagate",
                         ],
                         confidence=0.85,
-                    )
+                    ),
                 )
 
         # Check for potential performance issues
@@ -80,7 +79,7 @@ class AIAnalyzer(BaseAnalyzer):
                         "Consider generator expressions for large datasets",
                     ],
                     confidence=0.70,
-                )
+                ),
             )
 
         return issues
@@ -105,7 +104,7 @@ class AIAnalyzer(BaseAnalyzer):
                             "Consider using strategy or state patterns",
                         ],
                         confidence=0.95,
-                    )
+                    ),
                 )
 
         # Check for duplicate code
@@ -124,7 +123,7 @@ class AIAnalyzer(BaseAnalyzer):
                             "Create utility modules for shared functionality",
                         ],
                         confidence=0.90,
-                    )
+                    ),
                 )
 
         return issues
@@ -177,7 +176,7 @@ class AIAnalyzer(BaseAnalyzer):
                         category="antipattern",
                         recommendations=check["recommendations"],
                         confidence=0.80,
-                    )
+                    ),
                 )
 
         return issues

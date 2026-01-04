@@ -1,5 +1,4 @@
-"""
-Empathy Memory Panel API Server
+"""Empathy Memory Panel API Server
 
 FastAPI server that provides HTTP endpoints for the VS Code extension.
 This server wraps the MemoryControlPanel class and exposes its functionality via REST API.

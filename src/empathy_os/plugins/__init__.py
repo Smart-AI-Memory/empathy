@@ -1,5 +1,4 @@
-"""
-Empathy Framework - Plugin System
+"""Empathy Framework - Plugin System
 
 Enables modular extension of the Empathy Framework with domain-specific plugins.
 
@@ -18,12 +17,12 @@ from .base import (
 from .registry import PluginRegistry, get_global_registry
 
 __all__ = [
-    "BaseWizard",
     "BasePlugin",
-    "PluginMetadata",
+    "BaseWizard",
     "PluginError",
     "PluginLoadError",
-    "PluginValidationError",
+    "PluginMetadata",
     "PluginRegistry",
+    "PluginValidationError",
     "get_global_registry",
 ]

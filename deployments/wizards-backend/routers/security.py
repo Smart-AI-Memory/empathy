@@ -1,5 +1,4 @@
-"""
-Security Analysis Wizard API
+"""Security Analysis Wizard API
 
 Wraps the SecurityAnalysisWizard for web access.
 OWASP pattern detection with exploitability assessment.
@@ -18,7 +17,8 @@ class SecurityScanRequest(BaseModel):
     file_paths: list[str] = Field(default_factory=list, description="File paths to scan")
     project_path: str = Field(default=".", description="Project root path")
     exclude_patterns: list[str] = Field(
-        default_factory=list, description="Patterns to exclude from scanning"
+        default_factory=list,
+        description="Patterns to exclude from scanning",
     )
 
 
@@ -32,8 +32,7 @@ class CodeSnippetRequest(BaseModel):
 
 @router.post("/scan")
 async def scan_security(request: SecurityScanRequest):
-    """
-    Scan code for security vulnerabilities.
+    """Scan code for security vulnerabilities.
 
     This wizard detects OWASP Top 10 vulnerabilities and assesses
     their real-world exploitability, not just theoretical risk.
@@ -55,7 +54,7 @@ async def scan_security(request: SecurityScanRequest):
                 "source_files": request.file_paths,
                 "project_path": request.project_path,
                 "exclude_patterns": request.exclude_patterns,
-            }
+            },
         )
 
         return {
@@ -68,7 +67,7 @@ async def scan_security(request: SecurityScanRequest):
     except ImportError as e:
         raise HTTPException(
             status_code=503,
-            detail=f"Wizard not available: {str(e)}. Install empathy-framework[full]",
+            detail=f"Wizard not available: {e!s}. Install empathy-framework[full]",
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -76,8 +75,7 @@ async def scan_security(request: SecurityScanRequest):
 
 @router.post("/scan-snippet")
 async def scan_snippet(request: CodeSnippetRequest):
-    """
-    Scan a code snippet for security issues.
+    """Scan a code snippet for security issues.
 
     Quick analysis of a code snippet without file system access.
     Useful for code review or paste-and-check workflows.
@@ -105,7 +103,7 @@ async def scan_snippet(request: CodeSnippetRequest):
                     "exploit_likelihood": assessment.exploit_likelihood,
                     "reasoning": assessment.reasoning,
                     "mitigation_urgency": assessment.mitigation_urgency,
-                }
+                },
             )
 
         return {
@@ -116,16 +114,14 @@ async def scan_snippet(request: CodeSnippetRequest):
         }
 
     except ImportError as e:
-        raise HTTPException(status_code=503, detail=f"Wizard not available: {str(e)}")
+        raise HTTPException(status_code=503, detail=f"Wizard not available: {e!s}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/demo")
 async def demo_scan():
-    """
-    Demo endpoint showing security wizard with vulnerable code sample.
-    """
+    """Demo endpoint showing security wizard with vulnerable code sample."""
     vulnerable_code = """
 import sqlite3
 

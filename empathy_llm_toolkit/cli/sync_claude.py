@@ -1,5 +1,4 @@
-"""
-CLAUDE.md Auto-Sync Command for Empathy Framework
+"""CLAUDE.md Auto-Sync Command for Empathy Framework
 
 Syncs learned patterns from Empathy's pattern storage to Claude Code's
 .claude/rules/empathy/ directory for native integration.
@@ -41,8 +40,7 @@ PATTERN_SOURCES = {
 
 
 def load_patterns_from_directory(pattern_dir: Path, pattern_type: str) -> list[dict]:
-    """
-    Load all pattern JSON files from a directory.
+    """Load all pattern JSON files from a directory.
 
     Args:
         pattern_dir: Path to pattern directory
@@ -50,6 +48,7 @@ def load_patterns_from_directory(pattern_dir: Path, pattern_type: str) -> list[d
 
     Returns:
         List of pattern dictionaries
+
     """
     patterns: list[dict[str, Any]] = []
 
@@ -70,14 +69,14 @@ def load_patterns_from_directory(pattern_dir: Path, pattern_type: str) -> list[d
 
 
 def format_bug_patterns_markdown(patterns: list[dict]) -> str:
-    """
-    Format debugging patterns as Claude-compatible markdown.
+    """Format debugging patterns as Claude-compatible markdown.
 
     Args:
         patterns: List of bug pattern dictionaries
 
     Returns:
         Formatted markdown string
+
     """
     lines = [
         "---",
@@ -123,9 +122,7 @@ def format_bug_patterns_markdown(patterns: list[dict]) -> str:
 
 
 def format_security_decisions_markdown(patterns: list[dict]) -> str:
-    """
-    Format security decisions as Claude-compatible markdown.
-    """
+    """Format security decisions as Claude-compatible markdown."""
     lines = [
         "---",
         "paths: **/*.py, **/*.js, **/*.ts",
@@ -180,9 +177,7 @@ def format_security_decisions_markdown(patterns: list[dict]) -> str:
 
 
 def format_tech_debt_markdown(patterns: list[dict]) -> str:
-    """
-    Format tech debt hotspots as Claude-compatible markdown.
-    """
+    """Format tech debt hotspots as Claude-compatible markdown."""
     lines = [
         "---",
         "paths: **/*",
@@ -224,9 +219,7 @@ def format_tech_debt_markdown(patterns: list[dict]) -> str:
 
 
 def format_coding_patterns_markdown(patterns: list[dict]) -> str:
-    """
-    Format general coding patterns as Claude-compatible markdown.
-    """
+    """Format general coding patterns as Claude-compatible markdown."""
     lines = [
         "---",
         "paths: **/*",
@@ -272,8 +265,7 @@ def sync_patterns(
     dry_run: bool = False,
     verbose: bool = False,
 ) -> dict[str, Any]:
-    """
-    Sync patterns to .claude/rules/empathy/ directory.
+    """Sync patterns to .claude/rules/empathy/ directory.
 
     Args:
         project_root: Project root directory
@@ -282,6 +274,7 @@ def sync_patterns(
 
     Returns:
         Summary of sync operation
+
     """
     patterns_dir = project_root / "patterns"
     output_dir = project_root / CLAUDE_RULES_DIR
@@ -334,9 +327,11 @@ def sync_patterns(
             if verbose:
                 print(f"--- {output_file} ---")
                 print(
-                    markdown_content[:500] + "..."
-                    if len(markdown_content) > 500
-                    else markdown_content
+                    (
+                        markdown_content[:500] + "..."
+                        if len(markdown_content) > 500
+                        else markdown_content
+                    ),
                 )
                 print()
         else:
@@ -348,7 +343,7 @@ def sync_patterns(
                         "type": pattern_type,
                         "file": str(output_path),
                         "patterns": len(patterns),
-                    }
+                    },
                 )
                 if verbose:
                     print(f"Synced {len(patterns)} {pattern_type} patterns to {output_path}")
@@ -361,13 +356,13 @@ def sync_patterns(
 
 
 def watch_and_sync(project_root: Path, interval: int = 30, verbose: bool = False):
-    """
-    Watch patterns directory and sync on changes.
+    """Watch patterns directory and sync on changes.
 
     Args:
         project_root: Project root directory
         interval: Check interval in seconds
         verbose: Verbose output
+
     """
     print(f"Watching for pattern changes (every {interval}s)...")
     print("Press Ctrl+C to stop")
@@ -382,8 +377,7 @@ def watch_and_sync(project_root: Path, interval: int = 30, verbose: bool = False
             if patterns_dir.exists():
                 for json_file in patterns_dir.rglob("*.json"):
                     file_mtime = json_file.stat().st_mtime
-                    if file_mtime > current_mtime:
-                        current_mtime = file_mtime
+                    current_mtime = max(current_mtime, file_mtime)
 
             if current_mtime > last_mtime:
                 if last_mtime > 0:

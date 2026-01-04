@@ -1,5 +1,4 @@
-"""
-Tech Debt Tracking Wizard (Level 4)
+"""Tech Debt Tracking Wizard (Level 4)
 
 Tracks technical debt over time and predicts when it will become critical.
 Demonstrates Level 4 Anticipatory Empathy: predicts future problems
@@ -37,7 +36,7 @@ class DebtItem:
     item_id: str
     file_path: str
     line_number: int
-    debt_type: str  # todo, fixme, hack, temporary, deprecated
+    debt_type: str  # TODO, fixme, hack, temporary, deprecated
     content: str
     severity: str  # low, medium, high, critical
     date_found: str
@@ -70,8 +69,7 @@ class DebtTrajectory:
 
 
 class TechDebtWizard(BaseWizard):
-    """
-    Tech Debt Tracking Wizard - Level 4 Anticipatory
+    """Tech Debt Tracking Wizard - Level 4 Anticipatory
 
     What's now possible that wasn't before:
 
@@ -95,6 +93,7 @@ class TechDebtWizard(BaseWizard):
         ... })
         >>> print(result["trajectory"]["projection_90_days"])
         # Shows predicted debt count in 90 days
+
     """
 
     @property
@@ -106,11 +105,11 @@ class TechDebtWizard(BaseWizard):
         return 4  # Anticipatory
 
     def __init__(self, pattern_storage_path: str = "./patterns/tech_debt"):
-        """
-        Initialize the tech debt tracking wizard.
+        """Initialize the tech debt tracking wizard.
 
         Args:
             pattern_storage_path: Path to git-based pattern storage for history
+
         """
         super().__init__()
         self.pattern_storage_path = Path(pattern_storage_path)
@@ -158,8 +157,7 @@ class TechDebtWizard(BaseWizard):
         }
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze technical debt with trajectory tracking.
+        """Analyze technical debt with trajectory tracking.
 
         Context expects:
             - project_path: Path to the project
@@ -173,6 +171,7 @@ class TechDebtWizard(BaseWizard):
             - hotspots: Files with most debt
             - predictions: Level 4 predictions
             - recommendations: Actionable steps
+
         """
         project_path = Path(context.get("project_path", "."))
         track_history = context.get("track_history", True)
@@ -248,7 +247,9 @@ class TechDebtWizard(BaseWizard):
         }
 
     async def _scan_for_debt(
-        self, project_path: Path, exclude_patterns: list[str]
+        self,
+        project_path: Path,
+        exclude_patterns: list[str],
     ) -> list[DebtItem]:
         """Scan project for technical debt markers"""
         debt_items = []
@@ -371,7 +372,7 @@ class TechDebtWizard(BaseWizard):
                             by_severity=snapshot_data.get("by_severity", {}),
                             by_file=snapshot_data.get("by_file", {}),
                             hotspots=snapshot_data.get("hotspots", []),
-                        )
+                        ),
                     )
             except (json.JSONDecodeError, KeyError) as e:
                 logger.warning(f"Could not load debt history: {e}")
@@ -400,7 +401,7 @@ class TechDebtWizard(BaseWizard):
                 "by_severity": snapshot.by_severity,
                 "by_file": snapshot.by_file,
                 "hotspots": snapshot.hotspots,
-            }
+            },
         )
 
         # Keep last 100 snapshots
@@ -414,7 +415,9 @@ class TechDebtWizard(BaseWizard):
             logger.warning(f"Could not store debt snapshot: {e}")
 
     def _calculate_trajectory(
-        self, current: DebtSnapshot, history: list[DebtSnapshot]
+        self,
+        current: DebtSnapshot,
+        history: list[DebtSnapshot],
     ) -> DebtTrajectory:
         """Calculate debt trajectory from historical data"""
         if not history:
@@ -483,7 +486,7 @@ class TechDebtWizard(BaseWizard):
         critical_threshold = current.total_items * 2
         if daily_growth_rate > 0:
             days_until_critical = int(
-                (critical_threshold - current.total_items) / daily_growth_rate
+                (critical_threshold - current.total_items) / daily_growth_rate,
             )
         else:
             days_until_critical = None
@@ -530,7 +533,7 @@ class TechDebtWizard(BaseWizard):
                     "severity_score": total_severity,
                     "types": list({i.debt_type for i in items}),
                     "oldest_item": min((i.date_found for i in items), default="unknown"),
-                }
+                },
             )
 
         return hotspots
@@ -562,7 +565,7 @@ class TechDebtWizard(BaseWizard):
                             "Add debt ceiling to Definition of Done",
                             "Block new features until debt stabilizes",
                         ],
-                    }
+                    },
                 )
 
             # Prediction 2: Critical threshold warning
@@ -581,7 +584,7 @@ class TechDebtWizard(BaseWizard):
                             "Review root causes of debt accumulation",
                             "Consider architectural improvements",
                         ],
-                    }
+                    },
                 )
 
             # Prediction 3: Healthy trend acknowledgment
@@ -595,7 +598,7 @@ class TechDebtWizard(BaseWizard):
                             "Team is successfully paying down technical debt."
                         ),
                         "prevention_steps": ["Continue current practices"],
-                    }
+                    },
                 )
 
         # Prediction 4: Hotspot warnings
@@ -615,7 +618,7 @@ class TechDebtWizard(BaseWizard):
                         "Consider splitting large files",
                         "Review why debt accumulates in these areas",
                     ],
-                }
+                },
             )
 
         # Prediction 5: Type-based pattern
@@ -633,7 +636,7 @@ class TechDebtWizard(BaseWizard):
                         "Estimate effort to replace each hack",
                         "Prioritize hacks in critical paths",
                     ],
-                }
+                },
             )
 
         return predictions
@@ -653,32 +656,32 @@ class TechDebtWizard(BaseWizard):
 
         if critical_count > 0:
             recommendations.append(
-                f"🚨 {critical_count} CRITICAL debt items need immediate attention"
+                f"🚨 {critical_count} CRITICAL debt items need immediate attention",
             )
 
         if high_count > 3:
             recommendations.append(
-                f"⚠️  {high_count} HIGH severity items - schedule for next sprint"
+                f"⚠️  {high_count} HIGH severity items - schedule for next sprint",
             )
 
         # Trajectory-based recommendations
         if trajectory and trajectory.trend in ["increasing", "exploding"]:
             recommendations.append(
                 f"📈 Debt is {trajectory.trend} ({trajectory.change_percent:+.1f}%) - "
-                "consider adding cleanup tasks to each sprint"
+                "consider adding cleanup tasks to each sprint",
             )
 
         # Hotspot recommendations
         if hotspots and hotspots[0]["debt_count"] >= 5:
             recommendations.append(
                 f"🔥 Top hotspot: {hotspots[0]['file']} "
-                f"({hotspots[0]['debt_count']} items) - candidate for refactoring"
+                f"({hotspots[0]['debt_count']} items) - candidate for refactoring",
             )
 
         # Type-based recommendations
         if current.by_type.get("todo", 0) > 20:
             recommendations.append(
-                f"📝 {current.by_type['todo']} TODOs - consider converting to tracked issues"
+                f"📝 {current.by_type['todo']} TODOs - consider converting to tracked issues",
             )
 
         # History benefit reminder
@@ -686,13 +689,15 @@ class TechDebtWizard(BaseWizard):
             recommendations.append("📊 Trajectory analysis enabled - track progress over time")
         else:
             recommendations.append(
-                "💡 Run regularly to build historical data for trajectory analysis"
+                "💡 Run regularly to build historical data for trajectory analysis",
             )
 
         return recommendations
 
     def _calculate_memory_benefit(
-        self, history: list[DebtSnapshot], trajectory: DebtTrajectory | None
+        self,
+        history: list[DebtSnapshot],
+        trajectory: DebtTrajectory | None,
     ) -> dict[str, Any]:
         """Calculate the benefit provided by persistent memory"""
         if not history:

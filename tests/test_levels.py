@@ -1,5 +1,4 @@
-"""
-Tests for individual empathy level classes
+"""Tests for individual empathy level classes
 
 Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
@@ -120,7 +119,7 @@ class TestLevel4Anticipatory:
                 "current_state": {"compliance": 0.7},
                 "trajectory": "declining",
                 "prediction_horizon": "30_days",
-            }
+            },
         )
 
         assert response["level"] == 4
@@ -134,7 +133,7 @@ class TestLevel4Anticipatory:
         """Test Level 4 includes confidence in predictions"""
         level4 = Level4Anticipatory()
         response = level4.respond(
-            {"current_state": {}, "trajectory": "test", "prediction_horizon": "7_days"}
+            {"current_state": {}, "trajectory": "test", "prediction_horizon": "7_days"},
         )
 
         assert "confidence" in response
@@ -158,7 +157,7 @@ class TestLevel5Systems:
                 "problem_class": "documentation_burden",
                 "instances": 18,
                 "pattern": "repetitive_structure",
-            }
+            },
         )
 
         assert response["level"] == 5
@@ -464,7 +463,7 @@ class TestLevel4AnticipatorEdgeCases:
         """Test Level 4 with empty current state"""
         level4 = Level4Anticipatory()
         response = level4.respond(
-            {"current_state": {}, "trajectory": "unknown", "prediction_horizon": "unknown"}
+            {"current_state": {}, "trajectory": "unknown", "prediction_horizon": "unknown"},
         )
         assert response["level"] == 4
         assert len(response["predicted_needs"]) > 0
@@ -480,7 +479,7 @@ class TestLevel4AnticipatorEdgeCases:
                     "current_state": {"status": "good"},
                     "trajectory": "stable",
                     "prediction_horizon": horizon,
-                }
+                },
             )
             assert response["prediction_horizon"] == horizon
             assert horizon in response["description"]
@@ -489,7 +488,7 @@ class TestLevel4AnticipatorEdgeCases:
         """Test Level 4 always includes confidence"""
         level4 = Level4Anticipatory()
         response = level4.respond(
-            {"current_state": {}, "trajectory": "test", "prediction_horizon": "test"}
+            {"current_state": {}, "trajectory": "test", "prediction_horizon": "test"},
         )
         assert "confidence" in response
         assert response["confidence"] == 0.85  # Default from implementation
@@ -502,7 +501,7 @@ class TestLevel4AnticipatorEdgeCases:
                 "current_state": {"compliance": 0.8},
                 "trajectory": "declining",
                 "prediction_horizon": "30_days",
-            }
+            },
         )
         # Check structure of predictions
         assert len(response["predicted_needs"]) == 3
@@ -516,7 +515,7 @@ class TestLevel4AnticipatorEdgeCases:
 
         for trajectory in trajectories:
             response = level4.respond(
-                {"current_state": {}, "trajectory": trajectory, "prediction_horizon": "30_days"}
+                {"current_state": {}, "trajectory": trajectory, "prediction_horizon": "30_days"},
             )
             assert trajectory in response["predicted_needs"][0]
 
@@ -548,7 +547,7 @@ class TestLevel5SystemsEdgeCases:
         """Test Level 5 with explicit pattern"""
         level5 = Level5Systems()
         response = level5.respond(
-            {"problem_class": "test_problem", "instances": 10, "pattern": "repetitive_structure"}
+            {"problem_class": "test_problem", "instances": 10, "pattern": "repetitive_structure"},
         )
         assert response["level"] == 5
 
@@ -560,7 +559,7 @@ class TestLevel5SystemsEdgeCases:
                 "problem_class": "test_problem",
                 "instances": 10,
                 # pattern is optional, defaults to None
-            }
+            },
         )
         assert response["level"] == 5
 
@@ -568,7 +567,7 @@ class TestLevel5SystemsEdgeCases:
         """Test Level 5 system design has expected structure"""
         level5 = Level5Systems()
         response = level5.respond(
-            {"problem_class": "documentation", "instances": 20, "pattern": "repetitive"}
+            {"problem_class": "documentation", "instances": 20, "pattern": "repetitive"},
         )
 
         system = response["system_created"]

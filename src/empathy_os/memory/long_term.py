@@ -1,5 +1,4 @@
-"""
-Secure MemDocs Integration for Enterprise Privacy
+"""Secure MemDocs Integration for Enterprise Privacy
 
 Combines PII scrubbing, secrets detection, and audit logging with MemDocs pattern storage.
 Implements three-tier classification (PUBLIC/INTERNAL/SENSITIVE) with encryption support.
@@ -132,29 +131,24 @@ class SecurePattern:
 class SecurityError(Exception):
     """Raised when security policy is violated"""
 
-    pass
-
 
 class PermissionError(Exception):
     """Raised when access is denied"""
 
-    pass
-
 
 class EncryptionManager:
-    """
-    Manages encryption/decryption for SENSITIVE patterns.
+    """Manages encryption/decryption for SENSITIVE patterns.
 
     Uses AES-256-GCM (Galois/Counter Mode) for authenticated encryption.
     Keys are derived from a master key using HKDF.
     """
 
     def __init__(self, master_key: bytes | None = None):
-        """
-        Initialize encryption manager.
+        """Initialize encryption manager.
 
         Args:
             master_key: 32-byte master key (or None to generate/load)
+
         """
         if not HAS_ENCRYPTION:
             logger.warning("Encryption not available - install cryptography library")
@@ -165,8 +159,7 @@ class EncryptionManager:
         self.master_key = master_key or self._load_or_generate_key()
 
     def _load_or_generate_key(self) -> bytes:
-        """
-        Load master key from environment or generate new one.
+        """Load master key from environment or generate new one.
 
         Production: Set EMPATHY_MASTER_KEY environment variable
         Development: Generates ephemeral key (warning logged)
@@ -195,8 +188,7 @@ class EncryptionManager:
         return AESGCM.generate_key(bit_length=256)
 
     def encrypt(self, plaintext: str) -> str:
-        """
-        Encrypt plaintext using AES-256-GCM.
+        """Encrypt plaintext using AES-256-GCM.
 
         Args:
             plaintext: Content to encrypt
@@ -206,6 +198,7 @@ class EncryptionManager:
 
         Raises:
             SecurityError: If encryption fails
+
         """
         if not self.enabled:
             raise SecurityError("Encryption not available - install cryptography library")
@@ -231,8 +224,7 @@ class EncryptionManager:
             raise SecurityError(f"Encryption failed: {e}") from e
 
     def decrypt(self, ciphertext_b64: str) -> str:
-        """
-        Decrypt ciphertext using AES-256-GCM.
+        """Decrypt ciphertext using AES-256-GCM.
 
         Args:
             ciphertext_b64: Base64-encoded encrypted data
@@ -242,6 +234,7 @@ class EncryptionManager:
 
         Raises:
             SecurityError: If decryption fails (invalid key, corrupted data, etc.)
+
         """
         if not self.enabled:
             raise SecurityError("Encryption not available - install cryptography library")
@@ -268,27 +261,25 @@ class EncryptionManager:
 
 
 class MemDocsStorage:
-    """
-    Mock/Simple MemDocs storage backend.
+    """Mock/Simple MemDocs storage backend.
 
     In production, this would integrate with the actual MemDocs library.
     For now, provides a simple file-based storage for testing.
     """
 
     def __init__(self, storage_dir: str = "./memdocs_storage"):
-        """
-        Initialize storage backend.
+        """Initialize storage backend.
 
         Args:
             storage_dir: Directory for pattern storage
+
         """
         self.storage_dir = Path(storage_dir)
         self.storage_dir.mkdir(parents=True, exist_ok=True)
         logger.info("memdocs_storage_initialized", storage_dir=str(self.storage_dir))
 
     def store(self, pattern_id: str, content: str, metadata: dict[str, Any]) -> bool:
-        """
-        Store a pattern.
+        """Store a pattern.
 
         Args:
             pattern_id: Unique pattern identifier
@@ -300,6 +291,7 @@ class MemDocsStorage:
 
         Raises:
             IOError: If storage fails
+
         """
         try:
             pattern_file = self.storage_dir / f"{pattern_id}.json"
@@ -320,14 +312,14 @@ class MemDocsStorage:
             raise
 
     def retrieve(self, pattern_id: str) -> dict[str, Any] | None:
-        """
-        Retrieve a pattern.
+        """Retrieve a pattern.
 
         Args:
             pattern_id: Unique pattern identifier
 
         Returns:
             Pattern data dictionary or None if not found
+
         """
         try:
             pattern_file = self.storage_dir / f"{pattern_id}.json"
@@ -347,14 +339,14 @@ class MemDocsStorage:
             return None
 
     def delete(self, pattern_id: str) -> bool:
-        """
-        Delete a pattern.
+        """Delete a pattern.
 
         Args:
             pattern_id: Unique pattern identifier
 
         Returns:
             True if deleted, False if not found
+
         """
         try:
             pattern_file = self.storage_dir / f"{pattern_id}.json"
@@ -371,10 +363,11 @@ class MemDocsStorage:
             return False
 
     def list_patterns(
-        self, classification: str | None = None, created_by: str | None = None
+        self,
+        classification: str | None = None,
+        created_by: str | None = None,
     ) -> list[str]:
-        """
-        List pattern IDs matching criteria.
+        """List pattern IDs matching criteria.
 
         Args:
             classification: Filter by classification
@@ -382,6 +375,7 @@ class MemDocsStorage:
 
         Returns:
             List of pattern IDs
+
         """
         pattern_ids = []
 
@@ -406,8 +400,7 @@ class MemDocsStorage:
 
 
 class SecureMemDocsIntegration:
-    """
-    Secure integration between Claude Memory and MemDocs.
+    """Secure integration between Claude Memory and MemDocs.
 
     Enforces enterprise security policies from CLAUDE.md with:
     - Automatic PII scrubbing
@@ -435,6 +428,7 @@ class SecureMemDocsIntegration:
         ...     pattern_id=result["pattern_id"],
         ...     user_id="doctor@hospital.com"
         ... )
+
     """
 
     def __init__(
@@ -446,8 +440,7 @@ class SecureMemDocsIntegration:
         enable_encryption: bool = True,
         master_key: bytes | None = None,
     ):
-        """
-        Initialize Secure MemDocs Integration.
+        """Initialize Secure MemDocs Integration.
 
         Args:
             claude_memory_config: Configuration for Claude memory integration
@@ -456,6 +449,7 @@ class SecureMemDocsIntegration:
             classification_rules: Custom classification rules (uses defaults if None)
             enable_encryption: Enable encryption for SENSITIVE patterns
             master_key: Encryption master key (auto-generated if None)
+
         """
         self.claude_memory_config = claude_memory_config
         self.classification_rules = classification_rules or DEFAULT_CLASSIFICATION_RULES
@@ -490,8 +484,7 @@ class SecureMemDocsIntegration:
         )
 
     def _load_security_policies(self) -> dict[str, Any]:
-        """
-        Load security policies from enterprise Claude memory.
+        """Load security policies from enterprise Claude memory.
 
         In production, this would parse the enterprise CLAUDE.md file
         to extract PII patterns, secret patterns, and classification rules.
@@ -519,8 +512,7 @@ class SecureMemDocsIntegration:
         session_id: str = "",
         custom_metadata: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        """
-        Store a pattern with full security pipeline.
+        """Store a pattern with full security pipeline.
 
         Pipeline:
             1. PII scrubbing
@@ -556,6 +548,7 @@ class SecureMemDocsIntegration:
             ...     user_id="nurse@hospital.com"
             ... )
             >>> print(f"Stored as {result['classification']}")
+
         """
         logger.info(
             "store_pattern_started",
@@ -616,7 +609,7 @@ class SecureMemDocsIntegration:
                 )
 
                 raise SecurityError(
-                    f"Secrets detected in pattern. Cannot store. Found: {secret_types}"
+                    f"Secrets detected in pattern. Cannot store. Found: {secret_types}",
                 )
 
             # Step 3: Classification
@@ -743,8 +736,7 @@ class SecureMemDocsIntegration:
         check_permissions: bool = True,
         session_id: str = "",
     ) -> dict[str, Any]:
-        """
-        Retrieve a pattern with access control and decryption.
+        """Retrieve a pattern with access control and decryption.
 
         Pipeline:
             1. Retrieve from MemDocs
@@ -775,6 +767,7 @@ class SecureMemDocsIntegration:
             ...     user_id="user@company.com"
             ... )
             >>> print(pattern["content"])
+
         """
         logger.info(
             "retrieve_pattern_started",
@@ -799,7 +792,9 @@ class SecureMemDocsIntegration:
             access_granted = True
             if check_permissions:
                 access_granted = self._check_access(
-                    user_id=user_id, classification=classification, metadata=metadata
+                    user_id=user_id,
+                    classification=classification,
+                    metadata=metadata,
                 )
 
                 if not access_granted:
@@ -822,7 +817,7 @@ class SecureMemDocsIntegration:
                     )
 
                     raise PermissionError(
-                        f"User {user_id} does not have access to {classification.value} pattern"
+                        f"User {user_id} does not have access to {classification.value} pattern",
                     )
 
             # Step 3: Decrypt if needed
@@ -849,7 +844,7 @@ class SecureMemDocsIntegration:
                 )
                 raise ValueError(
                     f"Pattern {pattern_id} has expired retention period "
-                    f"(created: {metadata['created_at']}, retention: {retention_days} days)"
+                    f"(created: {metadata['created_at']}, retention: {retention_days} days)",
                 )
 
             # Step 5: Audit logging
@@ -891,8 +886,7 @@ class SecureMemDocsIntegration:
             raise
 
     def _classify_pattern(self, content: str, pattern_type: str) -> Classification:
-        """
-        Auto-classify pattern based on content and type.
+        """Auto-classify pattern based on content and type.
 
         Classification heuristics:
         - SENSITIVE: Healthcare, financial, regulated data keywords
@@ -905,6 +899,7 @@ class SecureMemDocsIntegration:
 
         Returns:
             Classification level
+
         """
         content_lower = content.lower()
 
@@ -970,10 +965,12 @@ class SecureMemDocsIntegration:
         return Classification.PUBLIC
 
     def _check_access(
-        self, user_id: str, classification: Classification, metadata: dict[str, Any]
+        self,
+        user_id: str,
+        classification: Classification,
+        metadata: dict[str, Any],
     ) -> bool:
-        """
-        Check if user has access to pattern based on classification.
+        """Check if user has access to pattern based on classification.
 
         Access rules:
         - PUBLIC: All users
@@ -987,6 +984,7 @@ class SecureMemDocsIntegration:
 
         Returns:
             True if access granted, False otherwise
+
         """
         # PUBLIC: Everyone has access
         if classification == Classification.PUBLIC:
@@ -1017,8 +1015,7 @@ class SecureMemDocsIntegration:
         return False
 
     def _generate_pattern_id(self, user_id: str, pattern_type: str) -> str:
-        """
-        Generate unique pattern ID.
+        """Generate unique pattern ID.
 
         Format: pat_{timestamp}_{hash}
 
@@ -1028,6 +1025,7 @@ class SecureMemDocsIntegration:
 
         Returns:
             Unique pattern identifier
+
         """
         timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S")
 
@@ -1043,8 +1041,7 @@ class SecureMemDocsIntegration:
         classification: Classification | None = None,
         pattern_type: str | None = None,
     ) -> list[dict[str, Any]]:
-        """
-        List patterns accessible to user.
+        """List patterns accessible to user.
 
         Args:
             user_id: User listing patterns
@@ -1053,6 +1050,7 @@ class SecureMemDocsIntegration:
 
         Returns:
             List of pattern summaries
+
         """
         all_pattern_ids = self.storage.list_patterns()
         accessible_patterns = []
@@ -1083,20 +1081,21 @@ class SecureMemDocsIntegration:
                             "created_by": metadata.get("created_by"),
                             "created_at": metadata.get("created_at"),
                             "encrypted": metadata.get("encrypted", False),
-                        }
+                        },
                     )
 
             except Exception as e:
                 logger.warning(
-                    "failed_to_load_pattern_metadata", pattern_id=pattern_id, error=str(e)
+                    "failed_to_load_pattern_metadata",
+                    pattern_id=pattern_id,
+                    error=str(e),
                 )
                 continue
 
         return accessible_patterns
 
     def delete_pattern(self, pattern_id: str, user_id: str, session_id: str = "") -> bool:
-        """
-        Delete a pattern (with access control).
+        """Delete a pattern (with access control).
 
         Args:
             pattern_id: Pattern to delete
@@ -1108,6 +1107,7 @@ class SecureMemDocsIntegration:
 
         Raises:
             PermissionError: If user doesn't have permission to delete
+
         """
         # Retrieve pattern to check permissions
         pattern_data = self.storage.retrieve(pattern_id)
@@ -1143,7 +1143,7 @@ class SecureMemDocsIntegration:
                         "pattern_id": pattern_id,
                         "classification": metadata["classification"],
                     },
-                )
+                ),
             )
 
             logger.info("pattern_deleted", pattern_id=pattern_id, user_id=user_id)
@@ -1151,11 +1151,11 @@ class SecureMemDocsIntegration:
         return deleted
 
     def get_statistics(self) -> dict[str, Any]:
-        """
-        Get statistics about stored patterns.
+        """Get statistics about stored patterns.
 
         Returns:
             Dictionary with pattern statistics
+
         """
         all_patterns = self.storage.list_patterns()
 

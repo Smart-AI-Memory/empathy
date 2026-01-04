@@ -1,5 +1,4 @@
-"""
-Automated Security Scanning with Bandit
+"""Automated Security Scanning with Bandit
 
 Runs Bandit security scanner on the codebase to detect common vulnerabilities.
 
@@ -16,7 +15,6 @@ class TestSecurityScanning:
 
     def test_bandit_security_scan(self):
         """Run Bandit security scanner and ensure no high/medium severity issues"""
-
         # Run bandit scan
         subprocess.run(
             [
@@ -36,6 +34,7 @@ class TestSecurityScanning:
                 "--confidence-level",
                 "medium",
             ],
+            check=False,
             capture_output=True,
             text=True,
         )
@@ -77,6 +76,8 @@ class TestSecurityScanning:
 
     def test_bandit_is_installed(self):
         """Verify Bandit is installed and accessible"""
-        result = subprocess.run(["bandit", "--version"], capture_output=True, text=True)
+        result = subprocess.run(
+            ["bandit", "--version"], check=False, capture_output=True, text=True
+        )
         assert result.returncode == 0, "Bandit is not installed. Run: pip install bandit"
         assert "bandit" in result.stdout.lower()

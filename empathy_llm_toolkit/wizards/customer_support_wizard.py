@@ -1,5 +1,4 @@
-"""
-Customer Support Wizard - Privacy-Compliant AI Assistant
+"""Customer Support Wizard - Privacy-Compliant AI Assistant
 
 Specialized wizard for customer support with PII protection, ticket management,
 and comprehensive audit logging.
@@ -42,8 +41,7 @@ SUPPORT_PII_PATTERNS = [
 
 
 class CustomerSupportWizard(BaseWizard):
-    """
-    Privacy-compliant customer support AI assistant
+    """Privacy-compliant customer support AI assistant
 
     Implements customer PII protection for support operations:
     1. Customer PII detection and scrubbing
@@ -69,6 +67,7 @@ class CustomerSupportWizard(BaseWizard):
         ...     user_input="Help resolve customer issue with order #12345",
         ...     user_id="agent@company.com"
         ... )
+
     """
 
     def __init__(
@@ -76,12 +75,12 @@ class CustomerSupportWizard(BaseWizard):
         llm: EmpathyLLM,
         custom_pii_patterns: list[str] | None = None,
     ):
-        """
-        Initialize customer support wizard
+        """Initialize customer support wizard
 
         Args:
             llm: EmpathyLLM instance (security recommended)
             custom_pii_patterns: Additional company-specific PII patterns
+
         """
         pii_patterns = SUPPORT_PII_PATTERNS.copy()
 
@@ -107,7 +106,7 @@ class CustomerSupportWizard(BaseWizard):
 
         logger.info(
             f"CustomerSupportWizard initialized: {len(pii_patterns)} PII patterns, "
-            f"empathy level={config.default_empathy_level}, security={llm.enable_security}"
+            f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
     def _build_system_prompt(self) -> str:

@@ -1,5 +1,4 @@
-"""
-Legal Wizard - Attorney-Client Privilege Compliant AI Assistant
+"""Legal Wizard - Attorney-Client Privilege Compliant AI Assistant
 
 Specialized wizard for legal services with enhanced PII protection,
 attorney-client privilege safeguards, mandatory encryption, and comprehensive audit logging.
@@ -51,8 +50,7 @@ LEGAL_PII_PATTERNS = [
 
 
 class LegalWizard(BaseWizard):
-    """
-    Attorney-client privilege compliant legal services AI assistant
+    """Attorney-client privilege compliant legal services AI assistant
 
     Implements defense-in-depth security for attorney-client communications:
     1. Enhanced legal PII detection and scrubbing
@@ -78,6 +76,7 @@ class LegalWizard(BaseWizard):
         ...     user_input="Analyze contract for case 2024-CV-1234",
         ...     user_id="attorney@lawfirm.com"
         ... )
+
     """
 
     def __init__(
@@ -85,12 +84,12 @@ class LegalWizard(BaseWizard):
         llm: EmpathyLLM,
         custom_pii_patterns: list[str] | None = None,
     ):
-        """
-        Initialize attorney-client privilege compliant legal wizard
+        """Initialize attorney-client privilege compliant legal wizard
 
         Args:
             llm: EmpathyLLM instance (security should be enabled)
             custom_pii_patterns: Additional firm-specific PII patterns
+
         """
         pii_patterns = LEGAL_PII_PATTERNS.copy()
 
@@ -117,12 +116,12 @@ class LegalWizard(BaseWizard):
         if not llm.enable_security:
             logger.warning(
                 "LegalWizard initialized with security DISABLED. "
-                "Attorney-client privilege requires enable_security=True in EmpathyLLM."
+                "Attorney-client privilege requires enable_security=True in EmpathyLLM.",
             )
 
         logger.info(
             f"LegalWizard initialized: {len(pii_patterns)} PII patterns, "
-            f"empathy level={config.default_empathy_level}, security={llm.enable_security}"
+            f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
     def _build_system_prompt(self) -> str:

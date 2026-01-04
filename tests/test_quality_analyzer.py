@@ -1,5 +1,4 @@
-"""
-Test Quality Analyzer
+"""Test Quality Analyzer
 
 Tests the test quality analysis module for detecting test anti-patterns
 and quality issues.

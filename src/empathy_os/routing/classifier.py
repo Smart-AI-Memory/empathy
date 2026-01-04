@@ -1,5 +1,4 @@
-"""
-LLM-based Request Classifier
+"""LLM-based Request Classifier
 
 Uses a cheap model (Haiku) to classify developer requests
 and route them to appropriate wizard(s).
@@ -29,8 +28,7 @@ class ClassificationResult:
 
 
 class HaikuClassifier:
-    """
-    Uses Claude Haiku to classify requests to wizards.
+    """Uses Claude Haiku to classify requests to wizards.
 
     Why Haiku:
     - Cheapest tier model
@@ -40,11 +38,11 @@ class HaikuClassifier:
     """
 
     def __init__(self, api_key: str | None = None):
-        """
-        Initialize the classifier.
+        """Initialize the classifier.
 
         Args:
             api_key: Anthropic API key (defaults to ANTHROPIC_API_KEY env var)
+
         """
         self._api_key = api_key or os.getenv("ANTHROPIC_API_KEY")
         self._client = None
@@ -67,8 +65,7 @@ class HaikuClassifier:
         context: dict[str, Any] | None = None,
         available_wizards: dict[str, str] | None = None,
     ) -> ClassificationResult:
-        """
-        Classify a developer request and determine which wizard(s) to invoke.
+        """Classify a developer request and determine which wizard(s) to invoke.
 
         Args:
             request: The developer's natural language request
@@ -77,6 +74,7 @@ class HaikuClassifier:
 
         Returns:
             ClassificationResult with primary and secondary wizard recommendations
+
         """
         if available_wizards is None:
             available_wizards = self._registry.get_descriptions_for_classification()

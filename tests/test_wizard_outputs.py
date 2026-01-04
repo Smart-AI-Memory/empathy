@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Wizard Output Testing and Saving - ALL 44 WIZARDS
+"""Wizard Output Testing and Saving - ALL 44 WIZARDS
 ==================================================
 
 Tests all wizards and saves outputs for user review.
@@ -566,7 +565,8 @@ async def run_all_tests():
         for r in results:
             if not r["success"] and r.get("error") != "Wizard not loaded":
                 priority_icon = {"critical": "🔴", "high": "🟠", "medium": "🟡"}.get(
-                    r.get("priority", "medium"), "⚪"
+                    r.get("priority", "medium"),
+                    "⚪",
                 )
                 print(f"  {priority_icon} {r['wizard_name']}: {r.get('error', 'Unknown')[:60]}")
 
@@ -574,7 +574,8 @@ async def run_all_tests():
 async def _run_single_test(client, wizard, index, total, results, summary):
     """Run a single wizard test"""
     priority_icon = {"critical": "🔴", "high": "🟠", "medium": "🟡", "low": "🟢"}.get(
-        wizard.get("priority", "medium"), "⚪"
+        wizard.get("priority", "medium"),
+        "⚪",
     )
 
     print(f"[{index}/{total}] {priority_icon} {wizard['name']}...", end=" ", flush=True)

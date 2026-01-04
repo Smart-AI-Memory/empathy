@@ -1,5 +1,4 @@
-"""
-Coach Demo - Comprehensive Examples
+"""Coach Demo - Comprehensive Examples
 
 Demonstrates Coach orchestration agent with various software development tasks.
 

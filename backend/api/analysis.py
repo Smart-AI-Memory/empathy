@@ -1,5 +1,4 @@
-"""
-Analysis API endpoints.
+"""Analysis API endpoints.
 Handles code analysis, project scanning, and result retrieval.
 
 Input validation and error handling included for security.
@@ -73,8 +72,7 @@ async def create_session(
     service: EmpathyService = Depends(get_empathy_service),
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
-    """
-    Create a new analysis session.
+    """Create a new analysis session.
 
     Args:
         request: Session configuration
@@ -83,6 +81,7 @@ async def create_session(
 
     Returns:
         Session ID and metadata
+
     """
     try:
         session_id = await service.create_analysis_session(request.dict())
@@ -92,7 +91,7 @@ async def create_session(
             "message": "Analysis session created successfully",
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to create session: {str(e)}") from e
+        raise HTTPException(status_code=500, detail=f"Failed to create session: {e!s}") from e
 
 
 @router.get("/session/{session_id}")
@@ -101,8 +100,7 @@ async def get_session(
     service: EmpathyService = Depends(get_empathy_service),
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
-    """
-    Get analysis session results.
+    """Get analysis session results.
 
     Args:
         session_id: Session identifier
@@ -111,6 +109,7 @@ async def get_session(
 
     Returns:
         Session results and status
+
     """
     result = await service.get_session_results(session_id)
     if not result["success"]:
@@ -124,8 +123,7 @@ async def analyze_project(
     service: EmpathyService = Depends(get_empathy_service),
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
-    """
-    Analyze an entire project.
+    """Analyze an entire project.
 
     Args:
         request: Project analysis configuration
@@ -134,14 +132,16 @@ async def analyze_project(
 
     Returns:
         Project analysis results
+
     """
     try:
         result = await service.analyze_project(
-            project_path=request.project_path, file_patterns=request.file_patterns
+            project_path=request.project_path,
+            file_patterns=request.file_patterns,
         )
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Project analysis failed: {str(e)}") from e
+        raise HTTPException(status_code=500, detail=f"Project analysis failed: {e!s}") from e
 
 
 @router.post("/file")
@@ -151,8 +151,7 @@ async def analyze_file(
     service: EmpathyService = Depends(get_empathy_service),
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
-    """
-    Analyze a single uploaded file.
+    """Analyze a single uploaded file.
 
     Args:
         file: Uploaded file (max 10MB)
@@ -165,6 +164,7 @@ async def analyze_file(
 
     Raises:
         HTTPException: If file is invalid or analysis fails
+
     """
     # Validate file size (10MB limit)
     MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
@@ -203,7 +203,8 @@ async def analyze_file(
         # Validate content is not empty
         if not content:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="File cannot be empty"
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="File cannot be empty",
             )
 
         code = content.decode("utf-8")
@@ -213,21 +214,23 @@ async def analyze_file(
         return {"success": True, "filename": file.filename, "analysis": result}
     except UnicodeDecodeError:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="File must be valid UTF-8 text"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must be valid UTF-8 text",
         ) from None
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"File analysis failed: {str(e)}",
+            detail=f"File analysis failed: {e!s}",
         ) from e
 
 
 @router.get("/history")
 async def get_analysis_history(
-    limit: int = 10, offset: int = 0, credentials: HTTPAuthorizationCredentials = Depends(security)
+    limit: int = 10,
+    offset: int = 0,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
-    """
-    Get user's analysis history.
+    """Get user's analysis history.
 
     Args:
         limit: Number of results to return (max 100, default 10)
@@ -239,6 +242,7 @@ async def get_analysis_history(
 
     Raises:
         HTTPException: If limit or offset are invalid
+
     """
     # Validate pagination parameters
     MAX_LIMIT = 100
@@ -250,7 +254,8 @@ async def get_analysis_history(
 
     if offset < 0:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="offset cannot be negative"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="offset cannot be negative",
         )
 
     # Placeholder implementation
@@ -262,7 +267,7 @@ async def get_analysis_history(
                 "timestamp": "2025-10-19T12:00:00Z",
                 "issues_found": 5,
                 "status": "completed",
-            }
+            },
         ],
         "total": 1,
         "limit": limit,
@@ -272,10 +277,10 @@ async def get_analysis_history(
 
 @router.delete("/session/{session_id}")
 async def delete_session(
-    session_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)
+    session_id: str,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
-    """
-    Delete an analysis session.
+    """Delete an analysis session.
 
     Args:
         session_id: Session identifier
@@ -283,5 +288,6 @@ async def delete_session(
 
     Returns:
         Deletion confirmation
+
     """
     return {"success": True, "message": f"Session {session_id} deleted successfully"}

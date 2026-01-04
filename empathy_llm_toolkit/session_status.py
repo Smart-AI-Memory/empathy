@@ -1,5 +1,4 @@
-"""
-Session Status Assistant
+"""Session Status Assistant
 
 Proactive briefing system that greets developers when they return to an
 Empathy-enhanced project, providing a prioritized status report with
@@ -93,8 +92,7 @@ class SessionStatus:
 
 
 class SessionStatusCollector:
-    """
-    Aggregates project status from all data sources.
+    """Aggregates project status from all data sources.
 
     Scans patterns directories, roadmap docs, and git history
     to build a prioritized status report for developers.
@@ -119,8 +117,7 @@ class SessionStatusCollector:
         self._state: dict[str, Any] | None = None
 
     def should_show(self) -> bool:
-        """
-        Check if status should be shown based on inactivity.
+        """Check if status should be shown based on inactivity.
 
         Returns True if:
         - First interaction after inactivity_minutes of no activity
@@ -164,11 +161,11 @@ class SessionStatusCollector:
         logger.debug("Recorded interaction at %s", state["last_interaction"])
 
     def collect(self) -> SessionStatus:
-        """
-        Collect and prioritize status items from all data sources.
+        """Collect and prioritize status items from all data sources.
 
         Returns:
             SessionStatus with prioritized items and wins
+
         """
         status = SessionStatus()
 
@@ -224,7 +221,7 @@ class SessionStatusCollector:
                     action_prompt=f"Review security finding: {finding}. "
                     f"Provide analysis and recommend: ACCEPTED, DEFERRED, or FALSE_POSITIVE.",
                     details={"pending_count": pending_count, "items": pending_items[:3]},
-                )
+                ),
             )
 
     def _collect_bug_items(self, status: SessionStatus) -> None:
@@ -267,7 +264,7 @@ class SessionStatusCollector:
                     f"{first_bug.get('error_message', 'No description')}. "
                     f"File: {first_bug.get('file_path', 'unknown')}",
                     details={"count": len(high_severity), "bugs": high_severity[:3]},
-                )
+                ),
             )
 
         # Add investigating bugs (P2)
@@ -285,7 +282,7 @@ class SessionStatusCollector:
                     f"Use: empathy patterns resolve {first_bug.get('bug_id', '')} "
                     f"--root-cause '<cause>' --fix '<fix>'",
                     details={"count": len(investigating), "bugs": investigating[:5]},
-                )
+                ),
             )
 
     def _collect_tech_debt_items(self, status: SessionStatus) -> None:
@@ -336,7 +333,7 @@ class SessionStatusCollector:
                         "change": change,
                         "hotspots": current.get("hotspots", [])[:3],
                     },
-                )
+                ),
             )
         elif change < 0:
             # Tech debt decreasing - this is a win
@@ -364,7 +361,7 @@ class SessionStatusCollector:
                         {
                             "task": task.strip(),
                             "file": plan_file.name,
-                        }
+                        },
                     )
             except OSError as e:
                 logger.warning("Failed to read plan file %s: %s", plan_file, e)
@@ -381,7 +378,7 @@ class SessionStatusCollector:
                     action_prompt=f"Continue roadmap item from {first_task['file']}: "
                     f"{first_task['task']}",
                     details={"count": len(unchecked_tasks), "tasks": unchecked_tasks[:5]},
-                )
+                ),
             )
 
     def _collect_git_items(self, status: SessionStatus) -> None:
@@ -389,6 +386,7 @@ class SessionStatusCollector:
         try:
             result = subprocess.run(
                 ["git", "log", "-10", "--format=%h|%s", "--since=7.days"],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=5,
@@ -413,7 +411,7 @@ class SessionStatusCollector:
                         {
                             "hash": commit_hash,
                             "message": message,
-                        }
+                        },
                     )
 
             if wip_commits:
@@ -429,7 +427,7 @@ class SessionStatusCollector:
                         f"{first_commit['message']}. "
                         "This commit may need follow-up work.",
                         details={"count": len(wip_commits), "commits": wip_commits[:5]},
-                    )
+                    ),
                 )
 
         except Exception as e:
@@ -540,8 +538,7 @@ class SessionStatusCollector:
         status: SessionStatus,
         max_items: int | None = None,
     ) -> str:
-        """
-        Format status for terminal output.
+        """Format status for terminal output.
 
         Args:
             status: The SessionStatus to format
@@ -549,6 +546,7 @@ class SessionStatusCollector:
 
         Returns:
             Formatted markdown string
+
         """
         max_items = max_items or self.config["max_display_items"]
         sorted_items = status.get_sorted_items()
@@ -616,8 +614,7 @@ class SessionStatusCollector:
         return json.dumps(data, indent=2, default=str)
 
     def get_action_prompt(self, status: SessionStatus, selection: int) -> str | None:
-        """
-        Get the action prompt for a selected item.
+        """Get the action prompt for a selected item.
 
         Args:
             status: The SessionStatus
@@ -625,6 +622,7 @@ class SessionStatusCollector:
 
         Returns:
             Action prompt string, or None if invalid selection
+
         """
         sorted_items = status.get_sorted_items()
 

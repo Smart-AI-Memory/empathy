@@ -1,5 +1,4 @@
-"""
-WebSocket Progress Server
+"""WebSocket Progress Server
 
 Real-time progress streaming for workflow execution.
 Enables live UI updates in VS Code and other clients.
@@ -54,8 +53,7 @@ class ProgressServerConfig:
 
 
 class ProgressServer:
-    """
-    WebSocket server for broadcasting workflow progress.
+    """WebSocket server for broadcasting workflow progress.
 
     Clients connect and receive real-time progress updates for all
     running workflows. Supports multiple concurrent connections.
@@ -65,7 +63,7 @@ class ProgressServer:
         if not WEBSOCKETS_AVAILABLE:
             raise ImportError(
                 "websockets package is required for ProgressServer. "
-                "Install with: pip install websockets"
+                "Install with: pip install websockets",
             )
 
         self.config = config or ProgressServerConfig()
@@ -125,8 +123,8 @@ class ProgressServer:
                         "type": "connected",
                         "message": "Connected to Empathy progress server",
                         "active_workflows": list(self._trackers.keys()),
-                    }
-                )
+                    },
+                ),
             )
 
             # Handle incoming messages (subscriptions, etc.)
@@ -154,7 +152,7 @@ class ProgressServer:
                 if workflow_id:
                     # Could track per-client subscriptions here
                     await websocket.send(
-                        json.dumps({"type": "subscribed", "workflow_id": workflow_id})
+                        json.dumps({"type": "subscribed", "workflow_id": workflow_id}),
                     )
 
             elif msg_type == "get_status":
@@ -165,8 +163,8 @@ class ProgressServer:
                             "type": "status",
                             "active_workflows": list(self._trackers.keys()),
                             "client_count": len(self._clients),
-                        }
-                    )
+                        },
+                    ),
                 )
 
         except json.JSONDecodeError:
@@ -181,7 +179,8 @@ class ProgressServer:
 
         # Broadcast to all clients
         await asyncio.gather(
-            *[self._send_safe(client, message) for client in self._clients], return_exceptions=True
+            *[self._send_safe(client, message) for client in self._clients],
+            return_exceptions=True,
         )
 
     async def _send_safe(self, client: WebSocketServerProtocol, message: str) -> None:
@@ -197,8 +196,7 @@ class ProgressServer:
         workflow_id: str,
         stage_names: list[str],
     ) -> ProgressTracker:
-        """
-        Create a progress tracker that broadcasts to this server.
+        """Create a progress tracker that broadcasts to this server.
 
         Args:
             workflow_name: Name of the workflow
@@ -207,6 +205,7 @@ class ProgressServer:
 
         Returns:
             ProgressTracker configured to broadcast updates
+
         """
         tracker = ProgressTracker(
             workflow_name=workflow_name,
@@ -230,8 +229,7 @@ class ProgressServer:
         self._trackers.pop(workflow_id, None)
 
     def get_callback(self) -> ProgressCallback:
-        """
-        Get a synchronous callback that queues broadcasts.
+        """Get a synchronous callback that queues broadcasts.
 
         Useful for integration with sync code that can't await.
         """
@@ -267,8 +265,7 @@ def get_progress_server(config: ProgressServerConfig | None = None) -> ProgressS
 
 @asynccontextmanager
 async def progress_server_context(config: ProgressServerConfig | None = None):
-    """
-    Context manager for running the progress server.
+    """Context manager for running the progress server.
 
     Usage:
         async with progress_server_context() as server:
@@ -285,8 +282,7 @@ async def progress_server_context(config: ProgressServerConfig | None = None):
 
 
 async def run_server(host: str = "localhost", port: int = 8766) -> None:
-    """
-    Run the progress server standalone.
+    """Run the progress server standalone.
 
     Can be run as: python -m empathy_os.workflows.progress_server
     """

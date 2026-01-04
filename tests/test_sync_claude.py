@@ -1,5 +1,4 @@
-"""
-Tests for empathy_llm_toolkit/cli/sync_claude.py
+"""Tests for empathy_llm_toolkit/cli/sync_claude.py
 
 Tests the sync-claude CLI command including:
 - Pattern loading from directories
@@ -79,8 +78,8 @@ class TestLoadPatternsFromDirectory:
                         "bug_id": "bug_001",
                         "error_type": "null_reference",
                         "description": "Missing null check",
-                    }
-                )
+                    },
+                ),
             )
 
             patterns = load_patterns_from_directory(Path(tmpdir), "debugging")
@@ -97,8 +96,8 @@ class TestLoadPatternsFromDirectory:
                         {
                             "bug_id": f"bug_{i}",
                             "error_type": "test",
-                        }
-                    )
+                        },
+                    ),
                 )
 
             patterns = load_patterns_from_directory(Path(tmpdir), "debugging")
@@ -259,8 +258,8 @@ class TestSyncClaudeIntegration:
                         "error_type": "null_reference",
                         "root_cause": "API returned null",
                         "fix": "Add null check",
-                    }
-                )
+                    },
+                ),
             )
 
             # Load and format

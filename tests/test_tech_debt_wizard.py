@@ -1,5 +1,4 @@
-"""
-Tests for wizards_consolidated/software/tech_debt_wizard.py
+"""Tests for wizards_consolidated/software/tech_debt_wizard.py
 
 Tests the TechDebtWizard including:
 - DebtItem, DebtSnapshot, DebtTrajectory dataclasses
@@ -450,7 +449,7 @@ class TestTechDebtWizardIntegration:
             # Create project with various debt
             (Path(tmpdir) / "main.py").write_text("# TODO: Refactor\n# FIXME: Bug here\nx = 1\n")
             (Path(tmpdir) / "utils.py").write_text(
-                "# HACK: Workaround\n# XXX: Review this\ny = 2\n"
+                "# HACK: Workaround\n# XXX: Review this\ny = 2\n",
             )
 
             wizard = TechDebtWizard(pattern_storage_path=tmpdir)

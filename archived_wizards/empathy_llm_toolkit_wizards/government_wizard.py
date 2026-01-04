@@ -1,5 +1,4 @@
-"""
-Government/Compliance Wizard - Regulatory Compliance AI Assistant
+"""Government/Compliance Wizard - Regulatory Compliance AI Assistant
 
 Specialized wizard for government and regulatory work with citizen PII protection,
 FISMA compliance, and comprehensive audit logging.
@@ -47,8 +46,7 @@ GOVERNMENT_PII_PATTERNS = [
 
 
 class GovernmentWizard(BaseWizard):
-    """
-    FISMA-compliant government and regulatory AI assistant
+    """FISMA-compliant government and regulatory AI assistant
 
     Implements defense-in-depth security for government data:
     1. Citizen PII detection and scrubbing
@@ -74,6 +72,7 @@ class GovernmentWizard(BaseWizard):
         ...     user_input="Help me analyze this regulatory compliance issue",
         ...     user_id="analyst@agency.gov"
         ... )
+
     """
 
     def __init__(
@@ -81,12 +80,12 @@ class GovernmentWizard(BaseWizard):
         llm: EmpathyLLM,
         custom_pii_patterns: list[str] | None = None,
     ):
-        """
-        Initialize government/compliance wizard
+        """Initialize government/compliance wizard
 
         Args:
             llm: EmpathyLLM instance (security should be enabled)
             custom_pii_patterns: Additional agency-specific PII patterns
+
         """
         pii_patterns = GOVERNMENT_PII_PATTERNS.copy()
 
@@ -113,12 +112,12 @@ class GovernmentWizard(BaseWizard):
         if not llm.enable_security:
             logger.warning(
                 "GovernmentWizard initialized with security DISABLED. "
-                "FISMA compliance requires enable_security=True in EmpathyLLM."
+                "FISMA compliance requires enable_security=True in EmpathyLLM.",
             )
 
         logger.info(
             f"GovernmentWizard initialized: {len(pii_patterns)} PII patterns, "
-            f"empathy level={config.default_empathy_level}, security={llm.enable_security}"
+            f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
     def _build_system_prompt(self) -> str:

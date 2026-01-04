@@ -1,5 +1,4 @@
-"""
-Built-in XML Prompt Templates Registry
+"""Built-in XML Prompt Templates Registry
 
 Provides pre-configured XML templates for common workflows.
 
@@ -281,34 +280,34 @@ BUILTIN_TEMPLATES: dict[str, XmlPromptTemplate] = {
 
 
 def get_template(name: str) -> XmlPromptTemplate | None:
-    """
-    Get a built-in template by name.
+    """Get a built-in template by name.
 
     Args:
         name: Template name (e.g., "security-audit", "code-review").
 
     Returns:
         XmlPromptTemplate if found, None otherwise.
+
     """
     return BUILTIN_TEMPLATES.get(name)
 
 
 def list_templates() -> list[str]:
-    """
-    List all available built-in template names.
+    """List all available built-in template names.
 
     Returns:
         List of template names.
+
     """
     return list(BUILTIN_TEMPLATES.keys())
 
 
 def register_template(name: str, template: XmlPromptTemplate) -> None:
-    """
-    Register a custom template.
+    """Register a custom template.
 
     Args:
         name: Template name for lookup.
         template: XmlPromptTemplate instance.
+
     """
     BUILTIN_TEMPLATES[name] = template

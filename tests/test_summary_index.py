@@ -1,5 +1,4 @@
-"""
-Tests for ConversationSummaryIndex
+"""Tests for ConversationSummaryIndex
 
 Tests the Redis-backed conversation summary with topic indexing.
 """

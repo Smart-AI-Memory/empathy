@@ -1,5 +1,4 @@
-"""
-Performance Analysis Components
+"""Performance Analysis Components
 
 Supporting modules for Performance Profiling Wizard.
 

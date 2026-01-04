@@ -1,5 +1,4 @@
-"""
-Schema definitions for keyboard shortcut generation.
+"""Schema definitions for keyboard shortcut generation.
 
 Uses Pydantic models for validation and serialization.
 """

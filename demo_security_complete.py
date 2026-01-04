@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Comprehensive End-to-End Security Demo
+"""Comprehensive End-to-End Security Demo
 Empathy Framework v1.8.0-beta
 
 Demonstrates all Phase 2 security features with real-world scenarios:
@@ -178,7 +177,9 @@ def scenario_1_healthcare():
 
         # Retrieve and show PII scrubbing
         retrieved = integration.retrieve_pattern(
-            pattern_id=result["pattern_id"], user_id="nurse@hospital.com", check_permissions=True
+            pattern_id=result["pattern_id"],
+            user_id="nurse@hospital.com",
+            check_permissions=True,
         )
 
         print_before_after(clinical_protocol, retrieved["content"])
@@ -260,7 +261,9 @@ def scenario_2_financial():
 
         # Retrieve and verify scrubbing
         retrieved = integration.retrieve_pattern(
-            pattern_id=result["pattern_id"], user_id="processor@bank.com", check_permissions=True
+            pattern_id=result["pattern_id"],
+            user_id="processor@bank.com",
+            check_permissions=True,
         )
 
         print_before_after(financial_data, retrieved["content"])
@@ -326,7 +329,7 @@ def scenario_3_secrets_detection():
 
     except SecurityError as e:
         print_success("Storage BLOCKED as expected!")
-        print_warning(f"Reason: {str(e)}")
+        print_warning(f"Reason: {e!s}")
 
         # Show what was detected
         detector = SecretsDetector()
@@ -535,12 +538,13 @@ def scenario_5_audit_analysis():
     if violations:
         for v in violations:
             print(
-                f"  - {v.get('violation_type')}: {v.get('severity')} severity (blocked={v.get('blocked', False)})"
+                f"  - {v.get('violation_type')}: {v.get('severity')} severity (blocked={v.get('blocked', False)})",
             )
 
     # All SENSITIVE pattern access
     sensitive_access = logger.query(
-        event_type="pattern_store", filters={"classification": "SENSITIVE"}
+        event_type="pattern_store",
+        filters={"classification": "SENSITIVE"},
     )
     print_metric("\n🔒 SENSITIVE Pattern Operations", len(sensitive_access))
 
@@ -632,13 +636,17 @@ def scenario_6_performance():
 
     start = time.time()
     integration.store_pattern(
-        content=test_content, pattern_type="test", user_id="test@company.com", auto_classify=True
+        content=test_content,
+        pattern_type="test",
+        user_id="test@company.com",
+        auto_classify=True,
     )
     elapsed = (time.time() - start) * 1000
 
     print_metric("  End-to-End Time", f"{elapsed:.2f}ms")
     print_metric(
-        "  Pipeline Stages", "7 (validate → scrub → detect → classify → encrypt → store → audit)"
+        "  Pipeline Stages",
+        "7 (validate → scrub → detect → classify → encrypt → store → audit)",
     )
 
     # Summary
@@ -679,7 +687,7 @@ def main():
 ║                                                                      ║
 ╚══════════════════════════════════════════════════════════════════════╝
 {Colors.ENDC}
-    """
+    """,
     )
 
     print_info(f"Demo started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
@@ -742,7 +750,7 @@ def main():
         cleanup_demo()
 
     print(
-        f"\n{Colors.BOLD}Demo completed at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}{Colors.ENDC}\n"
+        f"\n{Colors.BOLD}Demo completed at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}{Colors.ENDC}\n",
     )
 
 

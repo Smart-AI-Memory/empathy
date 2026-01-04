@@ -1,5 +1,4 @@
-"""
-Chain Executor
+"""Chain Executor
 
 Executes wizard chains based on triggers and conditions.
 Handles auto-chaining, approval workflows, and chain tracking.
@@ -65,8 +64,7 @@ class ChainExecution:
 
 
 class ChainExecutor:
-    """
-    Executes wizard chains based on configuration and results.
+    """Executes wizard chains based on configuration and results.
 
     Usage:
         executor = ChainExecutor()
@@ -83,11 +81,11 @@ class ChainExecutor:
         self,
         config_path: str | Path = ".empathy/wizard_chains.yaml",
     ):
-        """
-        Initialize the chain executor.
+        """Initialize the chain executor.
 
         Args:
             config_path: Path to wizard_chains.yaml
+
         """
         self.config_path = Path(config_path)
         self._configs: dict[str, ChainConfig] = {}
@@ -121,7 +119,7 @@ class ChainExecutor:
                             next_wizard=t.get("next", ""),
                             approval_required=t.get("approval_required", False),
                             reason=t.get("reason", ""),
-                        )
+                        ),
                     )
 
                 self._configs[wizard_name] = ChainConfig(
@@ -144,8 +142,7 @@ class ChainExecutor:
         wizard_name: str,
         result: dict[str, Any],
     ) -> list[ChainTrigger]:
-        """
-        Get triggered chain steps based on wizard result.
+        """Get triggered chain steps based on wizard result.
 
         Args:
             wizard_name: The wizard that just completed
@@ -153,6 +150,7 @@ class ChainExecutor:
 
         Returns:
             List of triggered ChainTriggers
+
         """
         if not self._global_settings.get("auto_chain_enabled", True):
             return []
@@ -173,8 +171,7 @@ class ChainExecutor:
         condition: str,
         context: dict[str, Any],
     ) -> bool:
-        """
-        Evaluate a trigger condition against a result context.
+        """Evaluate a trigger condition against a result context.
 
         Supports:
         - Comparisons: var > 0, var == 'value', var < 10
@@ -187,6 +184,7 @@ class ChainExecutor:
 
         Returns:
             True if condition is met
+
         """
         if not condition:
             return False
@@ -232,8 +230,7 @@ class ChainExecutor:
         wizard_name: str,
         result: dict[str, Any],
     ) -> tuple[bool, list[ChainTrigger]]:
-        """
-        Check if a chain should be triggered and return triggers.
+        """Check if a chain should be triggered and return triggers.
 
         Args:
             wizard_name: The wizard that completed
@@ -241,6 +238,7 @@ class ChainExecutor:
 
         Returns:
             Tuple of (should_trigger, list_of_triggers)
+
         """
         triggers = self.get_triggered_chains(wizard_name, result)
         return len(triggers) > 0, triggers
@@ -262,8 +260,7 @@ class ChainExecutor:
         initial_wizard: str,
         triggered_steps: list[ChainTrigger] | None = None,
     ) -> ChainExecution:
-        """
-        Create a new chain execution record.
+        """Create a new chain execution record.
 
         Args:
             initial_wizard: The starting wizard
@@ -271,6 +268,7 @@ class ChainExecutor:
 
         Returns:
             ChainExecution object
+
         """
         execution = ChainExecution(
             chain_id=f"chain_{datetime.now().strftime('%Y%m%d%H%M%S')}",
@@ -284,7 +282,7 @@ class ChainExecutor:
                 triggered_by="manual",
                 approval_required=False,
                 approved=True,
-            )
+            ),
         )
 
         # Add triggered steps
@@ -295,7 +293,7 @@ class ChainExecutor:
                         wizard_name=trigger.next_wizard,
                         triggered_by=trigger.condition,
                         approval_required=trigger.approval_required,
-                    )
+                    ),
                 )
 
         self._executions.append(execution)
@@ -345,8 +343,7 @@ class ChainExecutor:
         step: ChainStep,
         result: dict[str, Any],
     ) -> list[ChainTrigger]:
-        """
-        Mark a step as complete and check for new triggers.
+        """Mark a step as complete and check for new triggers.
 
         Args:
             execution: The chain execution
@@ -355,6 +352,7 @@ class ChainExecutor:
 
         Returns:
             List of newly triggered steps
+
         """
         step.completed_at = datetime.now()
         step.result = result
@@ -371,7 +369,7 @@ class ChainExecutor:
                         wizard_name=trigger.next_wizard,
                         triggered_by=trigger.condition,
                         approval_required=trigger.approval_required,
-                    )
+                    ),
                 )
 
         # Check if chain is complete

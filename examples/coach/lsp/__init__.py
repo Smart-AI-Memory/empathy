@@ -1,5 +1,4 @@
-"""
-Coach Language Server Protocol Implementation
+"""Coach Language Server Protocol Implementation
 
 Provides LSP server for IDE integration (VS Code, JetBrains, etc.)
 """

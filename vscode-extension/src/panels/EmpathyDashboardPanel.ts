@@ -134,6 +134,15 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     console.log('[EmpathyDashboard] Received runWorkflowInEditor:', message.workflow);
                     await this._runWorkflowInEditor(message.workflow, message.input);
                     break;
+                case 'openHealthPanel':
+                    vscode.commands.executeCommand('empathy.openHealthPanel');
+                    break;
+                case 'openCostsPanel':
+                    vscode.commands.executeCommand('empathy.openCostsPanel');
+                    break;
+                case 'openWorkflowHistory':
+                    vscode.commands.executeCommand('empathy.openWorkflowHistory');
+                    break;
             }
         });
 
@@ -1654,42 +1663,6 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             overflow: hidden;
         }
 
-        /* Tab Bar */
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid var(--border);
-            background: var(--tab-inactive);
-        }
-
-        .tab {
-            padding: 8px 12px;
-            cursor: pointer;
-            border: none;
-            background: transparent;
-            color: var(--fg);
-            opacity: 0.7;
-            font-size: 11px;
-            border-bottom: 2px solid transparent;
-        }
-
-        .tab:hover { opacity: 1; }
-
-        .tab.active {
-            opacity: 1;
-            background: var(--tab-active);
-            border-bottom-color: var(--button-bg);
-        }
-
-        /* Tab Content */
-        .tab-content {
-            display: none;
-            padding: 12px;
-            height: calc(100vh - 36px);
-            overflow-y: auto;
-        }
-
-        .tab-content.active { display: block; }
-
         /* Cards */
         .card {
             background: var(--vscode-input-background);
@@ -2019,16 +1992,18 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
     </style>
 </head>
 <body>
-    <div class="tabs">
-        <button class="tab active" data-tab="power">Power</button>
-        <button class="tab" data-tab="health">Health</button>
-        <button class="tab" data-tab="costs">Costs</button>
-        <button class="tab" data-tab="workflows">Workflows <span style="font-size: 9px; opacity: 0.6; font-weight: normal;">(Beta)</span></button>
-    </div>
+    <div id="error-banner"></div>
 
-    <!-- Power Tab -->
-    <div id="tab-power" class="tab-content active">
-        <div id="error-banner"></div>
+    <!-- Health Summary Bar -->
+    <div class="card" style="margin-bottom: 12px; cursor: pointer;" onclick="openHealthPanel()" title="Click to view detailed health metrics">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <span style="font-size: 12px; font-weight: 600;">Health:</span>
+                <span id="health-score-summary" style="font-size: 14px; font-weight: 700; margin-left: 8px;">--</span>
+            </div>
+            <span style="font-size: 11px; opacity: 0.7;">View Details →</span>
+        </div>
+    </div>
         <div class="card">
             <div class="card-title">Quick Actions</div>
             <div class="actions-grid workflow-grid">
@@ -2056,28 +2031,6 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     <span class="action-icon">&#x2699;</span>
                     <span>Setup</span>
                 </button>
-            </div>
-        </div>
-
-    <div class="card" style="margin-top: 12px">
-            <div class="card-title">Quick Stats</div>
-            <div class="metrics-grid">
-                <div class="metric">
-                    <div class="metric-value" id="power-patterns">--</div>
-                    <div class="metric-label">Patterns</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value" id="power-health">--</div>
-                    <div class="metric-label">Health</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value success" id="power-savings">--</div>
-                    <div class="metric-label">Savings</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value" id="power-requests">--</div>
-                    <div class="metric-label">Requests</div>
-                </div>
             </div>
         </div>
 
@@ -2238,355 +2191,11 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         <div style="margin-top: 12px; text-align: center;">
             <button class="btn" id="open-web-dashboard" style="opacity: 0.7; font-size: 10px;">&#x1F310; Open Full Web Dashboard</button>
         </div>
-    </div>
-
-    <!-- Health Tab - Tree View Style -->
-    <div id="tab-health" class="tab-content">
-        <div class="score-container" style="padding: 12px;">
-            <div class="score-circle good" id="health-score">--</div>
-            <div style="opacity: 0.7; font-size: 11px;">Health Score (v2)</div>
-        </div>
-
-        <div class="health-tree">
-            <div class="tree-item" data-cmd="learn">
-                <span class="tree-icon" id="patterns-icon">&#x2714;</span>
-                <span class="tree-label">Patterns Learned</span>
-                <span class="tree-value" id="metric-patterns">--</span>
-            </div>
-            <div class="tree-item" data-cmd="fixLint">
-                <span class="tree-icon" id="lint-icon">&#x2714;</span>
-                <span class="tree-label">Lint</span>
-                <span class="tree-value" id="metric-lint">--</span>
-            </div>
-            <div class="tree-item" data-cmd="fixAll">
-                <span class="tree-icon" id="types-icon">&#x2714;</span>
-                <span class="tree-label">Types</span>
-                <span class="tree-value" id="metric-types">--</span>
-            </div>
-            <div class="tree-item" data-cmd="securityScan">
-                <span class="tree-icon" id="security-icon">&#x2714;</span>
-                <span class="tree-label">Security</span>
-                <span class="tree-value" id="metric-security">0 high</span>
-            </div>
-            <div class="tree-item" data-cmd="runTests">
-                <span class="tree-icon" id="tests-icon">&#x2714;</span>
-                <span class="tree-label">Tests</span>
-                <span class="tree-value" id="metric-tests">--</span>
-            </div>
-            <div class="tree-item">
-                <span class="tree-icon">&#x1F4DD;</span>
-                <span class="tree-label">Tech Debt</span>
-                <span class="tree-value" id="metric-debt">--</span>
-            </div>
-        </div>
-
-        <div class="card" style="margin-top: 10px;">
-            <div class="card-title">Coverage</div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <div class="progress-bar" style="flex: 1">
-                    <div class="progress-fill success" id="coverage-bar" style="width: 0%"></div>
-                </div>
-                <span id="coverage-value">--%</span>
-            </div>
-        </div>
-
-        <!-- Health Actions -->
-        <div class="card" style="margin-top: 10px;">
-            <div class="card-title">Health Actions</div>
-            <div class="actions-grid" style="grid-template-columns: repeat(2, 1fr); gap: 8px;">
-                <button class="action-btn" data-cmd="runScan" title="Run HealthCheckCrew for comprehensive 5-agent analysis">
-                    <span class="action-icon">&#x1FA7A;</span>
-                    <span>Deep Scan</span>
-                </button>
-                <button class="action-btn" data-cmd="fixAll" title="Apply safe auto-fixes (ruff --fix, formatting)">
-                    <span class="action-icon">&#x1F527;</span>
-                    <span>Auto Fix</span>
-                </button>
-                <button class="action-btn" data-cmd="runTests" title="Run pytest test suite">
-                    <span class="action-icon">&#x1F9EA;</span>
-                    <span>Run Tests</span>
-                </button>
-                <button class="action-btn" data-cmd="securityScan" title="Quick security vulnerability scan">
-                    <span class="action-icon">&#x1F512;</span>
-                    <span>Security Scan</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Costs Tab -->
-    <div id="tab-costs" class="tab-content">
-        <!-- Current Model Configuration -->
-        <div class="card">
-            <div class="card-title">Current Configuration</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;">
-                <div>
-                    <div style="font-size: 10px; opacity: 0.7; margin-bottom: 4px;">Provider</div>
-                    <div style="font-size: 14px; font-weight: 600;" id="current-provider">Detecting...</div>
-                </div>
-                <div>
-                    <div style="font-size: 10px; opacity: 0.7; margin-bottom: 4px;">Mode</div>
-                    <div style="font-size: 14px; font-weight: 600;" id="current-mode">--</div>
-                </div>
-            </div>
-            <div style="margin-top: 12px;">
-                <div style="font-size: 10px; opacity: 0.7; margin-bottom: 4px;">Active Models by Tier</div>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 11px;" id="tier-models">
-                    <div style="padding: 6px; background: var(--vscode-input-background); border-radius: 4px;">
-                        <div style="font-weight: 600; color: var(--vscode-charts-green);">Cheap</div>
-                        <div style="opacity: 0.8;" id="model-cheap">--</div>
-                    </div>
-                    <div style="padding: 6px; background: var(--vscode-input-background); border-radius: 4px;">
-                        <div style="font-weight: 600; color: var(--vscode-charts-blue);">Capable</div>
-                        <div style="opacity: 0.8;" id="model-capable">--</div>
-                    </div>
-                    <div style="padding: 6px; background: var(--vscode-input-background); border-radius: 4px;">
-                        <div style="font-weight: 600; color: var(--vscode-charts-purple);">Premium</div>
-                        <div style="opacity: 0.8;" id="model-premium">--</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Cost Summary (7 days) -->
-        <div class="card" style="margin-top: 12px;">
-            <div class="card-title">Cost Summary (7 days)</div>
-            <div id="costs-summary" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; text-align: center;">
-                <div>
-                    <div style="font-size: 20px; font-weight: bold; color: var(--vscode-charts-green);" id="costs-saved">$0.00</div>
-                    <div style="font-size: 10px; opacity: 0.7;">Saved</div>
-                </div>
-                <div>
-                    <div style="font-size: 20px; font-weight: bold;" id="costs-percent">0%</div>
-                    <div style="font-size: 10px; opacity: 0.7;">Reduction</div>
-                </div>
-                <div>
-                    <div style="font-size: 20px; font-weight: bold;" id="costs-total">$0.00</div>
-                    <div style="font-size: 10px; opacity: 0.7;">Actual</div>
-                </div>
-            </div>
-            <div style="margin-top: 12px;">
-                <div style="font-size: 11px; font-weight: bold; margin-bottom: 6px; opacity: 0.8;">Recent Requests</div>
-                <div id="costs-list" style="max-height: 150px; overflow-y: auto;">
-                    <div style="text-align: center; padding: 16px; opacity: 0.5;">Loading...</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Cost Trend Chart (7 days) -->
-        <div class="card" style="margin-top: 12px;">
-            <div class="card-title">Daily Cost Trend</div>
-            <div id="cost-trend-chart" style="height: 120px; display: flex; align-items: flex-end; gap: 4px; padding: 8px 0;">
-                <div style="text-align: center; opacity: 0.5; width: 100%;">No data yet</div>
-            </div>
-            <div id="cost-trend-labels" style="display: flex; justify-content: space-between; font-size: 9px; opacity: 0.6; padding: 0 4px;"></div>
-        </div>
-
-        <!-- Tier Distribution Chart -->
-        <div class="card" style="margin-top: 12px;">
-            <div class="card-title">Cost by Tier</div>
-            <div style="display: flex; align-items: center; gap: 16px;">
-                <div id="tier-pie-chart" style="width: 80px; height: 80px; flex-shrink: 0;">
-                    <svg viewBox="0 0 32 32" style="transform: rotate(-90deg); width: 100%; height: 100%;">
-                        <circle id="pie-cheap" r="16" cx="16" cy="16" fill="transparent" stroke="var(--vscode-charts-green)" stroke-width="32" stroke-dasharray="0 100" />
-                        <circle id="pie-capable" r="16" cx="16" cy="16" fill="transparent" stroke="var(--vscode-charts-blue)" stroke-width="32" stroke-dasharray="0 100" stroke-dashoffset="0" />
-                        <circle id="pie-premium" r="16" cx="16" cy="16" fill="transparent" stroke="var(--vscode-charts-purple)" stroke-width="32" stroke-dasharray="0 100" stroke-dashoffset="0" />
-                    </svg>
-                </div>
-                <div id="tier-legend" style="flex: 1; font-size: 10px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                        <span><span style="color: var(--vscode-charts-green);">●</span> Cheap</span>
-                        <span id="tier-cheap-pct">--</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                        <span><span style="color: var(--vscode-charts-blue);">●</span> Capable</span>
-                        <span id="tier-capable-pct">--</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span><span style="color: var(--vscode-charts-purple);">●</span> Premium</span>
-                        <span id="tier-premium-pct">--</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Provider Comparison -->
-        <div class="card" style="margin-top: 12px;">
-            <div class="card-title">Cost by Provider</div>
-            <div id="provider-bars" style="display: flex; flex-direction: column; gap: 6px;">
-                <div style="text-align: center; opacity: 0.5; padding: 8px;">No provider data</div>
-            </div>
-        </div>
-
-        <!-- Cost Simulator -->
-        <div class="card" style="margin-top: 12px;">
-            <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
-                <span>Cost Simulator <span style="font-size: 9px; color: #a855f7; font-weight: normal; opacity: 0.9;">(Interactive)</span></span>
-            </div>
-            <div style="font-size: 10px; opacity: 0.7; margin-bottom: 8px;">Drag sliders to see real-time cost estimates</div>
-
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <!-- Controls -->
-                <div>
-                    <div style="margin-bottom: 8px;">
-                        <div style="font-size: 10px; margin-bottom: 4px; opacity: 0.8;">Provider preset</div>
-                        <select id="sim-provider" style="width: 100%; padding: 6px 8px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 4px; font-size: 11px;">
-                            <option value="cost-optimized">Cost-Optimized (Recommended)</option>
-                            <option value="anthropic">Anthropic</option>
-                            <option value="openai">OpenAI</option>
-                            <option value="google">Google Gemini</option>
-                            <option value="ollama">Ollama (Free - Local)</option>
-                        </select>
-                    </div>
-
-                    <div style="margin-bottom: 8px;">
-                        <div style="font-size: 10px; margin-bottom: 4px; opacity: 0.8;">Scenario</div>
-                        <select id="sim-scenario" style="width: 100%; padding: 6px 8px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--border); border-radius: 4px; font-size: 11px;">
-                            <option value="default">Typical week</option>
-                            <option value="heavy">Heavy experimentation</option>
-                            <option value="light">Light usage</option>
-                        </select>
-                    </div>
-
-                    <div style="margin-bottom: 8px;">
-                        <div style="font-size: 10px; margin-bottom: 4px; opacity: 0.8;">Tier mix (drag to adjust)</div>
-                        <div style="display: flex; flex-direction: column; gap: 6px;">
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <span style="width: 50px; font-size: 10px; color: var(--vscode-charts-green);">Cheap</span>
-                                <input id="sim-cheap" type="range" min="0" max="100" step="5" value="50" style="flex: 1; height: 6px; accent-color: var(--vscode-charts-green);" />
-                                <span id="sim-cheap-val" style="width: 30px; font-size: 10px; text-align: right;">50%</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <span style="width: 50px; font-size: 10px; color: var(--vscode-charts-blue);">Capable</span>
-                                <input id="sim-capable" type="range" min="0" max="100" step="5" value="40" style="flex: 1; height: 6px; accent-color: var(--vscode-charts-blue);" />
-                                <span id="sim-capable-val" style="width: 30px; font-size: 10px; text-align: right;">40%</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <span style="width: 50px; font-size: 10px; color: var(--vscode-charts-purple);">Premium</span>
-                                <input id="sim-premium" type="range" min="0" max="100" step="5" value="10" style="flex: 1; height: 6px; accent-color: var(--vscode-charts-purple);" />
-                                <span id="sim-premium-val" style="width: 30px; font-size: 10px; text-align: right;">10%</span>
-                            </div>
-                        </div>
-                        <div id="sim-mix-warning" style="margin-top: 4px; font-size: 9px; color: var(--vscode-inputValidation-warningForeground); display: none;">Percentages normalized to 100%</div>
-                    </div>
-                </div>
-
-                <!-- Results -->
-                <div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; text-align: center; margin-bottom: 8px;">
-                        <div>
-                            <div style="font-size: 13px; font-weight: 600;" id="sim-actual">$0.00</div>
-                            <div style="font-size: 9px; opacity: 0.7;">Scenario</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 13px; font-weight: 600;" id="sim-baseline">$0.00</div>
-                            <div style="font-size: 9px; opacity: 0.7;">Baseline</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 13px; font-weight: 600; color: var(--vscode-charts-green);" id="sim-savings">$0.00</div>
-                            <div style="font-size: 9px; opacity: 0.7;">Saved</div>
-                        </div>
-                    </div>
-
-                    <!-- Monthly Projection Chart -->
-                    <div style="margin-bottom: 8px;">
-                        <div style="font-size: 10px; opacity: 0.8; margin-bottom: 4px;">Monthly Projection</div>
-                        <div id="sim-projection-chart" style="height: 50px; display: flex; gap: 2px; align-items: flex-end;">
-                            <div style="flex: 1; background: var(--vscode-charts-blue); height: 50%; border-radius: 2px;" title="Scenario"></div>
-                            <div style="flex: 1; background: var(--vscode-input-background); border: 1px dashed var(--vscode-charts-red); height: 100%; border-radius: 2px;" title="Baseline"></div>
-                        </div>
-                        <div style="display: flex; justify-content: space-around; font-size: 9px; opacity: 0.6; margin-top: 2px;">
-                            <span>Scenario</span>
-                            <span>Baseline</span>
-                        </div>
-                    </div>
-
-                    <div style="font-size: 10px; opacity: 0.8; margin-bottom: 4px;">By tier</div>
-                    <div id="sim-tier-breakdown" style="font-size: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;"></div>
-
-                    <div style="font-size: 9px; opacity: 0.6; margin-top: 8px;">
-                        Based on ~1K tokens/request
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Workflows Tab -->
-    <div id="tab-workflows" class="tab-content">
-        <!-- Hidden for v3.5.5 release - TODO: enable after workflow wizard is complete -->
-        <button class="btn new-workflow-btn-large" id="btn-new-workflow-tab" title="Create a new workflow from template" style="display: none; width: 100%; margin-bottom: 12px; padding: 10px; align-items: center; justify-content: center; gap: 8px;">
-            <span style="font-size: 16px;">&#x2795;</span>
-            <span>Create New Workflow</span>
-        </button>
-
-        <div class="metrics-grid">
-            <div class="metric">
-                <div class="metric-value" id="wf-runs">0</div>
-                <div class="metric-label">Total Runs</div>
-            </div>
-            <div class="metric">
-                <div class="metric-value success" id="wf-success">0%</div>
-                <div class="metric-label">Success Rate</div>
-            </div>
-            <div class="metric">
-                <div class="metric-value" id="wf-cost">$0.00</div>
-                <div class="metric-label">Total Cost</div>
-            </div>
-            <div class="metric">
-                <div class="metric-value success" id="wf-savings">$0.00</div>
-                <div class="metric-label">Savings</div>
-            </div>
-        </div>
-
-        <!-- Execution Timeline (last 24h) -->
-        <div class="card" style="margin-top: 12px;">
-            <div class="card-title">Execution Timeline (24h)</div>
-            <div id="workflow-timeline" style="display: flex; align-items: flex-end; gap: 2px; height: 60px; padding: 8px 0;">
-                <div style="text-align: center; opacity: 0.5; width: 100%;">No recent activity</div>
-            </div>
-            <div style="display: flex; justify-content: space-between; font-size: 9px; opacity: 0.6; margin-top: 4px;">
-                <span>24h ago</span>
-                <span>Now</span>
-            </div>
-        </div>
-
-        <!-- Workflow Cost Comparison -->
-        <div class="card" style="margin-top: 12px;">
-            <div class="card-title">Cost by Workflow Type</div>
-            <div id="workflow-cost-bars" style="display: flex; flex-direction: column; gap: 6px;">
-                <div style="text-align: center; opacity: 0.5; padding: 8px;">No workflow data</div>
-            </div>
-        </div>
-
-        <div class="card" style="margin-top: 12px">
-            <div class="card-title">Recent Runs</div>
-            <div id="workflows-list">
-                <div class="empty-state">No workflow runs yet</div>
-            </div>
-        </div>
-    </div>
 
     <script nonce="${nonce}">
         console.log('[EmpathyDashboard] WEBVIEW SCRIPT LOADED - VERSION 4 - TEST GEN FIX');
         const vscode = acquireVsCodeApi();
         const PROJECT_PATH = '${projectPath}';
-
-        // Tab switching
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                tab.classList.add('active');
-                document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
-
-                // Load data when switching to Costs tab
-                if (tab.dataset.tab === 'costs') {
-                    vscode.postMessage({ type: 'getCosts' });
-                    vscode.postMessage({ type: 'getModelConfig' });
-                }
-            });
-        });
 
         // Track running actions to prevent duplicate clicks
         const runningActions = new Set();
@@ -3089,6 +2698,19 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
             openWebDashboardBtn.addEventListener('click', function() {
                 vscode.postMessage({ type: 'openWebDashboard' });
             });
+        }
+
+        // Panel opening functions
+        function openHealthPanel() {
+            vscode.postMessage({ type: 'openHealthPanel' });
+        }
+
+        function openCostsPanel() {
+            vscode.postMessage({ type: 'openCostsPanel' });
+        }
+
+        function openWorkflowHistory() {
+            vscode.postMessage({ type: 'openWorkflowHistory' });
         }
 
         // Handle data updates
@@ -3714,35 +3336,16 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         function updateHealth(health) {
             // Guard against null health data
             if (!health) {
-                document.getElementById('health-score').textContent = '--';
-                document.getElementById('power-patterns').textContent = '--';
-                document.getElementById('power-health').textContent = '--';
+                document.getElementById('health-score-summary').textContent = '--';
                 return;
             }
 
-            const scoreEl = document.getElementById('health-score');
             const score = health.score || 0;
-            scoreEl.textContent = score + '%';
-            scoreEl.className = 'score-circle ' + (score >= 80 ? 'good' : score >= 50 ? 'warning' : 'bad');
 
-            // Update tree items with icons and values
-            updateTreeItem('patterns', health.patterns || 0, (health.patterns || 0) > 0);
-            updateTreeItem('lint', (health.lint?.errors || 0) + ' errors', (health.lint?.errors || 0) === 0);
-            updateTreeItem('types', (health.types?.errors || 0) + ' errors', (health.types?.errors || 0) === 0);
-            updateTreeItem('security', (health.security?.high || 0) + ' high', (health.security?.high || 0) === 0);
-            updateTreeItem('tests', (health.tests?.passed || 0) + '/' + (health.tests?.total || 0), (health.tests?.failed || 0) === 0);
-            document.getElementById('metric-debt').textContent = (health.techDebt?.total || 0) + ' items';
-
-            const coverage = health.tests?.coverage || 0;
-            document.getElementById('coverage-bar').style.width = coverage + '%';
-            document.getElementById('coverage-bar').className = 'progress-fill ' + (coverage >= 70 ? 'success' : coverage >= 50 ? 'warning' : 'error');
-            document.getElementById('coverage-value').textContent = coverage + '%';
-
-            // Update Power tab stats
-            document.getElementById('power-patterns').textContent = health.patterns || 0;
-            const powerHealthEl = document.getElementById('power-health');
-            powerHealthEl.textContent = score + '%';
-            powerHealthEl.className = 'metric-value ' + (score >= 80 ? 'success' : score >= 50 ? 'warning' : 'error');
+            // Update health summary bar
+            const summaryEl = document.getElementById('health-score-summary');
+            summaryEl.textContent = score + '%';
+            summaryEl.style.color = score >= 80 ? 'var(--vscode-testing-iconPassed)' : score >= 50 ? 'var(--vscode-editorWarning-foreground)' : 'var(--vscode-testing-iconFailed)';
         }
 
         function updateTreeItem(id, value, isOk) {
@@ -4086,18 +3689,8 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
         setTimeout(runSimulator, 0);
 
         function updateCosts(costs, isEmpty) {
-            // Update Power tab cost stats
-            const savings = costs?.totalSavings || 0;
-            const requests = costs?.requests || 0;
-
-            document.getElementById('power-savings').textContent = '$' + savings.toFixed(2);
-            document.getElementById('power-requests').textContent = requests;
-
-            // Update savings color based on value
-            const savingsEl = document.getElementById('power-savings');
-            if (savingsEl) {
-                savingsEl.className = 'metric-value ' + (savings > 0 ? 'success' : '');
-            }
+            // Costs are now displayed in the dedicated Costs Panel
+            // This function kept for potential future use
         }
 
         function showErrorBanner(errors) {
@@ -4113,6 +3706,19 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 .map(([key, msg]) => '<div class="error-item">&#x26A0; ' + key + ': ' + msg + '</div>')
                 .join('');
             banner.style.display = 'block';
+        }
+
+        // Panel navigation functions
+        function openHealthPanel() {
+            vscode.postMessage({ type: 'openHealthPanel' });
+        }
+
+        function openCostsPanel() {
+            vscode.postMessage({ type: 'openCostsPanel' });
+        }
+
+        function openWorkflowHistory() {
+            vscode.postMessage({ type: 'openWorkflowHistory' });
         }
 
         // Request initial data

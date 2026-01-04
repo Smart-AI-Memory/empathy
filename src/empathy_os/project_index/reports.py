@@ -1,5 +1,4 @@
-"""
-Project Index Reports - Generate actionable reports from index data.
+"""Project Index Reports - Generate actionable reports from index data.
 
 Reports for project management, sprint planning, and architecture decisions.
 
@@ -14,8 +13,7 @@ from .models import FileRecord, ProjectSummary, TestRequirement
 
 
 class ReportGenerator:
-    """
-    Generates reports from project index data.
+    """Generates reports from project index data.
 
     Reports are designed for:
     - Human consumption (markdown)
@@ -31,8 +29,7 @@ class ReportGenerator:
     # ===== Test Gap Reports =====
 
     def test_gap_report(self) -> dict[str, Any]:
-        """
-        Generate comprehensive test gap report.
+        """Generate comprehensive test gap report.
 
         Used by test-gen workflow and agents.
         """
@@ -75,12 +72,12 @@ class ReportGenerator:
         if high_impact:
             recommendations.append(
                 f"PRIORITY: {len(high_impact)} high-impact files need tests. "
-                f"Start with: {', '.join(r.name for r in high_impact[:3])}"
+                f"Start with: {', '.join(r.name for r in high_impact[:3])}",
             )
 
         if len(needing_tests) > 50:
             recommendations.append(
-                f"Consider batch test generation - {len(needing_tests)} files need tests"
+                f"Consider batch test generation - {len(needing_tests)} files need tests",
             )
 
         return recommendations
@@ -88,8 +85,7 @@ class ReportGenerator:
     # ===== Staleness Reports =====
 
     def staleness_report(self) -> dict[str, Any]:
-        """
-        Generate test staleness report.
+        """Generate test staleness report.
 
         Identifies files where code changed but tests didn't update.
         """
@@ -127,9 +123,7 @@ class ReportGenerator:
     # ===== Coverage Reports =====
 
     def coverage_report(self) -> dict[str, Any]:
-        """
-        Generate coverage analysis report.
-        """
+        """Generate coverage analysis report."""
         with_coverage = [r for r in self._source_records if r.coverage_percent > 0]
         low_coverage = [r for r in with_coverage if r.coverage_percent < 50]
 
@@ -172,8 +166,7 @@ class ReportGenerator:
     # ===== Project Health Report =====
 
     def health_report(self) -> dict[str, Any]:
-        """
-        Generate overall project health report.
+        """Generate overall project health report.
 
         Comprehensive view for project managers and architects.
         """
@@ -234,14 +227,13 @@ class ReportGenerator:
         """Convert score to letter grade."""
         if score >= 90:
             return "A"
-        elif score >= 80:
+        if score >= 80:
             return "B"
-        elif score >= 70:
+        if score >= 70:
             return "C"
-        elif score >= 60:
+        if score >= 60:
             return "D"
-        else:
-            return "F"
+        return "F"
 
     def _identify_strengths(self) -> list[str]:
         """Identify project strengths."""
@@ -252,12 +244,12 @@ class ReportGenerator:
 
         if self.summary.files_with_docstrings_pct >= 70:
             strengths.append(
-                f"Well documented ({self.summary.files_with_docstrings_pct:.1f}% with docstrings)"
+                f"Well documented ({self.summary.files_with_docstrings_pct:.1f}% with docstrings)",
             )
 
         if self.summary.files_with_type_hints_pct >= 70:
             strengths.append(
-                f"Strong typing ({self.summary.files_with_type_hints_pct:.1f}% with type hints)"
+                f"Strong typing ({self.summary.files_with_type_hints_pct:.1f}% with type hints)",
             )
 
         if self.summary.stale_file_count == 0:
@@ -280,7 +272,7 @@ class ReportGenerator:
 
         if self.summary.critical_untested_files:
             concerns.append(
-                f"{len(self.summary.critical_untested_files)} high-impact files lack tests"
+                f"{len(self.summary.critical_untested_files)} high-impact files lack tests",
             )
 
         return concerns
@@ -296,7 +288,7 @@ class ReportGenerator:
                     "priority": "high",
                     "action": f"Add tests for {path}",
                     "reason": "High-impact file without tests",
-                }
+                },
             )
 
         # Stale tests
@@ -306,7 +298,7 @@ class ReportGenerator:
                     "priority": "medium",
                     "action": f"Update tests for {path}",
                     "reason": "Tests are stale",
-                }
+                },
             )
 
         return items
@@ -314,8 +306,7 @@ class ReportGenerator:
     # ===== Sprint Planning Report =====
 
     def sprint_planning_report(self, sprint_capacity: int = 10) -> dict[str, Any]:
-        """
-        Generate sprint planning report.
+        """Generate sprint planning report.
 
         Suggests files to address based on priority and capacity.
         """
@@ -356,31 +347,27 @@ class ReportGenerator:
         if not record.tests_exist:
             if loc < 50:
                 return "small (1-2 hours)"
-            elif loc < 200:
+            if loc < 200:
                 return "medium (2-4 hours)"
-            else:
-                return "large (4+ hours)"
-        elif record.is_stale:
+            return "large (4+ hours)"
+        if record.is_stale:
             return "small (update existing tests)"
-        else:
-            return "varies"
+        return "varies"
 
     # ===== Markdown Reports =====
 
     def to_markdown(self, report_type: str = "health") -> str:
-        """
-        Generate markdown formatted report.
+        """Generate markdown formatted report.
 
         For human consumption or documentation.
         """
         if report_type == "health":
             return self._health_markdown()
-        elif report_type == "test_gap":
+        if report_type == "test_gap":
             return self._test_gap_markdown()
-        elif report_type == "staleness":
+        if report_type == "staleness":
             return self._staleness_markdown()
-        else:
-            return self._health_markdown()
+        return self._health_markdown()
 
     def _health_markdown(self) -> str:
         """Generate health report in markdown."""

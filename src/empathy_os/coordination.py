@@ -1,5 +1,4 @@
-"""
-Multi-Agent Coordination for Distributed Memory Networks
+"""Multi-Agent Coordination for Distributed Memory Networks
 
 Provides conflict resolution and coordination primitives for multi-agent
 systems sharing pattern libraries.
@@ -63,7 +62,7 @@ class TeamPriorities:
             "performance": 0.7,
             "style": 0.5,
             "warning": 0.6,
-        }
+        },
     )
 
     # Tag preferences (tags that should be prioritized)
@@ -71,8 +70,7 @@ class TeamPriorities:
 
 
 class ConflictResolver:
-    """
-    Resolves conflicts between patterns from different agents.
+    """Resolves conflicts between patterns from different agents.
 
     When multiple agents contribute patterns that address the same issue
     but recommend different approaches, the ConflictResolver determines
@@ -105,6 +103,7 @@ class ConflictResolver:
         ...     context={"team_priority": "readability", "code_complexity": "high"}
         ... )
         >>> print(f"Winner: {resolution.winning_pattern.name}")
+
     """
 
     def __init__(
@@ -112,12 +111,12 @@ class ConflictResolver:
         default_strategy: ResolutionStrategy = ResolutionStrategy.WEIGHTED_SCORE,
         team_priorities: TeamPriorities | None = None,
     ):
-        """
-        Initialize the ConflictResolver.
+        """Initialize the ConflictResolver.
 
         Args:
             default_strategy: Strategy to use when not specified
             team_priorities: Team-configured priorities for resolution
+
         """
         self.default_strategy = default_strategy
         self.team_priorities = team_priorities or TeamPriorities()
@@ -129,8 +128,7 @@ class ConflictResolver:
         context: dict[str, Any] | None = None,
         strategy: ResolutionStrategy | None = None,
     ) -> ResolutionResult:
-        """
-        Resolve conflict between multiple patterns.
+        """Resolve conflict between multiple patterns.
 
         Args:
             patterns: List of conflicting patterns (minimum 2)
@@ -142,6 +140,7 @@ class ConflictResolver:
 
         Raises:
             ValueError: If fewer than 2 patterns provided
+
         """
         if len(patterns) < 2:
             raise ValueError("Need at least 2 patterns to resolve conflict")
@@ -185,7 +184,6 @@ class ConflictResolver:
         strategy: ResolutionStrategy,
     ) -> dict[str, float]:
         """Calculate score for a pattern based on strategy"""
-
         scores: dict[str, float] = {}
 
         # Factor 1: Confidence score (0-1)
@@ -230,7 +228,6 @@ class ConflictResolver:
         context: dict[str, Any],
     ) -> float:
         """Calculate how well a pattern matches the current context"""
-
         if not context or not pattern.context:
             return 0.5  # Neutral if no context available
 
@@ -261,7 +258,6 @@ class ConflictResolver:
         context: dict[str, Any],
     ) -> float:
         """Calculate how well a pattern aligns with team priorities"""
-
         score = 0.5  # Start neutral
 
         # Check team priority in context
@@ -307,13 +303,12 @@ class ConflictResolver:
         strategy: ResolutionStrategy,
     ) -> str:
         """Generate human-readable reasoning for the resolution"""
-
         reasons = []
 
         # Strategy-specific reasoning
         if strategy == ResolutionStrategy.HIGHEST_CONFIDENCE:
             reasons.append(
-                f"Selected '{winner.name}' with highest confidence ({winner.confidence:.0%})"
+                f"Selected '{winner.name}' with highest confidence ({winner.confidence:.0%})",
             )
         elif strategy == ResolutionStrategy.MOST_RECENT:
             age = (datetime.now() - winner.discovered_at).days
@@ -321,7 +316,7 @@ class ConflictResolver:
         elif strategy == ResolutionStrategy.BEST_CONTEXT_MATCH:
             reasons.append(
                 f"Selected '{winner.name}' as best match for current context "
-                f"(match score: {scores['context_match']:.0%})"
+                f"(match score: {scores['context_match']:.0%})",
             )
         elif strategy == ResolutionStrategy.TEAM_PRIORITY:
             team_priority = context.get("team_priority", "balanced")
@@ -334,7 +329,7 @@ class ConflictResolver:
             )[:2]
             factor_desc = ", ".join(f"{k}: {v:.0%}" for k, v in top_factors)
             reasons.append(
-                f"Selected '{winner.name}' based on weighted scoring (top factors: {factor_desc})"
+                f"Selected '{winner.name}' based on weighted scoring (top factors: {factor_desc})",
             )
 
         # Add comparison to losers
@@ -346,7 +341,6 @@ class ConflictResolver:
 
     def get_resolution_stats(self) -> dict[str, Any]:
         """Get statistics about resolution history"""
-
         if not self.resolution_history:
             return {
                 "total_resolutions": 0,
@@ -397,8 +391,7 @@ class AgentTask:
 
 
 class AgentCoordinator:
-    """
-    Redis-backed coordinator for multi-agent teams.
+    """Redis-backed coordinator for multi-agent teams.
 
     Enables real-time coordination between agents using Redis short-term memory:
     - Task distribution and claiming
@@ -425,6 +418,7 @@ class AgentCoordinator:
         >>> if task:
         ...     # Do work...
         ...     coordinator.complete_task(task.task_id, {"issues_found": 3})
+
     """
 
     def __init__(
@@ -433,13 +427,13 @@ class AgentCoordinator:
         team_id: str,
         conflict_resolver: ConflictResolver | None = None,
     ):
-        """
-        Initialize the coordinator.
+        """Initialize the coordinator.
 
         Args:
             short_term_memory: RedisShortTermMemory instance
             team_id: Unique identifier for this team
             conflict_resolver: Optional ConflictResolver for pattern conflicts
+
         """
         from .redis_memory import AccessTier, AgentCredentials
 
@@ -457,14 +451,14 @@ class AgentCoordinator:
         self._active_agents: dict[str, datetime] = {}
 
     def add_task(self, task: AgentTask) -> bool:
-        """
-        Add a task to the queue for agents to claim.
+        """Add a task to the queue for agents to claim.
 
         Args:
             task: The task to add
 
         Returns:
             True if added successfully
+
         """
         task_data = {
             "task_id": task.task_id,
@@ -485,14 +479,14 @@ class AgentCoordinator:
         return bool(result)
 
     def get_pending_tasks(self, task_type: str | None = None) -> list[AgentTask]:
-        """
-        Get all pending tasks, optionally filtered by type.
+        """Get all pending tasks, optionally filtered by type.
 
         Args:
             task_type: Filter by task type
 
         Returns:
             List of pending AgentTask objects
+
         """
         # In a real implementation, we'd scan Redis keys
         # For now, this is a simplified version
@@ -516,7 +510,7 @@ class AgentCoordinator:
                             status=task_data.get("status", "pending"),
                             priority=task_data.get("priority", 5),
                             context=task_data.get("context", {}),
-                        )
+                        ),
                     )
 
         return sorted(tasks, key=lambda t: t.priority, reverse=True)
@@ -526,8 +520,7 @@ class AgentCoordinator:
         agent_id: str,
         task_type: str | None = None,
     ) -> AgentTask | None:
-        """
-        Claim a pending task for an agent.
+        """Claim a pending task for an agent.
 
         Uses atomic operations to prevent race conditions.
 
@@ -537,6 +530,7 @@ class AgentCoordinator:
 
         Returns:
             The claimed task, or None if no tasks available
+
         """
         pending = self.get_pending_tasks(task_type)
 
@@ -576,8 +570,7 @@ class AgentCoordinator:
         result: dict[str, Any],
         agent_id: str | None = None,
     ) -> bool:
-        """
-        Mark a task as completed with results.
+        """Mark a task as completed with results.
 
         Args:
             task_id: Task to complete
@@ -586,6 +579,7 @@ class AgentCoordinator:
 
         Returns:
             True if completed successfully
+
         """
         task_key = f"task:{self.team_id}:{task_id}"
         current = self.memory.retrieve(task_key, self._credentials)
@@ -619,8 +613,7 @@ class AgentCoordinator:
         return False
 
     def register_agent(self, agent_id: str, capabilities: list[str] | None = None) -> bool:
-        """
-        Register an agent with the team.
+        """Register an agent with the team.
 
         Args:
             agent_id: Unique agent identifier
@@ -628,6 +621,7 @@ class AgentCoordinator:
 
         Returns:
             True if registered successfully
+
         """
         self._active_agents[agent_id] = datetime.now()
 
@@ -644,14 +638,14 @@ class AgentCoordinator:
         return bool(result)
 
     def heartbeat(self, agent_id: str) -> bool:
-        """
-        Send heartbeat to indicate agent is still active.
+        """Send heartbeat to indicate agent is still active.
 
         Args:
             agent_id: Agent sending heartbeat
 
         Returns:
             True if heartbeat recorded
+
         """
         self._active_agents[agent_id] = datetime.now()
 
@@ -663,14 +657,14 @@ class AgentCoordinator:
         return bool(result)
 
     def get_active_agents(self, timeout_seconds: int = 300) -> list[str]:
-        """
-        Get list of recently active agents.
+        """Get list of recently active agents.
 
         Args:
             timeout_seconds: Consider agents inactive after this duration
 
         Returns:
             List of active agent IDs
+
         """
         cutoff = datetime.now()
         active = []
@@ -682,8 +676,7 @@ class AgentCoordinator:
         return active
 
     def broadcast(self, message_type: str, data: dict[str, Any]) -> bool:
-        """
-        Broadcast a message to all agents in the team.
+        """Broadcast a message to all agents in the team.
 
         Args:
             message_type: Type of message
@@ -691,6 +684,7 @@ class AgentCoordinator:
 
         Returns:
             True if broadcast sent
+
         """
         result = self.memory.send_signal(
             signal_type=message_type,
@@ -700,14 +694,14 @@ class AgentCoordinator:
         return bool(result)
 
     def aggregate_results(self, task_type: str | None = None) -> dict[str, Any]:
-        """
-        Aggregate results from completed tasks.
+        """Aggregate results from completed tasks.
 
         Args:
             task_type: Optional filter by task type
 
         Returns:
             Aggregated results summary
+
         """
         # Get completion signals
         completions = self.memory.receive_signals(
@@ -742,8 +736,7 @@ class AgentCoordinator:
 
 
 class TeamSession:
-    """
-    A collaborative session for multiple agents working together.
+    """A collaborative session for multiple agents working together.
 
     Example:
         >>> from empathy_os import get_redis_memory, TeamSession
@@ -763,6 +756,7 @@ class TeamSession:
         >>>
         >>> # Get context from session
         >>> scope = session.get("analysis_scope")
+
     """
 
     def __init__(
@@ -771,13 +765,13 @@ class TeamSession:
         session_id: str,
         purpose: str = "",
     ):
-        """
-        Create or join a team session.
+        """Create or join a team session.
 
         Args:
             short_term_memory: RedisShortTermMemory instance
             session_id: Unique session identifier
             purpose: Description of what this session is for
+
         """
         from .redis_memory import AccessTier, AgentCredentials
 
@@ -810,8 +804,7 @@ class TeamSession:
         return dict(result) if result else None
 
     def share(self, key: str, data: Any) -> bool:
-        """
-        Share data with all agents in the session.
+        """Share data with all agents in the session.
 
         Args:
             key: Unique key for this data
@@ -819,24 +812,25 @@ class TeamSession:
 
         Returns:
             True if shared successfully
+
         """
         return bool(
             self.memory.stash(
                 f"session:{self.session_id}:{key}",
                 data,
                 self._credentials,
-            )
+            ),
         )
 
     def get(self, key: str) -> Any | None:
-        """
-        Get shared data from the session.
+        """Get shared data from the session.
 
         Args:
             key: Key of the shared data
 
         Returns:
             The data, or None if not found
+
         """
         return self.memory.retrieve(
             f"session:{self.session_id}:{key}",
@@ -844,8 +838,7 @@ class TeamSession:
         )
 
     def signal(self, signal_type: str, data: dict[str, Any]) -> bool:
-        """
-        Send a signal to session participants.
+        """Send a signal to session participants.
 
         Args:
             signal_type: Type of signal
@@ -853,24 +846,25 @@ class TeamSession:
 
         Returns:
             True if sent
+
         """
         return bool(
             self.memory.send_signal(
                 signal_type=signal_type,
                 data={"session_id": self.session_id, **data},
                 credentials=self._credentials,
-            )
+            ),
         )
 
     def get_signals(self, signal_type: str | None = None) -> list[dict]:
-        """
-        Get signals from the session.
+        """Get signals from the session.
 
         Args:
             signal_type: Optional filter
 
         Returns:
             List of signals
+
         """
         result = self.memory.receive_signals(self._credentials, signal_type=signal_type)
         return list(result) if result else []

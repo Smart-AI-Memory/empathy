@@ -1,5 +1,4 @@
-"""
-Security Adapters for SecurityAuditCrew Integration
+"""Security Adapters for SecurityAuditCrew Integration
 
 Provides format conversion functions between SecurityAuditCrew output
 and workflow dict formats used by existing workflows.
@@ -19,11 +18,11 @@ logger = logging.getLogger(__name__)
 
 
 def _check_crew_available() -> bool:
-    """
-    Check if SecurityAuditCrew is available.
+    """Check if SecurityAuditCrew is available.
 
     Returns:
         True if the crew module can be imported, False otherwise.
+
     """
     try:
         from empathy_llm_toolkit.agent_factory.crews import SecurityAuditCrew  # noqa: F401
@@ -38,8 +37,7 @@ async def _get_crew_audit(
     config: dict | None = None,
     timeout: float = 300.0,
 ) -> "SecurityReport | None":
-    """
-    Get SecurityAuditCrew audit results with graceful fallback.
+    """Get SecurityAuditCrew audit results with graceful fallback.
 
     Args:
         target: Path to codebase to audit
@@ -48,6 +46,7 @@ async def _get_crew_audit(
 
     Returns:
         SecurityReport if successful, None if crew unavailable or audit failed.
+
     """
     if not _check_crew_available():
         logger.debug("SecurityAuditCrew not available, returning None")
@@ -73,8 +72,7 @@ async def _get_crew_audit(
 
 
 def crew_report_to_workflow_format(report: "SecurityReport") -> dict:
-    """
-    Convert SecurityReport to workflow dict format.
+    """Convert SecurityReport to workflow dict format.
 
     This converts the crew's structured output to the format expected
     by existing workflows (matching SecurityAuditWorkflow output).
@@ -84,6 +82,7 @@ def crew_report_to_workflow_format(report: "SecurityReport") -> dict:
 
     Returns:
         Dict in workflow format with findings, assessment, etc.
+
     """
     findings: list[dict] = []
     for finding in report.findings:
@@ -143,8 +142,7 @@ def crew_report_to_workflow_format(report: "SecurityReport") -> dict:
 
 
 def workflow_findings_to_crew_format(findings: list[dict]) -> list[dict]:
-    """
-    Convert workflow findings to SecurityFinding-compatible dicts.
+    """Convert workflow findings to SecurityFinding-compatible dicts.
 
     This is useful when passing workflow findings to SecurityAuditCrew
     for enhanced analysis.
@@ -154,6 +152,7 @@ def workflow_findings_to_crew_format(findings: list[dict]) -> list[dict]:
 
     Returns:
         List of dicts that can be used with SecurityAuditCrew context.
+
     """
     crew_findings = []
     for finding in findings:
@@ -176,8 +175,7 @@ def merge_security_results(
     crew_report: dict | None,
     workflow_findings: dict | None,
 ) -> dict:
-    """
-    Merge SecurityAuditCrew and workflow security results.
+    """Merge SecurityAuditCrew and workflow security results.
 
     Combines findings from both sources, deduplicating where possible,
     and provides a unified assessment.
@@ -188,6 +186,7 @@ def merge_security_results(
 
     Returns:
         Merged dict with combined findings and assessment.
+
     """
     # Handle None cases
     if crew_report is None and workflow_findings is None:
@@ -259,11 +258,11 @@ def _score_to_level(score: float) -> str:
     """Convert risk score to risk level string."""
     if score >= 75:
         return "critical"
-    elif score >= 50:
+    if score >= 50:
         return "high"
-    elif score >= 25:
+    if score >= 25:
         return "medium"
-    elif score > 0:
+    if score > 0:
         return "low"
     return "none"
 

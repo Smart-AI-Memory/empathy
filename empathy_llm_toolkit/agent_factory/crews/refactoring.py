@@ -1,5 +1,4 @@
-"""
-Refactoring Crew
+"""Refactoring Crew
 
 A 2-agent crew that performs interactive code refactoring analysis.
 Designed for Level 4 Empathy with session memory, rollback capability,
@@ -289,7 +288,7 @@ class RefactoringConfig:
             "remove_duplication",
             "rename",
             "dead_code",
-        ]
+        ],
     )
 
     # Memory Graph
@@ -417,8 +416,7 @@ XML_PROMPT_TEMPLATES = {
 
 
 class RefactoringCrew:
-    """
-    2-agent crew for interactive code refactoring.
+    """2-agent crew for interactive code refactoring.
 
     The crew consists of:
 
@@ -447,15 +445,16 @@ class RefactoringCrew:
             # Generate refactored code on demand
             finding = await crew.generate_refactor(finding, full_code)
             print(f"After: {finding.after_code}")
+
     """
 
     def __init__(self, config: RefactoringConfig | None = None, **kwargs: Any):
-        """
-        Initialize the Refactoring Crew.
+        """Initialize the Refactoring Crew.
 
         Args:
             config: RefactoringConfig or pass individual params as kwargs
             **kwargs: Individual config parameters (api_key, provider, etc.)
+
         """
         if config:
             self.config = config
@@ -524,7 +523,6 @@ class RefactoringCrew:
 
     async def _create_agents(self) -> None:
         """Create the 2 specialized refactoring agents."""
-
         # Fallback prompts
         analyzer_fallback = """You are a Refactoring Analyst.
 
@@ -595,8 +593,7 @@ Return the refactored code as after_code."""
         file_path: str,
         context: dict | None = None,
     ) -> RefactoringReport:
-        """
-        Analyze code for refactoring opportunities.
+        """Analyze code for refactoring opportunities.
 
         Args:
             code: The source code to analyze
@@ -605,6 +602,7 @@ Return the refactored code as after_code."""
 
         Returns:
             RefactoringReport with prioritized findings
+
         """
         import time
 
@@ -700,8 +698,7 @@ Return the refactored code as after_code."""
         finding: RefactoringFinding,
         full_code: str,
     ) -> RefactoringFinding:
-        """
-        Generate refactored code for a specific finding.
+        """Generate refactored code for a specific finding.
 
         Args:
             finding: The finding to generate refactored code for
@@ -709,6 +706,7 @@ Return the refactored code as after_code."""
 
         Returns:
             Updated finding with after_code populated
+
         """
         await self._initialize()
 
@@ -734,8 +732,7 @@ Return the refactored code as after_code."""
         content: str,
         finding_id: str,
     ) -> CodeCheckpoint:
-        """
-        Create a checkpoint before applying a change.
+        """Create a checkpoint before applying a change.
 
         Args:
             file_path: Path to the file
@@ -744,6 +741,7 @@ Return the refactored code as after_code."""
 
         Returns:
             CodeCheckpoint that can be used for rollback
+
         """
         checkpoint = CodeCheckpoint(
             id=str(uuid.uuid4()),
@@ -755,14 +753,14 @@ Return the refactored code as after_code."""
         return checkpoint
 
     def rollback(self, checkpoint: CodeCheckpoint) -> str:
-        """
-        Get the original content from a checkpoint.
+        """Get the original content from a checkpoint.
 
         Args:
             checkpoint: The checkpoint to rollback to
 
         Returns:
             The original file content
+
         """
         return checkpoint.original_content
 
@@ -799,12 +797,12 @@ Return the refactored code as after_code."""
             logger.warning(f"Failed to save user profile: {e}")
 
     def record_decision(self, finding: RefactoringFinding, accepted: bool) -> None:
-        """
-        Record user decision for learning.
+        """Record user decision for learning.
 
         Args:
             finding: The finding that was accepted or rejected
             accepted: True if user accepted, False if rejected
+
         """
         if not self._user_profile:
             return
@@ -828,7 +826,7 @@ Return the refactored code as after_code."""
                 "file": finding.file_path,
                 "category": cat,
                 "accepted": accepted,
-            }
+            },
         )
 
         # Keep history bounded
@@ -951,7 +949,7 @@ The refactored code MUST be syntactically valid and preserve all functionality.
                     start_line=0,
                     end_line=0,
                     confidence=0.5,
-                )
+                ),
             )
 
         return findings
@@ -988,7 +986,8 @@ The refactored code MUST be syntactically valid and preserve all functionality.
         return str(output).strip()
 
     def _apply_user_preferences(
-        self, findings: list[RefactoringFinding]
+        self,
+        findings: list[RefactoringFinding],
     ) -> list[RefactoringFinding]:
         """Apply user preferences to prioritize findings."""
         if not self._user_profile:

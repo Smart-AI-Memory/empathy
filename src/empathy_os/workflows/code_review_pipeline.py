@@ -1,5 +1,4 @@
-"""
-Code Review Pipeline
+"""Code Review Pipeline
 
 A composite workflow that combines CodeReviewCrew with CodeReviewWorkflow
 for comprehensive code analysis.
@@ -17,10 +16,7 @@ import asyncio
 import logging
 import time
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    pass
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -48,8 +44,7 @@ class CodeReviewPipelineResult:
 
 
 class CodeReviewPipeline:
-    """
-    Composite workflow combining CodeReviewCrew with CodeReviewWorkflow.
+    """Composite workflow combining CodeReviewCrew with CodeReviewWorkflow.
 
     Provides multiple modes for different use cases:
     - full: Most comprehensive (crew + workflow)
@@ -76,8 +71,7 @@ class CodeReviewPipeline:
         crew_config: dict | None = None,
         **kwargs,
     ):
-        """
-        Initialize the pipeline.
+        """Initialize the pipeline.
 
         Args:
             provider: LLM provider to use (anthropic, openai, etc.)
@@ -85,6 +79,7 @@ class CodeReviewPipeline:
             parallel_crew: Run crew in parallel with workflow (full mode only)
             crew_config: Configuration for CodeReviewCrew
             **kwargs: Additional arguments (for CLI compatibility)
+
         """
         self.provider = provider
         self.mode = mode
@@ -95,14 +90,14 @@ class CodeReviewPipeline:
 
     @classmethod
     def for_pr_review(cls, files_changed: int = 0) -> "CodeReviewPipeline":
-        """
-        Factory for PR review - uses crew for complex PRs.
+        """Factory for PR review - uses crew for complex PRs.
 
         Args:
             files_changed: Number of files changed in PR
 
         Returns:
             Pipeline configured for PR review complexity
+
         """
         # Use full mode for complex PRs (5+ files)
         mode = "full" if files_changed > 5 else "standard"
@@ -125,8 +120,7 @@ class CodeReviewPipeline:
         target: str = "",
         context: dict | None = None,
     ) -> CodeReviewPipelineResult:
-        """
-        Execute the code review pipeline.
+        """Execute the code review pipeline.
 
         Args:
             diff: Code diff to review
@@ -136,6 +130,7 @@ class CodeReviewPipeline:
 
         Returns:
             CodeReviewPipelineResult with combined analysis
+
         """
         start_time = time.time()
         files_changed = files_changed or []
@@ -157,12 +152,16 @@ class CodeReviewPipeline:
             if self.mode == "full":
                 # Run crew and workflow
                 crew_report, workflow_result = await self._run_full_mode(
-                    code_to_review, files_changed, context
+                    code_to_review,
+                    files_changed,
+                    context,
                 )
             elif self.mode == "standard":
                 # Run workflow only
                 workflow_result = await self._run_standard_mode(
-                    code_to_review, files_changed, context
+                    code_to_review,
+                    files_changed,
+                    context,
                 )
             else:  # quick
                 # Run minimal workflow
@@ -209,7 +208,9 @@ class CodeReviewPipeline:
 
             # Calculate combined scores
             quality_score = self._calculate_quality_score(
-                crew_report, workflow_result, all_findings
+                crew_report,
+                workflow_result,
+                all_findings,
             )
 
             # Determine verdict
@@ -260,7 +261,7 @@ class CodeReviewPipeline:
                 medium_count=0,
                 agents_used=agents_used,
                 recommendations=[],
-                blockers=[f"Pipeline error: {str(e)}"],
+                blockers=[f"Pipeline error: {e!s}"],
                 mode=self.mode,
                 duration_seconds=duration,
                 cost=total_cost,
@@ -294,7 +295,7 @@ class CodeReviewPipeline:
                     diff=code_to_review,
                     files_changed=files_changed,
                     config=self.crew_config,
-                )
+                ),
             )
 
             # Run workflow (without crew - we'll merge results)
@@ -304,12 +305,14 @@ class CodeReviewPipeline:
                     diff=code_to_review,
                     files_changed=files_changed,
                     **context,
-                )
+                ),
             )
 
             # Wait for both
             crew_report_obj, workflow_result = await asyncio.gather(
-                crew_task, workflow_task, return_exceptions=True
+                crew_task,
+                workflow_task,
+                return_exceptions=True,
             )
 
             # Handle crew result
@@ -564,14 +567,14 @@ def main():
 
 
 def format_code_review_pipeline_report(result: CodeReviewPipelineResult) -> str:
-    """
-    Format code review pipeline result as a human-readable report.
+    """Format code review pipeline result as a human-readable report.
 
     Args:
         result: The CodeReviewPipelineResult dataclass
 
     Returns:
         Formatted report string
+
     """
     lines = []
 
@@ -657,7 +660,8 @@ def format_code_review_pipeline_report(result: CodeReviewPipelineResult) -> str:
                 for i, finding in enumerate(critical_high, 1):
                     severity = finding.get("severity", "unknown")
                     title = finding.get(
-                        "title", finding.get("message", finding.get("description", "Issue found"))
+                        "title",
+                        finding.get("message", finding.get("description", "Issue found")),
                     )
                     emoji_f = "🔴" if severity == "critical" else "🟠"
                     if len(str(title)) > 50:

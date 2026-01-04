@@ -1,5 +1,4 @@
-"""
-Learning Node - Phase 4
+"""Learning Node - Phase 4
 
 Extracts patterns from inspection results for future use.
 Stores patterns in patterns/inspection/ directory.
@@ -20,8 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 async def run_learning_phase(state: CodeInspectionState) -> CodeInspectionState:
-    """
-    Phase 4: Extract and store patterns from inspection results.
+    """Phase 4: Extract and store patterns from inspection results.
 
     Patterns extracted:
     - Recurring findings across files
@@ -33,6 +31,7 @@ async def run_learning_phase(state: CodeInspectionState) -> CodeInspectionState:
 
     Returns:
         Updated state with learning results
+
     """
     logger.info("[Phase 4] Starting learning phase")
 
@@ -99,7 +98,7 @@ async def run_learning_phase(state: CodeInspectionState) -> CodeInspectionState:
 
     logger.info(
         f"[Phase 4] Complete: {len(patterns_extracted)} patterns extracted, "
-        f"{len(patterns_stored)} stored"
+        f"{len(patterns_stored)} stored",
     )
 
     return state
@@ -108,8 +107,7 @@ async def run_learning_phase(state: CodeInspectionState) -> CodeInspectionState:
 async def _extract_recurring_patterns(
     state: CodeInspectionState,
 ) -> list[dict[str, Any]]:
-    """
-    Extract patterns from recurring findings.
+    """Extract patterns from recurring findings.
 
     Looks for findings with the same code/rule that appear multiple times.
     """
@@ -157,8 +155,7 @@ async def _extract_recurring_patterns(
 async def _extract_insight_patterns(
     state: CodeInspectionState,
 ) -> list[dict[str, Any]]:
-    """
-    Extract patterns from cross-tool insights.
+    """Extract patterns from cross-tool insights.
 
     Stores insights as reusable patterns for future inspections.
     """

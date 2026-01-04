@@ -1,5 +1,4 @@
-"""
-Crew Integration for Project Index
+"""Crew Integration for Project Index
 
 Enables CrewAI crews and agents to maintain the project index.
 
@@ -23,8 +22,7 @@ from .reports import ReportGenerator
 
 
 class ProjectIndexTools:
-    """
-    Tools for agents to interact with the project index.
+    """Tools for agents to interact with the project index.
 
     These can be registered with CrewAI or LangChain agents.
     """
@@ -131,16 +129,15 @@ class ProjectIndexTools:
 
         if report_type == "health":
             return generator.health_report()
-        elif report_type == "test_gap":
+        if report_type == "test_gap":
             return generator.test_gap_report()
-        elif report_type == "staleness":
+        if report_type == "staleness":
             return generator.staleness_report()
-        elif report_type == "sprint_planning":
+        if report_type == "sprint_planning":
             return generator.sprint_planning_report()
-        elif report_type == "coverage":
+        if report_type == "coverage":
             return generator.coverage_report()
-        else:
-            return generator.health_report()
+        return generator.health_report()
 
     def refresh_index(self) -> dict[str, Any]:
         """Refresh the index."""
@@ -164,8 +161,7 @@ class ProjectIndexTools:
 
 
 class IndexMaintenanceTasks:
-    """
-    Maintenance tasks that can be run by agents or scheduled.
+    """Maintenance tasks that can be run by agents or scheduled.
 
     These tasks keep the index accurate and up-to-date.
     """
@@ -174,8 +170,7 @@ class IndexMaintenanceTasks:
         self.index = index
 
     def daily_refresh(self) -> dict[str, Any]:
-        """
-        Daily index refresh.
+        """Daily index refresh.
 
         - Re-scans all files
         - Updates staleness calculations
@@ -191,8 +186,7 @@ class IndexMaintenanceTasks:
         }
 
     def coverage_sync(self, coverage_xml_path: str) -> dict[str, Any]:
-        """
-        Sync coverage data from coverage.xml.
+        """Sync coverage data from coverage.xml.
 
         Should be run after test runs.
         """
@@ -225,8 +219,7 @@ class IndexMaintenanceTasks:
             }
 
     def identify_test_opportunities(self) -> dict[str, Any]:
-        """
-        Identify files that are good candidates for test generation.
+        """Identify files that are good candidates for test generation.
 
         Prioritizes by impact and ease of testing.
         """
@@ -252,10 +245,9 @@ class IndexMaintenanceTasks:
         """Estimate effort to write tests."""
         if record.lines_of_code < 50:
             return "small"
-        elif record.lines_of_code < 200:
+        if record.lines_of_code < 200:
             return "medium"
-        else:
-            return "large"
+        return "large"
 
     def _test_reason(self, record: FileRecord) -> str:
         """Generate reason for testing."""
@@ -269,9 +261,7 @@ class IndexMaintenanceTasks:
         return ", ".join(reasons)
 
     def stale_test_alert(self) -> dict[str, Any]:
-        """
-        Check for stale tests and generate alerts.
-        """
+        """Check for stale tests and generate alerts."""
         stale = self.index.get_stale_files()
 
         alerts = []
@@ -289,7 +279,7 @@ class IndexMaintenanceTasks:
                     "staleness_days": record.staleness_days,
                     "severity": severity,
                     "test_file": record.test_file_path,
-                }
+                },
             )
 
         return {
@@ -301,8 +291,7 @@ class IndexMaintenanceTasks:
 
 
 def create_index_maintainer_crew_config() -> dict[str, Any]:
-    """
-    Generate CrewAI crew configuration for index maintenance.
+    """Generate CrewAI crew configuration for index maintenance.
 
     This crew can be instantiated to automatically maintain the index.
     """
@@ -368,8 +357,7 @@ def create_index_maintainer_crew_config() -> dict[str, Any]:
 
 
 def integrate_with_workflow(index: ProjectIndex, workflow_name: str) -> dict[str, Any]:
-    """
-    Get index context for a specific workflow.
+    """Get index context for a specific workflow.
 
     Workflows can call this to get relevant index data.
     """
@@ -377,8 +365,7 @@ def integrate_with_workflow(index: ProjectIndex, workflow_name: str) -> dict[str
 
 
 class IndexEventHooks:
-    """
-    Event hooks for automatic index updates.
+    """Event hooks for automatic index updates.
 
     Can be triggered by CI/CD, git hooks, or file watchers.
     """
@@ -397,8 +384,7 @@ class IndexEventHooks:
             self.callbacks[event].append(callback)
 
     def on_file_changed(self, file_path: str) -> None:
-        """
-        Called when a file is modified.
+        """Called when a file is modified.
 
         Can be triggered by file watcher or git hook.
         """
@@ -419,8 +405,7 @@ class IndexEventHooks:
             callback(file_path)
 
     def on_test_run_complete(self, coverage_xml_path: str | None = None) -> None:
-        """
-        Called after a test run completes.
+        """Called after a test run completes.
 
         Updates coverage data if provided.
         """
@@ -433,8 +418,7 @@ class IndexEventHooks:
             callback(coverage_xml_path)
 
     def on_commit(self, changed_files: list[str]) -> None:
-        """
-        Called after a git commit.
+        """Called after a git commit.
 
         Updates index for changed files.
         """

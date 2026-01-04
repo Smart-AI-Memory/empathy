@@ -1,5 +1,4 @@
-"""
-Debugging Assistant - Level 3 Proactive Empathy Example
+"""Debugging Assistant - Level 3 Proactive Empathy Example
 
 Demonstrates how to use the Empathy Framework to build an AI debugging
 assistant that proactively helps developers debug code.
@@ -27,8 +26,7 @@ from empathy_os import (
 
 
 class DebuggingAssistant:
-    """
-    AI debugging assistant using Level 3 Proactive Empathy
+    """AI debugging assistant using Level 3 Proactive Empathy
 
     Proactively detects debugging struggles and offers targeted help
     without waiting to be asked.
@@ -51,7 +49,6 @@ class DebuggingAssistant:
 
     def _initialize_debugging_patterns(self):
         """Initialize common debugging patterns"""
-
         # Pattern 1: Repeated syntax errors
         pattern1 = Pattern(
             id="pat_syntax_errors",
@@ -96,8 +93,7 @@ class DebuggingAssistant:
         attempt_number: int,
         time_spent_minutes: int,
     ) -> dict:
-        """
-        Observe a debugging attempt and proactively offer help
+        """Observe a debugging attempt and proactively offer help
 
         Args:
             error_type: Type of error (e.g., "SyntaxError", "ImportError")
@@ -108,8 +104,8 @@ class DebuggingAssistant:
 
         Returns:
             Proactive assistance response
-        """
 
+        """
         # Record observation
         observation = {
             "error_type": error_type,
@@ -134,24 +130,31 @@ class DebuggingAssistant:
 
         # Calculate confidence for proactive action
         confidence = self._calculate_intervention_confidence(
-            error_type, attempt_number, time_spent_minutes
+            error_type,
+            attempt_number,
+            time_spent_minutes,
         )
 
         # Query pattern library for relevant patterns
         context = {"error_type": error_type, "tags": [error_type.lower(), "debugging"]}
         relevant_patterns = self.pattern_library.query_patterns(
-            "debug_assistant", context, min_confidence=0.7
+            "debug_assistant",
+            context,
+            min_confidence=0.7,
         )
 
         # Level 3: Proactively offer help
         proactive_response = self.level3.respond(
-            {"observed_need": f"debugging_{error_type.lower()}", "confidence": confidence}
+            {"observed_need": f"debugging_{error_type.lower()}", "confidence": confidence},
         )
 
         # If confidence is high enough, offer specific help
         if confidence >= 0.7:
             specific_help = self._generate_specific_help(
-                error_type, error_message, code_snippet, relevant_patterns
+                error_type,
+                error_message,
+                code_snippet,
+                relevant_patterns,
             )
             proactive_response["specific_help"] = specific_help
 
@@ -176,10 +179,12 @@ class DebuggingAssistant:
         return proactive_response
 
     def _calculate_intervention_confidence(
-        self, error_type: str, attempt_number: int, time_spent: int
+        self,
+        error_type: str,
+        attempt_number: int,
+        time_spent: int,
     ) -> float:
         """Calculate confidence for proactive intervention"""
-
         confidence = 0.5  # Base confidence
 
         # High confidence for well-known errors
@@ -201,10 +206,13 @@ class DebuggingAssistant:
         return min(confidence, 1.0)
 
     def _generate_specific_help(
-        self, error_type: str, error_message: str, code_snippet: str, patterns: list
+        self,
+        error_type: str,
+        error_message: str,
+        code_snippet: str,
+        patterns: list,
     ) -> dict:
         """Generate specific debugging help"""
-
         help_response = {
             "error_type": error_type,
             "diagnosis": "",
@@ -302,7 +310,6 @@ class DebuggingAssistant:
 
     def detect_feedback_loops(self) -> dict:
         """Detect if developer is in virtuous or vicious debugging cycle"""
-
         if len(self.session_history) < 3:
             return {"status": "insufficient_data"}
 
@@ -329,7 +336,6 @@ class DebuggingAssistant:
 
 def main():
     """Demonstrate debugging assistant with realistic scenarios"""
-
     try:
         print("=" * 70)
         print("Debugging Assistant - Level 3 Proactive Empathy")
@@ -379,12 +385,12 @@ def main():
         if "structural_support" in response1:
             support = response1["structural_support"]
             print("\n   🆘 Proactive help offered:")
-            if "offered_support" in support and support["offered_support"]:
+            if support.get("offered_support"):
                 for offer in support["offered_support"]:
                     print(f"      - {offer['description']}")
             else:
                 print(
-                    f"      Assessment: {support['struggle_assessment']['type']} struggle detected"
+                    f"      Assessment: {support['struggle_assessment']['type']} struggle detected",
                 )
 
         # Record successful resolution
@@ -455,7 +461,7 @@ def main():
             print("\n   🆘 Structural support offered:")
             if "struggle_assessment" in support:
                 print(f"      Struggle type: {support['struggle_assessment']['type']}")
-            if "help_offered" in support and support["help_offered"]:
+            if support.get("help_offered"):
                 for offer in support["help_offered"]:
                     print(f"      - {offer['type']}: {offer['description']}")
             else:

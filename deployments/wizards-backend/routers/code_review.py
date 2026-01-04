@@ -1,5 +1,4 @@
-"""
-Code Review Wizard API
+"""Code Review Wizard API
 
 Pattern-based code review against historical bug patterns.
 """
@@ -17,7 +16,8 @@ class CodeReviewRequest(BaseModel):
     diff: str | None = Field(default=None, description="Git diff to review")
     file_paths: list[str] = Field(default_factory=list, description="Files to review")
     severity_threshold: str = Field(
-        default="info", description="Minimum severity (info/warning/error)"
+        default="info",
+        description="Minimum severity (info/warning/error)",
     )
 
 
@@ -30,8 +30,7 @@ class DiffReviewRequest(BaseModel):
 
 @router.post("/review")
 async def review_code(request: CodeReviewRequest):
-    """
-    Review code against historical bug patterns.
+    """Review code against historical bug patterns.
 
     This wizard analyzes code using patterns learned from past bugs,
     catching issues before they become production problems.
@@ -53,7 +52,7 @@ async def review_code(request: CodeReviewRequest):
                 "files": request.file_paths,
                 "diff": request.diff,
                 "severity_threshold": request.severity_threshold,
-            }
+            },
         )
 
         return {
@@ -66,7 +65,7 @@ async def review_code(request: CodeReviewRequest):
     except ImportError as e:
         raise HTTPException(
             status_code=503,
-            detail=f"Wizard not available: {str(e)}. Install empathy-framework[full]",
+            detail=f"Wizard not available: {e!s}. Install empathy-framework[full]",
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -74,8 +73,7 @@ async def review_code(request: CodeReviewRequest):
 
 @router.post("/review-diff")
 async def review_diff(request: DiffReviewRequest):
-    """
-    Review a git diff for anti-patterns.
+    """Review a git diff for anti-patterns.
 
     Quick review of changed code without file system access.
     Perfect for CI/CD integration or pre-commit hooks.
@@ -89,7 +87,7 @@ async def review_diff(request: DiffReviewRequest):
             {
                 "diff": request.diff,
                 "severity_threshold": request.severity_threshold,
-            }
+            },
         )
 
         return {
@@ -101,16 +99,14 @@ async def review_diff(request: DiffReviewRequest):
         }
 
     except ImportError as e:
-        raise HTTPException(status_code=503, detail=f"Wizard not available: {str(e)}")
+        raise HTTPException(status_code=503, detail=f"Wizard not available: {e!s}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/demo")
 async def demo_review():
-    """
-    Demo endpoint showing code review with sample diff.
-    """
+    """Demo endpoint showing code review with sample diff."""
     sample_diff = """diff --git a/src/api.js b/src/api.js
 --- a/src/api.js
 +++ b/src/api.js

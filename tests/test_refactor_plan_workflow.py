@@ -1,5 +1,4 @@
-"""
-Tests for RefactorPlanWorkflow.
+"""Tests for RefactorPlanWorkflow.
 
 Tests the tech debt prioritization workflow with:
 - Debt marker scanning
@@ -111,7 +110,7 @@ class TestDebtHistoryLoading:
                 "snapshots": [
                     {"total_items": 50, "date": "2024-01-01"},
                     {"total_items": 60, "date": "2024-02-01"},
-                ]
+                ],
             }
 
             with open(Path(tmpdir) / "tech_debt.json", "w") as f:
@@ -478,7 +477,7 @@ class TestRefactorPlanPlan:
             result, _, _ = await workflow._plan(
                 {
                     "high_priority": [
-                        {"file": "a.py", "line": 1, "marker": "HACK", "message": "Fix me"}
+                        {"file": "a.py", "line": 1, "marker": "HACK", "message": "Fix me"},
                     ],
                     "medium_priority": [],
                     "analysis": {"trajectory": "increasing", "hotspots": []},
@@ -593,7 +592,7 @@ class TestFormatRefactorPlanReport:
                     "message": "Critical workaround",
                     "priority_score": 15,
                     "is_hotspot": True,
-                }
+                },
             ],
         }
 
@@ -620,7 +619,7 @@ def process(data):
     return data.upper()
 
 # FIXME: Memory leak when processing large files
-"""
+""",
             )
 
             workflow = RefactorPlanWorkflow(patterns_dir=tmpdir)

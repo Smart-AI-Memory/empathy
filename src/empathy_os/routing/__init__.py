@@ -1,5 +1,4 @@
-"""
-Empathy Framework Routing Module
+"""Empathy Framework Routing Module
 
 Intelligent request routing to wizards using LLM classification.
 
@@ -24,21 +23,21 @@ from .smart_router import RoutingDecision, SmartRouter, quick_route
 from .wizard_registry import WIZARD_REGISTRY, WizardInfo, WizardRegistry
 
 __all__ = [
-    # Smart Router
-    "SmartRouter",
-    "RoutingDecision",
-    "quick_route",
-    # Classifier
-    "HaikuClassifier",
-    "ClassificationResult",
-    # Wizard Registry
-    "WizardRegistry",
-    "WizardInfo",
     "WIZARD_REGISTRY",
-    # Chain Executor
-    "ChainExecutor",
     "ChainConfig",
     "ChainExecution",
+    # Chain Executor
+    "ChainExecutor",
     "ChainStep",
     "ChainTrigger",
+    "ClassificationResult",
+    # Classifier
+    "HaikuClassifier",
+    "RoutingDecision",
+    # Smart Router
+    "SmartRouter",
+    "WizardInfo",
+    # Wizard Registry
+    "WizardRegistry",
+    "quick_route",
 ]

@@ -1,5 +1,4 @@
-"""
-Tests for Multi-Model Fallback and Resilience Module
+"""Tests for Multi-Model Fallback and Resilience Module
 
 Tests the fallback policies, circuit breaker, and retry logic:
 - FallbackPolicy and FallbackStrategy

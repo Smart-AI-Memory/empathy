@@ -1,5 +1,4 @@
-"""
-LocalizationWizard - Internationalization and localization
+"""LocalizationWizard - Internationalization and localization
 
 Level 4 Anticipatory Empathy for Localization using the Empathy Framework.
 
@@ -13,8 +12,7 @@ from .base_wizard import BaseCoachWizard, WizardIssue, WizardPrediction
 
 
 class LocalizationWizard(BaseCoachWizard):
-    """
-    Internationalization and localization
+    """Internationalization and localization
 
     Detects:
     - hardcoded strings
@@ -36,8 +34,7 @@ class LocalizationWizard(BaseCoachWizard):
         )
 
     def analyze_code(self, code: str, file_path: str, language: str) -> list[WizardIssue]:
-        """
-        Analyze code for localization issues
+        """Analyze code for localization issues
 
         This is a reference implementation. In production, integrate with:
         - Static analysis tools
@@ -59,7 +56,11 @@ class LocalizationWizard(BaseCoachWizard):
         return issues
 
     def _check_hardcoded_string(
-        self, line: str, line_num: int, file_path: str, language: str
+        self,
+        line: str,
+        line_num: int,
+        file_path: str,
+        language: str,
     ) -> WizardIssue | None:
         """Check a single line for hardcoded user-facing strings."""
         # Skip comments and imports
@@ -83,7 +84,10 @@ class LocalizationWizard(BaseCoachWizard):
         return None
 
     def _check_python_hardcoded(
-        self, line: str, line_num: int, file_path: str
+        self,
+        line: str,
+        line_num: int,
+        file_path: str,
     ) -> WizardIssue | None:
         """Check Python code for hardcoded UI strings."""
         # Look for print() or raise with string literals
@@ -132,10 +136,13 @@ class LocalizationWizard(BaseCoachWizard):
         return None
 
     def predict_future_issues(
-        self, code: str, file_path: str, project_context: dict[str, Any], timeline_days: int = 90
+        self,
+        code: str,
+        file_path: str,
+        project_context: dict[str, Any],
+        timeline_days: int = 90,
     ) -> list[WizardPrediction]:
-        """
-        Level 4 Anticipatory: Predict localization issues {timeline_days} days ahead
+        """Level 4 Anticipatory: Predict localization issues {timeline_days} days ahead
 
         Uses:
         - Historical patterns
@@ -151,16 +158,16 @@ class LocalizationWizard(BaseCoachWizard):
 
         self.logger.info(
             f"{self.name} predicted {len(predictions)} future issues "
-            f"for {file_path} ({timeline_days} days ahead)"
+            f"for {file_path} ({timeline_days} days ahead)",
         )
         return predictions
 
     def suggest_fixes(self, issue: WizardIssue) -> str:
-        """
-        Suggest how to fix a localization issue
+        """Suggest how to fix a localization issue
 
         Returns:
             Detailed fix suggestion with code examples
+
         """
         # Implementation depends on issue type
         return f"Fix suggestion for {issue.category} issue: {issue.message}"

@@ -1,5 +1,4 @@
-"""
-Test suite for secrets detector module
+"""Test suite for secrets detector module
 
 Tests comprehensive secrets detection functionality including:
 - Pattern-based detection for various secret types
@@ -201,7 +200,9 @@ class TestSecretsDetector:
         """Test custom pattern addition"""
         detector = SecretsDetector()
         detector.add_custom_pattern(
-            name="acme_api_key", pattern=r"ACME_[A-Z0-9]{32}", severity="high"
+            name="acme_api_key",
+            pattern=r"ACME_[A-Z0-9]{32}",
+            severity="high",
         )
 
         # Exactly 32 characters after ACME_ prefix (37 total)
@@ -225,7 +226,9 @@ class TestSecretsDetector:
 
         with pytest.raises(ValueError):
             detector.add_custom_pattern(
-                name="bad_pattern", pattern=r"[invalid(regex", severity="high"
+                name="bad_pattern",
+                pattern=r"[invalid(regex",
+                severity="high",
             )
 
     def test_invalid_severity(self):
@@ -234,7 +237,9 @@ class TestSecretsDetector:
 
         with pytest.raises(ValueError):
             detector.add_custom_pattern(
-                name="test_pattern", pattern=r"TEST_\d+", severity="invalid_severity"
+                name="test_pattern",
+                pattern=r"TEST_\d+",
+                severity="invalid_severity",
             )
 
     def test_secret_redaction(self):

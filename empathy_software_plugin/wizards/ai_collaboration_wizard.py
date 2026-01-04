@@ -1,5 +1,4 @@
-"""
-AI Collaboration Pattern Wizard - Level 4 Anticipatory Empathy
+"""AI Collaboration Pattern Wizard - Level 4 Anticipatory Empathy
 
 Alerts developers when their AI integration patterns will become problematic.
 
@@ -21,8 +20,7 @@ from empathy_os.plugins import BaseWizard
 
 
 class AICollaborationWizard(BaseWizard):
-    """
-    Level 4 Anticipatory: Analyzes HOW developers work with AI.
+    """Level 4 Anticipatory: Analyzes HOW developers work with AI.
 
     Meta-insight: This wizard applies the Empathy Framework to itself.
     It helps developers progress from Level 1 (reactive AI usage) to
@@ -52,8 +50,7 @@ class AICollaborationWizard(BaseWizard):
         ]
 
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze AI collaboration patterns and predict limitations.
+        """Analyze AI collaboration patterns and predict limitations.
 
         Meta: This wizard helps developers build systems like the
         Empathy Framework itself - systems that transcend reactive AI.
@@ -68,7 +65,9 @@ class AICollaborationWizard(BaseWizard):
 
         # Level 4: Predict when current patterns will limit growth
         predictions = await self._predict_collaboration_bottlenecks(
-            integration_files, usage_patterns, context
+            integration_files,
+            usage_patterns,
+            context,
         )
 
         recommendations = self._generate_recommendations(issues, predictions)
@@ -89,10 +88,11 @@ class AICollaborationWizard(BaseWizard):
         }
 
     async def _analyze_collaboration_maturity(
-        self, integration_files: list[str], usage_patterns: list[dict]
+        self,
+        integration_files: list[str],
+        usage_patterns: list[dict],
     ) -> list[dict[str, Any]]:
-        """
-        Assess current AI collaboration maturity level.
+        """Assess current AI collaboration maturity level.
 
         Maps observed patterns to Empathy Framework levels 1-5.
         """
@@ -115,7 +115,7 @@ class AICollaborationWizard(BaseWizard):
                         "Consider Level 2 (Guided): Use calibrated questions to refine "
                         "AI understanding before generating responses"
                     ),
-                }
+                },
             )
 
         # Check for missing context accumulation (Level 2 → 3 transition)
@@ -134,7 +134,7 @@ class AICollaborationWizard(BaseWizard):
                         "Implement CollaborationState tracking: trust levels, patterns, "
                         "shared context (see Empathy Framework core)"
                     ),
-                }
+                },
             )
 
         # Check for pattern detection capability (Level 3 requirement)
@@ -152,7 +152,7 @@ class AICollaborationWizard(BaseWizard):
                         "Add pattern library: track user workflows, detect sequences, "
                         "enable proactive suggestions"
                     ),
-                }
+                },
             )
 
         # Check for trajectory analysis (Level 4 requirement)
@@ -170,16 +170,18 @@ class AICollaborationWizard(BaseWizard):
                         "Implement trajectory analysis: growth rates, bottleneck prediction, "
                         "leverage point identification"
                     ),
-                }
+                },
             )
 
         return issues
 
     async def _predict_collaboration_bottlenecks(
-        self, integration_files: list[str], usage_patterns: list[dict], full_context: dict[str, Any]
+        self,
+        integration_files: list[str],
+        usage_patterns: list[dict],
+        full_context: dict[str, Any],
     ) -> list[dict[str, Any]]:
-        """
-        Level 4: Predict when current collaboration patterns will limit growth.
+        """Level 4: Predict when current collaboration patterns will limit growth.
 
         This is meta-Level 4: using anticipatory empathy to help developers
         build anticipatory empathy systems.
@@ -218,7 +220,7 @@ class AICollaborationWizard(BaseWizard):
                         "patterns. That shift only happened because we'd built the "
                         "infrastructure for higher-level collaboration."
                     ),
-                }
+                },
             )
 
         # Pattern 2: No feedback loops
@@ -244,7 +246,7 @@ class AICollaborationWizard(BaseWizard):
                         "AI quality is static. We've seen quality improve 2-3x "
                         "with proper feedback integration."
                     ),
-                }
+                },
             )
 
         # Pattern 3: No cross-integration learning
@@ -277,7 +279,7 @@ class AICollaborationWizard(BaseWizard):
                         "different domain. That only worked because we'd built Level 5 "
                         "cross-domain learning."
                     ),
-                }
+                },
             )
 
         # Pattern 4: AI as tool, not partner
@@ -310,12 +312,12 @@ class AICollaborationWizard(BaseWizard):
                         "Not because AI wrote more code, but because it anticipated "
                         "structural issues before they became costly."
                     ),
-                }
+                },
             )
 
         # Pattern 5: No architecture for growth
         if len(integration_files) > 2 and not self._has_collaboration_architecture(
-            integration_files
+            integration_files,
         ):
             predictions.append(
                 {
@@ -339,7 +341,7 @@ class AICollaborationWizard(BaseWizard):
                         "Framework-based approach scales well. "
                         "We learned this by building both ways."
                     ),
-                }
+                },
             )
 
         return predictions
@@ -376,17 +378,19 @@ class AICollaborationWizard(BaseWizard):
             recommendations.append("  Next: Implement Level 3 (Proactive) - Add pattern detection")
         elif current_level < 4:
             recommendations.append(
-                "  Next: Implement Level 4 (Anticipatory) - Add trajectory analysis"
+                "  Next: Implement Level 4 (Anticipatory) - Add trajectory analysis",
             )
         else:
             recommendations.append(
-                "  Next: Implement Level 5 (Systems) - Add cross-domain learning"
+                "  Next: Implement Level 5 (Systems) - Add cross-domain learning",
             )
 
         return recommendations
 
     def _extract_patterns(
-        self, issues: list[dict], predictions: list[dict]
+        self,
+        issues: list[dict],
+        predictions: list[dict],
     ) -> list[dict[str, Any]]:
         """Extract cross-domain patterns"""
         return [
@@ -412,7 +416,7 @@ class AICollaborationWizard(BaseWizard):
                     "4: Anticipatory (predict and design relief)",
                     "5: Systems (build scalable structures)",
                 ],
-            }
+            },
         ]
 
     # Assessment methods

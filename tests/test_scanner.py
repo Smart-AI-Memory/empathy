@@ -1,5 +1,4 @@
-"""
-Tests for src/empathy_os/project_index/scanner.py
+"""Tests for src/empathy_os/project_index/scanner.py
 
 Tests the ProjectScanner class and its methods for scanning
 codebases and building file indexes.
@@ -585,7 +584,8 @@ class TestProjectScannerGlobPatternMatching:
         with tempfile.TemporaryDirectory() as tmpdir:
             scanner = ProjectScanner(tmpdir)
             assert scanner._matches_glob_pattern(
-                Path("src/__pycache__/foo.pyc"), "**/__pycache__/**"
+                Path("src/__pycache__/foo.pyc"),
+                "**/__pycache__/**",
             )
 
     def test_directory_pattern(self):
@@ -593,7 +593,8 @@ class TestProjectScannerGlobPatternMatching:
         with tempfile.TemporaryDirectory() as tmpdir:
             scanner = ProjectScanner(tmpdir)
             assert scanner._matches_glob_pattern(
-                Path("node_modules/pkg/index.js"), "**/node_modules/**"
+                Path("node_modules/pkg/index.js"),
+                "**/node_modules/**",
             )
 
 
@@ -655,7 +656,7 @@ def hello(name: str) -> str:
     if name:
         return f"Hello, {name}"
     return "Hello"
-'''
+''',
             )
 
             scanner = ProjectScanner(tmpdir)
@@ -714,7 +715,7 @@ def complex_function():
                 process(i)
             except Exception:
                 pass
-"""
+""",
             )
 
             scanner = ProjectScanner(tmpdir)

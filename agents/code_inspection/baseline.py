@@ -1,5 +1,4 @@
-"""
-Baseline and Suppression System
+"""Baseline and Suppression System
 
 Hybrid approach for managing finding suppressions:
 1. Inline comments - Line-specific suppressions
@@ -102,8 +101,7 @@ BASELINE_SCHEMA = {
 
 
 class BaselineManager:
-    """
-    Manages finding suppressions using hybrid approach.
+    """Manages finding suppressions using hybrid approach.
 
     Usage:
         manager = BaselineManager(project_root="/path/to/project")
@@ -122,11 +120,11 @@ class BaselineManager:
     """
 
     def __init__(self, project_root: str | Path):
-        """
-        Initialize baseline manager.
+        """Initialize baseline manager.
 
         Args:
             project_root: Root directory of the project
+
         """
         self.project_root = Path(project_root)
         self.baseline_path = self.project_root / ".empathy-baseline.json"
@@ -134,11 +132,11 @@ class BaselineManager:
         self.inline_cache: dict[str, list[Suppression]] = {}  # {file_path: [suppressions]}
 
     def load(self) -> bool:
-        """
-        Load baseline from JSON file.
+        """Load baseline from JSON file.
 
         Returns:
             True if loaded successfully, False if no baseline exists
+
         """
         if not self.baseline_path.exists():
             self.baseline = copy.deepcopy(BASELINE_SCHEMA)
@@ -154,11 +152,11 @@ class BaselineManager:
             return False
 
     def save(self) -> bool:
-        """
-        Save baseline to JSON file.
+        """Save baseline to JSON file.
 
         Returns:
             True if saved successfully
+
         """
         self.baseline["updated_at"] = datetime.now().isoformat()
 
@@ -171,8 +169,7 @@ class BaselineManager:
             return False
 
     def parse_inline_suppressions(self, file_path: str, content: str) -> list[Suppression]:
-        """
-        Parse inline suppression comments from file content.
+        """Parse inline suppression comments from file content.
 
         Args:
             file_path: Path to the file (for tracking)
@@ -180,6 +177,7 @@ class BaselineManager:
 
         Returns:
             List of Suppression entries found
+
         """
         suppressions = []
         lines = content.split("\n")
@@ -200,7 +198,7 @@ class BaselineManager:
                             source="inline",
                             file_path=file_path,
                             line_number=None,  # File-wide
-                        )
+                        ),
                     )
 
             # Check for same-line disable
@@ -215,7 +213,7 @@ class BaselineManager:
                             source="inline",
                             file_path=file_path,
                             line_number=i,
-                        )
+                        ),
                     )
 
             # Check for disable-next-line
@@ -229,20 +227,20 @@ class BaselineManager:
                         source="inline",
                         file_path=file_path,
                         line_number=i + 1,  # Applies to next line
-                    )
+                    ),
                 )
 
         return suppressions
 
     def scan_file_for_inline(self, file_path: str) -> list[Suppression]:
-        """
-        Scan a file for inline suppressions and cache results.
+        """Scan a file for inline suppressions and cache results.
 
         Args:
             file_path: Path to file (relative to project root)
 
         Returns:
             List of suppressions found
+
         """
         full_path = self.project_root / file_path
 
@@ -268,8 +266,7 @@ class BaselineManager:
         line_number: int | None = None,
         tool: str | None = None,
     ) -> SuppressionMatch:
-        """
-        Check if a finding should be suppressed.
+        """Check if a finding should be suppressed.
 
         Checks in order (most specific to least):
         1. Inline comment at exact line
@@ -286,6 +283,7 @@ class BaselineManager:
 
         Returns:
             SuppressionMatch indicating if suppressed and why
+
         """
         rule_code = rule_code.upper()
         now = datetime.now()
@@ -370,7 +368,7 @@ class BaselineManager:
                     return SuppressionMatch(
                         is_suppressed=True,
                         suppression=self._dict_to_suppression(
-                            {**supp_dict, "rule_code": rule_code}
+                            {**supp_dict, "rule_code": rule_code},
                         ),
                         match_type="baseline_rule",
                     )
@@ -389,8 +387,7 @@ class BaselineManager:
         ttl_days: int | None = None,
         created_by: str = "",
     ) -> bool:
-        """
-        Add a suppression to the baseline file.
+        """Add a suppression to the baseline file.
 
         Args:
             rule_code: Rule code to suppress
@@ -404,6 +401,7 @@ class BaselineManager:
 
         Returns:
             True if added successfully
+
         """
         if not reason:
             raise ValueError("Suppression reason is required for audit trail")
@@ -428,7 +426,7 @@ class BaselineManager:
 
         if scope == "project":
             self.baseline.setdefault("suppressions", {}).setdefault("project", []).append(
-                supp_entry
+                supp_entry,
             )
         elif scope == "file":
             if not file_path:
@@ -438,7 +436,8 @@ class BaselineManager:
                 supp_entry["line_number"] = line_number
 
             self.baseline.setdefault("suppressions", {}).setdefault("files", {}).setdefault(
-                file_path, []
+                file_path,
+                [],
             ).append(supp_entry)
         elif scope == "rule":
             self.baseline.setdefault("suppressions", {}).setdefault("rules", {})[
@@ -450,8 +449,7 @@ class BaselineManager:
         return self.save()
 
     def filter_findings(self, findings: list[dict], tool: str | None = None) -> list[dict]:
-        """
-        Filter a list of findings, removing suppressed ones.
+        """Filter a list of findings, removing suppressed ones.
 
         Args:
             findings: List of finding dicts with rule_code, file_path, line_number
@@ -459,6 +457,7 @@ class BaselineManager:
 
         Returns:
             List of non-suppressed findings
+
         """
         result = []
 
@@ -488,11 +487,11 @@ class BaselineManager:
         return result
 
     def get_suppression_stats(self) -> dict[str, Any]:
-        """
-        Get statistics about current suppressions.
+        """Get statistics about current suppressions.
 
         Returns:
             Dict with suppression counts and details
+
         """
         now = datetime.now()
         by_scope: dict[str, int] = {"project": 0, "file": 0, "rule": 0, "inline": 0}
@@ -535,11 +534,11 @@ class BaselineManager:
         }
 
     def cleanup_expired(self) -> int:
-        """
-        Remove expired suppressions from baseline.
+        """Remove expired suppressions from baseline.
 
         Returns:
             Number of suppressions removed
+
         """
         now = datetime.now()
         removed = 0
@@ -632,8 +631,7 @@ def create_baseline_file(
     description: str = "",
     maintainer: str = "",
 ) -> Path:
-    """
-    Create a new baseline file with empty suppressions.
+    """Create a new baseline file with empty suppressions.
 
     Args:
         project_root: Root directory of the project
@@ -642,6 +640,7 @@ def create_baseline_file(
 
     Returns:
         Path to created baseline file
+
     """
     project_root = Path(project_root)
     baseline_path = project_root / ".empathy-baseline.json"

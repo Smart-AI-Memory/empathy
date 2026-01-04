@@ -1,5 +1,4 @@
-"""
-Empathy Framework - Plugin System Base Classes
+"""Empathy Framework - Plugin System Base Classes
 
 This module provides the core abstractions for creating domain-specific plugins
 that extend the Empathy Framework.
@@ -32,8 +31,7 @@ class PluginMetadata:
 
 
 class BaseWizard(ABC):
-    """
-    Universal base class for all wizards across all domains.
+    """Universal base class for all wizards across all domains.
 
     This replaces domain-specific base classes (BaseCoachWizard, etc.)
     to provide a unified interface.
@@ -45,14 +43,14 @@ class BaseWizard(ABC):
     """
 
     def __init__(self, name: str, domain: str, empathy_level: int, category: str | None = None):
-        """
-        Initialize a wizard
+        """Initialize a wizard
 
         Args:
             name: Human-readable wizard name
             domain: Domain this wizard belongs to (e.g., 'software', 'healthcare')
             empathy_level: Which empathy level this wizard operates at (1-5)
             category: Optional category within domain
+
         """
         self.name = name
         self.domain = domain
@@ -62,8 +60,7 @@ class BaseWizard(ABC):
 
     @abstractmethod
     async def analyze(self, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze the given context and return results.
+        """Analyze the given context and return results.
 
         This is the main entry point for all wizards. The context structure
         is domain-specific but the return format should follow a standard pattern.
@@ -101,13 +98,12 @@ class BaseWizard(ABC):
             - Use self.contribute_patterns() to extract learnings for the pattern library
             - Confidence scores should reflect uncertainty in the analysis
             - This method is async to support long-running analyses
+
         """
-        pass
 
     @abstractmethod
     def get_required_context(self) -> list[str]:
-        """
-        Declare what context fields this wizard needs.
+        """Declare what context fields this wizard needs.
 
         This method defines the contract between the caller and the wizard.
         The caller must provide all declared fields before calling analyze().
@@ -130,18 +126,18 @@ class BaseWizard(ABC):
             - Order is not significant but consistency helps with documentation
             - Consider validation requirements when declaring fields
             - Used by validate_context() to check required fields before analyze()
+
         """
-        pass
 
     def validate_context(self, context: dict[str, Any]) -> bool:
-        """
-        Validate that context contains required fields.
+        """Validate that context contains required fields.
 
         Args:
             context: Context to validate
 
         Returns:
             True if valid, raises ValueError if invalid
+
         """
         required = self.get_required_context()
         missing = [key for key in required if key not in context]
@@ -156,8 +152,7 @@ class BaseWizard(ABC):
         return self.empathy_level
 
     def contribute_patterns(self, analysis_result: dict[str, Any]) -> dict[str, Any]:
-        """
-        Extract patterns from analysis for the shared pattern library.
+        """Extract patterns from analysis for the shared pattern library.
 
         This enables cross-domain learning (Level 5 Systems Empathy).
 
@@ -166,6 +161,7 @@ class BaseWizard(ABC):
 
         Returns:
             Dictionary of patterns in standard format
+
         """
         # Default implementation - override for custom pattern extraction
         return {
@@ -177,8 +173,7 @@ class BaseWizard(ABC):
 
 
 class BasePlugin(ABC):
-    """
-    Base class for domain plugins.
+    """Base class for domain plugins.
 
     A plugin is a collection of wizards and patterns for a specific domain.
 
@@ -186,6 +181,7 @@ class BasePlugin(ABC):
         - SoftwarePlugin: 16+ coach wizards for code analysis
         - HealthcarePlugin: Clinical and compliance wizards
         - FinancePlugin: Fraud detection, compliance wizards
+
     """
 
     def __init__(self):
@@ -195,8 +191,7 @@ class BasePlugin(ABC):
 
     @abstractmethod
     def get_metadata(self) -> PluginMetadata:
-        """
-        Return metadata about this plugin.
+        """Return metadata about this plugin.
 
         This method provides essential information about the plugin that the
         framework uses for loading, validation, and discovery. It must return
@@ -221,13 +216,12 @@ class BasePlugin(ABC):
             - Version should follow semantic versioning
             - Domain names should be lowercase and consistent across plugins
             - Core version requirement ensures framework compatibility
+
         """
-        pass
 
     @abstractmethod
     def register_wizards(self) -> dict[str, type[BaseWizard]]:
-        """
-        Register all wizards provided by this plugin.
+        """Register all wizards provided by this plugin.
 
         This method defines all analysis wizards available in this plugin.
         Wizards are lazy-instantiated by get_wizard() when first requested.
@@ -264,22 +258,21 @@ class BasePlugin(ABC):
             - Can return empty dict {} if plugin provides no wizards initially
             - Called once during initialization via initialize()
             - Framework caches results in self._wizards
+
         """
-        pass
 
     def register_patterns(self) -> dict[str, Any]:
-        """
-        Register domain-specific patterns for the pattern library.
+        """Register domain-specific patterns for the pattern library.
 
         Returns:
             Dictionary of patterns in standard format
+
         """
         # Optional - override if plugin provides pre-built patterns
         return {}
 
     def initialize(self) -> None:
-        """
-        Initialize the plugin (lazy initialization).
+        """Initialize the plugin (lazy initialization).
 
         Called once before first use. Override to perform setup:
         - Load configuration
@@ -295,20 +288,20 @@ class BasePlugin(ABC):
         self._wizards = self.register_wizards()
 
         self.logger.info(
-            f"Plugin '{self.get_metadata().name}' initialized with {len(self._wizards)} wizards"
+            f"Plugin '{self.get_metadata().name}' initialized with {len(self._wizards)} wizards",
         )
 
         self._initialized = True
 
     def get_wizard(self, wizard_id: str) -> type[BaseWizard] | None:
-        """
-        Get a wizard by ID.
+        """Get a wizard by ID.
 
         Args:
             wizard_id: Wizard identifier
 
         Returns:
             Wizard class or None if not found
+
         """
         if not self._initialized:
             self.initialize()
@@ -316,11 +309,11 @@ class BasePlugin(ABC):
         return self._wizards.get(wizard_id)
 
     def list_wizards(self) -> list[str]:
-        """
-        List all wizard IDs provided by this plugin.
+        """List all wizard IDs provided by this plugin.
 
         Returns:
             List of wizard identifiers
+
         """
         if not self._initialized:
             self.initialize()
@@ -328,14 +321,14 @@ class BasePlugin(ABC):
         return list(self._wizards.keys())
 
     def get_wizard_info(self, wizard_id: str) -> dict[str, Any] | None:
-        """
-        Get information about a wizard without instantiating it.
+        """Get information about a wizard without instantiating it.
 
         Args:
             wizard_id: Wizard identifier
 
         Returns:
             Dictionary with wizard metadata
+
         """
         wizard_class = self.get_wizard(wizard_id)
         if not wizard_class:
@@ -359,16 +352,10 @@ class BasePlugin(ABC):
 class PluginError(Exception):
     """Base exception for plugin-related errors"""
 
-    pass
-
 
 class PluginLoadError(PluginError):
     """Raised when plugin fails to load"""
 
-    pass
-
 
 class PluginValidationError(PluginError):
     """Raised when plugin fails validation"""
-
-    pass

@@ -1,5 +1,4 @@
-"""
-OWASP Top 10 Pattern Detection
+"""OWASP Top 10 Pattern Detection
 
 Detects security vulnerabilities based on OWASP Top 10.
 
@@ -43,9 +42,7 @@ class SecurityPattern:
 
 
 class OWASPPatternDetector:
-    """
-    Detects OWASP Top 10 vulnerability patterns in code.
-    """
+    """Detects OWASP Top 10 vulnerability patterns in code."""
 
     def __init__(self):
         self.patterns = self._build_pattern_library()
@@ -204,8 +201,7 @@ class OWASPPatternDetector:
         ]
 
     def detect_vulnerabilities(self, code: str, file_path: str = "") -> list[dict[str, Any]]:
-        """
-        Detect vulnerabilities in code.
+        """Detect vulnerabilities in code.
 
         Args:
             code: Source code to analyze
@@ -213,6 +209,7 @@ class OWASPPatternDetector:
 
         Returns:
             List of detected vulnerabilities
+
         """
         vulnerabilities = []
 
@@ -234,7 +231,7 @@ class OWASPPatternDetector:
                             "matched_code": match.group(0),
                             "description": pattern_def.description,
                             "example_safe": pattern_def.example_safe,
-                        }
+                        },
                     )
 
         return vulnerabilities

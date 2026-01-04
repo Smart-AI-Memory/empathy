@@ -1,5 +1,4 @@
-"""
-Integration Tests for Intelligence System
+"""Integration Tests for Intelligence System
 
 Tests the complete flow of Smart Router, Memory Graph, and Chain Executor
 working together as a unified system.
@@ -254,7 +253,7 @@ class TestChainExecutorIntegration:
                 wizard_name="next-wizard",
                 triggered_by="test",
                 approval_required=True,
-            )
+            ),
         )
 
         # Step should need approval

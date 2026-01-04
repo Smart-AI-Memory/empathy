@@ -1,5 +1,4 @@
-"""
-Tests for ModelRouter
+"""Tests for ModelRouter
 
 Tests the smart model routing for cost optimization.
 """
@@ -226,9 +225,13 @@ class TestCostOptimization:
 
         # Without optimization (all Opus)
         unoptimized = router.estimate_cost(
-            "coordinate", 50000, 5000
+            "coordinate",
+            50000,
+            5000,
         ) + 4 * router.estimate_cost(  # Coordinator
-            "coordinate", 30000, 3000
+            "coordinate",
+            30000,
+            3000,
         )  # Sub-agents
 
         # With optimization (tiered)

@@ -1,5 +1,4 @@
-"""
-Software Development Plugin for Empathy Framework
+"""Software Development Plugin for Empathy Framework
 
 This plugin provides 16+ Coach wizards for code analysis,
 demonstrating Level 4 Anticipatory Empathy in software development.
@@ -25,8 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 class SoftwarePlugin(BasePlugin):
-    """
-    Software Development Domain Plugin
+    """Software Development Domain Plugin
 
     Provides wizards for:
     - Security analysis
@@ -59,8 +57,7 @@ class SoftwarePlugin(BasePlugin):
         )
 
     def register_wizards(self) -> dict[str, type[BaseWizard]]:
-        """
-        Register all software development wizards.
+        """Register all software development wizards.
 
         In our experience building these wizards, we found that the framework
         enables a fundamental shift: instead of reactive debugging, the system
@@ -157,8 +154,7 @@ class SoftwarePlugin(BasePlugin):
         return wizards
 
     def register_patterns(self) -> dict:
-        """
-        Register software development patterns.
+        """Register software development patterns.
 
         These patterns were learned from real-world usage and enable
         cross-domain learning (Level 5 Systems Empathy).

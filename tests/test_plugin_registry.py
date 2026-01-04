@@ -1,5 +1,4 @@
-"""
-Tests for Plugin Registry
+"""Tests for Plugin Registry
 
 Tests the plugin auto-discovery and management system.
 

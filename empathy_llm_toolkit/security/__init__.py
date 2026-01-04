@@ -1,5 +1,4 @@
-"""
-Security Module for Empathy Framework
+"""Security Module for Empathy Framework
 
 DEPRECATED: This module re-exports from empathy_os.memory.security
 Use `from empathy_os.memory.security import ...` instead.
@@ -39,25 +38,25 @@ from empathy_os.memory.security import (
 )
 
 __all__ = [
-    # PII Scrubbing
-    "PIIScrubber",
-    "PIIDetection",
-    "PIIPattern",
-    # Secrets Detection
-    "SecretsDetector",
-    "SecretDetection",
-    "SecretType",
-    "Severity",
-    "detect_secrets",
+    "AuditEvent",
     # Audit Logging
     "AuditLogger",
-    "AuditEvent",
-    "SecurityViolation",
-    # Secure MemDocs Integration
-    "SecureMemDocsIntegration",
     "Classification",
     "ClassificationRules",
-    "PatternMetadata",
     "EncryptionManager",
+    "PIIDetection",
+    "PIIPattern",
+    # PII Scrubbing
+    "PIIScrubber",
+    "PatternMetadata",
+    "SecretDetection",
+    "SecretType",
+    # Secrets Detection
+    "SecretsDetector",
+    # Secure MemDocs Integration
+    "SecureMemDocsIntegration",
     "SecurityError",
+    "SecurityViolation",
+    "Severity",
+    "detect_secrets",
 ]

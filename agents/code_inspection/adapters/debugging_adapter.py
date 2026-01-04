@@ -1,5 +1,4 @@
-"""
-Debugging Adapter
+"""Debugging Adapter
 
 Wraps both memory_enhanced_debugging_wizard and advanced_debugging_wizard
 and converts their output to the unified ToolResult format.
@@ -16,8 +15,7 @@ from ..state import HistoricalMatch, ToolResult
 
 
 class DebuggingAdapter:
-    """
-    Adapter for the Debugging Wizards.
+    """Adapter for the Debugging Wizards.
 
     Combines memory-enhanced debugging (historical bug correlation) and
     advanced debugging (systematic linter-based debugging).
@@ -28,19 +26,18 @@ class DebuggingAdapter:
         project_root: str,
         config: dict[str, Any] | None = None,
     ):
-        """
-        Initialize the adapter.
+        """Initialize the adapter.
 
         Args:
             project_root: Root directory of the project
             config: Configuration overrides
+
         """
         self.project_root = Path(project_root)
         self.config = config or {}
 
     async def analyze_memory_enhanced(self) -> ToolResult:
-        """
-        Analyze historical bug patterns in the patterns directory.
+        """Analyze historical bug patterns in the patterns directory.
 
         Note: The MemoryEnhancedDebuggingWizard is designed for analyzing
         specific bugs with error_message, stack_trace, etc. For code inspection,
@@ -48,6 +45,7 @@ class DebuggingAdapter:
 
         Returns:
             ToolResult with historical matches and recommendations
+
         """
         import json
 
@@ -108,7 +106,7 @@ class DebuggingAdapter:
                             matched_code=pattern.get("error_message", ""),
                             historical_fix=pattern.get("suggested_fix", ""),
                             resolution_time_minutes=0,
-                        )
+                        ),
                     )
                 except (json.JSONDecodeError, KeyError, OSError):
                     continue
@@ -137,11 +135,11 @@ class DebuggingAdapter:
         )
 
     async def analyze_advanced(self) -> ToolResult:
-        """
-        Run advanced debugging (systematic linter-based).
+        """Run advanced debugging (systematic linter-based).
 
         Returns:
             ToolResult with systematic debugging findings
+
         """
         start_time = time.time()
 
@@ -159,7 +157,7 @@ class DebuggingAdapter:
                     "linters": {},  # Will use defaults
                     "auto_fix": False,
                     "verify": False,
-                }
+                },
             )
 
             # Convert to unified format
