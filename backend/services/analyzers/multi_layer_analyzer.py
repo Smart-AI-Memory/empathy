@@ -1,5 +1,4 @@
-"""Multi-Layer Analyzer - Orchestrates analysis across different empathy levels.
-"""
+"""Multi-Layer Analyzer - Orchestrates analysis across different empathy levels."""
 
 import asyncio
 from typing import Any

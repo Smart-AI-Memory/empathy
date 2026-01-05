@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""Generate Word document from the non-technical Empathy Framework guide
-"""
+"""Generate Word document from the non-technical Empathy Framework guide"""
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH

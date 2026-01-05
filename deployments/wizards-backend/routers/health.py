@@ -1,5 +1,4 @@
-"""Health check endpoint for Railway/Kubernetes monitoring.
-"""
+"""Health check endpoint for Railway/Kubernetes monitoring."""
 
 from datetime import datetime
 
