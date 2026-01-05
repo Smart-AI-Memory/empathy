@@ -67,7 +67,11 @@ class BaseProfilerParser:
 
     def parse(self, data: str) -> list[FunctionProfile]:
         """Parse profiler output"""
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"{self.__class__.__name__}.parse() must be implemented. "
+            "Create a subclass of BaseProfilerParser and implement the parse() method. "
+            f"See CProfileParser, ChromeDevToolsParser, or SimpleJSONProfilerParser for examples."
+        )
 
 
 class CProfileParser(BaseProfilerParser):

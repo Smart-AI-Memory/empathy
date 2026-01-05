@@ -62,7 +62,11 @@ class BaseSensorParser:
 
     def parse(self, data: str) -> list[VitalSignReading]:
         """Parse sensor data into standardized readings"""
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"{self.__class__.__name__}.parse() must be implemented. "
+            "Create a subclass of BaseSensorParser and implement the parse() method. "
+            f"See FHIRObservationParser or SimpleJSONParser for examples."
+        )
 
 
 class FHIRObservationParser(BaseSensorParser):

@@ -60,11 +60,19 @@ class BaseConfigLoader:
 
     def load(self, config_path: str) -> LintConfig:
         """Load configuration from file"""
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"{self.__class__.__name__}.load() must be implemented. "
+            "Create a subclass of BaseConfigLoader and implement the load() method. "
+            f"See ESLintConfigLoader, PylintConfigLoader, or TypeScriptConfigLoader for examples."
+        )
 
     def find_config(self, start_dir: str) -> str | None:
         """Find config file starting from directory"""
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"{self.__class__.__name__}.find_config() must be implemented. "
+            "Create a subclass of BaseConfigLoader and implement the find_config() method. "
+            f"See ESLintConfigLoader, PylintConfigLoader, or TypeScriptConfigLoader for examples."
+        )
 
 
 class ESLintConfigLoader(BaseConfigLoader):

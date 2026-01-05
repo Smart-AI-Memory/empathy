@@ -73,7 +73,11 @@ class BaseLinterParser:
             List of LintIssue objects
 
         """
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"{self.__class__.__name__}.parse() must be implemented. "
+            "Create a subclass of BaseLinterParser and implement the parse() method. "
+            f"See ESLintParser, PylintParser, or MyPyParser for examples."
+        )
 
     def parse_file(self, file_path: str, format: str = "auto") -> list[LintIssue]:
         """Parse linter output from file"""

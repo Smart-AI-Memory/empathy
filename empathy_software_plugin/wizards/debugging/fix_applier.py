@@ -70,7 +70,11 @@ class BaseFixApplier:
 
     def can_autofix(self, issue: LintIssue) -> bool:
         """Check if issue can be auto-fixed"""
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"{self.__class__.__name__}.can_autofix() must be implemented. "
+            "Create a subclass of BaseFixApplier and implement the can_autofix() method. "
+            f"See ESLintFixApplier, PylintFixApplier, or TypeScriptFixApplier for examples."
+        )
 
     def apply_fix(self, issue: LintIssue, dry_run: bool = False) -> FixResult:
         """Apply fix for issue.
@@ -83,7 +87,11 @@ class BaseFixApplier:
             FixResult with outcome
 
         """
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"{self.__class__.__name__}.apply_fix() must be implemented. "
+            "Create a subclass of BaseFixApplier and implement the apply_fix() method. "
+            f"See ESLintFixApplier, PylintFixApplier, or TypeScriptFixApplier for examples."
+        )
 
     def apply_fixes_batch(self, issues: list[LintIssue], dry_run: bool = False) -> list[FixResult]:
         """Apply fixes for multiple issues"""
@@ -95,7 +103,11 @@ class BaseFixApplier:
 
     def suggest_manual_fix(self, issue: LintIssue) -> str:
         """Provide suggestion for manual fix"""
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"{self.__class__.__name__}.suggest_manual_fix() must be implemented. "
+            "Create a subclass of BaseFixApplier and implement the suggest_manual_fix() method. "
+            f"See ESLintFixApplier, PylintFixApplier, or TypeScriptFixApplier for examples."
+        )
 
 
 class ESLintFixApplier(BaseFixApplier):
