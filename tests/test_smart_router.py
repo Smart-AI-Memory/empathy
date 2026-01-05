@@ -11,9 +11,9 @@ import pytest
 # Check if wizard_chains.yaml exists for chain executor tests
 CHAIN_CONFIG_EXISTS = Path(".empathy/wizard_chains.yaml").exists()
 
-from empathy_os.routing import (  # noqa: E402
+from empathy_os.routing import (
     ChainExecutor,
-    HaikuClassifier,
+    HaikuClassifier,  # noqa: E402
     RoutingDecision,
     SmartRouter,
     WizardInfo,

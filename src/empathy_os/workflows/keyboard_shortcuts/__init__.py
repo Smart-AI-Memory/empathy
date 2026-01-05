@@ -10,11 +10,7 @@ Features:
 - Multiple output formats (keybindings, aliases, documentation)
 """
 
-from .generators import (
-    CLIAliasGenerator,
-    MarkdownDocGenerator,
-    VSCodeKeybindingsGenerator,
-)
+from .generators import CLIAliasGenerator, MarkdownDocGenerator, VSCodeKeybindingsGenerator
 from .parsers import (
     FeatureParser,
     LLMFeatureAnalyzer,
@@ -22,13 +18,7 @@ from .parsers import (
     VSCodeCommandParser,
     YAMLManifestParser,
 )
-from .schema import (
-    Category,
-    Feature,
-    FeatureManifest,
-    LayoutConfig,
-    ShortcutAssignment,
-)
+from .schema import Category, Feature, FeatureManifest, LayoutConfig, ShortcutAssignment
 from .workflow import KeyboardShortcutWorkflow
 
 __all__ = [

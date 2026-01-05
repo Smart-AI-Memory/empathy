@@ -33,9 +33,7 @@ ManageDocumentationCrewResult = None
 HAS_SCOUT = False
 
 try:
-    from .manage_documentation import (
-        ManageDocumentationCrew as _ManageDocumentationCrew,
-    )
+    from .manage_documentation import ManageDocumentationCrew as _ManageDocumentationCrew
     from .manage_documentation import (
         ManageDocumentationCrewResult as _ManageDocumentationCrewResult,
     )
