@@ -82,16 +82,19 @@ class ManageDocumentationCrewResult:
 
 @dataclass
 class Agent:
-    """Agent configuration for the crew."""
+    """Agent configuration for the crew with XML-enhanced prompting."""
 
     role: str
     goal: str
     backstory: str
     expertise_level: str = "expert"
+    use_xml_structure: bool = True  # Enable XML-enhanced prompting by default
 
     def get_system_prompt(self) -> str:
-        """Generate system prompt for this agent."""
-        return f"""You are a {self.role} with {self.expertise_level}-level expertise.
+        """Generate XML-enhanced system prompt for this agent."""
+        if not self.use_xml_structure:
+            # Legacy format for backward compatibility
+            return f"""You are a {self.role} with {self.expertise_level}-level expertise.
 
 Goal: {self.goal}
 
@@ -99,24 +102,115 @@ Background: {self.backstory}
 
 Provide thorough, actionable analysis. Be specific and cite file paths when relevant."""
 
+        # XML-enhanced format (Anthropic best practice)
+        return f"""<agent_role>
+You are a {self.role} with {self.expertise_level}-level expertise.
+</agent_role>
+
+<agent_goal>
+{self.goal}
+</agent_goal>
+
+<agent_backstory>
+{self.backstory}
+</agent_backstory>
+
+<instructions>
+1. Carefully review all provided context data
+2. Think through your analysis step-by-step
+3. Provide thorough, actionable analysis
+4. Be specific and cite file paths when relevant
+5. Structure your output according to the requested format
+</instructions>
+
+<output_structure>
+Always structure your response as:
+
+<thinking>
+[Your step-by-step reasoning process]
+- What you observe in the context
+- How you analyze the situation
+- What conclusions you draw
+</thinking>
+
+<answer>
+[Your final output in the requested format]
+</answer>
+</output_structure>"""
+
 
 @dataclass
 class Task:
-    """Task configuration for the crew."""
+    """Task configuration for the crew with XML-enhanced prompting."""
 
     description: str
     expected_output: str
     agent: Agent
 
     def get_user_prompt(self, context: dict) -> str:
-        """Generate user prompt for this task with context."""
-        context_str = "\n".join(f"- {k}: {v}" for k, v in context.items() if v)
-        return f"""{self.description}
+        """Generate XML-enhanced user prompt for this task with context."""
+        if not self.agent.use_xml_structure:
+            # Legacy format for backward compatibility
+            context_str = "\n".join(f"- {k}: {v}" for k, v in context.items() if v)
+            return f"""{self.description}
 
 Context:
 {context_str}
 
 Expected output format: {self.expected_output}"""
+
+        # XML-enhanced format (Anthropic best practice)
+        # Build structured context with proper XML tags
+        context_sections = []
+        for key, value in context.items():
+            if value:
+                # Use underscores for tag names
+                tag_name = key.replace(" ", "_").replace("-", "_").lower()
+                # Wrap in appropriate tags
+                context_sections.append(f"<{tag_name}>\n{value}\n</{tag_name}>")
+
+        context_xml = "\n".join(context_sections)
+
+        return f"""<task_description>
+{self.description}
+</task_description>
+
+<context>
+{context_xml}
+</context>
+
+<expected_output>
+{self.expected_output}
+</expected_output>
+
+<instructions>
+1. Review all context data in the <context> tags above
+2. Structure your response using <thinking> and <answer> tags as defined in your system prompt
+3. Match the expected output format exactly
+4. Be thorough and specific in your analysis
+</instructions>"""
+
+
+def parse_xml_response(response: str) -> dict:
+    """Parse XML-structured agent response.
+
+    Args:
+        response: Raw agent response potentially containing XML tags
+
+    Returns:
+        Dictionary with 'thinking', 'answer', and 'raw' keys
+    """
+    import re
+
+    thinking_match = re.search(r"<thinking>(.*?)</thinking>", response, re.DOTALL)
+    answer_match = re.search(r"<answer>(.*?)</answer>", response, re.DOTALL)
+
+    return {
+        "thinking": thinking_match.group(1).strip() if thinking_match else "",
+        "answer": answer_match.group(1).strip() if answer_match else response.strip(),
+        "raw": response,
+        "has_structure": bool(thinking_match and answer_match),
+    }
 
 
 def format_manage_docs_report(result: ManageDocumentationCrewResult, path: str) -> str:
@@ -170,17 +264,36 @@ def format_manage_docs_report(result: ManageDocumentationCrewResult, path: str) 
         for i, finding in enumerate(result.findings, 1):
             agent = finding.get("agent", f"Agent {i}")
             response = finding.get("response", "")
+            thinking = finding.get("thinking", "")
+            answer = finding.get("answer", "")
+            has_xml = finding.get("has_xml_structure", False)
             cost = finding.get("cost", 0.0)
 
-            lines.append(f"\n{i}. {agent} (Cost: ${cost:.4f})")
+            lines.append(
+                f"\n{i}. {agent} (Cost: ${cost:.4f}) {'🔬 XML-Structured' if has_xml else ''}"
+            )
             lines.append("   " + "-" * 54)
 
-            # Show truncated response
-            if len(response) > 500:
-                lines.append(f"   {response[:500]}...")
-                lines.append(f"   [Truncated - {len(response)} chars total]")
+            # Show thinking and answer separately if available
+            if has_xml and thinking:
+                lines.append("   💭 Thinking:")
+                if len(thinking) > 300:
+                    lines.append(f"   {thinking[:300]}...")
+                else:
+                    lines.append(f"   {thinking}")
+                lines.append("")
+                lines.append("   ✅ Answer:")
+                if len(answer) > 300:
+                    lines.append(f"   {answer[:300]}...")
+                else:
+                    lines.append(f"   {answer}")
             else:
-                lines.append(f"   {response}")
+                # Fallback to original response
+                if len(response) > 500:
+                    lines.append(f"   {response[:500]}...")
+                    lines.append(f"   [Truncated - {len(response)} chars total]")
+                else:
+                    lines.append(f"   {response}")
             lines.append("")
 
     # Recommendations
@@ -589,12 +702,21 @@ Note: This is a mock response. Configure ANTHROPIC_API_KEY for real analysis."""
             self._total_output_tokens += out_tokens
             self._total_cost += cost
 
+            # Parse XML-structured response if available
+            parsed = parse_xml_response(response)
+
+            # Store full response for next agent's context
             all_responses.append(response)
+
+            # Store findings with parsed structure
             all_findings.append(
                 {
                     "agent": task.agent.role,
                     "task": task.description[:100],
                     "response": response[:1000],  # Truncate for result
+                    "thinking": parsed["thinking"][:500] if parsed["thinking"] else "",
+                    "answer": parsed["answer"][:500] if parsed["answer"] else response[:500],
+                    "has_xml_structure": parsed["has_structure"],
                     "tokens": {"input": in_tokens, "output": out_tokens},
                     "cost": cost,
                 },
