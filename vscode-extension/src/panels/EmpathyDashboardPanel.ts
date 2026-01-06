@@ -2414,19 +2414,12 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     return;
                 }
 
-                // Special case: test-gen opens the Test Generator panel directly
-                if (wf === 'test-gen') {
-                    console.log('[EmpathyDashboard] Sending openTestGenerator message');
-                    vscode.postMessage({ type: 'openTestGenerator' });
-                    console.log('[EmpathyDashboard] Message sent');
-                    return;
-                }
-
                 // Report workflows: run immediately with project root and open in editor
                 const reportWorkflows = [
                     'code-review', 'bug-predict', 'security-audit', 'perf-audit',
                     'refactor-plan', 'health-check', 'pr-review', 'pro-review',
-                    'doc-gen'  // Doc generation workflow runs immediately
+                    'doc-gen',  // Doc generation workflow runs immediately
+                    'test-gen'  // Test generation workflow runs immediately
                 ];
                 if (reportWorkflows.includes(wf)) {
                     // Run workflow immediately with project root as input

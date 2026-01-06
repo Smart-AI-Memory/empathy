@@ -14,12 +14,15 @@ Licensed under Fair Source License 0.9
 """
 
 import json
+import logging
 import re
 from pathlib import Path
 from typing import Any
 
 from .base import BaseWorkflow, ModelTier
 from .step_config import WorkflowStepConfig
+
+logger = logging.getLogger(__name__)
 
 # Define step configurations for executor-based execution
 SECURITY_STEPS = {
@@ -193,7 +196,8 @@ class SecurityAuditWorkflow(BaseWorkflow):
         self,
         patterns_dir: str = "./patterns",
         skip_remediate_if_clean: bool = True,
-        use_crew_for_remediation: bool = False,
+        use_crew_for_assessment: bool = True,
+        use_crew_for_remediation: bool = True,
         crew_config: dict | None = None,
         **kwargs: Any,
     ):
@@ -202,7 +206,8 @@ class SecurityAuditWorkflow(BaseWorkflow):
         Args:
             patterns_dir: Directory containing security decisions
             skip_remediate_if_clean: Skip remediation if no high/critical findings
-            use_crew_for_remediation: Use SecurityAuditCrew for enhanced remediation
+            use_crew_for_assessment: Use SecurityAuditCrew for vulnerability assessment (default: True)
+            use_crew_for_remediation: Use SecurityAuditCrew for enhanced remediation (default: True)
             crew_config: Configuration dict for SecurityAuditCrew
             **kwargs: Additional arguments passed to BaseWorkflow
 
@@ -210,10 +215,13 @@ class SecurityAuditWorkflow(BaseWorkflow):
         super().__init__(**kwargs)
         self.patterns_dir = patterns_dir
         self.skip_remediate_if_clean = skip_remediate_if_clean
+        self.use_crew_for_assessment = use_crew_for_assessment
         self.use_crew_for_remediation = use_crew_for_remediation
         self.crew_config = crew_config or {}
         self._has_critical: bool = False
         self._team_decisions: dict[str, dict] = {}
+        self._crew: Any = None
+        self._crew_available = False
         self._load_team_decisions()
 
     def _load_team_decisions(self) -> None:
@@ -228,6 +236,21 @@ class SecurityAuditWorkflow(BaseWorkflow):
                         self._team_decisions[key] = decision
             except (json.JSONDecodeError, OSError):
                 pass
+
+    async def _initialize_crew(self) -> None:
+        """Initialize the SecurityAuditCrew."""
+        if self._crew is not None:
+            return
+
+        try:
+            from empathy_llm_toolkit.agent_factory.crews.security_audit import SecurityAuditCrew
+
+            self._crew = SecurityAuditCrew()
+            self._crew_available = True
+            logger.info("SecurityAuditCrew initialized successfully")
+        except ImportError as e:
+            logger.warning(f"SecurityAuditCrew not available: {e}")
+            self._crew_available = False
 
     def should_skip_stage(self, stage_name: str, input_data: Any) -> tuple[bool, str | None]:
         """Skip remediation stage if no critical/high findings.
@@ -510,7 +533,12 @@ class SecurityAuditWorkflow(BaseWorkflow):
 
         Calculates overall security risk score and identifies
         critical issues requiring immediate attention.
+
+        When use_crew_for_assessment=True, uses SecurityAuditCrew's
+        comprehensive analysis for enhanced vulnerability detection.
         """
+        await self._initialize_crew()
+
         needs_review = input_data.get("needs_review", [])
 
         # Count by severity
@@ -539,6 +567,52 @@ class SecurityAuditWorkflow(BaseWorkflow):
                 by_owasp[owasp] = []
             by_owasp[owasp].append(finding)
 
+        # Use crew for enhanced assessment if available
+        crew_enhanced = False
+        crew_findings = []
+        if self.use_crew_for_assessment and self._crew_available:
+            target = input_data.get("path", ".")
+            try:
+                crew_report = await self._crew.audit(code=target, file_path=target)
+                if crew_report and crew_report.findings:
+                    crew_enhanced = True
+                    # Convert crew findings to workflow format
+                    for finding in crew_report.findings:
+                        crew_findings.append({
+                            "type": finding.category.value,
+                            "title": finding.title,
+                            "description": finding.description,
+                            "severity": finding.severity.value,
+                            "file": finding.file_path or "",
+                            "line": finding.line_number or 0,
+                            "owasp": finding.category.value,
+                            "remediation": finding.remediation or "",
+                            "cwe_id": finding.cwe_id or "",
+                            "cvss_score": finding.cvss_score or 0.0,
+                            "source": "crew",
+                        })
+                    # Update severity counts with crew findings
+                    for finding in crew_findings:
+                        sev = finding.get("severity", "low")
+                        severity_counts[sev] = severity_counts.get(sev, 0) + 1
+                    # Recalculate risk score with crew findings
+                    risk_score = (
+                        severity_counts["critical"] * 25
+                        + severity_counts["high"] * 10
+                        + severity_counts["medium"] * 3
+                        + severity_counts["low"] * 1
+                    )
+                    risk_score = min(100, risk_score)
+            except Exception as e:
+                logger.warning(f"Crew assessment failed: {e}")
+
+        # Merge crew findings with pattern-based findings
+        all_critical = [f for f in needs_review if f.get("severity") == "critical"]
+        all_high = [f for f in needs_review if f.get("severity") == "high"]
+        if crew_enhanced:
+            all_critical.extend([f for f in crew_findings if f.get("severity") == "critical"])
+            all_high.extend([f for f in crew_findings if f.get("severity") == "high"])
+
         assessment = {
             "risk_score": risk_score,
             "risk_level": (
@@ -548,8 +622,10 @@ class SecurityAuditWorkflow(BaseWorkflow):
             ),
             "severity_breakdown": severity_counts,
             "by_owasp_category": {k: len(v) for k, v in by_owasp.items()},
-            "critical_findings": [f for f in needs_review if f.get("severity") == "critical"],
-            "high_findings": [f for f in needs_review if f.get("severity") == "high"],
+            "critical_findings": all_critical,
+            "high_findings": all_high,
+            "crew_enhanced": crew_enhanced,
+            "crew_findings_count": len(crew_findings) if crew_enhanced else 0,
         }
 
         input_tokens = len(str(input_data)) // 4

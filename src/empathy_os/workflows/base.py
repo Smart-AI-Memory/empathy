@@ -16,6 +16,7 @@ Licensed under Fair Source License 0.9
 from __future__ import annotations
 
 import json
+import logging
 import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -53,6 +54,8 @@ from .progress import ProgressCallback, ProgressTracker
 if TYPE_CHECKING:
     from .config import WorkflowConfig
     from .step_config import WorkflowStepConfig
+
+logger = logging.getLogger(__name__)
 
 # Default path for workflow run history
 WORKFLOW_HISTORY_FILE = ".empathy/workflow_runs.json"
@@ -471,8 +474,16 @@ class BaseWorkflow(ABC):
                 system=system,
             )
             return content, in_tokens, out_tokens
-        except Exception as e:
-            return f"Error calling LLM: {e}", 0, 0
+        except (ValueError, TypeError, KeyError) as e:
+            # Invalid input or configuration errors
+            return f"Error calling LLM (invalid input): {e}", 0, 0
+        except (TimeoutError, RuntimeError) as e:
+            # Timeout or API errors
+            return f"Error calling LLM (timeout/API error): {e}", 0, 0
+        except Exception:
+            # INTENTIONAL: Graceful degradation - return error message rather than crashing workflow
+            logger.exception("Unexpected error calling LLM")
+            return "Error calling LLM: unexpected error", 0, 0
 
     def _calculate_cost(self, tier: ModelTier, input_tokens: int, output_tokens: int) -> float:
         """Calculate cost for a stage."""
@@ -655,9 +666,22 @@ class BaseWorkflow(ABC):
                 # Pass output to next stage
                 current_data = output if isinstance(output, dict) else {"result": output}
 
-        except Exception as e:
-            error = str(e)
-            # Report failure to progress tracker
+        except (ValueError, TypeError, KeyError) as e:
+            # Data validation or configuration errors
+            error = f"Workflow execution error (data/config): {e}"
+            logger.error(error)
+            if self._progress_tracker:
+                self._progress_tracker.fail_workflow(error)
+        except (TimeoutError, RuntimeError) as e:
+            # Timeout or API errors
+            error = f"Workflow execution error (timeout/API): {e}"
+            logger.error(error)
+            if self._progress_tracker:
+                self._progress_tracker.fail_workflow(error)
+        except Exception:
+            # INTENTIONAL: Workflow orchestration - catch all errors to report failure gracefully
+            logger.exception("Unexpected error in workflow execution")
+            error = "Workflow execution failed: unexpected error"
             if self._progress_tracker:
                 self._progress_tracker.fail_workflow(error)
 
@@ -714,8 +738,15 @@ class BaseWorkflow(ABC):
         # Save to workflow history for dashboard
         try:
             _save_workflow_run(self.name, provider_str, result)
+        except (OSError, PermissionError):
+            # File system errors saving history - log but don't crash workflow
+            logger.warning("Failed to save workflow history (file system error)")
+        except (ValueError, TypeError, KeyError):
+            # Data serialization errors - log but don't crash workflow
+            logger.warning("Failed to save workflow history (serialization error)")
         except Exception:
-            pass  # Don't fail workflow if history save fails
+            # INTENTIONAL: History save is optional diagnostics - never crash workflow
+            logger.exception("Unexpected error saving workflow history")
 
         # Emit workflow telemetry to backend
         self._emit_workflow_telemetry(result)
@@ -859,8 +890,15 @@ class BaseWorkflow(ABC):
         )
         try:
             self._telemetry_backend.log_call(record)
-        except Exception:
-            pass  # Don't fail workflow if telemetry fails
+        except (AttributeError, ValueError, TypeError):
+            # Telemetry backend errors - log but don't crash workflow
+            logger.debug("Failed to log call telemetry (backend error)")
+        except OSError:
+            # File system errors - log but don't crash workflow
+            logger.debug("Failed to log call telemetry (file system error)")
+        except Exception:  # noqa: BLE001
+            # INTENTIONAL: Telemetry is optional diagnostics - never crash workflow
+            logger.debug("Unexpected error logging call telemetry")
 
     def _emit_workflow_telemetry(self, result: WorkflowResult) -> None:
         """Emit a WorkflowRunRecord to the telemetry backend.
@@ -906,8 +944,15 @@ class BaseWorkflow(ABC):
         )
         try:
             self._telemetry_backend.log_workflow(record)
-        except Exception:
-            pass  # Don't fail workflow if telemetry fails
+        except (AttributeError, ValueError, TypeError):
+            # Telemetry backend errors - log but don't crash workflow
+            logger.debug("Failed to log workflow telemetry (backend error)")
+        except OSError:
+            # File system errors - log but don't crash workflow
+            logger.debug("Failed to log workflow telemetry (file system error)")
+        except Exception:  # noqa: BLE001
+            # INTENTIONAL: Telemetry is optional diagnostics - never crash workflow
+            logger.debug("Unexpected error logging workflow telemetry")
 
     async def run_step_with_executor(
         self,
