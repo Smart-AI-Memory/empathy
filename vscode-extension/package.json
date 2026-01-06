@@ -183,6 +183,41 @@
         "command": "empathy.workflowWizard.show",
         "title": "Empathy: Workflow Wizard",
         "icon": "$(symbol-function)"
+      },
+      {
+        "command": "empathy.wizard.create",
+        "title": "Empathy: Create Wizard (12x faster)",
+        "icon": "$(wand)"
+      },
+      {
+        "command": "empathy.wizard.listPatterns",
+        "title": "Empathy: List Wizard Patterns",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "empathy.wizard.generateTests",
+        "title": "Empathy: Generate Wizard Tests",
+        "icon": "$(beaker)"
+      },
+      {
+        "command": "empathy.wizard.analyze",
+        "title": "Empathy: Analyze Wizard Risk",
+        "icon": "$(graph-line)"
+      },
+      {
+        "command": "empathy.workflow.create",
+        "title": "Empathy: Create Workflow (12x faster)",
+        "icon": "$(output)"
+      },
+      {
+        "command": "empathy.workflow.listPatterns",
+        "title": "Empathy: List Workflow Patterns",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "empathy.workflow.recommend",
+        "title": "Empathy: Recommend Workflow Patterns",
+        "icon": "$(lightbulb)"
       }
     ],
     "keybindings": [
@@ -204,7 +239,9 @@
       {"command": "empathy.testGenerator.show", "key": "ctrl+shift+e w", "mac": "cmd+shift+e w"},
       {"command": "empathy.viewDetails", "key": "ctrl+shift+e v", "mac": "cmd+shift+e v"},
       {"command": "empathy.refreshHealth", "key": "ctrl+shift+e u", "mac": "cmd+shift+e u"},
-      {"command": "empathy.openDocAnalysis", "key": "ctrl+shift+e o", "mac": "cmd+shift+e o"}
+      {"command": "empathy.openDocAnalysis", "key": "ctrl+shift+e o", "mac": "cmd+shift+e o"},
+      {"command": "empathy.wizard.create", "key": "ctrl+shift+e z", "mac": "cmd+shift+e z"},
+      {"command": "empathy.workflow.create", "key": "ctrl+shift+e k", "mac": "cmd+shift+e k"}
     ],
     "viewsContainers": {
       "activitybar": [

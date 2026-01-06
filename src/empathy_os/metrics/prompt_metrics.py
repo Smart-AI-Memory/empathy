@@ -122,7 +122,7 @@ class MetricsTracker:
         Returns:
             List of PromptMetrics matching filters
         """
-        metrics = []
+        metrics: list[PromptMetrics] = []
 
         try:
             if not self.metrics_file.exists():

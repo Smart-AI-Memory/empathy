@@ -1325,11 +1325,43 @@ class Test{name}:
         test_context += "</generated_tests>\n"
         test_context += f"\n<summary>Total test functions: {total_test_count}</summary>\n"
 
-        # Build the system prompt directly for the review stage
+        # Build the prompt using XML if enabled
         target_files = [item["source_file"] for item in generated_tests]
         file_list = "\n".join(f"  - {f}" for f in target_files)
 
-        system_prompt = f"""You are an automated test coverage analysis tool. You MUST output a report directly - no conversation, no questions, no preamble.
+        # Check if XML prompts are enabled
+        if self._is_xml_enabled():
+            # Use XML-enhanced prompt for better structure and reliability
+            user_message = self._render_xml_prompt(
+                role="test automation engineer and quality analyst",
+                goal="Analyze generated test suite and identify coverage gaps",
+                instructions=[
+                    "Count total test functions generated across all files",
+                    "Identify which classes and functions are tested",
+                    "Find critical gaps in test coverage (untested edge cases, error paths)",
+                    "Assess quality of existing tests (assertions, test data, completeness)",
+                    "Prioritize missing tests by impact and risk",
+                    "Generate specific, actionable test recommendations",
+                ],
+                constraints=[
+                    "Output ONLY the structured report - no conversation or questions",
+                    "START with '# Test Gap Analysis Report' - no preamble",
+                    "Use markdown tables for metrics and coverage",
+                    "Classify gaps by severity (HIGH/MEDIUM/LOW)",
+                    "Provide numbered prioritized recommendations",
+                ],
+                input_type="generated_tests",
+                input_payload=test_context,
+                extra={
+                    "total_test_count": total_test_count,
+                    "files_covered": len(generated_tests),
+                    "target_files": ", ".join(target_files),
+                },
+            )
+            system_prompt = None  # XML prompt includes all context
+        else:
+            # Use legacy plain text prompts
+            system_prompt = f"""You are an automated test coverage analysis tool. You MUST output a report directly - no conversation, no questions, no preamble.
 
 CRITICAL RULES (VIOLATIONS WILL CAUSE SYSTEM FAILURE):
 1. START your response with "# Test Gap Analysis Report" - no other text before this
@@ -1364,7 +1396,7 @@ REQUIRED OUTPUT FORMAT (follow exactly):
 
 END OF REQUIRED FORMAT - output nothing after recommendations."""
 
-        user_message = f"Generate the test gap analysis report for:\n{test_context}"
+            user_message = f"Generate the test gap analysis report for:\n{test_context}"
 
         # Call the LLM using the provider-agnostic executor from BaseWorkflow
         step_config = TEST_GEN_STEPS["review"]

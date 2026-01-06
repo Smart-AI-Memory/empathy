@@ -73,48 +73,48 @@ from .graph import MemoryGraph
 
 # Long-term memory (Persistent patterns)
 from .long_term import (
-    Classification,
-    ClassificationRules,
-    EncryptionManager,
-    MemDocsStorage,
-    PatternMetadata,
-    SecureMemDocsIntegration,
-    SecurePattern,
-    SecurityError,
+                     Classification,
+                     ClassificationRules,
+                     EncryptionManager,
+                     MemDocsStorage,
+                     PatternMetadata,
+                     SecureMemDocsIntegration,
+                     SecurePattern,
+                     SecurityError,
 )
 from .long_term import PermissionError as MemoryPermissionError
 from .nodes import BugNode, Node, NodeType, PatternNode, PerformanceNode, VulnerabilityNode
 
 # Redis Bootstrap
 from .redis_bootstrap import (
-    RedisStartMethod,
-    RedisStatus,
-    ensure_redis,
-    get_redis_or_mock,
-    stop_redis,
+                     RedisStartMethod,
+                     RedisStatus,
+                     ensure_redis,
+                     get_redis_or_mock,
+                     stop_redis,
 )
 
 # Security components
 from .security import (  # Audit Logging; PII Scrubbing; Secrets Detection
-    AuditEvent,
-    AuditLogger,
-    PIIDetection,
-    PIIPattern,
-    PIIScrubber,
-    SecretDetection,
-    SecretsDetector,
-    SecretType,
-    SecurityViolation,
-    Severity,
-    detect_secrets,
+                     AuditEvent,
+                     AuditLogger,
+                     PIIDetection,
+                     PIIPattern,
+                     PIIScrubber,
+                     SecretDetection,
+                     SecretsDetector,
+                     SecretType,
+                     SecurityViolation,
+                     Severity,
+                     detect_secrets,
 )
 from .short_term import (
-    AccessTier,
-    AgentCredentials,
-    ConflictContext,
-    RedisShortTermMemory,
-    StagedPattern,
-    TTLStrategy,
+                     AccessTier,
+                     AgentCredentials,
+                     ConflictContext,
+                     RedisShortTermMemory,
+                     StagedPattern,
+                     TTLStrategy,
 )
 
 # Conversation Summary Index

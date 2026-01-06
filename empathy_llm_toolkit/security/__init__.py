@@ -16,25 +16,25 @@ License: Fair Source 0.9
 
 # Re-export from consolidated memory module for backwards compatibility
 from empathy_os.memory.long_term import (
-    Classification,
-    ClassificationRules,
-    EncryptionManager,
-    PatternMetadata,
-    SecureMemDocsIntegration,
-    SecurityError,
+                                         Classification,
+                                         ClassificationRules,
+                                         EncryptionManager,
+                                         PatternMetadata,
+                                         SecureMemDocsIntegration,
+                                         SecurityError,
 )
 from empathy_os.memory.security import (
-    AuditEvent,
-    AuditLogger,
-    PIIDetection,
-    PIIPattern,
-    PIIScrubber,
-    SecretDetection,
-    SecretsDetector,
-    SecretType,
-    SecurityViolation,
-    Severity,
-    detect_secrets,
+                                         AuditEvent,
+                                         AuditLogger,
+                                         PIIDetection,
+                                         PIIPattern,
+                                         PIIScrubber,
+                                         SecretDetection,
+                                         SecretsDetector,
+                                         SecretType,
+                                         SecurityViolation,
+                                         Severity,
+                                         detect_secrets,
 )
 
 __all__ = [

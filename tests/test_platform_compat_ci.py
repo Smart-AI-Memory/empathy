@@ -45,9 +45,9 @@ class TestPlatformCompatibility:
             pytest.fail(f"Failed to parse compatibility report: {result.stdout}")
 
         errors = report["summary"]["errors"]
-        assert (
-            errors == 0
-        ), f"Found {errors} platform compatibility errors. Run: python scripts/check_platform_compat.py src/ --fix"
+        assert errors == 0, (
+            f"Found {errors} platform compatibility errors. Run: python scripts/check_platform_compat.py src/ --fix"
+        )
 
     def test_platform_utils_available(self):
         """Ensure platform_utils module is importable."""

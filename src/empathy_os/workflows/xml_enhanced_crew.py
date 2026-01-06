@@ -194,7 +194,7 @@ class XMLTask:
 2. Structure your response using <thinking> and <answer> tags as defined in your system prompt
 3. Match the expected output format exactly
 4. Be thorough and specific in your analysis
-{'5. Use the examples above as a guide for output structure' if self.examples else ''}
+{"5. Use the examples above as a guide for output structure" if self.examples else ""}
 </instructions>"""
 
     def _get_legacy_prompt(self, context: dict) -> str:
@@ -267,13 +267,15 @@ def extract_json_from_answer(answer: str) -> dict | None:
     json_match = re.search(r"```json\s*(.*?)\s*```", answer, re.DOTALL)
     if json_match:
         try:
-            return json.loads(json_match.group(1))
+            result = json.loads(json_match.group(1))
+            return result if isinstance(result, dict) else None
         except json.JSONDecodeError:
             pass
 
     # Try to parse entire answer as JSON
     try:
-        return json.loads(answer)
+        result = json.loads(answer)
+        return result if isinstance(result, dict) else None
     except json.JSONDecodeError:
         return None
 

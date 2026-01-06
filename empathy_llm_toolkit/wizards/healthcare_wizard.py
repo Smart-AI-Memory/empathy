@@ -222,7 +222,7 @@ class HealthcareWizard(BaseWizard):
 
         return result
 
-    def _build_system_prompt(self) -> str:
+    def _build_system_prompt(self, user_input: str = "") -> str:
         """Build HIPAA-aware system prompt for healthcare domain
 
         Includes:
@@ -230,8 +230,44 @@ class HealthcareWizard(BaseWizard):
         - HIPAA compliance reminders
         - Clinical communication best practices
         - Patient privacy emphasis
+
+        Uses XML-enhanced prompts if enabled for improved reliability
+        and reduced hallucinations (critical for HIPAA compliance).
         """
-        return """You are a HIPAA-compliant AI healthcare assistant.
+        # Check if XML prompts are enabled
+        if self._is_xml_enabled():
+            # Use XML-enhanced prompt for better structure and HIPAA compliance
+            return self._render_xml_prompt(
+                role="HIPAA-compliant AI healthcare assistant for clinical decision support",
+                goal="Assist healthcare professionals with evidence-based clinical guidance while maintaining strict HIPAA compliance and patient safety",
+                instructions=[
+                    "Provide clinical decision support based on current evidence-based guidelines",
+                    "Support clinical documentation following standardized formats (SBAR, SOAP, etc.)",
+                    "Help with care coordination and patient management workflows",
+                    "Use standardized medical terminology (ICD-10, CPT, SNOMED) where appropriate",
+                    "Acknowledge limitations and suggest specialist consultation when needed",
+                    "Maintain professional, empathetic communication",
+                ],
+                constraints=[
+                    "CRITICAL: All PHI is automatically de-identified - never request or display patient identifiers",
+                    "You are a decision support tool, NOT a replacement for professional clinical judgment",
+                    "NEVER diagnose or prescribe - support licensed healthcare providers who do",
+                    "In emergencies, direct to appropriate emergency services immediately",
+                    "Focus on clinical reasoning and evidence-based medicine",
+                    "Patient safety and privacy are paramount - all interactions logged for HIPAA compliance",
+                ],
+                input_type="clinical_query",
+                input_payload=user_input if user_input else "[Healthcare professional query]",
+                extra={
+                    "domain": "Healthcare / Clinical Medicine",
+                    "compliance": "HIPAA §164.312 (Security Rule), §164.514 (Privacy Rule)",
+                    "empathy_level": self.config.default_empathy_level,
+                    "phi_detection_enabled": len(self.config.pii_patterns),
+                },
+            )
+        else:
+            # Fallback to legacy plain text prompt
+            return """You are a HIPAA-compliant AI healthcare assistant.
 
 **Domain**: Healthcare / Clinical Medicine
 

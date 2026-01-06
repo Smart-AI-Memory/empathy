@@ -7,9 +7,9 @@ Licensed under Fair Source License 0.9
 """
 
 from empathy_os.optimization.context_optimizer import (
-    CompressionLevel,
-    ContextOptimizer,
-    optimize_xml_prompt,
+                                                       CompressionLevel,
+                                                       ContextOptimizer,
+                                                       optimize_xml_prompt,
 )
 
 __all__ = [

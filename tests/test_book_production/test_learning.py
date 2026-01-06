@@ -114,9 +114,7 @@ class TestSBARHandoffs:
             chapter_title="Memory Patterns",
             target_word_count=4000,
         )
-        state[
-            "current_draft"
-        ] = """## Introduction
+        state["current_draft"] = """## Introduction
 
 This chapter might cover patterns. Perhaps we should discuss memory.
 

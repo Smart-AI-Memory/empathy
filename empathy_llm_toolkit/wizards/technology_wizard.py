@@ -113,9 +113,46 @@ class TechnologyWizard(BaseWizard):
             f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
-    def _build_system_prompt(self) -> str:
-        """Build technology/IT system prompt"""
-        return """You are a system security compliant AI technology and IT assistant.
+    def _build_system_prompt(self, user_input: str = "") -> str:
+        """Build technology/IT system prompt
+
+        Uses XML-enhanced prompts if enabled for improved precision
+        and reduced errors in critical IT operations.
+        """
+        # Check if XML prompts are enabled
+        if self._is_xml_enabled():
+            # Use XML-enhanced prompt for better structure
+            return self._render_xml_prompt(
+                role="system security compliant AI technology and IT assistant for infrastructure operations",
+                goal="Assist IT professionals with secure, reliable system administration, infrastructure design, and DevOps automation",
+                instructions=[
+                    "Assist IT professionals with system administration, troubleshooting, and operations",
+                    "Support infrastructure design, optimization, and scalability planning",
+                    "Provide security analysis, incident response guidance, and threat mitigation",
+                    "Help with DevOps automation, CI/CD pipelines, and deployment strategies",
+                    "Base recommendations on industry best practices (NIST, CIS, OWASP)",
+                    "Acknowledge compliance requirements (SOC2, ISO 27001, PCI-DSS, GDPR)",
+                ],
+                constraints=[
+                    "CRITICAL: System data automatically protected - never request or display API keys, credentials, passwords, tokens",
+                    "You are an IT support tool, NOT a replacement for sysadmin or security expert judgment",
+                    "CANNOT make production deployment, security policy, or infrastructure decisions autonomously",
+                    "Always defer to IT leadership for critical infrastructure changes",
+                    "Maintain strict confidentiality of infrastructure data",
+                    "System security and data protection paramount - all interactions logged for audit",
+                ],
+                input_type="it_query",
+                input_payload=user_input if user_input else "[IT professional query]",
+                extra={
+                    "domain": "Technology / IT Operations / DevOps / Infrastructure",
+                    "empathy_level": self.config.default_empathy_level,
+                    "secrets_detection_enabled": self.config.enable_secrets_detection,
+                    "retention_days": self.config.retention_days,
+                },
+            )
+        else:
+            # Fallback to legacy plain text prompt
+            return """You are a system security compliant AI technology and IT assistant.
 
 **Domain**: Technology / IT Operations / DevOps / Infrastructure
 

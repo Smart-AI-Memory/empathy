@@ -9,6 +9,7 @@ Licensed under Fair Source 0.9
 
 import asyncio
 import json
+import logging
 import shutil
 import subprocess
 from dataclasses import dataclass, field
@@ -16,6 +17,8 @@ from datetime import datetime, timedelta
 from enum import Enum
 from pathlib import Path
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 
 class HealthStatus(Enum):
@@ -311,13 +314,23 @@ class HealthCheckRunner:
         handler,
         config: dict,
     ) -> CheckResult:
-        """Run a check handler asynchronously."""
+        """Run a check handler asynchronously.
+
+        This uses broad exception handling intentionally for graceful degradation.
+        Health checks are optional features - the system should continue even if some checks fail.
+
+        Note:
+            Full exception context is preserved via logger.exception() for debugging.
+        """
         start_time = datetime.now()
         try:
             result: CheckResult = await asyncio.to_thread(handler, config)
             result.duration_ms = int((datetime.now() - start_time).total_seconds() * 1000)
             return result
         except Exception as e:
+            # INTENTIONAL: Broad exception handler for graceful degradation of optional checks
+            # Full traceback preserved for debugging
+            logger.exception(f"Health check failed for {category.value}: {e}")
             return CheckResult(
                 category=category,
                 status=HealthStatus.ERROR,
@@ -390,7 +403,30 @@ class HealthCheckRunner:
                 details={"total_files_checked": len({i.file_path for i in issues}) or "all"},
             )
 
+        except json.JSONDecodeError as e:
+            # Tool output not in expected JSON format
+            logger.warning(f"Lint check JSON parse error ({tool}): {e}")
+            return CheckResult(
+                category=CheckCategory.LINT,
+                status=HealthStatus.ERROR,
+                score=0,
+                tool_used=tool,
+                details={"error": f"Failed to parse {tool} output: {e}"},
+            )
+        except subprocess.SubprocessError as e:
+            # Tool execution failed
+            logger.error(f"Lint check subprocess error ({tool}): {e}")
+            return CheckResult(
+                category=CheckCategory.LINT,
+                status=HealthStatus.ERROR,
+                score=0,
+                tool_used=tool,
+                details={"error": f"Failed to run {tool}: {e}"},
+            )
         except Exception as e:
+            # Unexpected errors - preserve full context for debugging
+            # INTENTIONAL: Broad handler for graceful degradation of optional check
+            logger.exception(f"Unexpected error in lint check ({tool}): {e}")
             return CheckResult(
                 category=CheckCategory.LINT,
                 status=HealthStatus.ERROR,
@@ -475,7 +511,20 @@ class HealthCheckRunner:
                 details={"files_need_formatting": len(issues)},
             )
 
+        except subprocess.SubprocessError as e:
+            # Tool execution failed
+            logger.error(f"Format check subprocess error ({tool}): {e}")
+            return CheckResult(
+                category=CheckCategory.FORMAT,
+                status=HealthStatus.ERROR,
+                score=0,
+                tool_used=tool,
+                details={"error": f"Failed to run {tool}: {e}"},
+            )
         except Exception as e:
+            # Unexpected errors - preserve full context for debugging
+            # INTENTIONAL: Broad handler for graceful degradation of optional check
+            logger.exception(f"Unexpected error in format check ({tool}): {e}")
             return CheckResult(
                 category=CheckCategory.FORMAT,
                 status=HealthStatus.ERROR,
@@ -569,7 +618,30 @@ class HealthCheckRunner:
                 details={"type_errors": len(issues)},
             )
 
+        except json.JSONDecodeError as e:
+            # Tool output not in expected JSON format (pyright specific)
+            logger.warning(f"Type check JSON parse error ({tool}): {e}")
+            return CheckResult(
+                category=CheckCategory.TYPES,
+                status=HealthStatus.ERROR,
+                score=0,
+                tool_used=tool,
+                details={"error": f"Failed to parse {tool} output: {e}"},
+            )
+        except subprocess.SubprocessError as e:
+            # Tool execution failed
+            logger.error(f"Type check subprocess error ({tool}): {e}")
+            return CheckResult(
+                category=CheckCategory.TYPES,
+                status=HealthStatus.ERROR,
+                score=0,
+                tool_used=tool,
+                details={"error": f"Failed to run {tool}: {e}"},
+            )
         except Exception as e:
+            # Unexpected errors - preserve full context for debugging
+            # INTENTIONAL: Broad handler for graceful degradation of optional check
+            logger.exception(f"Unexpected error in type check ({tool}): {e}")
             return CheckResult(
                 category=CheckCategory.TYPES,
                 status=HealthStatus.ERROR,
@@ -681,6 +753,8 @@ class HealthCheckRunner:
             )
 
         except subprocess.TimeoutExpired:
+            # Tests took too long - specific timeout error
+            logger.error(f"Test check timeout ({tool}): Tests took longer than 5 minutes")
             return CheckResult(
                 category=CheckCategory.TESTS,
                 status=HealthStatus.ERROR,
@@ -688,7 +762,20 @@ class HealthCheckRunner:
                 tool_used=tool,
                 details={"error": "Test suite timed out after 5 minutes"},
             )
+        except subprocess.SubprocessError as e:
+            # Tool execution failed
+            logger.error(f"Test check subprocess error ({tool}): {e}")
+            return CheckResult(
+                category=CheckCategory.TESTS,
+                status=HealthStatus.ERROR,
+                score=0,
+                tool_used=tool,
+                details={"error": f"Failed to run {tool}: {e}"},
+            )
         except Exception as e:
+            # Unexpected errors - preserve full context for debugging
+            # INTENTIONAL: Broad handler for graceful degradation of optional check
+            logger.exception(f"Unexpected error in test check ({tool}): {e}")
             return CheckResult(
                 category=CheckCategory.TESTS,
                 status=HealthStatus.ERROR,
@@ -761,7 +848,30 @@ class HealthCheckRunner:
                 },
             )
 
+        except json.JSONDecodeError as e:
+            # Tool output not in expected JSON format
+            logger.warning(f"Security check JSON parse error ({tool}): {e}")
+            return CheckResult(
+                category=CheckCategory.SECURITY,
+                status=HealthStatus.ERROR,
+                score=0,
+                tool_used=tool,
+                details={"error": f"Failed to parse {tool} output: {e}"},
+            )
+        except subprocess.SubprocessError as e:
+            # Tool execution failed
+            logger.error(f"Security check subprocess error ({tool}): {e}")
+            return CheckResult(
+                category=CheckCategory.SECURITY,
+                status=HealthStatus.ERROR,
+                score=0,
+                tool_used=tool,
+                details={"error": f"Failed to run {tool}: {e}"},
+            )
         except Exception as e:
+            # Unexpected errors - preserve full context for debugging
+            # INTENTIONAL: Broad handler for graceful degradation of optional check
+            logger.exception(f"Unexpected error in security check ({tool}): {e}")
             return CheckResult(
                 category=CheckCategory.SECURITY,
                 status=HealthStatus.ERROR,
@@ -824,7 +934,30 @@ class HealthCheckRunner:
                 details={"vulnerable_packages": len(issues)},
             )
 
+        except json.JSONDecodeError as e:
+            # Tool output not in expected JSON format
+            logger.warning(f"Dependency check JSON parse error ({tool}): {e}")
+            return CheckResult(
+                category=CheckCategory.DEPS,
+                status=HealthStatus.ERROR,
+                score=0,
+                tool_used=tool,
+                details={"error": f"Failed to parse {tool} output: {e}"},
+            )
+        except subprocess.SubprocessError as e:
+            # Tool execution failed
+            logger.error(f"Dependency check subprocess error ({tool}): {e}")
+            return CheckResult(
+                category=CheckCategory.DEPS,
+                status=HealthStatus.ERROR,
+                score=0,
+                tool_used=tool,
+                details={"error": f"Failed to run {tool}: {e}"},
+            )
         except Exception as e:
+            # Unexpected errors - preserve full context for debugging
+            # INTENTIONAL: Broad handler for graceful degradation of optional check
+            logger.exception(f"Unexpected error in dependency check ({tool}): {e}")
             return CheckResult(
                 category=CheckCategory.DEPS,
                 status=HealthStatus.ERROR,
@@ -920,7 +1053,14 @@ class AutoFixer:
         return results
 
     async def _apply_fix(self, issue: HealthIssue) -> bool:
-        """Apply a single fix."""
+        """Apply a single fix.
+
+        This uses broad exception handling intentionally for graceful degradation.
+        Auto-fixes are optional - the system should continue even if some fixes fail.
+
+        Note:
+            Full exception context is preserved via logger.exception() for debugging.
+        """
         if not issue.fix_command:
             return False
 
@@ -932,7 +1072,14 @@ class AutoFixer:
                 text=True,
             )
             return result.returncode == 0
-        except Exception:
+        except subprocess.SubprocessError as e:
+            # Fix command execution failed
+            logger.error(f"Auto-fix subprocess error for {issue.file_path}: {e}")
+            return False
+        except Exception as e:
+            # Unexpected errors - preserve full context for debugging
+            # INTENTIONAL: Broad handler for graceful degradation of optional auto-fix
+            logger.exception(f"Unexpected error applying fix to {issue.file_path}: {e}")
             return False
 
 

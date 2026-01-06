@@ -539,9 +539,9 @@ class TestDomainWizards:
             # Check for expected analysis features
             if data.get("success") and data.get("analysis"):
                 for feature in wizard.get("expected_features", []):
-                    assert (
-                        feature in data["analysis"]
-                    ), f"Missing {feature} in {wizard['id']} response"
+                    assert feature in data["analysis"], (
+                        f"Missing {feature} in {wizard['id']} response"
+                    )
 
 
 class TestSoftwareWizards:

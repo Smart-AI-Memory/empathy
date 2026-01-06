@@ -26,6 +26,7 @@ from empathy_os.pattern_library import PatternLibrary
 from empathy_os.persistence import MetricsCollector, PatternPersistence, StateManager
 from empathy_os.platform_utils import setup_asyncio_policy
 from empathy_os.templates import cmd_new
+from empathy_os.wizard_factory_cli import add_wizard_factory_commands
 from empathy_os.workflows import (
     cmd_fix_all,
     cmd_learn,
@@ -284,7 +285,9 @@ def cmd_version(args):
     logger.info("Displaying version information")
     try:
         version = get_version("empathy")
-    except Exception:
+    except (ImportError, ValueError) as e:
+        # Package metadata not available or invalid (development install)
+        logger.debug(f"Version not available: {e}")
         version = "unknown"
     logger.info(f"Empathy v{version}")
     logger.info("Copyright 2025 Smart-AI-Memory")
@@ -640,8 +643,19 @@ def cmd_validate(args):
         logger.info(f"  Confidence Threshold: {config.confidence_threshold}")
         logger.info(f"  Persistence Backend: {config.persistence_backend}")
         logger.info(f"  Metrics Enabled: {config.metrics_enabled}")
-    except Exception as e:
+    except (OSError, FileNotFoundError) as e:
+        # Config file not found or cannot be read
+        logger.error(f"Configuration file error: {e}")
+        logger.error(f"✗ Cannot read configuration file: {e}")
+        sys.exit(1)
+    except ValueError as e:
+        # Invalid configuration values
         logger.error(f"Configuration validation failed: {e}")
+        logger.error(f"✗ Configuration invalid: {e}")
+        sys.exit(1)
+    except Exception as e:
+        # Unexpected errors during config validation
+        logger.exception(f"Unexpected error validating configuration: {e}")
         logger.error(f"✗ Configuration invalid: {e}")
         sys.exit(1)
 
@@ -734,8 +748,19 @@ def cmd_patterns_export(args):
 
         logger.info(f"Loaded {len(library.patterns)} patterns from {input_file}")
         logger.info(f"✓ Loaded {len(library.patterns)} patterns from {input_file}")
+    except (OSError, FileNotFoundError) as e:
+        # Input file not found or cannot be read
+        logger.error(f"Pattern file error: {e}")
+        logger.error(f"✗ Cannot read pattern file: {e}")
+        sys.exit(1)
+    except (ValueError, KeyError) as e:
+        # Invalid pattern data format
+        logger.error(f"Pattern data error: {e}")
+        logger.error(f"✗ Invalid pattern data: {e}")
+        sys.exit(1)
     except Exception as e:
-        logger.error(f"Failed to load patterns: {e}")
+        # Unexpected errors loading patterns
+        logger.exception(f"Unexpected error loading patterns: {e}")
         logger.error(f"✗ Failed to load patterns: {e}")
         sys.exit(1)
 
@@ -748,8 +773,14 @@ def cmd_patterns_export(args):
 
         logger.info(f"Saved {len(library.patterns)} patterns to {output_file}")
         logger.info(f"✓ Saved {len(library.patterns)} patterns to {output_file}")
+    except (OSError, FileNotFoundError, PermissionError) as e:
+        # Cannot write output file
+        logger.error(f"Pattern file write error: {e}")
+        logger.error(f"✗ Cannot write pattern file: {e}")
+        sys.exit(1)
     except Exception as e:
-        logger.error(f"Failed to save patterns: {e}")
+        # Unexpected errors saving patterns
+        logger.exception(f"Unexpected error saving patterns: {e}")
         logger.error(f"✗ Failed to save patterns: {e}")
         sys.exit(1)
 
@@ -1041,8 +1072,19 @@ def cmd_metrics_show(args):
         logger.info(f"  Level 3: {stats.get('level_3_count', 0)} uses")
         logger.info(f"  Level 4: {stats.get('level_4_count', 0)} uses")
         logger.info(f"  Level 5: {stats.get('level_5_count', 0)} uses")
+    except (OSError, FileNotFoundError) as e:
+        # Database file not found
+        logger.error(f"Metrics database error: {e}")
+        logger.error(f"✗ Cannot read metrics database: {e}")
+        sys.exit(1)
+    except KeyError as e:
+        # User not found in database
+        logger.error(f"User not found in metrics: {e}")
+        logger.error(f"✗ User {user_id} not found: {e}")
+        sys.exit(1)
     except Exception as e:
-        logger.error(f"Failed to retrieve metrics for user {user_id}: {e}")
+        # Unexpected errors retrieving metrics
+        logger.exception(f"Unexpected error retrieving metrics for user {user_id}: {e}")
         logger.error(f"✗ Failed to retrieve metrics: {e}")
         sys.exit(1)
 
@@ -1096,7 +1138,17 @@ def cmd_run(args):
             persistence_enabled=config.persistence_enabled,
         )
         print("✓ Empathy OS initialized")
+    except ValueError as e:
+        # Invalid configuration parameters
+        print(f"✗ Configuration error: {e}")
+        sys.exit(1)
+    except (OSError, FileNotFoundError, PermissionError) as e:
+        # Cannot access required files/directories
+        print(f"✗ File system error: {e}")
+        sys.exit(1)
     except Exception as e:
+        # Unexpected initialization failure
+        logger.exception(f"Unexpected error initializing Empathy OS: {e}")
         print(f"✗ Failed to initialize Empathy OS: {e}")
         sys.exit(1)
 
@@ -1180,7 +1232,12 @@ def cmd_run(args):
         except KeyboardInterrupt:
             print("\n\n👋 Goodbye!")
             break
+        except (ValueError, KeyError) as e:
+            # Invalid input or response structure
+            print(f"\n✗ Input error: {e}\n")
         except Exception as e:
+            # Unexpected errors in interactive loop - log and continue
+            logger.exception(f"Unexpected error in interactive loop: {e}")
             print(f"\n✗ Error: {e}\n")
 
 
@@ -1223,7 +1280,13 @@ def cmd_inspect(args):
             print(f"✗ Pattern library not found: {db_path}")
             print("  Tip: Use 'empathy-framework wizard' to set up your first project")
             sys.exit(1)
+        except (ValueError, KeyError) as e:
+            # Invalid pattern data format
+            print(f"✗ Invalid pattern data: {e}")
+            sys.exit(1)
         except Exception as e:
+            # Unexpected errors loading patterns
+            logger.exception(f"Unexpected error loading patterns: {e}")
             print(f"✗ Failed to load patterns: {e}")
             sys.exit(1)
 
@@ -1245,7 +1308,17 @@ def cmd_inspect(args):
             for level in range(1, 6):
                 count = stats.get(f"level_{level}_count", 0)
                 print(f"    Level {level}: {count} times")
+        except (OSError, FileNotFoundError) as e:
+            # Database file not found
+            print(f"✗ Metrics database not found: {e}")
+            sys.exit(1)
+        except KeyError as e:
+            # User not found
+            print(f"✗ User {user_id} not found: {e}")
+            sys.exit(1)
         except Exception as e:
+            # Unexpected errors loading metrics
+            logger.exception(f"Unexpected error loading metrics: {e}")
             print(f"✗ Failed to load metrics: {e}")
             sys.exit(1)
 
@@ -1262,7 +1335,13 @@ def cmd_inspect(args):
                 print("\n  Users:")
                 for uid in users:
                     print(f"    • {uid}")
+        except (OSError, FileNotFoundError) as e:
+            # State directory not found
+            print(f"✗ State directory not found: {e}")
+            sys.exit(1)
         except Exception as e:
+            # Unexpected errors loading state
+            logger.exception(f"Unexpected error loading state: {e}")
             print(f"✗ Failed to load state: {e}")
             sys.exit(1)
 
@@ -1314,7 +1393,17 @@ def cmd_export(args):
         print(f"✗ Source file not found: {db_path}")
         print("  Tip: Patterns are saved automatically when using the framework")
         sys.exit(1)
+    except (OSError, PermissionError) as e:
+        # Cannot write output file
+        print(f"✗ Cannot write to file: {e}")
+        sys.exit(1)
+    except (ValueError, KeyError) as e:
+        # Invalid pattern data
+        print(f"✗ Invalid pattern data: {e}")
+        sys.exit(1)
     except Exception as e:
+        # Unexpected errors during export
+        logger.exception(f"Unexpected error exporting patterns: {e}")
         print(f"✗ Export failed: {e}")
         sys.exit(1)
 
@@ -1367,7 +1456,17 @@ def cmd_import(args):
     except FileNotFoundError:
         print(f"✗ Input file not found: {input_file}")
         sys.exit(1)
+    except (ValueError, KeyError) as e:
+        # Invalid pattern data format
+        print(f"✗ Invalid pattern data: {e}")
+        sys.exit(1)
+    except (OSError, PermissionError) as e:
+        # Cannot read input or write to database
+        print(f"✗ File access error: {e}")
+        sys.exit(1)
     except Exception as e:
+        # Unexpected errors during import
+        logger.exception(f"Unexpected error importing patterns: {e}")
         print(f"✗ Import failed: {e}")
         sys.exit(1)
 
@@ -1940,7 +2039,11 @@ def cmd_workflow(args):
                         else:
                             try:
                                 final_output_serializable[k] = str(v)
-                            except Exception:
+                            except Exception as e:  # noqa: BLE001
+                                # INTENTIONAL: Silently skip any non-serializable objects
+                                # This is a best-effort serialization for JSON output
+                                # We cannot predict all possible object types users might return
+                                logger.debug(f"Cannot serialize field {k}: {e}")
                                 pass
                 else:
                     final_output_serializable = None
@@ -2668,6 +2771,9 @@ def main():
     )
     parser_achievements.set_defaults(func=cmd_achievements)
 
+    # Wizard Factory commands (create wizards 12x faster)
+    add_wizard_factory_commands(subparsers)
+
     # Parse arguments
     args = parser.parse_args()
 
@@ -2679,8 +2785,12 @@ def main():
         if args.command and args.command not in ("dashboard", "run"):
             try:
                 show_tip_if_available(args.command)
-            except Exception:
-                pass  # Don't fail on discovery errors
+            except Exception as e:  # noqa: BLE001
+                # INTENTIONAL: Discovery tips are optional UX enhancements
+                # They should never cause command execution to fail
+                # Cannot predict all possible errors from discovery system
+                logger.debug(f"Discovery tip not available for {args.command}: {e}")
+                pass
 
         return result if result is not None else 0
     parser.print_help()

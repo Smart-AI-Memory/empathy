@@ -561,7 +561,9 @@ class CodeReviewWizard(BaseWizard):
             icon = (
                 "⚠️"
                 if finding["severity"] == "warning"
-                else "❌" if finding["severity"] == "error" else "ℹ️"
+                else "❌"
+                if finding["severity"] == "error"
+                else "ℹ️"
             )
             lines.append(f"{icon}  {finding['file']}:{finding['line']}")
             lines.append(f"    Pattern: {finding['pattern_type']} ({finding['pattern_id']})")

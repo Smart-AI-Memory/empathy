@@ -20,7 +20,9 @@ import { PowerPanel } from './panels/PowerPanel';
 import { HealthPanel } from './panels/HealthPanel';
 import { CostsPanel } from './panels/CostsPanel';
 import { WorkflowHistoryPanel } from './panels/WorkflowHistoryPanel';
+import { TelemetryPanel } from './panels/TelemetryPanel';
 import { EmpathyDashboardProvider } from './panels/EmpathyDashboardPanel';
+import { WorkflowFactoryPanel } from './panels/WorkflowFactoryPanel';
 import { MemoryPanelProvider } from './panels/MemoryPanelProvider';
 // REMOVED in v3.5.5: Refactor Advisor panel - kept for future use
 // import { RefactorAdvisorPanel } from './panels/RefactorAdvisorPanel';
@@ -35,6 +37,9 @@ import { initializeProject, showWelcomeIfNeeded as showInitializeWelcome } from 
 
 // Status bar item
 let statusBarItem: vscode.StatusBarItem;
+
+// Telemetry status bar item
+let telemetryStatusBarItem: vscode.StatusBarItem;
 
 // Health provider (used for diagnostics)
 let healthProvider: HealthTreeProvider;
@@ -74,6 +79,17 @@ export function activate(context: vscode.ExtensionContext) {
     statusBarItem.command = 'empathy.status';
     context.subscriptions.push(statusBarItem);
 
+    // Create telemetry status bar button
+    telemetryStatusBarItem = vscode.window.createStatusBarItem(
+        vscode.StatusBarAlignment.Right,
+        99
+    );
+    telemetryStatusBarItem.text = '$(dashboard) Telemetry';
+    telemetryStatusBarItem.tooltip = 'Open LLM Telemetry Dashboard';
+    telemetryStatusBarItem.command = 'empathy.openTelemetry';
+    telemetryStatusBarItem.show();
+    context.subscriptions.push(telemetryStatusBarItem);
+
     // Create diagnostics collection (Feature F)
     diagnosticCollection = vscode.languages.createDiagnosticCollection('empathy');
     context.subscriptions.push(diagnosticCollection);
@@ -107,6 +123,8 @@ export function activate(context: vscode.ExtensionContext) {
             }
         )
     );
+
+    // Workflow Factory panel opens in editor area (created on demand via command)
 
     // REMOVED in v3.5.5: Refactor Advisor panel - kept for future use
     // const refactorAdvisorProvider = new RefactorAdvisorPanel(context.extensionUri, context);
@@ -184,10 +202,134 @@ export function activate(context: vscode.ExtensionContext) {
         { name: 'empathy.memory.refreshStatus', handler: () => { memoryProvider.refresh(); vscode.window.showInformationMessage('Memory status refreshed'); } },
         // Initialize wizard (accepts optional { force: true } to skip "already initialized" check)
         { name: 'empathy.initializeProject', handler: (options?: { force?: boolean }) => initializeProject(context, options) },
+        // Navigation command
+        { name: 'empathy.goToLocation', handler: async (location: { file: string; line: number; column?: number }) => {
+            const uri = vscode.Uri.file(location.file);
+            const doc = await vscode.workspace.openTextDocument(uri);
+            const editor = await vscode.window.showTextDocument(doc);
+            const position = new vscode.Position(location.line - 1, (location.column || 1) - 1);
+            editor.selection = new vscode.Selection(position, position);
+            editor.revealRange(new vscode.Range(position, position));
+        }},
+        // Workflow execution command
+        { name: 'empathy.runWorkflow', handler: async (workflowName: string, input?: any) => {
+            const terminal = vscode.window.createTerminal('Empathy Workflow');
+            terminal.show();
+            if (input) {
+                terminal.sendText(`empathy workflow run ${workflowName} --input '${JSON.stringify(input)}'`);
+            } else {
+                terminal.sendText(`empathy workflow run ${workflowName}`);
+            }
+        }},
+        // Agent Factory command (distinct from wizards/workflows)
+        { name: 'empathy.agentFactory', handler: async () => {
+            vscode.window.showInformationMessage('Agent Factory: Agent creation tools (separate from wizards and workflows)');
+        }},
+        // Keyboard layout command
+        { name: 'empathy.applyKeyboardLayout', handler: async () => {
+            await vscode.commands.executeCommand('workbench.action.openGlobalKeybindings');
+        }},
+        // Wizard Factory commands (12x faster wizard creation)
+        { name: 'empathy.wizard.create', handler: async () => {
+            const wizardName = await vscode.window.showInputBox({
+                prompt: 'Enter wizard name (snake_case)',
+                placeHolder: 'patient_intake',
+                validateInput: (value) => {
+                    if (!value) return 'Wizard name is required';
+                    if (!/^[a-z_][a-z0-9_]*$/.test(value)) return 'Use snake_case (lowercase with underscores)';
+                    return null;
+                }
+            });
+            if (!wizardName) return;
+
+            const domain = await vscode.window.showQuickPick(
+                ['healthcare', 'finance', 'software', 'legal', 'education', 'other'],
+                { placeHolder: 'Select domain' }
+            );
+            if (!domain) return;
+
+            const wizardType = await vscode.window.showQuickPick(
+                ['domain', 'coach', 'ai'],
+                { placeHolder: 'Select wizard type (default: domain)' }
+            );
+            if (!wizardType) return;
+
+            const terminal = vscode.window.createTerminal('Wizard Factory');
+            terminal.show();
+            terminal.sendText(`empathy wizard create ${wizardName} --domain ${domain} --type ${wizardType}`);
+            vscode.window.showInformationMessage(`Creating wizard: ${wizardName} (${domain})`);
+        }},
+        { name: 'empathy.wizard.listPatterns', handler: async () => {
+            const terminal = vscode.window.createTerminal('Wizard Patterns');
+            terminal.show();
+            terminal.sendText('empathy wizard list-patterns');
+        }},
+        { name: 'empathy.wizard.generateTests', handler: async () => {
+            const wizardId = await vscode.window.showInputBox({
+                prompt: 'Enter wizard ID to generate tests for',
+                placeHolder: 'patient_intake'
+            });
+            if (!wizardId) return;
+
+            const patterns = await vscode.window.showInputBox({
+                prompt: 'Enter comma-separated pattern IDs',
+                placeHolder: 'linear_flow,approval,structured_fields',
+                validateInput: (value) => value ? null : 'Patterns are required'
+            });
+            if (!patterns) return;
+
+            const terminal = vscode.window.createTerminal('Test Generator');
+            terminal.show();
+            terminal.sendText(`empathy wizard generate-tests ${wizardId} --patterns ${patterns}`);
+            vscode.window.showInformationMessage(`Generating tests for: ${wizardId}`);
+        }},
+        { name: 'empathy.wizard.analyze', handler: async () => {
+            const wizardId = await vscode.window.showInputBox({
+                prompt: 'Enter wizard ID to analyze',
+                placeHolder: 'patient_intake'
+            });
+            if (!wizardId) return;
+
+            const patterns = await vscode.window.showInputBox({
+                prompt: 'Enter comma-separated pattern IDs',
+                placeHolder: 'linear_flow,approval,structured_fields',
+                validateInput: (value) => value ? null : 'Patterns are required'
+            });
+            if (!patterns) return;
+
+            const terminal = vscode.window.createTerminal('Wizard Risk Analysis');
+            terminal.show();
+            terminal.sendText(`empathy wizard analyze ${wizardId} --patterns ${patterns}`);
+            vscode.window.showInformationMessage(`Analyzing risk for: ${wizardId}`);
+        }},
+        // Workflow Factory commands - opens visual webview panel
+        { name: 'empathy.workflow.create', handler: async () => {
+            // Open the Workflow Factory webview panel in editor area
+            WorkflowFactoryPanel.createOrShow(context.extensionUri);
+        }},
+        { name: 'empathy.workflow.listPatterns', handler: async () => {
+            const terminal = vscode.window.createTerminal('Workflow Patterns');
+            terminal.show();
+            terminal.sendText('empathy workflow list-patterns');
+        }},
+        { name: 'empathy.workflow.recommend', handler: async () => {
+            const workflowType = await vscode.window.showQuickPick(
+                ['code-analysis', 'multi-agent', 'data-processing', 'custom'],
+                {
+                    placeHolder: 'Select workflow type to get pattern recommendations',
+                    title: 'Workflow Pattern Recommendations'
+                }
+            );
+            if (!workflowType) return;
+
+            const terminal = vscode.window.createTerminal('Workflow Recommendations');
+            terminal.show();
+            terminal.sendText(`empathy workflow recommend ${workflowType}`);
+        }},
         // REMOVED in v3.5.5: Test Generator wizard
         // { name: 'empathy.testGenerator.show', handler: () => vscode.commands.executeCommand('empathy.openTestGenerator') },
-        // Workflow Wizard
-        { name: 'empathy.workflowWizard.show', handler: () => vscode.commands.executeCommand('workflow-wizard.focus') },
+        // HIDDEN in v3.5.5: Workflow Wizard (temporarily disabled - panel is hidden)
+        // { name: 'empathy.workflowWizard.show', handler: () => vscode.commands.executeCommand('workflow-wizard.focus') },
     ];
 
     for (const cmd of commands) {
@@ -221,6 +363,13 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('empathy.openWorkflowHistory', () => {
             WorkflowHistoryPanel.createOrShow(context.extensionUri);
+        })
+    );
+
+    // Register Telemetry Panel command
+    context.subscriptions.push(
+        vscode.commands.registerCommand('empathy.openTelemetry', () => {
+            TelemetryPanel.createOrShow(context.extensionUri);
         })
     );
 

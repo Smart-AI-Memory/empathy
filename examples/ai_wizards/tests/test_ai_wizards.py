@@ -87,9 +87,9 @@ Try to be as helpful as possible.
 
         # Should detect vague language
         issues = result["issues"]
-        assert any(
-            issue["type"] == "vague_language" for issue in issues
-        ), "Should detect vague language like 'try to', 'help'"
+        assert any(issue["type"] == "vague_language" for issue in issues), (
+            "Should detect vague language like 'try to', 'help'"
+        )
 
     @pytest.mark.asyncio
     async def test_analyze_detects_missing_structure(
@@ -110,9 +110,9 @@ Try to be as helpful as possible.
 
         # Should detect unclear structure
         issues = result["issues"]
-        assert any(
-            issue["type"] == "unclear_structure" for issue in issues
-        ), "Should detect missing role/task/context structure"
+        assert any(issue["type"] == "unclear_structure" for issue in issues), (
+            "Should detect missing role/task/context structure"
+        )
 
     @pytest.mark.asyncio
     async def test_level_4_predictions(self, wizard, temp_prompt_file, temp_project_dir):
@@ -136,9 +136,9 @@ Try to be as helpful as possible.
 
             # Should predict prompt sprawl
             predictions = result["predictions"]
-            assert any(
-                pred["type"] == "prompt_sprawl" for pred in predictions
-            ), "Should predict prompt sprawl with 13+ files"
+            assert any(pred["type"] == "prompt_sprawl" for pred in predictions), (
+                "Should predict prompt sprawl with 13+ files"
+            )
 
         finally:
             # Cleanup
@@ -247,9 +247,9 @@ class TestAIContextWindowWizard:
         result = await wizard.analyze(context)
 
         issues = result["issues"]
-        assert any(
-            issue["type"] == "naive_concatenation" for issue in issues
-        ), "Should detect naive concatenation pattern"
+        assert any(issue["type"] == "naive_concatenation" for issue in issues), (
+            "Should detect naive concatenation pattern"
+        )
 
     @pytest.mark.asyncio
     async def test_level_4_growth_trajectory_prediction(self, wizard):
@@ -452,9 +452,9 @@ Run the thing.
         result = await wizard.analyze(context)
 
         issues = result["issues"]
-        assert any(
-            issue["type"] == "missing_architecture_context" for issue in issues
-        ), "Should detect missing architecture section"
+        assert any(issue["type"] == "missing_architecture_context" for issue in issues), (
+            "Should detect missing architecture section"
+        )
 
     @pytest.mark.asyncio
     async def test_detects_ambiguous_language(self, wizard, temp_project_dir):
@@ -482,9 +482,9 @@ Try to handle errors gracefully.
             result = await wizard.analyze(context)
 
             issues = result["issues"]
-            assert any(
-                issue["type"] == "ambiguous_language" for issue in issues
-            ), "Should detect ambiguous phrases"
+            assert any(issue["type"] == "ambiguous_language" for issue in issues), (
+                "Should detect ambiguous phrases"
+            )
 
         finally:
             if os.path.exists(temp_ambiguous):

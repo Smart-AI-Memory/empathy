@@ -7,11 +7,14 @@ Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
+import logging
 import time
 from pathlib import Path
 from typing import Any
 
 from ..state import ToolResult
+
+logger = logging.getLogger(__name__)
 
 
 class SecurityAdapter:
@@ -96,9 +99,34 @@ class SecurityAdapter:
                             "remediation": vuln.get("remediation", ""),
                         }
                         findings.append(finding)
-                except Exception:
-                    # Skip files that can't be scanned
+                except (OSError, PermissionError) as e:
+                    # File system errors - log and skip
+                    logger.warning(f"Cannot access {py_file}: {e}")
                     continue
+                except UnicodeDecodeError as e:
+                    # Binary or encoding issues - log and skip
+                    logger.debug(f"Cannot decode {py_file}: {e}")
+                    continue
+                except (ValueError, RuntimeError, KeyError, IndexError, AttributeError) as e:
+                    # Fail secure - treat scan failures as potential issues
+                    logger.error(f"Scanner failed on {py_file}: {e}")
+                    findings_by_severity["medium"] += 1
+                    finding = {
+                        "finding_id": f"sec_{len(findings)}",
+                        "tool": "security",
+                        "category": "security",
+                        "severity": "medium",
+                        "file_path": str(py_file.relative_to(self.project_root)),
+                        "line_number": None,
+                        "code": "SCAN_FAILURE",
+                        "message": f"Security scanner failed: {type(e).__name__}",
+                        "evidence": str(e),
+                        "confidence": 0.5,
+                        "fixable": False,
+                        "fix_command": None,
+                        "remediation": "Manual review recommended - scanner could not complete",
+                    }
+                    findings.append(finding)
 
             # Scan dependencies if enabled
             if self.scan_dependencies:
@@ -124,8 +152,39 @@ class SecurityAdapter:
                             "remediation": f"Upgrade to {vuln.get('fix_version', 'latest')}",
                         }
                         findings.append(finding)
-                except Exception:
-                    pass
+                except FileNotFoundError as e:
+                    # No requirements file - log info only
+                    logger.info(f"No dependency file found: {e}")
+                except (
+                    ValueError,
+                    RuntimeError,
+                    KeyError,
+                    IndexError,
+                    AttributeError,
+                    ConnectionError,
+                ) as e:
+                    # Fail secure - dependency scan failures are security issues
+                    logger.error(f"Dependency scanner failed: {e}")
+                    findings_by_severity["high"] += 1
+                    finding = {
+                        "finding_id": f"sec_dep_{len(findings)}",
+                        "tool": "security",
+                        "category": "deps",
+                        "severity": "high",
+                        "file_path": "requirements.txt",
+                        "line_number": None,
+                        "code": "DEP_SCAN_FAILURE",
+                        "message": f"Dependency scanner failed: {type(e).__name__}",
+                        "evidence": str(e),
+                        "confidence": 0.7,
+                        "fixable": False,
+                        "fix_command": None,
+                        "remediation": "Manual dependency audit recommended - scanner could not complete",
+                    }
+                    findings.append(finding)
+                except OSError as e:
+                    # File system errors - log and continue
+                    logger.warning(f"Cannot access dependency files: {e}")
 
             # Calculate score
             score = self._calculate_score(findings_by_severity)
@@ -153,8 +212,20 @@ class SecurityAdapter:
                 "vulnerability_scanner module not available",
                 start_time,
             )
+        except OSError as e:
+            # File system errors accessing project root
+            logger.critical(f"File system error during security scan: {e}")
+            return self._create_error_result(f"Cannot access project files: {e}", start_time)
+        except (AttributeError, TypeError) as e:
+            # Scanner API errors or invalid configuration
+            logger.error(f"Security scanner configuration error: {e}")
+            return self._create_error_result(f"Scanner configuration issue: {e}", start_time)
         except Exception as e:
-            return self._create_error_result(str(e), start_time)
+            # Unexpected errors - log and report
+            logger.exception(f"Unexpected error in security scan: {e}")
+            return self._create_error_result(
+                f"Security scan failed: {type(e).__name__}: {e}", start_time
+            )
 
     def _map_severity(self, severity: str) -> str:
         """Map scanner severity to unified severity."""

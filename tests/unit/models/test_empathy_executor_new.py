@@ -79,9 +79,9 @@ class TestEmpathyLLMExecutorTaskRouting:
         tier = get_tier_for_task(task_type)
         # get_tier_for_task returns ModelTier enum
         tier_value = tier.value if hasattr(tier, "value") else tier
-        assert (
-            tier_value == expected_tier_value
-        ), f"Task '{task_type}' should route to '{expected_tier_value}', got '{tier_value}'"
+        assert tier_value == expected_tier_value, (
+            f"Task '{task_type}' should route to '{expected_tier_value}', got '{tier_value}'"
+        )
 
     def test_unknown_task_type_routes_to_capable(self):
         """Test that unknown task types default to capable tier."""

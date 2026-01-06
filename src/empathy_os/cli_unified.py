@@ -372,6 +372,78 @@ def wizard_run(
     subprocess.run(["empathy-scan", str(path), "--wizards", name], check=False)
 
 
+@wizard_app.command("create")
+def wizard_create(
+    name: str = typer.Argument(..., help="Wizard name (snake_case)"),
+    domain: str = typer.Option(
+        ..., "--domain", "-d", help="Domain (healthcare, finance, software)"
+    ),
+    wizard_type: str = typer.Option(
+        "domain", "--type", "-t", help="Wizard type (domain, coach, ai)"
+    ),
+    methodology: str = typer.Option(
+        "pattern", "--methodology", "-m", help="Methodology (pattern, tdd)"
+    ),
+    patterns: str | None = typer.Option(
+        None, "--patterns", "-p", help="Comma-separated pattern IDs"
+    ),
+    interactive: bool = typer.Option(
+        False, "--interactive", "-i", help="Interactive pattern selection"
+    ),
+):
+    """Create a new wizard using Wizard Factory (12x faster)."""
+    cmd = [
+        sys.executable,
+        "-m",
+        "scaffolding",
+        "create",
+        name,
+        "--domain",
+        domain,
+        "--type",
+        wizard_type,
+        "--methodology",
+        methodology,
+    ]
+    if patterns:
+        cmd.extend(["--patterns", patterns])
+    if interactive:
+        cmd.append("--interactive")
+    subprocess.run(cmd, check=False)
+
+
+@wizard_app.command("list-patterns")
+def wizard_list_patterns():
+    """List all available wizard patterns."""
+    subprocess.run([sys.executable, "-m", "scaffolding", "list-patterns"], check=False)
+
+
+@wizard_app.command("generate-tests")
+def wizard_generate_tests(
+    wizard_id: str = typer.Argument(..., help="Wizard ID"),
+    patterns: str = typer.Option(..., "--patterns", "-p", help="Comma-separated pattern IDs"),
+    output: Path | None = typer.Option(None, "--output", "-o", help="Output directory"),
+):
+    """Generate tests for a wizard."""
+    cmd = [sys.executable, "-m", "test_generator", "generate", wizard_id, "--patterns", patterns]
+    if output:
+        cmd.extend(["--output", str(output)])
+    subprocess.run(cmd, check=False)
+
+
+@wizard_app.command("analyze")
+def wizard_analyze(
+    wizard_id: str = typer.Argument(..., help="Wizard ID"),
+    patterns: str = typer.Option(..., "--patterns", "-p", help="Wizard ID"),
+    json_output: bool = typer.Option(False, "--json", help="Output JSON format"),
+):
+    """Analyze wizard risk and get coverage recommendations."""
+    cmd = [sys.executable, "-m", "test_generator", "analyze", wizard_id, "--patterns", patterns]
+    if json_output:
+        cmd.append("--json")
+    subprocess.run(cmd, check=False)
+
+
 # =============================================================================
 # WORKFLOW SUBCOMMAND GROUP
 # =============================================================================
@@ -394,6 +466,50 @@ def workflow_run(
     """Run a multi-model workflow."""
     subprocess.run(
         [sys.executable, "-m", "empathy_os.cli", "workflow", "run", name, str(path)], check=False
+    )
+
+
+@workflow_app.command("create")
+def workflow_create(
+    name: str = typer.Argument(..., help="Workflow name (kebab-case, e.g., bug-scanner)"),
+    description: str = typer.Option(None, "--description", "-d", help="Workflow description"),
+    patterns: str = typer.Option(None, "--patterns", "-p", help="Comma-separated pattern IDs"),
+    stages: str = typer.Option(None, "--stages", "-s", help="Comma-separated stage names"),
+    tier_map: str = typer.Option(
+        None, "--tier-map", "-t", help="Tier map (e.g., analyze:CHEAP,process:CAPABLE)"
+    ),
+    output: Path = typer.Option(None, "--output", "-o", help="Output directory"),
+):
+    """Create a new workflow using Workflow Factory (12x faster)."""
+    cmd = [sys.executable, "-m", "workflow_scaffolding", "create", name]
+    if description:
+        cmd.extend(["--description", description])
+    if patterns:
+        cmd.extend(["--patterns", patterns])
+    if stages:
+        cmd.extend(["--stages", stages])
+    if tier_map:
+        cmd.extend(["--tier-map", tier_map])
+    if output:
+        cmd.extend(["--output", str(output)])
+    subprocess.run(cmd, check=False)
+
+
+@workflow_app.command("list-patterns")
+def workflow_list_patterns():
+    """List available workflow patterns."""
+    subprocess.run([sys.executable, "-m", "workflow_scaffolding", "list-patterns"], check=False)
+
+
+@workflow_app.command("recommend")
+def workflow_recommend(
+    workflow_type: str = typer.Argument(
+        ..., help="Workflow type (code-analysis, simple, multi-agent, etc.)"
+    ),
+):
+    """Recommend patterns for a workflow type."""
+    subprocess.run(
+        [sys.executable, "-m", "workflow_scaffolding", "recommend", workflow_type], check=False
     )
 
 
@@ -435,10 +551,14 @@ def cheatsheet():
 [bold]Workflows[/bold]
   empathy workflow list     Show available workflows
   empathy workflow run <name>   Execute a workflow
+  empathy workflow create <name> -p <patterns>  Create workflow (12x faster)
+  empathy workflow list-patterns                List available patterns
 
 [bold]Wizards[/bold]
   empathy wizard list       Show available wizards
-  empathy wizard run <name> Execute a wizard""",
+  empathy wizard run <name> Execute a wizard
+  empathy wizard create <name> -d <domain>  Create wizard (12x faster)
+  empathy wizard list-patterns              List available patterns""",
             title="[bold blue]Empathy Framework Cheatsheet[/bold blue]",
         ),
     )

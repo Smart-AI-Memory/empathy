@@ -621,7 +621,102 @@
         "vscode-extension/src/extension.ts"
       ],
       "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20260106_80120c05",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "fix: Release Prep and Secure Release buttons now open reports in editor",
+      "fix": "See commit 80120c05",
+      "resolved_by": "@geneai",
+      "resolved_at": "2026-01-06",
+      "files_affected": [
+        "vscode-extension/src/panels/EmpathyDashboardPanel.ts"
+      ],
+      "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20260106_5cab2623",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "fix: Check Deps button now opens report in editor",
+      "fix": "See commit 5cab2623",
+      "resolved_by": "@geneai",
+      "resolved_at": "2026-01-06",
+      "files_affected": [
+        "vscode-extension/src/panels/EmpathyDashboardPanel.ts"
+      ],
+      "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20260106_893e2300",
+      "bug_type": "import_error",
+      "status": "resolved",
+      "root_cause": "fix: Add missing logger imports in base.py and security_audit.py",
+      "fix": "See commit 893e2300",
+      "resolved_by": "@geneai",
+      "resolved_at": "2026-01-06",
+      "files_affected": [
+        "src/empathy_os/workflows/base.py",
+        "src/empathy_os/workflows/security_audit.py",
+        ".../src/panels/EmpathyDashboardPanel.ts"
+      ],
+      "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20260106_0f2acbf3",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "fix: Remove Sync Docs button (manage-docs workflow)",
+      "fix": "See commit 0f2acbf3",
+      "resolved_by": "@geneai",
+      "resolved_at": "2026-01-06",
+      "files_affected": [
+        "vscode-extension/src/panels/EmpathyDashboardPanel.ts"
+      ],
+      "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20260106_8075c60f",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "release: Prepare v3.7.0 - XML-Enhanced Prompts & Dependency Fixes",
+      "fix": "See commit 8075c60f",
+      "resolved_by": "@geneai",
+      "resolved_at": "2026-01-06",
+      "files_affected": [
+        ".claude/CLAUDE.md",
+        ".pre-commit-config.yaml",
+        "CHANGELOG.md"
+      ],
+      "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20260105_0254547f",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "fix: Add formatted_report to Sync Docs workflow",
+      "fix": "See commit 0254547f",
+      "resolved_by": "@geneai",
+      "resolved_at": "2026-01-05",
+      "files_affected": [
+        "src/empathy_os/workflows/manage_documentation.py"
+      ],
+      "source": "git_history"
+    },
+    {
+      "pattern_id": "bug_20260104_c2516490",
+      "bug_type": "unknown",
+      "status": "resolved",
+      "root_cause": "docs: Fix Level 1 install command to use [developer] extra",
+      "fix": "See commit c2516490",
+      "resolved_by": "@geneai",
+      "resolved_at": "2026-01-04",
+      "files_affected": [
+        "README.md"
+      ],
+      "source": "git_history"
     }
   ],
-  "last_updated": "2026-01-01T00:19:52.283382"
+  "last_updated": "2026-01-06T01:25:37.118326"
 }

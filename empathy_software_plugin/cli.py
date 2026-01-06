@@ -662,7 +662,9 @@ def scan_command():
                     severity_icon = (
                         "🔴"
                         if issue.severity == "high"
-                        else "🟡" if issue.severity == "medium" else "🔵"
+                        else "🟡"
+                        if issue.severity == "medium"
+                        else "🔵"
                     )
                     print(f"    {severity_icon} Line {issue.line_number}: {issue.message}")
                 if len(result.issues) > 3:

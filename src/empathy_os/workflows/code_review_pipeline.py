@@ -605,7 +605,11 @@ def format_code_review_pipeline_report(result: CodeReviewPipelineResult) -> str:
     quality_label = (
         "EXCELLENT"
         if score >= 90
-        else "GOOD" if score >= 70 else "NEEDS WORK" if score >= 50 else "POOR"
+        else "GOOD"
+        if score >= 70
+        else "NEEDS WORK"
+        if score >= 50
+        else "POOR"
     )
     lines.append("-" * 60)
     lines.append("QUALITY SCORE")

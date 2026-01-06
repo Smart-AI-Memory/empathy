@@ -59,28 +59,29 @@ __version__ = "1.0.0-beta"
 __author__ = "Patrick Roebuck"
 __email__ = "hello@deepstudy.ai"
 
+from .agent_monitoring import AgentMetrics, AgentMonitor, TeamMetrics
 from .config import EmpathyConfig, load_config
 from .coordination import (
-    AgentCoordinator,
-    AgentTask,
-    ConflictResolver,
-    ResolutionResult,
-    ResolutionStrategy,
-    TeamPriorities,
-    TeamSession,
+                           AgentCoordinator,
+                           AgentTask,
+                           ConflictResolver,
+                           ResolutionResult,
+                           ResolutionStrategy,
+                           TeamPriorities,
+                           TeamSession,
 )
 from .core import EmpathyOS
 from .emergence import EmergenceDetector
 from .exceptions import (
-    CollaborationStateError,
-    ConfidenceThresholdError,
-    EmpathyFrameworkError,
-    EmpathyLevelError,
-    FeedbackLoopError,
-    LeveragePointError,
-    PatternNotFoundError,
-    TrustThresholdError,
-    ValidationError,
+                           CollaborationStateError,
+                           ConfidenceThresholdError,
+                           EmpathyFrameworkError,
+                           EmpathyLevelError,
+                           FeedbackLoopError,
+                           LeveragePointError,
+                           PatternNotFoundError,
+                           TrustThresholdError,
+                           ValidationError,
 )
 from .feedback_loops import FeedbackLoopDetector
 from .levels import Level1Reactive, Level2Guided, Level3Proactive, Level4Anticipatory, Level5Systems
@@ -89,43 +90,42 @@ from .logging_config import LoggingConfig, get_logger
 
 # Memory module (unified short-term + long-term + security)
 from .memory import (
-    AccessTier,
-    AgentCredentials,  # Memory module imports
-    AuditEvent,
-    AuditLogger,
-    Classification,
-    ClassificationRules,
-    ClaudeMemoryConfig,
-    ClaudeMemoryLoader,
-    ConflictContext,
-    EncryptionManager,
-    Environment,
-    MemDocsStorage,
-    MemoryConfig,
-    MemoryPermissionError,
-    PatternMetadata,
-    PIIDetection,
-    PIIPattern,
-    PIIScrubber,
-    RedisShortTermMemory,
-    SecretDetection,
-    SecretsDetector,
-    SecretType,
-    SecureMemDocsIntegration,
-    SecurePattern,
-    SecurityError,
-    SecurityViolation,
-    Severity,
-    StagedPattern,
-    TTLStrategy,
-    UnifiedMemory,
-    check_redis_connection,
-    detect_secrets,
-    get_railway_redis,
-    get_redis_config,
-    get_redis_memory,
+                           AccessTier,
+                           AgentCredentials,  # Memory module imports
+                           AuditEvent,
+                           AuditLogger,
+                           Classification,
+                           ClassificationRules,
+                           ClaudeMemoryConfig,
+                           ClaudeMemoryLoader,
+                           ConflictContext,
+                           EncryptionManager,
+                           Environment,
+                           MemDocsStorage,
+                           MemoryConfig,
+                           MemoryPermissionError,
+                           PatternMetadata,
+                           PIIDetection,
+                           PIIPattern,
+                           PIIScrubber,
+                           RedisShortTermMemory,
+                           SecretDetection,
+                           SecretsDetector,
+                           SecretType,
+                           SecureMemDocsIntegration,
+                           SecurePattern,
+                           SecurityError,
+                           SecurityViolation,
+                           Severity,
+                           StagedPattern,
+                           TTLStrategy,
+                           UnifiedMemory,
+                           check_redis_connection,
+                           detect_secrets,
+                           get_railway_redis,
+                           get_redis_config,
+                           get_redis_memory,
 )
-from .monitoring import AgentMetrics, AgentMonitor, TeamMetrics
 from .pattern_library import Pattern, PatternLibrary, PatternMatch
 from .persistence import MetricsCollector, PatternPersistence, StateManager
 from .trust_building import TrustBuildingBehaviors

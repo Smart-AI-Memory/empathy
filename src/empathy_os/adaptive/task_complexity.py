@@ -14,7 +14,7 @@ from enum import Enum
 try:
     import tiktoken
 except ImportError:
-    tiktoken = None
+    tiktoken = None  # type: ignore[assignment]
 
 
 class TaskComplexity(Enum):

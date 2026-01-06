@@ -604,9 +604,9 @@ class TestSecurityPatternsStructure:
         """Severity values should be valid."""
         valid_severities = {"critical", "high", "medium", "low"}
         for name, info in SECURITY_PATTERNS.items():
-            assert (
-                info["severity"] in valid_severities
-            ), f"{name} has invalid severity: {info['severity']}"
+            assert info["severity"] in valid_severities, (
+                f"{name} has invalid severity: {info['severity']}"
+            )
 
     def test_owasp_format_is_valid(self):
         """OWASP references should follow expected format."""

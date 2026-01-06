@@ -58,34 +58,34 @@ from empathy_llm_toolkit.wizards.retail_wizard import RetailWizard  # noqa: E402
 from empathy_llm_toolkit.wizards.sales_wizard import SalesWizard  # noqa: E402
 from empathy_llm_toolkit.wizards.technology_wizard import TechnologyWizard  # noqa: E402
 from empathy_software_plugin.wizards.advanced_debugging_wizard import (
-    AdvancedDebuggingWizard,
-)  # noqa: E402
+    AdvancedDebuggingWizard,  # noqa: E402
+)
 from empathy_software_plugin.wizards.agent_orchestration_wizard import (
-    AgentOrchestrationWizard,
-)  # noqa: E402
+    AgentOrchestrationWizard,  # noqa: E402
+)
 from empathy_software_plugin.wizards.ai_collaboration_wizard import (
-    AICollaborationWizard,
-)  # noqa: E402
+    AICollaborationWizard,  # noqa: E402
+)
 from empathy_software_plugin.wizards.ai_context_wizard import AIContextWindowWizard  # noqa: E402
 from empathy_software_plugin.wizards.ai_documentation_wizard import (
-    AIDocumentationWizard,
-)  # noqa: E402
+    AIDocumentationWizard,  # noqa: E402
+)
 from empathy_software_plugin.wizards.enhanced_testing_wizard import (
-    EnhancedTestingWizard,
-)  # noqa: E402
+    EnhancedTestingWizard,  # noqa: E402
+)
 
 # AI wizards (12 total)
 from empathy_software_plugin.wizards.multi_model_wizard import MultiModelWizard  # noqa: E402
 from empathy_software_plugin.wizards.performance_profiling_wizard import (
-    PerformanceProfilingWizard as AIPerformanceWizard,
-)  # noqa: E402
+    PerformanceProfilingWizard as AIPerformanceWizard,  # noqa: E402
+)
 from empathy_software_plugin.wizards.prompt_engineering_wizard import (
-    PromptEngineeringWizard,
-)  # noqa: E402
+    PromptEngineeringWizard,  # noqa: E402
+)
 from empathy_software_plugin.wizards.rag_pattern_wizard import RAGPatternWizard  # noqa: E402
 from empathy_software_plugin.wizards.security_analysis_wizard import (
-    SecurityAnalysisWizard,
-)  # noqa: E402
+    SecurityAnalysisWizard,  # noqa: E402
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -112,6 +112,49 @@ def get_llm_instance():
         enable_security=True,
         enable_audit_logging=True,
     )
+
+
+def register_wizard(wizard_id: str, wizard_class: type, *args, **kwargs) -> bool:
+    """Register a wizard with proper exception handling.
+
+    This function uses broad exception handling intentionally for graceful degradation.
+    Wizards are optional features - the API should start even if some wizards fail.
+
+    Args:
+        wizard_id: Unique identifier for the wizard
+        wizard_class: Wizard class to instantiate
+        *args: Positional arguments for wizard constructor
+        **kwargs: Keyword arguments for wizard constructor
+
+    Returns:
+        True if wizard was successfully initialized, False otherwise
+
+    Note:
+        Uses broad Exception handling for graceful degradation of optional features.
+        Full exception context is preserved via logger.exception() for debugging.
+    """
+    try:
+        WIZARDS[wizard_id] = wizard_class(*args, **kwargs)
+        logger.info(f"✓ {wizard_class.__name__} initialized as '{wizard_id}'")
+        return True
+    except ImportError as e:
+        # Missing dependencies - common for optional wizards
+        logger.warning(f"{wizard_class.__name__} init failed (missing dependency): {e}")
+        return False
+    except ValueError as e:
+        # Configuration errors - invalid arguments, missing API keys, etc.
+        logger.warning(f"{wizard_class.__name__} init failed (config error): {e}")
+        return False
+    except OSError as e:
+        # File system errors - missing resources, permission issues
+        logger.warning(f"{wizard_class.__name__} init failed (file system error): {e}")
+        return False
+    except Exception:
+        # Catch-all for unexpected wizard initialization errors
+        # INTENTIONAL: Ensures API starts even if individual wizards fail
+        # Full traceback preserved for debugging
+        logger.exception(f"{wizard_class.__name__} init failed (unexpected error)")
+        return False
 
 
 app = FastAPI(title="Empathy Wizard API", version="2.0.0")
@@ -144,279 +187,79 @@ WIZARDS = {}
 
 
 def init_wizards():
-    """Initialize all wizard instances"""
+    """Initialize all wizard instances with proper exception handling.
+
+    Uses the register_wizard() helper for centralized exception handling.
+    Wizards are optional features - API starts even if some wizards fail to initialize.
+    """
     global WIZARDS
 
     # Get shared LLM instance for domain wizards
     try:
         llm = get_llm_instance()
         logger.info("✓ EmpathyLLM instance created")
-    except Exception as e:
-        logger.error(f"Failed to create EmpathyLLM: {e}")
+    except ValueError as e:
+        # Missing API key - expected in some environments
+        logger.warning(f"EmpathyLLM not available (missing API key): {e}")
+        llm = None
+    except ImportError as e:
+        # Missing dependencies
+        logger.warning(f"EmpathyLLM not available (missing dependency): {e}")
+        llm = None
+    except Exception:
+        # Unexpected errors during LLM initialization
+        logger.exception("EmpathyLLM initialization failed (unexpected error)")
         llm = None
 
     # Domain wizards (16 total - require LLM instance)
     if llm:
-        # Healthcare domain
-        try:
-            WIZARDS["healthcare"] = HealthcareWizard(llm)
-            logger.info("✓ Healthcare Wizard initialized")
-        except Exception as e:
-            logger.warning(f"Healthcare Wizard init failed: {e}")
-
-        try:
-            WIZARDS["finance"] = FinanceWizard(llm)
-            logger.info("✓ Finance Wizard initialized")
-        except Exception as e:
-            logger.warning(f"Finance Wizard init failed: {e}")
-
-        try:
-            WIZARDS["legal"] = LegalWizard(llm)
-            logger.info("✓ Legal Wizard initialized")
-        except Exception as e:
-            logger.warning(f"Legal Wizard init failed: {e}")
-
-        try:
-            WIZARDS["education"] = EducationWizard(llm)
-            logger.info("✓ Education Wizard initialized")
-        except Exception as e:
-            logger.warning(f"Education Wizard init failed: {e}")
-
-        try:
-            WIZARDS["customer_support"] = CustomerSupportWizard(llm)
-            logger.info("✓ Customer Support Wizard initialized")
-        except Exception as e:
-            logger.warning(f"Customer Support Wizard init failed: {e}")
-
-        try:
-            WIZARDS["hr"] = HRWizard(llm)
-            logger.info("✓ HR Wizard initialized")
-        except Exception as e:
-            logger.warning(f"HR Wizard init failed: {e}")
-
-        try:
-            WIZARDS["sales"] = SalesWizard(llm)
-            logger.info("✓ Sales Wizard initialized")
-        except Exception as e:
-            logger.warning(f"Sales Wizard init failed: {e}")
-
-        try:
-            WIZARDS["real_estate"] = RealEstateWizard(llm)
-            logger.info("✓ Real Estate Wizard initialized")
-        except Exception as e:
-            logger.warning(f"Real Estate Wizard init failed: {e}")
-
-        try:
-            WIZARDS["insurance"] = InsuranceWizard(llm)
-            logger.info("✓ Insurance Wizard initialized")
-        except Exception as e:
-            logger.warning(f"Insurance Wizard init failed: {e}")
-
-        try:
-            WIZARDS["accounting"] = AccountingWizard(llm)
-            logger.info("✓ Accounting Wizard initialized")
-        except Exception as e:
-            logger.warning(f"Accounting Wizard init failed: {e}")
-
-        try:
-            WIZARDS["research"] = ResearchWizard(llm)
-            logger.info("✓ Research Wizard initialized")
-        except Exception as e:
-            logger.warning(f"Research Wizard init failed: {e}")
-
-        try:
-            WIZARDS["government"] = GovernmentWizard(llm)
-            logger.info("✓ Government Wizard initialized")
-        except Exception as e:
-            logger.warning(f"Government Wizard init failed: {e}")
-
-        try:
-            WIZARDS["retail"] = RetailWizard(llm)
-            logger.info("✓ Retail Wizard initialized")
-        except Exception as e:
-            logger.warning(f"Retail Wizard init failed: {e}")
-
-        try:
-            WIZARDS["manufacturing"] = ManufacturingWizard(llm)
-            logger.info("✓ Manufacturing Wizard initialized")
-        except Exception as e:
-            logger.warning(f"Manufacturing Wizard init failed: {e}")
-
-        try:
-            WIZARDS["logistics"] = LogisticsWizard(llm)
-            logger.info("✓ Logistics Wizard initialized")
-        except Exception as e:
-            logger.warning(f"Logistics Wizard init failed: {e}")
-
-        try:
-            WIZARDS["technology"] = TechnologyWizard(llm)
-            logger.info("✓ Technology Wizard initialized")
-        except Exception as e:
-            logger.warning(f"Technology Wizard init failed: {e}")
+        register_wizard("healthcare", HealthcareWizard, llm)
+        register_wizard("finance", FinanceWizard, llm)
+        register_wizard("legal", LegalWizard, llm)
+        register_wizard("education", EducationWizard, llm)
+        register_wizard("customer_support", CustomerSupportWizard, llm)
+        register_wizard("hr", HRWizard, llm)
+        register_wizard("sales", SalesWizard, llm)
+        register_wizard("real_estate", RealEstateWizard, llm)
+        register_wizard("insurance", InsuranceWizard, llm)
+        register_wizard("accounting", AccountingWizard, llm)
+        register_wizard("research", ResearchWizard, llm)
+        register_wizard("government", GovernmentWizard, llm)
+        register_wizard("retail", RetailWizard, llm)
+        register_wizard("manufacturing", ManufacturingWizard, llm)
+        register_wizard("logistics", LogisticsWizard, llm)
+        register_wizard("technology", TechnologyWizard, llm)
 
     # Coach/Software wizards (16 total)
-    try:
-        WIZARDS["debugging"] = DebuggingWizard()
-        logger.info("✓ Debugging Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Debugging Wizard init failed: {e}")
-
-    try:
-        WIZARDS["testing"] = TestingWizard()
-        logger.info("✓ Testing Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Testing Wizard init failed: {e}")
-
-    try:
-        WIZARDS["security_wizard"] = SecurityWizard()
-        logger.info("✓ Security Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Security Wizard init failed: {e}")
-
-    try:
-        WIZARDS["documentation"] = DocumentationWizard()
-        logger.info("✓ Documentation Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Documentation Wizard init failed: {e}")
-
-    try:
-        WIZARDS["performance_wizard"] = PerformanceWizard()
-        logger.info("✓ Performance Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Performance Wizard init failed: {e}")
-
-    try:
-        WIZARDS["refactoring"] = RefactoringWizard()
-        logger.info("✓ Refactoring Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Refactoring Wizard init failed: {e}")
-
-    try:
-        WIZARDS["database"] = DatabaseWizard()
-        logger.info("✓ Database Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Database Wizard init failed: {e}")
-
-    try:
-        WIZARDS["api_wizard"] = APIWizard()
-        logger.info("✓ API Wizard initialized")
-    except Exception as e:
-        logger.warning(f"API Wizard init failed: {e}")
-
-    try:
-        WIZARDS["compliance"] = ComplianceWizard()
-        logger.info("✓ Compliance Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Compliance Wizard init failed: {e}")
-
-    try:
-        WIZARDS["monitoring"] = MonitoringWizard()
-        logger.info("✓ Monitoring Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Monitoring Wizard init failed: {e}")
-
-    try:
-        WIZARDS["cicd"] = CICDWizard()
-        logger.info("✓ CI/CD Wizard initialized")
-    except Exception as e:
-        logger.warning(f"CI/CD Wizard init failed: {e}")
-
-    try:
-        WIZARDS["accessibility"] = AccessibilityWizard()
-        logger.info("✓ Accessibility Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Accessibility Wizard init failed: {e}")
-
-    try:
-        WIZARDS["localization"] = LocalizationWizard()
-        logger.info("✓ Localization Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Localization Wizard init failed: {e}")
-
-    try:
-        WIZARDS["migration"] = MigrationWizard()
-        logger.info("✓ Migration Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Migration Wizard init failed: {e}")
-
-    try:
-        WIZARDS["observability"] = ObservabilityWizard()
-        logger.info("✓ Observability Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Observability Wizard init failed: {e}")
-
-    try:
-        WIZARDS["scaling"] = ScalingWizard()
-        logger.info("✓ Scaling Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Scaling Wizard init failed: {e}")
+    register_wizard("debugging", DebuggingWizard)
+    register_wizard("testing", TestingWizard)
+    register_wizard("security_wizard", SecurityWizard)
+    register_wizard("documentation", DocumentationWizard)
+    register_wizard("performance_wizard", PerformanceWizard)
+    register_wizard("refactoring", RefactoringWizard)
+    register_wizard("database", DatabaseWizard)
+    register_wizard("api_wizard", APIWizard)
+    register_wizard("compliance", ComplianceWizard)
+    register_wizard("monitoring", MonitoringWizard)
+    register_wizard("cicd", CICDWizard)
+    register_wizard("accessibility", AccessibilityWizard)
+    register_wizard("localization", LocalizationWizard)
+    register_wizard("migration", MigrationWizard)
+    register_wizard("observability", ObservabilityWizard)
+    register_wizard("scaling", ScalingWizard)
 
     # AI wizards (12 total)
-    try:
-        WIZARDS["prompt_engineering"] = PromptEngineeringWizard()
-        logger.info("✓ Prompt Engineering Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Prompt Engineering Wizard init failed: {e}")
-
-    try:
-        WIZARDS["multi_model"] = MultiModelWizard()
-        logger.info("✓ Multi-Model Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Multi-Model Wizard init failed: {e}")
-
-    try:
-        WIZARDS["rag_pattern"] = RAGPatternWizard()
-        logger.info("✓ RAG Pattern Wizard initialized")
-    except Exception as e:
-        logger.warning(f"RAG Pattern Wizard init failed: {e}")
-
-    try:
-        WIZARDS["ai_performance"] = AIPerformanceWizard()
-        logger.info("✓ AI Performance Wizard initialized")
-    except Exception as e:
-        logger.warning(f"AI Performance Wizard init failed: {e}")
-
-    try:
-        WIZARDS["ai_collaboration"] = AICollaborationWizard()
-        logger.info("✓ AI Collaboration Wizard initialized")
-    except Exception as e:
-        logger.warning(f"AI Collaboration Wizard init failed: {e}")
-
-    try:
-        WIZARDS["advanced_debugging"] = AdvancedDebuggingWizard()
-        logger.info("✓ Advanced Debugging Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Advanced Debugging Wizard init failed: {e}")
-
-    try:
-        WIZARDS["agent_orchestration"] = AgentOrchestrationWizard()
-        logger.info("✓ Agent Orchestration Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Agent Orchestration Wizard init failed: {e}")
-
-    try:
-        WIZARDS["enhanced_testing"] = EnhancedTestingWizard()
-        logger.info("✓ Enhanced Testing Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Enhanced Testing Wizard init failed: {e}")
-
-    try:
-        WIZARDS["ai_documentation"] = AIDocumentationWizard()
-        logger.info("✓ AI Documentation Wizard initialized")
-    except Exception as e:
-        logger.warning(f"AI Documentation Wizard init failed: {e}")
-
-    try:
-        WIZARDS["ai_context"] = AIContextWindowWizard()
-        logger.info("✓ AI Context Window Wizard initialized")
-    except Exception as e:
-        logger.warning(f"AI Context Window Wizard init failed: {e}")
-
-    try:
-        WIZARDS["security_analysis"] = SecurityAnalysisWizard()
-        logger.info("✓ Security Analysis Wizard initialized")
-    except Exception as e:
-        logger.warning(f"Security Analysis Wizard init failed: {e}")
+    register_wizard("prompt_engineering", PromptEngineeringWizard)
+    register_wizard("multi_model", MultiModelWizard)
+    register_wizard("rag_pattern", RAGPatternWizard)
+    register_wizard("ai_performance", AIPerformanceWizard)
+    register_wizard("ai_collaboration", AICollaborationWizard)
+    register_wizard("advanced_debugging", AdvancedDebuggingWizard)
+    register_wizard("agent_orchestration", AgentOrchestrationWizard)
+    register_wizard("enhanced_testing", EnhancedTestingWizard)
+    register_wizard("ai_documentation", AIDocumentationWizard)
+    register_wizard("ai_context", AIContextWindowWizard)
+    register_wizard("security_analysis", SecurityAnalysisWizard)
 
     logger.info(f"🧙 Initialized {len(WIZARDS)} wizards")
 

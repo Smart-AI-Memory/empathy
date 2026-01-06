@@ -233,8 +233,19 @@ class HealthCheckWorkflow(BaseWorkflow):
                             "severity": "medium",
                         },
                     )
+            except subprocess.TimeoutExpired:
+                logger.warning("Lint check timed out after 60s")
+                checks_run["lint"] = {"passed": True, "skipped": True, "reason": "timeout"}
+            except FileNotFoundError:
+                logger.info("Ruff not installed, skipping lint check")
+                checks_run["lint"] = {"passed": True, "skipped": True, "reason": "tool_missing"}
+            except subprocess.SubprocessError as e:
+                logger.error(f"Lint check subprocess error: {e}")
+                checks_run["lint"] = {"passed": True, "skipped": True, "reason": "subprocess_error"}
             except Exception:
-                checks_run["lint"] = {"passed": True, "skipped": True}
+                # INTENTIONAL: Graceful degradation - health checks are best-effort
+                logger.exception("Unexpected error in lint check")
+                checks_run["lint"] = {"passed": True, "skipped": True, "reason": "unexpected_error"}
 
         # Type check
         if self.check_types:
@@ -257,8 +268,27 @@ class HealthCheckWorkflow(BaseWorkflow):
                             "severity": "medium",
                         },
                     )
+            except subprocess.TimeoutExpired:
+                logger.warning("Type check timed out after 120s")
+                checks_run["types"] = {"passed": True, "skipped": True, "reason": "timeout"}
+            except FileNotFoundError:
+                logger.info("Mypy not installed, skipping type check")
+                checks_run["types"] = {"passed": True, "skipped": True, "reason": "tool_missing"}
+            except subprocess.SubprocessError as e:
+                logger.error(f"Type check subprocess error: {e}")
+                checks_run["types"] = {
+                    "passed": True,
+                    "skipped": True,
+                    "reason": "subprocess_error",
+                }
             except Exception:
-                checks_run["types"] = {"passed": True, "skipped": True}
+                # INTENTIONAL: Graceful degradation - health checks are best-effort
+                logger.exception("Unexpected error in type check")
+                checks_run["types"] = {
+                    "passed": True,
+                    "skipped": True,
+                    "reason": "unexpected_error",
+                }
 
         # Test check
         if self.check_tests:
@@ -282,8 +312,27 @@ class HealthCheckWorkflow(BaseWorkflow):
                             "severity": "high",
                         },
                     )
+            except subprocess.TimeoutExpired:
+                logger.warning("Test check timed out after 180s")
+                checks_run["tests"] = {"passed": True, "skipped": True, "reason": "timeout"}
+            except FileNotFoundError:
+                logger.info("Pytest not installed, skipping test check")
+                checks_run["tests"] = {"passed": True, "skipped": True, "reason": "tool_missing"}
+            except subprocess.SubprocessError as e:
+                logger.error(f"Test check subprocess error: {e}")
+                checks_run["tests"] = {
+                    "passed": True,
+                    "skipped": True,
+                    "reason": "subprocess_error",
+                }
             except Exception:
-                checks_run["tests"] = {"passed": True, "skipped": True}
+                # INTENTIONAL: Graceful degradation - health checks are best-effort
+                logger.exception("Unexpected error in test check")
+                checks_run["tests"] = {
+                    "passed": True,
+                    "skipped": True,
+                    "reason": "unexpected_error",
+                }
 
         return {
             "health_score": max(0, health_score),
@@ -339,8 +388,15 @@ class HealthCheckWorkflow(BaseWorkflow):
                             "status": "applied",
                         },
                     )
+            except subprocess.TimeoutExpired:
+                logger.warning("Ruff auto-fix timed out after 60s")
+            except FileNotFoundError:
+                logger.info("Ruff not installed, skipping auto-fix")
+            except subprocess.SubprocessError as e:
+                logger.error(f"Ruff auto-fix subprocess error: {e}")
             except Exception:
-                pass
+                # INTENTIONAL: Graceful degradation - auto-fix is best-effort
+                logger.exception("Unexpected error in ruff auto-fix")
 
         return (
             {
@@ -461,8 +517,16 @@ class HealthCheckWorkflow(BaseWorkflow):
                 json.dump(health_data, f, indent=2)
 
             logger.info(f"Saved health data to {health_file}")
-        except Exception as e:
-            logger.warning(f"Failed to save health data: {e}")
+        except OSError as e:
+            # File system errors (disk full, permission denied, etc.)
+            logger.warning(f"Failed to save health data (file system error): {e}")
+        except (TypeError, ValueError) as e:
+            # Cannot serialize health data - json.dump raises TypeError/ValueError
+            logger.error(f"Failed to save health data (serialization error): {e}")
+        except Exception as e:  # noqa: BLE001
+            # INTENTIONAL: Saving health data should never crash a health check
+            # This is best-effort diagnostics output
+            logger.warning(f"Failed to save health data (unexpected error): {e}")
 
 
 def format_health_check_report(result: HealthCheckResult) -> str:

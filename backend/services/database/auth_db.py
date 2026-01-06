@@ -7,12 +7,15 @@ Copyright 2025 Smart-AI-Memory
 Licensed under Fair Source License 0.9
 """
 
+import logging
 import sqlite3
 from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
 
 import bcrypt
+
+logger = logging.getLogger(__name__)
 
 
 class AuthDatabase:
@@ -45,16 +48,48 @@ class AuthDatabase:
     @contextmanager
     def _get_connection(self) -> Generator[sqlite3.Connection, None, None]:
         """Get database connection with automatic cleanup."""
-        conn = sqlite3.connect(self.db_path, check_same_thread=False)
-        conn.row_factory = sqlite3.Row  # Enable dict-like access
+        conn = None
         try:
+            conn = sqlite3.connect(self.db_path, check_same_thread=False)
+            conn.row_factory = sqlite3.Row  # Enable dict-like access
             yield conn
             conn.commit()
-        except Exception:
-            conn.rollback()
-            raise
+        except sqlite3.IntegrityError as e:
+            # Data integrity violations (unique constraints, foreign keys, etc.)
+            # Common in auth: duplicate email, invalid user references
+            logger.error(f"Authentication database integrity error: {e}")
+            if conn:
+                conn.rollback()
+            raise  # Re-raise - caller must handle validation
+        except sqlite3.OperationalError as e:
+            # Database locked, disk full, permission denied, etc.
+            # CRITICAL for auth - cannot authenticate users
+            logger.critical(f"Authentication database operational error: {e}")
+            if conn:
+                conn.rollback()
+            raise  # Re-raise - critical database issue
+        except sqlite3.DatabaseError as e:
+            # General database errors
+            logger.error(f"Authentication database error: {e}")
+            if conn:
+                conn.rollback()
+            raise  # Re-raise - unexpected database issue
+        except OSError as e:
+            # File system errors (disk full, permission denied, etc.)
+            # CRITICAL for auth - cannot access user database
+            logger.critical(f"Authentication database file system error: {e}")
+            if conn:
+                conn.rollback()
+            raise  # Re-raise - critical system issue
+        except Exception as e:
+            # Unexpected errors - log with full context for security audit
+            logger.exception(f"Unexpected error in authentication database operation: {e}")
+            if conn:
+                conn.rollback()
+            raise  # Re-raise - preserve error for security audit trail
         finally:
-            conn.close()
+            if conn:
+                conn.close()
 
     def _init_schema(self) -> None:
         """Initialize database schema if not exists."""
@@ -132,6 +167,9 @@ class AuthDatabase:
         Raises:
             sqlite3.IntegrityError: If email already exists
         """
+        logger.info(
+            f"Creating new user account: email={email}, has_license={license_key is not None}"
+        )
         password_hash = self._hash_password(password)
 
         with self._get_connection() as conn:
@@ -142,7 +180,9 @@ class AuthDatabase:
                 """,
                 (email, password_hash, name, license_key),
             )
-            return cursor.lastrowid
+            user_id = cursor.lastrowid
+            logger.info(f"User account created successfully: user_id={user_id}, email={email}")
+            return user_id
 
     def verify_user(self, email: str, password: str) -> dict | None:
         """Verify user credentials.
@@ -154,6 +194,8 @@ class AuthDatabase:
         Returns:
             User dict if credentials valid, None otherwise
         """
+        logger.info(f"Authentication attempt: email={email}")
+
         with self._get_connection() as conn:
             cursor = conn.execute(
                 "SELECT id, email, password_hash, name, license_key FROM users WHERE email = ?",
@@ -162,10 +204,16 @@ class AuthDatabase:
             row = cursor.fetchone()
 
             if row is None:
+                # User not found - security-relevant event
+                logger.warning(f"Authentication failed: user not found: email={email}")
                 return None
 
             # Verify password hash
             if not self._verify_password(password, row["password_hash"]):
+                # Invalid password - security-relevant event
+                logger.warning(
+                    f"Authentication failed: invalid password: user_id={row['id']}, email={email}"
+                )
                 return None
 
             # Update last login
@@ -173,6 +221,9 @@ class AuthDatabase:
                 "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?",
                 (row["id"],),
             )
+
+            # Successful authentication
+            logger.info(f"Authentication successful: user_id={row['id']}, email={email}")
 
             return {
                 "id": row["id"],
@@ -191,11 +242,18 @@ class AuthDatabase:
             success: Whether login succeeded
             ip_address: Optional IP address
         """
+        log_level = logging.INFO if success else logging.WARNING
+        logger.log(
+            log_level, f"Recording login attempt: email={email}, success={success}, ip={ip_address}"
+        )
+
         with self._get_connection() as conn:
             conn.execute(
                 "INSERT INTO login_attempts (email, success, ip_address) VALUES (?, ?, ?)",
                 (email, 1 if success else 0, ip_address),
             )
+
+            logger.log(log_level, f"Login attempt recorded: email={email}, success={success}")
 
     def get_failed_attempts(self, email: str, minutes: int = 15) -> int:
         """Count recent failed login attempts.

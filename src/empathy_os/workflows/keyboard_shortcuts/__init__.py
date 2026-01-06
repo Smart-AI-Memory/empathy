@@ -12,11 +12,11 @@ Features:
 
 from .generators import CLIAliasGenerator, MarkdownDocGenerator, VSCodeKeybindingsGenerator
 from .parsers import (
-    FeatureParser,
-    LLMFeatureAnalyzer,
-    PyProjectParser,
-    VSCodeCommandParser,
-    YAMLManifestParser,
+                         FeatureParser,
+                         LLMFeatureAnalyzer,
+                         PyProjectParser,
+                         VSCodeCommandParser,
+                         YAMLManifestParser,
 )
 from .schema import Category, Feature, FeatureManifest, LayoutConfig, ShortcutAssignment
 from .workflow import KeyboardShortcutWorkflow

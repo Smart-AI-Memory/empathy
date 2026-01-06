@@ -18,11 +18,11 @@ Licensed under Fair Source 0.9
 """
 
 from .circuit_breaker import (
-    CircuitBreaker,
-    CircuitOpenError,
-    CircuitState,
-    circuit_breaker,
-    get_circuit_breaker,
+                              CircuitBreaker,
+                              CircuitOpenError,
+                              CircuitState,
+                              circuit_breaker,
+                              get_circuit_breaker,
 )
 from .fallback import Fallback, fallback, with_fallback
 from .health import HealthCheck, HealthStatus, SystemHealth

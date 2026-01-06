@@ -1,0 +1,13 @@
+{
+  "bug_id": "bug_20260105_3cf44b70",
+  "date": "2026-01-05T15:44:48.102262",
+  "file_path": "src/components/UserList.tsx",
+  "error_type": "null_reference",
+  "error_message": "TypeError: Cannot read property 'map' of undefined",
+  "root_cause": "",
+  "fix_applied": "",
+  "fix_code": null,
+  "resolution_time_minutes": 0,
+  "resolved_by": "",
+  "status": "investigating"
+}

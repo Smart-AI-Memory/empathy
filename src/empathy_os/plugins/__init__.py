@@ -7,12 +7,12 @@ Licensed under Fair Source 0.9
 """
 
 from .base import (
-    BasePlugin,
-    BaseWizard,
-    PluginError,
-    PluginLoadError,
-    PluginMetadata,
-    PluginValidationError,
+                   BasePlugin,
+                   BaseWizard,
+                   PluginError,
+                   PluginLoadError,
+                   PluginMetadata,
+                   PluginValidationError,
 )
 from .registry import PluginRegistry, get_global_registry
 

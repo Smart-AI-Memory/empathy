@@ -13,6 +13,14 @@ import importlib.util
 import sys
 from pathlib import Path
 
+# Check if PyYAML is available
+try:
+    import yaml  # noqa: F401
+
+    YAML_AVAILABLE = True
+except ImportError:
+    YAML_AVAILABLE = False
+
 # Load the original config.py module directly
 config_py_path = Path(__file__).parent.parent / "config.py"
 spec = importlib.util.spec_from_file_location("empathy_os_config_legacy", config_py_path)
@@ -23,8 +31,8 @@ if spec and spec.loader:
     load_config = legacy_config.load_config
 else:
     # Fallback if import fails
-    EmpathyConfig = None  # type: ignore
-    load_config = None  # type: ignore
+    EmpathyConfig = None
+    load_config = None
 
 # Import XML enhancement configs
 from empathy_os.config.xml_config import (  # noqa: E402
@@ -42,6 +50,7 @@ __all__ = [
     # Original config (backward compatible)
     "EmpathyConfig",
     "load_config",
+    "YAML_AVAILABLE",
     # XML enhancement configs
     "XMLConfig",
     "OptimizationConfig",

@@ -223,9 +223,9 @@ class TestShouldExcludeFile:
         This is more maintainable than writing individual test functions.
         """
         result = _should_exclude_file(file_path, [pattern])
-        assert (
-            result == expected
-        ), f"Pattern '{pattern}' should {'match' if expected else 'not match'} '{file_path}'"
+        assert result == expected, (
+            f"Pattern '{pattern}' should {'match' if expected else 'not match'} '{file_path}'"
+        )
 
     def test_no_exclusion_when_pattern_list_empty(self):
         """Test that empty pattern list excludes nothing.

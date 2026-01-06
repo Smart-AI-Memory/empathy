@@ -321,7 +321,11 @@ class DependencyCheckWorkflow(BaseWorkflow):
         risk_level = (
             "critical"
             if risk_score >= 75
-            else "high" if risk_score >= 50 else "medium" if risk_score >= 25 else "low"
+            else "high"
+            if risk_score >= 50
+            else "medium"
+            if risk_score >= 25
+            else "low"
         )
 
         # Build vulnerability summary for LLM

@@ -324,7 +324,7 @@ def main():
 
     print("\n" + "-" * 70)
     print(f"  Total: {passed_count}/{total_count} tests passed")
-    print(f"  Pass Rate: {(passed_count/total_count)*100:.1f}%")
+    print(f"  Pass Rate: {(passed_count / total_count) * 100:.1f}%")
 
     if passed_count == total_count:
         print("\n  🎉 ALL WORKFLOW TESTS PASSED!")

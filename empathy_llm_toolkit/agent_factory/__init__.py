@@ -31,12 +31,12 @@ Licensed under Fair Source License 0.9
 """
 
 from empathy_llm_toolkit.agent_factory.base import (
-    AgentCapability,
-    AgentConfig,
-    AgentRole,
-    BaseAdapter,
-    BaseAgent,
-    WorkflowConfig,
+                                                    AgentCapability,
+                                                    AgentConfig,
+                                                    AgentRole,
+                                                    BaseAdapter,
+                                                    BaseAgent,
+                                                    WorkflowConfig,
 )
 from empathy_llm_toolkit.agent_factory.factory import AgentFactory
 from empathy_llm_toolkit.agent_factory.framework import Framework

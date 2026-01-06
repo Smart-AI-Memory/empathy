@@ -351,9 +351,9 @@ class TestModelPricingConsistency:
             if "cheap" in models and "capable" in models:
                 cheap = models["cheap"]
                 capable = models["capable"]
-                assert (
-                    cheap.input_cost_per_million <= capable.input_cost_per_million
-                ), f"{provider} cheap tier not cheaper than capable"
+                assert cheap.input_cost_per_million <= capable.input_cost_per_million, (
+                    f"{provider} cheap tier not cheaper than capable"
+                )
 
     def test_capable_tier_middle(self):
         """Test capable tier is between cheap and premium."""
@@ -362,9 +362,9 @@ class TestModelPricingConsistency:
                 cheap = models["cheap"]
                 capable = models["capable"]
                 models["premium"]
-                assert (
-                    cheap.input_cost_per_million <= capable.input_cost_per_million
-                ), f"{provider} tier ordering violated"
+                assert cheap.input_cost_per_million <= capable.input_cost_per_million, (
+                    f"{provider} tier ordering violated"
+                )
                 # Note: Some premium models may be cheaper in some dimensions
 
     def test_all_models_have_positive_or_zero_pricing(self):

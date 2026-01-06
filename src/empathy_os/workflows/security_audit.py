@@ -578,19 +578,21 @@ class SecurityAuditWorkflow(BaseWorkflow):
                     crew_enhanced = True
                     # Convert crew findings to workflow format
                     for finding in crew_report.findings:
-                        crew_findings.append({
-                            "type": finding.category.value,
-                            "title": finding.title,
-                            "description": finding.description,
-                            "severity": finding.severity.value,
-                            "file": finding.file_path or "",
-                            "line": finding.line_number or 0,
-                            "owasp": finding.category.value,
-                            "remediation": finding.remediation or "",
-                            "cwe_id": finding.cwe_id or "",
-                            "cvss_score": finding.cvss_score or 0.0,
-                            "source": "crew",
-                        })
+                        crew_findings.append(
+                            {
+                                "type": finding.category.value,
+                                "title": finding.title,
+                                "description": finding.description,
+                                "severity": finding.severity.value,
+                                "file": finding.file_path or "",
+                                "line": finding.line_number or 0,
+                                "owasp": finding.category.value,
+                                "remediation": finding.remediation or "",
+                                "cwe_id": finding.cwe_id or "",
+                                "cvss_score": finding.cvss_score or 0.0,
+                                "source": "crew",
+                            }
+                        )
                     # Update severity counts with crew findings
                     for finding in crew_findings:
                         sev = finding.get("severity", "low")
@@ -618,7 +620,11 @@ class SecurityAuditWorkflow(BaseWorkflow):
             "risk_level": (
                 "critical"
                 if risk_score >= 75
-                else "high" if risk_score >= 50 else "medium" if risk_score >= 25 else "low"
+                else "high"
+                if risk_score >= 50
+                else "medium"
+                if risk_score >= 25
+                else "low"
             ),
             "severity_breakdown": severity_counts,
             "by_owasp_category": {k: len(v) for k, v in by_owasp.items()},

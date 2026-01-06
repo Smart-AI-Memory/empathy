@@ -5,9 +5,9 @@ Licensed under Fair Source License 0.9
 """
 
 from empathy_os.adaptive.task_complexity import (
-    ComplexityScore,
-    TaskComplexity,
-    TaskComplexityScorer,
+                                                 ComplexityScore,
+                                                 TaskComplexity,
+                                                 TaskComplexityScorer,
 )
 
 __all__ = ["TaskComplexity", "ComplexityScore", "TaskComplexityScorer"]

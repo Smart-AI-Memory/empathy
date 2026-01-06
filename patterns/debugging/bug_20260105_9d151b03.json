@@ -1,0 +1,13 @@
+{
+  "bug_id": "bug_20260105_9d151b03",
+  "date": "2026-01-05T14:10:50.105879",
+  "file_path": "src/services/dataService.ts",
+  "error_type": "async_timing",
+  "error_message": "UnhandledPromiseRejection: await undefined",
+  "root_cause": "",
+  "fix_applied": "",
+  "fix_code": null,
+  "resolution_time_minutes": 0,
+  "resolved_by": "",
+  "status": "investigating"
+}

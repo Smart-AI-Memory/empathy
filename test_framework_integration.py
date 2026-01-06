@@ -15,7 +15,6 @@ def test_imports():
 
     # Test 1: BaseWorkflow
     try:
-
         print("✅ BaseWorkflow imported")
         tests_passed += 1
     except Exception as e:
@@ -38,7 +37,6 @@ def test_imports():
 
     # Test 3: CrewAI Integration
     try:
-
         print("✅ All 4 CrewAI crews imported")
         print("  ✅ SecurityAuditCrew")
         print("  ✅ CodeReviewCrew")
@@ -51,7 +49,6 @@ def test_imports():
 
     # Test 4: Developer Tools
     try:
-
         print("✅ All developer tools imported")
         print("  ✅ scaffolding (PatternCompose)")
         print("  ✅ workflow_scaffolding (WorkflowGenerator)")
@@ -64,7 +61,6 @@ def test_imports():
 
     # Test 5: Customer Support & Technology Wizards
     try:
-
         print("✅ Customer Support & Technology wizards imported")
         print("  ✅ CustomerSupportWizard")
         print("  ✅ TechnologyWizard")

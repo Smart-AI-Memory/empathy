@@ -16,8 +16,8 @@ import pytest
 CHAIN_CONFIG_EXISTS = Path(".empathy/wizard_chains.yaml").exists()
 
 from empathy_os.memory import EdgeType, MemoryGraph  # noqa: E402
-from empathy_os.routing import (
-    ChainExecutor,  # noqa: E402
+from empathy_os.routing import (  # noqa: E402
+    ChainExecutor,
     ClassificationResult,
     HaikuClassifier,
     SmartRouter,

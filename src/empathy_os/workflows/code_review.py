@@ -55,7 +55,7 @@ class CodeReviewWorkflow(BaseWorkflow):
         self,
         file_threshold: int = 10,
         core_modules: list[str] | None = None,
-        use_crew: bool = False,
+        use_crew: bool = True,
         crew_config: dict | None = None,
         **kwargs: Any,
     ):
@@ -64,7 +64,7 @@ class CodeReviewWorkflow(BaseWorkflow):
         Args:
             file_threshold: Number of files above which premium review is used.
             core_modules: List of module paths considered "core" (trigger premium).
-            use_crew: Enable CodeReviewCrew for comprehensive 5-agent analysis.
+            use_crew: Enable CodeReviewCrew for comprehensive 5-agent analysis (default: True).
             crew_config: Configuration dict for CodeReviewCrew.
 
         """
@@ -81,16 +81,37 @@ class CodeReviewWorkflow(BaseWorkflow):
         self.crew_config = crew_config or {}
         self._needs_architect_review: bool = False
         self._change_type: str = "unknown"
+        self._crew: Any = None
+        self._crew_available = False
 
         # Dynamically configure stages based on crew setting
         if use_crew:
             self.stages = ["classify", "crew_review", "scan", "architect_review"]
             self.tier_map = {
                 "classify": ModelTier.CHEAP,
-                "crew_review": ModelTier.PREMIUM,
+                "crew_review": ModelTier.CAPABLE,  # Changed from PREMIUM to CAPABLE
                 "scan": ModelTier.CAPABLE,
                 "architect_review": ModelTier.PREMIUM,
             }
+
+    async def _initialize_crew(self) -> None:
+        """Initialize the CodeReviewCrew."""
+        if self._crew is not None:
+            return
+
+        try:
+            import logging
+
+            from empathy_llm_toolkit.agent_factory.crews.code_review import CodeReviewCrew
+
+            self._crew = CodeReviewCrew()
+            self._crew_available = True
+            logging.getLogger(__name__).info("CodeReviewCrew initialized successfully")
+        except ImportError as e:
+            import logging
+
+            logging.getLogger(__name__).warning(f"CodeReviewCrew not available: {e}")
+            self._crew_available = False
 
     def should_skip_stage(self, stage_name: str, input_data: Any) -> tuple[bool, str | None]:
         """Skip stages when appropriate."""
@@ -98,6 +119,10 @@ class CodeReviewWorkflow(BaseWorkflow):
         if isinstance(input_data, dict) and input_data.get("error"):
             if stage_name != "classify":
                 return True, "Skipped due to input validation error"
+
+        # Skip crew review if crew is not available
+        if stage_name == "crew_review" and not self._crew_available:
+            return True, "CodeReviewCrew not available"
 
         # Skip architectural review if change is simple
         if stage_name == "architect_review" and not self._needs_architect_review:
@@ -332,6 +357,8 @@ Code:
 
         Falls back gracefully if CodeReviewCrew is not available.
         """
+        await self._initialize_crew()
+
         from .code_review_adapters import (
             _check_crew_available,
             _get_crew_review,
@@ -343,13 +370,13 @@ Code:
         files_changed = input_data.get("files_changed", [])
 
         # Check if crew is available
-        if not _check_crew_available():
+        if not self._crew_available or not _check_crew_available():
             return (
                 {
                     "crew_review": {
                         "available": False,
                         "fallback": True,
-                        "reason": "CodeReviewCrew not installed",
+                        "reason": "CodeReviewCrew not installed or failed to initialize",
                     },
                     **input_data,
                 },

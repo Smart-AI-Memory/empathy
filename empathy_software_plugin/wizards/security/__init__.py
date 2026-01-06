@@ -9,12 +9,12 @@ Licensed under Fair Source License 0.9
 from .exploit_analyzer import ExploitAnalyzer
 from .owasp_patterns import OWASPPatternDetector
 from .vulnerability_scanner import (
-    DependencyVulnerability,
-    Severity,
-    Vulnerability,
-    VulnerabilityScanner,
-    VulnerabilityScanReport,
-    VulnerabilityType,
+                                    DependencyVulnerability,
+                                    Severity,
+                                    Vulnerability,
+                                    VulnerabilityScanner,
+                                    VulnerabilityScanReport,
+                                    VulnerabilityType,
 )
 
 __all__ = [

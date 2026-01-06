@@ -249,7 +249,7 @@ Phase 4: Complete Migration (45-60 min)
 <details>
 <summary>View Agent's Reasoning (Click to expand)</summary>
 
-{parsed['thinking']}
+{parsed["thinking"]}
 
 </details>
 
@@ -257,7 +257,7 @@ Phase 4: Complete Migration (45-60 min)
 
 ## Implementation Specification
 
-{parsed['answer']}
+{parsed["answer"]}
 
 ---
 
@@ -267,7 +267,7 @@ Phase 4: Complete Migration (45-60 min)
 - **Output tokens:** {response.usage.output_tokens}
 - **Total tokens:** {response.usage.input_tokens + response.usage.output_tokens}
 - **Cost estimate:** ${(response.usage.input_tokens * 0.003 / 1000) + (response.usage.output_tokens * 0.015 / 1000):.4f}
-- **Has XML structure:** {parsed['has_structure']}
+- **Has XML structure:** {parsed["has_structure"]}
 """
 
         with open("XML_ENHANCEMENT_SPEC.md", "w") as f:

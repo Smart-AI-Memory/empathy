@@ -73,6 +73,9 @@ from .research_synthesis import ResearchSynthesisWorkflow
 from .secure_release import SecureReleasePipeline, SecureReleaseResult
 from .security_audit import SecurityAuditWorkflow
 from .step_config import WorkflowStepConfig, steps_from_tier_map, validate_step_config
+
+# User-generated workflows
+from .test5 import Test5Workflow
 from .test_gen import TestGenerationWorkflow
 
 # Re-export CLI commands from workflow_commands.py
@@ -125,6 +128,8 @@ _DEFAULT_WORKFLOWS: dict[str, type] = {
     "manage-docs": ManageDocumentationCrew,
     # Keyboard Conductor (v3.6) - keyboard shortcut generation
     "keyboard-shortcuts": KeyboardShortcutWorkflow,
+    # User-generated workflows
+    "test5": Test5Workflow,
 }
 
 # Opt-in workflows - not included by default, must be explicitly enabled

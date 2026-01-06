@@ -7,9 +7,9 @@ Licensed under Fair Source License 0.9
 """
 
 from empathy_os.validation.xml_validator import (
-    ValidationResult,
-    XMLValidator,
-    validate_xml_response,
+                                                 ValidationResult,
+                                                 XMLValidator,
+                                                 validate_xml_response,
 )
 
 __all__ = [

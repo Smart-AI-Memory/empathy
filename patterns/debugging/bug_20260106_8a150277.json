@@ -1,0 +1,13 @@
+{
+  "bug_id": "bug_20260106_8a150277",
+  "date": "2026-01-06T00:57:28.131144",
+  "file_path": "scripts/data_analysis.py",
+  "error_type": "import_error",
+  "error_message": "ModuleNotFoundError: No module named 'pandas'",
+  "root_cause": "",
+  "fix_applied": "",
+  "fix_code": null,
+  "resolution_time_minutes": 0,
+  "resolved_by": "",
+  "status": "investigating"
+}

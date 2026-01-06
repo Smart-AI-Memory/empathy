@@ -9,13 +9,13 @@ Licensed under Fair Source 0.9
 from .accessibility_wizard import AccessibilityWizard
 from .api_wizard import APIWizard
 from .base_wizard import (
-    BaseWizard,
-    EmpathyChecks,
-    WizardArtifact,
-    WizardHandoff,
-    WizardOutput,
-    WizardRisk,
-    WizardTask,
+                          BaseWizard,
+                          EmpathyChecks,
+                          WizardArtifact,
+                          WizardHandoff,
+                          WizardOutput,
+                          WizardRisk,
+                          WizardTask,
 )
 from .compliance_wizard import ComplianceWizard
 from .database_wizard import DatabaseWizard

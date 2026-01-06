@@ -22,36 +22,36 @@ Licensed under Fair Source 0.9
 from .base import AgentConfig, BaseAgent, MemDocsConfig, OpusAgent, RedisConfig, SonnetAgent
 from .editor_agent import EditorAgent
 from .learning import (  # Pattern Extraction; Feedback Loop; Quality Gap Detection; SBAR Handoffs
-    ExtractedPattern,
-    FeedbackEntry,
-    FeedbackLoop,
-    GapSeverity,
-    HandoffType,
-    PatternExtractor,
-    QualityGap,
-    QualityGapDetector,
-    SBARHandoff,
-    create_editor_to_reviewer_handoff,
-    create_research_to_writer_handoff,
-    create_reviewer_to_writer_handoff,
-    create_writer_to_editor_handoff,
+                   ExtractedPattern,
+                   FeedbackEntry,
+                   FeedbackLoop,
+                   GapSeverity,
+                   HandoffType,
+                   PatternExtractor,
+                   QualityGap,
+                   QualityGapDetector,
+                   SBARHandoff,
+                   create_editor_to_reviewer_handoff,
+                   create_research_to_writer_handoff,
+                   create_reviewer_to_writer_handoff,
+                   create_writer_to_editor_handoff,
 )
 from .pipeline import BookProductionPipeline, PipelineConfig, produce_chapter
 from .research_agent import ResearchAgent
 from .reviewer_agent import ReviewerAgent
 from .state import (
-    AgentPhase,
-    Chapter,
-    ChapterProductionState,
-    ChapterSpec,
-    Draft,
-    DraftVersion,
-    EditResult,
-    QualityScore,
-    ResearchResult,
-    ReviewResult,
-    SourceDocument,
-    create_initial_state,
+                   AgentPhase,
+                   Chapter,
+                   ChapterProductionState,
+                   ChapterSpec,
+                   Draft,
+                   DraftVersion,
+                   EditResult,
+                   QualityScore,
+                   ResearchResult,
+                   ReviewResult,
+                   SourceDocument,
+                   create_initial_state,
 )
 from .writer_agent import WriterAgent
 

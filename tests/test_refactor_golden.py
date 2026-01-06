@@ -108,9 +108,9 @@ class TestGoldenScenarioValidation:
         primary = expected["primary_category"]
 
         valid_categories = [c.value for c in RefactoringCategory]
-        assert (
-            primary in valid_categories
-        ), f"Invalid primary_category '{primary}' in {scenario}. Valid options: {valid_categories}"
+        assert primary in valid_categories, (
+            f"Invalid primary_category '{primary}' in {scenario}. Valid options: {valid_categories}"
+        )
 
 
 class TestRefactoringCrewGoldenAnalysis:
@@ -298,9 +298,9 @@ class TestExpectedPatternMatching:
             from empathy_llm_toolkit.agent_factory.crews.refactoring import RefactoringCategory
 
             valid_categories = [c.value for c in RefactoringCategory]
-            assert (
-                pattern["category"] in valid_categories
-            ), f"Invalid category '{pattern['category']}' in {scenario}"
+            assert pattern["category"] in valid_categories, (
+                f"Invalid category '{pattern['category']}' in {scenario}"
+            )
 
 
 if __name__ == "__main__":

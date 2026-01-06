@@ -109,9 +109,46 @@ class CustomerSupportWizard(BaseWizard):
             f"empathy level={config.default_empathy_level}, security={llm.enable_security}",
         )
 
-    def _build_system_prompt(self) -> str:
-        """Build customer support system prompt"""
-        return """You are a privacy-compliant AI customer support assistant.
+    def _build_system_prompt(self, user_input: str = "") -> str:
+        """Build customer support system prompt
+
+        Uses XML-enhanced prompts if enabled for improved consistency
+        and reduced hallucinations in customer-facing scenarios.
+        """
+        # Check if XML prompts are enabled
+        if self._is_xml_enabled():
+            # Use XML-enhanced prompt for better structure
+            return self._render_xml_prompt(
+                role="privacy-compliant AI customer support assistant for help desk operations",
+                goal="Assist support agents with customer inquiries, issue resolution, and excellent service delivery",
+                instructions=[
+                    "Assist support agents with customer inquiries and technical issues",
+                    "Provide product knowledge, troubleshooting steps, and resolution guidance",
+                    "Help draft clear, empathetic customer communications",
+                    "Support ticket management, resolution tracking, and escalation decisions",
+                    "Recommend solutions based on company policies and best practices",
+                    "Maintain professional yet friendly communication style",
+                ],
+                constraints=[
+                    "CRITICAL: All customer PII automatically de-identified - never request or display customer names, emails, accounts",
+                    "You are a support tool assisting agents, NOT a replacement for human judgment",
+                    "CANNOT make refund, replacement, or policy exception decisions autonomously",
+                    "Always defer to supervisors for complex, sensitive, or high-value cases",
+                    "Prioritize customer satisfaction while following company policies",
+                    "Customer privacy paramount - all interactions logged for audit",
+                ],
+                input_type="support_query",
+                input_payload=user_input if user_input else "[Support agent query]",
+                extra={
+                    "domain": "Customer Support / Help Desk",
+                    "empathy_level": self.config.default_empathy_level,
+                    "pii_patterns_enabled": len(self.config.pii_patterns),
+                    "retention_days": self.config.retention_days,
+                },
+            )
+        else:
+            # Fallback to legacy plain text prompt
+            return """You are a privacy-compliant AI customer support assistant.
 
 **Domain**: Customer Support / Help Desk
 

@@ -7,11 +7,14 @@ Copyright 2025 Smart AI Memory, LLC
 Licensed under Fair Source 0.9
 """
 
+import logging
 import time
 from pathlib import Path
 from typing import Any
 
 from ..state import ToolResult
+
+logger = logging.getLogger(__name__)
 
 
 class TechDebtAdapter:
@@ -112,9 +115,22 @@ class TechDebtAdapter:
 
         except ImportError:
             # Fallback: Simple pattern scanning
+            logger.info("Tech debt wizard not available, using fallback analysis")
             return await self._fallback_analyze(start_time)
+        except (KeyError, ValueError, TypeError) as e:
+            # Data format or configuration errors
+            logger.error(f"Tech debt analysis data error: {e}")
+            return self._create_error_result(f"Data validation error: {e}", start_time)
+        except OSError as e:
+            # File system errors
+            logger.error(f"Tech debt analysis file system error: {e}")
+            return self._create_error_result(f"Cannot access project files: {e}", start_time)
         except Exception as e:
-            return self._create_error_result(str(e), start_time)
+            # Unexpected errors - log with full context
+            logger.exception(f"Unexpected error in tech debt analysis: {e}")
+            return self._create_error_result(
+                f"Tech debt analysis failed: {type(e).__name__}: {e}", start_time
+            )
 
     async def _fallback_analyze(self, start_time: float) -> ToolResult:
         """Simple fallback analysis when wizard not available."""
@@ -168,7 +184,13 @@ class TechDebtAdapter:
                                 "fix_command": None,
                             }
                             findings.append(finding)
-            except Exception:
+            except (OSError, PermissionError) as e:
+                # File system errors - log and skip
+                logger.warning(f"Cannot access {py_file}: {e}")
+                continue
+            except UnicodeDecodeError as e:
+                # Binary or encoding issues - log and skip
+                logger.debug(f"Cannot decode {py_file}: {e}")
                 continue
 
         score = self._calculate_score(findings_by_severity)

@@ -14,12 +14,15 @@ Licensed under Fair Source License 0.9
 """
 
 import json
+import logging
 import re
 from pathlib import Path
 from typing import Any
 
 from .base import BaseWorkflow, ModelTier
 from .step_config import WorkflowStepConfig
+
+logger = logging.getLogger(__name__)
 
 # Define step configurations for executor-based execution
 REFACTOR_PLAN_STEPS = {
@@ -65,6 +68,8 @@ class RefactorPlanWorkflow(BaseWorkflow):
         self,
         patterns_dir: str = "./patterns",
         min_debt_for_premium: int = 50,
+        use_crew_for_analysis: bool = True,
+        crew_config: dict | None = None,
         **kwargs: Any,
     ):
         """Initialize refactor planning workflow.
@@ -72,14 +77,20 @@ class RefactorPlanWorkflow(BaseWorkflow):
         Args:
             patterns_dir: Directory containing tech debt history
             min_debt_for_premium: Minimum debt items to use premium planning
+            use_crew_for_analysis: Use RefactoringCrew for enhanced code analysis (default: True)
+            crew_config: Configuration dict for RefactoringCrew
             **kwargs: Additional arguments passed to BaseWorkflow
 
         """
         super().__init__(**kwargs)
         self.patterns_dir = patterns_dir
         self.min_debt_for_premium = min_debt_for_premium
+        self.use_crew_for_analysis = use_crew_for_analysis
+        self.crew_config = crew_config or {}
         self._total_debt: int = 0
         self._debt_history: list[dict] = []
+        self._crew: Any = None
+        self._crew_available = False
         self._load_debt_history()
 
     def _load_debt_history(self) -> None:
@@ -92,6 +103,21 @@ class RefactorPlanWorkflow(BaseWorkflow):
                     self._debt_history = data.get("snapshots", [])
             except (json.JSONDecodeError, OSError):
                 pass
+
+    async def _initialize_crew(self) -> None:
+        """Initialize the RefactoringCrew."""
+        if self._crew is not None:
+            return
+
+        try:
+            from empathy_llm_toolkit.agent_factory.crews.refactoring import RefactoringCrew
+
+            self._crew = RefactoringCrew()
+            self._crew_available = True
+            logger.info("RefactoringCrew initialized successfully")
+        except ImportError as e:
+            logger.warning(f"RefactoringCrew not available: {e}")
+            self._crew_available = False
 
     def should_skip_stage(self, stage_name: str, input_data: Any) -> tuple[bool, str | None]:
         """Downgrade plan stage if debt is low.
@@ -260,7 +286,11 @@ class RefactorPlanWorkflow(BaseWorkflow):
         """Score debt items by impact, effort, and risk.
 
         Calculates priority scores considering multiple factors.
+        When use_crew_for_analysis=True, uses RefactoringCrew for
+        enhanced refactoring opportunity detection.
         """
+        await self._initialize_crew()
+
         debt_items = input_data.get("debt_items", [])
         analysis = input_data.get("analysis", {})
         hotspots = {h["file"] for h in analysis.get("hotspots", [])}
@@ -306,6 +336,49 @@ class RefactorPlanWorkflow(BaseWorkflow):
             else:
                 low_priority.append(p)
 
+        # Use crew for enhanced refactoring analysis if available
+        crew_enhanced = False
+        crew_findings = []
+        if self.use_crew_for_analysis and self._crew_available:
+            target = input_data.get("path", ".")
+            try:
+                # Analyze hotspot files with the crew
+                for hotspot in list(hotspots)[:5]:  # Analyze top 5 hotspots
+                    try:
+                        code_content = Path(hotspot).read_text(errors="ignore")
+                        crew_result = await self._crew.analyze(code=code_content, file_path=hotspot)
+                        if crew_result and crew_result.findings:
+                            crew_enhanced = True
+                            # Convert crew findings to workflow format
+                            for finding in crew_result.findings:
+                                crew_findings.append(
+                                    {
+                                        "file": finding.file_path or hotspot,
+                                        "line": finding.start_line or 0,
+                                        "marker": "REFACTOR",
+                                        "message": finding.title,
+                                        "description": finding.description,
+                                        "severity": finding.severity.value,
+                                        "category": finding.category.value,
+                                        "priority_score": 15
+                                        if finding.severity.value == "high"
+                                        else 10,
+                                        "is_hotspot": True,
+                                        "source": "crew",
+                                    }
+                                )
+                    except Exception as e:
+                        logger.debug(f"Crew analysis failed for {hotspot}: {e}")
+                        continue
+
+                # Add crew findings to high priority if they're high severity
+                if crew_findings:
+                    for cf in crew_findings:
+                        if cf["priority_score"] >= 10:
+                            high_priority.append(cf)
+            except Exception as e:
+                logger.warning(f"Crew analysis failed: {e}")
+
         input_tokens = len(str(input_data)) // 4
         output_tokens = len(str(prioritized)) // 4
 
@@ -315,6 +388,8 @@ class RefactorPlanWorkflow(BaseWorkflow):
                 "high_priority": high_priority[:20],
                 "medium_priority": medium_priority[:20],
                 "low_priority_count": len(low_priority),
+                "crew_enhanced": crew_enhanced,
+                "crew_findings_count": len(crew_findings),
                 **input_data,
             },
             input_tokens,

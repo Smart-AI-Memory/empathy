@@ -440,9 +440,9 @@ class BaselineManager:
                 [],
             ).append(supp_entry)
         elif scope == "rule":
-            self.baseline.setdefault("suppressions", {}).setdefault("rules", {})[
-                rule_code
-            ] = supp_entry
+            self.baseline.setdefault("suppressions", {}).setdefault("rules", {})[rule_code] = (
+                supp_entry
+            )
         else:
             raise ValueError(f"Invalid scope: {scope}")
 

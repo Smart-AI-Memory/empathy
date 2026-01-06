@@ -458,9 +458,9 @@ class TestWizardRetentionPolicies:
 
         for wizard_class, reason in seven_year_wizards:
             wizard = wizard_class(llm_with_security)
-            assert (
-                wizard.config.retention_days == 2555
-            ), f"{wizard_class.__name__} should have 7-year retention ({reason})"
+            assert wizard.config.retention_days == 2555, (
+                f"{wizard_class.__name__} should have 7-year retention ({reason})"
+            )
 
     def test_hipaa_retention(self, llm_with_security):
         """Test Healthcare wizard has 90-day minimum HIPAA retention"""

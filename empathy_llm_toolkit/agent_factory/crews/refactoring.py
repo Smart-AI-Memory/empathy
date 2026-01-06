@@ -633,8 +633,15 @@ Return the refactored code as after_code."""
                         for node, score in similar
                     ]
                     logger.info(f"Found {memory_hits} similar past refactorings")
-            except Exception as e:
-                logger.warning(f"Error querying Memory Graph: {e}")
+            except (AttributeError, KeyError, ValueError) as e:
+                # Memory Graph data structure errors
+                logger.warning(f"Memory Graph query error (data issue): {e}")
+            except OSError as e:
+                # File system errors accessing memory graph
+                logger.warning(f"Memory Graph query error (file system): {e}")
+            except Exception:
+                # INTENTIONAL: Memory Graph is optional - continue without it
+                logger.exception("Unexpected error querying Memory Graph")
 
         # Build analysis task
         task = self._build_analysis_task(code, file_path, context)
@@ -648,16 +655,41 @@ Return the refactored code as after_code."""
             if self._user_profile:
                 findings = self._apply_user_preferences(findings)
 
-        except Exception as e:
-            logger.error(f"Analysis failed: {e}")
+        except KeyError as e:
+            # Agent not initialized or missing in agents dict
+            logger.error(f"Analysis failed (agent not found): {e}")
             return RefactoringReport(
                 target=file_path,
                 findings=[],
-                summary=f"Analysis failed: {e}",
+                summary=f"Analysis failed - agent not initialized: {e}",
                 duration_seconds=time.time() - start_time,
                 agents_used=["analyzer"],
                 memory_graph_hits=memory_hits,
                 metadata={"error": str(e)},
+            )
+        except (ValueError, TypeError, RuntimeError) as e:
+            # Agent invocation errors (invalid input, API errors, etc.)
+            logger.error(f"Analysis failed (invocation error): {e}")
+            return RefactoringReport(
+                target=file_path,
+                findings=[],
+                summary=f"Analysis failed - agent error: {e}",
+                duration_seconds=time.time() - start_time,
+                agents_used=["analyzer"],
+                memory_graph_hits=memory_hits,
+                metadata={"error": str(e)},
+            )
+        except Exception:
+            # INTENTIONAL: Graceful degradation - return empty report rather than crashing
+            logger.exception("Unexpected error in refactoring analysis")
+            return RefactoringReport(
+                target=file_path,
+                findings=[],
+                summary="Analysis failed due to unexpected error",
+                duration_seconds=time.time() - start_time,
+                agents_used=["analyzer"],
+                memory_graph_hits=memory_hits,
+                metadata={"error": "unexpected_error"},
             )
 
         # Build report
@@ -688,8 +720,15 @@ Return the refactored code as after_code."""
                     },
                 )
                 self._graph._save()
-            except Exception as e:
-                logger.warning(f"Error storing in Memory Graph: {e}")
+            except (AttributeError, KeyError, ValueError) as e:
+                # Memory Graph data structure errors
+                logger.warning(f"Error storing in Memory Graph (data issue): {e}")
+            except (OSError, PermissionError) as e:
+                # File system errors saving memory graph
+                logger.warning(f"Error storing in Memory Graph (file system): {e}")
+            except Exception:
+                # INTENTIONAL: Memory Graph storage is optional - continue without it
+                logger.exception("Unexpected error storing in Memory Graph")
 
         return report
 
@@ -716,9 +755,18 @@ Return the refactored code as after_code."""
             result = await self._agents["writer"].invoke(task)
             after_code = self._parse_refactor_result(result)
             finding.after_code = after_code
-        except Exception as e:
-            logger.error(f"Refactor generation failed: {e}")
-            finding.metadata["generation_error"] = str(e)
+        except KeyError as e:
+            # Agent not initialized or missing in agents dict
+            logger.error(f"Refactor generation failed (agent not found): {e}")
+            finding.metadata["generation_error"] = f"Agent not initialized: {e}"
+        except (ValueError, TypeError, RuntimeError) as e:
+            # Agent invocation errors (invalid input, API errors, etc.)
+            logger.error(f"Refactor generation failed (invocation error): {e}")
+            finding.metadata["generation_error"] = f"Agent error: {e}"
+        except Exception:
+            # INTENTIONAL: Graceful degradation - finding without after_code is still useful
+            logger.exception("Unexpected error in refactor generation")
+            finding.metadata["generation_error"] = "Unexpected error"
 
         return finding
 
@@ -776,8 +824,18 @@ Return the refactored code as after_code."""
                 with open(profile_path) as f:
                     data = json.load(f)
                 return UserProfile.from_dict(data)
-            except Exception as e:
-                logger.warning(f"Failed to load user profile: {e}")
+            except (OSError, PermissionError) as e:
+                # File system errors reading profile
+                logger.warning(f"Failed to load user profile (file system error): {e}")
+            except json.JSONDecodeError as e:
+                # Invalid JSON in profile file
+                logger.warning(f"Failed to load user profile (invalid JSON): {e}")
+            except (KeyError, ValueError, TypeError) as e:
+                # Profile data validation errors
+                logger.warning(f"Failed to load user profile (data error): {e}")
+            except Exception:
+                # INTENTIONAL: User profile is optional - start with default
+                logger.exception("Unexpected error loading user profile")
         return UserProfile()
 
     def save_user_profile(self) -> None:
@@ -793,8 +851,15 @@ Return the refactored code as after_code."""
         try:
             with open(profile_path, "w") as f:
                 json.dump(self._user_profile.to_dict(), f, indent=2)
-        except Exception as e:
-            logger.warning(f"Failed to save user profile: {e}")
+        except (OSError, PermissionError) as e:
+            # File system errors writing profile
+            logger.warning(f"Failed to save user profile (file system error): {e}")
+        except (TypeError, ValueError) as e:
+            # JSON serialization errors
+            logger.warning(f"Failed to save user profile (serialization error): {e}")
+        except Exception:
+            # INTENTIONAL: User profile save is optional - don't crash on failure
+            logger.exception("Unexpected error saving user profile")
 
     def record_decision(self, finding: RefactoringFinding, accepted: bool) -> None:
         """Record user decision for learning.

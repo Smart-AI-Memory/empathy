@@ -7,12 +7,15 @@ Copyright 2025 Smart-AI-Memory
 Licensed under Fair Source License 0.9
 """
 
+import logging
 import sqlite3
 from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 
 class ComplianceDatabase:
@@ -51,16 +54,45 @@ class ComplianceDatabase:
     @contextmanager
     def _get_connection(self) -> Generator[sqlite3.Connection, None, None]:
         """Get database connection with automatic cleanup."""
-        conn = sqlite3.connect(self.db_path, check_same_thread=False)
-        conn.row_factory = sqlite3.Row  # Enable dict-like access
+        conn = None
         try:
+            conn = sqlite3.connect(self.db_path, check_same_thread=False)
+            conn.row_factory = sqlite3.Row  # Enable dict-like access
             yield conn
             conn.commit()
-        except Exception:
-            conn.rollback()
-            raise
+        except sqlite3.IntegrityError as e:
+            # Data integrity violations (unique constraints, foreign keys, etc.)
+            logger.error(f"Compliance database integrity error: {e}")
+            if conn:
+                conn.rollback()
+            raise  # Re-raise - caller must handle data validation
+        except sqlite3.OperationalError as e:
+            # Database locked, disk full, permission denied, etc.
+            logger.critical(f"Compliance database operational error: {e}")
+            if conn:
+                conn.rollback()
+            raise  # Re-raise - critical database issue
+        except sqlite3.DatabaseError as e:
+            # General database errors
+            logger.error(f"Compliance database error: {e}")
+            if conn:
+                conn.rollback()
+            raise  # Re-raise - unexpected database issue
+        except OSError as e:
+            # File system errors (disk full, permission denied, etc.)
+            logger.critical(f"Compliance database file system error: {e}")
+            if conn:
+                conn.rollback()
+            raise  # Re-raise - critical system issue
+        except Exception as e:
+            # Unexpected errors - log with full context
+            logger.exception(f"Unexpected error in compliance database operation: {e}")
+            if conn:
+                conn.rollback()
+            raise  # Re-raise - preserve error for audit trail
         finally:
-            conn.close()
+            if conn:
+                conn.close()
 
     def _init_schema(self) -> None:
         """Initialize database schema if not exists."""
@@ -128,6 +160,10 @@ class ComplianceDatabase:
         Note:
             This is an append-only operation. Cannot modify existing audits.
         """
+        logger.info(
+            f"Recording compliance audit: type={audit_type}, "
+            f"risk_score={risk_score}, auditor={auditor}"
+        )
         with self._get_connection() as conn:
             cursor = conn.execute(
                 """
@@ -136,7 +172,9 @@ class ComplianceDatabase:
                 """,
                 (audit_date, audit_type, findings, risk_score, auditor),
             )
-            return cursor.lastrowid
+            audit_id = cursor.lastrowid
+            logger.info(f"Compliance audit recorded successfully: id={audit_id}")
+            return audit_id
 
     def get_last_audit(self, audit_type: str | None = None) -> dict[str, Any] | None:
         """Get most recent audit record (read-only).
@@ -207,6 +245,10 @@ class ComplianceDatabase:
             This is an append-only operation. To mark a gap as fixed,
             add a new status record, don't modify this one.
         """
+        logger.warning(
+            f"Recording compliance gap: type={gap_type}, severity={severity}, "
+            f"framework={compliance_framework}, source={detection_source}"
+        )
         with self._get_connection() as conn:
             cursor = conn.execute(
                 """
@@ -225,7 +267,9 @@ class ComplianceDatabase:
                     detection_source,
                 ),
             )
-            return cursor.lastrowid
+            gap_id = cursor.lastrowid
+            logger.warning(f"Compliance gap recorded: id={gap_id}, severity={severity}")
+            return gap_id
 
     def get_active_gaps(
         self, severity: str | None = None, framework: str | None = None
@@ -295,6 +339,12 @@ class ComplianceDatabase:
         Note:
             This is an append-only operation. Status history is preserved.
         """
+        log_level = logging.INFO if status == "compliant" else logging.WARNING
+        logger.log(
+            log_level,
+            f"Recording compliance status change: framework={compliance_framework}, "
+            f"status={status}, effective_date={effective_date}",
+        )
         with self._get_connection() as conn:
             cursor = conn.execute(
                 """
@@ -303,7 +353,12 @@ class ComplianceDatabase:
                 """,
                 (compliance_framework, status, effective_date, notes),
             )
-            return cursor.lastrowid
+            status_id = cursor.lastrowid
+            logger.log(
+                log_level,
+                f"Compliance status recorded: id={status_id}, framework={compliance_framework}, status={status}",
+            )
+            return status_id
 
     def get_current_compliance_status(self, compliance_framework: str) -> dict[str, Any] | None:
         """Get most recent compliance status (read-only).

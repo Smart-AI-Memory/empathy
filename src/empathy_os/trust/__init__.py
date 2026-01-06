@@ -8,13 +8,13 @@ Transfer: Protect user trust like protecting system stability
 """
 
 from .circuit_breaker import (
-    TrustCircuitBreaker,
-    TrustConfig,
-    TrustDamageEvent,
-    TrustDamageType,
-    TrustRecoveryEvent,
-    TrustState,
-    create_trust_breaker,
+                              TrustCircuitBreaker,
+                              TrustConfig,
+                              TrustDamageEvent,
+                              TrustDamageType,
+                              TrustRecoveryEvent,
+                              TrustState,
+                              create_trust_breaker,
 )
 
 __all__ = [

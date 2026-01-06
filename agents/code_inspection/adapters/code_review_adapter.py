@@ -115,9 +115,7 @@ class CodeReviewAdapter:
                     if not any(
                         p in f.parts for p in ["node_modules", ".venv", "__pycache__", ".git"]
                     )
-                ][
-                    :50
-                ]  # Limit to 50 files for performance
+                ][:50]  # Limit to 50 files for performance
 
             # Group files by language for language-aware review
             files_by_language: dict[str, list[str]] = defaultdict(list)
