@@ -2066,10 +2066,6 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                     <span class="action-icon">&#x1F4DD;</span>
                     <span>Generate Docs</span>
                 </button>
-                <button class="action-btn workflow-btn" data-workflow="manage-docs" title="Ensure program files are documented and docs stay updated">
-                    <span class="action-icon">&#x1F4C1;</span>
-                    <span>Sync Docs</span>
-                </button>
             </div>
 
             <!-- Quality & Testing -->
@@ -2430,7 +2426,7 @@ export class EmpathyDashboardProvider implements vscode.WebviewViewProvider {
                 const reportWorkflows = [
                     'code-review', 'bug-predict', 'security-audit', 'perf-audit',
                     'refactor-plan', 'health-check', 'pr-review', 'pro-review',
-                    'doc-gen', 'manage-docs'  // Added: doc workflows should run immediately
+                    'doc-gen'  // Doc generation workflow runs immediately
                 ];
                 if (reportWorkflows.includes(wf)) {
                     // Run workflow immediately with project root as input
