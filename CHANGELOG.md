@@ -5,6 +5,15 @@ All notable changes to the Empathy Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.1] - 2026-01-07
+
+### Fixed
+
+- **README.md**: Corrected PyPI package description to highlight v3.9.0 security features
+  - Was showing "What's New in v3.8.3 (Current Release)" on PyPI
+  - Now correctly shows v3.9.0 security hardening as current release
+  - Highlights Pattern 6 implementation (6 modules, 174 tests, +1143% increase)
+
 ## [3.9.0] - 2026-01-07
 
 ### Added

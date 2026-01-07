@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "empathy-framework"
-version = "3.9.0"
+version = "3.9.1"
 description = "AI collaboration framework with intelligent caching (up to 57% cache hit rate), tier routing (34-86% cost savings depending on task complexity), XML-enhanced prompts, persistent memory, CrewAI integration, and multi-agent orchestration. Includes HIPAA-compliant healthcare wizards."
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.10"
