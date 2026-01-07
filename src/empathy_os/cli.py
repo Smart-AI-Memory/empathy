@@ -37,6 +37,19 @@ from empathy_os.workflows import (
 )
 from empathy_os.workflows import list_workflows as get_workflow_list
 
+# Import telemetry CLI commands
+try:
+    from empathy_os.telemetry.cli import (
+        cmd_telemetry_show,
+        cmd_telemetry_savings,
+        cmd_telemetry_compare,
+        cmd_telemetry_reset,
+        cmd_telemetry_export,
+    )
+    TELEMETRY_CLI_AVAILABLE = True
+except ImportError:
+    TELEMETRY_CLI_AVAILABLE = False
+
 logger = get_logger(__name__)
 
 
@@ -2206,6 +2219,51 @@ def cmd_frameworks(args):
     return 0
 
 
+# =============================================================================
+# Telemetry CLI Command Wrappers
+# =============================================================================
+
+
+def _cmd_telemetry_show(args):
+    """Wrapper for telemetry show command."""
+    if not TELEMETRY_CLI_AVAILABLE:
+        print("Telemetry commands not available. Install telemetry dependencies.")
+        return 1
+    return cmd_telemetry_show(args)
+
+
+def _cmd_telemetry_savings(args):
+    """Wrapper for telemetry savings command."""
+    if not TELEMETRY_CLI_AVAILABLE:
+        print("Telemetry commands not available. Install telemetry dependencies.")
+        return 1
+    return cmd_telemetry_savings(args)
+
+
+def _cmd_telemetry_compare(args):
+    """Wrapper for telemetry compare command."""
+    if not TELEMETRY_CLI_AVAILABLE:
+        print("Telemetry commands not available. Install telemetry dependencies.")
+        return 1
+    return cmd_telemetry_compare(args)
+
+
+def _cmd_telemetry_reset(args):
+    """Wrapper for telemetry reset command."""
+    if not TELEMETRY_CLI_AVAILABLE:
+        print("Telemetry commands not available. Install telemetry dependencies.")
+        return 1
+    return cmd_telemetry_reset(args)
+
+
+def _cmd_telemetry_export(args):
+    """Wrapper for telemetry export command."""
+    if not TELEMETRY_CLI_AVAILABLE:
+        print("Telemetry commands not available. Install telemetry dependencies.")
+        return 1
+    return cmd_telemetry_export(args)
+
+
 def main():
     """Main CLI entry point"""
     # Configure Windows-compatible asyncio event loop policy
@@ -2606,6 +2664,98 @@ def main():
     parser_costs.add_argument("--empathy-dir", default=".empathy", help="Empathy data directory")
     parser_costs.add_argument("--json", action="store_true", help="Output as JSON")
     parser_costs.set_defaults(func=cmd_costs)
+
+    # Telemetry commands (usage tracking)
+    parser_telemetry = subparsers.add_parser(
+        "telemetry",
+        help="View and manage local usage telemetry",
+    )
+    telemetry_subparsers = parser_telemetry.add_subparsers(dest="telemetry_command")
+
+    # Telemetry show command
+    parser_telemetry_show = telemetry_subparsers.add_parser(
+        "show",
+        help="Show recent LLM calls",
+    )
+    parser_telemetry_show.add_argument(
+        "--limit",
+        type=int,
+        default=20,
+        help="Number of entries to show (default: 20)",
+    )
+    parser_telemetry_show.add_argument(
+        "--days",
+        type=int,
+        help="Only show entries from last N days",
+    )
+    parser_telemetry_show.set_defaults(func=lambda args: _cmd_telemetry_show(args))
+
+    # Telemetry savings command
+    parser_telemetry_savings = telemetry_subparsers.add_parser(
+        "savings",
+        help="Calculate cost savings vs baseline",
+    )
+    parser_telemetry_savings.add_argument(
+        "--days",
+        type=int,
+        default=30,
+        help="Number of days to analyze (default: 30)",
+    )
+    parser_telemetry_savings.set_defaults(func=lambda args: _cmd_telemetry_savings(args))
+
+    # Telemetry compare command
+    parser_telemetry_compare = telemetry_subparsers.add_parser(
+        "compare",
+        help="Compare two time periods",
+    )
+    parser_telemetry_compare.add_argument(
+        "--period1",
+        type=int,
+        default=7,
+        help="First period in days (default: 7)",
+    )
+    parser_telemetry_compare.add_argument(
+        "--period2",
+        type=int,
+        default=30,
+        help="Second period in days (default: 30)",
+    )
+    parser_telemetry_compare.set_defaults(func=lambda args: _cmd_telemetry_compare(args))
+
+    # Telemetry reset command
+    parser_telemetry_reset = telemetry_subparsers.add_parser(
+        "reset",
+        help="Clear all telemetry data",
+    )
+    parser_telemetry_reset.add_argument(
+        "--confirm",
+        action="store_true",
+        help="Confirm deletion",
+    )
+    parser_telemetry_reset.set_defaults(func=lambda args: _cmd_telemetry_reset(args))
+
+    # Telemetry export command
+    parser_telemetry_export = telemetry_subparsers.add_parser(
+        "export",
+        help="Export telemetry data",
+    )
+    parser_telemetry_export.add_argument(
+        "--format",
+        choices=["json", "csv"],
+        default="json",
+        help="Export format (default: json)",
+    )
+    parser_telemetry_export.add_argument(
+        "--output",
+        "-o",
+        help="Output file (default: stdout)",
+    )
+    parser_telemetry_export.add_argument(
+        "--days",
+        type=int,
+        help="Only export last N days",
+    )
+    parser_telemetry_export.set_defaults(func=lambda args: _cmd_telemetry_export(args))
 
     # New command (project scaffolding)
     parser_new = subparsers.add_parser("new", help="Create a new project from a template")

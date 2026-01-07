@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 import logging
+import time
 import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -52,6 +53,14 @@ from empathy_os.models import ModelTier as UnifiedModelTier
 
 # Import progress tracking
 from .progress import ProgressCallback, ProgressTracker
+
+# Import telemetry tracking
+try:
+    from empathy_os.telemetry import UsageTracker
+    TELEMETRY_AVAILABLE = True
+except ImportError:
+    TELEMETRY_AVAILABLE = False
+    UsageTracker = None  # type: ignore
 
 if TYPE_CHECKING:
     from .config import WorkflowConfig
@@ -416,6 +425,17 @@ class BaseWorkflow(ABC):
         self._enable_cache = enable_cache
         self._cache_setup_attempted = False
 
+        # Telemetry tracking (singleton instance)
+        self._telemetry_tracker: UsageTracker | None = None
+        self._enable_telemetry = True  # Enable by default
+        if TELEMETRY_AVAILABLE and UsageTracker is not None:
+            try:
+                self._telemetry_tracker = UsageTracker.get_instance()
+            except Exception:
+                # Telemetry initialization failed - disable it
+                logger.debug("Failed to initialize telemetry tracker")
+                self._enable_telemetry = False
+
         # Load config if not provided
         self._config = config or WorkflowConfig.load()
 
@@ -500,6 +520,7 @@ class BaseWorkflow(ABC):
         that respect the configured provider (anthropic, openai, google, etc.).
 
         Supports automatic caching to reduce API costs and latency.
+        Tracks telemetry for usage analysis and cost savings measurement.
 
         Args:
             tier: Model tier to use (CHEAP, CAPABLE, PREMIUM)
@@ -514,9 +535,14 @@ class BaseWorkflow(ABC):
         """
         from .step_config import WorkflowStepConfig
 
+        # Start timing for telemetry
+        start_time = time.time()
+
         # Determine stage name for cache key
         stage = stage_name or f"llm_call_{tier.value}"
         model = self.get_model_for_tier(tier)
+        cache_hit = False
+        cache_type = None
 
         # Try cache lookup if enabled
         if self._enable_cache and self._cache is not None:
@@ -527,6 +553,30 @@ class BaseWorkflow(ABC):
 
                 if cached_response is not None:
                     logger.debug(f"Cache hit for {self.name}:{stage}")
+                    cache_hit = True
+                    # Determine cache type
+                    if hasattr(self._cache, "cache_type"):
+                        cache_type = self._cache.cache_type  # type: ignore
+                    else:
+                        cache_type = "hash"  # Default assumption
+
+                    # Track telemetry for cache hit
+                    duration_ms = int((time.time() - start_time) * 1000)
+                    in_tokens = cached_response["input_tokens"]
+                    out_tokens = cached_response["output_tokens"]
+                    cost = self._calculate_cost(tier, in_tokens, out_tokens)
+
+                    self._track_telemetry(
+                        stage=stage,
+                        tier=tier,
+                        model=model,
+                        cost=cost,
+                        tokens={"input": in_tokens, "output": out_tokens},
+                        cache_hit=True,
+                        cache_type=cache_type,
+                        duration_ms=duration_ms,
+                    )
+
                     # Cached response is dict with content, input_tokens, output_tokens
                     return (
                         cached_response["content"],
@@ -547,10 +597,25 @@ class BaseWorkflow(ABC):
         )
 
         try:
-            content, in_tokens, out_tokens, _cost = await self.run_step_with_executor(
+            content, in_tokens, out_tokens, cost = await self.run_step_with_executor(
                 step=step,
                 prompt=user_message,
                 system=system,
+            )
+
+            # Calculate duration
+            duration_ms = int((time.time() - start_time) * 1000)
+
+            # Track telemetry for actual LLM call
+            self._track_telemetry(
+                stage=stage,
+                tier=tier,
+                model=model,
+                cost=cost,
+                tokens={"input": in_tokens, "output": out_tokens},
+                cache_hit=False,
+                cache_type=None,
+                duration_ms=duration_ms,
             )
 
             # Store in cache if enabled
@@ -579,6 +644,51 @@ class BaseWorkflow(ABC):
             # INTENTIONAL: Graceful degradation - return error message rather than crashing workflow
             logger.exception("Unexpected error calling LLM")
             return "Error calling LLM: unexpected error", 0, 0
+
+    def _track_telemetry(
+        self,
+        stage: str,
+        tier: ModelTier,
+        model: str,
+        cost: float,
+        tokens: dict[str, int],
+        cache_hit: bool,
+        cache_type: str | None,
+        duration_ms: int,
+    ) -> None:
+        """Track telemetry for an LLM call.
+
+        Args:
+            stage: Stage name
+            tier: Model tier used
+            model: Model ID used
+            cost: Cost in USD
+            tokens: Dictionary with "input" and "output" token counts
+            cache_hit: Whether this was a cache hit
+            cache_type: Cache type if cache hit
+            duration_ms: Duration in milliseconds
+
+        """
+        if not self._enable_telemetry or self._telemetry_tracker is None:
+            return
+
+        try:
+            provider_str = getattr(self, "_provider_str", "unknown")
+            self._telemetry_tracker.track_llm_call(
+                workflow=self.name,
+                stage=stage,
+                tier=tier.value.upper(),
+                model=model,
+                provider=provider_str,
+                cost=cost,
+                tokens=tokens,
+                cache_hit=cache_hit,
+                cache_type=cache_type,
+                duration_ms=duration_ms,
+            )
+        except Exception:
+            # INTENTIONAL: Telemetry tracking failures should never crash workflows
+            logger.debug("Failed to track telemetry")
 
     def _calculate_cost(self, tier: ModelTier, input_tokens: int, output_tokens: int) -> float:
         """Calculate cost for a stage."""
