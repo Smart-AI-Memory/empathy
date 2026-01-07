@@ -13,7 +13,48 @@
 pip install empathy-framework[developer]  # Lightweight for individual developers
 ```
 
-## What's New in v3.8.3 (Current Release)
+## What's New in v3.9.0 (Current Release)
+
+### 🔒 **Security Hardening: 174 Security Tests (Up from 14)**
+
+**Production-ready security with comprehensive file path validation across the entire framework.**
+
+- ✅ **6 modules secured** with Pattern 6 (File Path Validation)
+- ✅ **13 file write operations** validated to prevent path traversal (CWE-22)
+- ✅ **174 security tests** (100% passing) - up from 14 tests (+1143% increase)
+- ✅ **Zero blind exception handlers** - all errors now properly typed and logged
+
+```python
+# All file writes now validated for security
+from empathy_os.config import EmpathyConfig
+
+config = EmpathyConfig(user_id="alice")
+config.to_yaml("/etc/passwd")  # ❌ ValueError: Cannot write to system directory
+config.to_yaml("./empathy.yml")  # ✅ Safe write
+```
+
+**Attack vectors blocked:**
+
+- Path traversal: `../../../etc/passwd` → `ValueError`
+- Null byte injection: `config\x00.json` → `ValueError`
+- System directory writes: `/etc`, `/sys`, `/proc`, `/dev` → All blocked
+
+See [SECURITY.md](https://github.com/Smart-AI-Memory/empathy-framework/blob/main/SECURITY.md) for complete security documentation.
+
+### 🛡️ **Exception Handling Improvements**
+
+**Better error messages with graceful degradation.**
+
+- Fixed 8 blind `except Exception:` handlers in workflow base
+- Specific exception types for better debugging
+- Enhanced error logging while maintaining graceful degradation
+- All intentional broad catches documented with design rationale
+
+---
+
+### Previous Releases
+
+#### v3.8.3
 
 ### 🎯 **Transparent Cost Claims: Honest Role-Based Savings (34-86%)**
 
@@ -58,7 +99,7 @@ empathy telemetry export --format csv --output usage.csv
 
 ---
 
-### Previous Release: v3.7.0
+#### v3.7.0
 
 #### 🚀 **XML-Enhanced Prompting: 15-35% Token Reduction + Graceful Validation**
 
