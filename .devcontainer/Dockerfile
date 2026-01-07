@@ -1,7 +1,7 @@
 # Empathy Framework Development Container
 # Python 3.11 with dev tools pre-installed
 
-FROM mcr.microsoft.com/devcontainers/python:1-3.11-bullseye
+FROM mcr.microsoft.com/devcontainers/python:3.13-bullseye
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
