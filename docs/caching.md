@@ -1,6 +1,6 @@
 # Hybrid Caching System
 
-**Version:** 3.8.0
+**Version:** 3.9.0
 **Status:** Production-ready
 
 Empathy Framework's hybrid caching system can reduce API costs by 70-75% through intelligent response caching. It combines exact-match hash caching (fast path) with semantic similarity matching (smart path) for maximum effectiveness.

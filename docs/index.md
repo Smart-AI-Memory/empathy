@@ -78,6 +78,26 @@ Webhooks for Slack, GitHub, JIRA, Datadog, and custom services.
 
 ---
 
+## Security Hardening (v3.9.0)
+
+**Production-ready security with comprehensive file path validation.**
+
+The Empathy Framework underwent extensive security hardening in v3.9.0:
+
+- ✅ **6 modules secured** with Pattern 6 (File Path Validation)
+- ✅ **13 file write operations** validated to prevent path traversal (CWE-22)
+- ✅ **174 security tests** (100% passing) - up from 14 tests (+1143% increase)
+- ✅ **Zero blind exception handlers** - all errors properly typed and logged
+
+**Attack vectors blocked:**
+- Path traversal: `../../../etc/passwd` → `ValueError`
+- Null byte injection: `config\x00.json` → `ValueError`
+- System directory writes: `/etc`, `/sys`, `/proc`, `/dev` → All blocked
+
+See [SECURITY.md](https://github.com/Smart-AI-Memory/empathy-framework/blob/main/SECURITY.md) for complete documentation.
+
+---
+
 ## Use Cases
 
 === "Software Development"

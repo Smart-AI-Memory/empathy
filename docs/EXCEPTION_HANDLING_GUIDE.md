@@ -1,5 +1,6 @@
 # Exception Handling Best Practices
 
+**Version:** 3.9.0
 **Purpose:** This guide establishes exception handling patterns for the Empathy Framework to ensure errors are properly caught, logged, and handled.
 
 **Enforcement:** The `BLE` (Blind Exception) linting rule is enabled in `pyproject.toml` to prevent bare `except:` clauses.

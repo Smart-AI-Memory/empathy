@@ -66,4 +66,4 @@ Whether that participant is human or AI.
 
 ---
 
-*This foreword was written during working sessions where Claude and Patrick built Redis-backed short-term memory for multi-agent coordination. The framework now includes 53 wizards across healthcare, software, coach, and domain categories, with over 3,000 tests ensuring reliability.*
+*This foreword was written during working sessions where Claude and Patrick built Redis-backed short-term memory for multi-agent coordination. The framework now includes 53 wizards across healthcare, software, coach, and domain categories, with 6,038 tests passing ensuring reliability.*
