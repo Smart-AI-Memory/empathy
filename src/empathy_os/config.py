@@ -14,7 +14,10 @@ import json
 import os
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from empathy_os.workflows.config import ModelConfig
 
 try:
     import yaml
@@ -22,8 +25,6 @@ try:
     YAML_AVAILABLE = True
 except ImportError:
     YAML_AVAILABLE = False
-
-from empathy_os.workflows.config import ModelConfig
 
 
 def _validate_file_path(path: str, allowed_dir: str | None = None) -> Path:
@@ -120,7 +121,7 @@ class EmpathyConfig:
     metadata: dict[str, Any] = field(default_factory=dict)
 
     # Model settings
-    models: list[ModelConfig] = field(default_factory=list)
+    models: list["ModelConfig"] = field(default_factory=list)
     default_model: str | None = None
     log_path: str | None = None
     max_threads: int = 4
@@ -181,6 +182,8 @@ class EmpathyConfig:
 
         # Handle nested ModelConfig objects
         if filtered_data.get("models"):
+            from empathy_os.workflows.config import ModelConfig
+
             filtered_data["models"] = [ModelConfig(**m) for m in filtered_data["models"]]
 
         return cls(**filtered_data)
