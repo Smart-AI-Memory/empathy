@@ -131,6 +131,9 @@ patterns/security_demo/
 patterns/tech_debt/
 patterns/tech_debt_demo/
 
+# Auto-generated workflow tracking files
+patterns/debugging/workflow_*.json
+
 # Word temp files
 ~$*
 
