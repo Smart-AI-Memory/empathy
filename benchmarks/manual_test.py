@@ -330,7 +330,7 @@ def test_unit_tests():
     if "passed" in output:
         # Extract test count
         lines = output.split("\n")
-        summary_line = [l for l in lines if "passed" in l][-1]
+        summary_line = [line for line in lines if "passed" in line][-1]
         print_success(f"All unit tests: {summary_line.strip()}")
     else:
         print_error("Some unit tests failed")

@@ -69,7 +69,7 @@ def run_command(user_input):
     os.system(f"echo {user_input}")
 
 def get_secret():
-    password = "admin123"  # Hardcoded secret
+    password = "admin123"  # Hardcoded secret  # pragma: allowlist secret
     return password
 """,
     "semantically_similar": """
@@ -307,7 +307,7 @@ This benchmark tests whether semantic caching (hybrid mode) can match similar pr
 ## Comparison: Hash vs Hybrid Cache
 
 """
-        for workflow_name in set(r.test_name for r in results):
+        for workflow_name in {r.test_name for r in results}:
             hash_result = next((r for r in hash_results if r.test_name == workflow_name), None)
             hybrid_result = next((r for r in hybrid_results if r.test_name == workflow_name), None)
 
