@@ -494,7 +494,7 @@ def {test_name}({params_str}):
         summary.append("=" * 60)
 
         # Group by priority
-        by_priority = {
+        by_priority: dict[TestPriority, list[TestSuggestion]] = {
             TestPriority.CRITICAL: [],
             TestPriority.HIGH: [],
             TestPriority.MEDIUM: [],
