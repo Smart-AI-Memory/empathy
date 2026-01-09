@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "updated_at": "2026-01-09T00:29:00.525343",
-  "node_count": 45,
+  "updated_at": "2026-01-09T00:56:57.281877",
+  "node_count": 46,
   "edge_count": 0,
   "nodes": [
     {
@@ -722,6 +722,22 @@
       "tags": [],
       "created_at": "2026-01-09T00:29:00.524104",
       "updated_at": "2026-01-09T00:29:00.524105",
+      "status": "open"
+    },
+    {
+      "id": "refactoring_analysis_20260109005657_8d74759a3afb",
+      "type": "pattern",
+      "name": "refactor:/var/folders/5t/bzsz5qd17pd7h_wwwd5qjbnw0000gn/T/tmpbzjgdmu0/app.py",
+      "description": "Found 1 refactoring opportunities:\n  - 1 medium impact\n\nTop categories:\n  - other: 1",
+      "source_wizard": "refactoring_crew",
+      "source_file": "",
+      "source_line": null,
+      "severity": "",
+      "confidence": 1.0,
+      "metadata": {},
+      "tags": [],
+      "created_at": "2026-01-09T00:56:57.281184",
+      "updated_at": "2026-01-09T00:56:57.281184",
       "status": "open"
     }
   ],
