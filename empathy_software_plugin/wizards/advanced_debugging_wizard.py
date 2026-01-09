@@ -47,8 +47,8 @@ class AdvancedDebuggingWizard(BaseWizard):
         super().__init__()
         self.bug_analyzer = BugRiskAnalyzer()
         self.pattern_library = get_pattern_library()
-        self._name = "Advanced Debugging Wizard"
-        self._level = 4
+        self._name: str = "Advanced Debugging Wizard"
+        self._level: int = 4
 
     @property
     def name(self) -> str:
@@ -126,7 +126,8 @@ class AdvancedDebuggingWizard(BaseWizard):
         # Phase 4: Group by fixability
         fixability_by_linter = {}
         for linter_name, result in linter_results.items():
-            fixability = group_issues_by_fixability(linter_name, result["issues"])
+            issues_for_fixability: list[LintIssue] = result["issues"]  # type: ignore[assignment]
+            fixability = group_issues_by_fixability(linter_name, issues_for_fixability)
             fixability_by_linter[linter_name] = {
                 "auto_fixable": len(fixability["auto_fixable"]),
                 "manual": len(fixability["manual"]),
@@ -138,7 +139,8 @@ class AdvancedDebuggingWizard(BaseWizard):
             logger.info("Applying auto-fixes...")
 
             for linter_name, result in linter_results.items():
-                fixes = apply_fixes(linter_name, result["issues"], dry_run=False, auto_only=True)
+                issues_for_fixing: list[LintIssue] = result["issues"]  # type: ignore[assignment]
+                fixes = apply_fixes(linter_name, issues_for_fixing, dry_run=False, auto_only=True)
 
                 successful = [f for f in fixes if f.success]
                 failed = [f for f in fixes if not f.success]
@@ -155,7 +157,8 @@ class AdvancedDebuggingWizard(BaseWizard):
             logger.info("Verifying fixes...")
 
             for linter_name, result in linter_results.items():
-                verification = verify_fixes(linter_name, project_path, result["issues"])
+                issues_for_verification: list[LintIssue] = result["issues"]  # type: ignore[assignment]
+                verification = verify_fixes(linter_name, project_path, issues_for_verification)
 
                 verification_results[linter_name] = verification.to_dict()
 
@@ -201,7 +204,7 @@ class AdvancedDebuggingWizard(BaseWizard):
         insights = []
 
         # Group issues by language
-        by_language = {}
+        by_language: dict[str, list[LintIssue]] = {}
         for issue in issues:
             lang = issue.linter
             if lang not in by_language:

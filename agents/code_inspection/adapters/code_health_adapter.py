@@ -59,7 +59,7 @@ class CodeHealthAdapter:
             report = await runner.run_all()
 
             # Convert findings to unified format
-            findings = []
+            findings: list[dict[str, Any]] = []
             findings_by_severity: dict[str, int] = {
                 "critical": 0,
                 "high": 0,

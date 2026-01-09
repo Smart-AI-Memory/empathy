@@ -246,15 +246,19 @@ class PylintConfigLoader(BaseConfigLoader):
         """Load from pyproject.toml"""
         try:
             import tomli
+
+            toml_loader = tomli
         except ImportError:
             # Fallback for Python 3.11+
             try:
-                import tomllib as tomli
+                import tomllib
+
+                toml_loader = tomllib
             except ImportError as e:
                 raise ImportError("tomli or tomllib required for pyproject.toml") from e
 
         with open(path, "rb") as f:
-            data = tomli.load(f)
+            data = toml_loader.load(f)
 
         pylint_config = data.get("tool", {}).get("pylint", {})
 

@@ -278,6 +278,7 @@ class CrossLanguagePatternLibrary:
             UniversalPattern if found, None otherwise
 
         """
+        pattern: UniversalPattern
         for pattern in self.patterns.values():
             if linter in pattern.language_manifestations:
                 if pattern.language_manifestations[linter] == rule:
@@ -295,11 +296,12 @@ class CrossLanguagePatternLibrary:
             List of fix steps, or None if not found
 
         """
-        pattern = self.patterns.get(pattern_name)
+        pattern: UniversalPattern | None = self.patterns.get(pattern_name)
         if not pattern:
             return None
 
-        return pattern.language_specific_fixes.get(language)
+        result: list[str] | None = pattern.language_specific_fixes.get(language)
+        return result
 
     def suggest_cross_language_insight(
         self,

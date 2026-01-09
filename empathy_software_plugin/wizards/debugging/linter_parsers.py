@@ -360,7 +360,7 @@ class ClippyParser(BaseLinterParser):
 
         # Pattern: warning: unused variable: `x`
         #   --> src/main.rs:5:9
-        current_issue = {}
+        current_issue: dict[str, Any] = {}
 
         for line in output.split("\n"):
             # Check for severity line

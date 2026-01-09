@@ -478,6 +478,17 @@ exclude = [
     "agents/",  # Root-level agents dir (not part of main packages)
     "examples/",  # Example scripts (not part of main packages)
     "src/",  # Exclude src/ as top-level package (use via mypy_path instead)
+    "build/",  # Build artifacts
+    "backend/",  # Backend service (separate project)
+    "scripts/",  # Utility scripts (not production code)
+    "docs/",  # Documentation scripts
+    "book-indesign/",  # Book publishing scripts
+    "dashboard/",  # Dashboard (separate project)
+    "archived_wizards/",  # Archived code
+    "wizards_consolidated/",  # Consolidated wizards (separate)
+    "coach_wizards/",  # Coach wizards (separate package)
+    "tests/test_wizard_site_comprehensive.py",  # Large test file
+    "tests/test_plugin_registry.py",  # Mock-heavy test file
 ]
 warn_return_any = true
 warn_unused_configs = true

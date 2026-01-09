@@ -54,7 +54,7 @@ class TestQualityAdapter:
             analyzer = TestQualityAnalyzer()
 
             # Collect all findings
-            findings = []
+            findings: list[dict[str, Any]] = []
             findings_by_severity: dict[str, int] = {
                 "critical": 0,
                 "high": 0,

@@ -62,7 +62,7 @@ class TechDebtAdapter:
             )
 
             # Convert findings to unified format
-            findings = []
+            findings: list[dict[str, Any]] = []
             findings_by_severity: dict[str, int] = {
                 "critical": 0,
                 "high": 0,
@@ -143,7 +143,7 @@ class TechDebtAdapter:
             "XXX": re.compile(r"#\s*XXX[:\s](.*)$", re.IGNORECASE | re.MULTILINE),
         }
 
-        findings = []
+        findings: list[dict[str, Any]] = []
         findings_by_severity: dict[str, int] = {
             "critical": 0,
             "high": 0,

@@ -15,6 +15,7 @@ Licensed under Fair Source 0.9
 import asyncio
 import logging
 from datetime import datetime
+from typing import Any
 
 from ..adapters import CodeReviewAdapter, DebuggingAdapter
 from ..state import CodeInspectionState, InspectionPhase, add_audit_entry
@@ -41,7 +42,7 @@ async def run_dynamic_analysis(state: CodeInspectionState) -> CodeInspectionStat
     enabled_tools = state["enabled_tools"]
 
     # Get security context from Phase 1 for informed review
-    security_context = []
+    security_context: list[dict[str, Any]] = []
     if state.get("security_scan_result"):
         security_context = state["security_scan_result"].get("findings", [])
 

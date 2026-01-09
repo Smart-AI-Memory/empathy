@@ -167,20 +167,20 @@ class ChromeDevToolsParser(BaseProfilerParser):
                     function_times[name]["call_count"] += 1
 
             # Convert to FunctionProfile
-            total_time = sum(data["total_time"] for data in function_times.values())
+            total_time = sum(stats["total_time"] for stats in function_times.values())
 
-            for func_name, data in function_times.items():
+            for func_name, stats in function_times.items():
                 profiles.append(
                     FunctionProfile(
                         function_name=func_name,
                         file_path="",  # Chrome doesn't always provide
                         line_number=0,
-                        total_time=data["total_time"],
-                        self_time=data["total_time"],
-                        call_count=data["call_count"],
-                        cumulative_time=data["total_time"],
+                        total_time=stats["total_time"],
+                        self_time=stats["total_time"],
+                        call_count=stats["call_count"],
+                        cumulative_time=stats["total_time"],
                         percent_total=(
-                            (data["total_time"] / total_time * 100) if total_time > 0 else 0
+                            (stats["total_time"] / total_time * 100) if total_time > 0 else 0
                         ),
                         profiler=self.profiler_name,
                     ),

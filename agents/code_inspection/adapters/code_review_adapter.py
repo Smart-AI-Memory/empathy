@@ -151,7 +151,7 @@ class CodeReviewAdapter:
             report = await wizard.analyze(context)
 
             # Convert findings to unified format
-            findings = []
+            findings: list[dict[str, Any]] = []
             findings_by_severity: dict[str, int] = {
                 "critical": 0,
                 "high": 0,

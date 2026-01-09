@@ -168,10 +168,10 @@ class SecurityAnalysisWizard(BaseWizard):
 
     def _group_by_category(self, vulnerabilities: list[dict[str, Any]]) -> dict[str, int]:
         """Group vulnerabilities by OWASP category"""
-        by_category = {}
+        by_category: dict[str, int] = {}
 
         for vuln in vulnerabilities:
-            category = vuln.get("category", "unknown")
+            category: str = str(vuln.get("category", "unknown"))
             by_category[category] = by_category.get(category, 0) + 1
 
         return by_category

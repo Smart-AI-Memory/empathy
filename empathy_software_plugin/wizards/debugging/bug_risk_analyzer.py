@@ -335,7 +335,7 @@ class BugRiskAnalyzer:
         This is the Level 4 alert format.
         """
         # Count by risk level
-        by_risk = {
+        by_risk: dict[BugRisk, list[RiskAssessment]] = {
             BugRisk.CRITICAL: [],
             BugRisk.HIGH: [],
             BugRisk.MEDIUM: [],
