@@ -58,7 +58,7 @@ dependencies = [
     "anthropic>=0.25.0,<1.0.0",  # Core LLM provider
     "crewai>=0.1.0,<1.0.0",  # CrewAI integration (core feature in v3.7.0)
     "langchain>=0.1.0,<2.0.0",  # Required for workflows
-    "langchain-core>=0.1.0,<2.0.0",  # Required for workflows (1.2.5+ has security fixes)
+    "langchain-core>=1.2.6,<2.0.0",  # Required for workflows (1.2.6+ has security fixes, compatible with langchain-anthropic)
 ]
 
 [project.optional-dependencies]
