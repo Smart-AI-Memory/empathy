@@ -13,8 +13,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from src.empathy_os.workflows.base import ModelTier
-from src.empathy_os.workflows.bug_predict import (
+from empathy_os.workflows.base import ModelTier
+from empathy_os.workflows.bug_predict import (
     BUG_PREDICT_STEPS,
     BugPredictionWorkflow,
     format_bug_predict_report,

@@ -8,8 +8,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from src.empathy_os.workflows.base import ModelTier
-from src.empathy_os.workflows.code_review import CodeReviewWorkflow
+from empathy_os.workflows.base import ModelTier
+from empathy_os.workflows.code_review import CodeReviewWorkflow
 
 
 class TestCodeReviewWorkflowInit:

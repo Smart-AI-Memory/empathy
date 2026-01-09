@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from src.empathy_os.config import EmpathyConfig
+from empathy_os.config import EmpathyConfig
 
 
 @pytest.mark.unit

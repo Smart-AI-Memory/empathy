@@ -11,7 +11,7 @@ Licensed under Fair Source 0.9
 
 import time
 
-from src.empathy_os.memory.control_panel import (
+from empathy_os.memory.control_panel import (
     APIKeyAuth,
     RateLimiter,
     _validate_agent_id,

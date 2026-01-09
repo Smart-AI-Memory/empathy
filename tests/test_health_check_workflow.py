@@ -10,7 +10,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from src.empathy_os.workflows.health_check import HealthCheckResult, HealthCheckWorkflow
+from empathy_os.workflows.health_check import HealthCheckResult, HealthCheckWorkflow
 
 
 class TestHealthCheckResult:
@@ -129,7 +129,7 @@ class TestHealthCheckWorkflowInit:
         """Test tier mapping for stages."""
         workflow = HealthCheckWorkflow()
 
-        from src.empathy_os.workflows.base import ModelTier
+        from empathy_os.workflows.base import ModelTier
 
         assert workflow.tier_map["diagnose"] == ModelTier.CAPABLE
         assert workflow.tier_map["fix"] == ModelTier.CAPABLE
@@ -245,7 +245,7 @@ class TestHealthCheckWorkflowStages:
         with patch.object(workflow, "_diagnose", new_callable=AsyncMock) as mock_diagnose:
             mock_diagnose.return_value = ({"diagnosis": {}}, 100, 50)
 
-            from src.empathy_os.workflows.base import ModelTier
+            from empathy_os.workflows.base import ModelTier
 
             result = await workflow.run_stage("diagnose", ModelTier.CAPABLE, {"path": "."})
 
@@ -260,7 +260,7 @@ class TestHealthCheckWorkflowStages:
         with patch.object(workflow, "_fix", new_callable=AsyncMock) as mock_fix:
             mock_fix.return_value = ({"fixes": []}, 50, 25)
 
-            from src.empathy_os.workflows.base import ModelTier
+            from empathy_os.workflows.base import ModelTier
 
             await workflow.run_stage("fix", ModelTier.CAPABLE, {"path": "."})
 
@@ -271,7 +271,7 @@ class TestHealthCheckWorkflowStages:
         """Test invalid stage raises error."""
         workflow = HealthCheckWorkflow()
 
-        from src.empathy_os.workflows.base import ModelTier
+        from empathy_os.workflows.base import ModelTier
 
         with pytest.raises(ValueError, match="Unknown stage"):
             await workflow.run_stage("invalid", ModelTier.CAPABLE, {})
@@ -285,7 +285,7 @@ class TestHealthCheckFix:
         """Test fix stage when auto_fix is disabled."""
         workflow = HealthCheckWorkflow(auto_fix=False)
 
-        from src.empathy_os.workflows.base import ModelTier
+        from empathy_os.workflows.base import ModelTier
 
         result, input_tokens, output_tokens = await workflow._fix({"path": "."}, ModelTier.CAPABLE)
 
@@ -306,7 +306,7 @@ class TestHealthCheckFix:
                 stderr="",
             )
 
-            from src.empathy_os.workflows.base import ModelTier
+            from empathy_os.workflows.base import ModelTier
 
             result, _, _ = await workflow._fix({"path": "."}, ModelTier.CAPABLE)
 

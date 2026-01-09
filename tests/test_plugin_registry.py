@@ -12,8 +12,8 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from src.empathy_os.plugins.base import BasePlugin, BaseWizard, PluginValidationError
-from src.empathy_os.plugins.registry import PluginRegistry, get_global_registry
+from empathy_os.plugins.base import BasePlugin, BaseWizard, PluginValidationError
+from empathy_os.plugins.registry import PluginRegistry, get_global_registry
 
 
 @dataclass

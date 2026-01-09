@@ -11,7 +11,7 @@ import json
 import tempfile
 from pathlib import Path
 
-from src.empathy_os.workflow_commands import (
+from empathy_os.workflow_commands import (
     _get_tech_debt_trend,
     _load_patterns,
     _load_stats,

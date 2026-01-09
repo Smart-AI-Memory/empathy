@@ -297,7 +297,7 @@ def test_calculate_savings(tracker):
 def test_reset(tracker):
     """Test clearing all telemetry data."""
     # Track some calls
-    for i in range(5):
+    for _i in range(5):
         tracker.track_llm_call(
             workflow="test",
             stage="test",

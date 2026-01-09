@@ -17,7 +17,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from empathy_os.cost_tracker import CostTracker
-from src.empathy_os.workflows.base import (
+from empathy_os.workflows.base import (
     PROVIDER_MODELS,
     BaseWorkflow,
     CostReport,

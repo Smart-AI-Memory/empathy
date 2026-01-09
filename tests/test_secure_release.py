@@ -13,7 +13,7 @@ Licensed under Fair Source 0.9
 
 import pytest
 
-from src.empathy_os.workflows.secure_release import SecureReleasePipeline, SecureReleaseResult
+from empathy_os.workflows.secure_release import SecureReleasePipeline, SecureReleaseResult
 
 
 class TestSecureReleaseResult:

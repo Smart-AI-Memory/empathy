@@ -10,8 +10,8 @@ from pathlib import Path
 
 import pytest
 
-from src.empathy_os.workflows.base import ModelTier
-from src.empathy_os.workflows.dependency_check import KNOWN_VULNERABILITIES, DependencyCheckWorkflow
+from empathy_os.workflows.base import ModelTier
+from empathy_os.workflows.dependency_check import KNOWN_VULNERABILITIES, DependencyCheckWorkflow
 
 
 class TestKnownVulnerabilities:

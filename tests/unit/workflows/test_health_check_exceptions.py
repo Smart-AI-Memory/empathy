@@ -15,7 +15,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.empathy_os.workflows.health_check import HealthCheckWorkflow
+from empathy_os.workflows.health_check import HealthCheckWorkflow
 
 
 class TestBasicHealthCheckExceptions:
@@ -210,7 +210,7 @@ class TestSaveHealthDataExceptions:
     @pytest.fixture
     def health_result(self):
         """Create mock health result."""
-        from src.empathy_os.workflows.health_check import HealthCheckResult
+        from empathy_os.workflows.health_check import HealthCheckResult
 
         return HealthCheckResult(
             success=True,

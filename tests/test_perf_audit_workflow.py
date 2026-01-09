@@ -16,8 +16,8 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from src.empathy_os.workflows.base import ModelTier
-from src.empathy_os.workflows.perf_audit import (
+from empathy_os.workflows.base import ModelTier
+from empathy_os.workflows.perf_audit import (
     PERF_PATTERNS,
     PerformanceAuditWorkflow,
     format_perf_audit_report,

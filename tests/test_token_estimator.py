@@ -14,7 +14,7 @@ from unittest.mock import patch
 
 import pytest
 
-from src.empathy_os.models.token_estimator import (
+from empathy_os.models.token_estimator import (
     TIKTOKEN_AVAILABLE,
     TOKENS_PER_CHAR_HEURISTIC,
     estimate_single_call_cost,

@@ -9,7 +9,7 @@ Tests cover:
 
 import pytest
 
-from src.empathy_os.plugins.base import (
+from empathy_os.plugins.base import (
     BasePlugin,
     BaseWizard,
     PluginError,

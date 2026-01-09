@@ -16,8 +16,8 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from src.empathy_os.workflows.base import ModelTier
-from src.empathy_os.workflows.document_gen import (
+from empathy_os.workflows.base import ModelTier
+from empathy_os.workflows.document_gen import (
     TOKEN_COSTS,
     DocumentGenerationWorkflow,
     format_doc_gen_report,

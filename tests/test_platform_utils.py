@@ -13,7 +13,7 @@ from unittest.mock import patch
 
 import pytest
 
-from src.empathy_os.platform_utils import (
+from empathy_os.platform_utils import (
     PLATFORM_INFO,
     ensure_dir,
     get_default_cache_dir,
@@ -41,7 +41,7 @@ class TestPlatformDetection:
         """Test is_windows returns True on Windows."""
         with patch("src.empathy_os.platform_utils.platform.system", return_value="Windows"):
             # Need to reload to pick up the mock
-            from src.empathy_os import platform_utils
+            from empathy_os import platform_utils
 
             with patch.object(platform_utils, "platform") as mock_platform:
                 mock_platform.system.return_value = "Windows"

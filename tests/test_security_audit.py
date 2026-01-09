@@ -21,8 +21,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from src.empathy_os.workflows.base import ModelTier
-from src.empathy_os.workflows.security_audit import (
+from empathy_os.workflows.base import ModelTier
+from empathy_os.workflows.security_audit import (
     DETECTION_PATTERNS,
     FAKE_CREDENTIAL_PATTERNS,
     SECURITY_EXAMPLE_PATHS,

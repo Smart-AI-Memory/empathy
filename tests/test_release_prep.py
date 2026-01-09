@@ -20,13 +20,13 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from src.empathy_os.workflows.base import ModelTier
-from src.empathy_os.workflows.release_prep import (
+from empathy_os.workflows.base import ModelTier
+from empathy_os.workflows.release_prep import (
     RELEASE_PREP_STEPS,
     ReleasePreparationWorkflow,
     format_release_prep_report,
 )
-from src.empathy_os.workflows.step_config import WorkflowStepConfig
+from empathy_os.workflows.step_config import WorkflowStepConfig
 
 # =============================================================================
 # TestReleaseStepsConfig - RELEASE_PREP_STEPS configuration

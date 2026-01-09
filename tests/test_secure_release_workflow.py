@@ -10,7 +10,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from src.empathy_os.workflows.secure_release import (
+from empathy_os.workflows.secure_release import (
     SecureReleasePipeline,
     SecureReleaseResult,
     format_secure_release_report,

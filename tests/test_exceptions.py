@@ -8,7 +8,7 @@ Licensed under Fair Source 0.9
 
 import pytest
 
-from src.empathy_os.exceptions import (
+from empathy_os.exceptions import (
     CollaborationStateError,
     ConfidenceThresholdError,
     EmpathyFrameworkError,
