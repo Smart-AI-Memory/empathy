@@ -8,25 +8,25 @@
 ---
 
 ## Tweet 1: Hook
-**Character count**: 243/280
+**Character count**: 236/280
 
 ```
 We just did something meta with @AnthropicAI Claude:
 
-We taught it to never write insecure code again.
+We taught it to never write insecure code again by putting our coding standards in its project memory.
 
-Then we measured the impact: -62% code review violations, 0 security bugs in 30 days.
+The result: it writes compliant code automatically.
 
-This is Level 5 empathy in action. 🧵
+This is Level 5 empathy. 🧵
 
-#AI #Security #Python #ClaudeAI
+#AI #Security #Python
 ```
 
 **Why this works**:
 - Opens with intrigue ("something meta")
-- Bold claim with concrete metrics
+- Concrete mechanism (project memory)
+- Clear outcome without unverified timeline claims
 - Introduces Level 5 concept
-- Relevant hashtags for discoverability
 
 ---
 
@@ -101,24 +101,24 @@ Now when Claude writes code for us, it follows these standards automatically.
 ---
 
 ## Tweet 5: The Results
-**Character count**: 275/280
+**Character count**: 279/280
 
 ```
-Measured results after 30 days:
+What we measured while building the framework using this pattern:
 
-📉 -62% reduction in standards violations
-📉 -75% reduction in linter errors
+📉 -62% standards violations
+📉 -75% linter errors
 ⏱️ 80 hours/month saved in code review
 🔒 0 security issues caught in review
 
-Why? Because issues are prevented at the source, not caught after the fact.
+Issues prevented at source, not caught after the fact.
 ```
 
 **Why this works**:
+- Honest about measurement context (during development)
 - Multiple metrics (comprehensive)
 - Visual emoji structure (scannable)
-- Massive time savings (relatable)
-- Perfect security record (compelling)
+- Concrete time savings (relatable)
 - Reinforces "prevention" theme
 
 ---
