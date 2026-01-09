@@ -80,7 +80,7 @@ class NewSampleWorkflow1Workflow(BaseWorkflow):
 
         """
         # TODO: Implement analyze logic
-        prompt = f"{stage} stage: {input_data}"
+        prompt = f"analyze stage: {input_data}"
 
         if self.executor:
             result = await self.executor.execute(
@@ -107,7 +107,7 @@ class NewSampleWorkflow1Workflow(BaseWorkflow):
 
         """
         # TODO: Implement process logic
-        prompt = f"{stage} stage: {input_data}"
+        prompt = f"process stage: {input_data}"
 
         if self.executor:
             result = await self.executor.execute(
@@ -134,7 +134,7 @@ class NewSampleWorkflow1Workflow(BaseWorkflow):
 
         """
         # TODO: Implement report logic
-        prompt = f"{stage} stage: {input_data}"
+        prompt = f"report stage: {input_data}"
 
         if self.executor:
             result = await self.executor.execute(
