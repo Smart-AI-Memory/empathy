@@ -28,6 +28,7 @@ import { MemoryPanelProvider } from './panels/MemoryPanelProvider';
 // import { RefactorAdvisorPanel } from './panels/RefactorAdvisorPanel';
 import { ResearchSynthesisPanel } from './panels/ResearchSynthesisPanel';
 import { InitializeWizardPanel } from './panels/InitializeWizardPanel';
+import { MorningBriefingPanel } from './panels/MorningBriefingPanel';
 // REMOVED in v3.5.5: Test Generator panel - kept for future use
 // import { TestGeneratorPanel } from './panels/TestGeneratorPanel';
 // HIDDEN in v3.5.5: Workflow Wizard panel - temporarily hidden
@@ -653,7 +654,50 @@ export function deactivate() {
 // ============================================================================
 
 async function cmdMorning() {
-    runEmpathyCommand('morning', 'Morning Briefing');
+    // Run morning briefing and open in styled webview panel
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+    if (!workspaceFolder) {
+        vscode.window.showErrorMessage('No workspace folder open');
+        return;
+    }
+
+    const config = vscode.workspace.getConfiguration('empathy');
+    const pythonPath = config.get<string>('pythonPath', 'python');
+    const args = ['-m', 'empathy_os.cli', 'morning'];
+
+    // Show progress notification
+    await vscode.window.withProgress(
+        {
+            location: vscode.ProgressLocation.Notification,
+            title: 'Empathy: Generating morning briefing...',
+            cancellable: false,
+        },
+        async () => {
+            return new Promise<void>((resolve, reject) => {
+                cp.execFile(pythonPath, args, { cwd: workspaceFolder, maxBuffer: 1024 * 1024 * 5 }, async (error, stdout, stderr) => {
+                    const output = stdout || stderr || (error ? error.message : 'No output');
+
+                    if (error && !stdout) {
+                        vscode.window.showErrorMessage(`Morning briefing failed: ${error.message}`);
+                        reject(error);
+                        return;
+                    }
+
+                    // Open in styled webview panel
+                    try {
+                        const extensionUri = vscode.extensions.getExtension('smart-ai-memory.empathy-framework')?.extensionUri;
+                        if (extensionUri) {
+                            MorningBriefingPanel.createOrShow(extensionUri, output);
+                        }
+                        resolve();
+                    } catch (openErr) {
+                        vscode.window.showErrorMessage(`Failed to open briefing panel: ${openErr}`);
+                        reject(openErr);
+                    }
+                });
+            });
+        }
+    );
 }
 
 async function cmdShip() {
