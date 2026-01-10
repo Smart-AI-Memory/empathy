@@ -66,6 +66,22 @@ class ConnectionManager:
         for connection in disconnected:
             self.disconnect(connection)
 
+    async def broadcast_tier1_update(self, update_type: str, data: dict):
+        """Broadcast Tier 1 automation monitoring update to all connections.
+
+        Args:
+            update_type: Type of update (task_routing, test_execution, coverage, agent_assignment)
+            data: Update data to broadcast
+
+        """
+        message = {
+            "type": "tier1_update",
+            "update_type": update_type,
+            "data": data,
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+        }
+        await self.broadcast(message)
+
 
 manager = ConnectionManager()
 
@@ -193,3 +209,56 @@ async def _metrics_update_loop(
         logger.debug("metrics_update_loop_cancelled")
     except Exception as e:
         logger.error("metrics_update_loop_error", error=str(e))
+
+
+async def tier1_metrics_updater():
+    """Background task to poll and broadcast Tier 1 automation updates.
+
+    Polls for new task routing and test execution records every 5 seconds
+    and broadcasts them to all connected WebSocket clients for real-time monitoring.
+
+    """
+
+    from empathy_os.models.telemetry import get_telemetry_store
+
+    logger.info("tier1_metrics_updater_started")
+
+    # Track last seen records to detect new ones
+    last_routing_count = 0
+    last_test_count = 0
+
+    try:
+        while True:
+            await asyncio.sleep(5)  # Poll every 5 seconds
+
+            try:
+                store = get_telemetry_store()
+
+                # Check for new task routings
+                routings = store.get_task_routings(limit=10)
+                if len(routings) > last_routing_count:
+                    # New routing records detected
+                    new_routings = routings[last_routing_count:]
+                    for routing in new_routings:
+                        await manager.broadcast_tier1_update("task_routing", routing.to_dict())
+                    last_routing_count = len(routings)
+                    logger.debug("tier1_routing_broadcast", new_count=len(new_routings))
+
+                # Check for new test executions
+                executions = store.get_test_executions(limit=10)
+                if len(executions) > last_test_count:
+                    # New test execution records detected
+                    new_executions = executions[last_test_count:]
+                    for execution in new_executions:
+                        await manager.broadcast_tier1_update("test_execution", execution.to_dict())
+                    last_test_count = len(executions)
+                    logger.debug("tier1_test_broadcast", new_count=len(new_executions))
+
+            except Exception as e:
+                logger.error("tier1_metrics_poll_error", error=str(e))
+                # Continue polling even if one iteration fails
+
+    except asyncio.CancelledError:
+        logger.info("tier1_metrics_updater_cancelled")
+    except Exception as e:
+        logger.error("tier1_metrics_updater_error", error=str(e))

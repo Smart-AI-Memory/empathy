@@ -59,6 +59,7 @@ python examples/website_examples/03_security_learning.py
 | Post | Topic | Key Takeaway |
 |------|-------|--------------|
 | [Building AI Memory with Redis](06-building-ai-memory-with-redis.md) | Infrastructure | Sub-millisecond coordination, dual-layer architecture |
+| [Cutting Claude Costs 78% with Intelligent Fallback](07-cutting-claude-costs-with-intelligent-fallback.md) | Cost Optimization | $211/year saved, 100% quality maintained **(NEW)** |
 
 ---
 

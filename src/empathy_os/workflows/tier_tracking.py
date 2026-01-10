@@ -203,6 +203,7 @@ class WorkflowTierTracker:
         workflow_result: Any,
         files_affected: list[str] | None = None,
         bug_type: str = "workflow_run",
+        tier_progression: list[tuple[str, str, bool]] | None = None,
     ) -> Path | None:
         """
         Save tier progression data after workflow completion.
@@ -211,6 +212,8 @@ class WorkflowTierTracker:
             workflow_result: WorkflowResult from workflow execution
             files_affected: Files processed by workflow
             bug_type: Type of issue being addressed
+            tier_progression: Optional detailed tier progression list
+                             [(stage, tier, success), ...]
 
         Returns:
             Path to saved pattern file, or None if save failed
@@ -223,8 +226,11 @@ class WorkflowTierTracker:
             successful_tier = self._determine_successful_tier(workflow_result)
             self.starting_tier = self.starting_tier or successful_tier
 
-            # Build tier history from stages
-            tier_history = self._build_tier_history(workflow_result)
+            # Build tier history - use detailed progression if available
+            if tier_progression:
+                tier_history = self._build_tier_history_from_progression(tier_progression)
+            else:
+                tier_history = self._build_tier_history(workflow_result)
 
             # Calculate costs
             total_cost = (
@@ -317,6 +323,62 @@ class WorkflowTierTracker:
             return "CAPABLE"
         else:
             return "CHEAP"
+
+    def _build_tier_history_from_progression(
+        self, tier_progression: list[tuple[str, str, bool]]
+    ) -> list[dict[str, Any]]:
+        """Build detailed tier history from tier progression tracking.
+
+        Args:
+            tier_progression: List of (stage, tier, success) tuples
+
+        Returns:
+            List of tier history entries with detailed attempt information
+
+        """
+        # Group attempts by stage
+        stage_attempts: dict[str, list[tuple[str, bool]]] = {}
+        for stage, tier, success in tier_progression:
+            if stage not in stage_attempts:
+                stage_attempts[stage] = []
+            stage_attempts[stage].append((tier, success))
+
+        # Build history with fallback information
+        history = []
+        for stage, attempts in stage_attempts.items():
+            stage_entry = {
+                "stage": stage,
+                "total_attempts": len(attempts),
+                "attempts": [],
+            }
+
+            for attempt_num, (tier, success) in enumerate(attempts, 1):
+                attempt_entry = {
+                    "attempt": attempt_num,
+                    "tier": tier.upper(),
+                    "success": success,
+                }
+
+                if not success:
+                    attempt_entry["quality_gate_failed"] = "validation_failed"
+
+                stage_entry["attempts"].append(attempt_entry)
+
+            # Record successful tier for this stage
+            successful_attempts = [a for a in attempts if a[1]]
+            if successful_attempts:
+                final_tier = successful_attempts[-1][0]
+                stage_entry["successful_tier"] = final_tier.upper()
+
+                # Check if tier fallback occurred
+                if len(attempts) > 1:
+                    first_tier = attempts[0][0]
+                    stage_entry["tier_fallback_occurred"] = True
+                    stage_entry["fallback_chain"] = f"{first_tier.upper()} → {final_tier.upper()}"
+
+            history.append(stage_entry)
+
+        return history
 
     def _build_tier_history(self, workflow_result: Any) -> list[dict[str, Any]]:
         """Build tier history from workflow stages."""

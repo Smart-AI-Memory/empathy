@@ -11,8 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from jinja2 import Environment, FileSystemLoader
-
-from workflow_patterns import get_workflow_pattern_registry
+from empathy_os.workflow_patterns import get_workflow_pattern_registry
 
 
 class WorkflowGenerator:

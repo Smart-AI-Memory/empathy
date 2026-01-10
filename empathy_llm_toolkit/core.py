@@ -219,7 +219,24 @@ class EmpathyLLM:
         model: str | None,
         **kwargs,
     ) -> BaseLLMProvider:
-        """Create appropriate provider instance"""
+        """Create appropriate provider instance
+
+        Falls back to environment variables if api_key not provided:
+        - ANTHROPIC_API_KEY for Anthropic
+        - OPENAI_API_KEY for OpenAI
+        - GOOGLE_API_KEY or GEMINI_API_KEY for Google/Gemini
+        """
+        import os
+
+        # Check environment variables if api_key not provided
+        if api_key is None:
+            if provider == "anthropic":
+                api_key = os.getenv("ANTHROPIC_API_KEY")
+            elif provider == "openai":
+                api_key = os.getenv("OPENAI_API_KEY")
+            elif provider in ("google", "gemini"):
+                api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+
         if provider == "anthropic":
             return AnthropicProvider(
                 api_key=api_key,

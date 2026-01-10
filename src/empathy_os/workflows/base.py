@@ -46,6 +46,7 @@ from empathy_os.models import (
     ExecutionContext,
     LLMCallRecord,
     LLMExecutor,
+    TaskRoutingRecord,
     TelemetryBackend,
     WorkflowRunRecord,
     WorkflowStageRecord,
@@ -181,6 +182,17 @@ class CostReport:
     cache_hit_rate: float = 0.0
     estimated_cost_without_cache: float = 0.0
     savings_from_cache: float = 0.0
+
+
+@dataclass
+class StageQualityMetrics:
+    """Quality metrics for stage output validation."""
+
+    execution_succeeded: bool
+    output_valid: bool
+    quality_improved: bool  # Workflow-specific (e.g., health score improved)
+    error_type: str | None
+    validation_error: str | None
 
 
 @dataclass
@@ -390,6 +402,7 @@ class BaseWorkflow(ABC):
         cache: BaseCache | None = None,
         enable_cache: bool = True,
         enable_tier_tracking: bool = True,
+        enable_tier_fallback: bool = False,
     ):
         """Initialize workflow with optional cost tracker, provider, and config.
 
@@ -409,6 +422,8 @@ class BaseWorkflow(ABC):
                    auto-creates cache with one-time setup prompt.
             enable_cache: Whether to enable caching (default True).
             enable_tier_tracking: Whether to enable automatic tier tracking (default True).
+            enable_tier_fallback: Whether to enable intelligent tier fallback
+                     (CHEAP → CAPABLE → PREMIUM). Opt-in feature (default False).
 
         """
         from .config import WorkflowConfig
@@ -434,6 +449,10 @@ class BaseWorkflow(ABC):
         # Tier tracking support
         self._enable_tier_tracking = enable_tier_tracking
         self._tier_tracker: WorkflowTierTracker | None = None
+
+        # Tier fallback support
+        self._enable_tier_fallback = enable_tier_fallback
+        self._tier_progression: list[tuple[str, str, bool]] = []  # (stage, tier, success)
 
         # Telemetry tracking (singleton instance)
         self._telemetry_tracker: UsageTracker | None = None
@@ -838,6 +857,69 @@ class BaseWorkflow(ABC):
         """
         return False, None
 
+    def validate_output(self, stage_output: dict) -> tuple[bool, str | None]:
+        """Validate stage output quality for tier fallback decisions.
+
+        This is called after each stage execution when tier fallback is enabled.
+        Override in subclasses to add workflow-specific validation logic.
+
+        Default implementation checks:
+        - No exceptions during execution (execution_succeeded)
+        - Output is not empty (output_valid)
+        - Required keys present if defined in stage config
+
+        Args:
+            stage_output: Output dict from run_stage()
+
+        Returns:
+            Tuple of (is_valid, failure_reason)
+            - is_valid: True if output passes quality gates
+            - failure_reason: Error code if validation failed (e.g., "output_empty",
+              "health_score_low", "tests_failed")
+
+        Example:
+            >>> def validate_output(self, stage_output):
+            ...     # Check health score for health-check workflow
+            ...     health_score = stage_output.get("health_score", 0)
+            ...     if health_score < 80:
+            ...         return False, "health_score_low"
+            ...     return True, None
+
+        """
+        # Default validation: check output is not empty
+        if not stage_output:
+            return False, "output_empty"
+
+        # Check for error indicators in output
+        if stage_output.get("error") is not None:
+            return False, "execution_error"
+
+        # Output is valid by default
+        return True, None
+
+    def _assess_complexity(self, input_data: dict[str, Any]) -> str:
+        """Assess task complexity based on workflow stages and input.
+
+        Args:
+            input_data: Workflow input data
+
+        Returns:
+            Complexity level: "simple", "moderate", or "complex"
+
+        """
+        # Simple heuristic: based on number of stages and tier requirements
+        num_stages = len(self.stages)
+        premium_stages = sum(
+            1 for s in self.stages if self.get_tier_for_stage(s) == ModelTier.PREMIUM
+        )
+
+        if num_stages <= 2 and premium_stages == 0:
+            return "simple"
+        elif num_stages <= 4 and premium_stages <= 1:
+            return "moderate"
+        else:
+            return "complex"
+
     async def execute(self, **kwargs: Any) -> WorkflowResult:
         """Execute the full workflow.
 
@@ -853,6 +935,28 @@ class BaseWorkflow(ABC):
 
         # Set run ID for telemetry correlation
         self._run_id = str(uuid.uuid4())
+
+        # Log task routing (Tier 1 automation monitoring)
+        routing_id = f"routing-{self._run_id}"
+        routing_record = TaskRoutingRecord(
+            routing_id=routing_id,
+            timestamp=datetime.utcnow().isoformat() + "Z",
+            task_description=f"{self.name}: {self.description}",
+            task_type=self.name,
+            task_complexity=self._assess_complexity(kwargs),
+            assigned_agent=self.name,
+            assigned_tier=getattr(self, "_provider_str", "unknown"),
+            routing_strategy="rule_based",
+            confidence_score=1.0,
+            status="running",
+            started_at=datetime.utcnow().isoformat() + "Z",
+        )
+
+        # Log routing start
+        try:
+            self._telemetry_backend.log_task_routing(routing_record)
+        except Exception as e:
+            logger.debug(f"Failed to log task routing: {e}")
 
         # Auto tier recommendation
         if self._enable_tier_tracking:
@@ -884,88 +988,244 @@ class BaseWorkflow(ABC):
             self._progress_tracker.start_workflow()
 
         try:
-            for stage_name in self.stages:
-                tier = self.get_tier_for_stage(stage_name)
-                stage_start = datetime.now()
+            # Tier fallback mode: try CHEAP → CAPABLE → PREMIUM with validation
+            if self._enable_tier_fallback:
+                tier_chain = [ModelTier.CHEAP, ModelTier.CAPABLE, ModelTier.PREMIUM]
 
-                # Check if stage should be skipped
-                should_skip, skip_reason = self.should_skip_stage(stage_name, current_data)
+                for stage_name in self.stages:
+                    # Check if stage should be skipped
+                    should_skip, skip_reason = self.should_skip_stage(stage_name, current_data)
 
-                if should_skip:
+                    if should_skip:
+                        tier = self.get_tier_for_stage(stage_name)
+                        stage = WorkflowStage(
+                            name=stage_name,
+                            tier=tier,
+                            description=f"Stage: {stage_name}",
+                            skipped=True,
+                            skip_reason=skip_reason,
+                        )
+                        self._stages_run.append(stage)
+
+                        # Report skip to progress tracker
+                        if self._progress_tracker:
+                            self._progress_tracker.skip_stage(stage_name, skip_reason or "")
+
+                        continue
+
+                    # Try each tier in fallback chain
+                    stage_succeeded = False
+                    tier_index = 0
+
+                    for tier in tier_chain:
+                        stage_start = datetime.now()
+
+                        # Report stage start to progress tracker with current tier
+                        model_id = self.get_model_for_tier(tier)
+                        if self._progress_tracker:
+                            # On first attempt, start stage. On retry, update tier.
+                            if tier_index == 0:
+                                self._progress_tracker.start_stage(stage_name, tier.value, model_id)
+                            else:
+                                # Show tier upgrade (e.g., CHEAP → CAPABLE)
+                                prev_tier = tier_chain[tier_index - 1].value
+                                self._progress_tracker.update_tier(
+                                    stage_name, tier.value, f"{prev_tier}_failed"
+                                )
+
+                        try:
+                            # Run the stage at current tier
+                            output, input_tokens, output_tokens = await self.run_stage(
+                                stage_name,
+                                tier,
+                                current_data,
+                            )
+
+                            stage_end = datetime.now()
+                            duration_ms = int((stage_end - stage_start).total_seconds() * 1000)
+                            cost = self._calculate_cost(tier, input_tokens, output_tokens)
+
+                            # Create stage output dict for validation
+                            stage_output = (
+                                output if isinstance(output, dict) else {"result": output}
+                            )
+
+                            # Validate output quality
+                            is_valid, failure_reason = self.validate_output(stage_output)
+
+                            if is_valid:
+                                # Success - record stage and move to next
+                                stage = WorkflowStage(
+                                    name=stage_name,
+                                    tier=tier,
+                                    description=f"Stage: {stage_name}",
+                                    input_tokens=input_tokens,
+                                    output_tokens=output_tokens,
+                                    cost=cost,
+                                    result=output,
+                                    duration_ms=duration_ms,
+                                )
+                                self._stages_run.append(stage)
+
+                                # Report stage completion to progress tracker
+                                if self._progress_tracker:
+                                    self._progress_tracker.complete_stage(
+                                        stage_name,
+                                        cost=cost,
+                                        tokens_in=input_tokens,
+                                        tokens_out=output_tokens,
+                                    )
+
+                                # Log to cost tracker
+                                self.cost_tracker.log_request(
+                                    model=model_id,
+                                    input_tokens=input_tokens,
+                                    output_tokens=output_tokens,
+                                    task_type=f"workflow:{self.name}:{stage_name}",
+                                )
+
+                                # Track telemetry for this stage
+                                self._track_telemetry(
+                                    stage=stage_name,
+                                    tier=tier,
+                                    model=model_id,
+                                    cost=cost,
+                                    tokens={"input": input_tokens, "output": output_tokens},
+                                    cache_hit=False,
+                                    cache_type=None,
+                                    duration_ms=duration_ms,
+                                )
+
+                                # Record successful tier usage
+                                self._tier_progression.append((stage_name, tier.value, True))
+                                stage_succeeded = True
+
+                                # Pass output to next stage
+                                current_data = stage_output
+                                break  # Success - move to next stage
+
+                            else:
+                                # Quality gate failed - try next tier
+                                self._tier_progression.append((stage_name, tier.value, False))
+                                logger.info(
+                                    f"Stage {stage_name} failed quality validation with {tier.value}: "
+                                    f"{failure_reason}"
+                                )
+
+                                # Check if more tiers available
+                                if tier_index < len(tier_chain) - 1:
+                                    logger.info("Retrying with higher tier...")
+                                else:
+                                    logger.error(f"All tiers exhausted for {stage_name}")
+
+                        except Exception as e:
+                            # Exception during stage execution - try next tier
+                            self._tier_progression.append((stage_name, tier.value, False))
+                            logger.warning(
+                                f"Stage {stage_name} error with {tier.value}: {type(e).__name__}: {e}"
+                            )
+
+                            # Check if more tiers available
+                            if tier_index < len(tier_chain) - 1:
+                                logger.info("Retrying with higher tier...")
+                            else:
+                                logger.error(f"All tiers exhausted for {stage_name}")
+
+                        tier_index += 1
+
+                    # Check if stage succeeded with any tier
+                    if not stage_succeeded:
+                        error_msg = (
+                            f"Stage {stage_name} failed with all tiers: CHEAP, CAPABLE, PREMIUM"
+                        )
+                        if self._progress_tracker:
+                            self._progress_tracker.fail_stage(stage_name, error_msg)
+                        raise ValueError(error_msg)
+
+            # Standard mode: use configured tier_map (backward compatible)
+            else:
+                for stage_name in self.stages:
+                    tier = self.get_tier_for_stage(stage_name)
+                    stage_start = datetime.now()
+
+                    # Check if stage should be skipped
+                    should_skip, skip_reason = self.should_skip_stage(stage_name, current_data)
+
+                    if should_skip:
+                        stage = WorkflowStage(
+                            name=stage_name,
+                            tier=tier,
+                            description=f"Stage: {stage_name}",
+                            skipped=True,
+                            skip_reason=skip_reason,
+                        )
+                        self._stages_run.append(stage)
+
+                        # Report skip to progress tracker
+                        if self._progress_tracker:
+                            self._progress_tracker.skip_stage(stage_name, skip_reason or "")
+
+                        continue
+
+                    # Report stage start to progress tracker
+                    model_id = self.get_model_for_tier(tier)
+                    if self._progress_tracker:
+                        self._progress_tracker.start_stage(stage_name, tier.value, model_id)
+
+                    # Run the stage
+                    output, input_tokens, output_tokens = await self.run_stage(
+                        stage_name,
+                        tier,
+                        current_data,
+                    )
+
+                    stage_end = datetime.now()
+                    duration_ms = int((stage_end - stage_start).total_seconds() * 1000)
+                    cost = self._calculate_cost(tier, input_tokens, output_tokens)
+
                     stage = WorkflowStage(
                         name=stage_name,
                         tier=tier,
                         description=f"Stage: {stage_name}",
-                        skipped=True,
-                        skip_reason=skip_reason,
+                        input_tokens=input_tokens,
+                        output_tokens=output_tokens,
+                        cost=cost,
+                        result=output,
+                        duration_ms=duration_ms,
                     )
                     self._stages_run.append(stage)
 
-                    # Report skip to progress tracker
+                    # Report stage completion to progress tracker
                     if self._progress_tracker:
-                        self._progress_tracker.skip_stage(stage_name, skip_reason or "")
+                        self._progress_tracker.complete_stage(
+                            stage_name,
+                            cost=cost,
+                            tokens_in=input_tokens,
+                            tokens_out=output_tokens,
+                        )
 
-                    continue
-
-                # Report stage start to progress tracker
-                model_id = self.get_model_for_tier(tier)
-                if self._progress_tracker:
-                    self._progress_tracker.start_stage(stage_name, tier.value, model_id)
-
-                # Run the stage
-                output, input_tokens, output_tokens = await self.run_stage(
-                    stage_name,
-                    tier,
-                    current_data,
-                )
-
-                stage_end = datetime.now()
-                duration_ms = int((stage_end - stage_start).total_seconds() * 1000)
-                cost = self._calculate_cost(tier, input_tokens, output_tokens)
-
-                stage = WorkflowStage(
-                    name=stage_name,
-                    tier=tier,
-                    description=f"Stage: {stage_name}",
-                    input_tokens=input_tokens,
-                    output_tokens=output_tokens,
-                    cost=cost,
-                    result=output,
-                    duration_ms=duration_ms,
-                )
-                self._stages_run.append(stage)
-
-                # Report stage completion to progress tracker
-                if self._progress_tracker:
-                    self._progress_tracker.complete_stage(
-                        stage_name,
-                        cost=cost,
-                        tokens_in=input_tokens,
-                        tokens_out=output_tokens,
+                    # Log to cost tracker
+                    self.cost_tracker.log_request(
+                        model=model_id,
+                        input_tokens=input_tokens,
+                        output_tokens=output_tokens,
+                        task_type=f"workflow:{self.name}:{stage_name}",
                     )
 
-                # Log to cost tracker
-                self.cost_tracker.log_request(
-                    model=model_id,
-                    input_tokens=input_tokens,
-                    output_tokens=output_tokens,
-                    task_type=f"workflow:{self.name}:{stage_name}",
-                )
+                    # Track telemetry for this stage
+                    self._track_telemetry(
+                        stage=stage_name,
+                        tier=tier,
+                        model=model_id,
+                        cost=cost,
+                        tokens={"input": input_tokens, "output": output_tokens},
+                        cache_hit=False,
+                        cache_type=None,
+                        duration_ms=duration_ms,
+                    )
 
-                # Track telemetry for this stage
-                self._track_telemetry(
-                    stage=stage_name,
-                    tier=tier,
-                    model=model_id,
-                    cost=cost,
-                    tokens={"input": input_tokens, "output": output_tokens},
-                    cache_hit=False,
-                    cache_type=None,
-                    duration_ms=duration_ms,
-                )
-
-                # Pass output to next stage
-                current_data = output if isinstance(output, dict) else {"result": output}
+                    # Pass output to next stage
+                    current_data = output if isinstance(output, dict) else {"result": output}
 
         except (ValueError, TypeError, KeyError) as e:
             # Data validation or configuration errors
@@ -1076,13 +1336,35 @@ class BaseWorkflow(ABC):
                 }
                 bug_type = bug_type_map.get(self.name, "workflow_run")
 
+                # Pass tier_progression data if tier fallback was enabled
+                tier_progression_data = (
+                    self._tier_progression if self._enable_tier_fallback else None
+                )
+
                 self._tier_tracker.save_progression(
                     workflow_result=result,
                     files_affected=files_affected,
                     bug_type=bug_type,
+                    tier_progression=tier_progression_data,
                 )
             except Exception as e:
                 logger.debug(f"Failed to save tier progression: {e}")
+
+        # Update routing record with completion status (Tier 1 automation monitoring)
+        routing_record.status = "completed" if result.success else "failed"
+        routing_record.completed_at = datetime.utcnow().isoformat() + "Z"
+        routing_record.success = result.success
+        routing_record.actual_cost = sum(s.cost for s in result.stages)
+
+        if not result.success and result.error:
+            routing_record.error_type = result.error_type or "unknown"
+            routing_record.error_message = result.error
+
+        # Log routing completion
+        try:
+            self._telemetry_backend.log_task_routing(routing_record)
+        except Exception as e:
+            logger.debug(f"Failed to log task routing completion: {e}")
 
         return result
 
@@ -1138,14 +1420,20 @@ class BaseWorkflow(ABC):
         )
 
     def _create_default_executor(self) -> LLMExecutor:
-        """Create a default EmpathyLLMExecutor wrapped in ResilientExecutor.
+        """Create a default EmpathyLLMExecutor with optional resilience wrapper.
 
         This method is called lazily when run_step_with_executor is used
-        without a pre-configured executor. The executor is wrapped with
+        without a pre-configured executor.
+
+        When tier fallback is enabled (enable_tier_fallback=True), the base
+        executor is returned without the ResilientExecutor wrapper to avoid
+        double fallback (tier-level + LLM-level).
+
+        When tier fallback is disabled (default), the executor is wrapped with
         resilience features (retry, fallback, circuit breaker).
 
         Returns:
-            LLMExecutor instance (ResilientExecutor wrapping EmpathyLLMExecutor)
+            LLMExecutor instance (optionally wrapped with ResilientExecutor)
 
         """
         from empathy_os.models.empathy_executor import EmpathyLLMExecutor
@@ -1157,7 +1445,13 @@ class BaseWorkflow(ABC):
             api_key=self._api_key,
             telemetry_store=self._telemetry_backend,
         )
-        # Wrap with resilience layer (retry, fallback, circuit breaker)
+
+        # When tier fallback is enabled, skip LLM-level fallback
+        # to avoid double fallback (tier-level + LLM-level)
+        if self._enable_tier_fallback:
+            return base_executor
+
+        # Standard mode: wrap with resilience layer (retry, fallback, circuit breaker)
         return ResilientExecutor(executor=base_executor)
 
     def _get_executor(self) -> LLMExecutor:

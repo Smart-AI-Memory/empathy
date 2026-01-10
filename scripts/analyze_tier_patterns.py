@@ -15,10 +15,9 @@ Usage:
 """
 
 import json
-from pathlib import Path
-from typing import Dict, List, Optional
 from collections import defaultdict
 from dataclasses import dataclass
+from pathlib import Path
 
 
 @dataclass
@@ -40,7 +39,7 @@ class TierPatternAnalyzer:
         self.patterns_dir = patterns_dir
         self.patterns = self._load_patterns()
 
-    def _load_patterns(self) -> List[Dict]:
+    def _load_patterns(self) -> list[dict]:
         """Load all patterns with tier_progression data."""
         patterns = []
 
@@ -59,7 +58,7 @@ class TierPatternAnalyzer:
 
         return patterns
 
-    def analyze_by_bug_type(self, bug_type: Optional[str] = None) -> Dict:
+    def analyze_by_bug_type(self, bug_type: str | None = None) -> dict:
         """Analyze tier success rates by bug type."""
 
         filtered = self.patterns
@@ -183,7 +182,7 @@ class TierPatternAnalyzer:
             avg_attempts=avg_attempts,
         )
 
-    def calculate_savings(self) -> Dict:
+    def calculate_savings(self) -> dict:
         """Calculate total savings from cascading tier approach."""
 
         if not self.patterns:
@@ -208,7 +207,7 @@ class TierPatternAnalyzer:
             "cost_per_bug": round(total_cost / len(self.patterns), 3),
         }
 
-    def quality_gate_report(self) -> Dict:
+    def quality_gate_report(self) -> dict:
         """Analyze which quality gates catch the most issues."""
 
         gate_failures = defaultdict(int)
@@ -239,7 +238,7 @@ class TierPatternAnalyzer:
             ],
         }
 
-    def xml_protocol_effectiveness(self) -> Dict:
+    def xml_protocol_effectiveness(self) -> dict:
         """Analyze XML protocol compliance and effectiveness."""
 
         if not self.patterns:
@@ -321,7 +320,7 @@ def main():
     else:
         print(f"Bug type: {analysis['bug_type']}")
         print(f"Total patterns: {analysis['total_patterns']}")
-        print(f"\nTier Distribution:")
+        print("\nTier Distribution:")
         for tier, count in analysis["tier_distribution"].items():
             percent = (count / analysis["total_patterns"]) * 100
             print(f"  {tier}: {count} ({percent:.1f}%)")

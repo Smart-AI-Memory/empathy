@@ -233,6 +233,26 @@ class ProgressTracker:
             message += f": {reason}"
         self._emit(ProgressStatus.SKIPPED, message)
 
+    def update_tier(self, stage_name: str, new_tier: str, reason: str = "") -> None:
+        """Update the tier for a stage during tier fallback.
+
+        Args:
+            stage_name: Name of the stage
+            new_tier: New tier being attempted (CHEAP, CAPABLE, PREMIUM)
+            reason: Optional reason for tier change (e.g., "validation_failed")
+
+        """
+        stage = self._get_stage(stage_name)
+        if stage:
+            old_tier = stage.tier
+            stage.tier = new_tier
+
+            message = f"Tier upgrade: {stage_name} [{old_tier.upper()} → {new_tier.upper()}]"
+            if reason:
+                message += f" ({reason})"
+
+            self._emit(ProgressStatus.RUNNING, message)
+
     def fallback_occurred(
         self,
         stage_name: str,
@@ -382,7 +402,15 @@ class ConsoleProgressReporter:
             ProgressStatus.RETRYING: "↻",
         }.get(update.status, "?")
 
-        print(f"[{percent}] {status_icon} {update.message} ({cost})")
+        # Get current tier from running stage
+        tier_info = ""
+        if update.current_stage and update.stages:
+            for stage in update.stages:
+                if stage.name == update.current_stage and stage.status == ProgressStatus.RUNNING:
+                    tier_info = f" [{stage.tier.upper()}]"
+                    break
+
+        print(f"[{percent}] {status_icon} {update.message}{tier_info} ({cost})")
 
         if self.verbose and update.fallback_info:
             print(f"       Fallback: {update.fallback_info}")

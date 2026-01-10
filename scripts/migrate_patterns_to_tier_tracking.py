@@ -12,10 +12,8 @@ The tier progression is inferred based on bug complexity and type.
 """
 
 import json
-import re
-from pathlib import Path
-from typing import Dict, List, Tuple
 from datetime import datetime
+from pathlib import Path
 
 
 class PatternMigrator:
@@ -33,12 +31,12 @@ class PatternMigrator:
         self.patterns_file = patterns_file
         self.patterns_data = self._load_patterns()
 
-    def _load_patterns(self) -> Dict:
+    def _load_patterns(self) -> dict:
         """Load existing patterns."""
         with open(self.patterns_file) as f:
             return json.load(f)
 
-    def classify_bug_type(self, pattern: Dict) -> str:
+    def classify_bug_type(self, pattern: dict) -> str:
         """Classify bug type from root_cause text."""
         root_cause = pattern.get("root_cause", "").lower()
         bug_type = pattern.get("bug_type", "unknown")
@@ -67,7 +65,7 @@ class PatternMigrator:
 
         return "unknown"
 
-    def infer_tier_progression(self, pattern: Dict, bug_type: str) -> Dict:
+    def infer_tier_progression(self, pattern: dict, bug_type: str) -> dict:
         """
         Infer tier progression based on bug type and complexity.
 
@@ -117,7 +115,7 @@ class PatternMigrator:
 
     def _determine_tier_and_attempts(
         self, bug_type: str, root_cause: str, files_count: int
-    ) -> Tuple[str, int]:
+    ) -> tuple[str, int]:
         """Determine appropriate tier and number of attempts."""
 
         # Simple fixes → CHEAP, 1 attempt
@@ -167,7 +165,7 @@ class PatternMigrator:
             return "CAPABLE", 2
         return "CHEAP", 1
 
-    def _build_tier_history(self, tier: str, attempts: int) -> List[Dict]:
+    def _build_tier_history(self, tier: str, attempts: int) -> list[dict]:
         """Build tier history based on tier and attempts."""
         if attempts == 1:
             # Succeeded on first try
@@ -200,7 +198,7 @@ class PatternMigrator:
                 }
             ]
 
-    def _calculate_costs(self, tier: str, attempts: int) -> Dict:
+    def _calculate_costs(self, tier: str, attempts: int) -> dict:
         """Calculate cost breakdown for tier and attempts."""
         cost_per_attempt = self.TIER_COSTS[tier]
         total_cost = cost_per_attempt * attempts
@@ -218,7 +216,7 @@ class PatternMigrator:
             "savings_percent": savings_percent,
         }
 
-    def migrate_pattern(self, pattern: Dict) -> Dict:
+    def migrate_pattern(self, pattern: dict) -> dict:
         """Migrate a single pattern to enhanced format."""
         # Only migrate resolved patterns
         if pattern.get("status") != "resolved":
@@ -241,7 +239,7 @@ class PatternMigrator:
 
         return enhanced
 
-    def migrate_all(self) -> Dict:
+    def migrate_all(self) -> dict:
         """Migrate all patterns."""
         patterns = self.patterns_data.get("patterns", [])
 
@@ -289,7 +287,7 @@ class PatternMigrator:
             json.dump(migrated, f, indent=2)
 
         metadata = migrated["migration_metadata"]
-        print(f"\n✅ Migration complete!")
+        print("\n✅ Migration complete!")
         print(f"   Total patterns: {metadata['total_patterns']}")
         print(f"   Migrated: {metadata['migrated']}")
         print(f"   Skipped: {metadata['skipped']}")
@@ -331,14 +329,14 @@ def main():
     if args.dry_run:
         migrated = migrator.migrate_all()
         metadata = migrated["migration_metadata"]
-        print(f"\n🔍 DRY RUN - No files modified")
+        print("\n🔍 DRY RUN - No files modified")
         print(f"   Would migrate: {metadata['migrated']} patterns")
         print(f"   Would skip: {metadata['skipped']} patterns")
 
         # Show sample of migrated pattern
         enhanced = [p for p in migrated["patterns"] if "tier_progression" in p]
         if enhanced:
-            print(f"\n📄 Sample enhanced pattern:")
+            print("\n📄 Sample enhanced pattern:")
             sample = enhanced[0]
             print(f"   ID: {sample['pattern_id']}")
             print(f"   Type: {sample['bug_type']}")

@@ -370,6 +370,167 @@ class MetricsUpdate(BaseModel):
 
 
 # ============================================================================
+# Tier 1 Automation Monitoring Responses
+# ============================================================================
+
+
+class TaskRoutingStatsResponse(BaseModel):
+    """Task routing statistics response."""
+
+    total_tasks: int
+    successful_routing: int
+    accuracy_rate: float
+    avg_confidence: float
+    by_task_type: dict[str, dict]
+    by_strategy: dict[str, dict]
+    timestamp: str
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "total_tasks": 150,
+                "successful_routing": 142,
+                "accuracy_rate": 0.947,
+                "avg_confidence": 0.92,
+                "by_task_type": {
+                    "code_review": {"total": 50, "success": 48, "rate": 0.96},
+                    "test_gen": {"total": 45, "success": 43, "rate": 0.956},
+                },
+                "by_strategy": {
+                    "rule_based": {"total": 100, "success": 95},
+                    "ml_predicted": {"total": 50, "success": 47},
+                },
+                "timestamp": "2025-01-15T12:34:56.789Z",
+            },
+        }
+
+
+class TestExecutionStatsResponse(BaseModel):
+    """Test execution statistics response."""
+
+    total_executions: int
+    success_rate: float
+    avg_duration_seconds: float
+    total_tests_run: int
+    total_failures: int
+    coverage_trend: str
+    most_failing_tests: list[dict]
+    timestamp: str
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "total_executions": 25,
+                "success_rate": 0.88,
+                "avg_duration_seconds": 45.2,
+                "total_tests_run": 2500,
+                "total_failures": 15,
+                "coverage_trend": "improving",
+                "most_failing_tests": [
+                    {"name": "test_authentication", "failures": 5},
+                    {"name": "test_database_connection", "failures": 3},
+                ],
+                "timestamp": "2025-01-15T12:34:56.789Z",
+            },
+        }
+
+
+class CoverageStatsResponse(BaseModel):
+    """Test coverage statistics response."""
+
+    current_coverage: float
+    previous_coverage: float
+    change: float
+    trend: str
+    coverage_history: list[dict]
+    files_improved: int
+    files_declined: int
+    critical_gaps_count: int
+    timestamp: str
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "current_coverage": 85.3,
+                "previous_coverage": 82.1,
+                "change": 3.2,
+                "trend": "improving",
+                "coverage_history": [
+                    {"timestamp": "2025-01-08T12:00:00Z", "coverage": 82.1, "trend": "stable"},
+                    {"timestamp": "2025-01-15T12:00:00Z", "coverage": 85.3, "trend": "improving"},
+                ],
+                "files_improved": 12,
+                "files_declined": 2,
+                "critical_gaps_count": 5,
+                "timestamp": "2025-01-15T12:34:56.789Z",
+            },
+        }
+
+
+class AgentPerformanceResponse(BaseModel):
+    """Agent performance metrics response."""
+
+    total_assignments: int
+    by_agent: dict[str, dict]
+    automation_rate: float
+    human_review_rate: float
+    timestamp: str
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "total_assignments": 80,
+                "by_agent": {
+                    "test_gen_workflow": {
+                        "assignments": 50,
+                        "completed": 47,
+                        "success_rate": 0.94,
+                        "avg_duration_hours": 0.5,
+                        "quality_score_avg": 0.88,
+                    },
+                    "code_review_workflow": {
+                        "assignments": 30,
+                        "completed": 28,
+                        "success_rate": 0.933,
+                        "avg_duration_hours": 0.3,
+                        "quality_score_avg": 0.92,
+                    },
+                },
+                "automation_rate": 0.75,
+                "human_review_rate": 0.10,
+                "timestamp": "2025-01-15T12:34:56.789Z",
+            },
+        }
+
+
+class Tier1SummaryResponse(BaseModel):
+    """Comprehensive Tier 1 summary response."""
+
+    task_routing: TaskRoutingStatsResponse
+    test_execution: TestExecutionStatsResponse
+    coverage: CoverageStatsResponse
+    agent_performance: AgentPerformanceResponse
+    cost_savings: dict
+    timestamp: str
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "task_routing": {
+                    "total_tasks": 150,
+                    "successful_routing": 142,
+                    "accuracy_rate": 0.947,
+                },
+                "test_execution": {"total_executions": 25, "success_rate": 0.88},
+                "coverage": {"current_coverage": 85.3, "trend": "improving"},
+                "agent_performance": {"automation_rate": 0.75},
+                "cost_savings": {"total_savings": 125.50, "savings_percent": 42.3},
+                "timestamp": "2025-01-15T12:34:56.789Z",
+            },
+        }
+
+
+# ============================================================================
 # Error Responses
 # ============================================================================
 

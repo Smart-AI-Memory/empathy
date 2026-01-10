@@ -57,6 +57,9 @@ from .code_review_pipeline import CodeReviewPipeline, CodeReviewPipelineResult
 from .config import DEFAULT_MODELS, ModelConfig, WorkflowConfig, create_example_config, get_model
 from .dependency_check import DependencyCheckWorkflow
 from .document_gen import DocumentGenerationWorkflow
+
+# User-generated workflows
+from .document_manager import DocumentManagerWorkflow
 from .documentation_orchestrator import DocumentationOrchestrator, OrchestratorResult
 from .health_check import HealthCheckWorkflow
 
@@ -73,8 +76,6 @@ from .research_synthesis import ResearchSynthesisWorkflow
 from .secure_release import SecureReleasePipeline, SecureReleaseResult
 from .security_audit import SecurityAuditWorkflow
 from .step_config import WorkflowStepConfig, steps_from_tier_map, validate_step_config
-
-# User-generated workflows
 from .test5 import Test5Workflow
 from .test_gen import TestGenerationWorkflow
 
@@ -129,6 +130,7 @@ _DEFAULT_WORKFLOWS: dict[str, type] = {
     # Keyboard Conductor (v3.6) - keyboard shortcut generation
     "keyboard-shortcuts": KeyboardShortcutWorkflow,
     # User-generated workflows
+    "document-manager": DocumentManagerWorkflow,
     "test5": Test5Workflow,
 }
 
@@ -312,6 +314,7 @@ __all__ = [
     "CostReport",
     "DependencyCheckWorkflow",
     "DocumentGenerationWorkflow",
+    "DocumentManagerWorkflow",
     # Documentation management (v3.5)
     "DocumentationOrchestrator",
     # Health check crew integration (v3.1)

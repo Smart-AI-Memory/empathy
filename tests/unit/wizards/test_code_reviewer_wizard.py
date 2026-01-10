@@ -6,11 +6,7 @@ Target Coverage: 90%
 Generated: 2026-01-05T20:15:45.112306
 """
 
-import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
-
 import pytest
-
 from wizards.code_reviewer_wizard import CodeReviewerWizard
 
 
