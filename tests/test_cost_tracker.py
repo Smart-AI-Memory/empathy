@@ -130,10 +130,13 @@ class TestRequestLogging:
         assert result["savings"] > 0  # Haiku saves vs Opus
 
     def test_log_request_updates_daily_totals(self, tmp_path):
-        """Test that logging updates daily totals."""
+        """Test that logging updates daily totals (after flush)."""
         tracker = CostTracker(storage_dir=str(tmp_path / ".empathy"))
         tracker.log_request("claude-3-haiku-20240307", 1000, 500, "test")
         tracker.log_request("claude-3-haiku-20240307", 2000, 1000, "test")
+
+        # Flush to update daily totals
+        tracker.flush()
 
         today = datetime.now().strftime("%Y-%m-%d")
         daily = tracker.data["daily_totals"][today]
@@ -142,16 +145,21 @@ class TestRequestLogging:
         assert daily["output_tokens"] == 1500
 
     def test_log_request_saves_to_file(self, tmp_path):
-        """Test that logging saves data to file."""
+        """Test that logging saves data to file (JSONL format)."""
         storage_dir = tmp_path / ".empathy"
         tracker = CostTracker(storage_dir=str(storage_dir))
         tracker.log_request("claude-3-haiku-20240307", 1000, 500, "test")
 
-        # Reload from file
-        with open(storage_dir / "costs.json") as f:
-            saved_data = json.load(f)
+        # Flush to write to disk
+        tracker.flush()
 
-        assert len(saved_data["requests"]) == 1
+        # Check JSONL file exists and has data
+        assert (storage_dir / "costs.jsonl").exists()
+        with open(storage_dir / "costs.jsonl") as f:
+            lines = f.readlines()
+            assert len(lines) == 1
+            request = json.loads(lines[0])
+            assert request["model"] == "claude-3-haiku-20240307"
 
     def test_log_request_limits_stored_requests(self, tmp_path):
         """Test that only last 1000 requests are kept."""

@@ -23212,6 +23212,206 @@
         "started_at": "2026-01-10T05:34:14.378853",
         "completed_at": "2026-01-10T05:34:41.404926"
       }
+    },
+    {
+      "pattern_id": "workflow_20260110_b056942e",
+      "bug_type": "workflow_run",
+      "status": "resolved",
+      "root_cause": "Workflow: perf-audit - Identify performance bottlenecks and optimization opportunities",
+      "fix": "Completed via perf-audit workflow",
+      "resolved_by": "@empathy_framework",
+      "resolved_at": "2026-01-10",
+      "files_affected": [],
+      "source": "workflow_tracking",
+      "tier_progression": {
+        "methodology": "AI-ADDIE",
+        "recommended_tier": "CHEAP",
+        "starting_tier": "PREMIUM",
+        "successful_tier": "PREMIUM",
+        "total_attempts": 3,
+        "tier_history": [
+          {
+            "tier": "CHEAP",
+            "attempts": 1,
+            "success": {
+              "attempt": 1,
+              "quality_gates_passed": [
+                "execution",
+                "output"
+              ]
+            }
+          },
+          {
+            "tier": "CAPABLE",
+            "attempts": 2,
+            "success": {
+              "attempt": 2,
+              "quality_gates_passed": [
+                "execution",
+                "output"
+              ]
+            }
+          },
+          {
+            "tier": "PREMIUM",
+            "attempts": 1,
+            "success": {
+              "attempt": 1,
+              "quality_gates_passed": [
+                "execution",
+                "output"
+              ]
+            }
+          }
+        ],
+        "cost_breakdown": {
+          "total_cost": 0.083,
+          "cost_if_always_premium": 0.417,
+          "savings_percent": 80.0
+        },
+        "quality_metrics": {
+          "tests_passed": true,
+          "health_score_before": 73,
+          "health_score_after": 73
+        },
+        "xml_protocol_compliance": {
+          "prompt_used_xml": true,
+          "response_used_xml": true,
+          "all_sections_present": true,
+          "test_evidence_provided": true,
+          "false_complete_avoided": true
+        }
+      },
+      "workflow_metadata": {
+        "workflow_name": "perf-audit",
+        "workflow_id": "b056942e-fe5d-49c7-b91a-4744680a74e5",
+        "duration_seconds": 1.72,
+        "started_at": "2026-01-10T06:13:35.590809",
+        "completed_at": "2026-01-10T06:13:37.309237"
+      }
+    },
+    {
+      "pattern_id": "workflow_20260110_acc49c2d",
+      "bug_type": "health_check",
+      "status": "resolved",
+      "root_cause": "Workflow: health-check - Project health diagnosis and fixing with 5-agent crew",
+      "fix": "Completed via health-check workflow",
+      "resolved_by": "@empathy_framework",
+      "resolved_at": "2026-01-10",
+      "files_affected": [
+        "."
+      ],
+      "source": "workflow_tracking",
+      "tier_progression": {
+        "methodology": "AI-ADDIE",
+        "recommended_tier": "CHEAP",
+        "starting_tier": "CAPABLE",
+        "successful_tier": "CAPABLE",
+        "total_attempts": 1,
+        "tier_history": [
+          {
+            "tier": "CAPABLE",
+            "attempts": 2,
+            "success": {
+              "attempt": 2,
+              "quality_gates_passed": [
+                "execution",
+                "output"
+              ]
+            }
+          }
+        ],
+        "cost_breakdown": {
+          "total_cost": 0.002,
+          "cost_if_always_premium": 0.012,
+          "savings_percent": 80.0
+        },
+        "quality_metrics": {
+          "tests_passed": true,
+          "health_score_before": 73,
+          "health_score_after": 73
+        },
+        "xml_protocol_compliance": {
+          "prompt_used_xml": true,
+          "response_used_xml": true,
+          "all_sections_present": true,
+          "test_evidence_provided": true,
+          "false_complete_avoided": true
+        }
+      },
+      "workflow_metadata": {
+        "workflow_name": "health-check",
+        "workflow_id": "acc49c2d-a9ab-4e92-be92-370e8dcb3fb0",
+        "duration_seconds": 31.72,
+        "started_at": "2026-01-10T06:14:32.204833",
+        "completed_at": "2026-01-10T06:15:03.929587"
+      }
+    },
+    {
+      "pattern_id": "workflow_20260110_b153bcce",
+      "bug_type": "workflow_run",
+      "status": "resolved",
+      "root_cause": "Workflow: dependency-check - Audit dependencies for vulnerabilities and updates",
+      "fix": "Completed via dependency-check workflow",
+      "resolved_by": "@empathy_framework",
+      "resolved_at": "2026-01-10",
+      "files_affected": [],
+      "source": "workflow_tracking",
+      "tier_progression": {
+        "methodology": "AI-ADDIE",
+        "recommended_tier": "CHEAP",
+        "starting_tier": "CAPABLE",
+        "successful_tier": "CAPABLE",
+        "total_attempts": 2,
+        "tier_history": [
+          {
+            "tier": "CHEAP",
+            "attempts": 1,
+            "success": {
+              "attempt": 1,
+              "quality_gates_passed": [
+                "execution",
+                "output"
+              ]
+            }
+          },
+          {
+            "tier": "CAPABLE",
+            "attempts": 2,
+            "success": {
+              "attempt": 2,
+              "quality_gates_passed": [
+                "execution",
+                "output"
+              ]
+            }
+          }
+        ],
+        "cost_breakdown": {
+          "total_cost": 0.006,
+          "cost_if_always_premium": 0.031,
+          "savings_percent": 80.0
+        },
+        "quality_metrics": {
+          "tests_passed": true,
+          "health_score_before": 73,
+          "health_score_after": 73
+        },
+        "xml_protocol_compliance": {
+          "prompt_used_xml": true,
+          "response_used_xml": true,
+          "all_sections_present": true,
+          "test_evidence_provided": true,
+          "false_complete_avoided": true
+        }
+      },
+      "workflow_metadata": {
+        "workflow_name": "dependency-check",
+        "workflow_id": "b153bcce-8e43-4143-9e9d-100f0f892f9e",
+        "duration_seconds": 0.05,
+        "started_at": "2026-01-10T06:25:53.757801",
+        "completed_at": "2026-01-10T06:25:53.806467"
+      }
     }
   ],
   "last_updated": "2026-01-07T00:51:52.358772",

@@ -12,8 +12,10 @@ Licensed under Fair Source License 0.9
 import sys
 from pathlib import Path
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+# Add project root to path (for scripts/ and src/)
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+sys.path.insert(0, str(project_root / "src"))
 
 from scripts.profile_utils import profile_function, time_function
 
@@ -22,18 +24,19 @@ from scripts.profile_utils import profile_function, time_function
 @time_function
 def profile_scanner():
     """Profile project scanner on real codebase."""
-    from empathy_os.project_index import ProjectIndex
+    from empathy_os.project_index.scanner import ProjectScanner
 
     print("\n" + "=" * 60)
     print("Profiling: Project Scanner")
     print("=" * 60)
 
-    index = ProjectIndex(project_root=".")
-    records, summary = index.scan()
+    scanner = ProjectScanner(project_root=".")
+    records, summary = scanner.scan()
 
     print(f"✓ Scanned {summary.total_files} files")
+    print(f"✓ Source files: {summary.source_files}")
+    print(f"✓ Test files: {summary.test_files}")
     print(f"✓ Lines of code: {summary.total_lines_of_code:,}")
-    print(f"✓ Test files: {summary.test_file_count}")
 
 
 @profile_function(output_file="benchmarks/profiles/pattern_library.prof")
@@ -51,20 +54,27 @@ def profile_pattern_library():
     # Create some test patterns
     for i in range(100):
         pattern = Pattern(
+            id=f"pat_{i:03d}",
+            agent_id=f"agent_{i % 10}",
+            pattern_type=["sequential", "temporal", "conditional", "behavioral"][i % 4],
             name=f"test_pattern_{i}",
             description=f"Test pattern {i}",
-            trigger=f"trigger_{i}",
-            response=f"response_{i}",
             tags=[f"tag_{i % 10}"],
             confidence=0.5 + (i % 50) / 100,
         )
-        library.add_pattern(pattern)
+        library.contribute_pattern(f"agent_{i % 10}", pattern)
 
     # Simulate pattern matching
     match_count = 0
     for i in range(1000):
-        context = {"query": f"test query {i}", "history": [f"item {j}" for j in range(10)]}
-        matches = library.match(context)
+        context = {
+            "task_type": f"task_{i % 5}",
+            "user_role": "developer",
+            "time_of_day": ["morning", "afternoon", "evening"][i % 3],
+        }
+        matches = library.query_patterns(
+            agent_id=f"agent_{i % 10}", context=context, pattern_type=None
+        )
         match_count += len(matches)
 
     print(f"✓ Created 100 patterns")
@@ -94,11 +104,11 @@ def profile_cost_tracker():
         )
 
     summary = tracker.get_summary(days=7)
-    report = tracker.get_report(days=7)
 
     print(f"✓ Logged 1000 requests")
-    print(f"✓ Total cost: ${summary['total_cost']:.4f}")
-    print(f"✓ Total tokens: {summary['total_tokens']:,}")
+    print(f"✓ Actual cost: ${summary['actual_cost']:.4f}")
+    print(f"✓ Input tokens: {summary['input_tokens']:,}")
+    print(f"✓ Output tokens: {summary['output_tokens']:,}")
 
 
 @profile_function(output_file="benchmarks/profiles/feedback_loops.prof")
@@ -113,25 +123,37 @@ def profile_feedback_loops():
 
     detector = FeedbackLoopDetector()
 
-    # Simulate session history
+    # Generate test session history
+    session_history = []
     for i in range(500):
-        session_data = {
-            "trust": 0.5 + (i % 50) / 100,
-            "success_rate": 0.6 + (i % 40) / 100,
-            "patterns_used": i % 10,
-            "user_satisfaction": 0.7 + (i % 30) / 100,
-        }
-        detector.update_metrics(session_data)
+        session_history.append(
+            {
+                "trust": 0.5 + (i % 50) / 100,
+                "success_rate": 0.6 + (i % 40) / 100,
+                "patterns_used": i % 10,
+                "user_satisfaction": 0.7 + (i % 30) / 100,
+            }
+        )
 
-    # Detect loops
-    virtuous = detector.detect_virtuous_cycle(metric="trust")
-    vicious = detector.detect_vicious_cycle(metric="success_rate")
-    active_loops = detector.detect_active_loop()
+    # Detect loops multiple times (simulate repeated checks)
+    virtuous_count = 0
+    vicious_count = 0
+    active_count = 0
 
-    print(f"✓ Processed 500 session updates")
-    print(f"✓ Virtuous cycles: {len([v for v in [virtuous] if v])}")
-    print(f"✓ Vicious cycles: {len([v for v in [vicious] if v])}")
-    print(f"✓ Active loops: {len(active_loops)}")
+    for _ in range(100):
+        if detector.detect_virtuous_cycle(session_history):
+            virtuous_count += 1
+        if detector.detect_vicious_cycle(session_history):
+            vicious_count += 1
+        active = detector.detect_active_loop(session_history)
+        if active:
+            active_count += 1
+
+    print(f"✓ Generated 500-item session history")
+    print(f"✓ Ran 100 detection cycles")
+    print(f"✓ Virtuous cycles detected: {virtuous_count}")
+    print(f"✓ Vicious cycles detected: {vicious_count}")
+    print(f"✓ Active loops detected: {active_count}")
 
 
 @time_function
