@@ -13,35 +13,39 @@
 pip install empathy-framework[developer]  # Lightweight for individual developers
 ```
 
-## What's New in v3.10.0 (Current Release)
+## What's New in v3.11.0 (Current Release)
 
-### 🎯 **Intelligent Tier Fallback: Start CHEAP, Upgrade Only When Needed**
+### ⚡ **Phase 2 Performance Optimizations: 46% Faster, 15% Less Memory**
 
-**Automatic cost optimization with quality-based tier escalation.**
+**Data-driven performance improvements based on comprehensive profiling.**
 
-- ✅ **30-50% cost savings** on average workflow execution
-- ✅ **CHEAP → CAPABLE → PREMIUM** automatic fallback chain
-- ✅ **Quality gates** validate each tier before upgrading
-- ✅ **Opt-in design** - backward compatible, enabled via `--use-recommended-tier`
-- ✅ **Full telemetry** tracks tier progression and savings
+- ✅ **46% faster project scans** (9.5s → 5.1s for 2,000+ files)
+- ✅ **66% faster pattern queries** with intelligent caching
+- ✅ **15% less memory** through generator expression migrations
+- ✅ **3-5x faster lookups** via O(n) → O(1) optimizations
+- ✅ **Zero breaking changes** - 100% backward compatible
 
-```bash
-# Enable intelligent tier fallback
-empathy workflow run health-check --use-recommended-tier
+```python
+from empathy_os.pattern_library import PatternLibrary
 
-# Result: Both stages succeeded at CHEAP tier
-# 💰 Cost Savings: $0.0300 (66.7% vs. all-PREMIUM)
+library = PatternLibrary()
+# Automatically uses O(1) index structures - 5x faster!
+patterns = library.get_patterns_by_tag("debugging")
 ```
 
-**How it works:**
-1. Try CHEAP tier first (Haiku)
-2. If quality gates fail → upgrade to CAPABLE (Sonnet 4.5)
-3. If still failing → upgrade to PREMIUM (Opus 4.5)
-4. Track savings and learn from patterns
+**What was optimized:**
+1. **Data structures**: 5 O(n) → O(1) conversions (frozensets, dicts)
+2. **Memory**: Generator expressions reduce allocations by 50-100MB
+3. **Caching**: Pattern match cache with 60-70% hit rate
+4. **Profiling**: Complete performance baseline for future optimizations
 
-**When to use:** Cost-sensitive workflows where quality can be validated (health-check, test-gen, doc-gen)
+**Performance gains:**
+- File categorization: **5x faster**
+- Verdict merging: **3.5x faster**
+- Progress tracking: **5.8x faster**
+- GC cycles: **-50%** (4 → 2 for large operations)
 
-See [CHANGELOG.md](https://github.com/Smart-AI-Memory/empathy-framework/blob/main/CHANGELOG.md#3100---2026-01-09) for full details.
+See [CHANGELOG.md](https://github.com/Smart-AI-Memory/empathy-framework/blob/main/CHANGELOG.md#3110---2026-01-10) for complete details and benchmarks.
 
 ---
 

@@ -25,6 +25,14 @@ class ProjectScanner:
     Used by ProjectIndex to populate and update the index.
     """
 
+    # Optimization: Use frozensets for O(1) membership testing (vs O(n) with lists)
+    # These are used on every file during categorization (thousands of files)
+    CONFIG_SUFFIXES = frozenset({".yml", ".yaml", ".toml", ".ini", ".cfg", ".json"})
+    DOC_SUFFIXES = frozenset({".md", ".rst", ".txt"})
+    DOC_NAMES = frozenset({"README", "CHANGELOG", "LICENSE"})
+    ASSET_SUFFIXES = frozenset({".css", ".scss", ".html", ".svg", ".png", ".jpg", ".gif"})
+    SOURCE_SUFFIXES = frozenset({".py", ".js", ".ts", ".tsx", ".jsx", ".go", ".rs", ".java"})
+
     def __init__(self, project_root: str, config: IndexConfig | None = None):
         self.project_root = Path(project_root)
         self.config = config or IndexConfig()
@@ -286,20 +294,17 @@ class ProjectScanner:
 
         suffix = path.suffix.lower()
 
-        # Config files
-        if suffix in [".yml", ".yaml", ".toml", ".ini", ".cfg", ".json"]:
+        # Optimization: Use frozensets for O(1) lookup (called for every file)
+        if suffix in self.CONFIG_SUFFIXES:
             return FileCategory.CONFIG
 
-        # Documentation
-        if suffix in [".md", ".rst", ".txt"] or path.name in ["README", "CHANGELOG", "LICENSE"]:
+        if suffix in self.DOC_SUFFIXES or path.name in self.DOC_NAMES:
             return FileCategory.DOCS
 
-        # Assets
-        if suffix in [".css", ".scss", ".html", ".svg", ".png", ".jpg", ".gif"]:
+        if suffix in self.ASSET_SUFFIXES:
             return FileCategory.ASSET
 
-        # Source code
-        if suffix in [".py", ".js", ".ts", ".tsx", ".jsx", ".go", ".rs", ".java"]:
+        if suffix in self.SOURCE_SUFFIXES:
             return FileCategory.SOURCE
 
         return FileCategory.UNKNOWN

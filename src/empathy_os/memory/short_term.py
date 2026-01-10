@@ -613,10 +613,12 @@ class RedisShortTermMemory:
         if self.use_mock:
             import fnmatch
 
+            # Use list comp for small result sets (typical <1000 keys)
             return [k for k in self._mock_storage.keys() if fnmatch.fnmatch(k, pattern)]
         if self._client is None:
             return []
         keys = self._client.keys(pattern)
+        # Convert bytes to strings - needed for API return type
         return [k.decode() if isinstance(k, bytes) else str(k) for k in keys]
 
     # === Working Memory (Stash/Retrieve) ===

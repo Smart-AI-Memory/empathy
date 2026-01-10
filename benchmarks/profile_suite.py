@@ -156,6 +156,175 @@ def profile_feedback_loops():
     print(f"✓ Active loops detected: {active_count}")
 
 
+@profile_function(output_file="benchmarks/profiles/workflow_execution.prof")
+@time_function
+def profile_workflow_execution():
+    """Profile workflow execution data processing."""
+    from empathy_os.workflows.base import ModelTier, _load_workflow_history
+
+    print("\n" + "=" * 60)
+    print("Profiling: Workflow Execution")
+    print("=" * 60)
+
+    # Load workflow history
+    history = _load_workflow_history()
+    print(f"✓ Loaded {len(history)} workflow history entries")
+
+    # Simulate workflow data processing
+    results = []
+    for i in range(200):
+        result_data = {
+            "workflow_id": f"workflow_{i % 5}",
+            "success": i % 10 != 0,
+            "output": {"result": f"Output {i}", "confidence": 0.5 + (i % 50) / 100},
+            "error": None if i % 10 != 0 else "Simulated error",
+            "metadata": {
+                "execution_time": 0.1 + (i % 10) / 100,
+                "tokens_used": 100 + i % 100,
+                "tier": ModelTier.CHEAP.value if i % 3 == 0 else ModelTier.CAPABLE.value,
+            },
+        }
+        results.append(result_data)
+
+    print(f"✓ Created {len(results)} workflow result objects")
+
+    # Process results
+    successful = sum(1 for r in results if r["success"])
+    failed = [r for r in results if not r["success"]]
+    avg_tokens = sum(r["metadata"]["tokens_used"] for r in results) / len(results)
+
+    print(f"✓ Success rate: {successful}/{len(results)} ({successful/len(results)*100:.1f}%)")
+    print(f"✓ Failed: {len(failed)}")
+    print(f"✓ Avg tokens: {avg_tokens:.0f}")
+
+
+@profile_function(output_file="benchmarks/profiles/memory_operations.prof")
+@time_function
+def profile_memory_operations():
+    """Profile unified memory operations."""
+    from empathy_os.memory.unified import UnifiedMemory
+    from empathy_os.pattern_library import Pattern
+
+    print("\n" + "=" * 60)
+    print("Profiling: Memory Operations")
+    print("=" * 60)
+
+    memory = UnifiedMemory(user_id="profiler_test")
+
+    # Test stash/retrieve operations (short-term memory)
+    stash_count = 0
+    for i in range(200):
+        key = f"temp_data_{i}"
+        value = {
+            "content": f"Memory content {i} " * 10,
+            "metadata": {
+                "timestamp": f"2026-01-10T00:{i:02d}:00Z",
+                "type": ["fact", "procedure", "experience"][i % 3],
+                "importance": 0.5 + (i % 50) / 100,
+            },
+        }
+        if memory.stash(key, value, ttl_seconds=3600):
+            stash_count += 1
+
+    print(f"✓ Stashed {stash_count} items in short-term memory")
+
+    # Test retrieval
+    retrieve_count = 0
+    for i in range(100):
+        key = f"temp_data_{i}"
+        result = memory.retrieve(key)
+        if result is not None:
+            retrieve_count += 1
+
+    print(f"✓ Retrieved {retrieve_count} items from short-term memory")
+
+    # Test pattern staging and persistence
+    pattern_count = 0
+    for i in range(50):
+        pattern_data = {
+            "id": f"memory_pattern_{i}",
+            "name": f"Test pattern {i}",
+            "description": f"Memory test pattern {i}",
+            "tags": [f"tag_{i % 10}"],
+            "confidence": 0.5 + (i % 50) / 100,
+            "examples": [f"example_{j}" for j in range(3)],
+        }
+        pattern_id = memory.stage_pattern(
+            pattern_data=pattern_data, pattern_type="sequential", ttl_hours=24
+        )
+        if pattern_id:
+            pattern_count += 1
+
+    print(f"✓ Staged {pattern_count} patterns")
+
+    # Get staged patterns
+    staged = memory.get_staged_patterns()
+    print(f"✓ Retrieved {len(staged)} staged patterns")
+
+    # Test pattern recall
+    recall_count = 0
+    for i in range(50):
+        pattern = memory.recall_pattern(pattern_id=f"memory_pattern_{i % pattern_count}")
+        if pattern:
+            recall_count += 1
+
+    print(f"✓ Recalled {recall_count} patterns")
+
+
+@profile_function(output_file="benchmarks/profiles/test_generation.prof")
+@time_function
+def profile_test_generation():
+    """Profile test generation workflow."""
+    from empathy_os.workflows.test_gen import TestGenerationWorkflow
+
+    print("\n" + "=" * 60)
+    print("Profiling: Test Generation")
+    print("=" * 60)
+
+    workflow = TestGenerationWorkflow()
+
+    # Simulate analyzing functions for test generation
+    test_functions = []
+    for i in range(50):
+        func_code = f"""
+def calculate_sum_{i}(a: int, b: int) -> int:
+    '''Calculate sum of two integers.
+
+    Args:
+        a: First integer
+        b: Second integer
+
+    Returns:
+        Sum of a and b
+
+    Raises:
+        TypeError: If inputs are not integers
+    '''
+    if not isinstance(a, int) or not isinstance(b, int):
+        raise TypeError("Inputs must be integers")
+    return a + b
+"""
+        test_functions.append(
+            {
+                "name": f"calculate_sum_{i}",
+                "code": func_code,
+                "docstring": "Calculate sum of two integers.",
+            }
+        )
+
+    print(f"✓ Created {len(test_functions)} function definitions")
+
+    # Simulate test case generation analysis
+    # (Note: We're not actually calling LLM, just testing the data structures)
+    test_cases_generated = 0
+    for func in test_functions:
+        # Simulate generating 3 test cases per function
+        test_cases_generated += 3
+
+    print(f"✓ Simulated generation of {test_cases_generated} test cases")
+    print(f"✓ Functions analyzed: {len(test_functions)}")
+
+
 @time_function
 def profile_file_operations():
     """Profile file I/O operations."""
@@ -197,6 +366,9 @@ if __name__ == "__main__":
         # Run profiling on key areas
         profile_scanner()
         profile_pattern_library()
+        profile_workflow_execution()
+        profile_memory_operations()
+        profile_test_generation()
         profile_cost_tracker()
         profile_feedback_loops()
         profile_file_operations()
@@ -208,6 +380,9 @@ if __name__ == "__main__":
         print("\nVisualize with snakeviz:")
         print("  snakeviz benchmarks/profiles/scanner_scan.prof")
         print("  snakeviz benchmarks/profiles/pattern_library.prof")
+        print("  snakeviz benchmarks/profiles/workflow_execution.prof")
+        print("  snakeviz benchmarks/profiles/memory_operations.prof")
+        print("  snakeviz benchmarks/profiles/test_generation.prof")
         print("  snakeviz benchmarks/profiles/cost_tracker.prof")
         print("  snakeviz benchmarks/profiles/feedback_loops.prof")
 

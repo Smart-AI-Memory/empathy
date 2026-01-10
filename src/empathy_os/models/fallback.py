@@ -94,6 +94,9 @@ class FallbackPolicy:
         chain: list[FallbackStep] = []
         all_providers = ["anthropic", "openai", "ollama"]
         all_tiers = ["premium", "capable", "cheap"]
+        # Optimization: Cache tier index for O(1) lookup (vs O(n) .index() call)
+        tier_index_map = {tier: i for i, tier in enumerate(all_tiers)}
+        tier_index = tier_index_map.get(self.primary_tier, 1)
 
         if self.strategy == FallbackStrategy.SAME_TIER_DIFFERENT_PROVIDER:
             # Try same tier with other providers
@@ -109,7 +112,6 @@ class FallbackPolicy:
 
         elif self.strategy == FallbackStrategy.CHEAPER_TIER_SAME_PROVIDER:
             # Try cheaper tiers with same provider
-            tier_index = all_tiers.index(self.primary_tier) if self.primary_tier in all_tiers else 1
             for tier in all_tiers[tier_index + 1 :]:
                 chain.append(
                     FallbackStep(
@@ -132,9 +134,6 @@ class FallbackPolicy:
                         ),
                     )
                     # Then cheaper tiers
-                    tier_index = (
-                        all_tiers.index(self.primary_tier) if self.primary_tier in all_tiers else 1
-                    )
                     for tier in all_tiers[tier_index + 1 :]:
                         chain.append(
                             FallbackStep(

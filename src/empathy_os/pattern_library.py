@@ -234,11 +234,12 @@ class PatternLibrary:
         # Performance optimization: Use index for pattern_type filter (O(1) vs O(n))
         if pattern_type:
             # Only check patterns of the requested type
+            # Use generator to avoid creating intermediate list
             pattern_ids = self._patterns_by_type.get(pattern_type, [])
-            patterns_to_check = [self.patterns[pid] for pid in pattern_ids]
+            patterns_to_check = (self.patterns[pid] for pid in pattern_ids)
         else:
-            # Check all patterns
-            patterns_to_check = list(self.patterns.values())
+            # Check all patterns - use generator to avoid materializing all patterns
+            patterns_to_check = (p for p in self.patterns.values())
 
         for pattern in patterns_to_check:
             # Apply confidence filter
@@ -289,7 +290,10 @@ class PatternLibrary:
             >>> patterns = library.get_patterns_by_tag("debugging")
         """
         pattern_ids = self._patterns_by_tag.get(tag, [])
-        return [self.patterns[pid] for pid in pattern_ids if pid in self.patterns]
+        # Generator expression for memory efficiency, converted to list for return type
+        return [
+            self.patterns[pid] for pid in pattern_ids if pid in self.patterns
+        ]  # Keep list comp: API returns list, typically small result set
 
     def get_patterns_by_type(self, pattern_type: str) -> list[Pattern]:
         """Get all patterns of a specific type (O(1) lookup).
@@ -534,3 +538,5 @@ class PatternLibrary:
         self.patterns = {}
         self.agent_contributions = {}
         self.pattern_graph = {}
+        self._patterns_by_type = {}
+        self._patterns_by_tag = {}

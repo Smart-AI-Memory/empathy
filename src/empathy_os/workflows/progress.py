@@ -133,6 +133,8 @@ class ProgressTracker:
         self.workflow = workflow_name
         self.workflow_id = workflow_id
         self.stage_names = stage_names
+        # Optimization: Index map for O(1) stage lookup (vs O(n) .index() call)
+        self._stage_index_map: dict[str, int] = {name: i for i, name in enumerate(stage_names)}
         self.current_index = 0
         self.cost_accumulated = 0.0
         self.tokens_accumulated = 0
@@ -176,7 +178,8 @@ class ProgressTracker:
             stage.tier = tier
             stage.model = model
             self._stage_start_times[stage_name] = stage.started_at
-            self.current_index = self.stage_names.index(stage_name)
+            # Optimization: O(1) lookup instead of O(n) .index() call
+            self.current_index = self._stage_index_map.get(stage_name, 0)
 
         self._emit(ProgressStatus.RUNNING, f"Running {stage_name}...")
 
@@ -203,7 +206,8 @@ class ProgressTracker:
 
         self.cost_accumulated += cost
         self.tokens_accumulated += tokens_in + tokens_out
-        self.current_index = self.stage_names.index(stage_name) + 1
+        # Optimization: O(1) lookup instead of O(n) .index() call
+        self.current_index = self._stage_index_map.get(stage_name, 0) + 1
 
         self._emit(ProgressStatus.COMPLETED, f"Completed {stage_name}")
 

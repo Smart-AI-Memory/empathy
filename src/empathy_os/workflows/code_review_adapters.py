@@ -106,13 +106,13 @@ def crew_report_to_workflow_format(report: "CodeReviewReport") -> dict:
         }
         findings.append(finding_dict)
 
-    # Build severity breakdown
+    # Build severity breakdown (using sum with generator for memory efficiency)
     severity_counts = {
-        "critical": len([f for f in report.findings if f.severity.value == "critical"]),
-        "high": len([f for f in report.findings if f.severity.value == "high"]),
-        "medium": len([f for f in report.findings if f.severity.value == "medium"]),
-        "low": len([f for f in report.findings if f.severity.value == "low"]),
-        "info": len([f for f in report.findings if f.severity.value == "info"]),
+        "critical": sum(1 for f in report.findings if f.severity.value == "critical"),
+        "high": sum(1 for f in report.findings if f.severity.value == "high"),
+        "medium": sum(1 for f in report.findings if f.severity.value == "medium"),
+        "low": sum(1 for f in report.findings if f.severity.value == "low"),
+        "info": sum(1 for f in report.findings if f.severity.value == "info"),
     }
 
     # Build category breakdown
@@ -275,13 +275,15 @@ def merge_code_review_results(
 def _merge_verdicts(verdict1: str, verdict2: str) -> str:
     """Merge two verdicts, taking the more severe one."""
     severity_order = ["reject", "request_changes", "approve_with_suggestions", "approve"]
+    # Optimization: Dict for O(1) lookup instead of O(n) .index() call
+    severity_map = {v: i for i, v in enumerate(severity_order)}
 
     # Normalize verdicts
     v1 = verdict1.lower().replace("-", "_")
     v2 = verdict2.lower().replace("-", "_")
 
-    idx1 = severity_order.index(v1) if v1 in severity_order else 3
-    idx2 = severity_order.index(v2) if v2 in severity_order else 3
+    idx1 = severity_map.get(v1, 3)
+    idx2 = severity_map.get(v2, 3)
 
     # Return more severe (lower index)
     return severity_order[min(idx1, idx2)]

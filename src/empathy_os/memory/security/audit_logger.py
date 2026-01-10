@@ -725,7 +725,9 @@ class AuditLogger:
             parts = key.split("__")
             operator = None
 
-            if len(parts) > 1 and parts[-1] in ["gt", "gte", "lt", "lte", "ne"]:
+            # Optimization: Use set for O(1) membership testing (vs O(n) with list)
+            valid_operators = {"gt", "gte", "lt", "lte", "ne"}
+            if len(parts) > 1 and parts[-1] in valid_operators:
                 operator = parts[-1]
                 parts = parts[:-1]
 

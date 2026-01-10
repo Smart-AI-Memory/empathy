@@ -1,0 +1,152 @@
+
+============================================================
+PROFILING SUITE - Empathy Framework
+Phase 2 Performance Optimization
+============================================================
+
+============================================================
+Profiling: Project Scanner
+============================================================
+✓ Scanned 2113 files
+✓ Source files: 556
+✓ Test files: 288
+✓ Lines of code: 166,785
+profile_scanner took 9.4358 seconds
+         43424576 function calls (43373430 primitive calls) in 9.432 seconds
+
+   Ordered by: cumulative time
+   List reduced from 2490 to 20 due to restriction <20>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.001    0.001    9.436    9.436 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/scripts/profile_utils.py:77(wrapper)
+        1    0.000    0.000    9.435    9.435 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/benchmarks/profile_suite.py:23(profile_scanner)
+        1    0.002    0.002    9.263    9.263 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/project_index/scanner.py:77(scan)
+     2113    0.020    0.000    7.637    0.004 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/project_index/scanner.py:206(_analyze_file)
+     2113    0.012    0.000    7.447    0.004 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/project_index/scanner.py:357(_analyze_code_metrics)
+      770    1.561    0.002    5.276    0.007 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/project_index/scanner.py:402(_analyze_python_ast)
+  2124888    0.514    0.000    3.111    0.000 /Users/patrickroebuck/.pyenv/versions/3.10.11/lib/python3.10/ast.py:380(walk)
+  2112049    0.312    0.000    2.532    0.000 {method 'extend' of 'collections.deque' objects}
+  4211205    1.106    0.000    2.220    0.000 /Users/patrickroebuck/.pyenv/versions/3.10.11/lib/python3.10/ast.py:267(iter_child_nodes)
+      770    0.002    0.000    1.862    0.002 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/project_index/scanner.py:54(_parse_python_cached)
+      873    1.839    0.002    1.839    0.002 {built-in method builtins.compile}
+      770    0.001    0.000    1.838    0.002 /Users/patrickroebuck/.pyenv/versions/3.10.11/lib/python3.10/ast.py:33(parse)
+  5727288    0.629    0.000    0.859    0.000 /Users/patrickroebuck/.pyenv/versions/3.10.11/lib/python3.10/ast.py:255(iter_fields)
+12203500/12159838    0.794    0.000    0.803    0.000 {built-in method builtins.isinstance}
+   189761    0.231    0.000    0.733    0.000 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/project_index/scanner.py:129(_matches_glob_pattern)
+        1    0.003    0.003    0.688    0.688 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/project_index/scanner.py:112(_discover_files)
+     2538    0.022    0.000    0.648    0.000 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/project_index/scanner.py:165(_is_excluded)
+        1    0.450    0.450    0.616    0.616 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/project_index/scanner.py:445(_analyze_dependencies)
+   379385    0.132    0.000    0.357    0.000 /Users/patrickroebuck/.pyenv/versions/3.10.11/lib/python3.10/fnmatch.py:25(fnmatch)
+        1    0.044    0.044    0.314    0.314 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/project_index/scanner.py:172(_build_test_mapping)
+
+
+
+
+Profile saved to: benchmarks/profiles/scanner_scan.prof
+Visualize with: snakeviz benchmarks/profiles/scanner_scan.prof
+
+============================================================
+Profiling: Pattern Library
+============================================================
+✓ Created 100 patterns
+✓ Performed 1000 pattern matches
+✓ Total matches: 0
+profile_pattern_library took 0.0967 seconds
+         506713 function calls in 0.097 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.097    0.097 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/scripts/profile_utils.py:77(wrapper)
+        1    0.001    0.001    0.097    0.097 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/benchmarks/profile_suite.py:42(profile_pattern_library)
+     1000    0.026    0.000    0.095    0.000 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/pattern_library.py:186(query_patterns)
+   100000    0.054    0.000    0.070    0.000 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/pattern_library.py:470(_calculate_relevance)
+   100000    0.008    0.000    0.008    0.000 {built-in method builtins.min}
+   200000    0.005    0.000    0.005    0.000 {method 'keys' of 'dict' objects}
+   100000    0.003    0.000    0.003    0.000 {method 'get' of 'dict' objects}
+      100    0.000    0.000    0.000    0.000 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/pattern_library.py:132(contribute_pattern)
+      100    0.000    0.000    0.000    0.000 <string>:2(__init__)
+     1000    0.000    0.000    0.000    0.000 {method 'sort' of 'list' objects}
+     1000    0.000    0.000    0.000    0.000 {built-in method builtins.len}
+     1100    0.000    0.000    0.000    0.000 {method 'strip' of 'str' objects}
+     1000    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}
+     1000    0.000    0.000    0.000    0.000 {method 'values' of 'dict' objects}
+      100    0.000    0.000    0.000    0.000 {built-in method now}
+      300    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+        7    0.000    0.000    0.000    0.000 {built-in method builtins.print}
+        1    0.000    0.000    0.000    0.000 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/pattern_library.py:116(__init__)
+        2    0.000    0.000    0.000    0.000 {built-in method time.perf_counter}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+
+
+
+
+Profile saved to: benchmarks/profiles/pattern_library.prof
+Visualize with: snakeviz benchmarks/profiles/pattern_library.prof
+
+============================================================
+Profiling: Workflow Execution
+============================================================
+✓ Loaded 100 workflow history entries
+✓ Created 200 workflow result objects
+✓ Success rate: 180/200 (90.0%)
+✓ Failed: 20
+✓ Avg tokens: 150
+profile_workflow_execution took 0.1299 seconds
+         163888 function calls (161114 primitive calls) in 0.129 seconds
+
+   Ordered by: cumulative time
+   List reduced from 1257 to 20 due to restriction <20>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.130    0.130 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/scripts/profile_utils.py:77(wrapper)
+        1    0.001    0.001    0.130    0.130 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/benchmarks/profile_suite.py:159(profile_workflow_execution)
+    176/1    0.000    0.000    0.128    0.128 <frozen importlib._bootstrap>:1022(_find_and_load)
+    163/1    0.000    0.000    0.128    0.128 <frozen importlib._bootstrap>:987(_find_and_load_unlocked)
+    228/1    0.000    0.000    0.128    0.128 <frozen importlib._bootstrap>:233(_call_with_frames_removed)
+    374/1    0.000    0.000    0.128    0.128 {built-in method builtins.__import__}
+    158/1    0.000    0.000    0.128    0.128 <frozen importlib._bootstrap>:664(_load_unlocked)
+    146/1    0.000    0.000    0.128    0.128 <frozen importlib._bootstrap_external>:877(exec_module)
+    296/1    0.018    0.000    0.128    0.128 {built-in method builtins.exec}
+        1    0.000    0.000    0.128    0.128 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/workflows/__init__.py:1(<module>)
+        1    0.000    0.000    0.093    0.093 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/workflows/base.py:1(<module>)
+        1    0.000    0.000    0.065    0.065 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/cache/__init__.py:1(<module>)
+        1    0.000    0.000    0.064    0.064 /Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/src/empathy_os/cache/hybrid.py:1(<module>)
+        1    0.000    0.000    0.064    0.064 /Users/patrickroebuck/.pyenv/versions/3.10.11/lib/python3.10/site-packages/numpy/__init__.py:1(<module>)
+   265/57    0.000    0.000    0.061    0.001 <frozen importlib._bootstrap>:1053(_handle_fromlist)
+       48    0.000    0.000    0.026    0.001 /Users/patrickroebuck/.pyenv/versions/3.10.11/lib/python3.10/dataclasses.py:1174(wrap)
+       48    0.001    0.000    0.026    0.001 /Users/patrickroebuck/.pyenv/versions/3.10.11/lib/python3.10/dataclasses.py:881(_process_class)
+       48    0.000    0.000    0.025    0.001 /Users/patrickroebuck/.pyenv/versions/3.10.11/lib/python3.10/dataclasses.py:1156(dataclass)
+  159/157    0.000    0.000    0.025    0.000 <frozen importlib._bootstrap>:564(module_from_spec)
+       13    0.000    0.000    0.023    0.002 <frozen importlib._bootstrap_external>:1174(create_module)
+
+
+
+
+Profile saved to: benchmarks/profiles/workflow_execution.prof
+Visualize with: snakeviz benchmarks/profiles/workflow_execution.prof
+
+============================================================
+Profiling: Memory Operations
+============================================================
+2026-01-10 08:37:27 [info     ] redis_connected                attempt=1 host=redis-12368.fcrce172.us-east-1-1.ec2.cloud.redislabs.com port=12368
+2026-01-10 08:37:27 [info     ] short_term_memory_initialized  environment=development mock_mode=False redis_method=already_running
+2026-01-10 08:37:27 [debug    ] secrets_detector_initialized   entropy_analysis=True patterns_count=20
+2026-01-10 08:37:27 [info     ] memdocs_storage_initialized    storage_dir=memdocs_storage
+2026-01-10 08:37:27 [debug    ] security_policies_loaded       policies={'pii_scrubbing_enabled': True, 'secrets_detection_enabled': True, 'classification_required': True, 'audit_logging_enabled': True, 'retention_enforcement_enabled': True}
+2026-01-10 08:37:27 [info     ] secure_memdocs_initialized     audit_dir=None encryption_enabled=True storage_dir=./memdocs_storage
+2026-01-10 08:37:27 [info     ] long_term_memory_initialized   encryption=True storage_dir=./memdocs_storage
+Traceback (most recent call last):
+  File "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/benchmarks/profile_suite.py", line 369, in <module>
+    profile_memory_operations()
+  File "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/scripts/profile_utils.py", line 39, in wrapper
+    result = func(*args, **kwargs)
+  File "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/scripts/profile_utils.py", line 80, in wrapper
+    result = func(*args, **kwargs)
+  File "/Users/patrickroebuck/empathy_11_6_2025/Empathy-framework/benchmarks/profile_suite.py", line 253, in profile_memory_operations
+    memory.stage_pattern(agent_id="profiler", pattern=pattern)
+TypeError: UnifiedMemory.stage_pattern() got an unexpected keyword argument 'agent_id'
+✓ Stashed 200 items in short-term memory
+✓ Retrieved 100 items from short-term memory
+
+❌ Error during profiling: UnifiedMemory.stage_pattern() got an unexpected keyword argument 'agent_id'

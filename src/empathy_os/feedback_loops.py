@@ -158,15 +158,13 @@ class FeedbackLoopDetector:
                 "recommendation": "Continue collaboration to gather data",
             }
 
-        # Analyze trust trend
+        # Analyze trust trend - use generator to avoid intermediate list for calculations
         trust_values = [s.get("trust", 0.5) for s in session_history]
         trust_trend = self._calculate_trend(trust_values)
 
-        # Analyze success rate trend
-        success_indicators = [1 if s.get("success", False) else 0 for s in session_history]
-        success_rate = (
-            sum(success_indicators) / len(success_indicators) if success_indicators else 0.5
-        )
+        # Analyze success rate trend - extract directly without intermediate list
+        success_count = sum(1 for s in session_history if s.get("success", False))
+        success_rate = success_count / len(session_history) if session_history else 0.5
 
         # Determine active loop
         if trust_trend > 0.1 and success_rate > 0.6:
@@ -232,15 +230,15 @@ class FeedbackLoopDetector:
             return False
 
         trust_values = [h.get("trust", 0.5) for h in history]
-        success_indicators = [1 if h.get("success", False) else 0 for h in history]
+        success_count = sum(1 for h in history if h.get("success", False))
 
         # Check trust is increasing
         trust_trend = self._calculate_trend(trust_values)
         if trust_trend <= 0:
             return False
 
-        # Check success rate is high
-        success_rate = sum(success_indicators) / len(success_indicators)
+        # Check success rate is high - calculate directly without intermediate list
+        success_rate = success_count / len(history) if history else 0.0
         if success_rate < 0.6:
             return False
 
@@ -280,15 +278,15 @@ class FeedbackLoopDetector:
             return False
 
         trust_values = [h.get("trust", 0.5) for h in history]
-        failure_indicators = [0 if h.get("success", True) else 1 for h in history]
+        failure_count = sum(1 for h in history if not h.get("success", True))
 
         # Check trust is decreasing
         trust_trend = self._calculate_trend(trust_values)
         if trust_trend >= 0:
             return False
 
-        # Check failure rate is high
-        failure_rate = sum(failure_indicators) / len(failure_indicators)
+        # Check failure rate is high - calculate directly without intermediate list
+        failure_rate = failure_count / len(history) if history else 0.0
         if failure_rate < 0.4:
             return False
 

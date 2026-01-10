@@ -25,6 +25,14 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+# Role categories for O(1) lookups
+EXECUTIVE_ROLES = frozenset({"executive", "ceo", "cto", "manager", "director", "vp"})
+TECHNICAL_ROLES = frozenset({"developer", "engineer", "architect", "devops", "sre"})
+COORDINATION_ROLES = frozenset({"team_lead", "project_manager", "scrum_master", "coordinator"})
+
+# Stress level categories
+HIGH_STRESS_LEVELS = frozenset({"critical", "high", "severe"})
+
 
 @dataclass
 class TrustSignal:
@@ -120,14 +128,14 @@ class TrustBuildingBehaviors:
             "reasoning": f"Pre-formatted for {recipient_role} workflow",
         }
 
-        # Format based on recipient role and context
-        if recipient_role in ["executive", "manager", "director"]:
+        # Format based on recipient role and context (O(1) set lookups)
+        if recipient_role in EXECUTIVE_ROLES:
             formatted["summary"] = self._create_executive_summary(data, context)
 
-        elif recipient_role in ["developer", "engineer", "analyst"]:
+        elif recipient_role in TECHNICAL_ROLES:
             formatted["summary"] = self._create_technical_summary(data, context)
 
-        elif recipient_role in ["team_lead", "coordinator", "supervisor"]:
+        elif recipient_role in COORDINATION_ROLES:
             formatted["summary"] = self._create_action_oriented_summary(data, context)
 
         else:
@@ -252,7 +260,7 @@ class TrustBuildingBehaviors:
         }
 
         # Offer appropriate scaffolding based on stress level
-        if stress_level in ["high", "critical"]:
+        if stress_level in HIGH_STRESS_LEVELS:
             if "prioritization" in available_scaffolding:
                 offered_support.append(
                     {
