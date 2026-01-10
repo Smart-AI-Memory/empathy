@@ -114,10 +114,20 @@ class PatternLibrary:
     """
 
     def __init__(self):
-        """Initialize PatternLibrary"""
+        """Initialize PatternLibrary with optimized index structures.
+
+        Performance optimizations:
+        - patterns_by_type: O(1) lookup by pattern type
+        - patterns_by_tag: O(1) lookup by tag
+        - Reduces query_patterns from O(n) to O(k) where k = matching patterns
+        """
         self.patterns: dict[str, Pattern] = {}  # pattern_id -> Pattern
         self.agent_contributions: dict[str, list[str]] = {}  # agent_id -> pattern_ids
         self.pattern_graph: dict[str, list[str]] = {}  # pattern_id -> related_pattern_ids
+
+        # Performance optimization: Index structures for fast lookups
+        self._patterns_by_type: dict[str, list[str]] = {}  # pattern_type -> pattern_ids
+        self._patterns_by_tag: dict[str, list[str]] = {}  # tag -> pattern_ids
 
     def contribute_pattern(self, agent_id: str, pattern: Pattern) -> None:
         """Agent contributes a discovered pattern to the library
@@ -162,6 +172,16 @@ class PatternLibrary:
         # Initialize pattern graph entry
         if pattern.id not in self.pattern_graph:
             self.pattern_graph[pattern.id] = []
+
+        # Update index structures for O(1) lookups
+        if pattern.pattern_type not in self._patterns_by_type:
+            self._patterns_by_type[pattern.pattern_type] = []
+        self._patterns_by_type[pattern.pattern_type].append(pattern.id)
+
+        for tag in pattern.tags:
+            if tag not in self._patterns_by_tag:
+                self._patterns_by_tag[tag] = []
+            self._patterns_by_tag[tag].append(pattern.id)
 
     def query_patterns(
         self,
@@ -211,12 +231,18 @@ class PatternLibrary:
 
         matches: list[PatternMatch] = []
 
-        for pattern in self.patterns.values():
-            # Apply filters
-            if pattern.confidence < min_confidence:
-                continue
+        # Performance optimization: Use index for pattern_type filter (O(1) vs O(n))
+        if pattern_type:
+            # Only check patterns of the requested type
+            pattern_ids = self._patterns_by_type.get(pattern_type, [])
+            patterns_to_check = [self.patterns[pid] for pid in pattern_ids]
+        else:
+            # Check all patterns
+            patterns_to_check = self.patterns.values()
 
-            if pattern_type and pattern.pattern_type != pattern_type:
+        for pattern in patterns_to_check:
+            # Apply confidence filter
+            if pattern.confidence < min_confidence:
                 continue
 
             # Calculate relevance
@@ -246,6 +272,42 @@ class PatternLibrary:
 
         """
         return self.patterns.get(pattern_id)
+
+    def get_patterns_by_tag(self, tag: str) -> list[Pattern]:
+        """Get all patterns with a specific tag (O(1) lookup).
+
+        Args:
+            tag: Tag to search for
+
+        Returns:
+            List of patterns with the given tag
+
+        Performance:
+            O(1) index lookup instead of O(n) linear scan.
+
+        Example:
+            >>> patterns = library.get_patterns_by_tag("debugging")
+        """
+        pattern_ids = self._patterns_by_tag.get(tag, [])
+        return [self.patterns[pid] for pid in pattern_ids if pid in self.patterns]
+
+    def get_patterns_by_type(self, pattern_type: str) -> list[Pattern]:
+        """Get all patterns of a specific type (O(1) lookup).
+
+        Args:
+            pattern_type: Type of patterns to retrieve
+
+        Returns:
+            List of patterns of the given type
+
+        Performance:
+            O(1) index lookup instead of O(n) linear scan.
+
+        Example:
+            >>> patterns = library.get_patterns_by_type("conditional")
+        """
+        pattern_ids = self._patterns_by_type.get(pattern_type, [])
+        return [self.patterns[pid] for pid in pattern_ids if pid in self.patterns]
 
     def record_pattern_outcome(self, pattern_id: str, success: bool):
         """Record outcome of using a pattern
