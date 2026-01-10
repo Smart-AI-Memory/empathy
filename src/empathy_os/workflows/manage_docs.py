@@ -75,8 +75,9 @@ class ManageDocsWorkflow(BaseWorkflow):
         prompt = f"Process this input: {input_data}"
 
         # Use LLM executor if available
-        if self.executor:
-            result = await self.executor.execute(
+        if self._executor:
+            result = await self._executor.run(
+                task_type="workflow_stage",
                 prompt=prompt,
                 tier=tier.to_unified() if hasattr(tier, "to_unified") else tier,
             )

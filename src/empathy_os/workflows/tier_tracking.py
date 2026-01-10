@@ -344,9 +344,9 @@ class WorkflowTierTracker:
             stage_attempts[stage].append((tier, success))
 
         # Build history with fallback information
-        history = []
+        history: list[dict[str, Any]] = []
         for stage, attempts in stage_attempts.items():
-            stage_entry = {
+            stage_entry: dict[str, Any] = {
                 "stage": stage,
                 "total_attempts": len(attempts),
                 "attempts": [],

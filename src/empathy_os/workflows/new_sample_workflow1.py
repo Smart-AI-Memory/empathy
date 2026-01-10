@@ -82,8 +82,9 @@ class NewSampleWorkflow1Workflow(BaseWorkflow):
         # TODO: Implement analyze logic
         prompt = f"analyze stage: {input_data}"
 
-        if self.executor:
-            result = await self.executor.execute(
+        if self._executor:
+            result = await self._executor.run(
+                task_type="workflow_stage",
                 prompt=prompt,
                 tier=tier.to_unified() if hasattr(tier, "to_unified") else tier,
             )
@@ -109,8 +110,9 @@ class NewSampleWorkflow1Workflow(BaseWorkflow):
         # TODO: Implement process logic
         prompt = f"process stage: {input_data}"
 
-        if self.executor:
-            result = await self.executor.execute(
+        if self._executor:
+            result = await self._executor.run(
+                task_type="workflow_stage",
                 prompt=prompt,
                 tier=tier.to_unified() if hasattr(tier, "to_unified") else tier,
             )
@@ -136,8 +138,9 @@ class NewSampleWorkflow1Workflow(BaseWorkflow):
         # TODO: Implement report logic
         prompt = f"report stage: {input_data}"
 
-        if self.executor:
-            result = await self.executor.execute(
+        if self._executor:
+            result = await self._executor.run(
+                task_type="workflow_stage",
                 prompt=prompt,
                 tier=tier.to_unified() if hasattr(tier, "to_unified") else tier,
             )

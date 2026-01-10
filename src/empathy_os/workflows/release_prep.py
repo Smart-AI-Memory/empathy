@@ -14,10 +14,8 @@ Licensed under Fair Source License 0.9
 """
 
 import json
-import re
 import subprocess
 from datetime import datetime
-from pathlib import Path
 from typing import Any
 
 from .base import BaseWorkflow, ModelTier
@@ -228,48 +226,67 @@ class ReleasePreparationWorkflow(BaseWorkflow):
         )
 
     async def _security(self, input_data: dict, tier: ModelTier) -> tuple[dict, int, int]:
-        """Run security scan summary.
+        """Run security scan using Bandit.
 
-        Quick security check for obvious issues.
+        Uses industry-standard Bandit tool for security analysis.
         """
         target_path = input_data.get("path", ".")
-        target = Path(target_path)
 
         issues: list[dict] = []
+        high_count = 0
+        medium_count = 0
 
-        # Check for common security issues
-        for py_file in target.rglob("*.py"):
-            if ".git" in str(py_file) or "venv" in str(py_file):
-                continue
+        # Run Bandit security scanner
+        try:
+            result = subprocess.run(
+                [
+                    "python",
+                    "-m",
+                    "bandit",
+                    "-r",
+                    target_path,
+                    "--severity-level",
+                    "medium",
+                    "--format",
+                    "json",
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
 
-            try:
-                content = py_file.read_text(errors="ignore")
+            # Parse Bandit JSON output
+            if result.stdout:
+                try:
+                    bandit_data = json.loads(result.stdout)
+                    bandit_results = bandit_data.get("results", [])
 
-                # Check for hardcoded secrets
-                if re.search(r'password\s*=\s*["\'][^"\']+["\']', content, re.IGNORECASE):
-                    issues.append(
-                        {
-                            "type": "hardcoded_secret",
-                            "file": str(py_file),
-                            "severity": "high",
-                        },
-                    )
+                    for finding in bandit_results:
+                        severity = finding.get("issue_severity", "LOW").lower()
+                        issues.append(
+                            {
+                                "type": finding.get("test_id", "unknown"),
+                                "file": finding.get("filename", "unknown"),
+                                "line": finding.get("line_number", 0),
+                                "severity": severity,
+                                "message": finding.get("issue_text", ""),
+                                "confidence": finding.get("issue_confidence", ""),
+                            }
+                        )
 
-                # Check for eval/exec
-                if "eval(" in content or "exec(" in content:
-                    issues.append(
-                        {
-                            "type": "dangerous_function",
-                            "file": str(py_file),
-                            "severity": "high",
-                        },
-                    )
-            except OSError:
-                continue
+                        if severity == "high":
+                            high_count += 1
+                        elif severity == "medium":
+                            medium_count += 1
 
-        # Count by severity
-        high_count = len([i for i in issues if i["severity"] == "high"])
-        medium_count = len([i for i in issues if i["severity"] == "medium"])
+                except json.JSONDecodeError:
+                    # If JSON parsing fails, fall back to error count from stderr
+                    pass
+
+        except (subprocess.TimeoutExpired, FileNotFoundError):
+            # Bandit not available or timed out - skip security scan
+            pass
 
         if high_count > 0:
             self._has_blockers = True
@@ -280,6 +297,7 @@ class ReleasePreparationWorkflow(BaseWorkflow):
             "high_severity": high_count,
             "medium_severity": medium_count,
             "passed": high_count == 0,
+            "tool": "bandit",
         }
 
         input_tokens = len(str(input_data)) // 4

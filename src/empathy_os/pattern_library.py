@@ -238,7 +238,7 @@ class PatternLibrary:
             patterns_to_check = [self.patterns[pid] for pid in pattern_ids]
         else:
             # Check all patterns
-            patterns_to_check = self.patterns.values()
+            patterns_to_check = list(self.patterns.values())
 
         for pattern in patterns_to_check:
             # Apply confidence filter
