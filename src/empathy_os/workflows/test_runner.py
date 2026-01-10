@@ -13,12 +13,16 @@ import subprocess
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 try:
     import defusedxml.ElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET  # noqa: S405
+
+# Import Element for type hints only (defusedxml doesn't expose it)
+if TYPE_CHECKING:
+    from xml.etree.ElementTree import Element
 
 from empathy_os.models import CoverageRecord, TestExecutionRecord, get_telemetry_store
 
@@ -315,7 +319,7 @@ def _get_previous_coverage() -> float | None:
         return None
 
 
-def _analyze_coverage_files(root: ET.Element) -> dict[str, Any]:
+def _analyze_coverage_files(root: "Element") -> dict[str, Any]:
     """Analyze file-level coverage from XML.
 
     Returns:
