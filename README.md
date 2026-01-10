@@ -1,6 +1,8 @@
 # Empathy Framework
 
-**The AI collaboration framework that predicts problems before they happen.**
+**The AI collaboration framework with breakthrough meta-orchestration - agents that compose themselves.**
+
+🎭 **v4.0: The Meta-Orchestration Era** - Dynamic agent teams, intelligent composition, self-learning systems.
 
 [![PyPI](https://img.shields.io/pypi/v/empathy-framework)](https://pypi.org/project/empathy-framework/)
 [![Tests](https://img.shields.io/badge/tests-6%2C038%20passing-brightgreen)](https://github.com/Smart-AI-Memory/empathy-framework/actions)
@@ -13,39 +15,113 @@
 pip install empathy-framework[developer]  # Lightweight for individual developers
 ```
 
-## What's New in v3.11.0 (Current Release)
+## What's New in v4.0.0 🎭 **PARADIGM SHIFT**
 
-### ⚡ **Phase 2 Performance Optimizations: 46% Faster, 15% Less Memory**
+### **Meta-Orchestration: AI Agents That Compose Themselves**
 
-**Data-driven performance improvements based on comprehensive profiling.**
+**The breakthrough:** Instead of manually wiring agent workflows, v4.0 introduces a meta-orchestration system that analyzes tasks, selects optimal agent teams, chooses composition patterns, and learns from outcomes.
 
-- ✅ **46% faster project scans** (9.5s → 5.1s for 2,000+ files)
-- ✅ **66% faster pattern queries** with intelligent caching
-- ✅ **15% less memory** through generator expression migrations
-- ✅ **3-5x faster lookups** via O(n) → O(1) optimizations
-- ✅ **Zero breaking changes** - 100% backward compatible
+**What this means:**
 
-```python
-from empathy_os.pattern_library import PatternLibrary
+- 🧠 **Automatic task analysis** → Determines complexity, domain, required capabilities
+- 🤝 **Dynamic team composition** → Selects optimal agents from 7 pre-built templates
+- 📐 **Intelligent strategy selection** → Chooses from 6 composition patterns (Sequential, Parallel, Debate, Teaching, Refinement, Adaptive)
+- 📚 **Self-learning** → Saves successful compositions and improves over time
+- ⚡ **Production-ready workflows** → Release Prep (parallel validation), Test Coverage Boost (sequential improvement)
 
-library = PatternLibrary()
-# Automatically uses O(1) index structures - 5x faster!
-patterns = library.get_patterns_by_tag("debugging")
+### Quick Start
+
+**Release preparation with 4 parallel agents:**
+
+```bash
+empathy orchestrate release-prep
 ```
 
-**What was optimized:**
-1. **Data structures**: 5 O(n) → O(1) conversions (frozensets, dicts)
-2. **Memory**: Generator expressions reduce allocations by 50-100MB
-3. **Caching**: Pattern match cache with 60-70% hit rate
-4. **Profiling**: Complete performance baseline for future optimizations
+Automatically runs:
 
-**Performance gains:**
-- File categorization: **5x faster**
-- Verdict merging: **3.5x faster**
-- Progress tracking: **5.8x faster**
-- GC cycles: **-50%** (4 → 2 for large operations)
+- **Security Auditor** (vulnerability scan)
+- **Test Coverage Analyzer** (gap analysis)
+- **Code Quality Reviewer** (best practices)
+- **Documentation Writer** (completeness check)
 
-See [CHANGELOG.md](https://github.com/Smart-AI-Memory/empathy-framework/blob/main/CHANGELOG.md#3110---2026-01-10) for complete details and benchmarks.
+**Boost test coverage to 90%:**
+
+```bash
+empathy orchestrate test-coverage --target 90
+```
+
+Sequential workflow:
+
+1. **Coverage Analyzer** → Identify gaps
+2. **Test Generator** → Create tests
+3. **Test Validator** → Verify coverage
+
+### Python API
+
+```python
+from empathy_os.workflows.orchestrated_release_prep import (
+    OrchestratedReleasePrepWorkflow
+)
+
+# Create workflow with custom quality gates
+workflow = OrchestratedReleasePrepWorkflow(
+    quality_gates={
+        "min_coverage": 90.0,
+        "max_critical_issues": 0,
+    }
+)
+
+# Execute
+report = await workflow.execute(path=".")
+
+if report.approved:
+    print(f"✅ Release approved! (confidence: {report.confidence})")
+else:
+    for blocker in report.blockers:
+        print(f"❌ {blocker}")
+```
+
+### 6 Composition Patterns
+
+The meta-orchestrator automatically selects the best pattern:
+
+1. **Sequential** (A → B → C) - Pipeline processing
+2. **Parallel** (A ‖ B ‖ C) - Independent validation
+3. **Debate** (A ⇄ B ⇄ C → Synthesis) - Consensus building
+4. **Teaching** (Junior → Expert) - Cost optimization
+5. **Refinement** (Draft → Review → Polish) - Iterative improvement
+6. **Adaptive** (Classifier → Specialist) - Right-sizing
+
+### Learning System
+
+Successful compositions are saved and improved over time:
+
+```python
+from empathy_os.orchestration.config_store import ConfigurationStore
+
+store = ConfigurationStore()
+
+# Find best composition for task
+best = store.get_best_for_task("release_prep")
+print(f"Success rate: {best.success_rate:.1%}")
+
+# Reuse proven composition
+agents = [get_template(a["role"]) for a in best.agents]
+```
+
+**Documentation:**
+
+- [Meta-Orchestration User Guide](docs/ORCHESTRATION_USER_GUIDE.md) - Complete guide with examples
+- [API Reference](docs/ORCHESTRATION_API.md) - All classes and methods
+- [Examples](examples/orchestration/) - Working code samples
+
+**Features:**
+
+- ✅ **7 pre-built agent templates** (security, testing, docs, etc.)
+- ✅ **Automatic strategy selection** based on task analysis
+- ✅ **Quality gates enforcement** with detailed reporting
+- ✅ **Configuration store** learns from outcomes
+- ✅ **Cost optimization** via tier selection (CHEAP → CAPABLE → PREMIUM)
 
 ---
 

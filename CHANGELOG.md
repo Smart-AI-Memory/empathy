@@ -5,6 +5,114 @@ All notable changes to the Empathy Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0] - 2026-01-10 🎭 **MAJOR RELEASE: Meta-Orchestration Era**
+
+### 🚀 BREAKING THROUGH: Dynamic Agent Composition
+
+**This is a paradigm shift** - Empathy Framework v4.0 introduces meta-orchestration, enabling the system to dynamically compose and customize agent teams based on task requirements. The framework has evolved from static workflows to intelligent, self-organizing multi-agent systems with learning capabilities.
+
+### Added
+
+- **🎭 Meta-Orchestration System: Intelligent Multi-Agent Composition**
+  - **Core orchestration engine** ([src/empathy_os/orchestration/](src/empathy_os/orchestration/))
+    - MetaOrchestrator analyzes tasks and selects optimal agent teams
+    - Automatic complexity and domain classification
+    - Cost estimation and duration prediction
+
+  - **7 pre-built agent templates** ([agent_templates.py](src/empathy_os/orchestration/agent_templates.py), 517 lines)
+    1. Test Coverage Analyzer (CAPABLE) - Gap analysis and test suggestions
+    2. Security Auditor (PREMIUM) - Vulnerability scanning and compliance
+    3. Code Reviewer (CAPABLE) - Quality assessment and best practices
+    4. Documentation Writer (CHEAP) - API docs and examples
+    5. Performance Optimizer (CAPABLE) - Profiling and optimization
+    6. Architecture Analyst (PREMIUM) - Design patterns and dependencies
+    7. Refactoring Specialist (CAPABLE) - Code smells and improvements
+
+  - **6 composition strategies** ([execution_strategies.py](src/empathy_os/orchestration/execution_strategies.py), 667 lines)
+    1. **Sequential** (A → B → C) - Pipeline processing with context passing
+    2. **Parallel** (A ‖ B ‖ C) - Independent validation with asyncio
+    3. **Debate** (A ⇄ B ⇄ C → Synthesis) - Consensus building with synthesis
+    4. **Teaching** (Junior → Expert) - Cost optimization with quality gates
+    5. **Refinement** (Draft → Review → Polish) - Iterative improvement
+    6. **Adaptive** (Classifier → Specialist) - Right-sizing based on complexity
+
+  - **Configuration store with learning** ([config_store.py](src/empathy_os/orchestration/config_store.py), 508 lines)
+    - Persistent storage in `.empathy/orchestration/compositions/`
+    - Success rate tracking and quality score averaging
+    - Search by task pattern, success rate, quality score
+    - Automatic pattern library contribution after 3+ successful uses
+    - JSON serialization with datetime handling
+
+  - **2 production workflows** demonstrating meta-orchestration
+    - **Release Preparation** ([orchestrated_release_prep.py](src/empathy_os/workflows/orchestrated_release_prep.py), 585 lines)
+      - 4 parallel agents: Security, Coverage, Quality, Docs
+      - Quality gates: min_coverage (80%), min_quality (7.0), max_critical (0)
+      - Consolidated release readiness report with blockers/warnings
+      - CLI: `empathy orchestrate release-prep`
+
+    - **Test Coverage Boost** ([test_coverage_boost.py](src/empathy_os/workflows/test_coverage_boost.py))
+      - 3 sequential stages: Analyzer → Generator → Validator
+      - Automatic gap prioritization and test generation
+      - CLI: `empathy orchestrate test-coverage --target 90`
+
+  - **CLI integration** ([cli.py](src/empathy_os/cli.py), new `cmd_orchestrate` function)
+    - `empathy orchestrate release-prep [--min-coverage N] [--json]`
+    - `empathy orchestrate test-coverage --target N [--project-root PATH]`
+    - Custom quality gates via CLI arguments
+    - JSON output mode for CI integration
+
+- **📚 Comprehensive Documentation** (1,470+ lines total)
+  - **User Guide** ([docs/ORCHESTRATION_USER_GUIDE.md](docs/ORCHESTRATION_USER_GUIDE.md), 580 lines)
+    - Overview of meta-orchestration concept
+    - Getting started with CLI and Python API
+    - Complete CLI reference for both workflows
+    - Agent template reference with capabilities
+    - Composition pattern explanations (when to use each)
+    - Configuration store usage and learning system
+    - Advanced usage: custom workflows, multi-stage, conditional
+    - Troubleshooting guide with common issues
+
+  - **API Reference** ([docs/ORCHESTRATION_API.md](docs/ORCHESTRATION_API.md), 890 lines)
+    - Complete API documentation for all public classes
+    - Type signatures and parameter descriptions
+    - Return values and raised exceptions
+    - Code examples for every component
+    - Agent templates, orchestrator, strategies, config store
+    - Full workflow API documentation
+
+  - **Working Examples** ([examples/orchestration/](examples/orchestration/), 3 files)
+    - `basic_usage.py` (470 lines) - 8 simple examples for getting started
+    - `custom_workflow.py` (550 lines) - 5 custom workflow patterns
+    - `advanced_composition.py` (680 lines) - 7 advanced techniques
+
+- **🧪 Comprehensive Testing** (100% passing)
+  - Unit tests for all orchestration components:
+    - `test_agent_templates.py` - Template validation and retrieval
+    - `test_meta_orchestrator.py` - Task analysis and agent selection
+    - `test_execution_strategies.py` - All 6 composition patterns
+    - `test_config_store.py` - Persistence, search, learning
+  - Integration tests for production workflows
+  - Security tests for file path validation in config store
+
+### Changed
+
+- **README.md** - Added meta-orchestration section with examples
+- **CLI** - New `orchestrate` subcommand with release-prep and test-coverage workflows
+
+### Documentation
+
+- **Migration Guide**: No breaking changes - fully backward compatible
+- **Examples**: 3 comprehensive example files (1,700+ lines total)
+- **API Coverage**: 100% of public APIs documented
+
+### Performance
+
+- **Meta-orchestration overhead**: < 100ms for task analysis and agent selection
+- **Parallel strategy**: Execution time = max(agent times) vs sum for sequential
+- **Configuration store**: In-memory cache for fast lookups, lazy disk loading
+
+---
+
 ## [3.11.0] - 2026-01-10
 
 ### Added

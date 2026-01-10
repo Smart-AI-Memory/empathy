@@ -33704,6 +33704,83 @@
         "started_at": "2026-01-10T09:25:19.461182",
         "completed_at": "2026-01-10T09:25:19.487625"
       }
+    },
+    {
+      "pattern_id": "workflow_20260110_d6ea1b88",
+      "bug_type": "workflow_run",
+      "status": "resolved",
+      "root_cause": "Workflow: release-prep - Pre-release quality gate with health, security, and changelog",
+      "fix": "Completed via release-prep workflow",
+      "resolved_by": "@empathy_framework",
+      "resolved_at": "2026-01-10",
+      "files_affected": [],
+      "source": "workflow_tracking",
+      "tier_progression": {
+        "methodology": "AI-ADDIE",
+        "recommended_tier": "CHEAP",
+        "starting_tier": "PREMIUM",
+        "successful_tier": "PREMIUM",
+        "total_attempts": 3,
+        "tier_history": [
+          {
+            "tier": "CHEAP",
+            "attempts": 1,
+            "success": {
+              "attempt": 1,
+              "quality_gates_passed": [
+                "execution",
+                "output"
+              ]
+            }
+          },
+          {
+            "tier": "CAPABLE",
+            "attempts": 2,
+            "success": {
+              "attempt": 2,
+              "quality_gates_passed": [
+                "execution",
+                "output"
+              ]
+            }
+          },
+          {
+            "tier": "PREMIUM",
+            "attempts": 1,
+            "success": {
+              "attempt": 1,
+              "quality_gates_passed": [
+                "execution",
+                "output"
+              ]
+            }
+          }
+        ],
+        "cost_breakdown": {
+          "total_cost": 0.097,
+          "cost_if_always_premium": 0.484,
+          "savings_percent": 80.0
+        },
+        "quality_metrics": {
+          "tests_passed": true,
+          "health_score_before": 73,
+          "health_score_after": 73
+        },
+        "xml_protocol_compliance": {
+          "prompt_used_xml": true,
+          "response_used_xml": true,
+          "all_sections_present": true,
+          "test_evidence_provided": true,
+          "false_complete_avoided": true
+        }
+      },
+      "workflow_metadata": {
+        "workflow_name": "release-prep",
+        "workflow_id": "d6ea1b88-586f-4528-884b-78e13e9c72f0",
+        "duration_seconds": 191.55,
+        "started_at": "2026-01-10T10:35:34.826139",
+        "completed_at": "2026-01-10T10:38:46.371399"
+      }
     }
   ],
   "last_updated": "2026-01-07T00:51:52.358772",

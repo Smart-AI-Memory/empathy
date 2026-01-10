@@ -764,6 +764,182 @@ def cmd_tier_stats(args):
     print()
 
 
+def cmd_orchestrate(args):
+    """Run meta-orchestration workflows.
+
+    Orchestrates teams of agents to accomplish complex tasks through
+    intelligent composition patterns.
+    """
+    import asyncio
+    import json
+
+    from empathy_os.workflows.orchestrated_release_prep import OrchestratedReleasePrepWorkflow
+    from empathy_os.workflows.test_coverage_boost import TestCoverageBoostWorkflow
+
+    # Get workflow type
+    workflow_type = args.workflow
+
+    print()
+    print("=" * 60)
+    print(f"  META-ORCHESTRATION: {workflow_type.upper()}")
+    print("=" * 60)
+    print()
+
+    if workflow_type == "release-prep":
+        # Release Preparation workflow
+        path = args.path or "."
+        quality_gates = {}
+
+        # Collect custom quality gates
+        if hasattr(args, "min_coverage") and args.min_coverage is not None:
+            quality_gates["min_coverage"] = args.min_coverage
+        if hasattr(args, "min_quality") and args.min_quality is not None:
+            quality_gates["min_quality_score"] = args.min_quality
+        if hasattr(args, "max_critical") and args.max_critical is not None:
+            quality_gates["max_critical_issues"] = args.max_critical
+
+        print(f"  Project Path: {path}")
+        if quality_gates:
+            print(f"  Quality Gates: {quality_gates}")
+        print()
+        print("  🔍 Parallel Validation Agents:")
+        print("    • Security Auditor (vulnerability scan)")
+        print("    • Test Coverage Analyzer (gap analysis)")
+        print("    • Code Quality Reviewer (best practices)")
+        print("    • Documentation Writer (completeness)")
+        print()
+
+        # Create workflow
+        workflow = OrchestratedReleasePrepWorkflow(
+            quality_gates=quality_gates if quality_gates else None
+        )
+
+        try:
+            # Execute workflow
+            report = asyncio.run(workflow.execute(path=path))
+
+            # Display results
+            if hasattr(args, "json") and args.json:
+                print(json.dumps(report.to_dict(), indent=2))
+            else:
+                print(report.format_console_output())
+
+            # Return appropriate exit code
+            return 0 if report.approved else 1
+
+        except Exception as e:
+            print(f"  ❌ Error executing release prep workflow: {e}")
+            print()
+            logger.exception("Release prep workflow failed")
+            return 1
+
+    elif workflow_type == "test-coverage":
+        # Test Coverage Boost workflow
+        target_coverage = args.target or 80.0
+        project_root = args.project_root or "."
+
+        print(f"  Target Coverage: {target_coverage}%")
+        print(f"  Project Root: {project_root}")
+        print()
+        print("  🔍 Stage 1: Coverage Gap Analysis")
+        print("  🔨 Stage 2: Test Generation")
+        print("  ✅ Stage 3: Test Validation")
+        print()
+
+        # Create workflow
+        workflow = TestCoverageBoostWorkflow(
+            target_coverage=target_coverage,
+            project_root=project_root,
+            save_patterns=True,
+        )
+
+        # Execute workflow
+        context = {
+            "current_coverage": args.current_coverage or 0.0,
+        }
+
+        try:
+            result = asyncio.run(workflow.execute(context))
+
+            # Display results
+            print()
+            print("  📊 RESULTS")
+            print("  " + "-" * 56)
+            print()
+
+            # Analysis stage
+            print("  ✓ Stage 1: Coverage Analysis")
+            print(f"    Current Coverage: {result.analysis.current_coverage:.1f}%")
+            print(f"    Gaps Identified: {len(result.analysis.gaps)}")
+            print(f"    Recommendations: {len(result.analysis.recommendations)}")
+            print()
+
+            # Generation stage
+            print("  ✓ Stage 2: Test Generation")
+            print(f"    Tests Generated: {result.generation.tests_generated}")
+            print(f"    Expected Delta: +{result.generation.coverage_delta:.1f}%")
+            print(f"    Test Files: {len(result.generation.test_files)}")
+            print()
+
+            # Validation stage
+            print("  ✓ Stage 3: Test Validation")
+            print(f"    All Tests Passed: {'✅ Yes' if result.validation.all_passed else '❌ No'}")
+            print(f"    Final Coverage: {result.validation.final_coverage:.1f}%")
+            print(f"    Improvement: +{result.validation.coverage_improvement:.1f}%")
+            print()
+
+            # Quality gates
+            print("  🎯 QUALITY GATES")
+            print("  " + "-" * 56)
+            if result.quality_gates_passed:
+                print("  ✅ All quality gates passed!")
+            else:
+                print("  ❌ Quality gates not met")
+                if result.validation.final_coverage < target_coverage:
+                    print(
+                        f"     - Coverage below target ({result.validation.final_coverage:.1f}% < {target_coverage}%)"
+                    )
+                if not result.validation.all_passed:
+                    print(f"     - {len(result.validation.failures)} tests failed")
+                if result.validation.coverage_improvement < 10.0:
+                    print(
+                        f"     - Improvement too small ({result.validation.coverage_improvement:.1f}% < 10%)"
+                    )
+            print()
+
+            # Execution time
+            print(f"  ⏱️  Execution Time: {result.execution_time:.1f}s")
+            print()
+
+            if result.success:
+                print("  ✅ Workflow completed successfully!")
+            else:
+                print("  ❌ Workflow failed")
+                if result.errors:
+                    print(f"     Errors: {', '.join(result.errors)}")
+
+        except Exception as e:
+            print(f"  ❌ Error executing workflow: {e}")
+            print()
+            logger.exception("Orchestration workflow failed")
+            return 1
+
+    else:
+        print(f"  ❌ Unknown workflow type: {workflow_type}")
+        print()
+        print("  Available workflows:")
+        print("    - release-prep: Release readiness validation (parallel agents)")
+        print("    - test-coverage: Boost test coverage through sequential agent composition")
+        print()
+        return 1
+
+    print()
+    print("=" * 60)
+    print()
+
+    return 0
+
+
 def cmd_init(args):
     """Initialize a new Empathy Framework project
 
@@ -3292,6 +3468,59 @@ def main():
         help="Show tier pattern learning statistics",
     )
     parser_tier_stats.set_defaults(func=cmd_tier_stats)
+
+    # Orchestrate command (meta-orchestration workflows)
+    parser_orchestrate = subparsers.add_parser(
+        "orchestrate",
+        help="Run meta-orchestration workflows (test-coverage, release-prep)",
+    )
+    parser_orchestrate.add_argument(
+        "workflow",
+        choices=["test-coverage", "release-prep"],
+        help="Workflow to execute",
+    )
+    parser_orchestrate.add_argument(
+        "--target",
+        type=float,
+        help="Target coverage percentage (for test-coverage workflow, default: 80)",
+    )
+    parser_orchestrate.add_argument(
+        "--current-coverage",
+        type=float,
+        help="Current coverage percentage (default: 0)",
+    )
+    parser_orchestrate.add_argument(
+        "--project-root",
+        default=".",
+        help="Project root directory (default: current directory)",
+    )
+    # Release-prep workflow arguments
+    parser_orchestrate.add_argument(
+        "--path",
+        default=".",
+        help="Path to codebase to analyze (for release-prep, default: current directory)",
+    )
+    parser_orchestrate.add_argument(
+        "--min-coverage",
+        type=float,
+        help="Minimum test coverage threshold (for release-prep, default: 80.0)",
+    )
+    parser_orchestrate.add_argument(
+        "--min-quality",
+        type=float,
+        help="Minimum code quality score (for release-prep, default: 7.0)",
+    )
+    parser_orchestrate.add_argument(
+        "--max-critical",
+        type=float,
+        help="Maximum critical security issues (for release-prep, default: 0)",
+    )
+    parser_orchestrate.add_argument(
+        "--json",
+        action="store_true",
+        help="Output results as JSON",
+    )
+    parser_orchestrate.set_defaults(func=cmd_orchestrate)
 
     # Wizard Factory commands (create wizards 12x faster)
     add_wizard_factory_commands(subparsers)
